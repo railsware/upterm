@@ -1,0 +1,8 @@
+{
+  "name": "black-screen",
+  "version": "0.0.1",
+  "main": "src/main.js",
+  "dependencies": {
+    "jquery": "^2.1.3"
+  }
+}

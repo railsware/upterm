@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Black Screen</title>
+</head>
+<body>
+
+  <div id="board"></div>
+
+  <script>
+  var child_process = require('child_process');
+  var $ = require('jquery');
+
+  var execute = function(input) {
+    var args = input.split(/\s+/);
+    var command = args.shift();
+    var response = child_process.spawnSync(command, args);
+    return response.stdout.toString();
+  };
+
+  var createPrompt = function() {
+    $('.currentInput').removeClass('currentInput');
+
+    var newInput = document.createElement("input");
+    newInput.type="text";
+    newInput.name="amount";
+    $(newInput).addClass('currentInput');
+    document.getElementById('board').appendChild(newInput);
+    newInput.focus();
+    addEnterHandler();
+  };
+
+  var addEnterHandler = function() {
+    $('.currentInput').keypress(function (e) {
+      if (e.which == 13) {
+        print($('.currentInput').val());
+        createPrompt();
+        return false;
+      }
+    });
+  };
+
+  var print = function(command) {
+    var container = document.createElement("pre");
+    container.className +='currentInput';
+    container.innerHTML = escapeHtml(execute(command));
+    document.getElementById('board').appendChild(container);
+  };
+
+  var currentInput = function() {
+
+  };
+
+  function escapeHtml(unsafe) {
+    return unsafe
+         .replace(/&/g, "&amp;")
+         .replace(/</g, "&lt;")
+         .replace(/>/g, "&gt;")
+         .replace(/"/g, "&quot;")
+         .replace(/'/g, "&#039;");
+ }
+
+  createPrompt();
+  </script>
+</body>
+</html>
