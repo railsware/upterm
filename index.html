@@ -7,58 +7,103 @@
 
   <div id="board"></div>
 
+  <style>
+    body, pre {
+      background-color: #292C33;
+      color: #95A2BB;
+      font-family: 'Menlo' !important;
+      font-size: 14px;
+    }
+
+    input, input:focus {
+      -webkit-appearance: none;
+      background-color: #2D323A;
+      border: none;
+      outline: none;
+      color: #95A2BB;
+      font-family: 'Menlo' !important;
+      font-size: 14px;
+      margin: 0 -8px;
+      width: 100%;
+      padding: 0 8px;
+    }
+  </style>
+
   <script>
   var child_process = require('child_process');
   var $ = require('jquery');
+  var pty = require('pty.js');
+  var Convert = require('ansi-to-html');
+  var _ = require('lodash');
+  var convert = new Convert();
 
-  var execute = function(input) {
-    var args = input.split(/\s+/);
-    var command = args.shift();
-    var response = child_process.spawnSync(command, args);
-    return response.stdout.toString();
-  };
+  process.stdin.setEncoding('utf8');
+  process.stdout.setEncoding('utf8');
 
-  var createPrompt = function() {
-    $('.currentInput').removeClass('currentInput');
+
+
+  // terminal.on('data', print);
+  var buffer = '';
+
+  function run(command) {
+    var terminal = pty.spawn(process.env.SHELL, ['-c', '-i', command], {
+      name: 'xterm-256color',
+      cols: 120,
+      rows: 80,
+      cwd: process.env.HOME,
+      env: process.env
+    });
+
+    terminal.on('data', function(data) {
+      buffer += data;
+    });
+
+    terminal.on('end', function(data) {
+      print(buffer);
+      buffer = '';
+      createPrompt();
+    });
+  }
+
+  function createPrompt() {
+    currentInput().removeClass('currentInput');
 
     var newInput = document.createElement("input");
     newInput.type="text";
-    newInput.name="amount";
     $(newInput).addClass('currentInput');
     document.getElementById('board').appendChild(newInput);
     newInput.focus();
     addEnterHandler();
-  };
+  }
 
-  var addEnterHandler = function() {
-    $('.currentInput').keypress(function (e) {
+  function addEnterHandler() {
+    currentInput().keypress(function (e) {
       if (e.which == 13) {
-        print($('.currentInput').val());
-        createPrompt();
+        run($('.currentInput').val());
         return false;
       }
     });
-  };
+  }
 
-  var print = function(command) {
+  function print(data) {
     var container = document.createElement("pre");
     container.className +='currentInput';
-    container.innerHTML = escapeHtml(execute(command));
+    container.innerHTML = convert.toHtml(data);
     document.getElementById('board').appendChild(container);
-  };
+  }
 
-  var currentInput = function() {
-
-  };
+  function currentInput() {
+    return $('.currentInput');
+  }
 
   function escapeHtml(unsafe) {
     return unsafe
-         .replace(/&/g, "&amp;")
-         .replace(/</g, "&lt;")
-         .replace(/>/g, "&gt;")
-         .replace(/"/g, "&quot;")
-         .replace(/'/g, "&#039;");
- }
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+  }
 
   createPrompt();
   </script>
