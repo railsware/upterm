@@ -1,0 +1,19 @@
+body, pre {
+  background-color: #292C33;
+  color: #95A2BB;
+  font-family: 'Menlo' !important;
+  font-size: 14px;
+}
+
+input, input:focus {
+  -webkit-appearance: none;
+  background-color: #2D323A;
+  border: none;
+  outline: none;
+  color: #95A2BB;
+  font-family: 'Menlo' !important;
+  font-size: 14px;
+  margin: 0 -8px;
+  width: 100%;
+  padding: 0 8px;
+}
