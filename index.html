@@ -55,12 +55,14 @@
     });
 
     terminal.on('data', function(data) {
-      buffer += data;
+      debugger;
+      print(data);
+      // buffer += data;
     });
 
     terminal.on('end', function(data) {
-      print(buffer);
-      buffer = '';
+      // print(buffer);
+      // buffer = '';
       createPrompt();
     });
   }
