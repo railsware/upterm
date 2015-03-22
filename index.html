@@ -20,17 +20,19 @@
   process.stdout.setEncoding('utf8');
 
 
+  var blackHistory = [];
 
   // terminal.on('data', print);
   var buffer = '';
 
   function run(command) {
-    var terminal = pty.spawn(process.env.SHELL, ['-c', '-i', command], {
-      name: 'xterm-256color',
+    var terminal = pty.spawn(process.env.SHELL, ['-c', '-i', 'TERM=black-screen;TERMINFO=/Users/me/.terminfo/62/black-screen;' + command], {
+      name: 'black-screen',
       cols: 120,
       rows: 80,
       cwd: process.env.HOME,
-      env: process.env
+      // env: _.extend(process.env, { TERM: 'black-screen' })
+      env: { TERM: 'black-screen' }
     });
 
     terminal.on('data', function(data) {
@@ -57,9 +59,20 @@
   }
 
   function addEnterHandler() {
-    currentInput().keypress(function (e) {
+    currentInput().keydown(function (e) {
       if (e.which == 13) {
-        run($('.currentInput').val());
+        var command = currentInput().val();
+
+        blackHistory.push(command);
+        run(command);
+
+        return false;
+      }
+
+      // Ctrl+P
+      if((e.ctrlKey && e.keyCode == 80) || e.keyCode == 38){
+        currentInput().val(blackHistory.pop());
+
         return false;
       }
     });

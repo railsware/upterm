@@ -17,3 +17,35 @@ input, input:focus {
   width: 100%;
   padding: 0 8px;
 }
+
+color.black {
+  color: black;
+}
+
+color.red {
+  color: red;
+}
+
+color.green {
+  color: green;
+}
+
+color.yellow {
+  color: yellow;
+}
+
+color.blue {
+  color: blue;
+}
+
+color.magenta {
+  color: magenta;
+}
+
+color.cyan {
+  color: cyan;
+}
+
+color.white {
+  color: white;
+}
