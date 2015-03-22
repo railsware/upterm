@@ -34,7 +34,6 @@
     });
 
     terminal.on('data', function(data) {
-      debugger;
       print(data);
       // buffer += data;
     });
@@ -69,7 +68,10 @@
   function print(data) {
     var container = document.createElement("pre");
     container.className +='currentInput';
-    container.innerHTML = convert.toHtml(data);
+
+    // container.innerHTML = convert.toHtml(data);
+    container.innerHTML = data;
+
     document.getElementById('board').appendChild(container);
   }
 
