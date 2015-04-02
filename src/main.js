@@ -1,6 +1,9 @@
 var app = require('app');
 var BrowserWindow = require('browser-window');
 
+process.stdin.setEncoding('utf8');
+process.stdout.setEncoding('utf8');
+
 var mainWindow = null;
 
 app.on('ready', function () {

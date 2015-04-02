@@ -2,58 +2,38 @@
 <html>
 <head>
   <title>Black Screen</title>
-  <link rel="stylesheet" type="text/css" href="styles/main.css" media="screen" />
+  <link rel="stylesheet" type="text/css" href="styles/main.css" media="screen"/>
 </head>
 <body>
 
-  <div id="board"></div>
+<div id="board"></div>
 
-  <script>
-  var child_process = require('child_process');
+<script>
   var $ = require('jquery');
   var pty = require('pty.js');
   var Convert = require('ansi-to-html');
   var _ = require('lodash');
   var convert = new Convert();
+  var TerminalEmulator = require('./src/terminal_emulator');
 
-  process.stdin.setEncoding('utf8');
-  process.stdout.setEncoding('utf8');
+  var terminalEmulator = new TerminalEmulator();
 
-
-  var blackHistory = [];
-
-  // terminal.on('data', print);
   var buffer = '';
 
   function run(command) {
-    var terminal = pty.spawn(process.env.SHELL, ['-c', '-i', 'TERM=black-screen;TERMINFO=/Users/me/.terminfo/62/black-screen;' + command], {
-    // var terminal = pty.spawn(process.env.SHELL, ['-c', '-i', command], {
-      name: 'black-screen',
-      cols: 120,
-      rows: 80,
-      cwd: process.env.HOME,
-      // env: _.extend(process.env, { TERM: 'black-screen' })
-      env: { TERM: 'black-screen' }
-    });
+    terminalEmulator.execute(command);
 
-    terminal.on('data', function(data) {
-      var codes = _.map(data, function(char) {
+    terminalEmulator.on('data', function (data) {
+      _.map(data, function (char) {
         if (char.charCodeAt(0) == 27) {
           print('\\E');
         } else {
           print(char);
         }
-        // return char.charCodeAt(0);
       });
-      // print(data);
-      // buffer += data;
     });
 
-    terminal.on('end', function(data) {
-      // print(buffer);
-      // buffer = '';
-      createPrompt();
-    });
+    terminalEmulator.on('end', createPrompt);
   }
 
   function createPrompt() {
@@ -61,14 +41,14 @@
     currentOutput().removeClass('currentOutput');
 
     var newInput = document.createElement("input");
-    newInput.type="text";
+    newInput.type = "text";
     $(newInput).addClass('currentInput');
     document.getElementById('board').appendChild(newInput);
     newInput.focus();
     addEnterHandler();
 
     var container = document.createElement("pre");
-    container.className +='currentOutput';
+    container.className += 'currentOutput';
 
     document.getElementById('board').appendChild(container);
   }
@@ -76,17 +56,14 @@
   function addEnterHandler() {
     currentInput().keydown(function (e) {
       if (e.which == 13) {
-        var command = currentInput().val();
-
-        blackHistory.push(command);
-        run(command);
+        run(currentInput().val());
 
         return false;
       }
 
       // Ctrl+P
-      if((e.ctrlKey && e.keyCode == 80) || e.keyCode == 38){
-        currentInput().val(blackHistory.pop());
+      if ((e.ctrlKey && e.keyCode == 80) || e.keyCode == 38) {
+        currentInput().val(terminalEmulator.history.previous());
 
         return false;
       }
@@ -94,7 +71,6 @@
   }
 
   function print(data) {
-    // container.innerHTML = convert.toHtml(data);
     currentOutput()[0].innerHTML += data;
   }
 
@@ -108,14 +84,14 @@
 
   function escapeHtml(unsafe) {
     return unsafe
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#039;");
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
   }
 
   createPrompt();
-  </script>
+</script>
 </body>
 </html>
