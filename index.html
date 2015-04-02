@@ -14,16 +14,16 @@
   var Convert = require('ansi-to-html');
   var _ = require('lodash');
   var convert = new Convert();
-  var TerminalEmulator = require('./src/terminal_emulator');
+  var Shell = require('./src/shell');
 
-  var terminalEmulator = new TerminalEmulator();
+  var shell = new Shell();
 
   var buffer = '';
 
   function run(command) {
-    terminalEmulator.execute(command);
+    shell.execute(command);
 
-    terminalEmulator.on('data', function (data) {
+    shell.on('data', function (data) {
       _.map(data, function (char) {
         if (char.charCodeAt(0) == 27) {
           print('\\E');
@@ -33,7 +33,7 @@
       });
     });
 
-    terminalEmulator.on('end', createPrompt);
+    shell.on('end', createPrompt);
   }
 
   function createPrompt() {
@@ -63,7 +63,7 @@
 
       // Ctrl+P
       if ((e.ctrlKey && e.keyCode == 80) || e.keyCode == 38) {
-        currentInput().val(terminalEmulator.history.previous());
+        currentInput().val(shell.history.previous());
 
         return false;
       }

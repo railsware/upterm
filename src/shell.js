@@ -3,7 +3,7 @@ var util = require('util');
 var History = require('./history');
 var EventEmitter = require('events').EventEmitter;
 
-function TerminalEmulator() {
+function Shell() {
     EventEmitter.call(this);
     this.currentDirectory = process.env.HOME;
     this.history = new History();
@@ -12,9 +12,9 @@ function TerminalEmulator() {
     this.rows = 40;
 }
 
-util.inherits(TerminalEmulator, EventEmitter);
+util.inherits(Shell, EventEmitter);
 
-TerminalEmulator.prototype.execute = function (command) {
+Shell.prototype.execute = function (command) {
     var parts = command.split(/\s+/);
 
     var commandName = parts.shift();
@@ -37,9 +37,9 @@ TerminalEmulator.prototype.execute = function (command) {
     }
 };
 
-TerminalEmulator.prototype.resize = function (dimensions) {
+Shell.prototype.resize = function (dimensions) {
     this.columns = dimensions.columns;
     this.rows = dimensions.rows;
 };
 
-module.exports = TerminalEmulator;
+module.exports = Shell;
