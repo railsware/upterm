@@ -11,14 +11,23 @@ History.prototype.append = function (command) {
     }
 
     this.stack.push(command);
-    this.pointer = this.stack.length - 1;
+    this.pointer = this.stack.length;
 };
 
 History.prototype.previous = function () {
-    var previousCommand = this.stack[this.pointer];
-    this.pointer -= 1;
+    if (this.pointer > 0) {
+        this.pointer -= 1;
+    }
 
-    return previousCommand;
+    return this.stack[this.pointer];
+};
+
+History.prototype.next = function () {
+    if (this.pointer < this.stack.length) {
+        this.pointer += 1;
+    }
+
+    return this.stack[this.pointer];
 };
 
 module.exports = History;

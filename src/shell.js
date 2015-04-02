@@ -15,6 +15,8 @@ function Shell() {
 util.inherits(Shell, EventEmitter);
 
 Shell.prototype.execute = function (command) {
+    this.history.append(command);
+
     var parts = command.split(/\s+/);
 
     var commandName = parts.shift();

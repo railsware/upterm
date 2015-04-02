@@ -54,9 +54,16 @@
         return false;
       }
 
-      // Ctrl+P
+      // Ctrl+P, ↑.
       if ((e.ctrlKey && e.keyCode == 80) || e.keyCode == 38) {
         currentInput().val(shell.history.previous());
+
+        return false;
+      }
+
+      // Ctrl+N, ↓.
+      if ((e.ctrlKey && e.keyCode == 78) || e.keyCode == 40) {
+        currentInput().val(shell.history.next());
 
         return false;
       }
