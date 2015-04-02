@@ -15,26 +15,19 @@
   var _ = require('lodash');
   var convert = new Convert();
   var Shell = require('./src/shell');
-
   var shell = new Shell();
 
-  var buffer = '';
-
-  function run(command) {
-    shell.execute(command);
-
-    shell.on('data', function (data) {
-      _.map(data, function (char) {
-        if (char.charCodeAt(0) == 27) {
-          print('\\E');
-        } else {
-          print(char);
-        }
-      });
+  shell.on('data', function (data) {
+    _.map(data, function (char) {
+      if (char.charCodeAt(0) == 27) {
+        print('\\E');
+      } else {
+        print(char);
+      }
     });
+  });
 
-    shell.on('end', createPrompt);
-  }
+  shell.on('end', createPrompt);
 
   function createPrompt() {
     currentInput().removeClass('currentInput');
@@ -56,7 +49,7 @@
   function addEnterHandler() {
     currentInput().keydown(function (e) {
       if (e.which == 13) {
-        run(currentInput().val());
+        shell.execute(currentInput().val());
 
         return false;
       }
