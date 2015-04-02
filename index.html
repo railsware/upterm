@@ -27,6 +27,7 @@
 
   function run(command) {
     var terminal = pty.spawn(process.env.SHELL, ['-c', '-i', 'TERM=black-screen;TERMINFO=/Users/me/.terminfo/62/black-screen;' + command], {
+    // var terminal = pty.spawn(process.env.SHELL, ['-c', '-i', command], {
       name: 'black-screen',
       cols: 120,
       rows: 80,
@@ -36,7 +37,15 @@
     });
 
     terminal.on('data', function(data) {
-      print(data);
+      var codes = _.map(data, function(char) {
+        if (char.charCodeAt(0) == 27) {
+          print('\\E');
+        } else {
+          print(char);
+        }
+        // return char.charCodeAt(0);
+      });
+      // print(data);
       // buffer += data;
     });
 
@@ -49,6 +58,7 @@
 
   function createPrompt() {
     currentInput().removeClass('currentInput');
+    currentOutput().removeClass('currentOutput');
 
     var newInput = document.createElement("input");
     newInput.type="text";
@@ -56,6 +66,11 @@
     document.getElementById('board').appendChild(newInput);
     newInput.focus();
     addEnterHandler();
+
+    var container = document.createElement("pre");
+    container.className +='currentOutput';
+
+    document.getElementById('board').appendChild(container);
   }
 
   function addEnterHandler() {
@@ -79,17 +94,16 @@
   }
 
   function print(data) {
-    var container = document.createElement("pre");
-    container.className +='currentInput';
-
     // container.innerHTML = convert.toHtml(data);
-    container.innerHTML = data;
-
-    document.getElementById('board').appendChild(container);
+    currentOutput()[0].innerHTML += data;
   }
 
   function currentInput() {
     return $('.currentInput');
+  }
+
+  function currentOutput() {
+    return $('.currentOutput');
   }
 
   function escapeHtml(unsafe) {
