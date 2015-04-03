@@ -6,7 +6,7 @@ function Terminal(document) {
     this.shell = new Shell();
     this.document = document;
 
-    this.shell.on('data', this.print.bind(this)).on('end', this.createPrompt.bind(this));
+    this.shell.on('data', this.processANSI.bind(this)).on('end', this.createPrompt.bind(this));
 
     this.createPrompt();
 }
@@ -52,7 +52,7 @@ Terminal.prototype.addKeysHandler = function () {
     }.bind(this));
 };
 
-Terminal.prototype.print = function (data) {
+Terminal.prototype.processANSI = function (data) {
     var output = this.currentOutput()[0];
 
     lodash.map(data, function (char) {
