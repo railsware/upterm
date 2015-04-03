@@ -33,15 +33,24 @@ Shell.prototype.execute = function (command) {
             env: process.env
         });
 
-        ['data', 'end'].forEach(function (eventName) {
-            child.on(eventName, this.emit.bind(this, eventName));
-        }, this);
+        this.currentCommand = child;
+
+        child.on('data', this.emit.bind(this, 'data'));
+
+        child.on('end', function () {
+            this.emit('end');
+            this.currentCommand = null;
+        }.bind(this, 'end'));
     }
 };
 
 Shell.prototype.resize = function (dimensions) {
     this.columns = dimensions.columns;
     this.rows = dimensions.rows;
+
+    if (this.currentCommand) {
+        this.currentCommand.kill('SIGWINCH');
+    }
 };
 
 module.exports = Shell;

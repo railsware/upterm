@@ -7,9 +7,12 @@ process.stdout.setEncoding('utf8');
 var mainWindow = null;
 
 app.on('ready', function () {
+    var atomScreen = require('screen');
+    var size = atomScreen.getPrimaryDisplay().workAreaSize;
     mainWindow = new BrowserWindow({
-        width: 1000,
-        height: 800
+        width: size.width,
+        height: size.height,
+        resizable: true
     });
 
     mainWindow.loadUrl('file://' + __dirname + '/../index.html');

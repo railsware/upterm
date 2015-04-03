@@ -98,4 +98,8 @@ Terminal.prototype.currentOutput = function () {
     return $('.currentOutput');
 };
 
+Terminal.prototype.resize = function (dimensions) {
+    this.shell.resize(dimensions);
+};
+
 module.exports = Terminal;

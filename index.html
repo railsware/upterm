@@ -12,15 +12,22 @@
 <div id="board"></div>
 
 <script>
+  var $ = require('jquery');
   var Terminal = require('./src/terminal');
   var terminal = new Terminal(document);
 
-  var letter = $('#sizes-calculation');
+  var letter = document.getElementById('sizes-calculation');
 
-  terminal.resize({
-    columns: Math.floor(window.innerWidth / letter.clientWidth),
-    rows:    Math.floor(window.innerHeight / letter.clientHeight)
-  })
+  function resize() {
+    debugger;
+    terminal.resize({
+      columns: Math.floor(window.innerWidth / letter.clientWidth),
+      rows:    Math.floor(window.innerHeight / letter.clientHeight)
+    });
+  }
+
+  resize();
+  $(window).resize(resize);
 </script>
 </body>
 </html>
