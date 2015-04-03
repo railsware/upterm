@@ -9,80 +9,8 @@
 <div id="board"></div>
 
 <script>
-  var $ = require('jquery');
-  var pty = require('pty.js');
-  var Convert = require('ansi-to-html');
-  var _ = require('lodash');
-  var convert = new Convert();
-  var Shell = require('./src/shell');
-  var shell = new Shell();
-
-  shell.on('data', function (data) {
-    _.map(data, function (char) {
-      if (char.charCodeAt(0) == 27) {
-        print('\\E');
-      } else {
-        print(char);
-      }
-    });
-  });
-
-  shell.on('end', createPrompt);
-
-  function createPrompt() {
-    currentInput().removeClass('currentInput');
-    currentOutput().removeClass('currentOutput');
-
-    var newInput = document.createElement("input");
-    newInput.type = "text";
-    $(newInput).addClass('currentInput');
-    document.getElementById('board').appendChild(newInput);
-    newInput.focus();
-    addEnterHandler();
-
-    var container = document.createElement("pre");
-    container.className += 'currentOutput';
-
-    document.getElementById('board').appendChild(container);
-  }
-
-  function addEnterHandler() {
-    currentInput().keydown(function (e) {
-      if (e.which == 13) {
-        shell.execute(currentInput().val());
-
-        return false;
-      }
-
-      // Ctrl+P, ↑.
-      if ((e.ctrlKey && e.keyCode == 80) || e.keyCode == 38) {
-        currentInput().val(shell.history.previous());
-
-        return false;
-      }
-
-      // Ctrl+N, ↓.
-      if ((e.ctrlKey && e.keyCode == 78) || e.keyCode == 40) {
-        currentInput().val(shell.history.next());
-
-        return false;
-      }
-    });
-  }
-
-  function print(data) {
-    currentOutput()[0].innerHTML += data;
-  }
-
-  function currentInput() {
-    return $('.currentInput');
-  }
-
-  function currentOutput() {
-    return $('.currentOutput');
-  }
-
-  createPrompt();
+  var Terminal = require('./src/terminal');
+  new Terminal(document);
 </script>
 </body>
 </html>
