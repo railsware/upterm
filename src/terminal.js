@@ -5,7 +5,6 @@ var Shell = require('./shell');
 function Terminal(document) {
     this.shell = new Shell();
     this.document = document;
-    this.output = '';
 
     this.shell.on('data', this.processANSI.bind(this)).on('end', this.createPrompt.bind(this));
 
@@ -32,7 +31,6 @@ Terminal.prototype.createPrompt = function () {
 Terminal.prototype.addKeysHandler = function () {
     this.currentInput().keydown(function (e) {
         if (e.which === 13) {
-            this.output = '';
             this.shell.execute(this.currentInput().val());
 
             return false;
@@ -76,7 +74,6 @@ var parser = new AnsiParser(terminal);
 
 
 Terminal.prototype.processANSI = function (data) {
-    this.output += data;
     var output = this.currentOutput()[0];
 
     parser.parse(data);
