@@ -1,12 +1,12 @@
 var pty = require('pty.js');
 var util = require('util');
-var History = require('./history');
+var historyModule = require('./history');
 var EventEmitter = require('events').EventEmitter;
 
 function Shell() {
     EventEmitter.call(this);
     this.currentDirectory = process.env.HOME;
-    this.history = new History();
+    this.history = new historyModule.History();
 
     this.columns = 120;
     this.rows = 40;

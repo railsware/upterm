@@ -10,7 +10,7 @@
     "node-ansiparser": "*"
   },
   "scripts": {
-    "build": "find . -name '*.ts' | xargs tsc",
+    "build": "find . -name '*.ts' | xargs tsc --module commonjs",
     "run": "npm run build && atom-shell ."
   }
 }
