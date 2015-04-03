@@ -18,6 +18,14 @@ input, input:focus {
   padding: 0 8px;
 }
 
+#sizes-calculation {
+  position: absolute;
+  visibility: hidden;
+  height: auto;
+  width: auto;
+  white-space: nowrap;
+}
+
 color.black {
   color: black;
 }

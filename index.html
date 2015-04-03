@@ -5,12 +5,22 @@
   <link rel="stylesheet" type="text/css" href="styles/main.css" media="screen"/>
 </head>
 <body>
+<div id="sizes-calculation">
+  0
+</div>
 
 <div id="board"></div>
 
 <script>
   var Terminal = require('./src/terminal');
-  new Terminal(document);
+  var terminal = new Terminal(document);
+
+  var letter = $('#sizes-calculation');
+
+  terminal.resize({
+    columns: Math.floor(window.innerWidth / letter.clientWidth),
+    rows:    Math.floor(window.innerHeight / letter.clientHeight)
+  })
 </script>
 </body>
 </html>

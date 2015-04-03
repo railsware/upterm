@@ -5,6 +5,7 @@ var Shell = require('./shell');
 function Terminal(document) {
     this.shell = new Shell();
     this.document = document;
+    this.output = '';
 
     this.shell.on('data', this.processANSI.bind(this)).on('end', this.createPrompt.bind(this));
 
@@ -31,6 +32,7 @@ Terminal.prototype.createPrompt = function () {
 Terminal.prototype.addKeysHandler = function () {
     this.currentInput().keydown(function (e) {
         if (e.which === 13) {
+            this.output = '';
             this.shell.execute(this.currentInput().val());
 
             return false;
@@ -52,8 +54,32 @@ Terminal.prototype.addKeysHandler = function () {
     }.bind(this));
 };
 
+var terminal = {
+    inst_p: function (s) {
+        console.log('print', s);
+    },
+    inst_o: function (s) {
+        console.log('osc', s);
+    },
+    inst_x: function (flag) {
+        console.log('execute', flag.charCodeAt(0));
+    },
+    inst_c: function (collected, params, flag) {
+        console.log('csi', collected, params, flag);
+    },
+    inst_e: function (collected, flag) {
+        console.log('esc', collected, flag);
+    }
+};
+var AnsiParser = require('node-ansiparser');
+var parser = new AnsiParser(terminal);
+
+
 Terminal.prototype.processANSI = function (data) {
+    this.output += data;
     var output = this.currentOutput()[0];
+
+    parser.parse(data);
 
     lodash.map(data, function (char) {
         if (char.charCodeAt(0) === 27) {
