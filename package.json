@@ -8,5 +8,9 @@
     "ansi-to-html": "*",
     "lodash": "*",
     "node-ansiparser": "*"
+  },
+  "scripts": {
+    "build": "find . -name '*.ts' | xargs tsc",
+    "run": "npm run build && atom-shell ."
   }
 }
