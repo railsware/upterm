@@ -6,7 +6,7 @@
 </head>
 <body>
 <div id="sizes-calculation">
-  0
+  0123456789
 </div>
 
 <div id="board"></div>
@@ -20,8 +20,8 @@
 
   function resize() {
     terminal.resize({
-      columns: Math.floor(window.innerWidth / letter.clientWidth),
-      rows:    Math.floor(window.innerHeight / letter.clientHeight)
+      columns: Math.floor(window.innerWidth  / letter.clientWidth  * 10),
+      rows:    Math.floor(window.innerHeight / letter.clientHeight * 10)
     });
   }
 
