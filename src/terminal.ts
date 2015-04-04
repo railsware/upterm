@@ -1,7 +1,7 @@
-/// <reference path="../dts/node.d.ts" />
+/// <reference path="../dts/black_screen.d.ts" />
 
-var $ = require('jquery');
-var lodash = require('lodash');
+import $ = require('jquery');
+import lodash = require('lodash');
 var pty = require('pty.js');
 import events = require('events');
 
@@ -184,14 +184,7 @@ module BlackScreen {
             var output = Terminal.currentOutput()[0];
 
             this.parser.parse(data);
-
-            lodash.map(data, function (char) {
-                if (char.charCodeAt(0) === 27) {
-                    output.innerHTML += '\\E';
-                } else {
-                    output.innerHTML += char;
-                }
-            });
+            output.innerHTML += data;
         }
 
         static currentInput() {
