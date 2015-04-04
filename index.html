@@ -10,11 +10,21 @@
 </div>
 
 <div id="board"></div>
+<div id="status-line">
+  <div id="current-directory"></div>
+</div>
 
 <script>
   var $ = require('jquery');
   var Terminal = require('./src/terminal');
   var terminal = new Terminal(document);
+
+  currentDirectoryElement = document.getElementById('current-directory');
+  currentDirectoryElement.innerHTML = terminal.shell.currentDirectory;
+
+  terminal.shell.on('current-directory-changed', function (cwd) {
+    currentDirectoryElement.innerHTML = cwd;
+  });
 
   var letter = document.getElementById('sizes-calculation');
 

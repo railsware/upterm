@@ -35,8 +35,7 @@ module BlackScreen {
             var args = parts;
 
             if (commandName === 'cd') {
-                this.currentDirectory = args[0];
-                this.emit('end');
+                this.cd(args);
             } else {
                 var child = pty.spawn(commandName, args, {
                     cols: this.dimensions.columns,
@@ -56,6 +55,18 @@ module BlackScreen {
             }
         }
 
+        cd(arguments) {
+            var expanded = arguments[0].replace('~', process.env.HOME);
+
+            this.setCurrentDirectory(expanded);
+            this.emit('end');
+        }
+
+        setCurrentDirectory(path:string) {
+            this.currentDirectory = path;
+            this.emit('current-directory-changed', this.currentDirectory)
+        }
+
         resize(dimensions) {
             this.dimensions = dimensions;
 
@@ -64,7 +75,6 @@ module BlackScreen {
             }
         }
     }
-
 
     class History {
         stack:Array<string>;
