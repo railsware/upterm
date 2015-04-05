@@ -16,6 +16,7 @@ module BlackScreen {
         currentDirectory:string;
         currentCommand:any;
         history:History;
+        aliases:Object;
 
         dimensions:Dimensions;
 
@@ -24,10 +25,35 @@ module BlackScreen {
             this.currentDirectory = process.env.HOME;
             this.history = new History();
 
+            this.aliases = {};
+            this.importAliasesFrom('zsh');
+
             this.dimensions = {columns: 120, rows: 40};
         }
 
+        importAliasesFrom(shellName:string):void {
+            var aliases = '';
+            var zsh = pty.spawn(shellName, ['-i', '-c', 'alias'], {env: process.env});
+
+            zsh.on('data', (text) => {
+                aliases += text
+            });
+
+            zsh.on('end', function () {
+                aliases.split('\n').forEach((alias) => {
+                    var split = alias.split('=');
+                    this.aliases[split[0]] = /'?([^']*)'?/.exec(split[1])[1];
+                });
+            }.bind(this));
+        }
+
         execute(command:string):void {
+            var alias = this.aliases[command];
+
+            if (alias) {
+                command = alias;
+            }
+
             this.history.append(command);
 
             var parts = command.split(/\s+/);
@@ -173,6 +199,7 @@ module BlackScreen {
             container.className += 'currentOutput';
 
             this.document.getElementById('board').appendChild(container);
+            $('html, body').animate({scrollTop:$(document).height()}, 'slow');
         }
 
         addKeysHandler() {
