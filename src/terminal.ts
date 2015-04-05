@@ -48,23 +48,19 @@ module BlackScreen {
         }
 
         execute(command:string):void {
-            var alias = this.aliases[command];
+            var parts = this.expandCommand(command);
+            var expanded = parts.join(' ');
 
-            if (alias) {
-                command = alias;
-            }
-
-            this.history.append(command);
-
-            var parts = command.split(/\s+/);
+            Terminal.currentInput().val(expanded);
+            this.history.append(expanded);
 
             var commandName = parts.shift();
-            var args = parts;
+            var arguments = parts;
 
             if (commandName === 'cd') {
-                this.cd(args);
+                this.cd(arguments);
             } else {
-                var child = pty.spawn(commandName, args, {
+                var child = pty.spawn(commandName, arguments, {
                     cols: this.dimensions.columns,
                     rows: this.dimensions.rows,
                     cwd: this.currentDirectory,
@@ -82,10 +78,32 @@ module BlackScreen {
             }
         }
 
-        cd(arguments) {
-            var expanded = arguments[0].replace('~', process.env.HOME);
+        expandCommand(command:string):Array<string> {
+            // Split by comma, but not inside quotes.
+            // http://stackoverflow.com/questions/16261635/javascript-split-string-by-space-but-ignore-space-in-quotes-notice-not-to-spli
+            var parts = command.match(/(?:[^\s']+|'[^']*')+/g);
+            var commandName = parts.shift();
 
-            this.setCurrentDirectory(expanded);
+            var alias = this.aliases[commandName];
+
+            if (alias) {
+                parts = this.expandCommand(alias).concat(parts);
+            } else {
+                parts.unshift(commandName);
+            }
+
+            return parts;
+        }
+
+        cd(arguments) {
+            var expanded:string = arguments[0].replace('~', process.env.HOME);
+
+            if (expanded.charAt(0) == '/') {
+                this.setCurrentDirectory(expanded);
+            } else {
+                this.setCurrentDirectory(`${this.currentDirectory}/${expanded}`);
+            }
+
             this.emit('end');
         }
 
@@ -206,7 +224,6 @@ module BlackScreen {
             Terminal.currentInput().keydown(function (e) {
                 if (e.which === 13) {
                     this.shell.execute(Terminal.currentInput().val());
-
                     return false;
                 }
 
