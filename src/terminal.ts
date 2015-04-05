@@ -4,6 +4,7 @@ import $ = require('jquery');
 import lodash = require('lodash');
 var pty = require('pty.js');
 import events = require('events');
+var AnsiParser = require('node-ansiparser');
 
 module BlackScreen {
     interface Dimensions {
@@ -116,7 +117,6 @@ module BlackScreen {
     export class Terminal {
         shell:Shell;
         document:any;
-        terminal:any;
         parser:any;
 
         constructor(document) {
@@ -126,26 +126,35 @@ module BlackScreen {
             this.shell.on('data', this.processANSI.bind(this)).on('end', this.createPrompt.bind(this));
 
             this.createPrompt();
-
-            this.terminal = {
-                inst_p: function (s) {
-                    console.log('print', s);
+            this.parser = new AnsiParser({
+                inst_p: function (text) {
+                    Terminal.appendToOutput(text);
+                    console.log('print', text);
                 },
                 inst_o: function (s) {
-                    console.log('osc', s);
+                    console.error('osc', s);
                 },
                 inst_x: function (flag) {
                     console.log('execute', flag.charCodeAt(0));
+
+                    //if (flag.charCodeAt(0) == 13) {
+                    //    Terminal.appendToOutput('\r');
+                    //} else
+                    if (flag.charCodeAt(0) == 10) {
+                        Terminal.appendToOutput('\n');
+                    } else if (flag.charCodeAt(0) == 9) {
+                        Terminal.appendToOutput('\t');
+                    } else {
+                        console.error('execute', flag.charCodeAt(0));
+                    }
                 },
                 inst_c: function (collected, params, flag) {
-                    console.log('csi', collected, params, flag);
+                    console.error('csi', collected, params, flag);
                 },
                 inst_e: function (collected, flag) {
-                    console.log('esc', collected, flag);
+                    console.error('esc', collected, flag);
                 }
-            };
-            var AnsiParser = require('node-ansiparser');
-            this.parser = new AnsiParser(this.terminal);
+            });
 
         }
 
@@ -191,10 +200,11 @@ module BlackScreen {
         }
 
         processANSI(data) {
-            var output = Terminal.currentOutput()[0];
-
             this.parser.parse(data);
-            output.innerHTML += data;
+        }
+
+        static appendToOutput(text:string) {
+            Terminal.currentOutput()[0].innerHTML += text;
         }
 
         static currentInput() {
@@ -207,6 +217,22 @@ module BlackScreen {
 
         resize(dimensions) {
             this.shell.resize(dimensions);
+        }
+    }
+
+    class Buffer {
+        private buffer:Array<Array<Char>>;
+
+        constructor(public dimensions:Dimensions) {
+
+        }
+    }
+
+    class Char {
+        constructor(private char:string) {
+            if (char.length != 1) {
+                throw(`Char can be created only from a single character; passed ${char.length}: ${char}`)
+            }
         }
     }
 }
