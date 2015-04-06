@@ -354,7 +354,7 @@ module BlackScreen {
                 this.moveCursor({column: this.cursor.column + 1, row: this.cursor.row});
             } else {
                 if (this.cursor.row + 1 >= this.buffer.length){
-                    this.buffer.concat(Buffer.arrayOf(this.buffer[0].length, () => { return new Char(' '); }))
+                    this.buffer.push(Buffer.arrayOf(this.buffer[0].length, () => { return new Char(' '); }))
                 }
 
                 this.moveCursor({column: 0, row: this.cursor.row + 1});
