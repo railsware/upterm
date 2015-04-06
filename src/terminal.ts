@@ -332,12 +332,17 @@ module BlackScreen {
         }
 
         write(element: Char): boolean {
-            if (this.setAt(this.cursor, element)) {
-                this.advanceCursor();
-                return true;
-            }
+            if (element.isNewLine()) {
+                this.buffer.push(Buffer.arrayOf(this.buffer[0].length, () => { return new Char(' '); }));
+                this.cursor = {row: this.cursor.row + 1, column: 0 }
+            } else {
+                if (this.setAt(this.cursor, element)) {
+                    this.advanceCursor();
+                    return true;
+                }
 
-            return false;
+                return false;
+            }
         }
 
         moveCursor(position: Position): boolean {
@@ -353,8 +358,9 @@ module BlackScreen {
             if (this.cursor.column + 1 < this.buffer[0].length) {
                 this.moveCursor({column: this.cursor.column + 1, row: this.cursor.row});
             } else {
+                debugger;
                 if (this.cursor.row + 1 >= this.buffer.length){
-                    this.buffer.push(Buffer.arrayOf(this.buffer[0].length, () => { return new Char(' '); }))
+                    this.buffer.push(Buffer.arrayOf(this.buffer[0].length, () => { return new Char(' '); }));
                 }
 
                 this.moveCursor({column: 0, row: this.cursor.row + 1});
@@ -383,6 +389,10 @@ module BlackScreen {
 
         toString(): string {
             return this.char;
+        }
+
+        isNewLine(): boolean {
+            return this.char == '\n';
         }
     }
 }
