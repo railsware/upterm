@@ -10,6 +10,7 @@
     "node-ansiparser": "*"
   },
   "devDependencies": {
-    "typescript": "1.5.0-alpha"
+    "typescript": "1.5.0-alpha",
+    "atom-shell": "*"
   }
 }
