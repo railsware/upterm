@@ -177,6 +177,7 @@ module BlackScreen {
 
             this.shell.on('data', this.processANSI.bind(this)).on('end', function () {
                 Terminal.appendToOutput(this.shell.buffer.toString());
+                this.shell.buffer = new Buffer(this.shell.dimensions);
                 this.createPrompt();
             }.bind(this));
 
@@ -282,12 +283,13 @@ module BlackScreen {
         private cursor: Position;
 
         constructor(public dimensions: Dimensions) {
-            this.buffer = Buffer.array2dOf(dimensions.rows, dimensions.columns, () => { return new Char(' '); });
+            this.buffer = Buffer.array2dOf(1, dimensions.columns, () => { return new Char(' '); });
             this.cursor = {row: 0, column: 0};
         }
 
         resize(dimensions: Dimensions): void {
-            var newBuffer = Buffer.array2dOf(dimensions.rows, dimensions.columns, () => { return new Char(' '); });
+            this.dimensions = dimensions;
+            var newBuffer = Buffer.array2dOf(this.buffer.length, dimensions.columns, () => { return new Char(' '); });
 
             for (var row = 0; row != this.buffer.length; row++) {
                 for (var column = 0; column != this.buffer[0].length; column++) {
@@ -351,7 +353,10 @@ module BlackScreen {
             if (this.cursor.column + 1 < this.buffer[0].length) {
                 this.moveCursor({column: this.cursor.column + 1, row: this.cursor.row});
             } else {
-                // FIXME: should change the buffer if it is at the latest position.
+                if (this.cursor.row + 1 >= this.buffer.length){
+                    this.buffer.concat(Buffer.arrayOf(this.buffer[0].length, () => { return new Char(' '); }))
+                }
+
                 this.moveCursor({column: 0, row: this.cursor.row + 1});
             }
         }
