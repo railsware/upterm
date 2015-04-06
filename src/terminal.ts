@@ -8,17 +8,23 @@ var AnsiParser = require('node-ansiparser');
 
 module BlackScreen {
     interface Dimensions {
-        columns:number;
-        rows:number;
+        columns: number;
+        rows: number;
+    }
+
+    interface Position {
+        column: number;
+        row: number;
     }
 
     class Shell extends events.EventEmitter {
-        currentDirectory:string;
-        currentCommand:any;
-        history:History;
-        aliases:Object;
+        currentDirectory: string;
+        currentCommand: any;
+        history: History;
+        aliases: Object;
+        buffer: Buffer;
 
-        dimensions:Dimensions;
+        dimensions: Dimensions;
 
         constructor() {
             super();
@@ -29,9 +35,10 @@ module BlackScreen {
             this.importAliasesFrom('zsh');
 
             this.dimensions = {columns: 120, rows: 40};
+            this.buffer = new Buffer(this.dimensions);
         }
 
-        importAliasesFrom(shellName:string):void {
+        importAliasesFrom(shellName: string): void {
             var aliases = '';
             var zsh = pty.spawn(shellName, ['-i', '-c', 'alias'], {env: process.env});
 
@@ -47,7 +54,7 @@ module BlackScreen {
             }.bind(this));
         }
 
-        execute(command:string):void {
+        execute(command: string): void {
             var parts = this.expandCommand(command);
             var expanded = parts.join(' ');
 
@@ -78,7 +85,7 @@ module BlackScreen {
             }
         }
 
-        expandCommand(command:string):Array<string> {
+        expandCommand(command: string): Array<string> {
             // Split by comma, but not inside quotes.
             // http://stackoverflow.com/questions/16261635/javascript-split-string-by-space-but-ignore-space-in-quotes-notice-not-to-spli
             var parts = command.match(/(?:[^\s']+|'[^']*')+/g);
@@ -96,7 +103,7 @@ module BlackScreen {
         }
 
         cd(arguments) {
-            var expanded:string = arguments[0].replace('~', process.env.HOME);
+            var expanded: string = arguments[0].replace('~', process.env.HOME);
 
             if (expanded.charAt(0) == '/') {
                 this.setCurrentDirectory(expanded);
@@ -107,13 +114,14 @@ module BlackScreen {
             this.emit('end');
         }
 
-        setCurrentDirectory(path:string) {
+        setCurrentDirectory(path: string) {
             this.currentDirectory = path;
             this.emit('current-directory-changed', this.currentDirectory)
         }
 
         resize(dimensions) {
             this.dimensions = dimensions;
+            this.buffer.resize(dimensions);
 
             if (this.currentCommand) {
                 this.currentCommand.kill('SIGWINCH');
@@ -122,15 +130,15 @@ module BlackScreen {
     }
 
     class History {
-        stack:Array<string>;
-        pointer:number;
+        stack: Array<string>;
+        pointer: number;
 
         constructor() {
             this.stack = [];
             this.pointer = 0;
         }
 
-        append(command:string):void {
+        append(command: string): void {
             var duplicateIndex = this.stack.indexOf(command);
 
             if (duplicateIndex !== -1) {
@@ -141,7 +149,7 @@ module BlackScreen {
             this.pointer = this.stack.length;
         }
 
-        previous():string {
+        previous(): string {
             if (this.pointer > 0) {
                 this.pointer -= 1;
             }
@@ -149,7 +157,7 @@ module BlackScreen {
             return this.stack[this.pointer];
         }
 
-        next():string {
+        next(): string {
             if (this.pointer < this.stack.length) {
                 this.pointer += 1;
             }
@@ -159,35 +167,40 @@ module BlackScreen {
     }
 
     export class Terminal {
-        shell:Shell;
-        document:any;
-        parser:any;
+        shell: Shell;
+        document: any;
+        parser: any;
 
         constructor(document) {
             this.shell = new Shell();
             this.document = document;
 
-            this.shell.on('data', this.processANSI.bind(this)).on('end', this.createPrompt.bind(this));
+            this.shell.on('data', this.processANSI.bind(this)).on('end', function () {
+                Terminal.appendToOutput(this.shell.buffer.toString());
+                this.createPrompt();
+            }.bind(this));
 
             this.createPrompt();
             this.parser = new AnsiParser({
-                inst_p: function (text) {
-                    Terminal.appendToOutput(text);
+                inst_p: (text) => {
+                    for (var i = 0; i != text.length; ++i) {
+                        this.shell.buffer.write(new Char(text.charAt(i)));
+                    }
                     console.log('print', text);
                 },
                 inst_o: function (s) {
                     console.error('osc', s);
                 },
-                inst_x: function (flag) {
+                inst_x: (flag) => {
                     console.log('execute', flag.charCodeAt(0));
 
                     //if (flag.charCodeAt(0) == 13) {
                     //    Terminal.appendToOutput('\r');
                     //} else
                     if (flag.charCodeAt(0) == 10) {
-                        Terminal.appendToOutput('\n');
+                        this.shell.buffer.write(new Char('\n'));
                     } else if (flag.charCodeAt(0) == 9) {
-                        Terminal.appendToOutput('\t');
+                        this.shell.buffer.write(new Char('\t'));
                     } else {
                         console.error('execute', flag.charCodeAt(0));
                     }
@@ -217,7 +230,7 @@ module BlackScreen {
             container.className += 'currentOutput';
 
             this.document.getElementById('board').appendChild(container);
-            $('html, body').animate({scrollTop:$(document).height()}, 'slow');
+            $('html, body').animate({scrollTop: $(document).height()}, 'slow');
         }
 
         addKeysHandler() {
@@ -247,7 +260,7 @@ module BlackScreen {
             this.parser.parse(data);
         }
 
-        static appendToOutput(text:string) {
+        static appendToOutput(text: string) {
             Terminal.currentOutput()[0].innerHTML += text;
         }
 
@@ -265,18 +278,106 @@ module BlackScreen {
     }
 
     class Buffer {
-        private buffer:Array<Array<Char>>;
+        buffer: Array<Array<Char>>;
+        private cursor: Position;
 
-        constructor(public dimensions:Dimensions) {
+        constructor(public dimensions: Dimensions) {
+            this.buffer = Buffer.array2dOf(dimensions.rows, dimensions.columns, () => { return new Char(' '); });
+            this.cursor = {row: 0, column: 0};
+        }
 
+        resize(dimensions: Dimensions): void {
+            var newBuffer = Buffer.array2dOf(dimensions.rows, dimensions.columns, () => { return new Char(' '); });
+
+            for (var row = 0; row != this.buffer.length; row++) {
+                for (var column = 0; column != this.buffer[0].length; column++) {
+                    if (row < dimensions.rows && column < dimensions.columns) {
+                        newBuffer[row][column] = this.buffer[row][column];
+                    }
+                }
+            }
+
+            this.buffer = newBuffer;
+        }
+
+        static array2dOf(rows: number, columns: number, producer: any): Array<Array<Char>> {
+            return Buffer.arrayOf(rows, () => {
+                return Buffer.arrayOf(columns, producer);
+            });
+        }
+
+        static arrayOf(n: number, producer: any): any {
+            var array = new Array(n);
+
+            for (var i = 0; i != n; i++) {
+                array[i] = producer();
+            }
+
+            return array;
+        }
+
+        at(position: Position): Char {
+            return this.buffer[position.row][position.column];
+        }
+
+        setAt(position: Position, element: Char): boolean {
+            if (this.isWithinBoundaries(position)) {
+                this.buffer[position.row][position.column] = element;
+                return true;
+            }
+
+            return false;
+        }
+
+        write(element: Char): boolean {
+            if (this.setAt(this.cursor, element)) {
+                this.advanceCursor();
+                return true;
+            }
+
+            return false;
+        }
+
+        moveCursor(position: Position): boolean {
+            if (this.isWithinBoundaries(position)) {
+                this.cursor = position;
+                return true;
+            }
+
+            return false;
+        }
+
+        advanceCursor() {
+            if (this.cursor.column + 1 < this.buffer[0].length) {
+                this.moveCursor({column: this.cursor.column + 1, row: this.cursor.row});
+            } else {
+                // FIXME: should change the buffer if it is at the latest position.
+                this.moveCursor({column: 0, row: this.cursor.row + 1});
+            }
+        }
+
+        toString(): string {
+            return this.buffer.map((row) => {
+                return row.map((char) => {
+                    return char.toString();
+                }).join('')
+            }).join('\n');
+        }
+
+        private isWithinBoundaries(position: Position): boolean {
+            return position.row < this.buffer.length && position.column < this.buffer[0].length;
         }
     }
 
     class Char {
-        constructor(private char:string) {
+        constructor(public char: string) {
             if (char.length != 1) {
                 throw(`Char can be created only from a single character; passed ${char.length}: ${char}`)
             }
+        }
+
+        toString(): string {
+            return this.char;
         }
     }
 }
