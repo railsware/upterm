@@ -6,7 +6,7 @@ module BlackScreen {
     export class Terminal {
         shell: Shell;
         document: any;
-        parser: any;
+        parser: AnsiParser;
 
         constructor(document: HTMLElement) {
             this.shell = new Shell();
