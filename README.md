@@ -1,13 +1,19 @@
 ### Installation
 
 ```bash
-npm install -g atom-shell
-apm install # In the project directory.
+npm run install
 ```
 
 
 ### Run
 
 ```bash
-atom-shell .
+npm run start
 ```
+
+
+### Architecture Thoughts
+
+A `Terminal` has an array of `Invocation`s.
+Each `Invocation` has an `Input` and an `Output`.
+Those are based on a `Buffer`, can have a `Cursor`. Have a view, and emit an event on change.
