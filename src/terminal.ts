@@ -8,7 +8,7 @@ module BlackScreen {
         document: any;
         parser: any;
 
-        constructor(document) {
+        constructor(document: HTMLElement) {
             this.shell = new Shell();
             this.document = document;
 
@@ -20,16 +20,16 @@ module BlackScreen {
 
             this.createPrompt();
             this.parser = new AnsiParser({
-                inst_p: (text) => {
+                inst_p: (text: string) => {
                     for (var i = 0; i != text.length; ++i) {
                         this.shell.buffer.write(new Char(text.charAt(i)));
                     }
                     console.log('print', text);
                 },
-                inst_o: function (s) {
+                inst_o: function (s: any) {
                     console.error('osc', s);
                 },
-                inst_x: (flag) => {
+                inst_x: (flag: any) => {
                     console.log('execute', flag.charCodeAt(0));
 
                     //if (flag.charCodeAt(0) == 13) {
@@ -43,10 +43,10 @@ module BlackScreen {
                         console.error('execute', flag.charCodeAt(0));
                     }
                 },
-                inst_c: function (collected, params, flag) {
+                inst_c: function (collected: any, params: any, flag: any) {
                     console.error('csi', collected, params, flag);
                 },
-                inst_e: function (collected, flag) {
+                inst_e: function (collected: any, flag: any) {
                     console.error('esc', collected, flag);
                 }
             });
@@ -72,7 +72,7 @@ module BlackScreen {
         }
 
         addKeysHandler() {
-            Terminal.currentInput().keydown(function (e) {
+            Terminal.currentInput().keydown(function (e: JQueryKeyEventObject) {
                 if (e.which === 13) {
                     this.shell.execute(Terminal.currentInput().val());
                     return false;
@@ -94,7 +94,7 @@ module BlackScreen {
             }.bind(this));
         }
 
-        processANSI(data) {
+        processANSI(data: string) {
             this.parser.parse(data);
         }
 
@@ -110,7 +110,7 @@ module BlackScreen {
             return $('.currentOutput');
         }
 
-        resize(dimensions) {
+        resize(dimensions: Dimensions) {
             this.shell.resize(dimensions);
         }
     }

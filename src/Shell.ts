@@ -8,7 +8,7 @@ module BlackScreen {
         currentDirectory: string;
         currentCommand: any;
         history: History;
-        aliases: Object;
+        aliases: { [index:string]: string };
         buffer: Buffer;
 
         dimensions: Dimensions;
@@ -29,7 +29,7 @@ module BlackScreen {
             var aliases = '';
             var zsh = pty.spawn(shellName, ['-i', '-c', 'alias'], {env: process.env});
 
-            zsh.on('data', (text) => {
+            zsh.on('data', (text: string) => {
                 aliases += text
             });
 
@@ -78,7 +78,7 @@ module BlackScreen {
             var parts = command.match(/(?:[^\s']+|'[^']*')+/g);
             var commandName = parts.shift();
 
-            var alias = this.aliases[commandName];
+            var alias: string = this.aliases[commandName];
 
             if (alias) {
                 parts = this.expandCommand(alias).concat(parts);
@@ -89,7 +89,7 @@ module BlackScreen {
             return parts;
         }
 
-        cd(arguments) {
+        cd(arguments: Array<string>) {
             var expanded: string = arguments[0].replace('~', process.env.HOME);
 
             if (expanded.charAt(0) == '/') {
@@ -106,7 +106,7 @@ module BlackScreen {
             this.emit('current-directory-changed', this.currentDirectory)
         }
 
-        resize(dimensions) {
+        resize(dimensions: Dimensions) {
             this.dimensions = dimensions;
             this.buffer.resize(dimensions);
 
