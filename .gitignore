@@ -1,3 +1,4 @@
 /node_modules/
-/src/terminal.js
-/src/terminal.js.map
+/src/Terminal.js
+/src/Terminal.js.map
+/compiled/*
