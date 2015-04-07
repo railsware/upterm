@@ -25,13 +25,13 @@ module BlackScreen {
             this.buffer = newBuffer;
         }
 
-        static array2dOf(rows: number, columns: number, producer: any): Array<Array<Char>> {
+        static array2dOf(rows: number, columns: number, producer: Function): Array<Array<Char>> {
             return Buffer.arrayOf(rows, () => {
                 return Buffer.arrayOf(columns, producer);
             });
         }
 
-        static arrayOf(n: number, producer: any): any {
+        static arrayOf(n: number, producer: Function): Array<any> {
             var array = new Array(n);
 
             for (var i = 0; i != n; i++) {

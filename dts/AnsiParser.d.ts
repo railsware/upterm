@@ -3,5 +3,5 @@ interface AnsiParserConstructor {
 }
 
 interface AnsiParser {
-    parse(data: string);
+    parse(data: string): any;
 }
