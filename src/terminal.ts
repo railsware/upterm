@@ -1,6 +1,6 @@
 /// <reference path="references.ts" />
 
-var AnsiParser = require('node-ansiparser');
+var AnsiParser: AnsiParserConstructor = require('node-ansiparser');
 
 module BlackScreen {
     export class Terminal {
