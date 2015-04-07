@@ -43,7 +43,6 @@ module BlackScreen {
         }
 
         emit(event: string, ...args: any[]): boolean {
-            debugger;
             return this.eventEmitter.emit.bind(this.eventEmitter, event).apply(this.eventEmitter, args);
         }
     }

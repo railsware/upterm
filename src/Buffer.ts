@@ -81,7 +81,6 @@ module BlackScreen {
             if (this.cursor.column + 1 < this.buffer[0].length) {
                 this.moveCursor({column: this.cursor.column + 1, row: this.cursor.row});
             } else {
-                debugger;
                 if (this.cursor.row + 1 >= this.buffer.length){
                     this.buffer.push(Buffer.arrayOf(this.buffer[0].length, () => { return new Char(' '); }));
                 }
