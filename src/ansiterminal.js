@@ -548,8 +548,8 @@
         switch (flag) {
             // complete ESC codes from xterm:
             //    ESC H   Tab Set ( HTS is 0x88).  // TODO
-            //    ESC N   Single Shift Select of G2 Character Set ( SS2 is 0x8e). This affects next character only.
-            //    ESC O   Single Shift Select of G3 Character Set ( SS3 is 0x8f). This affects next character only.
+            //    ESC N   Single Shift Select of G2 CharCode Set ( SS2 is 0x8e). This affects next character only.
+            //    ESC O   Single Shift Select of G3 CharCode Set ( SS3 is 0x8f). This affects next character only.
             //    ESC P   Device Control String ( DCS is 0x90).
             //    ESC V   Start of Guarded Area ( SPA is 0x96).
             //    ESC W   End of Guarded Area ( EPA is 0x97).
@@ -567,7 +567,7 @@
             //        case '8':  // (#) DEC Screen Alignment Test (DECALN) - not supported
             //        case '@':  // (%) Select default character set. That is ISO 8859-1 (ISO 2022) - not supported
             //        case 'G':  // (%) Select UTF-8 character set (ISO 2022) - not supported
-            // (() Designate G0 Character Set (ISO 2022, VT100)
+            // (() Designate G0 CharCode Set (ISO 2022, VT100)
             // more flags: A B < %5 > 4 C 5 R f Q 9 K Y ` E 6 %6 Z H 7 =
             // more collected: ) G1, * G2, + G3, - G1, . G2, / G3
             case '0':
@@ -589,11 +589,11 @@
                 return this.reset();  // Full Reset (RIS) http://vt100.net/docs/vt220-rm/chapter4.html
 //        case 'l':  // Memory Lock (per HP terminals). Locks memory above the cursor. - not supported
 //        case 'm':  // Memory Unlock (per HP terminals). - not supported
-//        case 'n':  // Invoke the G2 Character Set as GL (LS2). - not supported
-//        case 'o':  // Invoke the G3 Character Set as GL (LS3). - not supported
-//        case '|':  // Invoke the G3 Character Set as GR (LS3R). - not supported
-//        case '}':  // Invoke the G2 Character Set as GR (LS2R). - not supported
-//        case '~':  // Invoke the G1 Character Set as GR (LS1R). - not supported
+//        case 'n':  // Invoke the G2 CharCode Set as GL (LS2). - not supported
+//        case 'o':  // Invoke the G3 CharCode Set as GL (LS3). - not supported
+//        case '|':  // Invoke the G3 CharCode Set as GR (LS3R). - not supported
+//        case '}':  // Invoke the G2 CharCode Set as GR (LS2R). - not supported
+//        case '~':  // Invoke the G1 CharCode Set as GR (LS1R). - not supported
             case 'E':
                 return this.nel();
             case 'D':
@@ -881,7 +881,7 @@
         this.decsc();
         // DECAUPSS     Assign user preference supplemental set     --> Set selected in Set-Up. - unsupported
         // DECSASD      Select active status display    --> Main display. TODO do we need this?
-        // DECKPM       Keyboard position mode      --> Character codes. TODO do we need this?
+        // DECKPM       Keyboard position mode      --> CharCode codes. TODO do we need this?
         // DECRLM       Cursor direction            --> Reset (Left-to-right), regardless of NVR setting. TODO
         // DECPCTERM    PC Term mode                --> Always reset. TODO do we need this?
         // TODO: do we need to reset LNM?

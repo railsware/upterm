@@ -14,7 +14,7 @@ module BlackScreen {
 
             this.shell.on('data', this.processANSI.bind(this)).on('end', function () {
                 Terminal.appendToOutput(this.shell.buffer.toString());
-                this.shell.buffer = new Buffer(this.shell.dimensions);
+                this.shell.buffer = new Buffer();
                 this.createPrompt();
             }.bind(this));
 

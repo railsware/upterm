@@ -22,7 +22,7 @@ module BlackScreen {
             this.importAliasesFrom('zsh');
 
             this.dimensions = {columns: 120, rows: 40};
-            this.buffer = new Buffer(this.dimensions);
+            this.buffer = new Buffer();
         }
 
         importAliasesFrom(shellName: string): void {
@@ -108,7 +108,7 @@ module BlackScreen {
 
         resize(dimensions: Dimensions) {
             this.dimensions = dimensions;
-            this.buffer.resize(dimensions);
+            //this.buffer.resize(dimensions);
 
             if (this.currentCommand) {
                 this.currentCommand.kill('SIGWINCH');
