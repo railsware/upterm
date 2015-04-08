@@ -26,6 +26,7 @@ module BlackScreen {
                 this.set(this.cursor.getPosition(), char);
                 this.cursor.next();
             }
+            this.emit('change', this.toString, char);
         }
 
         private set(position: Position, char: Char): void {

@@ -12,11 +12,12 @@ module BlackScreen {
             this.shell = new Shell();
             this.document = document;
 
-            this.shell.on('data', this.processANSI.bind(this)).on('end', function () {
-                Terminal.appendToOutput(this.shell.buffer.toString());
-                this.shell.buffer = new Buffer();
+            this.resetBuffer();
+
+            this.shell.on('data', this.processANSI.bind(this)).on('end', () => {
+                this.resetBuffer();
                 this.createPrompt();
-            }.bind(this));
+            });
 
             this.createPrompt();
             this.parser = new AnsiParser({
@@ -32,9 +33,6 @@ module BlackScreen {
                 inst_x: (flag: any) => {
                     console.log('execute', flag.charCodeAt(0));
 
-                    //if (flag.charCodeAt(0) == 13) {
-                    //    Terminal.appendToOutput('\r');
-                    //} else
                     if (flag.charCodeAt(0) == 10) {
                         this.shell.buffer.write(new Char('\n'));
                     } else if (flag.charCodeAt(0) == 9) {
@@ -50,7 +48,16 @@ module BlackScreen {
                     console.error('esc', collected, flag);
                 }
             });
+        }
 
+        resetBuffer(): void {
+            this.shell.buffer.removeAllListeners('change');
+            this.shell.buffer = new Buffer();
+            this.shell.buffer.on('change', (toString, char: Char) => {
+                if (char.getCharCode() == CharCode.NewLine) {
+                    Terminal.setOutput(toString.call(this.shell.buffer));
+                }
+            });
         }
 
         createPrompt() {
@@ -98,8 +105,8 @@ module BlackScreen {
             this.parser.parse(data);
         }
 
-        static appendToOutput(text: string) {
-            Terminal.currentOutput()[0].innerHTML += text;
+        static setOutput(text: string) {
+            Terminal.currentOutput()[0].innerHTML = text;
         }
 
         static currentInput() {
