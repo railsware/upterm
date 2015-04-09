@@ -1,4 +1,5 @@
 /// <reference path="EventEmitter.ts" />
+/// <reference path="Aliases.ts" />
 /// <reference path="Dimensions.ts" />
 /// <reference path="Buffer.ts" />
 /// <reference path="Char.ts" />

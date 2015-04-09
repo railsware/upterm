@@ -5,12 +5,15 @@ var AnsiParser: AnsiParserConstructor = require('node-ansiparser');
 
 module BlackScreen {
 
+    // TODO: Separate input from output.
     export class Invocation extends EventEmitter {
         buffer: Buffer;
         command: NodeJS.Process;
         parser: AnsiParser;
 
-        constructor(private directory: string, private dimensions: Dimensions) {
+        constructor(private directory: string,
+                    private dimensions: Dimensions,
+                    private history: History) {
             super();
 
             this.buffer = new Buffer();
@@ -42,7 +45,11 @@ module BlackScreen {
         }
 
         execute(commandName: string): void {
-            var parts = commandName.match(/(?:[^\s']+|'[^']*')+/g);
+            var parts = this.expandCommand(commandName);
+            var expanded = parts.join(' ');
+
+            this.history.append(expanded);
+
             var commandName = parts.shift();
 
             this.command = pty.spawn(commandName, parts, {
@@ -58,6 +65,23 @@ module BlackScreen {
                 this.command = null;
                 this.emit('end');
             })
+        }
+
+        expandCommand(command: string): Array<string> {
+            // Split by comma, but not inside quotes.
+            // http://stackoverflow.com/questions/16261635/javascript-split-string-by-space-but-ignore-space-in-quotes-notice-not-to-spli
+            var parts = command.match(/(?:[^\s']+|'[^']*')+/g);
+            var commandName = parts.shift();
+
+            var alias: string = Aliases.find(commandName);
+
+            if (alias) {
+                parts = this.expandCommand(alias).concat(parts);
+            } else {
+                parts.unshift(commandName);
+            }
+
+            return parts;
         }
 
         resize(dimensions: Dimensions) {
