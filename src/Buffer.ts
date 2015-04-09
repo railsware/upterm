@@ -19,6 +19,9 @@ module BlackScreen {
                         this.cursor.moveRelative({vertical: 1});
                         this.cursor.moveAbsolute({horizontal: 0});
                         break;
+                    case CharCode.CarriageReturn:
+                        this.cursor.moveAbsolute({horizontal: 0});
+                        break;
                     default:
                         console.error(`Couldn't write a special char ${char}`);
                 }
@@ -26,7 +29,7 @@ module BlackScreen {
                 this.set(this.cursor.getPosition(), char);
                 this.cursor.next();
             }
-            this.emit('change', this.toString, char);
+            //this.emit('data');
         }
 
         private set(position: Position, char: Char): void {

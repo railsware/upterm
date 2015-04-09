@@ -3,40 +3,92 @@
 <head>
   <title>Black Screen</title>
   <link rel="stylesheet" type="text/css" href="styles/main.css" media="screen"/>
+  <script src="https://fb.me/react-0.13.1.js"></script>
+  <script src="https://fb.me/JSXTransformer-0.13.1.js"></script>
+  <script type="text/jsx">
+    var $ = require('jquery');
+    var Terminal = require('./compiled/terminal');
+
+    var Board = React.createClass({
+      getInitialState: function () {
+        return {terminal: new Terminal()};
+      },
+      componentDidMount: function () {
+        this.state.terminal.on('invocation', function () {
+          this.setState({terminal: this.state.terminal});
+        }.bind(this));
+      },
+      render: function () {
+        var invocations = this.state.terminal.invocations.map(function (invocation, index) {
+          return (
+              <Invocation key={index} invocation={invocation}/>
+          )
+        });
+        return (
+            <div id="board">
+              <div id="invocations">
+                {invocations}
+              </div>
+              <StatusLine/>
+            </div>
+        );
+      }
+    });
+
+    var Invocation = React.createClass({
+      getInitialState: function () {
+        return {invocation: this.props.invocation};
+      },
+      handleKeyDown: function (key) {
+        if (key.keyCode == 13) {
+          this.props.invocation.execute(React.findDOMNode(this.refs.command).value);
+        }
+      },
+      componentDidMount: function () {
+        this.props.invocation.on('data', function (invocation) {
+          this.setState({invocation: invocation});
+        }.bind(this));
+      },
+      render: function () {
+        return (
+            <div className="invocation">
+              <input onKeyDown={this.handleKeyDown} type="text" ref="command" autoFocus="autofocus"/>
+              <pre className="output">
+                {this.state.invocation.buffer.toString()}
+              </pre>
+            </div>
+        );
+      }
+    });
+
+    var StatusLine = React.createClass({
+      render: function () {
+        return (
+            <div id="status-line">
+              <CurrentDirectory/>
+            </div>
+        )
+      }
+    });
+
+    var CurrentDirectory = React.createClass({
+      render: function () {
+        return (
+            <div id="current-directory"></div>
+        )
+      }
+    });
+
+    React.render(<Board />, document.getElementById('black-board'));
+  </script>
 </head>
 <body>
+
 <div id="sizes-calculation">
-  0123456789
+0123456789
 </div>
 
-<div id="board"></div>
-<div id="status-line">
-  <div id="current-directory"></div>
-</div>
+<div id="black-board"></div>
 
-<script>
-  var $ = require('jquery');
-  var Terminal = require('./compiled/terminal');
-  var terminal = new Terminal(document);
-
-  currentDirectoryElement = document.getElementById('current-directory');
-  currentDirectoryElement.innerHTML = terminal.shell.currentDirectory;
-
-  terminal.shell.on('current-directory-changed', function (cwd) {
-    currentDirectoryElement.innerHTML = cwd;
-  });
-
-  var letter = document.getElementById('sizes-calculation');
-
-  function resize() {
-    terminal.resize({
-      columns: Math.floor(window.innerWidth  / letter.clientWidth  * 10),
-      rows:    Math.floor(window.innerHeight / letter.clientHeight * 10)
-    });
-  }
-
-  resize();
-  $(window).resize(resize);
-</script>
 </body>
 </html>

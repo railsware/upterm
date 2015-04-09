@@ -45,7 +45,6 @@ module BlackScreen {
             var parts = this.expandCommand(command);
             var expanded = parts.join(' ');
 
-            Terminal.currentInput().val(expanded);
             this.history.append(expanded);
 
             var commandName = parts.shift();
@@ -108,7 +107,6 @@ module BlackScreen {
 
         resize(dimensions: Dimensions) {
             this.dimensions = dimensions;
-            //this.buffer.resize(dimensions);
 
             if (this.currentCommand) {
                 this.currentCommand.kill('SIGWINCH');
