@@ -41,6 +41,10 @@ module BlackScreen {
             }).join('\n');
         }
 
+        map<R>(callback: (row: Array<Char>, index: number) => R): Array<R> {
+            return this.storage.map(callback);
+        }
+
         private set(position: Position, char: Char): void {
             if (!this.hasRow(position.row)) {
                 this.addRow(position.row);

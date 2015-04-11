@@ -55,11 +55,24 @@
 
     var BSBuffer = React.createClass({
       render: function () {
+        var rows = this.props.buffer.map(function (row, index) {
+          return (
+              <BufferRow key={index} row={row}/>
+          )
+        });
         return (
             <pre className="output">
               {this.props.buffer.toString()}
             </pre>
         )
+      }
+    });
+
+    var BufferRow = React.createClass({
+      render: function () {
+        return this.props.row.map(function (wrappedChar) {
+          return wrappedChar.toString();
+        }).join('');
       }
     });
 
