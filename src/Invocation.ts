@@ -27,14 +27,14 @@ module BlackScreen {
                     console.log('text', text);
 
                     for (var i = 0; i != text.length; ++i) {
-                        this.buffer.write(new Char(text.charAt(i)));
+                        this.buffer.write(text.charAt(i));
                     }
                 },
                 inst_o: function (s: any) {
                     console.error('osc', s);
                 },
                 inst_x: (flag: string) => {
-                    this.buffer.write(new Char(flag));
+                    this.buffer.write(flag);
                 },
                 inst_c: function (collected: any, params: any, flag: any) {
                     console.error('csi', collected, params, flag);

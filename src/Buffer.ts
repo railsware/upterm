@@ -1,18 +1,24 @@
 /// <reference path="references.ts" />
 
 module BlackScreen {
+    export interface Attributes {
+        color: Color
+    }
+
+    enum Color { Black, Red, Green, Yellow, Blue, Magenta, Cyan, White }
+
     export class Buffer extends EventEmitter {
-        private storage: Array<Array<Char>>;
-        private cursor: Cursor;
+        private storage: Array<Array<Char>> = [];
+        private cursor: Cursor = new Cursor();
+        private attributes: Attributes = {color: Color.White};
 
         constructor() {
             super();
-
-            this.storage = [];
-            this.cursor = new Cursor();
         }
 
-        write(char: Char): void {
+        write(raw: string): void {
+            var char = new Char(raw, this.attributes);
+
             if (char.isSpecial()) {
                 switch (char.getCharCode()) {
                     case CharCode.NewLine:
