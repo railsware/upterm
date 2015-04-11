@@ -5,6 +5,7 @@
 /// <reference path="Char.ts" />
 /// <reference path="Cursor.ts" />
 /// <reference path="History.ts" />
+/// <reference path="Prompt.ts" />
 /// <reference path="Invocation.ts" />
 /// <reference path="Position.ts" />
 /// <reference path="terminal.ts" />

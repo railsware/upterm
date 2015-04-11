@@ -2,13 +2,13 @@
 
 module BlackScreen {
     export class Buffer extends EventEmitter {
-        buffer: Array<Array<Char>>;
+        private storage: Array<Array<Char>>;
         private cursor: Cursor;
 
         constructor() {
             super();
 
-            this.buffer = [];
+            this.storage = [];
             this.cursor = new Cursor();
         }
 
@@ -29,22 +29,32 @@ module BlackScreen {
                 this.set(this.cursor.getPosition(), char);
                 this.cursor.next();
             }
-            //this.emit('data');
-        }
 
-        private set(position: Position, char: Char): void {
-            if (typeof this.buffer[position.row] == 'undefined') {
-                this.buffer[position.row] = []
-            }
-            this.buffer[position.row][position.column] = char;
+            this.emit('data');
         }
 
         toString(): string {
-            return this.buffer.map((row) => {
+            return this.storage.map((row) => {
                 return row.map((char) => {
                     return char.toString();
                 }).join('')
             }).join('\n');
+        }
+
+        private set(position: Position, char: Char): void {
+            if (!this.hasRow(position.row)) {
+                this.addRow(position.row);
+            }
+
+            this.storage[position.row][position.column] = char;
+        }
+
+        private addRow(row: number): void {
+            this.storage[row] = []
+        }
+
+        private hasRow(row: number): boolean {
+            return typeof this.storage[row] == 'object';
         }
     }
 }

@@ -4,23 +4,22 @@ var pty = require('pty.js');
 var AnsiParser: AnsiParserConstructor = require('node-ansiparser');
 
 module BlackScreen {
-
-    // TODO: Separate input from output.
     export class Invocation extends EventEmitter {
         buffer: Buffer;
         command: NodeJS.Process;
         parser: AnsiParser;
+        prompt: Prompt;
 
         constructor(private directory: string,
                     private dimensions: Dimensions,
                     private history: History) {
             super();
 
-            this.buffer = new Buffer();
+            this.prompt = new Prompt(directory, history);
+            this.prompt.on('send', () => { this.execute(); });
 
-            this.buffer.on('data', () => {
-                this.emit('data', this);
-            });
+            this.buffer = new Buffer();
+            this.buffer.on('data', () => { this.emit('data'); });
 
             this.parser = new AnsiParser({
                 inst_p: (text: string) => {
@@ -44,15 +43,8 @@ module BlackScreen {
 
         }
 
-        execute(commandName: string): void {
-            var parts = this.expandCommand(commandName);
-            var expanded = parts.join(' ');
-
-            this.history.append(expanded);
-
-            var commandName = parts.shift();
-
-            this.command = pty.spawn(commandName, parts, {
+        execute(): void {
+            this.command = pty.spawn(this.prompt.getCommand(), this.prompt.getArguments(), {
                 cols: this.dimensions.columns,
                 rows: this.dimensions.rows,
                 cwd: this.directory,
@@ -62,26 +54,8 @@ module BlackScreen {
             this.command.on('data', (data) => {
                 this.parser.parse(data);
             }).on('end', () => {
-                this.command = null;
                 this.emit('end');
             })
-        }
-
-        expandCommand(command: string): Array<string> {
-            // Split by comma, but not inside quotes.
-            // http://stackoverflow.com/questions/16261635/javascript-split-string-by-space-but-ignore-space-in-quotes-notice-not-to-spli
-            var parts = command.match(/(?:[^\s']+|'[^']*')+/g);
-            var commandName = parts.shift();
-
-            var alias: string = Aliases.find(commandName);
-
-            if (alias) {
-                parts = this.expandCommand(alias).concat(parts);
-            } else {
-                parts.unshift(commandName);
-            }
-
-            return parts;
         }
 
         resize(dimensions: Dimensions) {

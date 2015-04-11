@@ -16,7 +16,8 @@ module BlackScreen {
         }
 
         on(event: string, listener: Function): EventEmitter {
-            return this.addListener(event, listener);
+            this.addListener(event, listener);
+            return this;
         }
 
         once(event: string, listener: Function): EventEmitter {

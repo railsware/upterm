@@ -15,7 +15,7 @@
       },
       componentDidMount: function () {
         this.state.terminal.on('invocation', function () {
-          this.setState({terminal: this.state.terminal});
+          this.forceUpdate();
         }.bind(this));
       },
       render: function () {
@@ -35,31 +35,39 @@
       }
     });
 
+
     var Invocation = React.createClass({
-      getInitialState: function () {
-        return {invocation: this.props.invocation};
-      },
-      handleKeyDown: function (key) {
-        if (key.keyCode == 13) {
-          this.props.invocation.execute(React.findDOMNode(this.refs.command).value);
-        }
-      },
       componentDidMount: function () {
-        this.props.invocation.on('data', function (invocation) {
-          this.setState({invocation: invocation});
+        this.props.invocation.on('data', function () {
+          this.forceUpdate();
         }.bind(this));
       },
       render: function () {
         return (
             <div className="invocation">
-              <input onKeyDown={this.handleKeyDown} type="text" ref="command" autoFocus="autofocus"/>
+              <Prompt prompt={this.props.invocation.prompt}/>
               <pre className="output">
-                {this.state.invocation.buffer.toString()}
+                {this.props.invocation.buffer.toString()}
               </pre>
             </div>
         );
       }
     });
+
+
+    var Prompt = React.createClass({
+      handleKeyDown: function (event) {
+        if (event.keyCode == 13) {
+          this.props.prompt.send(this.refs.command.getDOMNode().value);
+        }
+      },
+      render: function () {
+        return (
+            <input onKeyDown={this.handleKeyDown} type="text" ref="command" autoFocus="autofocus"/>
+        )
+      }
+    });
+
 
     var StatusLine = React.createClass({
       render: function () {
@@ -71,6 +79,7 @@
       }
     });
 
+
     var CurrentDirectory = React.createClass({
       render: function () {
         return (
@@ -79,13 +88,14 @@
       }
     });
 
+
     React.render(<Board />, document.getElementById('black-board'));
   </script>
 </head>
 <body>
 
 <div id="sizes-calculation">
-0123456789
+  0123456789
 </div>
 
 <div id="black-board"></div>
