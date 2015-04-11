@@ -9,7 +9,6 @@
 /// <reference path="Invocation.ts" />
 /// <reference path="Position.ts" />
 /// <reference path="terminal.ts" />
-/// <reference path="Shell.ts" />
 
 /// <reference path="../dts/AnsiParser.d.ts" />
 /// <reference path="../dts/typings/node/node.d.ts" />
