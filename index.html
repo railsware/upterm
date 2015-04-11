@@ -73,11 +73,11 @@
       render: function () {
         var rendered = this.props.row.map(function (wrappedChar) {
           return wrappedChar.render();
-        }).join('');
+        });
 
         return (
             <div className="row">
-              <span dangerouslySetInnerHTML={{__html: rendered}} />
+              {rendered}
             </div>
         )
       }

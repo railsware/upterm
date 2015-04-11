@@ -1,5 +1,7 @@
 /// <reference path="references.ts" />
 
+var React = require('react')
+
 module BlackScreen {
     export enum CharCode {
         NewLine = 10,
@@ -17,11 +19,8 @@ module BlackScreen {
             return (<any>CharCode)[CharCode[this.char.charCodeAt(0)]];
         }
 
-        render(): string {
-            var span: HTMLSpanElement = document.createElement("span");
-            span.textContent = this.char;
-            span.classList.add('underlined');
-            return span.outerHTML;
+        render(): any {
+            return React.DOM.span( {className: "me"}, this.char);
         }
 
         toString(): string {

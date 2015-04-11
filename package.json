@@ -5,17 +5,13 @@
   "dependencies": {
     "jquery": "^2.1.3",
     "pty.js": "*",
-    "ansi-to-html": "*",
     "lodash": "*",
-    "node-ansiparser": "*"
+    "node-ansiparser": "*",
+    "react": "*"
   },
   "scripts": {
     "install": "npm install -g atom-shell && apm install",
     "compile": "tsc src/*.ts --out compiled/terminal.js -m commonjs",
     "start": "npm run compile && atom-shell ."
-  },
-  "devDependencies": {
-    "typescript": "1.5.0-alpha",
-    "atom-shell": "*"
   }
 }
