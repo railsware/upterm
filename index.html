@@ -47,7 +47,7 @@
             <div className="invocation">
               <Prompt prompt={this.props.invocation.prompt}/>
               <pre className="output">
-                {this.props.invocation.buffer.toString()}
+                {this.props.invocation.getBuffer().toString()}
               </pre>
             </div>
         );

@@ -5,10 +5,10 @@ var AnsiParser: AnsiParserConstructor = require('node-ansiparser');
 
 module BlackScreen {
     export class Invocation extends EventEmitter {
-        buffer: Buffer;
         command: NodeJS.Process;
         parser: AnsiParser;
         prompt: Prompt;
+        private buffer: Buffer;
 
         constructor(private directory: string,
                     private dimensions: Dimensions,
@@ -66,6 +66,10 @@ module BlackScreen {
             if (this.command) {
                 this.command.kill(this.command.pid, 'SIGWINCH');
             }
+        }
+
+        getBuffer(): Buffer {
+            return this.buffer;
         }
     }
 
