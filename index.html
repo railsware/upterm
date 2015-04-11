@@ -5,6 +5,7 @@
   <link rel="stylesheet" type="text/css" href="styles/main.css" media="screen"/>
   <script src="https://fb.me/react-0.13.1.js"></script>
   <script src="https://fb.me/JSXTransformer-0.13.1.js"></script>
+
   <script type="text/jsx">
     var $ = require('jquery');
     var Terminal = require('./compiled/terminal');
@@ -78,9 +79,29 @@
 
 
     var Prompt = React.createClass({
+      getInputNode: function (event) {
+        return this.refs.command.getDOMNode()
+      },
       handleKeyDown: function (event) {
         if (event.keyCode == 13) {
-          this.props.prompt.send(this.refs.command.getDOMNode().value);
+          this.props.prompt.send(this.getInputNode().value);
+          return false;
+        }
+
+        // Ctrl+P, ↑.
+        if ((event.ctrlKey && event.keyCode === 80) || event.keyCode === 38) {
+          var command = this.props.prompt.history.getPrevious();
+          if (typeof command != 'undefined') {
+            this.getInputNode().value = command;
+          }
+          return false;
+        }
+
+        // Ctrl+N, ↓.
+        if ((event.ctrlKey && event.keyCode === 78) || event.keyCode === 40) {
+          var command = this.props.prompt.history.getNext();
+          this.getInputNode().value = command || '';
+          return false;
         }
       },
       render: function () {

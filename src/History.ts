@@ -2,15 +2,10 @@
 
 module BlackScreen {
     export class History {
-        stack: Array<string>;
-        pointer: number;
+        static pointer: number = 0;
+        static stack: Array<string> = [];
 
-        constructor() {
-            this.stack = [];
-            this.pointer = 0;
-        }
-
-        append(command: string): void {
+        static append(command: string): void {
             var duplicateIndex = this.stack.indexOf(command);
 
             if (duplicateIndex !== -1) {
@@ -21,7 +16,7 @@ module BlackScreen {
             this.pointer = this.stack.length;
         }
 
-        previous(): string {
+        static getPrevious(): string {
             if (this.pointer > 0) {
                 this.pointer -= 1;
             }
@@ -29,7 +24,7 @@ module BlackScreen {
             return this.stack[this.pointer];
         }
 
-        next(): string {
+        static getNext(): string {
             if (this.pointer < this.stack.length) {
                 this.pointer += 1;
             }

@@ -16,7 +16,7 @@ module BlackScreen {
                     private history: History) {
             super();
 
-            this.prompt = new Prompt(directory, history);
+            this.prompt = new Prompt(directory);
             this.prompt.on('send', () => { this.execute(); });
 
             this.buffer = new Buffer();

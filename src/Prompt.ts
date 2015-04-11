@@ -3,19 +3,16 @@
 module BlackScreen {
 
     export class Prompt extends EventEmitter {
-        buffer: Buffer;
+        private buffer: Buffer;
+        history: any;
 
-        constructor(private directory: string, private history: History) {
+        constructor(private directory: string) {
             super();
 
             this.buffer = new Buffer();
-
             this.buffer.on('data', () => { this.emit('data'); });
 
-            this.on('key-down', (event: KeyboardEvent) => {
-                debugger;
-                this.buffer.write(new Char(String.fromCharCode(event.keyCode)));
-            });
+            this.history = History;
         }
 
         send(value: string): void {
@@ -23,6 +20,7 @@ module BlackScreen {
                 this.buffer.write(new Char(value.charAt(i)));
             }
 
+            this.history.append(value);
             this.emit('send');
         }
 

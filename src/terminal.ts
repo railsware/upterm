@@ -28,29 +28,6 @@ module BlackScreen {
             this.emit('invocation');
         }
 
-        //addKeysHandler() {
-        //    Terminal.currentInput().keydown(function (e: JQueryKeyEventObject) {
-        //        if (e.which === 13) {
-        //            this.shell.execute(Terminal.currentInput().val());
-        //            return false;
-        //        }
-        //
-        //        // Ctrl+P, ↑.
-        //        if ((e.ctrlKey && e.keyCode === 80) || e.keyCode === 38) {
-        //            Terminal.currentInput().val(this.shell.history.previous());
-        //
-        //            return false;
-        //        }
-        //
-        //        // Ctrl+N, ↓.
-        //        if ((e.ctrlKey && e.keyCode === 78) || e.keyCode === 40) {
-        //            Terminal.currentInput().val(this.shell.history.next());
-        //
-        //            return false;
-        //        }
-        //    }.bind(this));
-        //}
-
         resize(dimensions: Dimensions): void {
             this.invocations.forEach((invocation) => {
                 invocation.resize(dimensions);
