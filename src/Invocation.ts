@@ -10,11 +10,19 @@ module BlackScreen {
         private parser: AnsiParser;
         private prompt: Prompt;
         private buffer: Buffer;
+        private cgrs: { [indexer: string]: Attributes };
 
         constructor(private directory: string,
                     private dimensions: Dimensions,
                     private history: History) {
             super();
+
+            this.cgrs = {
+                0: {color: Color.White, weight: Weight.Normal, underline: false},
+                1: {weight: Weight.Bold},
+                2: {weight: Weight.Faint},
+                4: {underline: true}
+            };
 
             this.prompt = new Prompt(directory);
             this.prompt.on('send', () => { this.execute(); });
@@ -36,7 +44,13 @@ module BlackScreen {
                 inst_x: (flag: string) => {
                     this.buffer.write(flag);
                 },
-                inst_c: function (collected: any, params: any, flag: any) {
+                inst_c: (collected: any, params: any, flag: any) => {
+                    if (flag == 'm') {
+                        params.forEach((cgr: number) => {
+                            this.buffer.setAttributes(this.cgrs[cgr.toString()] || {});
+                        })
+
+                    }
                     console.error('csi', collected, params, flag);
                 },
                 inst_e: function (collected: any, flag: any) {

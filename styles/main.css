@@ -6,6 +6,25 @@ body, pre {
     margin: 0;
 }
 
+.prompt-decoration {
+    display: inline-block;
+    background-color: #353b44;
+    height: 16px;
+}
+
+.arrow {
+    width: 0;
+    height: 0;
+    border-style: solid;
+    border-width: 8px 0 8px 8px;
+    border-color: transparent transparent transparent #353b44;
+    display: inline-block;
+    background-color: #2D323A;
+    vertical-align: middle;
+    margin-bottom: 2px;
+    margin-left: 15px;
+}
+
 input, input:focus {
     -webkit-appearance: none;
     background-color: #2D323A;
@@ -16,6 +35,7 @@ input, input:focus {
     font-size: 14px;
     margin: 8px 0;
     width: 100%;
+    margin-right: -100px;
     padding: 0 8px;
 }
 

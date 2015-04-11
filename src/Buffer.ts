@@ -2,15 +2,19 @@
 
 module BlackScreen {
     export interface Attributes {
-        color: Color
+        color?: Color;
+        weight?: Weight;
+        underline?: boolean;
+        crossedOut?: boolean;
     }
 
-    enum Color { Black, Red, Green, Yellow, Blue, Magenta, Cyan, White }
+    export enum Color { Black, Red, Green, Yellow, Blue, Magenta, Cyan, White }
+    export enum Weight { Normal, Bold, Faint }
 
     export class Buffer extends EventEmitter {
         private storage: Array<Array<Char>> = [];
         private cursor: Cursor = new Cursor();
-        private attributes: Attributes = {color: Color.White};
+        private attributes: Attributes = {color: Color.White, weight: Weight.Normal};
 
         constructor() {
             super();
@@ -36,6 +40,10 @@ module BlackScreen {
             }
 
             this.emit('data');
+        }
+
+        setAttributes(attributes: Attributes): void {
+            this.attributes = _.merge(this.attributes, attributes);
         }
 
         toString(): string {

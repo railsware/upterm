@@ -63,7 +63,7 @@
         });
         return (
             <pre className="output">
-              {this.props.buffer.toString()}
+              {rows}
             </pre>
         )
       }
@@ -71,9 +71,15 @@
 
     var BufferRow = React.createClass({
       render: function () {
-        return this.props.row.map(function (wrappedChar) {
-          return wrappedChar.toString();
+        var rendered = this.props.row.map(function (wrappedChar) {
+          return wrappedChar.render();
         }).join('');
+
+        return (
+            <div className="row">
+              <span dangerouslySetInnerHTML={{__html: rendered}} />
+            </div>
+        )
       }
     });
 
@@ -85,7 +91,6 @@
       handleKeyDown: function (event) {
         if (event.keyCode == 13) {
           this.props.prompt.send(this.getInputNode().value);
-          return false;
         }
 
         // Ctrl+P, ↑.
@@ -94,19 +99,24 @@
           if (typeof command != 'undefined') {
             this.getInputNode().value = command;
           }
-          return false;
         }
 
         // Ctrl+N, ↓.
         if ((event.ctrlKey && event.keyCode === 78) || event.keyCode === 40) {
           var command = this.props.prompt.history.getNext();
           this.getInputNode().value = command || '';
-          return false;
         }
+
+        event.stopPropagation();
       },
       render: function () {
         return (
-            <input onKeyDown={this.handleKeyDown} type="text" ref="command" autoFocus="autofocus"/>
+            <div className="prompt">
+              <div className="prompt-decoration">
+                <div className="arrow"></div>
+              </div>
+              <input onKeyDown={this.handleKeyDown} type="text" ref="command" autoFocus="autofocus"/>
+            </div>
         )
       }
     });

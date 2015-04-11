@@ -1,6 +1,5 @@
 /// <reference path="references.ts" />
 
-
 module BlackScreen {
     export enum CharCode {
         NewLine = 10,
@@ -8,7 +7,7 @@ module BlackScreen {
     }
 
     export class Char {
-        constructor(private char: string, public attributes: Attributes) {
+        constructor(private char: string, private attributes: Attributes) {
             if (char.length != 1) {
                 throw(`Char can be created only from a single character; passed ${char.length}: ${char}`);
             }
@@ -16,6 +15,13 @@ module BlackScreen {
 
         getCharCode(): CharCode {
             return (<any>CharCode)[CharCode[this.char.charCodeAt(0)]];
+        }
+
+        render(): string {
+            var span: HTMLSpanElement = document.createElement("span");
+            span.textContent = this.char;
+            span.classList.add('underlined');
+            return span.outerHTML;
         }
 
         toString(): string {
