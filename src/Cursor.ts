@@ -5,7 +5,7 @@ module BlackScreen {
         constructor(private position: Position = {column: 0, row: 0}) {
         }
 
-        moveAbsolute(advancement: Advancement): void {
+        moveAbsolute(advancement: Advancement): Cursor {
             if (advancement.horizontal) {
                 this.position.column = advancement.horizontal;
             }
@@ -13,13 +13,17 @@ module BlackScreen {
             if (advancement.vertical) {
                 this.position.row = advancement.vertical;
             }
+
+            return this;
         }
 
-        moveRelative(advancement: Advancement): void {
+        moveRelative(advancement: Advancement): Cursor {
             var vertical = this.row() + (advancement.vertical || 0);
             var horizontal = this.column() + (advancement.horizontal || 0);
 
             this.moveAbsolute({vertical: vertical, horizontal: horizontal});
+
+            return this;
         }
 
         next(): void {

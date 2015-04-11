@@ -22,8 +22,7 @@ module BlackScreen {
             if (char.isSpecial()) {
                 switch (char.getCharCode()) {
                     case CharCode.NewLine:
-                        this.cursor.moveRelative({vertical: 1});
-                        this.cursor.moveAbsolute({horizontal: 0});
+                        this.cursor.moveRelative({vertical: 1}).moveAbsolute({horizontal: 0});
                         break;
                     case CharCode.CarriageReturn:
                         this.cursor.moveAbsolute({horizontal: 0});
