@@ -45,7 +45,7 @@
       render: function () {
         return (
             <div className="invocation">
-              <Prompt prompt={this.props.invocation.prompt}/>
+              <Prompt prompt={this.props.invocation.getPrompt()}/>
               <pre className="output">
                 {this.props.invocation.getBuffer().toString()}
               </pre>

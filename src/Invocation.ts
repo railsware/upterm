@@ -5,9 +5,9 @@ var AnsiParser: AnsiParserConstructor = require('node-ansiparser');
 
 module BlackScreen {
     export class Invocation extends EventEmitter {
-        command: NodeJS.Process;
-        parser: AnsiParser;
-        prompt: Prompt;
+        private command: NodeJS.Process;
+        private parser: AnsiParser;
+        private prompt: Prompt;
         private buffer: Buffer;
 
         constructor(private directory: string,
@@ -70,6 +70,10 @@ module BlackScreen {
 
         getBuffer(): Buffer {
             return this.buffer;
+        }
+
+        getPrompt(): Prompt {
+            return this.prompt;
         }
     }
 
