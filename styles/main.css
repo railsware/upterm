@@ -19,7 +19,11 @@ input, input:focus {
     padding: 0 8px;
 }
 
-#board {
+.output {
+    margin: 10px;
+}
+
+#black-board {
     margin-bottom: 24px;
 }
 
