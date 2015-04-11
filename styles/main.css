@@ -96,34 +96,34 @@ prompt, prompt:focus {
     margin-left: 5px;
 }
 
-color.black {
+.black {
     color: black;
 }
 
-color.red {
+.red {
     color: red;
 }
 
-color.green {
+.green {
     color: green;
 }
 
-color.yellow {
+.yellow {
     color: yellow;
 }
 
-color.blue {
+.blue {
     color: blue;
 }
 
-color.magenta {
+.magenta {
     color: magenta;
 }
 
-color.cyan {
+.cyan {
     color: cyan;
 }
 
-color.white {
+.white {
     color: white;
 }
