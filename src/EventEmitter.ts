@@ -44,7 +44,7 @@ module BlackScreen {
         }
 
         emit(event: string, ...args: any[]): boolean {
-            return this.eventEmitter.emit.bind(this.eventEmitter, event).apply(this.eventEmitter, args);
+            return this.eventEmitter.emit(event, ...args);
         }
     }
 }

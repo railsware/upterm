@@ -19,7 +19,7 @@ module BlackScreen {
             this.prompt.on('send', () => { this.execute(); });
 
             this.buffer = new Buffer();
-            this.buffer.on('data', () => { this.emit('data'); });
+            this.buffer.on('data', _.throttle(() => { this.emit('data'); }, 1000/60));
 
             this.parser = new AnsiParser({
                 inst_p: (text: string) => {
@@ -76,5 +76,4 @@ module BlackScreen {
             return this.prompt;
         }
     }
-
 }
