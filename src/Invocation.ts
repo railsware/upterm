@@ -2,6 +2,7 @@
 
 var pty = require('pty.js');
 var AnsiParser: AnsiParserConstructor = require('node-ansiparser');
+var _: _.LoDashStatic = require('lodash');
 
 module BlackScreen {
     export class Invocation extends EventEmitter {
