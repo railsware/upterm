@@ -46,11 +46,20 @@
         return (
             <div className="invocation">
               <Prompt prompt={this.props.invocation.getPrompt()}/>
-              <pre className="output">
-                {this.props.invocation.getBuffer().toString()}
-              </pre>
+              <BSBuffer buffer={this.props.invocation.getBuffer()}/>
             </div>
         );
+      }
+    });
+
+
+    var BSBuffer = React.createClass({
+      render: function () {
+        return (
+            <pre className="output">
+              {this.props.buffer.toString()}
+            </pre>
+        )
       }
     });
 
