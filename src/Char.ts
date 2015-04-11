@@ -19,8 +19,8 @@ module BlackScreen {
             return (<any>CharCode)[CharCode[this.char.charCodeAt(0)]];
         }
 
-        render(): any {
-            return React.DOM.span( {className: "me"}, this.char);
+        render(uniqueKey: string): any {
+            return React.DOM.span( {className: "me", key: uniqueKey }, this.char);
         }
 
         toString(): string {

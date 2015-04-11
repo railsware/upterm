@@ -71,9 +71,10 @@
 
     var BufferRow = React.createClass({
       render: function () {
-        var rendered = this.props.row.map(function (wrappedChar) {
-          return wrappedChar.render();
-        });
+        var rendered = this.props.row.map(function (wrappedChar, charIndex) {
+          var key = "char-at-" + this.props.reactKey + "-" + charIndex;
+          return wrappedChar.render(key);
+        }, this);
 
         return (
             <div className="row">
