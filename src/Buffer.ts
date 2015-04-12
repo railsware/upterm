@@ -81,7 +81,7 @@ module BlackScreen {
             });
 
             var children = consecutive.map((group, groupIndex) => {
-                return React.DOM.span({className: this.getClassNames(group.attributes), key: `group-${index}-${groupIndex}`}, group.text, ...children);
+                return React.DOM.span({className: this.getClassNames(group.attributes), key: `group-${groupIndex}`}, group.text);
             });
 
             return React.DOM.div({className: 'row', key: `row-${index}`}, null, ...children);
