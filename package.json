@@ -17,6 +17,7 @@
   "scripts": {
     "install": "npm install -g atom-shell && apm install",
     "compile": "tsc src/*.ts --out compiled/terminal.js -m commonjs",
-    "start": "npm run compile && atom-shell ."
+    "compile-react": "jsx react.js > compiled/react.js",
+    "start": "npm run compile && npm run compile-react && atom-shell ."
   }
 }
