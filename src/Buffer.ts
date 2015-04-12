@@ -65,8 +65,7 @@ module BlackScreen {
         private renderRow(row: Array<Char>, index: number) {
 
             var consecutive = [];
-            var first = row.shift();
-            var current = {attributes: first.getAttributes(), text: first.toString()};
+            var current = {attributes: null, text: '' };
 
             row.forEach((element: Char) => {
                 var attributes = element.getAttributes();
@@ -74,6 +73,7 @@ module BlackScreen {
 
                 if (_.isEqual(attributes, current.attributes)) {
                     current.text += value;
+                    current.attributes = attributes;
                 } else {
                     consecutive.push(current);
                     current = {attributes: attributes, text: value};
