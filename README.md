@@ -1,3 +1,16 @@
+### What is it?
+
+Black Screen is a modern terminal emulator based on atom-shell and exploiting
+capacities of contemporary interfaces in contrast to most of the terminal emulators.
+
+### Technologies
+
+* TypeScript
+* Atom Shell
+* NodeJS
+* ReactJS
+* SASS
+
 ### Installation
 
 ```bash
@@ -10,10 +23,3 @@ npm run install
 ```bash
 npm run forest-run
 ```
-
-
-### Architecture Thoughts
-
-A `Terminal` has an array of `Invocation`s.
-Each `Invocation` has an `Input` and an `Output`.
-Those are based on a `Buffer`, can have a `Cursor`. Have a view, and emit an event on change.
