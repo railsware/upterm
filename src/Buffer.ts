@@ -58,6 +58,46 @@ module BlackScreen {
             return this.storage.map(callback);
         }
 
+        render() {
+            return React.DOM.pre({className: 'output'}, null, ...this.storage.map(this.renderRow, this));
+        }
+
+        private renderRow(row: Array<Char>, index: number) {
+
+            var consecutive = [];
+            var first = row.shift();
+            var current = {attributes: first.getAttributes(), text: first.toString()};
+
+            row.forEach((element: Char) => {
+                var attributes = element.getAttributes();
+                var value = element.toString();
+
+                if (_.isEqual(attributes, current.attributes)) {
+                    current.text += value;
+                } else {
+                    consecutive.push(current);
+                    current = {attributes: attributes, text: value};
+                }
+            });
+
+            var children = consecutive.map((group, groupIndex) => {
+                return React.DOM.span({className: this.getClassNames(group.attributes), key: `group-${index}-${groupIndex}`}, group.text, ...children);
+            });
+
+            return React.DOM.div({className: 'row', key: `row-${index}`}, null, ...children);
+        }
+
+
+        private getClassNames(attributes: Attributes): string {
+            return _.map(<{ [indexer: string]: any }>attributes, (value, key) => {
+                if (value === true) {
+                    return key;
+                } else if (typeof value == 'number') {
+                    return BlackScreen[_.capitalize(key)][value].toLowerCase();
+                }
+            }).join(' ');
+        }
+
         private set(position: Position, char: Char): void {
             if (!this.hasRow(position.row)) {
                 this.addRow(position.row);

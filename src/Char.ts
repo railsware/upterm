@@ -20,8 +20,8 @@ module BlackScreen {
             return (<any>CharCode)[CharCode[this.char.charCodeAt(0)]];
         }
 
-        render(uniqueKey: string): any {
-            return React.DOM.span( {className: this.getClassNames(), key: uniqueKey }, this.char);
+        getAttributes(): Attributes {
+            return this.attributes;
         }
 
         toString(): string {
@@ -31,16 +31,6 @@ module BlackScreen {
         isSpecial(): boolean {
             // http://www.asciitable.com/index/asciifull.gif
             return this.getCharCode() < 32 || this.getCharCode() > 126;
-        }
-
-        getClassNames(): string {
-            return _.map(<{ [indexer: string]: any }>this.attributes, (value, key) => {
-                if (value === true) {
-                    return key;
-                } else if (typeof value == 'number') {
-                    return BlackScreen[_.capitalize(key)][value].toLowerCase();
-                }
-            }).join(' ');
         }
     }
 }

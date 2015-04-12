@@ -6,11 +6,11 @@ module BlackScreen {
         }
 
         moveAbsolute(advancement: Advancement): Cursor {
-            if (advancement.horizontal) {
+            if (typeof advancement.horizontal != 'undefined') {
                 this.position.column = advancement.horizontal;
             }
 
-            if (advancement.vertical) {
+            if (typeof advancement.vertical != 'undefined') {
                 this.position.row = advancement.vertical;
             }
 

@@ -47,43 +47,11 @@
         return (
             <div className="invocation">
               <Prompt prompt={this.props.invocation.getPrompt()}/>
-              <BSBuffer buffer={this.props.invocation.getBuffer()}/>
+              {this.props.invocation.getBuffer().render()}
             </div>
         );
       }
     });
-
-
-    var BSBuffer = React.createClass({
-      render: function () {
-        var rows = this.props.buffer.map(function (row, index) {
-          return (
-              <BufferRow key={index} row={row}/>
-          )
-        });
-        return (
-            <pre className="output">
-              {rows}
-            </pre>
-        )
-      }
-    });
-
-    var BufferRow = React.createClass({
-      render: function () {
-        var rendered = this.props.row.map(function (wrappedChar, charIndex) {
-          var key = "char-at-" + this.props.reactKey + "-" + charIndex;
-          return wrappedChar.render(key);
-        }, this);
-
-        return (
-            <div className="row">
-              {rendered}
-            </div>
-        )
-      }
-    });
-
 
     var Prompt = React.createClass({
       getInputNode: function (event) {
