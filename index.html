@@ -3,12 +3,12 @@
 <head>
   <title>Black Screen</title>
   <link rel="stylesheet" type="text/css" href="styles/main.css" media="screen"/>
-  <script src="https://fb.me/react-0.13.1.js"></script>
   <script src="https://fb.me/JSXTransformer-0.13.1.js"></script>
 
   <script type="text/jsx">
     var $ = require('jquery');
     var Terminal = require('./compiled/terminal');
+    var React = require('react');
 
     var Board = React.createClass({
       getInitialState: function () {
@@ -64,9 +64,9 @@
 
         // Ctrl+P, ↑.
         if ((event.ctrlKey && event.keyCode === 80) || event.keyCode === 38) {
-          var command = this.props.prompt.history.getPrevious();
-          if (typeof command != 'undefined') {
-            this.getInputNode().value = command;
+          var prevCommand = this.props.prompt.history.getPrevious();
+          if (typeof prevCommand != 'undefined') {
+            this.getInputNode().value = prevCommand;
           }
         }
 

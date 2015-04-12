@@ -9,6 +9,11 @@
     "node-ansiparser": "*",
     "react": "*"
   },
+  "devDependencies": {
+    "atom-shell": "*",
+    "typescript": "*",
+    "react-tools": "*"
+  },
   "scripts": {
     "install": "npm install -g atom-shell && apm install",
     "compile": "tsc src/*.ts --out compiled/terminal.js -m commonjs",
