@@ -64,56 +64,24 @@ input, input:focus {
     height: 16px;
 }
 
-prompt:before {
-    left: 0;
-    top: 50%;
-    border: solid transparent;
-    content: " ";
-    height: 0;
-    width: 0;
-    position: absolute;
-    pointer-events: none;
-    border-left-color: #292C33;
-    border-width: 15px;
-    margin-top: -15px;
-}
-
-
-prompt, prompt:focus {
-    -webkit-appearance: none;
-    height: 20px;
-    width: 100%;
-    font-family: 'Menlo', monospace;
-    background-color: #2D323A;
-    display: block;
-    border: none;
-    outline: none;
-    color: #95A2BB;
-    margin: 8px 0;
-    padding: 0 20px;
-
-    position: relative;
-    margin-left: 5px;
-}
-
 .black {
     color: black;
 }
 
 .red {
-    color: red;
+    color: #BF6E7C;
 }
 
 .green {
-    color: green;
+    color: #88B379;
 }
 
 .yellow {
-    color: yellow;
+    color: #D9BD86;
 }
 
 .blue {
-    color: blue;
+    color: #66A5DF;
 }
 
 .magenta {
@@ -126,4 +94,8 @@ prompt, prompt:focus {
 
 .white {
     color: #95A2BB;
+}
+
+.underline {
+    text-decoration: underline;
 }

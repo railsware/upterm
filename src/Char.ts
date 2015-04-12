@@ -21,7 +21,6 @@ module BlackScreen {
         }
 
         render(uniqueKey: string): any {
-            debugger;
             return React.DOM.span( {className: this.getClassNames(), key: uniqueKey }, this.char);
         }
 
@@ -35,15 +34,13 @@ module BlackScreen {
         }
 
         getClassNames(): string {
-            var classes = [];
-            _.forOwn(this.attributes, (value, key) => {
+            return _.map(<{ [indexer: string]: any }>this.attributes, (value, key) => {
                 if (value === true) {
-                    classes.push(key);
+                    return key;
                 } else if (typeof value == 'number') {
-                    classes.push(BlackScreen[_.capitalize(key)][value].toLowerCase());
+                    return BlackScreen[_.capitalize(key)][value].toLowerCase();
                 }
-            });
-            return classes.join(' ');
+            }).join(' ');
         }
     }
 }

@@ -21,14 +21,22 @@ module BlackScreen {
                 0: {color: Color.White, weight: Weight.Normal, underline: false},
                 1: {weight: Weight.Bold},
                 2: {weight: Weight.Faint},
-                4: {underline: true}
+                4: {underline: true},
+                30: {color: Color.Black},
+                31: {color: Color.Red},
+                32: {color: Color.Green},
+                33: {color: Color.Yellow},
+                34: {color: Color.Blue},
+                35: {color: Color.Magenta},
+                36: {color: Color.Cyan},
+                37: {color: Color.White}
             };
 
             this.prompt = new Prompt(directory);
             this.prompt.on('send', () => { this.execute(); });
 
             this.buffer = new Buffer();
-            this.buffer.on('data', _.throttle(() => { this.emit('data'); }, 1000/60));
+            //this.buffer.on('data', _.throttle(() => { this.emit('data'); }, 1000/60));
 
             this.parser = new AnsiParser({
                 inst_p: (text: string) => {
@@ -47,7 +55,7 @@ module BlackScreen {
                 inst_c: (collected: any, params: any, flag: any) => {
                     if (flag == 'm') {
                         params.forEach((cgr: number) => {
-                            this.buffer.setAttributes(this.cgrs[cgr.toString()] || {});
+                            this.buffer.setAttributes(this.cgrs[cgr] || {});
                         })
 
                     }

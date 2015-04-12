@@ -21,7 +21,7 @@ module BlackScreen {
         }
 
         write(raw: string): void {
-            var char = new Char(raw, this.attributes);
+            var char = new Char(raw, _.clone(this.attributes));
 
             if (char.isSpecial()) {
                 switch (char.getCharCode()) {
