@@ -8,7 +8,7 @@ npm run install
 ### Run
 
 ```bash
-npm run start
+npm run forest-run
 ```
 
 

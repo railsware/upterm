@@ -12,13 +12,14 @@
   "devDependencies": {
     "atom-shell": "*",
     "typescript": "*",
-    "react-tools": "*"
+    "react-tools": "*",
+    "node-sass": "*"
   },
   "scripts": {
     "install": "npm install -g atom-shell && apm install",
     "compile-typescript": "tsc src/*.ts --out compiled/terminal.js -m commonjs",
     "compile-react": "jsx react.js > compiled/react.js",
     "compile-css": "node-sass stylesheets/main.sass compiled/main.css",
-    "start": "npm run compile-typescript && npm run compile-react && npm run compile-css && atom-shell ."
+    "forest-run": "npm run compile-typescript && npm run compile-react && npm run compile-css && atom-shell ."
   }
 }
