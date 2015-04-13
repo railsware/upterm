@@ -1,4 +1,4 @@
-var $ = require('jquery');
+var jQuery = require('jquery');
 var Terminal = require('./compiled/terminal');
 var React = require('react');
 
@@ -99,7 +99,7 @@ var CurrentDirectory = React.createClass({
     }
 });
 
-$(function () {
+jQuery(document).ready(function () {
     React.render(<Board />, document.getElementById('black-board'));
 });
 
