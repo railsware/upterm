@@ -19,80 +19,77 @@ var Board = React.createClass({
         });
         return (
             <div id="board">
-        <div id="invocations">
-        {invocations}
-        </div>
-        <StatusLine/>
-        </div>
+                <div id="invocations">
+                    {invocations}
+                </div>
+                <StatusLine/>
+            </div>
         );
     }
 });
 
-
 var Invocation = React.createClass({
-        componentDidMount: function () {
-            this.props.invocation.on('data', function () {
-                this.forceUpdate();
-            }.bind(this));
-        },
-        render: function () {
-            return (
-                <div className="invocation">
-            <Prompt prompt={this.props.invocation.getPrompt()}/>
-        {this.props.invocation.getBuffer().render()}
-    </div>
-);
-}
+    componentDidMount: function () {
+        this.props.invocation.on('data', function () {
+            this.forceUpdate();
+        }.bind(this));
+    },
+    render: function () {
+        return (
+            <div className="invocation">
+                <Prompt prompt={this.props.invocation.getPrompt()}/>
+                {this.props.invocation.getBuffer().render()}
+            </div>
+        );
+    }
 });
 
 var Prompt = React.createClass({
     getInputNode: function (event) {
-    return this.refs.command.getDOMNode()
-},
-handleKeyDown: function (event) {
-    if (event.keyCode == 13) {
-        this.props.prompt.send(this.getInputNode().value);
-    }
-
-    // Ctrl+P, ↑.
-    if ((event.ctrlKey && event.keyCode === 80) || event.keyCode === 38) {
-        var prevCommand = this.props.prompt.history.getPrevious();
-        if (typeof prevCommand != 'undefined') {
-            this.getInputNode().value = prevCommand;
+        return this.refs.command.getDOMNode()
+    },
+    handleKeyDown: function (event) {
+        if (event.keyCode == 13) {
+            this.props.prompt.send(this.getInputNode().value);
         }
-    }
 
-    // Ctrl+N, ↓.
-    if ((event.ctrlKey && event.keyCode === 78) || event.keyCode === 40) {
-        var command = this.props.prompt.history.getNext();
-        this.getInputNode().value = command || '';
-    }
+        // Ctrl+P, ↑.
+        if ((event.ctrlKey && event.keyCode === 80) || event.keyCode === 38) {
+            var prevCommand = this.props.prompt.history.getPrevious();
+            if (typeof prevCommand != 'undefined') {
+                this.getInputNode().value = prevCommand;
+            }
+        }
 
-    event.stopPropagation();
-},
-render: function () {
-    return (
-        <div className="prompt">
-    <div className="prompt-decoration">
-    <div className="arrow"></div>
-    </div>
-    <input onKeyDown={this.handleKeyDown} type="text" ref="command" autoFocus="autofocus"/>
-</div>
-)
-}
-});
+        // Ctrl+N, ↓.
+        if ((event.ctrlKey && event.keyCode === 78) || event.keyCode === 40) {
+            var command = this.props.prompt.history.getNext();
+            this.getInputNode().value = command || '';
+        }
 
-
-var StatusLine = React.createClass({
+        event.stopPropagation();
+    },
     render: function () {
         return (
-        <div id="status-line">
-            <CurrentDirectory/>
-        </div>
+            <div className="prompt">
+                <div className="prompt-decoration">
+                    <div className="arrow"></div>
+                </div>
+                <input onKeyDown={this.handleKeyDown} type="text" ref="command" autoFocus="autofocus"/>
+            </div>
         )
     }
 });
 
+var StatusLine = React.createClass({
+    render: function () {
+        return (
+            <div id="status-line">
+                <CurrentDirectory/>
+            </div>
+        )
+    }
+});
 
 var CurrentDirectory = React.createClass({
     render: function () {
@@ -101,7 +98,6 @@ var CurrentDirectory = React.createClass({
         )
     }
 });
-
 
 $(function () {
     React.render(<Board />, document.getElementById('black-board'));
