@@ -11,9 +11,10 @@
   },
   "devDependencies": {
     "atom-shell": "*",
-    "typescript": "*",
+    "gulp": "^3.8.11",
+    "node-sass": "*",
     "react-tools": "*",
-    "node-sass": "*"
+    "typescript": "*"
   },
   "scripts": {
     "install": "npm install -g atom-shell && apm install",
