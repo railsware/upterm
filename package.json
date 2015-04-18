@@ -1,26 +1,28 @@
 {
-  "name": "black-screen",
-  "version": "0.0.1",
-  "main": "src/main.js",
-  "dependencies": {
-    "jquery": "^2.1.3",
-    "pty.js": "*",
-    "lodash": "*",
-    "node-ansiparser": "*",
-    "react": "*"
-  },
-  "devDependencies": {
-    "atom-shell": "*",
-    "gulp": "^3.8.11",
-    "node-sass": "*",
-    "react-tools": "*",
-    "typescript": "*"
-  },
-  "scripts": {
-    "install": "npm install -g atom-shell && apm install",
-    "compile-typescript": "tsc src/*.ts --out compiled/terminal.js -m commonjs",
-    "compile-react": "jsx react.js > compiled/react.js",
-    "compile-css": "node-sass stylesheets/main.sass compiled/main.css",
-    "forest-run": "npm run compile-typescript && npm run compile-react && npm run compile-css && atom-shell ."
-  }
+	"name": "black-screen",
+	"version": "0.0.1",
+	"main": "src/main.js",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/shockone/black-screen.git"
+	},
+	"dependencies": {
+		"jquery": "^2.1.3",
+		"pty.js": "*",
+		"lodash": "*",
+		"node-ansiparser": "*",
+		"react": "*"
+	},
+	"devDependencies": {
+		"gulp": "^3.8.11",
+		"node-sass": "*",
+		"react-tools": "*",
+		"typescript": "*"
+	},
+	"scripts": {
+		"compile-typescript": "tsc src/*.ts --out compiled/terminal.js -m commonjs",
+		"compile-react": "jsx react.js > compiled/react.js",
+		"compile-css": "node-sass stylesheets/main.sass compiled/main.css",
+		"forest-run": "npm run compile-typescript && npm run compile-react && npm run compile-css && /Applications/Electron.app/Contents/MacOS/Electron ."
+	}
 }

@@ -13,10 +13,12 @@ capacities of contemporary interfaces in contrast to most of the terminal emulat
 
 ### Installation
 
+* Install [https://github.com/atom/electron/releases](Electron).
+* Install dependencies:
+
 ```bash
 npm run install
 ```
-
 
 ### Run
 
