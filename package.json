@@ -7,22 +7,26 @@
 		"url": "https://github.com/shockone/black-screen.git"
 	},
 	"dependencies": {
-		"jquery": "^2.1.3",
-		"pty.js": "*",
-		"lodash": "*",
-		"node-ansiparser": "*",
-		"react": "*"
+		"pty.js": "latest",
+		"jquery": "latest",
+		"lodash": "latest",
+		"node-ansiparser": "latest",
+		"react": "latest"
 	},
 	"devDependencies": {
-		"gulp": "^3.8.11",
-		"node-sass": "*",
-		"react-tools": "*",
-		"typescript": "*"
+		"electron-prebuilt": "latest",
+		"gulp": "latest",
+		"node-sass": "latest",
+		"react-tools": "latest",
+		"typescript": "latest"
 	},
 	"scripts": {
-		"compile-typescript": "tsc src/*.ts --out compiled/terminal.js -m commonjs",
-		"compile-react": "jsx react.js > compiled/react.js",
-		"compile-css": "node-sass stylesheets/main.sass compiled/main.css",
-		"forest-run": "npm run compile-typescript && npm run compile-react && npm run compile-css && /Applications/Electron.app/Contents/MacOS/Electron ."
+		"install-all": "npm install && npm run install-native && npm run cleanup",
+		"install-native": "npm_config_disturl=https://atom.io/download/electron npm_config_target=0.23.0 npm_config_arch=x64 HOME=~/.electron-gyp npm install 'pty.js'",
+		"cleanup": "rm -rf build",
+		"compile-typescript": "./node_modules/.bin/tsc src/*.ts --out compiled/terminal.js -m commonjs",
+		"compile-react": "./node_modules/.bin/jsx react.js > compiled/react.js",
+		"compile-css": "./node_modules/.bin/node-sass stylesheets/main.sass compiled/main.css",
+		"forest-run": "npm run compile-typescript && npm run compile-react && npm run compile-css && ./node_modules/.bin/electron ."
 	}
 }

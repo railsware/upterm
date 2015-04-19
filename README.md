@@ -17,7 +17,7 @@ capacities of contemporary interfaces in contrast to most of the terminal emulat
 * Install dependencies:
 
 ```bash
-npm run install
+npm run install-all
 ```
 
 ### Run
