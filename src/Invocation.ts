@@ -76,7 +76,7 @@ module BlackScreen {
                 env: process.env
             });
 
-            this.command.on('data', (data) => {
+            this.command.on('data', (data: string) => {
                 this.parser.parse(data);
             }).on('end', () => {
                 this.emit('end');

@@ -1,32 +1,32 @@
 {
-	"name": "black-screen",
-	"version": "0.0.1",
-	"main": "src/main.js",
-	"repository": {
-		"type": "git",
-		"url": "https://github.com/shockone/black-screen.git"
-	},
-	"dependencies": {
-		"pty.js": "latest",
-		"jquery": "latest",
-		"lodash": "latest",
-		"node-ansiparser": "latest",
-		"react": "latest"
-	},
-	"devDependencies": {
-		"electron-prebuilt": "latest",
-		"gulp": "latest",
-		"node-sass": "latest",
-		"react-tools": "latest",
-		"typescript": "latest"
-	},
-	"scripts": {
-		"install-all": "npm install && npm run install-native && npm run cleanup",
-		"install-native": "npm_config_disturl=https://atom.io/download/electron npm_config_target=0.23.0 npm_config_arch=x64 HOME=~/.electron-gyp npm install 'pty.js'",
-		"cleanup": "rm -rf build",
-		"compile-typescript": "./node_modules/.bin/tsc src/*.ts --out compiled/terminal.js -m commonjs",
-		"compile-react": "./node_modules/.bin/jsx react.js > compiled/react.js",
-		"compile-css": "./node_modules/.bin/node-sass stylesheets/main.sass compiled/main.css",
-		"forest-run": "npm run compile-typescript && npm run compile-react && npm run compile-css && ./node_modules/.bin/electron ."
-	}
+  "name": "black-screen",
+  "version": "0.0.1",
+  "main": "src/main.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/shockone/black-screen.git"
+  },
+  "dependencies": {
+    "pty.js": "latest",
+    "jquery": "latest",
+    "lodash": "latest",
+    "node-ansiparser": "latest",
+    "react": "latest"
+  },
+  "devDependencies": {
+    "electron-prebuilt": "latest",
+    "gulp": "latest",
+    "gulp-sass": "^1.3.3",
+    "gulp-typescript": "^2.6.0",
+    "node-sass": "latest",
+    "react-tools": "latest",
+    "typescript": "latest"
+  },
+  "scripts": {
+    "install-all": "npm install && npm run install-native && npm run cleanup",
+    "install-native": "npm_config_disturl=https://atom.io/download/electron npm_config_target=0.23.0 npm_config_arch=x64 HOME=~/.electron-gyp npm install 'pty.js'",
+    "cleanup": "rm -rf build",
+    "compile-react": "./node_modules/.bin/jsx react.js > compiled/react.js",
+    "forest-run": "PATH=node_modules/.bin:$PATH gulp compile-typescript && gulp compile-sass && npm run compile-react && electron ."
+  }
 }

@@ -64,8 +64,8 @@ module BlackScreen {
 
         private renderRow(row: Array<Char>, index: number) {
 
-            var consecutive = [];
-            var current = {attributes: null, text: '' };
+            var consecutive: Array<any> = [];
+            var current = {attributes: <Attributes>null, text: '' };
 
             row.forEach((element: Char) => {
                 var attributes = element.getAttributes();
@@ -93,7 +93,8 @@ module BlackScreen {
                 if (value === true) {
                     return key;
                 } else if (typeof value == 'number') {
-                    return BlackScreen[_.capitalize(key)][value].toLowerCase();
+                  var capitalized = _.capitalize(key);
+                    return (<any>BlackScreen)[capitalized][value].toLowerCase();
                 }
             }).join(' ');
         }
