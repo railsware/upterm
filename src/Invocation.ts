@@ -36,7 +36,7 @@ module BlackScreen {
             this.prompt.on('send', () => { this.execute(); });
 
             this.buffer = new Buffer();
-            //this.buffer.on('data', _.throttle(() => { this.emit('data'); }, 1000/60));
+            this.buffer.on('data', _.throttle(() => { this.emit('data'); }, 1000/10));
 
             this.parser = new AnsiParser({
                 inst_p: (text: string) => {
@@ -50,16 +50,21 @@ module BlackScreen {
                     console.error('osc', s);
                 },
                 inst_x: (flag: string) => {
+                    console.log('flag', flag);
                     this.buffer.write(flag);
                 },
-                inst_c: (collected: any, params: any, flag: any) => {
+                inst_c: (collected: any, params: Array<number>, flag: any) => {
                     if (flag == 'm') {
                         params.forEach((cgr: number) => {
                             this.buffer.setAttributes(this.cgrs[cgr] || {});
-                        })
+                        });
 
+                        console.log('csi', collected, params, flag);
+                    } else if (flag == 'H') {
+                        this.buffer.cursor.moveAbsolute({ vertical: params[0], horizontal: params[1] });
+                    } else {
+                        console.error('csi', collected, params, flag);
                     }
-                    console.error('csi', collected, params, flag);
                 },
                 inst_e: function (collected: any, flag: any) {
                     console.error('esc', collected, flag);

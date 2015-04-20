@@ -18,10 +18,10 @@ module BlackScreen {
         }
 
         moveRelative(advancement: Advancement): Cursor {
-            var vertical = this.row() + (advancement.vertical || 0);
-            var horizontal = this.column() + (advancement.horizontal || 0);
-
-            this.moveAbsolute({vertical: vertical, horizontal: horizontal});
+            this.moveAbsolute({
+                vertical: this.row() + (advancement.vertical || 0),
+                horizontal: this.column() + (advancement.horizontal || 0)
+            });
 
             return this;
         }

@@ -13,7 +13,7 @@ module BlackScreen {
 
     export class Buffer extends EventEmitter {
         private storage: Array<Array<Char>> = [];
-        private cursor: Cursor = new Cursor();
+        public cursor: Cursor = new Cursor();
         private attributes: Attributes = {color: Color.White, weight: Weight.Normal};
 
         constructor() {
