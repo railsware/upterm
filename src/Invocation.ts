@@ -74,18 +74,24 @@ module BlackScreen {
         }
 
         execute(): void {
-            this.command = pty.spawn(this.prompt.getCommand(), this.prompt.getArguments(), {
-                cols: this.dimensions.columns,
-                rows: this.dimensions.rows,
-                cwd: this.directory,
-                env: process.env
-            });
-
-            this.command.on('data', (data: string) => {
-                this.parser.parse(data);
-            }).on('end', () => {
+            var command = this.prompt.getCommand();
+            if (this.isBuiltIn(command)) {
+                this.emit('working-directory-changed', Command.cd(this.directory, this.prompt.getArguments()));
                 this.emit('end');
-            })
+            } else {
+                this.command = pty.spawn(command, this.prompt.getArguments(), {
+                    cols: this.dimensions.columns,
+                    rows: this.dimensions.rows,
+                    cwd: this.directory,
+                    env: process.env
+                });
+
+                this.command.on('data', (data: string) => {
+                    this.parser.parse(data);
+                }).on('end', () => {
+                    this.emit('end');
+                })
+            }
         }
 
         resize(dimensions: Dimensions) {
@@ -102,6 +108,14 @@ module BlackScreen {
 
         getPrompt(): Prompt {
             return this.prompt;
+        }
+
+        private isBuiltIn(command: String): any {
+            if (command == 'cd') {
+                return true;
+            } else {
+                return false;
+            }
         }
     }
 }

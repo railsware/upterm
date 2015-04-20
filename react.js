@@ -22,7 +22,7 @@ var Board = React.createClass({
                 <div id="invocations">
                     {invocations}
                 </div>
-                <StatusLine/>
+                <StatusLine currentWorkingDirectory={this.state.terminal.currentDirectory}/>
             </div>
         );
     }
@@ -85,7 +85,7 @@ var StatusLine = React.createClass({
     render: function () {
         return (
             <div id="status-line">
-                <CurrentDirectory/>
+                <CurrentDirectory currentWorkingDirectory={this.props.currentWorkingDirectory}/>
             </div>
         )
     }
@@ -94,7 +94,7 @@ var StatusLine = React.createClass({
 var CurrentDirectory = React.createClass({
     render: function () {
         return (
-            <div id="current-directory"></div>
+            <div id="current-directory">{this.props.currentWorkingDirectory}</div>
         )
     }
 });

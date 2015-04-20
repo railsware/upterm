@@ -23,6 +23,8 @@ module BlackScreen {
             var invocation = new Invocation(this.currentDirectory, this.dimensions, this.history);
             invocation.once('end', () => {
                 this.createInvocation();
+            }).once('working-directory-changed', (newWorkingDirectory: string) => {
+                this.currentDirectory = newWorkingDirectory;
             });
             this.invocations = this.invocations.concat(invocation);
             this.emit('invocation');

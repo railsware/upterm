@@ -3,6 +3,7 @@
 /// <reference path="Dimensions.ts" />
 /// <reference path="Buffer.ts" />
 /// <reference path="Char.ts" />
+/// <reference path="Command.ts" />
 /// <reference path="Cursor.ts" />
 /// <reference path="History.ts" />
 /// <reference path="Prompt.ts" />
