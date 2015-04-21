@@ -8,6 +8,7 @@ var paths = {
     source: {
         typeScript: 'src/*.ts',
         sass: 'stylesheets/*.sass',
+        react: 'react.js'
     }
 };
 
@@ -33,14 +34,13 @@ gulp.task('default', function() {
 });
 
 gulp.task('compile-typescript', function() {
-	//TODO add gulp-cache
-	gulp.src(paths.source.typeScript).pipe(ts(typeScriptConfig)).pipe(gulp.dest(paths.target));
+	return gulp.src(paths.source.typeScript).pipe(ts(typeScriptConfig)).pipe(gulp.dest(paths.target));
 });
 
 gulp.task('compile-sass', function() {
-    gulp.src(paths.source.sass).pipe(sass(sassConfig)).pipe(gulp.dest(paths.target));
+    return gulp.src(paths.source.sass).pipe(sass(sassConfig)).pipe(gulp.dest(paths.target));
 });
 
 gulp.task('compile-react', function () {
-    return gulp.src('react.js').pipe(react()).pipe(gulp.dest(paths.target));
+    return gulp.src(paths.source.react).pipe(react()).pipe(gulp.dest(paths.target));
 });
