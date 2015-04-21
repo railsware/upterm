@@ -16,6 +16,7 @@
   "devDependencies": {
     "electron-prebuilt": "latest",
     "gulp": "latest",
+    "gulp-react": "^3.0.1",
     "gulp-sass": "^1.3.3",
     "gulp-typescript": "^2.6.0",
     "node-sass": "latest",
@@ -27,6 +28,6 @@
     "install-native": "npm_config_disturl=https://atom.io/download/electron npm_config_target=0.23.0 npm_config_arch=x64 HOME=~/.electron-gyp npm install 'pty.js'",
     "cleanup": "rm -rf build",
     "compile-react": "./node_modules/.bin/jsx react.js > compiled/react.js",
-    "forest-run": "PATH=node_modules/.bin:$PATH gulp compile-typescript && gulp compile-sass && npm run compile-react && electron ."
+    "forest-run": "PATH=node_modules/.bin:$PATH gulp && electron ."
   }
 }
