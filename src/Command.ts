@@ -4,28 +4,37 @@ module BlackScreen {
     // A class representing built in commands
     export class Command {
         static cd(currentDirectory: string, arguments: Array<string>): string {
-            var path = arguments[0];
-            if (!path) {
+            if (!arguments.length) {
                 return process.env.HOME;
-            } else if (path[0] == '~') {
-                return process.env.HOME + path.slice(1);
-            } else if (/^\.\./.test(path)) {
-                var pathParts = path.split('/');
-                pathParts.shift();
-                var parts = currentDirectory.split('/');
-                var newDirectory = parts.slice(0, parts.length - 1).join('/');
+            }
 
-                if (pathParts.length) {
-                    return this.cd(newDirectory, [pathParts.join('/')]);
-                } else {
-                    return newDirectory;
-                }
-            } else if (path == '.') {
-                return currentDirectory;
-            } else if (path[0] == '/') {
-                return path;
+            var path = arguments[0];
+            var tokens = path.split('/');
+            var firstToken = tokens.shift();
+
+            var newDirectory = currentDirectory;
+
+            switch (firstToken) {
+                case '~':
+                    newDirectory = process.env.HOME;
+                    break;
+                case '/':
+                    newDirectory = '/';
+                    break;
+                case '..':
+                    var parts = currentDirectory.split('/');
+                    newDirectory = parts.slice(0, parts.length - 1).join('/');
+                    break;
+                case '.':
+                    break;
+                default:
+                    newDirectory += `/${firstToken}`;
+            }
+
+            if (tokens.length) {
+                return this.cd(newDirectory, [tokens.join('/')]);
             } else {
-                return `${currentDirectory}/${path}`;
+                return newDirectory;
             }
         }
     }
