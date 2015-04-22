@@ -1,36 +1,19 @@
 /// <reference path="references.ts" />
 
 var pty = require('pty.js');
-var AnsiParser: AnsiParserConstructor = require('node-ansiparser');
 var _: _.LoDashStatic = require('lodash');
 
 module BlackScreen {
     export class Invocation extends EventEmitter {
         private command: NodeJS.Process;
-        private parser: AnsiParser;
+        private parser: Parser;
         private prompt: Prompt;
         private buffer: Buffer;
-        private cgrs: { [indexer: string]: Attributes };
 
         constructor(private directory: string,
                     private dimensions: Dimensions,
                     private history: History) {
             super();
-
-            this.cgrs = {
-                0: {color: Color.White, weight: Weight.Normal, underline: false},
-                1: {weight: Weight.Bold},
-                2: {weight: Weight.Faint},
-                4: {underline: true},
-                30: {color: Color.Black},
-                31: {color: Color.Red},
-                32: {color: Color.Green},
-                33: {color: Color.Yellow},
-                34: {color: Color.Blue},
-                35: {color: Color.Magenta},
-                36: {color: Color.Cyan},
-                37: {color: Color.White}
-            };
 
             this.prompt = new Prompt(directory);
             this.prompt.on('send', () => { this.execute(); });
@@ -38,39 +21,7 @@ module BlackScreen {
             this.buffer = new Buffer();
             this.buffer.on('data', _.throttle(() => { this.emit('data'); }, 1000/10));
 
-            this.parser = new AnsiParser({
-                inst_p: (text: string) => {
-                    console.log('text', text);
-
-                    for (var i = 0; i != text.length; ++i) {
-                        this.buffer.write(text.charAt(i));
-                    }
-                },
-                inst_o: function (s: any) {
-                    console.error('osc', s);
-                },
-                inst_x: (flag: string) => {
-                    console.log('flag', flag);
-                    this.buffer.write(flag);
-                },
-                inst_c: (collected: any, params: Array<number>, flag: any) => {
-                    if (flag == 'm') {
-                        params.forEach((cgr: number) => {
-                            this.buffer.setAttributes(this.cgrs[cgr] || {});
-                        });
-
-                        console.log('csi', collected, params, flag);
-                    } else if (flag == 'H') {
-                        this.buffer.cursor.moveAbsolute({ vertical: params[0], horizontal: params[1] });
-                    } else {
-                        console.error('csi', collected, params, flag);
-                    }
-                },
-                inst_e: function (collected: any, flag: any) {
-                    console.error('esc', collected, flag);
-                }
-            });
-
+            this.parser = new Parser(this.buffer);
         }
 
         execute(): void {

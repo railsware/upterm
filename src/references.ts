@@ -6,6 +6,7 @@
 /// <reference path="Command.ts" />
 /// <reference path="Cursor.ts" />
 /// <reference path="History.ts" />
+/// <reference path="Parser.ts" />
 /// <reference path="Prompt.ts" />
 /// <reference path="Invocation.ts" />
 /// <reference path="Position.ts" />
