@@ -17,7 +17,15 @@ module BlackScreen {
             34: {color: Color.Blue},
             35: {color: Color.Magenta},
             36: {color: Color.Cyan},
-            37: {color: Color.White}
+            37: {color: Color.White},
+            40: {'background-color': Color.Black},
+            41: {'background-color': Color.Red},
+            42: {'background-color': Color.Green},
+            43: {'background-color': Color.Yellow},
+            44: {'background-color': Color.Blue},
+            45: {'background-color': Color.Magenta},
+            46: {'background-color': Color.Cyan},
+            47: {'background-color': Color.White}
         };
 
         constructor(private buffer: Buffer) {
