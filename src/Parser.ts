@@ -3,30 +3,31 @@
 var AnsiParser: AnsiParserConstructor = require('node-ansiparser');
 
 module BlackScreen {
+    var CGR: { [indexer: string]: Attributes } = {
+        0: {color: Color.White, weight: Weight.Normal, underline: false, 'background-color': Color.Black},
+        1: {weight: Weight.Bold},
+        2: {weight: Weight.Faint},
+        4: {underline: true},
+        30: {color: Color.Black},
+        31: {color: Color.Red},
+        32: {color: Color.Green},
+        33: {color: Color.Yellow},
+        34: {color: Color.Blue},
+        35: {color: Color.Magenta},
+        36: {color: Color.Cyan},
+        37: {color: Color.White},
+        40: {'background-color': Color.Black},
+        41: {'background-color': Color.Red},
+        42: {'background-color': Color.Green},
+        43: {'background-color': Color.Yellow},
+        44: {'background-color': Color.Blue},
+        45: {'background-color': Color.Magenta},
+        46: {'background-color': Color.Cyan},
+        47: {'background-color': Color.White}
+    };
+
     export class Parser {
         private parser: AnsiParser;
-        private static CGRs: { [indexer: string]: Attributes } = {
-            0: {color: Color.White, weight: Weight.Normal, underline: false, 'background-color': Color.Black},
-            1: {weight: Weight.Bold},
-            2: {weight: Weight.Faint},
-            4: {underline: true},
-            30: {color: Color.Black},
-            31: {color: Color.Red},
-            32: {color: Color.Green},
-            33: {color: Color.Yellow},
-            34: {color: Color.Blue},
-            35: {color: Color.Magenta},
-            36: {color: Color.Cyan},
-            37: {color: Color.White},
-            40: {'background-color': Color.Black},
-            41: {'background-color': Color.Red},
-            42: {'background-color': Color.Green},
-            43: {'background-color': Color.Yellow},
-            44: {'background-color': Color.Blue},
-            45: {'background-color': Color.Magenta},
-            46: {'background-color': Color.Cyan},
-            47: {'background-color': Color.White}
-        };
 
         constructor(private buffer: Buffer) {
             this.parser = this.initializeAnsiParser();
@@ -54,6 +55,11 @@ module BlackScreen {
                 },
                 inst_c: (collected: any, params: Array<number>, flag: any) => {
                     if (flag == 'm') {
+                        if (params.length == 0) {
+                            this.buffer.setAttributes(CGR[0]);
+                            return;
+                        }
+
                         while(params.length) {
                             var cgr = params.shift();
 
@@ -64,7 +70,7 @@ module BlackScreen {
                                     this.buffer.setAttributes({'background-color': ColorIndex[backgroundColorIndex]});
                                 }
                             } else {
-                                this.buffer.setAttributes(Parser.CGRs[cgr] || {});
+                                this.buffer.setAttributes(CGR[cgr] || {});
                             }
                         }
 
