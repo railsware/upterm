@@ -22,7 +22,7 @@ var options = {
             "removeComments": true,
             "preserveConstEnums": true,
             "sourceMap": true,
-            "out": "terminal.js",
+            "out": "terminal.js"
         })
     }
 };
