@@ -1,4 +1,4 @@
-$colors: (
+$base-colors: (
         'black': #292C33,
         'red': #BF6E7C,
         'white': #95A2BB,
@@ -17,6 +17,34 @@ $colors: (
         'bright-magenta': #e8b6e7,
         'bright-cyan': #7adada
 );
+
+@function to-rgb($color) {
+  $RGB: 0;
+  @if $color > 0 {
+    $RGB: 55 + $color * 40;
+  }
+
+  @return $RGB;
+}
+
+$extra-colors: ();
+@for $index from 16 through 231 {
+  $R: floor(($index - 16) / 36);
+  $G: floor((($index - 16) % 36) / 6);
+  $B: floor(($index - 16) % 6);
+
+  $value: rgb(to-rgb($R), to-rgb($G), to-rgb($B));
+  $extra-colors: map-merge($extra-colors, ($index: $value));
+}
+
+$gray-scale-colors: ();
+@for $index from 232 through 255 {
+  $COLOR: ($index - 232) * 10 + 8;
+  $gray-scale-colors: map-merge($gray-scale-colors, ($index: rgb($COLOR, $COLOR, $COLOR)));
+}
+
+$colors: map-merge($base-colors, map-merge($gray-scale-colors, $extra-colors));
+
 
 @each $color, $value in $colors {
   [data-color='#{$color}'] {

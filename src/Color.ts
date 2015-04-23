@@ -8,7 +8,7 @@ module BlackScreen {
 
         'bright-black', 'bright-red', 'bright-green', 'bright-yellow',
         'bright-blue', 'bright-magenta', 'bright-cyan', 'bright-white',
-    ].concat(<Array<any>>_.range(16, 255));
+    ].concat(<Array<any>>_.range(16, 256));
 
     export enum Color {
         Black = <Color>ColorIndex[0],
