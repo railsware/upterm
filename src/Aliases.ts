@@ -5,7 +5,6 @@ var pty = require('pty.js');
 module BlackScreen {
     export class Aliases {
         static aliases: { [index:string]: string };
-        static instance: Aliases;
 
         static initialize(): void {
             this.aliases = {};
