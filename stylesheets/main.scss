@@ -105,9 +105,8 @@ input {
   color: #{map-get($colors, 'white')};
   font-family: 'Menlo', monospace !important;
   font-size: 14px;
-  margin: 8px 0;
   width: 100%;
-  margin-right: -100px;
+  margin: 8px -100px 8px 0;
   padding: 0 8px;
   &:focus {
     -webkit-appearance: none;
@@ -117,9 +116,8 @@ input {
     color: #{map-get($colors, 'white')};
     font-family: 'Menlo', monospace !important;
     font-size: 14px;
-    margin: 8px 0;
     width: 100%;
-    margin-right: -100px;
+    margin: 8px -100px 8px 0;
     padding: 0 8px;
   }
 }
