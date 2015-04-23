@@ -1,11 +1,22 @@
 {
   "name": "black-screen",
   "version": "0.0.1",
+  "description": "A terminal emulator for the 21st century.",
   "main": "src/main.js",
+  "author": "Volodymyr Shatsky <shockone89@gmail.com>",
   "repository": {
     "type": "git",
     "url": "https://github.com/shockone/black-screen.git"
   },
+  "bugs": {
+    "url": "https://github.com/shockone/black-screen/issues"
+  },
+  "keywords": [
+    "terminal",
+    "emulator",
+    "shell",
+    "console"
+  ],
   "dependencies": {
     "pty.js": "latest",
     "jquery": "latest",
@@ -29,5 +40,6 @@
     "cleanup": "rm -rf build",
     "compile-react": "./node_modules/.bin/jsx react.js > compiled/react.js",
     "forest-run": "PATH=node_modules/.bin:$PATH gulp && electron ."
-  }
+  },
+  "license": "MIT"
 }
