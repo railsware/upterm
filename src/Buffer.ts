@@ -1,16 +1,6 @@
 /// <reference path="references.ts" />
 
 module BlackScreen {
-    export interface Attributes {
-        color?: Color;
-        weight?: Weight;
-        underline?: boolean;
-        crossedOut?: boolean;
-    }
-
-    export enum Color { Black, Red, Green, Yellow, Blue, Magenta, Cyan, White }
-    export enum Weight { Normal, Bold, Faint }
-
     export class Buffer extends EventEmitter {
         private storage: Array<Array<Char>> = [];
         public cursor: Cursor = new Cursor();
@@ -83,22 +73,21 @@ module BlackScreen {
             consecutive.push(current);
 
             var children = consecutive.map((group, groupIndex) => {
-                return React.DOM.span({className: this.getClassNames(group.attributes), key: `group-${groupIndex}`}, group.text);
+                return React.DOM.span(
+                    _.merge(this.getHTMLAttributes(group.attributes), { key: `group-${groupIndex}` }),
+                    group.text
+                );
             });
 
             return React.DOM.div({className: 'row', key: `row-${index}`}, null, ...children);
         }
 
 
-        private getClassNames(attributes: Attributes): string {
-            return _.map(<{ [indexer: string]: any }>attributes, (value, key) => {
-                if (value === true) {
-                    return key;
-                } else if (typeof value == 'number') {
-                  var capitalized = _.capitalize(key);
-                    return (<any>BlackScreen)[capitalized][value].toLowerCase();
-                }
-            }).join(' ');
+        private getHTMLAttributes(attributes: Attributes): Object {
+            var htmlAttributes: { [indexer: string]: any } = {};
+            _.each(attributes, (value, key) => { htmlAttributes[`data-${key}`] = value; });
+
+            return htmlAttributes;
         }
 
         private set(position: Position, char: Char): void {
