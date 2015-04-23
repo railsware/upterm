@@ -7,12 +7,11 @@ var options = {
     target: 'compiled',
     source: {
         typeScript: 'src/*.ts',
-        sass: 'stylesheets/*.sass',
+        sass: 'stylesheets/*.scss',
         react: 'react.js'
     },
     config: {
         sass: {
-            indentedSyntax: true,
             errLogToConsole: true
         },
         typeScript: ts.createProject({

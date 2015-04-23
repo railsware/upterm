@@ -54,7 +54,12 @@ module BlackScreen {
                 },
                 inst_c: (collected: any, params: Array<number>, flag: any) => {
                     if (flag == 'm') {
-                        params.forEach((cgr: number) => {
+                        params.forEach((cgr: number, index: number) => {
+                            if (cgr == 48) {
+                                if (params[index + 1] == 5) {
+                                    this.buffer.setAttributes({'background-color': ColorIndex[params[index + 2]]});
+                                }
+                            }
                             this.buffer.setAttributes(Parser.CGRs[cgr] || {});
                         });
 
