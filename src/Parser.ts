@@ -26,6 +26,28 @@ module BlackScreen {
         47: {'background-color': Color.White}
     };
 
+    var CSI = {
+        mode: {
+            alternateScreen: 1049,
+            scrollbar: 30,
+            bracketedPaste: 2004,
+        },
+        flag: {
+            eraseDisplay: 'J',
+            selectGraphicRendition: 'm',
+            cursorPosition: 'H',
+            setMode: 'h',
+            resetMode: 'l'
+        },
+        eraseDisplay: {
+            toEndOfScreen: 0,
+            toBeginningOfScreen: 1,
+            entireScreen: 2,
+        }
+    };
+
+    var DECPrivateMode = '?';
+
     export class Parser {
         private parser: AnsiParser;
 
@@ -53,32 +75,62 @@ module BlackScreen {
                     console.log('flag', flag);
                     this.buffer.write(flag);
                 },
-                inst_c: (collected: any, params: Array<number>, flag: any) => {
-                    if (flag == 'm') {
-                        if (params.length == 0) {
-                            this.buffer.setAttributes(CGR[0]);
-                            return;
-                        }
-
-                        while(params.length) {
-                            var cgr = params.shift();
-
-                            if (cgr == 48) {
-                                var next = params.shift();
-                                if (next == 5) {
-                                    var backgroundColorIndex = params.shift();
-                                    this.buffer.setAttributes({'background-color': ColorIndex[backgroundColorIndex]});
-                                }
-                            } else {
-                                this.buffer.setAttributes(CGR[cgr] || {});
+                inst_c: (collected: any, params: Array<number>, flag: string) => {
+                    switch (flag) {
+                        case CSI.flag.selectGraphicRendition:
+                            if (params.length == 0) {
+                                this.buffer.setAttributes(CGR[0]);
+                                return;
                             }
-                        }
 
-                        console.log('csi', collected, params, flag);
-                    } else if (flag == 'H') {
-                        this.buffer.cursor.moveAbsolute({vertical: params[0], horizontal: params[1]});
-                    } else {
-                        console.error('csi', collected, params, flag);
+                            while(params.length) {
+                                var cgr = params.shift();
+
+                                if (cgr == 48) {
+                                    var next = params.shift();
+                                    if (next == 5) {
+                                        var backgroundColorIndex = params.shift();
+                                        this.buffer.setAttributes({'background-color': ColorIndex[backgroundColorIndex]});
+                                    }
+                                } else {
+                                    this.buffer.setAttributes(CGR[cgr] || {});
+                                }
+                            }
+
+                            console.log('csi', collected, params, flag);
+                            break;
+                        case CSI.flag.cursorPosition:
+                            this.buffer.cursor.moveAbsolute({vertical: params[0], horizontal: params[1]});
+                            break;
+                        case CSI.flag.eraseDisplay:
+                            switch (params[0]) {
+                                case CSI.eraseDisplay.entireScreen:
+                                    this.buffer.clear();
+                                    break;
+                            }
+                            break;
+                        case CSI.flag.setMode:
+                            if (collected != DECPrivateMode) {
+                                return console.error('Private mode sequence should start with a ?. Started with', collected);
+                            }
+
+                            if (params.length != 1) {
+                                return console.error('CSI mode has multiple arguments:', params);
+                            }
+
+                            switch (params[0]) {
+                                case CSI.mode.alternateScreen:
+                                    console.log('Switching to an alternate screen.');
+                                    break;
+                                case CSI.mode.bracketedPaste:
+                                    console.log('Enabling bracketed paste');
+                                    break;
+                                default:
+                                    console.log('Unknown CSI mode:', params[0]);
+                            }
+                            break;
+                        default:
+                            console.error('csi', collected, params, flag);
                     }
                 },
                 inst_e: function (collected: any, flag: any) {

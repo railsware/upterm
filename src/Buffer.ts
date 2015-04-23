@@ -52,6 +52,10 @@ module BlackScreen {
             return React.DOM.pre({className: 'output'}, null, ...this.storage.map(this.renderRow, this));
         }
 
+        clear() {
+            this.storage = [];
+        }
+
         private renderRow(row: Array<Char>, index: number) {
 
             var consecutive: Array<any> = [];
