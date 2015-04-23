@@ -49,7 +49,7 @@ module BlackScreen {
         }
 
         render() {
-            return React.DOM.pre({className: 'output'}, null, ...this.storage.map(this.renderRow, this));
+            return React.createElement('pre', {className: 'output'}, null, ...this.storage.map(this.renderRow, this));
         }
 
         clear() {
@@ -77,13 +77,14 @@ module BlackScreen {
             consecutive.push(current);
 
             var children = consecutive.map((group, groupIndex) => {
-                return React.DOM.span(
+                return React.createElement(
+                    'span',
                     _.merge(this.getHTMLAttributes(group.attributes), { key: `group-${groupIndex}` }),
                     group.text
                 );
             });
 
-            return React.DOM.div({className: 'row', key: `row-${index}`}, null, ...children);
+            return React.createElement('div', {className: 'row', key: `row-${index}`}, null, ...children);
         }
 
 
