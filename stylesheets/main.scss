@@ -28,19 +28,25 @@ $base-colors: (
 }
 
 $extra-colors: ();
-@for $index from 16 through 231 {
-  $R: floor(($index - 16) / 36);
-  $G: floor((($index - 16) % 36) / 6);
-  $B: floor(($index - 16) % 6);
+@for $index from 0 through 215 {
+  $R: floor($index / 36);
+  $G: floor(($index % 36) / 6);
+  $B: floor($index % 6);
 
+  $key: $index + 16;
   $value: rgb(to-rgb($R), to-rgb($G), to-rgb($B));
-  $extra-colors: map-merge($extra-colors, ($index: $value));
+
+  $extra-colors: map-merge($extra-colors, ($key: $value));
 }
 
 $gray-scale-colors: ();
-@for $index from 232 through 255 {
-  $COLOR: ($index - 232) * 10 + 8;
-  $gray-scale-colors: map-merge($gray-scale-colors, ($index: rgb($COLOR, $COLOR, $COLOR)));
+@for $index from 0 through 23 {
+  $COLOR: $index * 10 + 8;
+
+  $key: $index + 232;
+  $value: rgb($COLOR, $COLOR, $COLOR);
+
+  $gray-scale-colors: map-merge($gray-scale-colors, ($key: $value));
 }
 
 $colors: map-merge($base-colors, map-merge($gray-scale-colors, $extra-colors));
