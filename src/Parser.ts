@@ -6,7 +6,7 @@ module BlackScreen {
     export class Parser {
         private parser: AnsiParser;
         private static CGRs: { [indexer: string]: Attributes } = {
-            0: {color: Color.White, weight: Weight.Normal, underline: false},
+            0: {color: Color.White, weight: Weight.Normal, underline: false, 'background-color': Color.Black},
             1: {weight: Weight.Bold},
             2: {weight: Weight.Faint},
             4: {underline: true},
@@ -54,14 +54,19 @@ module BlackScreen {
                 },
                 inst_c: (collected: any, params: Array<number>, flag: any) => {
                     if (flag == 'm') {
-                        params.forEach((cgr: number, index: number) => {
+                        while(params.length) {
+                            var cgr = params.shift();
+
                             if (cgr == 48) {
-                                if (params[index + 1] == 5) {
-                                    this.buffer.setAttributes({'background-color': ColorIndex[params[index + 2]]});
+                                var next = params.shift();
+                                if (next == 5) {
+                                    var backgroundColorIndex = params.shift();
+                                    this.buffer.setAttributes({'background-color': ColorIndex[backgroundColorIndex]});
                                 }
+                            } else {
+                                this.buffer.setAttributes(Parser.CGRs[cgr] || {});
                             }
-                            this.buffer.setAttributes(Parser.CGRs[cgr] || {});
-                        });
+                        }
 
                         console.log('csi', collected, params, flag);
                     } else if (flag == 'H') {

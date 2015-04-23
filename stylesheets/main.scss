@@ -9,13 +9,13 @@ $colors: (
         'cyan': #6EC6C6,
 
         'bright-black': #2D323A,
-        'bright-red': #BF6E7C,
-        'bright-white': #95A2BB,
-        'bright-green': #88B379,
-        'bright-yellow': #D9BD86,
-        'bright-blue': #66A5DF,
-        'bright-magenta': #C699C5,
-        'bright-cyan': #6EC6C6
+        'bright-red': #dd8494,
+        'bright-white': #adbcd7,
+        'bright-green': #9dcc8c,
+        'bright-yellow': #e9cc92,
+        'bright-blue': #6cb2f0,
+        'bright-magenta': #e8b6e7,
+        'bright-cyan': #7adada
 );
 
 @each $color, $value in $colors {
