@@ -4,7 +4,12 @@ var React = require('react');
 
 var Board = React.createClass({
     getInitialState: function () {
-        return {terminal: new Terminal()};
+        var terminal = new Terminal(getDimensions());
+        jQuery(window).resize(function() {
+            terminal.resize(getDimensions());
+        });
+
+        return {terminal: terminal};
     },
     componentDidMount: function () {
         this.state.terminal.on('invocation', function () {
@@ -98,6 +103,14 @@ var CurrentDirectory = React.createClass({
         )
     }
 });
+
+function getDimensions() {
+    var letter = document.getElementById('sizes-calculation');
+    return {
+        columns: Math.floor(window.innerWidth / letter.clientWidth * 10),
+        rows:    Math.floor(window.innerHeight / letter.clientHeight)
+    };
+}
 
 jQuery(document).ready(function () {
     React.render(<Board />, document.getElementById('black-board'));

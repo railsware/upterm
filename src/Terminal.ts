@@ -5,12 +5,10 @@ module BlackScreen {
         invocations: Array<Invocation>;
         currentDirectory: string;
         history: History;
-        private dimensions: Dimensions;
 
-        constructor() {
+        constructor(private dimensions: Dimensions) {
             super();
             this.currentDirectory = process.env.HOME;
-            this.dimensions = {columns: 120, rows: 40};
             this.invocations = [];
             this.history = new History();
 
@@ -31,6 +29,8 @@ module BlackScreen {
         }
 
         resize(dimensions: Dimensions): void {
+            this.dimensions = dimensions;
+
             this.invocations.forEach((invocation) => {
                 invocation.resize(dimensions);
             });
