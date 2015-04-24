@@ -9,7 +9,7 @@ module BlackScreen {
             }
 
             var path = arguments[0];
-            var tokens: [string] = path.split('/');
+            var tokens: Array<string> = path.split('/');
             var firstToken = tokens.shift();
 
             var newDirectory = currentDirectory;
@@ -22,7 +22,7 @@ module BlackScreen {
                     newDirectory = '/';
                     break;
                 case '..':
-                    var parts: [string] = currentDirectory.split('/');
+                    var parts: Array<string> = currentDirectory.split('/');
                     newDirectory = parts.slice(0, parts.length - 1).join('/');
                     break;
                 case '.':
