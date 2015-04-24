@@ -26,7 +26,7 @@ module BlackScreen {
 
         execute(): void {
             var command = this.prompt.getCommand();
-            if (this.isBuiltIn(command)) {
+            if (Command.isBuiltIn(command)) {
                 this.emit('working-directory-changed', Command.cd(this.directory, this.prompt.getArguments()));
                 this.emit('end');
             } else {
@@ -59,14 +59,6 @@ module BlackScreen {
 
         getPrompt(): Prompt {
             return this.prompt;
-        }
-
-        private isBuiltIn(command: String): any {
-            if (command == 'cd') {
-                return true;
-            } else {
-                return false;
-            }
         }
     }
 }

@@ -9,7 +9,7 @@ module BlackScreen {
             }
 
             var path = arguments[0];
-            var tokens = path.split('/');
+            var tokens: [string] = path.split('/');
             var firstToken = tokens.shift();
 
             var newDirectory = currentDirectory;
@@ -22,7 +22,7 @@ module BlackScreen {
                     newDirectory = '/';
                     break;
                 case '..':
-                    var parts = currentDirectory.split('/');
+                    var parts: [string] = currentDirectory.split('/');
                     newDirectory = parts.slice(0, parts.length - 1).join('/');
                     break;
                 case '.':
@@ -36,6 +36,10 @@ module BlackScreen {
             } else {
                 return newDirectory;
             }
+        }
+
+        static isBuiltIn(command: String): any {
+            return command == 'cd';
         }
     }
 }
