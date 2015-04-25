@@ -1,6 +1,7 @@
 var jQuery = require('jquery');
 var Terminal = require('./compiled/terminal');
 var React = require('react');
+var Inspector = require('react-json-inspector');
 
 jQuery(document).ready(function () {
     window.terminal = new Terminal(getDimensions());
@@ -48,10 +49,18 @@ var Invocation = React.createClass({
     },
     componentDidUpdate: scrollToBottom,
     render: function () {
+        var buffer;
+
+        try {
+            buffer = <Inspector data={ JSON.parse(this.props.invocation.getBuffer().toString()) } />;
+        } catch(exception) {
+            buffer = this.props.invocation.getBuffer().render();
+        }
+
         return (
             <div className="invocation">
                 <Prompt prompt={this.props.invocation.getPrompt()}/>
-                {this.props.invocation.getBuffer().render()}
+                {buffer}
             </div>
         );
     }

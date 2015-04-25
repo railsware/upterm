@@ -18,11 +18,12 @@
     "console"
   ],
   "dependencies": {
-    "pty.js": "latest",
     "jquery": "latest",
     "lodash": "latest",
     "node-ansiparser": "latest",
-    "react": "latest"
+    "pty.js": "latest",
+    "react": "latest",
+    "react-json-inspector": "^4.2.2"
   },
   "devDependencies": {
     "electron-prebuilt": "latest",
