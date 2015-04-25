@@ -1,16 +1,14 @@
-li {
-    padding: 2px 4px;
-    list-style-type: none;
-}
+@import '../stylesheets/colors';
 
-li li {
-    margin-left: 16px;
+li {
+    padding: 2px 0;
+    list-style-type: none;
 }
 
 label {
     display: inline-block;
-    margin-right: 16px;
-    color: #B27ECD;
+    margin-right: 0.5em;
+    color: map-get($colors, 'magenta');
 }
 
 .parentNode:before {
@@ -39,23 +37,23 @@ label {
 }
 
 .array.expanded > span {
-    color: #D7D5D8;
+    color: map-get($colors, 'white');
 }
 
 .string > span {
-    color: #88B379;
+    color: map-get($colors, 'green');
 }
 
 .number > span {
-    color: #0B75F5;
+    color: map-get($colors, 'blue');
 }
 
 .boolean > span {
-    color: #08C6CE;
+    color: map-get($colors, 'cyan');
 }
 
 .null > span {
-    color: #DF113A;
+    color: map-get($colors, 'red');
 }
 
 .children-count {
