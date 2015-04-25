@@ -45,9 +45,8 @@ var grabNode = function (key, value) {
  * @return String The object's type
  */
 var objType  = function (obj) {
-    var className = Object.prototype.toString.call(obj).slice(8, -1);
-    return className;
-}
+    return Object.prototype.toString.call(obj).slice(8, -1);
+};
 
 /**
  * Mixin for stopping events from propagating and collapsing our tree all
@@ -60,7 +59,7 @@ var SquashClickEventMixin = {
 };
 
 /**
- * Mixin for setting intial props and state and handling clicks on
+ * Mixin for setting initial props and state and handling clicks on
  * nodes that can be expanded.
  */
 var ExpandedStateHandlerMixin = {
@@ -80,7 +79,7 @@ var ExpandedStateHandlerMixin = {
     componentWillReceiveProps: function () {
         // resets our caches and flags we need to build child nodes again
         this.renderedChildren = [];
-        this.itemString = false
+        this.itemString = false;
         this.needsChildNodes= true;
     }
 };
@@ -165,7 +164,7 @@ var JSONObjectNode = React.createClass({displayName: 'JSONObjectNode',
         if (this.state.expanded && this.needsChildNodes) {
             var obj = this.props.data;
             var childNodes = [];
-            for (k in obj) {
+            for (var k in obj) {
                 if (obj.hasOwnProperty(k)) {
                     childNodes.push( grabNode(k, obj[k]));
                 }
@@ -184,7 +183,7 @@ var JSONObjectNode = React.createClass({displayName: 'JSONObjectNode',
             var obj = this.props.data;
             var len = 0;
             var lenWord = ' Items';
-            for (k in obj) {
+            for (var k in obj) {
                 if (obj.hasOwnProperty(k)) {
                     len += 1;
                 }
