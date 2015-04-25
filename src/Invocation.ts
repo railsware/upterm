@@ -19,7 +19,7 @@ module BlackScreen {
             this.prompt.on('send', () => { this.execute(); });
 
             this.buffer = new Buffer();
-            this.buffer.on('data', _.throttle(() => { this.emit('data'); }, 1000/10));
+            this.buffer.on('data', _.throttle(() => { this.emit('data'); }, 1000/3));
 
             this.parser = new Parser(this.buffer);
         }
