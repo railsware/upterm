@@ -2,6 +2,8 @@
 /// <reference path="Color.ts" />
 /// <reference path="Weight.ts" />
 
+/// <reference path="Utils.ts" />
+
 /// <reference path="EventEmitter.ts" />
 /// <reference path="Aliases.ts" />
 /// <reference path="Dimensions.ts" />

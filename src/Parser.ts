@@ -62,17 +62,17 @@ module BlackScreen {
         private initializeAnsiParser(): AnsiParser {
             return new AnsiParser({
                 inst_p: (text: string) => {
-                    console.log('text', text);
+                    Utils.log('text', text);
 
                     for (var i = 0; i != text.length; ++i) {
                         this.buffer.write(text.charAt(i));
                     }
                 },
                 inst_o: function (s: any) {
-                    console.error('osc', s);
+                    Utils.error('osc', s);
                 },
                 inst_x: (flag: string) => {
-                    console.log('flag', flag);
+                    Utils.log('flag', flag);
                     this.buffer.write(flag);
                 },
                 inst_c: (collected: any, params: Array<number>, flag: string) => {
@@ -97,7 +97,7 @@ module BlackScreen {
                                 }
                             }
 
-                            console.log('csi', collected, params, flag);
+                            Utils.log('csi', collected, params, flag);
                             break;
                         case CSI.flag.cursorPosition:
                             this.buffer.cursor.moveAbsolute({vertical: params[0], horizontal: params[1]});
@@ -120,21 +120,21 @@ module BlackScreen {
 
                             switch (params[0]) {
                                 case CSI.mode.alternateScreen:
-                                    console.log('Switching to an alternate screen.');
+                                    Utils.log('Switching to an alternate screen.');
                                     break;
                                 case CSI.mode.bracketedPaste:
-                                    console.log('Enabling bracketed paste');
+                                    Utils.log('Enabling bracketed paste');
                                     break;
                                 default:
-                                    console.log('Unknown CSI mode:', params[0]);
+                                    Utils.log('Unknown CSI mode:', params[0]);
                             }
                             break;
                         default:
-                            console.error('csi', collected, params, flag);
+                            Utils.error('csi', collected, params, flag);
                     }
                 },
                 inst_e: function (collected: any, flag: any) {
-                    console.error('esc', collected, flag);
+                    Utils.error('esc', collected, flag);
                 }
             });
         }
