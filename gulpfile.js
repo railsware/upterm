@@ -1,13 +1,14 @@
 const gulp = require('gulp');
 const sass = require('gulp-sass');
 const react = require('gulp-react');
+const concat = require('gulp-concat');
 const ts = require('gulp-typescript');
 
 var options = {
     target: 'compiled',
     source: {
         typeScript: 'src/*.ts',
-        sass: 'stylesheets/*.scss',
+        sass: ['stylesheets/*.scss', 'decorators/*.scss'],
         react: 'javascript/react.js'
     },
     config: {
@@ -36,6 +37,7 @@ gulp.task('typescript', function () {
 gulp.task('sass', function () {
     return gulp.src(options.source.sass)
                .pipe(sass(options.config.sass))
+               .pipe(concat('all.css'))
                .pipe(gulp.dest(options.target));
 });
 

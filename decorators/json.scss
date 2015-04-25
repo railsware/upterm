@@ -35,7 +35,7 @@ label {
     cursor: default;
 }
 .array > span:before {
-    content: '[...] ";
+    content: "[...] ";
 }
 
 .array.expanded > span {
