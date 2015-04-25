@@ -235,7 +235,7 @@ var JSONStringNode = React.createClass({displayName: 'JSONStringNode',
         return (
             React.DOM.li({className: "string itemNode", onClick: this.handleClick},
                 React.DOM.label(null, this.props.keyName, ":"),
-                React.DOM.span({className: 'children-count'}, this.props.value)
+                React.DOM.span(null, this.props.value)
             )
         );
     }
@@ -266,7 +266,7 @@ var JSONNullNode = React.createClass({displayName: 'JSONNullNode',
         return (
             React.DOM.li({className: "null itemNode", onClick: this.handleClick},
                 React.DOM.label(null, this.props.keyName, ":"),
-                React.DOM.span({className: 'children-count'}, "null")
+                React.DOM.span(null, "null")
             )
         );
     }
@@ -281,7 +281,7 @@ var JSONBooleanNode = React.createClass({displayName: 'JSONBooleanNode',
         var truthString = (this.props.value) ? 'true' : 'false';
         return (
             React.DOM.li({className: "boolean itemNode " + truthString, onClick: this.handleClick},
-                React.DOM.label({className: 'children-count'}, this.props.keyName, ":"),
+                React.DOM.label(null, this.props.keyName, ":"),
                 React.DOM.span(null, truthString)
             )
         );
