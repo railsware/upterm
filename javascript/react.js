@@ -46,6 +46,7 @@ var Invocation = React.createClass({
             this.forceUpdate();
         }.bind(this));
     },
+    componentDidUpdate: scrollToBottom,
     render: function () {
         return (
             <div className="invocation">
@@ -118,4 +119,8 @@ function getDimensions() {
         columns: Math.floor(window.innerWidth / letter.clientWidth * 10),
         rows:    Math.floor(window.innerHeight / letter.clientHeight)
     };
+}
+
+function scrollToBottom() {
+    jQuery('html body').animate({ scrollTop: jQuery(document).height() }, 0);
 }
