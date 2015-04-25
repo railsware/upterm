@@ -47,4 +47,9 @@ gulp.task('react', function () {
                .pipe(gulp.dest(options.target));
 });
 
+gulp.task('watch', function () {
+    gulp.watch(options.source.sass, ['sass']);
+    gulp.watch(options.source.react, ['react']);
+});
+
 gulp.task('default', ['typescript', 'sass', 'react']);

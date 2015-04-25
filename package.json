@@ -41,7 +41,7 @@
     "install-native": "npm_config_disturl=https://atom.io/download/electron npm_config_target=0.23.0 npm_config_arch=x64 HOME=~/.electron-gyp npm install 'pty.js'",
     "cleanup": "rm -rf build",
     "forest-run": "PATH=node_modules/.bin:$PATH gulp && electron .",
-    "watch-react": "PATH=node_modules/.bin:$PATH jsx --watch javascript/ compiled/"
+    "watch": "PATH=node_modules/.bin:$PATH gulp watch"
   },
   "license": "MIT"
 }
