@@ -1,7 +1,6 @@
 var jQuery = require('jquery');
 var Terminal = require('./compiled/terminal');
 var React = require('react');
-var Inspector = require('react-json-inspector');
 
 jQuery(document).ready(function () {
     window.terminal = new Terminal(getDimensions());
@@ -25,7 +24,7 @@ var Board = React.createClass({
         }
     },
     render: function () {
-        var invocations = this.props.terminal.invocations.map(function (invocation, index) {
+        var invocations = this.props.terminal.invocations.map(function (invocation) {
             return (
                 <Invocation key={invocation.id} invocation={invocation}/>
             )
@@ -52,7 +51,7 @@ var Invocation = React.createClass({
         var buffer;
 
         try {
-            buffer = <Inspector data={ JSON.parse(this.props.invocation.getBuffer().toString()) } />;
+            buffer = <JSONTree data={ JSON.parse(this.props.invocation.getBuffer().toString()) } />;
         } catch(exception) {
             buffer = this.props.invocation.getBuffer().render();
         }
@@ -67,7 +66,7 @@ var Invocation = React.createClass({
 });
 
 var Prompt = React.createClass({
-    getInputNode: function (event) {
+    getInputNode: function () {
         return this.refs.command.getDOMNode()
     },
     handleKeyDown: function (event) {

@@ -1,0 +1,121 @@
+h1 {
+    font-size: 36px;
+    color: #666;
+    margin-bottom: 32px;
+}
+
+li {
+    padding: 2px 4px;
+    letter-spacing: 1px;
+    list-style-type: none;
+}
+
+li li {
+    margin-left: 16px;
+}
+
+label {
+    display: inline-block;
+    margin-right: 16px;
+    color: #75756E;
+}
+
+ol > li > label {
+    color: #ccc;
+}
+
+.parentNode:before {
+    content: "\0025B8 \0000a0";
+    color: #999;
+    margin-left: -13.6px;
+}
+.parentNode.expanded:before {
+    content: "\0025BE \0000a0";
+}
+
+.object > span {
+    color: #049977;
+    font-size: 12px;
+    cursor: default;
+}
+.object > span:before {
+    font-size: 16px;
+    font-family: inconolata, consolas, monospace;
+    content: "{} ";
+}
+
+.object.expanded > span {
+    color: #B3C0BD;
+}
+
+.array > span {
+    color: #C042DF;
+    font-size: 12px;
+    cursor: default;
+}
+.array > span:before {
+    font-size: 16px;
+    font-family: inconolata, consolas, monospace;
+    content: "[] ";
+}
+
+.array.expanded > span {
+    color: #D7D5D8;
+}
+
+.string > span {
+    color: #43413D;
+}
+
+.number > span {
+    color: #0B75F5;
+}
+
+.boolean > span {
+    color: #08C6CE;
+    font-family: inconolata, consolas, monospace;
+}
+
+.null > span {
+    color: #DF113A;
+    font-family: inconolata, consolas, monospace;
+}
+
+footer {
+    font-size: 12px;
+    color: #999;
+    margin-top: 48px;
+    padding-top: 24px;
+    border-top: 1px solid #ccc;
+}
+
+header {
+    margin-bottom: 24px;
+}
+
+button {
+    box-shadow: inset 0px 1px 3px 0px #91b8b3;
+    background: linear-gradient(to bottom, #768d87 5%, #6c7c7c 100%);
+    background-color: #768d87;
+    border-radius: 5px;
+    border: 1px solid #566963;
+    display: inline-block;
+    cursor: pointer;
+    color: #ffffff;
+    font-family: arial;
+    font-size: 15px;
+    font-weight: bold;
+    padding: 8px 12px;
+    text-decoration: none;
+    text-shadow: 0px -1px 0px #2b665e;
+}
+
+button:hover {
+    background-color: #6c7c7c;
+    background: linear-gradient(to bottom, #6c7c7c 5%, #768d87 100%);
+}
+
+.children-count {
+    -webkit-user-select: none;
+    user-select: none;
+}
