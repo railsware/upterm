@@ -17,7 +17,7 @@ li li {
 label {
     display: inline-block;
     margin-right: 16px;
-    color: #75756E;
+    color: #B27ECD;
 }
 
 ol > li > label {
@@ -64,7 +64,7 @@ ol > li > label {
 }
 
 .string > span {
-    color: #43413D;
+    color: #88B379;
 }
 
 .number > span {
