@@ -293,42 +293,9 @@ var JSONBooleanNode = React.createClass({displayName: 'JSONBooleanNode',
  * will render that data, or pass it a `source` URL prop and it will make
  * an XMLHttpRequest for said URL and render that when it loads the data.
  *
- * You can load new data into it by either changing the `data` prop or calling
- * `loadDataFromURL()` on an instance.
- *
  * The first node it draws will be expanded by default.
  */
 var JSONTree = React.createClass({displayName: 'JSONTree',
-    getDefaultProps: function () {
-        return {source: false};
-    },
-    /**
-     * Will try and load data from the given URL and display it
-     */
-    loadDataFromURL: function (url) {
-        var self = this;
-        request = new XMLHttpRequest();
-        request.open('GET', url, true);
-        request.onload = function() {
-            if (request.status >= 200 && request.status < 400){
-                jsonData = JSON.parse(request.responseText);
-                self.setProps({
-                    data: jsonData
-                });
-            } else {
-                console.error("OH NO! Your request was bad.");
-            }
-        };
-        request.onerror = function() {
-            console.error("Connection error");
-        };
-        request.send();
-    },
-    componentDidMount: function() {
-        if (this.props.source) {
-            this.loadDataFromURL(this.props.source);
-        }
-    },
     render: function() {
         var nodeType = objType(this.props.data);
         var rootNode;
