@@ -8,7 +8,7 @@ var options = {
     source: {
         typeScript: 'src/*.ts',
         sass: 'stylesheets/*.scss',
-        react: 'react.js'
+        react: 'javascript/react.js'
     },
     config: {
         sass: {
