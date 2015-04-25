@@ -38,8 +38,8 @@
     "install-all": "rm -rf node_modules && npm update && npm run install-native && npm install && npm run cleanup",
     "install-native": "npm_config_disturl=https://atom.io/download/electron npm_config_target=0.23.0 npm_config_arch=x64 HOME=~/.electron-gyp npm install 'pty.js'",
     "cleanup": "rm -rf build",
-    "compile-react": "./node_modules/.bin/jsx react.js > compiled/react.js",
-    "forest-run": "PATH=node_modules/.bin:$PATH gulp && electron ."
+    "forest-run": "PATH=node_modules/.bin:$PATH gulp && electron .",
+    "watch-react": "PATH=node_modules/.bin:$PATH jsx --watch javascript/ compiled/"
   },
   "license": "MIT"
 }
