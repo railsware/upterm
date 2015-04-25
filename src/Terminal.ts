@@ -9,12 +9,11 @@ module BlackScreen {
         constructor(private dimensions: Dimensions) {
             super();
             this.currentDirectory = process.env.HOME;
-            this.invocations = [];
             this.history = new History();
 
             Aliases.initialize();
 
-            this.createInvocation();
+            this.clearInvocations();
         }
 
         createInvocation(): void {
@@ -34,6 +33,11 @@ module BlackScreen {
             this.invocations.forEach((invocation) => {
                 invocation.resize(dimensions);
             });
+        }
+
+        clearInvocations(): void {
+            this.invocations = [];
+            this.createInvocation();
         }
     }
 }

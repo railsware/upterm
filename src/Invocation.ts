@@ -9,6 +9,7 @@ module BlackScreen {
         private parser: Parser;
         private prompt: Prompt;
         private buffer: Buffer;
+        public id: string;
 
         constructor(private directory: string,
                     private dimensions: Dimensions,
@@ -22,6 +23,7 @@ module BlackScreen {
             this.buffer.on('data', _.throttle(() => { this.emit('data'); }, 1000/3));
 
             this.parser = new Parser(this.buffer);
+            this.id = `invocation-${new Date().getTime()}`
         }
 
         execute(): void {

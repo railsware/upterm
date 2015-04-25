@@ -2,32 +2,39 @@ var jQuery = require('jquery');
 var Terminal = require('./compiled/terminal');
 var React = require('react');
 
-var Board = React.createClass({
-    getInitialState: function () {
-        var terminal = new Terminal(getDimensions());
-        jQuery(window).resize(function() {
-            terminal.resize(getDimensions());
-        });
+jQuery(document).ready(function () {
+    window.terminal = new Terminal(getDimensions());
 
-        return {terminal: terminal};
-    },
+    jQuery(window).resize(function() {
+        terminal.resize(getDimensions());
+    });
+
+    React.render(<Board terminal={window.terminal}/>, document.getElementById('black-board'));
+});
+
+var Board = React.createClass({
     componentDidMount: function () {
-        this.state.terminal.on('invocation', function () {
-            this.forceUpdate();
-        }.bind(this));
+        this.props.terminal.on('invocation', this.forceUpdate.bind(this));
+    },
+    handleKeyDown: function (event) {
+        // Ctrl+l
+        if (event.ctrlKey && event.keyCode === 76) {
+            this.props.terminal.clearInvocations();
+            event.stopPropagation();
+        }
     },
     render: function () {
-        var invocations = this.state.terminal.invocations.map(function (invocation, index) {
+        var invocations = this.props.terminal.invocations.map(function (invocation, index) {
             return (
-                <Invocation key={index} invocation={invocation}/>
+                <Invocation key={invocation.id} invocation={invocation}/>
             )
         });
         return (
-            <div id="board">
+            <div id="board" onKeyDown={this.handleKeyDown}>
                 <div id="invocations">
                     {invocations}
                 </div>
-                <StatusLine currentWorkingDirectory={this.state.terminal.currentDirectory}/>
+                <StatusLine currentWorkingDirectory={this.props.terminal.currentDirectory}/>
             </div>
         );
     }
@@ -56,6 +63,7 @@ var Prompt = React.createClass({
     handleKeyDown: function (event) {
         if (event.keyCode == 13) {
             this.props.prompt.send(this.getInputNode().value);
+            event.stopPropagation();
         }
 
         // Ctrl+P, ↑.
@@ -64,15 +72,15 @@ var Prompt = React.createClass({
             if (typeof prevCommand != 'undefined') {
                 this.getInputNode().value = prevCommand;
             }
+            event.stopPropagation();
         }
 
         // Ctrl+N, ↓.
         if ((event.ctrlKey && event.keyCode === 78) || event.keyCode === 40) {
             var command = this.props.prompt.history.getNext();
             this.getInputNode().value = command || '';
+            event.stopPropagation();
         }
-
-        event.stopPropagation();
     },
     render: function () {
         return (
@@ -111,8 +119,3 @@ function getDimensions() {
         rows:    Math.floor(window.innerHeight / letter.clientHeight)
     };
 }
-
-jQuery(document).ready(function () {
-    React.render(<Board />, document.getElementById('black-board'));
-});
-
