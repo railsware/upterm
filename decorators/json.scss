@@ -1,62 +1,64 @@
 @import '../stylesheets/colors';
 
-li {
+.json-tree {
+  li {
     padding: 2px 0;
     list-style-type: none;
-}
+  }
 
-label {
+  label {
     display: inline-block;
     margin-right: 0.5em;
     color: map-get($colors, 'magenta');
-}
+  }
 
-.parentNode:before {
+  .parentNode:before {
     content: "\0025B8 \0000a0";
     margin-left: -1.2em;
-}
-.parentNode.expanded:before {
+  }
+  .parentNode.expanded:before {
     content: "\0025BE \0000a0";
-}
+  }
 
-.object > span {
+  .object > span {
     cursor: default;
-}
-.object > span:before {
+  }
+  .object > span:before {
     content: "{...} ";
-}
+  }
 
-.object.expanded > span {
-}
+  .object.expanded > span {
+  }
 
-.array > span {
+  .array > span {
     cursor: default;
-}
-.array > span:before {
+  }
+  .array > span:before {
     content: "[...] ";
-}
+  }
 
-.array.expanded > span {
+  .array.expanded > span {
     color: map-get($colors, 'white');
-}
+  }
 
-.string > span {
+  .string > span {
     color: map-get($colors, 'green');
-}
+  }
 
-.number > span {
+  .number > span {
     color: map-get($colors, 'blue');
-}
+  }
 
-.boolean > span {
+  .boolean > span {
     color: map-get($colors, 'cyan');
-}
+  }
 
-.null > span {
+  .null > span {
     color: map-get($colors, 'red');
-}
+  }
 
-.children-count {
+  .children-count {
     -webkit-user-select: none;
     user-select: none;
+  }
 }

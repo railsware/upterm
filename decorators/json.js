@@ -340,7 +340,7 @@ var JSONTree = React.createClass({displayName: 'JSONTree',
             console.error("How did you manage that?");
         }
         return (
-            React.DOM.ul({className: "json_tree"},
+            React.DOM.ul({className: "json-tree"},
                 rootNode
             )
         );
