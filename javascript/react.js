@@ -10,6 +10,10 @@ jQuery(document).ready(function () {
     });
 
     React.render(<Board terminal={window.terminal}/>, document.getElementById('black-board'));
+
+    jQuery(document).keydown(function(event) {
+        focusLastInput(event);
+    });
 });
 
 var Board = React.createClass({
@@ -167,4 +171,10 @@ function getDimensions() {
 
 function scrollToBottom() {
     jQuery('html body').animate({ scrollTop: jQuery(document).height() }, 0);
+}
+
+function focusLastInput(event) {
+    if (event.target.nodeName != 'INPUT') {
+        jQuery('input').last().focus();
+    }
 }
