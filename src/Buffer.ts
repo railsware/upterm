@@ -56,6 +56,10 @@ module BlackScreen {
             this.storage = [];
         }
 
+        isEmpty(): boolean {
+            return this.storage.length === 0;
+        }
+
         private renderRow(row: Array<Char>, index: number) {
 
             var consecutive: Array<any> = [];

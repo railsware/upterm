@@ -18,6 +18,7 @@
     "console"
   ],
   "dependencies": {
+    "font-awesome": "^4.3.0",
     "jquery": "latest",
     "lodash": "latest",
     "node-ansiparser": "latest",

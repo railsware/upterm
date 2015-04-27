@@ -47,20 +47,57 @@ var Invocation = React.createClass({
         }.bind(this));
     },
     componentDidUpdate: scrollToBottom,
+    getInitialState: function() {
+        return { decorate: false };
+    },
     render: function () {
-        var buffer;
+        var buffer, decorationToggle;
 
-        try {
-            buffer = <JSONTree data={ JSON.parse(this.props.invocation.getBuffer().toString()) } />;
-        } catch(exception) {
+        if (this.state.decorate) {
+            try {
+                buffer = <JSONTree data={ JSON.parse(this.props.invocation.getBuffer().toString()) } />;
+            } catch(exception) {
+                buffer = this.props.invocation.getBuffer().render();
+            }
+        } else {
             buffer = this.props.invocation.getBuffer().render();
         }
+
+        if (this.props.invocation.hasOutput()) {
+            decorationToggle = <DecorationToggle invocation={this}/>;
+        }
+
 
         return (
             <div className="invocation">
                 <Prompt prompt={this.props.invocation.getPrompt()}/>
+                {decorationToggle}
                 {buffer}
             </div>
+        );
+    }
+});
+
+var DecorationToggle = React.createClass({
+    getInitialState: function() {
+        return {enabled: this.props.invocation.state.decorate};
+    },
+    handleClick: function() {
+        var newState = !this.state.enabled;
+        this.setState({enabled: newState});
+        this.props.invocation.setState({decorate: newState});
+    },
+    render: function () {
+        var classes = ['decoration-toggle'];
+
+        if (!this.state.enabled) {
+            classes.push('disabled');
+        }
+
+        return (
+            <a href="#" className={classes.join(' ')} onClick={this.handleClick}>
+                <i className="fa fa-magic"></i>
+            </a>
         );
     }
 });

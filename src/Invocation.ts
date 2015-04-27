@@ -47,6 +47,10 @@ module BlackScreen {
             }
         }
 
+        hasOutput(): boolean {
+            return !this.buffer.isEmpty();
+        }
+
         resize(dimensions: Dimensions) {
             this.dimensions = dimensions;
 
