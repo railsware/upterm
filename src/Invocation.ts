@@ -59,6 +59,24 @@ module BlackScreen {
             }
         }
 
+        canBeDecorated(): boolean {
+            for (var Decorator of Decorators.list) {
+                if ((new Decorator(this)).isApplicable()) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        decorate(): any {
+            for (var Decorator of Decorators.list) {
+                var decorator: Decorators.Base = new Decorator(this);
+                if (decorator.isApplicable()) {
+                    return decorator.decorate();
+                }
+            }
+        }
+
         getBuffer(): Buffer {
             return this.buffer;
         }

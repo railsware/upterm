@@ -43,30 +43,29 @@ var Board = React.createClass({
 var Invocation = React.createClass({
     componentDidMount: function () {
         this.props.invocation.on('data', function () {
-            this.forceUpdate();
+            this.setState({ canBeDecorated: this.props.invocation.canBeDecorated()});
         }.bind(this));
     },
     componentDidUpdate: scrollToBottom,
+
     getInitialState: function() {
-        return { decorate: false };
+        return {
+            decorate: false,
+            canBeDecorated: this.props.invocation.canBeDecorated()
+        };
     },
     render: function () {
         var buffer, decorationToggle;
 
-        if (this.state.decorate) {
-            try {
-                buffer = <JSONTree data={ JSON.parse(this.props.invocation.getBuffer().toString()) } />;
-            } catch(exception) {
-                buffer = this.props.invocation.getBuffer().render();
-            }
+        if (this.state.decorate && this.state.canBeDecorated) {
+            buffer = this.props.invocation.decorate();
         } else {
             buffer = this.props.invocation.getBuffer().render();
         }
 
-        if (this.props.invocation.hasOutput()) {
+        if (this.props.invocation.canBeDecorated()) {
             decorationToggle = <DecorationToggle invocation={this}/>;
         }
-
 
         return (
             <div className="invocation">

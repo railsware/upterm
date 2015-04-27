@@ -1,0 +1,36 @@
+0 info it worked if it ends with ok
+1 verbose cli [ 'node', '/usr/local/bin/npm', 'run', 'watch' ]
+2 info using npm@2.7.5
+3 info using node@v0.12.2
+4 verbose node symlink /usr/local/bin/node
+5 verbose run-script [ 'prewatch', 'watch', 'postwatch' ]
+6 info prewatch black-screen@0.0.1
+7 info watch black-screen@0.0.1
+8 verbose unsafe-perm in lifecycle true
+9 info black-screen@0.0.1 Failed to exec watch script
+10 verbose stack Error: black-screen@0.0.1 watch: `PATH=node_modules/.bin:$PATH gulp watch`
+10 verbose stack Exit status 1
+10 verbose stack     at EventEmitter.<anonymous> (/usr/local/lib/node_modules/npm/lib/utils/lifecycle.js:213:16)
+10 verbose stack     at EventEmitter.emit (events.js:110:17)
+10 verbose stack     at ChildProcess.<anonymous> (/usr/local/lib/node_modules/npm/lib/utils/spawn.js:14:12)
+10 verbose stack     at ChildProcess.emit (events.js:110:17)
+10 verbose stack     at maybeClose (child_process.js:1015:16)
+10 verbose stack     at Process.ChildProcess._handle.onexit (child_process.js:1087:5)
+11 verbose pkgid black-screen@0.0.1
+12 verbose cwd /Users/me/dev/black-screen
+13 error Darwin 14.3.0
+14 error argv "node" "/usr/local/bin/npm" "run" "watch"
+15 error node v0.12.2
+16 error npm  v2.7.5
+17 error code ELIFECYCLE
+18 error black-screen@0.0.1 watch: `PATH=node_modules/.bin:$PATH gulp watch`
+18 error Exit status 1
+19 error Failed at the black-screen@0.0.1 watch script 'PATH=node_modules/.bin:$PATH gulp watch'.
+19 error This is most likely a problem with the black-screen package,
+19 error not with npm itself.
+19 error Tell the author that this fails on your system:
+19 error     PATH=node_modules/.bin:$PATH gulp watch
+19 error You can get their info via:
+19 error     npm owner ls black-screen
+19 error There is likely additional logging output above.
+20 verbose exit [ 1, true ]

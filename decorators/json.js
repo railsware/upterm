@@ -1,3 +1,4 @@
+var React = require('react');
 /** @jsx React.DOM */
 
 /*
@@ -312,3 +313,5 @@ var JSONTree = React.createClass({displayName: 'JSONTree',
         );
     }
 });
+
+module.exports = JSONTree;
