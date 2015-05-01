@@ -1,0 +1,9 @@
+@import '../stylesheets/colors';
+
+.git-diff-new {
+  color: map-get($colors, 'green')
+}
+
+.git-diff-old {
+  color: map-get($colors, 'red')
+}

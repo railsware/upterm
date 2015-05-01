@@ -27,7 +27,8 @@ module BlackScreen {
         }
 
         execute(): void {
-            var command = this.prompt.getCommand();
+            var command = this.prompt.getCommandName();
+
             if (Command.isBuiltIn(command)) {
                 this.emit('working-directory-changed', Command.cd(this.directory, this.prompt.getArguments()));
                 this.emit('end');

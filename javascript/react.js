@@ -54,7 +54,7 @@ var Invocation = React.createClass({
 
     getInitialState: function() {
         return {
-            decorate: false,
+            decorate: true,
             canBeDecorated: this.props.invocation.canBeDecorated()
         };
     },

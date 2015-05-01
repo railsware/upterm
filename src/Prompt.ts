@@ -24,19 +24,27 @@ module BlackScreen {
             this.emit('send');
         }
 
-        getCommand(): string {
+        getCommandName(): string {
             return this.expandCommand(this.buffer.toString())[0];
 
         }
 
         getArguments(): Array<string> {
-            return this.expandCommand(this.buffer.toString()).slice(1);
+            return this.getCommand().slice(1);
+        }
+
+        getCommand(): Array<string> {
+            return this.expandCommand(this.buffer.toString())
         }
 
         private expandCommand(command: string): Array<string> {
             // Split by comma, but not inside quotes.
             // http://stackoverflow.com/questions/16261635/javascript-split-string-by-space-but-ignore-space-in-quotes-notice-not-to-spli
             var parts = command.match(/(?:[^\s']+|'[^']*')+/g);
+
+            if (!parts) {
+                return [];
+            }
             var commandName = parts.shift();
 
             var alias: string = Aliases.find(commandName);

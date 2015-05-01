@@ -37,11 +37,15 @@ module BlackScreen {
         }
 
         toString(): string {
+            return this.toLines().join('\n');
+        }
+
+        toLines(): Array<string> {
             return this.storage.map((row) => {
                 return row.map((char) => {
                     return char.toString();
                 }).join('')
-            }).join('\n');
+            });
         }
 
         map<R>(callback: (row: Array<Char>, index: number) => R): Array<R> {

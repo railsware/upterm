@@ -20,6 +20,7 @@
 
 /// <reference path="decorators/Base.ts" />
 /// <reference path="decorators/Json.ts" />
+/// <reference path="decorators/GitDiff.ts" />
 /// <reference path="decorators/List.ts" />
 
 /// <reference path="../dts/AnsiParser.d.ts" />
