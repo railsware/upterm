@@ -10,8 +10,14 @@ module BlackScreen {
             super();
         }
 
-        write(raw: string): void {
-            var char = new Char(raw, _.clone(this.attributes));
+        writeString(string: string, attributes = this.attributes): void {
+            for (var i = 0; i != string.length; ++i) {
+                this.write(string.charAt(i), attributes);
+            }
+        }
+
+        write(raw: string, attributes = this.attributes): void {
+            var char = new Char(raw, _.clone(attributes));
 
             if (char.isSpecial()) {
                 switch (char.getCharCode()) {

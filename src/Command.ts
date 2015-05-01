@@ -1,5 +1,7 @@
 /// <reference path="references.ts" />
 
+var fs = require('fs');
+
 module BlackScreen {
     // A class representing built in commands
     export class Command {
@@ -34,6 +36,14 @@ module BlackScreen {
             if (tokens.length) {
                 return this.cd(newDirectory, [tokens.join('/')]);
             } else {
+                if (!fs.existsSync(newDirectory)) {
+                    throw new Error(`The directory ${newDirectory} doesn't exist.`);
+                }
+
+                if (!fs.statSync(newDirectory).isDirectory()) {
+                    throw new Error(`${newDirectory} is not a directory.`);
+                }
+
                 return newDirectory;
             }
         }

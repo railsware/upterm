@@ -30,7 +30,13 @@ module BlackScreen {
             var command = this.prompt.getCommandName();
 
             if (Command.isBuiltIn(command)) {
-                this.emit('working-directory-changed', Command.cd(this.directory, this.prompt.getArguments()));
+                try {
+                    var newDirectory = Command.cd(this.directory, this.prompt.getArguments());
+                    this.emit('working-directory-changed', newDirectory);
+                } catch (error) {
+                    this.buffer.writeString(error.message, {color: Color.Red});
+                }
+
                 this.emit('end');
             } else {
                 this.command = pty.spawn(command, this.prompt.getArguments(), {

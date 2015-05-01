@@ -16,9 +16,7 @@ module BlackScreen {
         }
 
         send(value: string): void {
-            for(var i = 0; i != value.length; i++) {
-                this.buffer.write(value.charAt(i));
-            }
+            this.buffer.writeString(value);
 
             this.history.append(value);
             this.emit('send');
