@@ -5,12 +5,12 @@ var fs = require('fs');
 module BlackScreen {
     // A class representing built in commands
     export class Command {
-        static cd(currentDirectory: string, arguments: Array<string>): string {
-            if (!arguments.length) {
+        static cd(currentDirectory: string, args: Array<string>): string {
+            if (!args.length) {
                 return process.env.HOME;
             }
 
-            var path = arguments[0];
+            var path = args[0];
             var tokens: Array<string> = path.split('/');
             var firstToken = tokens.shift();
 
