@@ -73,7 +73,7 @@ var Invocation = React.createClass({
 
         return (
             <div className="invocation">
-                <Prompt prompt={this.props.invocation.getPrompt()}/>
+                <Prompt prompt={this.props.invocation.getPrompt()} status={this.props.invocation.status}/>
                 {decorationToggle}
                 {buffer}
             </div>
@@ -132,8 +132,10 @@ var Prompt = React.createClass({
         }
     },
     render: function () {
+        var classes = ['prompt', this.props.status].join(' ');
+
         return (
-            <div className="prompt">
+            <div className={classes}>
                 <div className="prompt-decoration">
                     <div className="arrow"></div>
                 </div>

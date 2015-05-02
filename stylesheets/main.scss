@@ -35,6 +35,16 @@ body, pre {
   height: 16px;
 }
 
+.prompt.failure {
+  .prompt-decoration {
+    background-color: map-get($colors, 'red');
+  }
+
+  .arrow {
+    border-color: transparent transparent transparent map-get($colors, 'red');
+  }
+}
+
 .arrow {
   width: 0;
   height: 0;

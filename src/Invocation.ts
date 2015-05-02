@@ -10,6 +10,7 @@ module BlackScreen {
         private prompt: Prompt;
         private buffer: Buffer;
         public id: string;
+        public status: Status = Status.NotStarted;
 
         constructor(private directory: string,
                     private dimensions: Dimensions,
