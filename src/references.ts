@@ -16,6 +16,7 @@
 /// <reference path="Prompt.ts" />
 /// <reference path="Invocation.ts" />
 /// <reference path="Position.ts" />
+/// <reference path="Status.ts" />
 /// <reference path="Terminal.ts" />
 
 /// <reference path="decorators/Base.ts" />
