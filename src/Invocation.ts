@@ -49,7 +49,12 @@ module BlackScreen {
 
                 this.command.on('data', (data: string) => {
                     this.parser.parse(data);
-                }).on('end', () => {
+                }).on('exit', (code: number, signal: string) => {
+                    if (code === 0) {
+                        this.status = Status.Success;
+                    } else {
+                        this.status = Status.Failure;
+                    }
                     this.emit('end');
                 })
             }

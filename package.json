@@ -22,7 +22,7 @@
     "jquery": "latest",
     "lodash": "latest",
     "node-ansiparser": "latest",
-    "pty.js": "latest",
+    "pty.js": "shockone/pty.js",
     "react": "latest",
     "react-json-inspector": "^4.2.2"
   },
@@ -39,7 +39,7 @@
   },
   "scripts": {
     "install-all": "rm -rf node_modules && npm update && npm run install-native && npm install && npm run cleanup",
-    "install-native": "npm_config_disturl=https://atom.io/download/electron npm_config_target=0.23.0 npm_config_arch=x64 HOME=~/.electron-gyp npm install 'pty.js'",
+    "install-native": "npm_config_disturl=https://atom.io/download/electron npm_config_target=0.25.2 npm_config_arch=x64 HOME=~/.electron-gyp npm install 'pty.js'",
     "cleanup": "rm -rf build",
     "forest-run": "PATH=node_modules/.bin:$PATH gulp && electron .",
     "watch": "PATH=node_modules/.bin:$PATH gulp watch"
