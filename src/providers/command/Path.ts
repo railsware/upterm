@@ -10,20 +10,13 @@ module BlackScreen {
                     super();
 
                     this.paths.forEach((path) => {
-                        fs.exists(path, (pathExists) => {
-                            if (pathExists) {
-                                fs.stat(path, (error, pathStat) => {
-                                    if (pathStat.isDirectory()) {
-                                        fs.readdir(path, (error, files) => {
-                                            var executableNames = files.map((fileName) => {
-                                                return fileName.split('/').pop();
-                                            });
-                                            this.executables = this.executables.concat(executableNames);
-                                        })
-                                    }
-                                });
-                            }
-                        });
+                        Utils.filesIn(path, (files) => {
+                            var executableNames = files.map((fileName) => {
+                                return fileName.split('/').pop();
+                            });
+
+                            this.executables = this.executables.concat(executableNames);
+                        })
                     });
                 }
             }
