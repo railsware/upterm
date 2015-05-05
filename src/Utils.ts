@@ -16,12 +16,12 @@ module BlackScreen {
                     return;
                 }
 
-                fs.stat(directory, (error, pathStat) => {
+                fs.stat(directory, (error: NodeJS.ErrnoException, pathStat) => {
                     if (!pathStat.isDirectory()) {
                         return;
                     }
 
-                    fs.readdir(directory, (error, files) => {
+                    fs.readdir(directory, (error: NodeJS.ErrnoException, files: Array<string>) => {
                         if (error) {
                             return;
                         }

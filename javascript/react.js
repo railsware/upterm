@@ -111,7 +111,7 @@ var Prompt = React.createClass({
     },
     handleKeyUp: function (event) {
         this.props.prompt.buffer.setTo(this.getInputNode().value);
-        console.log(this.props.prompt.getSuggestions());
+        //console.log(this.props.prompt.getSuggestions());
     },
     handleKeyDown: function (event) {
         if (event.keyCode == 13) {
