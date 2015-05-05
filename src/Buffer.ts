@@ -51,7 +51,7 @@ module BlackScreen {
             return this.toLines().join('\n');
         }
 
-        toLines(): Array<string> {
+        toLines(): string[] {
             return this.storage.map((row) => {
                 return row.map((char) => {
                     return char.toString();
@@ -59,7 +59,7 @@ module BlackScreen {
             });
         }
 
-        map<R>(callback: (row: Array<Char>, index: number) => R): Array<R> {
+        map<R>(callback: (row: Array<Char>, index: number) => R): R[] {
             return this.storage.map(callback);
         }
 
