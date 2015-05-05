@@ -35,6 +35,7 @@ module BlackScreen {
                     var newDirectory = Command.cd(this.directory, this.prompt.getArguments());
                     this.emit('working-directory-changed', newDirectory);
                 } catch (error) {
+                    this.status = Status.Failure;
                     this.buffer.writeString(error.message, {color: Color.Red});
                 }
 
