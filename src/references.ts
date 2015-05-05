@@ -6,6 +6,7 @@
 
 /// <reference path="EventEmitter.ts" />
 /// <reference path="Aliases.ts" />
+/// <reference path="Autocompletion.ts" />
 /// <reference path="Dimensions.ts" />
 /// <reference path="Buffer.ts" />
 /// <reference path="Char.ts" />
@@ -23,6 +24,9 @@
 /// <reference path="decorators/Json.ts" />
 /// <reference path="decorators/GitDiff.ts" />
 /// <reference path="decorators/List.ts" />
+
+/// <reference path="providers/command/Base.ts" />
+/// <reference path="providers/command/Path.ts" />
 
 /// <reference path="../dts/AnsiParser.d.ts" />
 /// <reference path="../dts/ObjectChange.d.ts" />

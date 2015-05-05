@@ -109,6 +109,10 @@ var Prompt = React.createClass({
     getInputNode: function () {
         return this.refs.command.getDOMNode()
     },
+    handleKeyUp: function (event) {
+        this.props.prompt.buffer.setTo(this.getInputNode().value);
+        console.log(this.props.prompt.getSuggestions());
+    },
     handleKeyDown: function (event) {
         if (event.keyCode == 13) {
             this.props.prompt.send(this.getInputNode().value);
@@ -139,7 +143,12 @@ var Prompt = React.createClass({
                 <div className="prompt-decoration">
                     <div className="arrow"></div>
                 </div>
-                <input onKeyDown={this.handleKeyDown} type="text" ref="command" autoFocus="autofocus"/>
+
+                <input onKeyDown={this.handleKeyDown}
+                       onKeyUp={this.handleKeyUp}
+                       type="text"
+                       ref="command"
+                       autoFocus="autofocus"/>
             </div>
         )
     }

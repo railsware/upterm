@@ -16,6 +16,11 @@ module BlackScreen {
             }
         }
 
+        setTo(string: string, attributes = this.attributes): void {
+            this.clear();
+            this.writeString(string, attributes)
+        }
+
         write(raw: string, attributes = this.attributes): void {
             var char = new Char(raw, _.clone(attributes));
 
