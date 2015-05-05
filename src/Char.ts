@@ -1,7 +1,6 @@
 /// <reference path="references.ts" />
 
 var React = require('react');
-var _: _.LoDashStatic = require('lodash');
 
 module BlackScreen {
     export enum CharCode {
