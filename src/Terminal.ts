@@ -1,9 +1,10 @@
 import fs = require('fs');
 import _ = require('lodash');
-import i = require('Interfaces');
+import i = require('./Interfaces');
 import events = require('events')
-import Invocation = require('Invocation')
-import Aliases = require('Aliases')
+import Invocation = require('./Invocation')
+import Aliases = require('./Aliases')
+import History = require('./History')
 
 class Terminal extends events.EventEmitter {
     invocations: Array<Invocation>;

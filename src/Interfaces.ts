@@ -1,4 +1,4 @@
-import e = require('Enums');
+import e = require('./Enums');
 
 export interface Dimensions {
     columns: number;

@@ -1,7 +1,8 @@
 import events = require('events');
-import Autocompletion = require('Autocompletion');
-import Buffer = require('Buffer');
-import Aliases = require('Aliases');
+import Autocompletion = require('./Autocompletion');
+import Buffer = require('./Buffer');
+import Aliases = require('./Aliases');
+import History = require('./History');
 
 class Prompt extends events.EventEmitter {
     private buffer: Buffer;

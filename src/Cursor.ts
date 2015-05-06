@@ -1,4 +1,4 @@
-import i = require('Interfaces');
+import i = require('./Interfaces');
 
 class Cursor {
     constructor(private position: i.Position = {column: 0, row: 0}) {

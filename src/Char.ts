@@ -1,8 +1,8 @@
 /// <reference path="references.ts" />
 
 var React = require('react');
-import i = require('Interfaces');
-import e = require('Enums');
+import i = require('./Interfaces');
+import e = require('./Enums');
 
 class Char {
     constructor(private char: string, private attributes: i.Attributes) {

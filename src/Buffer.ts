@@ -1,9 +1,10 @@
 import events = require('events');
-import Char = require('Char');
-import Cursor = require('Cursor');
+import Char = require('./Char');
+import Cursor = require('./Cursor');
 import React = require('react');
-import i = require('Interfaces');
-import e = require('Enums');
+import i = require('./Interfaces');
+import e = require('./Enums');
+import _ = require('lodash');
 
 class Buffer extends events.EventEmitter {
     private storage: Array<Array<Char>> = [];

@@ -1,4 +1,4 @@
-import Base = require('Base');
+import Base = require('./Base');
 import Utils = require('../../Utils');
 
 class Path extends Base {
