@@ -1,6 +1,7 @@
 import events = require('events');
 import Char = require('Char');
 import Cursor = require('Cursor');
+import React = require('react');
 import i = require('Interfaces');
 import e = require('Enums');
 
@@ -118,7 +119,7 @@ class Buffer extends events.EventEmitter {
         return htmlAttributes;
     }
 
-    private set(position: Position, char: Char): void {
+    private set(position: i.Position, char: Char): void {
         if (!this.hasRow(position.row)) {
             this.addRow(position.row);
         }

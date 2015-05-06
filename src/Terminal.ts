@@ -5,7 +5,7 @@ import events = require('events')
 import Invocation = require('Invocation')
 import Aliases = require('Aliases')
 
-export class Terminal extends events.EventEmitter {
+class Terminal extends events.EventEmitter {
     invocations: Array<Invocation>;
     currentDirectory: string;
     history: History;
@@ -75,7 +75,7 @@ export class Terminal extends events.EventEmitter {
 
     private restore(): void {
         try {
-            var state = JSON.parse(fs.readFileSync(this.stateFileName));
+            var state = JSON.parse(fs.readFileSync(this.stateFileName).toString());
         } catch (error) {
             state = this.serializableProperties;
         }

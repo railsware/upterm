@@ -1,5 +1,5 @@
 import Base = require('Base');
-import Utils = require('../Utils');
+import Utils = require('../../Utils');
 
 class Path extends Base {
     private paths: Array<string> = process.env.PATH.split(':');

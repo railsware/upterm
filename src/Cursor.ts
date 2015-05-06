@@ -29,7 +29,7 @@ class Cursor {
         this.moveRelative({horizontal: 1});
     }
 
-    getPosition(): Position {
+    getPosition(): i.Position {
         return this.position;
     }
 

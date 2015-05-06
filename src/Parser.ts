@@ -3,6 +3,7 @@ var AnsiParser: AnsiParserConstructor = require('node-ansiparser');
 import e = require('Enums');
 import i = require('Interfaces');
 import Utils = require('Utils');
+import Buffer = require('Buffer');
 
 import Color = e.Color;
 import Weight = e.Weight;

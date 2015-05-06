@@ -1,5 +1,6 @@
 var JSONTree = require('../decorators/json');
 import Base = require('Base');
+import React = require('react');
 
 class Json extends Base {
     decorate(): any {

@@ -1,5 +1,6 @@
 import _ = require('lodash');
 import Base = require('Base');
+import React = require('react');
 
 class GitDiff extends Base {
     decorate(): any {
