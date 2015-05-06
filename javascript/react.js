@@ -1,5 +1,5 @@
 var jQuery = require('jquery');
-var Terminal = require('./compiled/terminal');
+var Terminal = require('./compiled/Terminal');
 var React = require('react');
 
 jQuery(document).ready(function () {

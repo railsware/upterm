@@ -7,7 +7,7 @@ const ts = require('gulp-typescript');
 var options = {
     target: 'compiled',
     source: {
-        typeScript: 'src/*.ts',
+        typeScript: 'src/**/*.ts',
         sass: ['stylesheets/*.scss', 'decorators/*.scss'],
         react: 'javascript/react.js'
     },
@@ -23,7 +23,7 @@ var options = {
             "removeComments": true,
             "preserveConstEnums": true,
             "sourceMap": true,
-            "out": "terminal.js"
+            outDir: 'compiled'
         })
     }
 };
