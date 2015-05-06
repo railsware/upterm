@@ -6,7 +6,7 @@ capabilities of contemporary interfaces in contrast to most of the terminal emul
 ### Technologies
 
 * TypeScript
-* Atom Shell
+* Electron
 * NodeJS
 * ReactJS
 * SASS
