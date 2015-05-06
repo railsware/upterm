@@ -1,50 +1,45 @@
-/// <reference path="references.ts" />
+import i = require('Interfaces');
 
-module BlackScreen {
-    export class Cursor {
-        constructor(private position: Position = {column: 0, row: 0}) {
-        }
-
-        moveAbsolute(advancement: Advancement): Cursor {
-            if (typeof advancement.horizontal != 'undefined') {
-                this.position.column = advancement.horizontal;
-            }
-
-            if (typeof advancement.vertical != 'undefined') {
-                this.position.row = advancement.vertical;
-            }
-
-            return this;
-        }
-
-        moveRelative(advancement: Advancement): Cursor {
-            this.moveAbsolute({
-                vertical: this.row() + (advancement.vertical || 0),
-                horizontal: this.column() + (advancement.horizontal || 0)
-            });
-
-            return this;
-        }
-
-        next(): void {
-            this.moveRelative({horizontal: 1});
-        }
-
-        getPosition(): Position {
-            return this.position;
-        }
-
-        column(): number {
-            return this.position.column;
-        }
-
-        row(): number {
-            return this.position.row;
-        }
+class Cursor {
+    constructor(private position: i.Position = {column: 0, row: 0}) {
     }
 
-    export interface Advancement {
-        vertical?: number;
-        horizontal?: number;
+    moveAbsolute(advancement: i.Advancement): Cursor {
+        if (typeof advancement.horizontal != 'undefined') {
+            this.position.column = advancement.horizontal;
+        }
+
+        if (typeof advancement.vertical != 'undefined') {
+            this.position.row = advancement.vertical;
+        }
+
+        return this;
+    }
+
+    moveRelative(advancement: i.Advancement): Cursor {
+        this.moveAbsolute({
+            vertical: this.row() + (advancement.vertical || 0),
+            horizontal: this.column() + (advancement.horizontal || 0)
+        });
+
+        return this;
+    }
+
+    next(): void {
+        this.moveRelative({horizontal: 1});
+    }
+
+    getPosition(): Position {
+        return this.position;
+    }
+
+    column(): number {
+        return this.position.column;
+    }
+
+    row(): number {
+        return this.position.row;
     }
 }
+
+export = Cursor;

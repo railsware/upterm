@@ -1,21 +1,22 @@
-/// <reference path="references.ts" />
+//TODO: Make them accessible as providers.command.Path.
+import Path = require('./providers/command/Path');
 
-module BlackScreen {
-    export class Autocompletion {
-        pathCompletions: Providers.Command.Path;
+class Autocompletion {
+    pathCompletions: Path;
 
-        constructor() {
-            this.pathCompletions = new Providers.Command.Path();
-        }
+    constructor() {
+        this.pathCompletions = new Path();
+    }
 
-        getCompletions(): Array<string> {
-            return this.pathCompletions.executables;
-        }
+    getCompletions(): Array<string> {
+        return this.pathCompletions.executables;
+    }
 
-        matching(string: string): Array<string> {
-            return _.filter(this.getCompletions(), (completion: string) => {
-                return completion.startsWith(string);
-            })
-        }
+    matching(string: string): Array<string> {
+        return _.filter(this.getCompletions(), (completion: string) => {
+            return completion.startsWith(string);
+        })
     }
 }
+
+export = Autocompletion;

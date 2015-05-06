@@ -1,35 +1,32 @@
 /// <reference path="references.ts" />
 
 var React = require('react');
+import i = require('Interfaces');
+import e = require('Enums');
 
-module BlackScreen {
-    export enum CharCode {
-        NewLine = 10,
-        CarriageReturn = 13
+class Char {
+    constructor(private char: string, private attributes: i.Attributes) {
+        if (char.length != 1) {
+            throw(`Char can be created only from a single character; passed ${char.length}: ${char}`);
+        }
     }
 
-    export class Char {
-        constructor(private char: string, private attributes: Attributes) {
-            if (char.length != 1) {
-                throw(`Char can be created only from a single character; passed ${char.length}: ${char}`);
-            }
-        }
+    getCharCode(): e.CharCode {
+        return (<any>e.CharCode)[e.CharCode[this.char.charCodeAt(0)]];
+    }
 
-        getCharCode(): CharCode {
-            return (<any>CharCode)[CharCode[this.char.charCodeAt(0)]];
-        }
+    getAttributes(): i.Attributes {
+        return this.attributes;
+    }
 
-        getAttributes(): Attributes {
-            return this.attributes;
-        }
+    toString(): string {
+        return this.char;
+    }
 
-        toString(): string {
-            return this.char;
-        }
-
-        isSpecial(): boolean {
-            // http://www.asciitable.com/index/asciifull.gif
-            return this.getCharCode() < 32 || this.getCharCode() > 126;
-        }
+    isSpecial(): boolean {
+        // http://www.asciitable.com/index/asciifull.gif
+        return this.getCharCode() < 32 || this.getCharCode() > 126;
     }
 }
+
+export = Char

@@ -1,7 +1,8 @@
-/// <reference path="../references.ts" />
+import Base = require('Base');
+import Json = require('Json');
+import GitDiff = require('GitDiff');
+import Invocation = require('../Invocation');
 
-module BlackScreen {
-    export module Decorators {
-        export var list: Array<{new (invocation: Invocation): Base}> = [Json, GitDiff];
-    }
-}
+var list: Array<{new (invocation: Invocation): Base}> = [Json, GitDiff];
+
+export = list;

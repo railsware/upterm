@@ -1,18 +1,16 @@
-/// <reference path="../references.ts" />
+import Invocation = require('../Invocation');
 
-module BlackScreen {
-    export module Decorators {
-        export class Base {
-            constructor(protected invocation: Invocation) {
-            }
+class Base {
+    constructor(protected invocation: Invocation) {
+    }
 
-            decorate(): any {
-                throw new Error('This method should be implemented in a subclass');
-            }
-            
-            isApplicable(): boolean {
-                throw new Error('This method should be implemented in a subclass');
-            }
-        }
+    decorate(): any {
+        throw new Error('This method should be implemented in a subclass');
+    }
+
+    isApplicable(): boolean {
+        throw new Error('This method should be implemented in a subclass');
     }
 }
+
+export = Base;
