@@ -15,7 +15,7 @@ class Utils {
                 return;
             }
 
-            fs.stat(directory, (error: NodeJS.ErrnoException, pathStat) => {
+            fs.stat(directory, (error: NodeJS.ErrnoException, pathStat: fs.Stats) => {
                 if (!pathStat.isDirectory()) {
                     return;
                 }
