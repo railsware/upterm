@@ -1,5 +1,6 @@
 //TODO: Make them accessible as providers.command.Path.
 import Path = require('./providers/command/Path');
+import _ = require('lodash');
 
 class Autocompletion {
     pathCompletions: Path;
