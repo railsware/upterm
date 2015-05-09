@@ -109,13 +109,15 @@ var Prompt = React.createClass({
     getInputNode: function () {
         return this.refs.command.getDOMNode()
     },
+    getValue: function () {
+        return this.getInputNode().value;
+    },
     handleKeyUp: function (event) {
-        this.props.prompt.buffer.setTo(this.getInputNode().value);
-        //console.log(this.props.prompt.getSuggestions());
+        this.props.prompt.buffer.setTo(this.getValue());
     },
     handleKeyDown: function (event) {
         if (event.keyCode == 13) {
-            this.props.prompt.send(this.getInputNode().value);
+            this.props.prompt.send(this.getValue());
             event.stopPropagation();
         }
 
@@ -123,7 +125,7 @@ var Prompt = React.createClass({
         if ((event.ctrlKey && event.keyCode === 80) || event.keyCode === 38) {
             var prevCommand = this.props.prompt.history.getPrevious();
             if (typeof prevCommand != 'undefined') {
-                this.getInputNode().value = prevCommand;
+                this.getInputNode().innerText = prevCommand;
             }
             event.stopPropagation();
         }
@@ -131,7 +133,7 @@ var Prompt = React.createClass({
         // Ctrl+N, ↓.
         if ((event.ctrlKey && event.keyCode === 78) || event.keyCode === 40) {
             var command = this.props.prompt.history.getNext();
-            this.getInputNode().value = command || '';
+            this.getInputNode().innerText = command || '';
             event.stopPropagation();
         }
     },

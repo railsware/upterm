@@ -29,33 +29,37 @@ body, pre {
   margin: 0;
 }
 
-.prompt-decoration {
-  display: inline-block;
-  background-color: #353b44;
-  height: 16px;
-}
+.prompt {
+  position: relative;
 
-.prompt.failure {
   .prompt-decoration {
-    background-color: map-get($colors, 'red');
+    display: inline-block;
+    background-color: #353b44;
+    height: 16px;
   }
 
   .arrow {
-    border-color: transparent transparent transparent map-get($colors, 'red');
+    width: 0;
+    height: 0;
+    border-style: solid;
+    border-width: 8px 0 8px 8px;
+    border-color: transparent transparent transparent #353b44;
+    display: inline-block;
+    background-color: map-get($colors, 'bright-black');
+    vertical-align: middle;
+    margin-bottom: 2px;
+    margin-left: 15px;
   }
-}
 
-.arrow {
-  width: 0;
-  height: 0;
-  border-style: solid;
-  border-width: 8px 0 8px 8px;
-  border-color: transparent transparent transparent #353b44;
-  display: inline-block;
-  background-color: map-get($colors, 'bright-black');
-  vertical-align: middle;
-  margin-bottom: 2px;
-  margin-left: 15px;
+  &.failure {
+    .prompt-decoration {
+      background-color: map-get($colors, 'red');
+    }
+
+    .arrow {
+      border-left-color: map-get($colors, 'red');
+    }
+  }
 }
 
 input {
