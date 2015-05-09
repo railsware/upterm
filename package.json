@@ -27,7 +27,7 @@
     "react-json-inspector": "^4.2.2"
   },
   "devDependencies": {
-    "electron-prebuilt": "latest",
+    "electron-prebuilt": "0.25.2",
     "gulp": "latest",
     "gulp-concat": "^2.5.2",
     "gulp-react": "^3.0.1",
