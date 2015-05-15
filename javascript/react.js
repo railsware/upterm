@@ -1,6 +1,7 @@
 var jQuery = require('jquery');
 var Terminal = require('./compiled/Terminal');
 var React = require('react');
+var _ = require('lodash');
 
 jQuery(document).ready(function () {
     window.terminal = new Terminal(getDimensions());
@@ -110,7 +111,10 @@ var Prompt = React.createClass({
         return this.refs.command.getDOMNode()
     },
     getValue: function () {
-        return this.getInputNode().value;
+        return this.getInputNode().innerText;
+    },
+    componentDidMount: function () {
+        this.getInputNode().focus();
     },
     handleKeyUp: function (event) {
         this.props.prompt.buffer.setTo(this.getValue());
@@ -118,7 +122,9 @@ var Prompt = React.createClass({
     handleKeyDown: function (event) {
         if (event.keyCode == 13) {
             this.props.prompt.send(this.getValue());
+
             event.stopPropagation();
+            return false;
         }
 
         // Ctrl+P, ↑.
@@ -127,30 +133,34 @@ var Prompt = React.createClass({
             if (typeof prevCommand != 'undefined') {
                 this.getInputNode().innerText = prevCommand;
             }
+
             event.stopPropagation();
+            return false;
         }
 
         // Ctrl+N, ↓.
         if ((event.ctrlKey && event.keyCode === 78) || event.keyCode === 40) {
             var command = this.props.prompt.history.getNext();
             this.getInputNode().innerText = command || '';
+
             event.stopPropagation();
+            return false;
         }
     },
     render: function () {
         var classes = ['prompt', this.props.status].join(' ');
 
         return (
-            <div className={classes}>
+            <div className="prompt-wrapper">
                 <div className="prompt-decoration">
-                    <div className="arrow"></div>
+                    <div className="arrow"/>
                 </div>
-
-                <input onKeyDown={this.handleKeyDown}
-                       onKeyUp={this.handleKeyUp}
-                       type="text"
-                       ref="command"
-                       autoFocus="autofocus"/>
+                <div className={classes}
+                     onKeyDown={this.handleKeyDown}
+                     onKeyUp={this.handleKeyUp}
+                     type="text"
+                     ref="command"
+                     contentEditable="true" />
             </div>
         )
     }
@@ -187,7 +197,7 @@ function scrollToBottom() {
 }
 
 function focusLastInput(event) {
-    if (event.target.nodeName != 'INPUT') {
-        jQuery('input').last().focus();
+    if (!_.contains(event.target.classList, 'prompt')) {
+        jQuery('.prompt').last().focus();
     }
 }
