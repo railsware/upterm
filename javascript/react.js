@@ -147,6 +147,23 @@ var Prompt = React.createClass({
             return false;
         }
     },
+    handleInput: function (event) {
+        var el = event.target;
+
+        if (el.childNodes.length) {
+            var sel = window.getSelection();
+            var offset = sel.baseOffset;
+            var range = document.createRange();
+
+            // Do syntax highlighting.
+            //el.innerHTML = el.innerHTML.toUpperCase();
+
+            range.setStart(el.childNodes[0], offset);
+            range.collapse(true);
+            sel.removeAllRanges();
+            sel.addRange(range);
+        }
+    },
     render: function () {
         var classes = ['prompt', this.props.status].join(' ');
 
@@ -158,6 +175,7 @@ var Prompt = React.createClass({
                 <div className={classes}
                      onKeyDown={this.handleKeyDown}
                      onKeyUp={this.handleKeyUp}
+                     onInput={this.handleInput}
                      type="text"
                      ref="command"
                      contentEditable="true" />
