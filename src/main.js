@@ -18,5 +18,7 @@ app.on('ready', function () {
         resizable: true
     });
 
+    mainWindow.openDevTools();
+
     mainWindow.loadUrl('file://' + __dirname + '/../index.html');
 });
