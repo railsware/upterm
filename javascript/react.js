@@ -123,7 +123,9 @@ var Prompt = React.createClass({
             event.stopPropagation();
             event.preventDefault();
 
-            this.props.prompt.send(event.target.innerText);
+            // Prevent two-line input on cd.
+            var text = event.target.innerText;
+            setTimeout(function (){ this.props.prompt.send(text); }.bind(this), 0);
         }
 
         // Ctrl+P, ↑.
