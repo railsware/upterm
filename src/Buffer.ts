@@ -112,7 +112,7 @@ class Buffer extends events.EventEmitter {
     }
 
     private getHTMLAttributes(attributes: i.Attributes): Object {
-        var htmlAttributes: { [indexer: string]: any } = {};
+        var htmlAttributes: _.Dictionary<any> = {};
         _.each(attributes, (value, key) => {
             htmlAttributes[`data-${key}`] = value;
         });
