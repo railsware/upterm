@@ -58,19 +58,19 @@ var Invocation = React.createClass({
     getInitialState: function() {
         return {
             decorate: true,
-            canBeDecorated: this.props.invocation.canBeDecorated()
+            canBeDecorated: false
         };
     },
     render: function () {
         var buffer, decorationToggle;
 
-        if (this.state.decorate && this.state.canBeDecorated) {
+        if (this.state.canBeDecorated && this.state.decorate) {
             buffer = this.props.invocation.decorate();
         } else {
             buffer = this.props.invocation.getBuffer().render();
         }
 
-        if (this.props.invocation.canBeDecorated()) {
+        if (this.state.canBeDecorated) {
             decorationToggle = <DecorationToggle invocation={this}/>;
         }
 
