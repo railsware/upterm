@@ -5,10 +5,11 @@ import events = require('events')
 import Invocation = require('./Invocation')
 import Aliases = require('./Aliases')
 import History = require('./History')
+var remote = require('remote');
 
 class Terminal extends events.EventEmitter {
     invocations: Array<Invocation>;
-    currentDirectory: string;
+    private _currentDirectory: string;
     history: History;
 
     private stateFileName = `${process.env.HOME}/.black-screen-state`;
@@ -51,6 +52,14 @@ class Terminal extends events.EventEmitter {
     clearInvocations(): void {
         this.invocations = [];
         this.createInvocation();
+    }
+    get currentDirectory(): string {
+        return this._currentDirectory;
+    }
+
+    set currentDirectory(value: string) {
+        remote.getCurrentWindow().setRepresentedFilename(value);
+        this._currentDirectory = value;
     }
 
     private observeSerializableProperties(callback: Function): void {
