@@ -27,7 +27,7 @@
     "react-json-inspector": "^4.2.2"
   },
   "devDependencies": {
-    "electron-prebuilt": "0.25.2",
+    "electron-prebuilt": "0.26",
     "gulp": "latest",
     "gulp-concat": "^2.5.2",
     "gulp-react": "^3.0.1",
@@ -35,11 +35,11 @@
     "gulp-typescript": "^2.6.0",
     "node-sass": "latest",
     "react-tools": "latest",
-    "typescript": "latest"
+    "typescript": "latest",
+    "electron-rebuild": "latest"
   },
   "scripts": {
-    "install-all": "rm -rf node_modules && npm update && npm run install-native && npm install && npm run cleanup",
-    "install-native": "npm_config_disturl=https://atom.io/download/electron npm_config_target=0.25.2 npm_config_arch=x64 HOME=~/.electron-gyp npm install 'pty.js'",
+    "install-all": "PATH=node_modules/.bin:$PATH rm -rf node_modules && npm update && npm install && electron-rebuild && npm run cleanup",
     "cleanup": "rm -rf build",
     "forest-run": "PATH=node_modules/.bin:$PATH gulp && electron .",
     "watch": "PATH=node_modules/.bin:$PATH gulp watch"
