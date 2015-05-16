@@ -187,10 +187,8 @@ var Prompt = React.createClass({
         var classes = ['prompt-wrapper', this.props.status].join(' ');
 
         if (this.showAutocomplete()) {
-            // TODO: Show above if there is no space at the bottom.
-            var position = _.pick($(this.getInputNode()).caret('offset'), 'left');
             var autocomplete = <Autocomplete suggestions={this.state.suggestions}
-                                             position={position} />;
+                                             caretPosition={$(this.getInputNode()).caret('offset')} />;
         }
 
         return (
@@ -210,16 +208,24 @@ var Prompt = React.createClass({
     }
 });
 
+// TODO: Add ability to choose.
 var Autocomplete = React.createClass({
     render: function () {
-        var suggestions = this.props.suggestions.map(function(suggestion) {
+        var position = _.pick(this.props.caretPosition, 'left');
+
+        var suggestionViews = this.props.suggestions.map(function(suggestion) {
             return (<li>{suggestion}</li>);
         });
 
+        if (this.props.caretPosition.top + 300 > window.innerHeight) {
+            position['bottom'] = 28;
+            suggestionViews = _(suggestionViews).reverse().value();
+        }
+
         return (
-            <div className="autocomplete" style={this.props.position}>
+            <div className="autocomplete" style={position}>
                 <ul>
-                    {suggestions}
+                    {suggestionViews}
                 </ul>
             </div>
         )
