@@ -25,7 +25,9 @@ var Board = React.createClass({
         // Ctrl+l
         if (event.ctrlKey && event.keyCode === 76) {
             this.props.terminal.clearInvocations();
+
             event.stopPropagation();
+            event.preventDefault();
         }
     },
     render: function () {
@@ -124,7 +126,7 @@ var Prompt = React.createClass({
             this.props.prompt.send(this.getValue());
 
             event.stopPropagation();
-            return false;
+            event.preventDefault();
         }
 
         // Ctrl+P, ↑.
@@ -142,7 +144,7 @@ var Prompt = React.createClass({
             }
 
             event.stopPropagation();
-            return false;
+            event.preventDefault();
         }
 
         // Ctrl+N, ↓.
@@ -157,7 +159,7 @@ var Prompt = React.createClass({
             });
 
             event.stopPropagation();
-            return false;
+            event.preventDefault();
         }
     },
     handleInput: function (event) {
@@ -222,7 +224,10 @@ function scrollToBottom() {
 
 function focusLastInput(event) {
     if (!_.contains(event.target.classList, 'prompt')) {
-        jQuery('.prompt').last().focus();
+        var target = _.last(document.getElementsByClassName('prompt'));
+        target.focus();
+
+        withCaret(target, function() { return target.innerHTML.length; });
     }
 }
 
