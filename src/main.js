@@ -1,12 +1,7 @@
 var app = require('app');
 var BrowserWindow = require('browser-window');
 
-app.commandLine.appendSwitch('js-flags', '--harmony');
-
-process.stdin.setEncoding('utf8');
-process.stdout.setEncoding('utf8');
-
-var mainWindow = null;
+var mainWindow;
 
 app.on('ready', function () {
 
