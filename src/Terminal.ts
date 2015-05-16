@@ -9,11 +9,11 @@ var remote = require('remote');
 
 class Terminal extends events.EventEmitter {
     invocations: Array<Invocation>;
-    private _currentDirectory: string;
+    currentDirectory: string;
     history: History;
 
     private stateFileName = `${process.env.HOME}/.black-screen-state`;
-    private serializableProperties = {currentDirectory: process.env.HOME};
+    private serializableProperties: _.Dictionary<string> = {currentDirectory: process.env.HOME};
 
     constructor(private dimensions: i.Dimensions) {
         super();
@@ -35,7 +35,7 @@ class Terminal extends events.EventEmitter {
         invocation.once('end', () => {
             this.createInvocation();
         }).once('working-directory-changed', (newWorkingDirectory: string) => {
-            this.currentDirectory = newWorkingDirectory;
+            this.setCurrentDirectory(newWorkingDirectory);
         });
         this.invocations = this.invocations.concat(invocation);
         this.emit('invocation');
@@ -53,13 +53,10 @@ class Terminal extends events.EventEmitter {
         this.invocations = [];
         this.createInvocation();
     }
-    get currentDirectory(): string {
-        return this._currentDirectory;
-    }
 
-    set currentDirectory(value: string) {
+    setCurrentDirectory(value: string): void {
         remote.getCurrentWindow().setRepresentedFilename(value);
-        this._currentDirectory = value;
+        this.currentDirectory = value;
     }
 
     private observeSerializableProperties(callback: Function): void {
@@ -76,9 +73,13 @@ class Terminal extends events.EventEmitter {
     }
 
     private serialize(): void {
-        fs.writeFile(this.stateFileName, JSON.stringify({
-            currentDirectory: this.currentDirectory
-        }), (error: any) => {
+        var values: _.Dictionary<string> = {};
+
+        _.each(this.serializableProperties, (value: string, key: string) => {
+            values[key] = (<any>this)[key];
+        });
+
+        fs.writeFile(this.stateFileName, JSON.stringify(values), (error: any) => {
             if (error) debugger;
         })
     }
@@ -90,7 +91,7 @@ class Terminal extends events.EventEmitter {
             state = this.serializableProperties;
         }
 
-        this.currentDirectory = state.currentDirectory;
+        _.each(state, (value: string, key: string) => { (<any>this)[key] = value; });
     }
 }
 
