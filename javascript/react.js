@@ -172,14 +172,14 @@ var Prompt = React.createClass({
         });
     },
     render: function () {
-        var classes = ['prompt', this.props.status].join(' ');
+        var classes = ['prompt-wrapper', this.props.status].join(' ');
 
         return (
-            <div className="prompt-wrapper">
+            <div className={classes}>
                 <div className="prompt-decoration">
                     <div className="arrow"/>
                 </div>
-                <div className={classes}
+                <div className="prompt"
                      onKeyDown={this.handleKeyDown}
                      onKeyUp={this.handleKeyUp}
                      onInput={this.handleInput}
