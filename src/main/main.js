@@ -1,5 +1,6 @@
 var app = require('app');
 var BrowserWindow = require('browser-window');
+var menu = require('./menu');
 
 var mainWindow;
 
@@ -15,5 +16,7 @@ app.on('ready', function () {
 
     mainWindow.openDevTools();
 
-    mainWindow.loadUrl('file://' + __dirname + '/../index.html');
+    mainWindow.loadUrl('file://' + __dirname + '/../../index.html');
+    mainWindow.focus();
+    menu.setMenu(app, mainWindow);
 });

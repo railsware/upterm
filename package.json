@@ -2,7 +2,7 @@
   "name": "black-screen",
   "version": "0.0.1",
   "description": "A terminal emulator for the 21st century.",
-  "main": "src/main.js",
+  "main": "src/main/main.js",
   "author": "Volodymyr Shatsky <shockone89@gmail.com>",
   "repository": {
     "type": "git",
