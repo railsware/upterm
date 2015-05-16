@@ -6,10 +6,10 @@ module.exports = {
         if (process.platform == 'darwin') {
             var template = [
                 {
-                    label: 'Electron',
+                    label: 'Black Screen',
                     submenu: [
                         {
-                            label: 'About Electron',
+                            label: 'About Black Screen',
                             selector: 'orderFrontStandardAboutPanel:'
                         },
                         {
@@ -23,7 +23,7 @@ module.exports = {
                             type: 'separator'
                         },
                         {
-                            label: 'Hide Electron',
+                            label: 'Hide Black Screen',
                             accelerator: 'Command+H',
                             selector: 'hide:'
                         },

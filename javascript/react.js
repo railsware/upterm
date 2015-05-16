@@ -222,12 +222,13 @@ function scrollToBottom() {
 }
 
 function focusLastInput(event) {
-    if (!_.contains(event.target.classList, 'prompt')) {
-        var target = _.last(document.getElementsByClassName('prompt'));
-        target.focus();
-
-        withCaret(target, function() { return target.innerText.length; });
+    if (_.contains(event.target.classList, 'prompt') || event.metaKey) {
+        return;
     }
+
+    var target = _.last(document.getElementsByClassName('prompt'));
+    target.focus();
+    withCaret(target, function() { return target.innerText.length; });
 }
 
 function withCaret(target, callback) {
