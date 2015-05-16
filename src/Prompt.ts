@@ -41,7 +41,7 @@ class Prompt extends events.EventEmitter {
     }
 
     getSuggestions(): Array<string> {
-        return _.uniq(this.autocompletion.matching(this.buffer.toString()));
+        return _.uniq(this.autocompletion.matching(this.buffer.toString())).slice(0, 50);
     }
 
     private expandCommand(command: string): Array<string> {

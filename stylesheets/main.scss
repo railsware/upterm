@@ -127,3 +127,24 @@ body, pre {
 pre {
   white-space: pre-wrap;
 }
+
+.autocomplete {
+  max-height: 300px;
+  max-width: 300px;
+
+  overflow: scroll;
+
+  position: absolute;
+
+  box-shadow: 0 2px 8px 1px rgba(0, 0, 0, 0.3);
+
+  ul {
+    padding: 0;
+    margin: 0;
+
+    li {
+      list-style-type: none;
+      padding: 2px;
+    }
+  }
+}

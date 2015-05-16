@@ -1,18 +1,17 @@
-var jQuery = require('jquery');
 var Terminal = require('./compiled/Terminal');
 var React = require('react');
 var _ = require('lodash');
 
-jQuery(document).ready(function () {
+$(document).ready(function () {
     window.terminal = new Terminal(getDimensions());
 
-    jQuery(window).resize(function() {
+    $(window).resize(function() {
         terminal.resize(getDimensions());
     });
 
     React.render(<Board terminal={window.terminal}/>, document.getElementById('black-board'));
 
-    jQuery(document).keydown(function(event) {
+    $(document).keydown(function(event) {
         focusLastInput(event);
     });
 });
@@ -109,16 +108,17 @@ var DecorationToggle = React.createClass({
 });
 
 var Prompt = React.createClass({
+    getInitialState: function () {
+        return { suggestions: [] }
+    },
     getInputNode: function () {
         return this.refs.command.getDOMNode()
     },
     componentDidMount: function () {
         this.getInputNode().focus();
     },
-    handleKeyUp: function (event) {
-        this.props.prompt.buffer.setTo(event.target.innerText);
-    },
     handleKeyDown: function (event) {
+        // TODO: Make sure executing an empty command works well.
         if (event.keyCode == 13) {
             event.stopPropagation();
             event.preventDefault();
@@ -163,16 +163,35 @@ var Prompt = React.createClass({
     },
     handleInput: function (event) {
         var target = event.target;
+        this.props.prompt.buffer.setTo(target.innerText);
 
-        withCaret(target, function(oldPosition){
-            // Do syntax highlighting.
-            //target.innerText = target.innerText.toUpperCase();
+        //withCaret(target, function(oldPosition){
+        //    // Do syntax highlighting.
+        //    target.innerText = target.innerText.toUpperCase();
+        //    return oldPosition;
+        //});
 
-            return oldPosition;
-        });
+        this.setState({ suggestions: this.props.prompt.getSuggestions()});
+    },
+    currentToken: function () {
+        // TODO: return only the token under cursor.
+        return this.getInputNode().innerText;
+    },
+    showAutocomplete: function () {
+        return this.refs.command &&
+            this.state.suggestions.length &&
+            this.currentToken().length &&
+            this.props.status == 'not-started';
     },
     render: function () {
         var classes = ['prompt-wrapper', this.props.status].join(' ');
+
+        if (this.showAutocomplete()) {
+            // TODO: Show above if there is no space at the bottom.
+            var position = _.pick($(this.getInputNode()).caret('offset'), 'left');
+            var autocomplete = <Autocomplete suggestions={this.state.suggestions}
+                                             position={position} />;
+        }
 
         return (
             <div className={classes}>
@@ -181,11 +200,27 @@ var Prompt = React.createClass({
                 </div>
                 <div className="prompt"
                      onKeyDown={this.handleKeyDown}
-                     onKeyUp={this.handleKeyUp}
                      onInput={this.handleInput}
                      type="text"
                      ref="command"
                      contentEditable="true" />
+                {autocomplete}
+            </div>
+        )
+    }
+});
+
+var Autocomplete = React.createClass({
+    render: function () {
+        var suggestions = this.props.suggestions.map(function(suggestion) {
+            return (<li>{suggestion}</li>);
+        });
+
+        return (
+            <div className="autocomplete" style={this.props.position}>
+                <ul>
+                    {suggestions}
+                </ul>
             </div>
         )
     }
@@ -218,7 +253,7 @@ function getDimensions() {
 }
 
 function scrollToBottom() {
-    jQuery('html body').animate({ scrollTop: jQuery(document).height() }, 0);
+    $('html body').animate({ scrollTop: $(document).height() }, 0);
 }
 
 function focusLastInput(event) {
