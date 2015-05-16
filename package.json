@@ -27,18 +27,19 @@
     "react-json-inspector": "4.2.2"
   },
   "devDependencies": {
+    "bower": "1.4.1",
     "electron-prebuilt": "0.26",
+    "electron-rebuild": "0.1.4",
     "gulp": "3.8.11",
     "gulp-concat": "2.5.2",
     "gulp-react": "3.0.1",
     "gulp-sass": "2.0.1",
     "gulp-typescript": "2.7.3",
     "react-tools": "0.13.3",
-    "typescript": "1.5.0-beta",
-    "electron-rebuild": "0.1.4"
+    "typescript": "1.5.0-beta"
   },
   "scripts": {
-    "install-all": "PATH=node_modules/.bin:$PATH rm -rf node_modules && npm update && npm install && electron-rebuild && npm run cleanup",
+    "install-all": "PATH=node_modules/.bin:$PATH rm -rf node_modules && npm update && npm install && electron-rebuild && bower install && npm run cleanup",
     "cleanup": "rm -rf build",
     "forest-run": "PATH=node_modules/.bin:$PATH gulp && electron .",
     "watch": "PATH=node_modules/.bin:$PATH gulp watch"

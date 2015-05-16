@@ -1,0 +1,6 @@
+{
+  "name": "black-screen",
+  "dependencies": {
+    "caret.js": "0.2.2"
+  }
+}

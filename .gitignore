@@ -1,4 +1,5 @@
 /node_modules/
+/bower_components/
 /compiled/*
 /npm-debug.log
 /src/tsconfig.json
