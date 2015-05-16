@@ -112,21 +112,18 @@ var Prompt = React.createClass({
     getInputNode: function () {
         return this.refs.command.getDOMNode()
     },
-    getValue: function () {
-        return this.getInputNode().innerText;
-    },
     componentDidMount: function () {
         this.getInputNode().focus();
     },
     handleKeyUp: function (event) {
-        this.props.prompt.buffer.setTo(this.getValue());
+        this.props.prompt.buffer.setTo(event.target.innerText);
     },
     handleKeyDown: function (event) {
         if (event.keyCode == 13) {
-            this.props.prompt.send(this.getValue());
-
             event.stopPropagation();
             event.preventDefault();
+
+            this.props.prompt.send(event.target.innerText);
         }
 
         // Ctrl+P, ↑.
@@ -167,7 +164,7 @@ var Prompt = React.createClass({
 
         withCaret(target, function(oldPosition){
             // Do syntax highlighting.
-            //target.innerHTML = target.innerHTML.toUpperCase();
+            //target.innerText = target.innerText.toUpperCase();
 
             return oldPosition;
         });
@@ -227,7 +224,7 @@ function focusLastInput(event) {
         var target = _.last(document.getElementsByClassName('prompt'));
         target.focus();
 
-        withCaret(target, function() { return target.innerHTML.length; });
+        withCaret(target, function() { return target.innerText.length; });
     }
 }
 
