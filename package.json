@@ -18,25 +18,24 @@
     "console"
   ],
   "dependencies": {
-    "font-awesome": "^4.3.0",
-    "jquery": "latest",
-    "lodash": "latest",
-    "node-ansiparser": "latest",
+    "font-awesome": "4.3.0",
+    "jquery": "2.1.4",
+    "lodash": "3.8.0",
+    "node-ansiparser": "1.0.2",
     "pty.js": "shockone/pty.js",
-    "react": "latest",
-    "react-json-inspector": "^4.2.2"
+    "react": "0.13.3",
+    "react-json-inspector": "4.2.2"
   },
   "devDependencies": {
     "electron-prebuilt": "0.26",
-    "gulp": "latest",
-    "gulp-concat": "^2.5.2",
-    "gulp-react": "^3.0.1",
-    "gulp-sass": "^2.0.1",
-    "gulp-typescript": "^2.6.0",
-    "node-sass": "latest",
-    "react-tools": "latest",
-    "typescript": "latest",
-    "electron-rebuild": "latest"
+    "gulp": "3.8.11",
+    "gulp-concat": "2.5.2",
+    "gulp-react": "3.0.1",
+    "gulp-sass": "2.0.1",
+    "gulp-typescript": "2.7.3",
+    "react-tools": "0.13.3",
+    "typescript": "1.5.0-beta",
+    "electron-rebuild": "0.1.4"
   },
   "scripts": {
     "install-all": "PATH=node_modules/.bin:$PATH rm -rf node_modules && npm update && npm install && electron-rebuild && npm run cleanup",
