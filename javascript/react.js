@@ -130,8 +130,15 @@ var Prompt = React.createClass({
         // Ctrl+P, ↑.
         if ((event.ctrlKey && event.keyCode === 80) || event.keyCode === 38) {
             var prevCommand = this.props.prompt.history.getPrevious();
+
             if (typeof prevCommand != 'undefined') {
-                this.getInputNode().innerText = prevCommand;
+                var target = event.target;
+
+                withCaret(target, function(){
+                    target.innerText = prevCommand;
+
+                    return target.innerText.length;
+                });
             }
 
             event.stopPropagation();
@@ -141,28 +148,27 @@ var Prompt = React.createClass({
         // Ctrl+N, ↓.
         if ((event.ctrlKey && event.keyCode === 78) || event.keyCode === 40) {
             var command = this.props.prompt.history.getNext();
-            this.getInputNode().innerText = command || '';
+            target = event.target;
+
+            withCaret(target, function(){
+                target.innerText = command || '';
+
+                return target.innerText.length;
+            });
 
             event.stopPropagation();
             return false;
         }
     },
     handleInput: function (event) {
-        var el = event.target;
+        var target = event.target;
 
-        if (el.childNodes.length) {
-            var sel = window.getSelection();
-            var offset = sel.baseOffset;
-            var range = document.createRange();
-
+        withCaret(target, function(oldPosition){
             // Do syntax highlighting.
-            //el.innerHTML = el.innerHTML.toUpperCase();
+            //target.innerHTML = target.innerHTML.toUpperCase();
 
-            range.setStart(el.childNodes[0], offset);
-            range.collapse(true);
-            sel.removeAllRanges();
-            sel.addRange(range);
-        }
+            return oldPosition;
+        });
     },
     render: function () {
         var classes = ['prompt', this.props.status].join(' ');
@@ -218,4 +224,20 @@ function focusLastInput(event) {
     if (!_.contains(event.target.classList, 'prompt')) {
         jQuery('.prompt').last().focus();
     }
+}
+
+function withCaret(target, callback) {
+    var selection = window.getSelection();
+    var range = document.createRange();
+
+    var offset = callback(selection.baseOffset);
+
+    if (target.childNodes.length) {
+        range.setStart(target.childNodes[0], offset);
+    } else {
+        range.setStart(target, 0);
+    }
+    range.collapse(true);
+    selection.removeAllRanges();
+    selection.addRange(range);
 }
