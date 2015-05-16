@@ -8,6 +8,7 @@ class Command {
         }
 
         var path = args[0];
+        //FIXME: doesn't work correctly for 'cd /'.
         var tokens: Array<string> = path.split('/');
         var firstToken = tokens.shift();
 
