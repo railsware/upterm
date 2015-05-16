@@ -3,6 +3,7 @@ import Autocompletion = require('./Autocompletion');
 import Buffer = require('./Buffer');
 import Aliases = require('./Aliases');
 import History = require('./History');
+import _ = require('lodash');
 
 class Prompt extends events.EventEmitter {
     private buffer: Buffer;
@@ -40,7 +41,7 @@ class Prompt extends events.EventEmitter {
     }
 
     getSuggestions(): Array<string> {
-        return this.autocompletion.matching(this.buffer.toString());
+        return _.uniq(this.autocompletion.matching(this.buffer.toString()));
     }
 
     private expandCommand(command: string): Array<string> {
