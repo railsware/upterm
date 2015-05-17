@@ -1,3 +1,4 @@
+//TODO: Use ECMAScript 6.
 var Terminal = require('./compiled/Terminal');
 var React = require('react');
 var _ = require('lodash');
@@ -155,7 +156,7 @@ var Prompt = React.createClass({
         var keyDownStream = createEventHandler();
 
         keyDownStream.subscribe(function(event){
-            if (!_.contains([16, 17, 18], event.keyCode) && !event.ctrlKey && !event.altKey && !event.metaKey) {
+            if (!isCommandKey()) {
                 this.setState({latestKeyCode: event.keyCode});
             }
         }.bind(this));
@@ -390,4 +391,8 @@ function withCaret(target, callback) {
     range.collapse(true);
     selection.removeAllRanges();
     selection.addRange(range);
+}
+
+function isCommandKey(event) {
+    return _.contains([16, 17, 18], event.keyCode) || event.ctrlKey || event.altKey || event.metaKey;
 }
