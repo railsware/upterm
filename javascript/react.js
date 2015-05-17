@@ -91,9 +91,9 @@ var Board = React.createClass({
 
 var Invocation = React.createClass({
     componentDidMount: function () {
-        this.props.invocation.on('data', function () {
-            this.setState({ canBeDecorated: this.props.invocation.canBeDecorated()});
-        }.bind(this));
+        this.props.invocation.on('data', () =>
+            this.setState({ canBeDecorated: this.props.invocation.canBeDecorated()})
+        );
     },
     componentDidUpdate: scrollToBottom,
 
@@ -171,7 +171,7 @@ var Prompt = React.createClass({
 
 
         keysDownStream.filter(_.negate(isCommandKey))
-                      .forEach((event) => this.setState({latestKeyCode: event.keyCode}));
+                      .forEach(event => this.setState({latestKeyCode: event.keyCode}));
 
         meaningfulKeysDownStream.filter(keys.enter)
                                 .forEach(this.execute);
@@ -196,7 +196,7 @@ var Prompt = React.createClass({
         // TODO: send input read dynamically.
         var text = event.target.innerText;
         // Prevent two-line input on cd.
-        setTimeout(function (){ this.props.prompt.send(text); }.bind(this), 0);
+        setTimeout(() => this.props.prompt.send(text), 0);
     },
     navigateHistory: function (event) {
         if (keys.goUp(event)) {

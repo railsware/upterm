@@ -44,8 +44,8 @@ gulp.task('sass', function () {
 
 gulp.task('react', function () {
     return gulp.src(options.source.react)
+               .pipe(babel({ stage: 0 }))
                .pipe(react())
-               .pipe(babel())
                .pipe(gulp.dest(options.target));
 });
 
