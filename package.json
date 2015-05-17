@@ -24,7 +24,8 @@
     "node-ansiparser": "1.0.2",
     "pty.js": "shockone/pty.js",
     "react": "0.13.3",
-    "react-json-inspector": "4.2.2"
+    "react-json-inspector": "4.2.2",
+    "rx": "2.5.2"
   },
   "devDependencies": {
     "bower": "1.4.1",
