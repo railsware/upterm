@@ -312,7 +312,6 @@ var Prompt = React.createClass({
     }
 });
 
-// TODO: Add ability to choose.
 var Autocomplete = React.createClass({
     render: function () {
         var position = _.pick(this.props.caretPosition, 'left');
