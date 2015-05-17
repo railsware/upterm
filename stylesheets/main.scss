@@ -146,6 +146,10 @@ pre {
     li {
       list-style-type: none;
       padding: 2px;
+
+      &.selected {
+        background-color: #383E4A;
+      }
     }
   }
 }

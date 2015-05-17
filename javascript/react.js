@@ -1,6 +1,38 @@
 var Terminal = require('./compiled/Terminal');
 var React = require('react');
 var _ = require('lodash');
+var Rx = require('rx');
+
+
+// TODO: Figure out how it works.
+var createEventHandler = function () {
+    var subject = function() {
+        subject.onNext.apply(subject, arguments);
+    };
+
+    getEnumerablePropertyNames(Rx.Subject.prototype)
+        .forEach(function (property) {
+            subject[property] = Rx.Subject.prototype[property];
+        });
+    Rx.Subject.call(subject);
+
+    return subject;
+};
+function getEnumerablePropertyNames(target) {
+    var result = [];
+    for (var key in target) {
+        result.push(key);
+    }
+    return result;
+}
+
+
+var keys = {
+    goUp: function(event) { return (event.ctrlKey && event.keyCode === 80) || event.keyCode === 38; },
+    goDown: function(event) { return (event.ctrlKey && event.keyCode === 78) || event.keyCode === 40; },
+    execute: function(event) { return event.keyCode === 13; },
+    tab: function(event) { return event.keyCode === 9; }
+};
 
 $(document).ready(function () {
     window.terminal = new Terminal(getDimensions());
@@ -109,27 +141,79 @@ var DecorationToggle = React.createClass({
 
 var Prompt = React.createClass({
     getInitialState: function () {
-        return { suggestions: [] }
+        //TODO: Reset index to 0 when input changes.
+        return {
+            suggestions: [],
+            selectedAutocompleteIndex: 0,
+            latestKeyCode: null
+        }
     },
     getInputNode: function () {
         return this.refs.command.getDOMNode()
     },
-    componentDidMount: function () {
-        this.getInputNode().focus();
-    },
-    handleKeyDown: function (event) {
-        // TODO: Make sure executing an empty command works well.
-        if (event.keyCode == 13) {
+    componentWillMount: function () {
+        var keyDownStream = createEventHandler();
+
+        keyDownStream.subscribe(function(event){
+            if (!_.contains([16, 17, 18], event.keyCode) && !event.ctrlKey && !event.altKey && !event.metaKey) {
+                this.setState({latestKeyCode: event.keyCode});
+            }
+        }.bind(this));
+
+        var meaningfulKeyDownStream = keyDownStream.filter(function(event) {
+            return _.some(_.values(keys), function(matcher) { return matcher(event); });
+        });
+
+        meaningfulKeyDownStream.filter(keys.execute).subscribe(function(event) {
             event.stopPropagation();
             event.preventDefault();
 
-            // Prevent two-line input on cd.
-            var text = event.target.innerText;
-            setTimeout(function (){ this.props.prompt.send(text); }.bind(this), 0);
-        }
+            if (this.autocompleteIsShown()) {
+                this.selectAutocomplete(event);
+            } else {
+                this.execute(event);
+            }
 
-        // Ctrl+P, ↑.
-        if ((event.ctrlKey && event.keyCode === 80) || event.keyCode === 38) {
+        }.bind(this));
+
+        meaningfulKeyDownStream.filter(this.autocompleteIsShown).filter(function(event) {
+            return keys.execute(event) || keys.tab(event);
+        }).subscribe(function(event) {
+            event.stopPropagation();
+            event.preventDefault();
+
+            this.selectAutocomplete(event);
+
+        }.bind(this));
+
+        meaningfulKeyDownStream.filter(function(event) {
+            return keys.goDown(event) || keys.goUp(event);
+        }).subscribe(function(event) {
+            event.stopPropagation();
+            event.preventDefault();
+
+            if (!this.showAutocomplete()) {
+                this.navigateHistory(event);
+            }
+        }.bind(this));
+
+        this.handlers = {
+            onKeyDown: keyDownStream
+        }
+    },
+    componentDidMount: function () {
+        this.getInputNode().focus();
+    },
+    execute: function (event) {
+        // TODO: Make sure executing an empty command works well.
+
+        // TODO: send input read dynamically.
+        var text = event.target.innerText;
+        // Prevent two-line input on cd.
+        setTimeout(function (){ this.props.prompt.send(text); }.bind(this), 0);
+    },
+    navigateHistory: function (event) {
+        if (keys.goUp(event)) {
             var prevCommand = this.props.prompt.history.getPrevious();
 
             if (typeof prevCommand != 'undefined') {
@@ -141,25 +225,36 @@ var Prompt = React.createClass({
                     return target.innerText.length;
                 });
             }
-
-            event.stopPropagation();
-            event.preventDefault();
-        }
-
-        // Ctrl+N, ↓.
-        if ((event.ctrlKey && event.keyCode === 78) || event.keyCode === 40) {
+        } else {
             var command = this.props.prompt.history.getNext();
             target = event.target;
 
-            withCaret(target, function(){
+            withCaret(target, function() {
                 target.innerText = command || '';
 
                 return target.innerText.length;
             });
-
-            event.stopPropagation();
-            event.preventDefault();
         }
+    },
+    navigateAutocomplete: function (event) {
+        if(keys.goUp(event)) {
+            this.setState({ selectedAutocompleteIndex: Math.max(0, this.state.selectedAutocompleteIndex - 1) });
+        } else {
+            this.setState({ selectedAutocompleteIndex: Math.min(this.state.suggestions.length - 1, this.state.selectedAutocompleteIndex + 1) });
+        }
+    },
+    selectAutocomplete: function (event) {
+        var target = event.target;
+        var state = this.state;
+
+        withCaret(target, function() {
+            target.innerText = state.suggestions[state.selectedAutocompleteIndex];
+
+            // TODO: replace only the current token.
+            return target.innerText.length;
+        });
+        // TODO: remove forceUpdate.
+        this.forceUpdate();
     },
     handleInput: function (event) {
         var target = event.target;
@@ -175,20 +270,29 @@ var Prompt = React.createClass({
     },
     currentToken: function () {
         // TODO: return only the token under cursor.
-        return this.getInputNode().innerText;
+        return this.getInputNode().innerText.split(/\s+/).pop();
     },
     showAutocomplete: function () {
+        //TODO: use streams.
         return this.refs.command &&
             this.state.suggestions.length &&
             this.currentToken().length &&
-            this.props.status == 'not-started';
+            this.props.status == 'not-started' &&
+            this.state.latestKeyCode != 13 &&
+            this.state.latestKeyCode != 27 &&
+            this.state.latestKeyCode != 9;
+    },
+    autocompleteIsShown: function () {
+        return this.refs.autocomplete;
     },
     render: function () {
         var classes = ['prompt-wrapper', this.props.status].join(' ');
 
         if (this.showAutocomplete()) {
             var autocomplete = <Autocomplete suggestions={this.state.suggestions}
-                                             caretPosition={$(this.getInputNode()).caret('offset')} />;
+                                             caretPosition={$(this.getInputNode()).caret('offset')}
+                                             selectedIndex={this.state.selectedAutocompleteIndex}
+                                             ref="autocomplete" />;
         }
 
         return (
@@ -197,7 +301,7 @@ var Prompt = React.createClass({
                     <div className="arrow"/>
                 </div>
                 <div className="prompt"
-                     onKeyDown={this.handleKeyDown}
+                     onKeyDown={this.handlers.onKeyDown}
                      onInput={this.handleInput}
                      type="text"
                      ref="command"
@@ -213,9 +317,10 @@ var Autocomplete = React.createClass({
     render: function () {
         var position = _.pick(this.props.caretPosition, 'left');
 
-        var suggestionViews = this.props.suggestions.map(function(suggestion) {
-            return (<li>{suggestion}</li>);
-        });
+        var suggestionViews = this.props.suggestions.map(function(suggestion, index) {
+            var className = index == this.props.selectedIndex ? 'selected' : '';
+            return (<li className={className}>{suggestion}</li>);
+        }, this);
 
         if (this.props.caretPosition.top + 300 > window.innerHeight) {
             position['bottom'] = 28;
