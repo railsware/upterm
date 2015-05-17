@@ -28,14 +28,14 @@ function getEnumerablePropertyNames(target) {
 
 
 var keys = {
-    goUp: function(event) { return (event.ctrlKey && event.keyCode === 80) || event.keyCode === 38; },
-    goDown: function(event) { return (event.ctrlKey && event.keyCode === 78) || event.keyCode === 40; },
-    enter: function(event) { return event.keyCode === 13; },
-    tab: function(event) { return event.keyCode === 9; }
+    goUp: event => (event.ctrlKey && event.keyCode === 80) || event.keyCode === 38,
+    goDown: event => (event.ctrlKey && event.keyCode === 78) || event.keyCode === 40,
+    enter: event => event.keyCode === 13,
+    tab: event => event.keyCode === 9
 };
 
 function isDefinedKey(event) {
-    return _.some(_.values(keys), function(matcher) { return matcher(event); });
+    return _.some(_.values(keys), matcher => matcher(event));
 }
 
 function stopBubblingUp(event) {
@@ -45,25 +45,21 @@ function stopBubblingUp(event) {
     return event;
 }
 
-$(document).ready(function () {
+$(document).ready(() => {
     window.terminal = new Terminal(getDimensions());
 
-    $(window).resize(function() {
-        terminal.resize(getDimensions());
-    });
+    $(window).resize(() => terminal.resize(getDimensions()));
 
     React.render(<Board terminal={window.terminal}/>, document.getElementById('black-board'));
 
-    $(document).keydown(function(event) {
-        focusLastInput(event);
-    });
+    $(document).keydown(event => focusLastInput(event));
 });
 
 var Board = React.createClass({
-    componentDidMount: function () {
+    componentDidMount() {
         this.props.terminal.on('invocation', this.forceUpdate.bind(this));
     },
-    handleKeyDown: function (event) {
+    handleKeyDown(event) {
         // Ctrl+l
         if (event.ctrlKey && event.keyCode === 76) {
             this.props.terminal.clearInvocations();
@@ -72,12 +68,13 @@ var Board = React.createClass({
             event.preventDefault();
         }
     },
-    render: function () {
+    render() {
         var invocations = this.props.terminal.invocations.map(function (invocation) {
             return (
                 <Invocation key={invocation.id} invocation={invocation}/>
             )
         });
+
         return (
             <div id="board" onKeyDown={this.handleKeyDown}>
                 <div id="invocations">
@@ -90,20 +87,20 @@ var Board = React.createClass({
 });
 
 var Invocation = React.createClass({
-    componentDidMount: function () {
+    componentDidMount() {
         this.props.invocation.on('data', () =>
             this.setState({ canBeDecorated: this.props.invocation.canBeDecorated()})
         );
     },
     componentDidUpdate: scrollToBottom,
 
-    getInitialState: function() {
+    getInitialState() {
         return {
             decorate: true,
             canBeDecorated: false
         };
     },
-    render: function () {
+    render() {
         var buffer, decorationToggle;
 
         if (this.state.canBeDecorated && this.state.decorate) {
@@ -127,15 +124,15 @@ var Invocation = React.createClass({
 });
 
 var DecorationToggle = React.createClass({
-    getInitialState: function() {
+    getInitialState() {
         return {enabled: this.props.invocation.state.decorate};
     },
-    handleClick: function() {
+    handleClick() {
         var newState = !this.state.enabled;
         this.setState({enabled: newState});
         this.props.invocation.setState({decorate: newState});
     },
-    render: function () {
+    render() {
         var classes = ['decoration-toggle'];
 
         if (!this.state.enabled) {
@@ -151,7 +148,7 @@ var DecorationToggle = React.createClass({
 });
 
 var Prompt = React.createClass({
-    getInitialState: function () {
+    getInitialState() {
         //TODO: Reset index to 0 when input changes.
         return {
             suggestions: [],
@@ -159,10 +156,10 @@ var Prompt = React.createClass({
             latestKeyCode: null
         }
     },
-    getInputNode: function () {
+    getInputNode() {
         return this.refs.command.getDOMNode()
     },
-    componentWillMount: function () {
+    componentWillMount() {
         var keysDownStream           = createEventHandler();
         var meaningfulKeysDownStream = keysDownStream.filter(isDefinedKey).map(stopBubblingUp);
         var [navigateAutocompleteStream, navigateHistoryStream] = meaningfulKeysDownStream
@@ -187,10 +184,10 @@ var Prompt = React.createClass({
             onKeyDown: keysDownStream
         }
     },
-    componentDidMount: function () {
+    componentDidMount() {
         this.getInputNode().focus();
     },
-    execute: function (event) {
+    execute(event) {
         // TODO: Make sure executing an empty command works well.
 
         // TODO: send input read dynamically.
@@ -198,7 +195,7 @@ var Prompt = React.createClass({
         // Prevent two-line input on cd.
         setTimeout(() => this.props.prompt.send(text), 0);
     },
-    navigateHistory: function (event) {
+    navigateHistory(event) {
         if (keys.goUp(event)) {
             var prevCommand = this.props.prompt.history.getPrevious();
 
@@ -222,14 +219,14 @@ var Prompt = React.createClass({
             });
         }
     },
-    navigateAutocomplete: function (event) {
+    navigateAutocomplete(event) {
         if(keys.goUp(event)) {
             this.setState({ selectedAutocompleteIndex: Math.max(0, this.state.selectedAutocompleteIndex - 1) });
         } else {
             this.setState({ selectedAutocompleteIndex: Math.min(this.state.suggestions.length - 1, this.state.selectedAutocompleteIndex + 1) });
         }
     },
-    selectAutocomplete: function (event) {
+    selectAutocomplete(event) {
         var target = event.target;
         var state = this.state;
 
@@ -242,7 +239,7 @@ var Prompt = React.createClass({
         // TODO: remove forceUpdate.
         this.forceUpdate();
     },
-    handleInput: function (event) {
+    handleInput(event) {
         var target = event.target;
         this.props.prompt.buffer.setTo(target.innerText);
 
@@ -254,11 +251,11 @@ var Prompt = React.createClass({
 
         this.setState({ suggestions: this.props.prompt.getSuggestions()});
     },
-    currentToken: function () {
+    currentToken() {
         // TODO: return only the token under cursor.
         return this.getInputNode().innerText.split(/\s+/).pop();
     },
-    showAutocomplete: function () {
+    showAutocomplete() {
         //TODO: use streams.
         return this.refs.command &&
             this.state.suggestions.length &&
@@ -268,10 +265,10 @@ var Prompt = React.createClass({
             this.state.latestKeyCode != 27 &&
             this.state.latestKeyCode != 9;
     },
-    autocompleteIsShown: function () {
+    autocompleteIsShown() {
         return this.refs.autocomplete;
     },
-    render: function () {
+    render() {
         var classes = ['prompt-wrapper', this.props.status].join(' ');
 
         if (this.showAutocomplete()) {
@@ -299,7 +296,7 @@ var Prompt = React.createClass({
 });
 
 var Autocomplete = React.createClass({
-    render: function () {
+    render() {
         var position = _.pick(this.props.caretPosition, 'left');
 
         var suggestionViews = this.props.suggestions.map(function(suggestion, index) {
@@ -323,7 +320,7 @@ var Autocomplete = React.createClass({
 });
 
 var StatusLine = React.createClass({
-    render: function () {
+    render() {
         return (
             <div id="status-line">
                 <CurrentDirectory currentWorkingDirectory={this.props.currentWorkingDirectory}/>
@@ -333,7 +330,7 @@ var StatusLine = React.createClass({
 });
 
 var CurrentDirectory = React.createClass({
-    render: function () {
+    render() {
         return (
             <div id="current-directory">{this.props.currentWorkingDirectory}</div>
         )
