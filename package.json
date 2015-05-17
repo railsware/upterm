@@ -32,6 +32,7 @@
     "electron-prebuilt": "0.26",
     "electron-rebuild": "0.1.4",
     "gulp": "3.8.11",
+    "gulp-babel": "5.1.0",
     "gulp-concat": "2.5.2",
     "gulp-react": "3.0.1",
     "gulp-sass": "2.0.1",

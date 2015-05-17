@@ -3,6 +3,7 @@ const sass = require('gulp-sass');
 const react = require('gulp-react');
 const concat = require('gulp-concat');
 const ts = require('gulp-typescript');
+const babel = require("gulp-babel");
 
 var options = {
     target: 'compiled',
@@ -44,6 +45,7 @@ gulp.task('sass', function () {
 gulp.task('react', function () {
     return gulp.src(options.source.react)
                .pipe(react())
+               .pipe(babel())
                .pipe(gulp.dest(options.target));
 });
 

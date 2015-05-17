@@ -1,8 +1,7 @@
-//TODO: Use ECMAScript 6.
-var Terminal = require('./compiled/Terminal');
-var React = require('react');
-var _ = require('lodash');
-var Rx = require('rx');
+const Terminal = require('./compiled/Terminal');
+const React = require('react');
+const _ = require('lodash');
+const Rx = require('rx');
 
 
 // TODO: Figure out how it works.
@@ -177,7 +176,7 @@ var Prompt = React.createClass({
 
 
         keysDownStream.filter(_.negate(isCommandKey))
-                      .forEach(function(event){ this.setState({latestKeyCode: event.keyCode}) }.bind(this));
+                      .forEach((event) => this.setState({latestKeyCode: event.keyCode}));
 
         meaningfulKeysDownStream.filter(keys.enter)
                                 .forEach(this.execute);
