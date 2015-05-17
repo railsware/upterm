@@ -248,7 +248,7 @@ var Prompt = React.createClass({
         var state = this.state;
 
         withCaret(target, function() {
-            target.innerText = state.suggestions[state.selectedAutocompleteIndex];
+            target.innerHTML = state.suggestions[state.selectedAutocompleteIndex] + '&nbsp;';
 
             // TODO: replace only the current token.
             return target.innerText.length;
