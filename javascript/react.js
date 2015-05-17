@@ -164,15 +164,10 @@ var Prompt = React.createClass({
     },
     componentWillMount: function () {
         var keysDownStream           = createEventHandler();
-        var meaningfulKeysDownStream = keysDownStream.filter(isDefinedKey)
-                                                     .map(stopBubblingUp);
-        var navigationStreams = meaningfulKeysDownStream
+        var meaningfulKeysDownStream = keysDownStream.filter(isDefinedKey).map(stopBubblingUp);
+        var [navigateAutocompleteStream, navigateHistoryStream] = meaningfulKeysDownStream
             .filter(function(event) { return keys.goDown(event) || keys.goUp(event); })
             .partition(this.autocompleteIsShown);
-
-        // TODO: Use ES6 destructuring assignment.
-        var navigateAutocompleteStream = navigationStreams[0];
-        var navigateHistoryStream      = navigationStreams[1];
 
 
         keysDownStream.filter(_.negate(isCommandKey))
