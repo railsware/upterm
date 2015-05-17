@@ -31,9 +31,20 @@ function getEnumerablePropertyNames(target) {
 var keys = {
     goUp: function(event) { return (event.ctrlKey && event.keyCode === 80) || event.keyCode === 38; },
     goDown: function(event) { return (event.ctrlKey && event.keyCode === 78) || event.keyCode === 40; },
-    execute: function(event) { return event.keyCode === 13; },
+    enter: function(event) { return event.keyCode === 13; },
     tab: function(event) { return event.keyCode === 9; }
 };
+
+function isDefinedKey(event) {
+    return _.some(_.values(keys), function(matcher) { return matcher(event); });
+}
+
+function stopBubblingUp(event) {
+    event.stopPropagation();
+    event.preventDefault();
+
+    return event;
+}
 
 $(document).ready(function () {
     window.terminal = new Terminal(getDimensions());
@@ -153,49 +164,33 @@ var Prompt = React.createClass({
         return this.refs.command.getDOMNode()
     },
     componentWillMount: function () {
-        var keyDownStream = createEventHandler();
+        var keysDownStream           = createEventHandler();
+        var meaningfulKeysDownStream = keysDownStream.filter(isDefinedKey)
+                                                     .map(stopBubblingUp);
+        var navigationStreams = meaningfulKeysDownStream
+            .filter(function(event) { return keys.goDown(event) || keys.goUp(event); })
+            .partition(this.showAutocomplete);
 
-        keyDownStream.subscribe(function(event){
-            if (!isCommandKey(event)) {
-                this.setState({latestKeyCode: event.keyCode});
-            }
-        }.bind(this));
+        // TODO: Use ES6 destructuring assignment.
+        var navigateAutocompleteStream = navigationStreams[0];
+        var navigateHitoryStream       = navigationStreams[1];
 
-        var meaningfulKeyDownStream = keyDownStream.filter(function(event) {
-            return _.some(_.values(keys), function(matcher) { return matcher(event); });
-        }).map(function(event) {
-            event.stopPropagation();
-            event.preventDefault();
 
-            return event;
-        });
+        keysDownStream.filter(_.negate(isCommandKey))
+                      .subscribe(function(event){ this.setState({latestKeyCode: event.keyCode}) }.bind(this));
 
-        meaningfulKeyDownStream.filter(keys.execute).subscribe(function(event) {
-            if (this.autocompleteIsShown()) {
-                this.selectAutocomplete(event);
-            } else {
-                this.execute(event);
-            }
+        meaningfulKeysDownStream.filter(keys.enter)
+                                .forEach(this.execute);
 
-        }.bind(this));
+        meaningfulKeysDownStream.filter(this.autocompleteIsShown)
+                                .filter(keys.tab)
+                                .forEach(this.selectAutocomplete);
 
-        meaningfulKeyDownStream.filter(this.autocompleteIsShown).filter(function(event) {
-            return keys.execute(event) || keys.tab(event);
-        }).subscribe(function(event) {
-            this.selectAutocomplete(event);
-
-        }.bind(this));
-
-        meaningfulKeyDownStream.filter(function(event) {
-            return keys.goDown(event) || keys.goUp(event);
-        }).subscribe(function(event) {
-            if (!this.showAutocomplete()) {
-                this.navigateHistory(event);
-            }
-        }.bind(this));
+        navigateHitoryStream.forEach(this.navigateHistory);
+        navigateAutocompleteStream.forEach(this.navigateAutocomplete);
 
         this.handlers = {
-            onKeyDown: keyDownStream
+            onKeyDown: keysDownStream
         }
     },
     componentDidMount: function () {
