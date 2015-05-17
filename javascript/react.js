@@ -69,7 +69,7 @@ var Board = React.createClass({
         }
     },
     render() {
-        var invocations = this.props.terminal.invocations.map(function (invocation) {
+        var invocations = this.props.terminal.invocations.map((invocation) => {
             return (
                 <Invocation key={invocation.id} invocation={invocation}/>
             )
@@ -163,7 +163,7 @@ var Prompt = React.createClass({
         var keysDownStream           = createEventHandler();
         var meaningfulKeysDownStream = keysDownStream.filter(isDefinedKey).map(stopBubblingUp);
         var [navigateAutocompleteStream, navigateHistoryStream] = meaningfulKeysDownStream
-            .filter(function(event) { return keys.goDown(event) || keys.goUp(event); })
+            .filter(event => keys.goDown(event) || keys.goUp(event))
             .partition(this.autocompleteIsShown);
 
 
@@ -202,7 +202,7 @@ var Prompt = React.createClass({
             if (typeof prevCommand != 'undefined') {
                 var target = event.target;
 
-                withCaret(target, function(){
+                withCaret(target, () => {
                     target.innerText = prevCommand;
 
                     return target.innerText.length;
@@ -212,7 +212,7 @@ var Prompt = React.createClass({
             var command = this.props.prompt.history.getNext();
             target = event.target;
 
-            withCaret(target, function() {
+            withCaret(target, () => {
                 target.innerText = command || '';
 
                 return target.innerText.length;
@@ -230,7 +230,7 @@ var Prompt = React.createClass({
         var target = event.target;
         var state = this.state;
 
-        withCaret(target, function() {
+        withCaret(target, () => {
             target.innerHTML = state.suggestions[state.selectedAutocompleteIndex] + '&nbsp;';
 
             // TODO: replace only the current token.
@@ -299,10 +299,10 @@ var Autocomplete = React.createClass({
     render() {
         var position = _.pick(this.props.caretPosition, 'left');
 
-        var suggestionViews = this.props.suggestions.map(function(suggestion, index) {
+        var suggestionViews = this.props.suggestions.map((suggestion, index) => {
             var className = index == this.props.selectedIndex ? 'selected' : '';
             return (<li className={className}>{suggestion}</li>);
-        }, this);
+        });
 
         if (this.props.caretPosition.top + 300 > window.innerHeight) {
             position['bottom'] = 28;
@@ -356,7 +356,7 @@ function focusLastInput(event) {
 
     var target = _.last(document.getElementsByClassName('prompt'));
     target.focus();
-    withCaret(target, function() { return target.innerText.length; });
+    withCaret(target, () => target.innerText.length);
 }
 
 function withCaret(target, callback) {
