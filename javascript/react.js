@@ -169,7 +169,7 @@ var Prompt = React.createClass({
                                                      .map(stopBubblingUp);
         var navigationStreams = meaningfulKeysDownStream
             .filter(function(event) { return keys.goDown(event) || keys.goUp(event); })
-            .partition(this.showAutocomplete);
+            .partition(this.autocompleteIsShown);
 
         // TODO: Use ES6 destructuring assignment.
         var navigateAutocompleteStream = navigationStreams[0];
