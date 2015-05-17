@@ -173,11 +173,11 @@ var Prompt = React.createClass({
 
         // TODO: Use ES6 destructuring assignment.
         var navigateAutocompleteStream = navigationStreams[0];
-        var navigateHitoryStream       = navigationStreams[1];
+        var navigateHistoryStream      = navigationStreams[1];
 
 
         keysDownStream.filter(_.negate(isCommandKey))
-                      .subscribe(function(event){ this.setState({latestKeyCode: event.keyCode}) }.bind(this));
+                      .forEach(function(event){ this.setState({latestKeyCode: event.keyCode}) }.bind(this));
 
         meaningfulKeysDownStream.filter(keys.enter)
                                 .forEach(this.execute);
@@ -186,7 +186,7 @@ var Prompt = React.createClass({
                                 .filter(keys.tab)
                                 .forEach(this.selectAutocomplete);
 
-        navigateHitoryStream.forEach(this.navigateHistory);
+        navigateHistoryStream.forEach(this.navigateHistory);
         navigateAutocompleteStream.forEach(this.navigateAutocomplete);
 
         this.handlers = {
