@@ -156,19 +156,21 @@ var Prompt = React.createClass({
         var keyDownStream = createEventHandler();
 
         keyDownStream.subscribe(function(event){
-            if (!isCommandKey()) {
+            if (!isCommandKey(event)) {
                 this.setState({latestKeyCode: event.keyCode});
             }
         }.bind(this));
 
         var meaningfulKeyDownStream = keyDownStream.filter(function(event) {
             return _.some(_.values(keys), function(matcher) { return matcher(event); });
-        });
-
-        meaningfulKeyDownStream.filter(keys.execute).subscribe(function(event) {
+        }).map(function(event) {
             event.stopPropagation();
             event.preventDefault();
 
+            return event;
+        });
+
+        meaningfulKeyDownStream.filter(keys.execute).subscribe(function(event) {
             if (this.autocompleteIsShown()) {
                 this.selectAutocomplete(event);
             } else {
@@ -180,9 +182,6 @@ var Prompt = React.createClass({
         meaningfulKeyDownStream.filter(this.autocompleteIsShown).filter(function(event) {
             return keys.execute(event) || keys.tab(event);
         }).subscribe(function(event) {
-            event.stopPropagation();
-            event.preventDefault();
-
             this.selectAutocomplete(event);
 
         }.bind(this));
@@ -190,9 +189,6 @@ var Prompt = React.createClass({
         meaningfulKeyDownStream.filter(function(event) {
             return keys.goDown(event) || keys.goUp(event);
         }).subscribe(function(event) {
-            event.stopPropagation();
-            event.preventDefault();
-
             if (!this.showAutocomplete()) {
                 this.navigateHistory(event);
             }
