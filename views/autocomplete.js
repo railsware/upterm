@@ -6,8 +6,12 @@ export default React.createClass({
         var position = _.pick(this.props.caretPosition, 'left');
 
         var suggestionViews = this.props.suggestions.map((suggestion, index) => {
-            var className = index == this.props.selectedIndex ? 'selected' : '';
-            return (<li className={className}>{suggestion}</li>);
+            var props = {
+                className: (index == this.props.selectedIndex ? 'selected' : ''),
+                key: index
+            };
+
+            return (<li {...props}>{suggestion}</li>);
         });
 
         if (this.props.caretPosition.top + 300 > window.innerHeight) {

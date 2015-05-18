@@ -116,9 +116,7 @@ export default React.createClass({
             this.state.suggestions.length &&
             this.currentToken().length &&
             this.props.status == 'not-started' &&
-            this.state.latestKeyCode != 13 &&
-            this.state.latestKeyCode != 27 &&
-            this.state.latestKeyCode != 9;
+            !_.contains([9, 13, 27], this.state.latestKeyCode);
     },
     autocompleteIsShown() {
         return this.refs.autocomplete;
