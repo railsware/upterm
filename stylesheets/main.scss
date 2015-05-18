@@ -1,6 +1,6 @@
 @import 'colors';
 
-$fa-font-path:   "../node_modules/font-awesome/fonts";
+$fa-font-path: "../node_modules/font-awesome/fonts";
 @import '../node_modules/font-awesome/scss/font-awesome';
 
 @each $color, $value in $colors {
@@ -19,6 +19,10 @@ $fa-font-path:   "../node_modules/font-awesome/fonts";
 
 [data-underline='true'] {
   text-decoration: underline;
+}
+
+* {
+  box-sizing: border-box;
 }
 
 body, pre {
@@ -130,7 +134,6 @@ pre {
 
 .autocomplete {
   max-height: 300px;
-  max-width: 300px;
 
   overflow: scroll;
 
@@ -146,6 +149,48 @@ pre {
     li {
       list-style-type: none;
       padding: 2px;
+
+      .value {
+        padding-right: 20px;
+      }
+
+      .synopsis {
+        float: right;
+        opacity: 0.5;
+        font-size: 0.8em;
+        margin-top: 0.65em;
+        margin-right: 5px;
+      }
+
+      .icon:before {
+        content: ' ';
+        vertical-align: middle;
+        width: 2em;
+
+        display: inline-block;
+        height: inherit;
+
+        line-height: 2em;
+        text-align: center;
+        font-style: normal;
+
+        opacity: .5;
+        margin-right: 10px;
+
+        background-color: rgba(0, 0, 0, 0.15)
+      }
+
+      &.alias .icon:before {
+        content: 'A';
+      }
+
+      &.file .icon:before {
+        content: 'F';
+      }
+
+      &.executable .icon:before {
+        content: 'E';
+      }
 
       &.selected {
         background-color: #383E4A;

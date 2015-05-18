@@ -12,7 +12,7 @@ class Buffer extends events.EventEmitter {
     private attributes: i.Attributes = {color: e.Color.White, weight: e.Weight.Normal};
 
     constructor() {
-        super();
+      super();
     }
 
     writeString(string: string, attributes = this.attributes): void {

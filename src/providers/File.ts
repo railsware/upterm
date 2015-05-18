@@ -3,12 +3,21 @@ import _ = require('lodash');
 import Utils = require('../Utils');
 
 class File implements i.AutocompletionProvider {
+    type = 'file';
     constructor() {
     }
 
-    getSuggestions(currentDirectory: string, input: string, callback: (suggestions: string[]) => void ) {
+    getSuggestions(currentDirectory: string, input: string, callback: (suggestions: i.Suggestion[]) => void ) {
         Utils.filesIn(currentDirectory, (files) => {
-            callback(_.filter(files, (fileName: string) => { return _.include(fileName, input) }));
+            var filtered = _.filter(files, (fileName: string) => { return _.include(fileName, input) });
+
+            callback(_.map(filtered, (fileName: string) => {
+                return {
+                    value: fileName,
+                    synopsis: '',
+                    description: ''
+                };
+            }));
         });
     }
 }

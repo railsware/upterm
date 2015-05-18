@@ -7,11 +7,17 @@ export default React.createClass({
 
         var suggestionViews = this.props.suggestions.map((suggestion, index) => {
             var props = {
-                className: (index == this.props.selectedIndex ? 'selected' : ''),
+                className: `${(index == this.props.selectedIndex ? 'selected' : '')} ${suggestion.type}`,
                 key: index
             };
 
-            return (<li {...props}>{suggestion}</li>);
+            return (
+                <li {...props}>
+                    <i className="icon"></i>
+                    <span className="value">{suggestion.value}</span>
+                    <span className="synopsis">{suggestion.synopsis}</span>
+                </li>
+            );
         });
 
         if (this.props.caretPosition.top + 300 > window.innerHeight) {

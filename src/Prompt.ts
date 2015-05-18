@@ -4,6 +4,7 @@ import Buffer = require('./Buffer');
 import Aliases = require('./Aliases');
 import History = require('./History');
 import _ = require('lodash');
+import i = require('./Interfaces');
 
 class Prompt extends events.EventEmitter {
     private buffer: Buffer;
@@ -40,7 +41,7 @@ class Prompt extends events.EventEmitter {
         return this.expandCommand(this.buffer.toString())
     }
 
-    getSuggestions(callback: (suggestions: string[]) => void) {
+    getSuggestions(callback: (suggestions: i.TypedSuggestion[]) => void) {
         this.autocompletion.getSuggestions(this.directory, this.buffer.toString(), (suggestions) => {
             callback(_.uniq(suggestions).slice(0, 50));
         });

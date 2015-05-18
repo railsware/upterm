@@ -23,5 +23,17 @@ export interface Position {
 }
 
 export interface AutocompletionProvider {
-    getSuggestions(currentDirectory: string, input: string, callback: (suggestions: string[]) => void): void;
+    //TODO: deduce the type from class name.
+    type: string;
+    getSuggestions(currentDirectory: string, input: string, callback: (suggestions: Suggestion[]) => void): void;
+}
+
+export interface Suggestion {
+    value: string,
+    synopsis: string,
+    description: string,
+}
+
+export interface TypedSuggestion extends Suggestion {
+    type: string,
 }

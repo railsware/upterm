@@ -1,7 +1,8 @@
 var pty = require('pty.js');
+import _ = require('lodash')
 
 class Aliases {
-    static aliases: { [index:string]: string };
+    static aliases: _.Dictionary<string>;
 
     static initialize(): void {
         this.aliases = {};
