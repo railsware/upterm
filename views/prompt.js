@@ -86,7 +86,7 @@ export default React.createClass({
         var state = this.state;
 
         withCaret(target, () => {
-            target.innerHTML = state.suggestions[state.selectedAutocompleteIndex] + '&nbsp;';
+            target.innerHTML = state.suggestions[state.selectedAutocompleteIndex].value + '&nbsp;';
 
             // TODO: replace only the current token.
             return target.innerText.length;
