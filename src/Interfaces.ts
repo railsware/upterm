@@ -21,3 +21,7 @@ export interface Position {
     column: number;
     row: number;
 }
+
+export interface AutocompletionProvider {
+    getSuggestions(currentDirectory: string, input: string, callback: (suggestions: string[]) => void): void;
+}

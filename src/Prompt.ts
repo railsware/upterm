@@ -40,8 +40,10 @@ class Prompt extends events.EventEmitter {
         return this.expandCommand(this.buffer.toString())
     }
 
-    getSuggestions(): Array<string> {
-        return _.uniq(this.autocompletion.matching(this.buffer.toString())).slice(0, 50);
+    getSuggestions(callback: (suggestions: string[]) => void) {
+        this.autocompletion.getSuggestions(this.directory, this.buffer.toString(), (suggestions) => {
+            callback(_.uniq(suggestions).slice(0, 50));
+        });
     }
 
     private expandCommand(command: string): Array<string> {

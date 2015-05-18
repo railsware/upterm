@@ -1,22 +1,18 @@
-//TODO: Make them accessible as providers.command.Path.
-import Path = require('./providers/command/Path');
+import Executable = require('./providers/Executable');
+import File = require('./providers/File');
 import _ = require('lodash');
+import i = require('./Interfaces');
 
-class Autocompletion {
-    pathCompletions: Path;
+class Autocompletion implements i.AutocompletionProvider {
+    executableCompletions: Executable;
+    fileCompletion: File;
 
     constructor() {
-        this.pathCompletions = new Path();
+        this.executableCompletions = new Executable();
     }
 
-    getCompletions(): Array<string> {
-        return this.pathCompletions.executables;
-    }
-
-    matching(string: string): Array<string> {
-        return _.filter(this.getCompletions(), (completion: string) => {
-            return completion.startsWith(string);
-        })
+    getSuggestions(currentDirectory: string, input: string, callback: (suggestions: string[]) => void) {
+        this.executableCompletions.getSuggestions(currentDirectory, input, callback);
     }
 }
 
