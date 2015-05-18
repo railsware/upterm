@@ -1,7 +1,8 @@
-const Terminal = require('./compiled/Terminal');
-const React = require('react');
-const _ = require('lodash');
-const Rx = require('rx');
+import Terminal from './compiled/Terminal';
+import React from 'react';
+import _ from 'lodash';
+import Rx from 'rx';
+import { Board } from './compiled/views/board';
 
 var keys = {
     goUp: event => (event.ctrlKey && event.keyCode === 80) || event.keyCode === 38,
@@ -9,39 +10,6 @@ var keys = {
     enter: event => event.keyCode === 13,
     tab: event => event.keyCode === 9
 };
-
-
-var Board = React.createClass({
-    componentDidMount() {
-        this.props.terminal.on('invocation', this.forceUpdate.bind(this));
-    },
-    handleKeyDown(event) {
-        // Ctrl+l
-        if (event.ctrlKey && event.keyCode === 76) {
-            this.props.terminal.clearInvocations();
-
-            event.stopPropagation();
-            event.preventDefault();
-        }
-    },
-    render() {
-        var invocations = this.props.terminal.invocations.map((invocation) => {
-            return (
-                <Invocation key={invocation.id} invocation={invocation}/>
-            )
-        });
-
-        return (
-            <div id="board" onKeyDown={this.handleKeyDown}>
-                <div id="invocations">
-                    {invocations}
-                </div>
-                <StatusLine currentWorkingDirectory={this.props.terminal.currentDirectory}/>
-            </div>
-        );
-    }
-});
-
 
 var Invocation = React.createClass({
     componentDidMount() {

@@ -7,10 +7,13 @@ const babel = require("gulp-babel");
 
 var options = {
     target: 'compiled',
+    react: {
+        source: 'views/*.js',
+        target: 'compiled/views'
+    },
     source: {
         typeScript: 'src/**/*.ts',
-        sass: ['stylesheets/*.scss', 'decorators/*.scss'],
-        react: 'javascript/react.js'
+        sass: ['stylesheets/*.scss', 'decorators/*.scss']
     },
     config: {
         sass: {
@@ -43,15 +46,15 @@ gulp.task('sass', function () {
 });
 
 gulp.task('react', function () {
-    return gulp.src(options.source.react)
+    return gulp.src(options.react.source)
                .pipe(babel({ stage: 0 }))
                .pipe(react())
-               .pipe(gulp.dest(options.target));
+               .pipe(gulp.dest(options.react.target));
 });
 
 gulp.task('watch', ['default'], function () {
     gulp.watch(options.source.sass, ['sass']);
-    gulp.watch(options.source.react, ['react']);
+    gulp.watch(options.react.source, ['react']);
     gulp.watch(options.source.typeScript, ['typescript']);
 });
 
