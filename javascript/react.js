@@ -3,30 +3,6 @@ const React = require('react');
 const _ = require('lodash');
 const Rx = require('rx');
 
-
-// TODO: Figure out how it works.
-var createEventHandler = function () {
-    var subject = function() {
-        subject.onNext.apply(subject, arguments);
-    };
-
-    getEnumerablePropertyNames(Rx.Subject.prototype)
-        .forEach(function (property) {
-            subject[property] = Rx.Subject.prototype[property];
-        });
-    Rx.Subject.call(subject);
-
-    return subject;
-};
-function getEnumerablePropertyNames(target) {
-    var result = [];
-    for (var key in target) {
-        result.push(key);
-    }
-    return result;
-}
-
-
 var keys = {
     goUp: event => (event.ctrlKey && event.keyCode === 80) || event.keyCode === 38,
     goDown: event => (event.ctrlKey && event.keyCode === 78) || event.keyCode === 40,
@@ -34,26 +10,6 @@ var keys = {
     tab: event => event.keyCode === 9
 };
 
-function isDefinedKey(event) {
-    return _.some(_.values(keys), matcher => matcher(event));
-}
-
-function stopBubblingUp(event) {
-    event.stopPropagation();
-    event.preventDefault();
-
-    return event;
-}
-
-$(document).ready(() => {
-    window.terminal = new Terminal(getDimensions());
-
-    $(window).resize(() => terminal.resize(getDimensions()));
-
-    React.render(<Board terminal={window.terminal}/>, document.getElementById('black-board'));
-
-    $(document).keydown(event => focusLastInput(event));
-});
 
 var Board = React.createClass({
     componentDidMount() {
@@ -85,6 +41,7 @@ var Board = React.createClass({
         );
     }
 });
+
 
 var Invocation = React.createClass({
     componentDidMount() {
@@ -123,6 +80,7 @@ var Invocation = React.createClass({
     }
 });
 
+
 var DecorationToggle = React.createClass({
     getInitialState() {
         return {enabled: this.props.invocation.state.decorate};
@@ -146,6 +104,7 @@ var DecorationToggle = React.createClass({
         );
     }
 });
+
 
 var Prompt = React.createClass({
     getInitialState() {
@@ -295,6 +254,7 @@ var Prompt = React.createClass({
     }
 });
 
+
 var Autocomplete = React.createClass({
     render() {
         var position = _.pick(this.props.caretPosition, 'left');
@@ -319,6 +279,7 @@ var Autocomplete = React.createClass({
     }
 });
 
+
 var StatusLine = React.createClass({
     render() {
         return (
@@ -329,6 +290,7 @@ var StatusLine = React.createClass({
     }
 });
 
+
 var CurrentDirectory = React.createClass({
     render() {
         return (
@@ -336,6 +298,7 @@ var CurrentDirectory = React.createClass({
         )
     }
 });
+
 
 function getDimensions() {
     var letter = document.getElementById('sizes-calculation');
@@ -378,3 +341,47 @@ function withCaret(target, callback) {
 function isCommandKey(event) {
     return _.contains([16, 17, 18], event.keyCode) || event.ctrlKey || event.altKey || event.metaKey;
 }
+
+function isDefinedKey(event) {
+    return _.some(_.values(keys), matcher => matcher(event));
+}
+
+function stopBubblingUp(event) {
+    event.stopPropagation();
+    event.preventDefault();
+
+    return event;
+}
+
+// TODO: Figure out how it works.
+function createEventHandler() {
+    var subject = function() {
+        subject.onNext.apply(subject, arguments);
+    };
+
+    getEnumerablePropertyNames(Rx.Subject.prototype)
+        .forEach(function (property) {
+            subject[property] = Rx.Subject.prototype[property];
+        });
+    Rx.Subject.call(subject);
+
+    return subject;
+}
+
+function getEnumerablePropertyNames(target) {
+    var result = [];
+    for (var key in target) {
+        result.push(key);
+    }
+    return result;
+}
+
+$(document).ready(() => {
+    window.terminal = new Terminal(getDimensions());
+
+    $(window).resize(() => terminal.resize(getDimensions()));
+
+    React.render(<Board terminal={window.terminal}/>, document.getElementById('black-board'));
+
+    $(document).keydown(event => focusLastInput(event));
+});
