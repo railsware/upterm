@@ -1,6 +1,8 @@
 import React from 'react';
+import Invocation from './invocation';
+import StatusLine from './status_line';
 
-var Board = React.createClass({
+export default React.createClass({
     componentDidMount() {
         this.props.terminal.on('invocation', this.forceUpdate.bind(this));
     },
@@ -30,5 +32,3 @@ var Board = React.createClass({
         );
     }
 });
-
-export { Board };

@@ -2,7 +2,8 @@ import Terminal from './compiled/Terminal';
 import React from 'react';
 import _ from 'lodash';
 import Rx from 'rx';
-import { Board } from './compiled/views/board';
+import Board from './compiled/views/board';
+import Autocomplete from './compiled/views/autocomplete';
 
 var keys = {
     goUp: event => (event.ctrlKey && event.keyCode === 80) || event.keyCode === 38,
@@ -10,68 +11,6 @@ var keys = {
     enter: event => event.keyCode === 13,
     tab: event => event.keyCode === 9
 };
-
-var Invocation = React.createClass({
-    componentDidMount() {
-        this.props.invocation.on('data', () =>
-            this.setState({ canBeDecorated: this.props.invocation.canBeDecorated()})
-        );
-    },
-    componentDidUpdate: scrollToBottom,
-
-    getInitialState() {
-        return {
-            decorate: true,
-            canBeDecorated: false
-        };
-    },
-    render() {
-        var buffer, decorationToggle;
-
-        if (this.state.canBeDecorated && this.state.decorate) {
-            buffer = this.props.invocation.decorate();
-        } else {
-            buffer = this.props.invocation.getBuffer().render();
-        }
-
-        if (this.state.canBeDecorated) {
-            decorationToggle = <DecorationToggle invocation={this}/>;
-        }
-
-        return (
-            <div className="invocation">
-                <Prompt prompt={this.props.invocation.getPrompt()} status={this.props.invocation.status}/>
-                {decorationToggle}
-                {buffer}
-            </div>
-        );
-    }
-});
-
-
-var DecorationToggle = React.createClass({
-    getInitialState() {
-        return {enabled: this.props.invocation.state.decorate};
-    },
-    handleClick() {
-        var newState = !this.state.enabled;
-        this.setState({enabled: newState});
-        this.props.invocation.setState({decorate: newState});
-    },
-    render() {
-        var classes = ['decoration-toggle'];
-
-        if (!this.state.enabled) {
-            classes.push('disabled');
-        }
-
-        return (
-            <a href="#" className={classes.join(' ')} onClick={this.handleClick}>
-                <i className="fa fa-magic"></i>
-            </a>
-        );
-    }
-});
 
 
 var Prompt = React.createClass({
@@ -218,51 +157,6 @@ var Prompt = React.createClass({
                      contentEditable="true" />
                 {autocomplete}
             </div>
-        )
-    }
-});
-
-
-var Autocomplete = React.createClass({
-    render() {
-        var position = _.pick(this.props.caretPosition, 'left');
-
-        var suggestionViews = this.props.suggestions.map((suggestion, index) => {
-            var className = index == this.props.selectedIndex ? 'selected' : '';
-            return (<li className={className}>{suggestion}</li>);
-        });
-
-        if (this.props.caretPosition.top + 300 > window.innerHeight) {
-            position['bottom'] = 28;
-            suggestionViews = _(suggestionViews).reverse().value();
-        }
-
-        return (
-            <div className="autocomplete" style={position}>
-                <ul>
-                    {suggestionViews}
-                </ul>
-            </div>
-        )
-    }
-});
-
-
-var StatusLine = React.createClass({
-    render() {
-        return (
-            <div id="status-line">
-                <CurrentDirectory currentWorkingDirectory={this.props.currentWorkingDirectory}/>
-            </div>
-        )
-    }
-});
-
-
-var CurrentDirectory = React.createClass({
-    render() {
-        return (
-            <div id="current-directory">{this.props.currentWorkingDirectory}</div>
         )
     }
 });
