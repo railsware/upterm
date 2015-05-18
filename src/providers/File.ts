@@ -1,4 +1,5 @@
 import i = require('../Interfaces');
+import _ = require('lodash');
 import Utils = require('../Utils');
 
 class File implements i.AutocompletionProvider {
@@ -6,7 +7,9 @@ class File implements i.AutocompletionProvider {
     }
 
     getSuggestions(currentDirectory: string, input: string, callback: (suggestions: string[]) => void ) {
-        callback([]);
+        Utils.filesIn(currentDirectory, (files) => {
+            callback(_.filter(files, (fileName: string) => { return _.include(fileName, input) }));
+        });
     }
 }
 

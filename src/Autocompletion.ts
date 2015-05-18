@@ -9,10 +9,16 @@ class Autocompletion implements i.AutocompletionProvider {
 
     constructor() {
         this.executableCompletions = new Executable();
+        this.fileCompletion = new File();
     }
 
     getSuggestions(currentDirectory: string, input: string, callback: (suggestions: string[]) => void) {
-        this.executableCompletions.getSuggestions(currentDirectory, input, callback);
+        //TODO: flatten.
+        this.executableCompletions.getSuggestions(currentDirectory, input, (executables) => {
+            this.fileCompletion.getSuggestions(currentDirectory, input, (files) => {
+                callback(executables.concat(files));
+            });
+        });
     }
 }
 
