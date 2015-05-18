@@ -1,4 +1,5 @@
 import React from 'react';
+import Prompt from './prompt';
 import DecorationToggle from './decoration_toggle';
 
 export default React.createClass({
