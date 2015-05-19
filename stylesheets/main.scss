@@ -3,6 +3,10 @@
 $fa-font-path: "../node_modules/font-awesome/fonts";
 @import '../node_modules/font-awesome/scss/font-awesome';
 
+a {
+  color: map-get($colors, 'blue');
+}
+
 @each $color, $value in $colors {
   [data-color='#{$color}'] {
     color: $value;
