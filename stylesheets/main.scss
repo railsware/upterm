@@ -21,6 +21,13 @@ $fa-font-path: "../node_modules/font-awesome/fonts";
   text-decoration: underline;
 }
 
+@mixin info-panel {
+  padding: 5px 0.6em;
+  min-height: 2em;
+  line-height: 1.3;
+  background-color: #23252B;
+}
+
 * {
   box-sizing: border-box;
 }
@@ -109,12 +116,11 @@ body, pre {
 }
 
 #status-line {
-  background-color: #22252B;
   position: fixed;
   bottom: 0;
-  padding: 3px;
   width: 100%;
-  height: 16px;
+
+  @include info-panel;
 }
 
 .decoration-toggle {
@@ -210,10 +216,6 @@ pre {
     left: 0;
     right: 0;
 
-    padding: 5px 0.6em;
-    min-height: 2em;
-    line-height: 1.3;
-    background-color: #23252B;
-    border-radius: 0 0 3px 3px;
+    @include info-panel;
   }
 }
