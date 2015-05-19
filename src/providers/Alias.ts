@@ -12,7 +12,7 @@ class Alias implements i.AutocompletionProvider {
         var filtered: _.Dictionary<string> = {};
 
         _.each(Aliases.aliases, (expanded: string, alias: string) => {
-            if(_.include(alias, input)) {
+            if(_.include(alias, input) || _.include(expanded, input)) {
                 filtered[alias] = expanded
             }
         });
