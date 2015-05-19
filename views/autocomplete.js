@@ -15,6 +15,15 @@ export default React.createClass({
             );
         });
 
+        var selectedSuggestionDescription = this.props.suggestions[this.props.selectedIndex].description;
+
+        if (selectedSuggestionDescription) {
+            var descriptionChild =
+                <div className="description">
+                    {selectedSuggestionDescription}
+                </div>;
+        }
+
         if (this.props.caretPosition.top + 300 > window.innerHeight) {
             position['bottom'] = 28;
             suggestionViews = _(suggestionViews).reverse().value();
@@ -25,6 +34,7 @@ export default React.createClass({
                 <ul>
                     {suggestionViews}
                 </ul>
+                {descriptionChild}
             </div>
         )
     },

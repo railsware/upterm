@@ -22,7 +22,7 @@ class Alias implements i.AutocompletionProvider {
                 value: alias,
                 priority: 0,
                 synopsis: expanded,
-                description: ''
+                description: `Aliased to “${expanded}”.`
             };
         });
 

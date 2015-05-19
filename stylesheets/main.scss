@@ -133,16 +133,16 @@ pre {
 }
 
 .autocomplete {
-  max-height: 300px;
-
-  overflow: scroll;
-
   position: absolute;
 
   box-shadow: 0 2px 8px 1px rgba(0, 0, 0, 0.3);
   background-color: map-get($colors, 'black');
 
   ul {
+    max-height: 300px;
+
+    overflow: scroll;
+
     padding: 0;
     margin: 0;
 
@@ -151,7 +151,7 @@ pre {
       padding: 2px;
 
       .value {
-        padding-right: 20px;
+        padding-right: 30px;
       }
 
       .synopsis {
@@ -200,5 +200,20 @@ pre {
         background-color: #383E4A;
       }
     }
+  }
+
+  .description {
+    display: block;
+    box-shadow: 0 4px 8px 1px rgba(0, 0, 0, 0.3);
+
+    position: absolute;
+    left: 0;
+    right: 0;
+
+    padding: 5px 0.6em;
+    min-height: 2em;
+    line-height: 1.3;
+    background-color: #23252B;
+    border-radius: 0 0 3px 3px;
   }
 }
