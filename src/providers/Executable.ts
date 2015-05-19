@@ -27,6 +27,7 @@ class Executable implements i.AutocompletionProvider {
         callback(_.map(filtered, (executable: string) => {
             return {
                 value: executable,
+                priority: 0,
                 synopsis: '',
                 description: ''
             };

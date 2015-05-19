@@ -29,9 +29,10 @@ export interface AutocompletionProvider {
 }
 
 export interface Suggestion {
-    value: string,
-    synopsis: string,
-    description: string,
+    value: string;
+    priority: number;
+    synopsis: string;
+    description: string;
 }
 
 export interface TypedSuggestion extends Suggestion {

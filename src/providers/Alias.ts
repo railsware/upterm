@@ -20,6 +20,7 @@ class Alias implements i.AutocompletionProvider {
         var mapped: i.Suggestion[] = _.map(filtered, (expanded: string, alias: string) => {
             return {
                 value: alias,
+                priority: 0,
                 synopsis: expanded,
                 description: ''
             };

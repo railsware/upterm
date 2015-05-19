@@ -192,6 +192,10 @@ pre {
         content: 'E';
       }
 
+      &.history .icon:before {
+        content: 'H';
+      }
+
       &.selected {
         background-color: #383E4A;
       }

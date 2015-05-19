@@ -14,6 +14,7 @@ class File implements i.AutocompletionProvider {
             callback(_.map(filtered, (fileName: string) => {
                 return {
                     value: fileName,
+                    priority: 0,
                     synopsis: '',
                     description: ''
                 };
