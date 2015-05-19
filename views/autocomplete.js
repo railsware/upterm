@@ -1,4 +1,4 @@
-import React from 'react';
+import React from 'react/addons';
 import _ from 'lodash';
 
 export default React.createClass({
@@ -6,13 +6,8 @@ export default React.createClass({
         var position = _.pick(this.props.caretPosition, 'left');
 
         var suggestionViews = this.props.suggestions.map((suggestion, index) => {
-            var props = {
-                className: `${(index == this.props.selectedIndex ? 'selected' : '')} ${suggestion.type}`,
-                key: index
-            };
-
             return (
-                <li {...props}>
+                <li {...this.getRenderingProps(suggestion, index)}>
                     <i className="icon"></i>
                     <span className="value">{suggestion.value}</span>
                     <span className="synopsis">{suggestion.synopsis}</span>
@@ -32,5 +27,28 @@ export default React.createClass({
                 </ul>
             </div>
         )
+    },
+
+    getRenderingProps(suggestion, index) {
+        var props = {
+            className: [suggestion.type],
+            key: index
+        };
+
+        if (index == this.props.selectedIndex) {
+            props = React.addons.update(props, {
+                    className: {$push: ['selected']},
+                    ref: {$set: 'selected'}
+                }
+            );
+        }
+
+        props.className = props.className.join(' ');
+
+        return props;
+    },
+
+    componentDidUpdate() {
+        this.refs.selected.getDOMNode().scrollIntoView(false);
     }
 });

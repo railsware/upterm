@@ -105,7 +105,9 @@ export default React.createClass({
         //});
 
         //TODO: make it a stream.
-        this.props.prompt.getSuggestions(suggestions => this.setState({suggestions: suggestions}) );
+        this.props.prompt.getSuggestions(suggestions =>
+            this.setState({ suggestions: suggestions, selectedAutocompleteIndex: 0 })
+        );
     },
     currentToken() {
         // TODO: return only the token under cursor.
