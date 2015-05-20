@@ -29,6 +29,7 @@
   },
   "devDependencies": {
     "bower": "1.4.1",
+    "electron-packager": "4.1.0",
     "electron-prebuilt": "0.26",
     "electron-rebuild": "0.1.4",
     "gulp": "3.8.11",
