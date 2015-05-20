@@ -6,6 +6,7 @@ import Invocation = require('./Invocation')
 import Aliases = require('./Aliases')
 import History = require('./History')
 var remote = require('remote');
+var app = remote.require('app');
 
 class Terminal extends events.EventEmitter {
     invocations: Array<Invocation>;
@@ -33,6 +34,7 @@ class Terminal extends events.EventEmitter {
     createInvocation(): void {
         var invocation = new Invocation(this.currentDirectory, this.dimensions, this.history);
         invocation.once('end', () => {
+            app.dock.bounce('informational');
             this.createInvocation();
         }).once('working-directory-changed', (newWorkingDirectory: string) => {
             this.setCurrentDirectory(newWorkingDirectory);
@@ -57,6 +59,7 @@ class Terminal extends events.EventEmitter {
     setCurrentDirectory(value: string): void {
         remote.getCurrentWindow().setRepresentedFilename(value);
         this.currentDirectory = value;
+        app.addRecentDocument(value);
     }
 
     private observeSerializableProperties(callback: Function): void {
