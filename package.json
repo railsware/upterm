@@ -45,7 +45,8 @@
     "install-all": "PATH=node_modules/.bin:$PATH rm -rf node_modules && npm update && npm install && electron-rebuild && bower install && npm run cleanup",
     "cleanup": "rm -rf build",
     "forest-run": "PATH=node_modules/.bin:$PATH gulp && electron .",
-    "watch": "PATH=node_modules/.bin:$PATH gulp watch"
+    "watch": "PATH=node_modules/.bin:$PATH gulp watch",
+    "package": "PATH=node_modules/.bin:$PATH rm -rf '/Applications/Black Screen.app'; electron-packager . 'Black Screen' --platform=darwin --arch=x64 --version='0.26.0' --out='/Applications' --icon='./icon.icns'"
   },
   "license": "MIT"
 }

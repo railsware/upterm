@@ -2,6 +2,8 @@ var app = require('app');
 var BrowserWindow = require('browser-window');
 var menu = require('./menu');
 
+process.env.PATH += ':/usr/local/bin';
+
 var mainWindow;
 
 app.on('ready', function () {
