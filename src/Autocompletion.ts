@@ -9,12 +9,10 @@ class Autocompletion implements i.AutocompletionProvider {
     providers = [new Alias(), new Executable(), new File(), new History()];
 
     getSuggestions(currentDirectory: string, input: string) {
-        return new Promise((resolve) => {
-            Promise.all(_.map(this.providers, (provider) => {
-                return provider.getSuggestions(currentDirectory, input);
-            })).then((results) => {
-                resolve(_.uniq(_.flatten(results), 'value').slice(0, 30));
-            });
+        return Promise.all(_.map(this.providers, (provider) => {
+            return provider.getSuggestions(currentDirectory, input);
+        })).then((results) => {
+            return _.uniq(_.flatten(results), 'value').slice(0, 30);
         });
     }
 }
