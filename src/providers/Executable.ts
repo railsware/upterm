@@ -4,8 +4,6 @@ import _ = require('lodash')
 
 
 class Executable implements i.AutocompletionProvider {
-    type = 'executable';
-
     private paths: Array<string> = process.env.PATH.split(':');
     private executables: string[] = [];
 
@@ -21,17 +19,22 @@ class Executable implements i.AutocompletionProvider {
         });
     }
 
-    getSuggestions(currentDirectory: string, input: string, callback: (suggestions: i.Suggestion[]) => void ) {
-        var filtered = _.filter(this.executables, (executable: string) => { return executable.startsWith(input) });
+    getSuggestions(currentDirectory: string, input: string) {
+        return new Promise((resolve) => {
+            var filtered = _.filter(this.executables, (executable: string) => {
+                return executable.startsWith(input);
+            });
 
-        callback(_.map(filtered, (executable: string) => {
-            return {
-                value: executable,
-                priority: 0,
-                synopsis: '',
-                description: ''
-            };
-        }));
+            resolve(_.map(filtered, (executable: string) => {
+                return {
+                    value: executable,
+                    priority: 0,
+                    synopsis: '',
+                    description: '',
+                    type: 'executable'
+                };
+            }));
+        });
     }
 }
 

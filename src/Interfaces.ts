@@ -23,9 +23,7 @@ export interface Position {
 }
 
 export interface AutocompletionProvider {
-    //TODO: deduce the type from class name.
-    type: string;
-    getSuggestions(currentDirectory: string, input: string, callback: (suggestions: Suggestion[]) => void): void;
+    getSuggestions(currentDirectory: string, input: string): Promise<Suggestion[]>;
 }
 
 export interface Suggestion {
@@ -33,8 +31,5 @@ export interface Suggestion {
     priority: number;
     synopsis: string;
     description: string;
-}
-
-export interface TypedSuggestion extends Suggestion {
-    type: string,
+    type: string;
 }
