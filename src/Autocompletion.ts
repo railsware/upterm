@@ -12,7 +12,7 @@ class Autocompletion implements i.AutocompletionProvider {
         return Promise.all(_.map(this.providers, (provider) => {
             return provider.getSuggestions(currentDirectory, input);
         })).then((results) => {
-            return _.uniq(_.flatten(results), 'value').slice(0, 30);
+            return _(results).flatten().uniq('value').take(30).value();
         });
     }
 }
