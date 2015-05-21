@@ -105,7 +105,7 @@ export default React.createClass({
         //});
 
         //TODO: make it a stream.
-        this.props.prompt.getSuggestions(suggestions =>
+        this.props.prompt.getSuggestions().then(suggestions =>
             this.setState({ suggestions: suggestions, selectedAutocompleteIndex: 0 })
         );
     },

@@ -3,30 +3,28 @@ import _ = require('lodash');
 import Aliases = require('../Aliases');
 
 class Alias implements i.AutocompletionProvider {
-    type = 'alias';
+    getSuggestions(currentDirectory: string, input: string) {
+        return new Promise((resolve) => {
+            var filtered: _.Dictionary<string> = {};
 
-    constructor() {
-    }
+            _.each(Aliases.aliases, (expanded: string, alias: string) => {
+                if(_.include(alias, input) || _.include(expanded, input)) {
+                    filtered[alias] = expanded
+                }
+            });
 
-    getSuggestions(currentDirectory: string, input: string, callback: (suggestions: i.Suggestion[]) => void ) {
-        var filtered: _.Dictionary<string> = {};
+            var mapped: i.Suggestion[] = _.map(filtered, (expanded: string, alias: string) => {
+                return {
+                    value: alias,
+                    priority: 0,
+                    synopsis: expanded,
+                    description: `Aliased to “${expanded}”.`,
+                    type: 'alias',
+                };
+            });
 
-        _.each(Aliases.aliases, (expanded: string, alias: string) => {
-            if(_.include(alias, input) || _.include(expanded, input)) {
-                filtered[alias] = expanded
-            }
+            resolve(mapped);
         });
-
-        var mapped: i.Suggestion[] = _.map(filtered, (expanded: string, alias: string) => {
-            return {
-                value: alias,
-                priority: 0,
-                synopsis: expanded,
-                description: `Aliased to “${expanded}”.`
-            };
-        });
-
-        callback(mapped);
     }
 }
 
