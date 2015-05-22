@@ -28,7 +28,9 @@
     "rx": "2.5.2"
   },
   "devDependencies": {
+    "babel": "5.4.7",
     "bower": "1.4.1",
+    "chai": "2.3.0",
     "electron-packager": "4.1.0",
     "electron-prebuilt": "0.26",
     "electron-rebuild": "0.1.4",
@@ -38,15 +40,18 @@
     "gulp-react": "3.0.1",
     "gulp-sass": "2.0.1",
     "gulp-typescript": "2.7.5",
+    "mocha": "2.2.5",
     "react-tools": "0.13.3",
-    "typescript": "1.5.0-beta"
+    "typescript": "1.5.0-beta",
+    "webdriverio": "git://github.com/webdriverio/webdriverio.git"
   },
   "scripts": {
     "install-all": "PATH=node_modules/.bin:$PATH rm -rf node_modules && npm update && npm install && electron-rebuild && bower install && npm run cleanup",
     "cleanup": "rm -rf build",
     "forest-run": "PATH=node_modules/.bin:$PATH gulp && electron .",
     "watch": "PATH=node_modules/.bin:$PATH gulp watch",
-    "package": "PATH=node_modules/.bin:$PATH rm -rf '/Applications/Black Screen.app'; electron-packager . 'Black Screen' --platform=darwin --arch=x64 --version='0.26.0' --out='/Applications' --icon='./icon.icns'"
+    "package": "PATH=node_modules/.bin:$PATH rm -rf '/Applications/Black Screen.app'; electron-packager . 'Black Screen' --platform=darwin --arch=x64 --version='0.26.0' --out='/Applications' --icon='./icon.icns'",
+    "test": "PATH=node_modules/.bin:$PATH mocha --compilers js:babel/register"
   },
   "license": "MIT"
 }

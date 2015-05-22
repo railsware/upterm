@@ -5,8 +5,8 @@ capabilities of contemporary interfaces in contrast to most of the terminal emul
 
 ### Technologies
 
-* TypeScript
 * Electron
+* TypeScript
 * NodeJS
 * ReactJS
 * SASS
@@ -23,6 +23,12 @@ npm run install-all
 npm run forest-run
 ```
 
+### Test
+
+* Install [selenium-standalone](https://github.com/vvo/selenium-standalone)
+* `selenium-standalone start`
+* `npm run test`
+
 ### License
 
-The MIT License (MIT)
+The MIT License.
