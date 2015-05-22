@@ -38,6 +38,13 @@ describe('Black Screen', () => {
                 .then((error, isExisting) => expect(isExisting).to.be.true())
                 .call(done);
         });
+
+        it('shows options suggestions', done => {
+            blsk.addValue(selectors.prompt, 'git --ver')
+                .waitFor(selectors.autocomplete)
+                .then((error, autocompletes) => expect(autocompletes.length).to.eql(1))
+                .call(done);
+        });
     });
 
     afterEach(done => blsk.end(done));
