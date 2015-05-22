@@ -1,4 +1,6 @@
 var webdriverio = require('webdriverio');
+var expect = require('chai').expect;
+var selectors = require('./support/selectors');
 
 const options = {
     host: 'localhost',
@@ -12,7 +14,7 @@ const options = {
 };
 
 var client = webdriverio.remote(options);
-var page = require('./support/page')(client);
+
 
 describe('Black Screen', function() {
     beforeEach(function () {
@@ -20,16 +22,18 @@ describe('Black Screen', function() {
     });
 
     it('contains a prompt', function (done) {
-        page.prompts(function (result) {
-            expect(result.length).toEqual(1);
-        }).call(done);
+        client
+            .waitFor(selectors.prompt)
+            .then(function(error, result) {
+                expect(result.length).to.eql(1);
+            }).call(done);
     });
 
     it('executes commands', function (done) {
-        client.addValue('.prompt', 'ls\n')
-            .waitForText('.output')
-            .getText('.output')
-            .then(function(text) { expect(text[0]).toBePresent(); })
+        client.addValue(selectors.prompt, 'ls\n')
+            .waitForText(selectors.output)
+            .getText(selectors.output)
+            .then(function(text) { expect(text[0]).to.not.be.empty(); })
             .call(done);
     });
 
