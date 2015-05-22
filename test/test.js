@@ -42,11 +42,18 @@ describe('Black Screen', () => {
     });
 
     describe('Autocomplete', () => {
+        it('is not displayed if the prompt is blank', done => {
+            client
+                .isExisting(selectors.autocomplete)
+                .then((error, isExisting) => expect(isExisting).to.be.false())
+                .call(done);
+        });
+
         it('is displayed while typing', done => {
             client
                 .addValue(selectors.prompt, 'ls')
-                .waitFor(selectors.autocomplete)
-                .then((error, result) => expect(result).to.exist())
+                .isExisting(selectors.autocomplete)
+                .then((error, isExisting) => expect(isExisting).to.be.true())
                 .call(done);
         });
     });
