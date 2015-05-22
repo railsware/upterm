@@ -26,11 +26,22 @@ describe('Black Screen', () => {
     });
 
     it('executes commands', done => {
-        client.addValue(selectors.prompt, 'ls\n')
+        client
+            .addValue(selectors.prompt, 'ls\n')
             .waitForText(selectors.output)
             .getText(selectors.output)
             .then(text => expect(text[0]).to.not.be.empty())
             .call(done);
+    });
+
+    describe('Autocomplete', () => {
+        it('is displayed while typing', done => {
+            client
+                .addValue(selectors.prompt, 'ls')
+                .waitFor(selectors.autocomplete)
+                .then((error, result) => expect(result).to.exist())
+                .call(done);
+        });
     });
 
     afterEach(done => client.end(done));

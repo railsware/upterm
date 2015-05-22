@@ -1,4 +1,5 @@
 module.exports = {
     prompt: '.prompt',
-    output: '.output'
+    output: '.output',
+    autocomplete: '.autocomplete'
 };
