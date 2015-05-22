@@ -1,40 +1,24 @@
-const webdriverio = require('webdriverio');
-const expect = require('chai').expect;
 const selectors = require('./support/selectors');
-
-const options = {
-    host: 'localhost',
-    port: 4444,
-    desiredCapabilities: {
-        browserName: 'chrome',
-        chromeOptions: {
-            binary: './Black Screen.app/Contents/MacOS/Electron'
-        }
-    }
-};
-
-var client = webdriverio.remote(options);
+const expect = require('chai').expect;
+const blsk = require('./support/setup');
 
 describe('Black Screen', () => {
-    beforeEach(() => client.init());
+    beforeEach(() => blsk.init());
 
     it('contains a prompt', done => {
-        client
-            .waitFor(selectors.prompt)
+        blsk.waitFor(selectors.prompt)
             .then((error, result) => expect(result.length).to.eql(1))
             .call(done);
     });
 
     it('selects the promts on start', done => {
-        client
-            .isSelected(selectors.prompt)
+        blsk.isSelected(selectors.prompt)
             .then((error, isSelected) => expect(isSelected).to.be.true())
             .call(done);
     });
 
     it('executes commands', done => {
-        client
-            .addValue(selectors.prompt, 'ls\n')
+        blsk.addValue(selectors.prompt, 'ls\n')
             .waitForText(selectors.output)
             .getText(selectors.output)
             .then(text => expect(text[0]).to.not.be.empty())
@@ -43,20 +27,18 @@ describe('Black Screen', () => {
 
     describe('Autocomplete', () => {
         it('is not displayed if the prompt is blank', done => {
-            client
-                .isExisting(selectors.autocomplete)
+            blsk.isExisting(selectors.autocomplete)
                 .then((error, isExisting) => expect(isExisting).to.be.false())
                 .call(done);
         });
 
         it('is displayed while typing', done => {
-            client
-                .addValue(selectors.prompt, 'ls')
+            blsk.addValue(selectors.prompt, 'ls')
                 .isExisting(selectors.autocomplete)
                 .then((error, isExisting) => expect(isExisting).to.be.true())
                 .call(done);
         });
     });
 
-    afterEach(done => client.end(done));
+    afterEach(done => blsk.end(done));
 });
