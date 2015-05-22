@@ -25,6 +25,13 @@ describe('Black Screen', () => {
             .call(done);
     });
 
+    it('selects the promts on start', done => {
+        client
+            .isSelected(selectors.prompt)
+            .then((error, isSelected) => expect(isSelected).to.be.true())
+            .call(done);
+    });
+
     it('executes commands', done => {
         client
             .addValue(selectors.prompt, 'ls\n')
