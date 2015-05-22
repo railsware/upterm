@@ -14,7 +14,7 @@ const options = {
 var client = webdriverio.remote(options);
 var page = require('./support/page')(client);
 
-describe('prompt', function () {
+describe('Black Screen', function() {
     beforeEach(function () {
         client.init();
     });
@@ -25,10 +25,12 @@ describe('prompt', function () {
         }).call(done);
     });
 
-    it('contains a prompt', function (done) {
-        page.prompts(function (result) {
-            expect(result.length).toEqual(1);
-        }).call(done);
+    it('executes commands', function (done) {
+        client.addValue('.prompt', 'ls\n')
+            .waitForText('.output')
+            .getText('.output')
+            .then(function(text) { expect(text[0]).toBePresent(); })
+            .call(done);
     });
 
     afterEach(function (done) {

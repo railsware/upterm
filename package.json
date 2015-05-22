@@ -41,7 +41,7 @@
     "jasmine": "2.3.1",
     "react-tools": "0.13.3",
     "typescript": "1.5.0-beta",
-    "webdriverio": "2.4.5"
+    "webdriverio": "git://github.com/webdriverio/webdriverio.git"
   },
   "scripts": {
     "install-all": "PATH=node_modules/.bin:$PATH rm -rf node_modules && npm update && npm install && electron-rebuild && bower install && npm run cleanup",
