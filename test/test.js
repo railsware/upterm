@@ -39,10 +39,11 @@ describe('Black Screen', () => {
                 .call(done);
         });
 
-        it('shows options suggestions', done => {
+        // FIXME: Remove only.
+        it.only('shows options suggestions', done => {
             blsk.addValue(selectors.prompt, 'git --ver')
-                .waitFor(selectors.autocomplete)
-                .then((error, autocompletes) => expect(autocompletes.length).to.eql(1))
+                .waitForText(selectors.autocomplete)
+                .then((error, text) => expect(text).to.contain('version'))
                 .call(done);
         });
     });
