@@ -4,7 +4,7 @@ import Aliases = require('../Aliases');
 import ExecutionHistory = require('../History');
 
 class History implements i.AutocompletionProvider {
-    getSuggestions(currentDirectory: string, input: string) {
+    getSuggestions(currentDirectory: string, input: i.Parsable) {
         return new Promise((resolve) => {
             var mapped: i.Suggestion[] = _.map(ExecutionHistory.stack, (entry: string) => {
                 return {

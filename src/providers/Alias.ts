@@ -3,12 +3,16 @@ import _ = require('lodash');
 import Aliases = require('../Aliases');
 
 class Alias implements i.AutocompletionProvider {
-    getSuggestions(currentDirectory: string, input: string) {
+    getSuggestions(currentDirectory: string, input: i.Parsable) {
         return new Promise((resolve) => {
+            if (input.getLexemes().length > 1) {
+                return resolve([]);
+            }
+
             var filtered: _.Dictionary<string> = {};
 
             _.each(Aliases.aliases, (expanded: string, alias: string) => {
-                if(_.include(alias, input) || _.include(expanded, input)) {
+                if(_.include(alias, input.getLastLexeme()) || _.include(expanded, input.getLastLexeme())) {
                     filtered[alias] = expanded
                 }
             });

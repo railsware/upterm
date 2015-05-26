@@ -23,7 +23,7 @@ export interface Position {
 }
 
 export interface AutocompletionProvider {
-    getSuggestions(currentDirectory: string, input: string): Promise<Suggestion[]>;
+    getSuggestions(currentDirectory: string, input: Parsable): Promise<Suggestion[]>;
 }
 
 export interface Suggestion {
@@ -32,4 +32,12 @@ export interface Suggestion {
     synopsis: string;
     description: string;
     type: string;
+}
+
+export interface Parsable {
+    getLexemes: () => string[];
+    getLastLexeme: () => string;
+    getText: () => string;
+    parse: () => void;
+    onParsingError: Function;
 }

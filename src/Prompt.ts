@@ -5,7 +5,7 @@ import Aliases = require('./Aliases');
 import History = require('./History');
 import _ = require('lodash');
 import i = require('./Interfaces');
-import Language = require('./Language');
+import ParsableString = require('./ParsableString');
 
 class Prompt extends events.EventEmitter {
     buffer: Buffer;
@@ -44,14 +44,18 @@ class Prompt extends events.EventEmitter {
     }
 
     getSuggestions(): Promise<i.Suggestion[]> {
-        return this.autocompletion.getSuggestions(this.directory, this.buffer.toString())
+        return this.autocompletion.getSuggestions(this.directory, this.toParsableString())
     }
 
     replaceCurrentLexeme(suggestion: i.Suggestion): void {
-        var lexemes = new Language().lex(this.buffer.toString());
+        var lexemes = this.toParsableString().getLexemes();
         lexemes[lexemes.length - 1] = suggestion.value;
 
         this.buffer.setTo(lexemes.join(' '));
+    }
+
+    private toParsableString(): ParsableString {
+        return new ParsableString(this.buffer.toString());
     }
 
     private expandCommand(command: string): Array<string> {

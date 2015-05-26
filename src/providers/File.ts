@@ -3,11 +3,15 @@ import _ = require('lodash');
 import Utils = require('../Utils');
 
 class File implements i.AutocompletionProvider {
-    getSuggestions(currentDirectory: string, input: string) {
+    getSuggestions(currentDirectory: string, input: i.Parsable) {
         return new Promise((resolve) => {
             Utils.filesIn(currentDirectory, (files) => {
+                if (input.getLexemes().length < 2) {
+                    return resolve([]);
+                }
+
                 var filtered = _.filter(files, (fileName: string) => {
-                    return _.include(fileName, input)
+                    return _.include(fileName.toLowerCase(), input.getLastLexeme().toLowerCase());
                 });
 
                 resolve(_.map(filtered, (fileName: string) => {
