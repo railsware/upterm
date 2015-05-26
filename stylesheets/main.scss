@@ -26,7 +26,7 @@ a {
 }
 
 @mixin info-panel {
-  padding: 5px 0.6em;
+  padding: 8px 0 6px 0.6em;
   min-height: 2em;
   line-height: 1.3;
   background-color: #23252B;
@@ -227,6 +227,8 @@ pre {
     position: absolute;
     left: 0;
     right: 0;
+
+    font-size: 0.8em;
 
     @include info-panel;
   }
