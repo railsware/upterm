@@ -20,6 +20,7 @@ COMMAND
     : 'git' GIT_OPTION EOF
     | 'hub' GIT_OPTION EOF
     | 'ls'  LS_OPTION EOF
+    | 'bundle' 'exec' COMMAND
     ;
 
 GIT_OPTION
