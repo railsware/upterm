@@ -46,12 +46,11 @@ describe('Black Screen', () => {
                 .call(done);
         });
 
-        // FIXME: Remove only.
-        it.only('can autocomplete the second lexeme', done => {
+        it('can autocomplete the second lexeme', done => {
             blsk.addValue(selectors.prompt, 'git --ver')
                 .waitForText(selectors.autocomplete)
                 .addValue(selectors.prompt, '\t')
-                .getText(selectors.prompt, (error, text) =>  expect(text).to.eql('git --version'))
+                .getText(selectors.prompt, (error, text) =>  expect(text).to.eql('git --version '))
                 .call(done);
         });
     });
