@@ -4,15 +4,19 @@ import Autocomplete from './autocomplete';
 
 export default React.createClass({
     getInitialState() {
-        //TODO: Reset index to 0 when input changes.
         return {
             suggestions: [],
             selectedAutocompleteIndex: 0,
-            latestKeyCode: null
+            latestKeyCode: null,
+            caretPosition: 0,
+            caretOffset: 0
         }
     },
     getInputNode() {
         return this.refs.command.getDOMNode()
+    },
+    getCaretPixelOffset() {
+        return $(this.getInputNode()).caret('offset');
     },
     componentWillMount() {
         var keysDownStream           = createEventHandler();
@@ -96,7 +100,10 @@ export default React.createClass({
     },
     handleInput(event) {
         var target = event.target;
+        var caretOffset   = this.getCaretPixelOffset();
+        var caretPosition = window.getSelection().baseOffset;
         this.props.prompt.buffer.setTo(target.innerText);
+        this.props.prompt.buffer.cursor.moveAbsolute({vertical: caretPosition});
 
         //withCaret(target, function(oldPosition){
         //    // Do syntax highlighting.
@@ -106,7 +113,12 @@ export default React.createClass({
 
         //TODO: make it a stream.
         this.props.prompt.getSuggestions().then(suggestions =>
-            this.setState({ suggestions: suggestions, selectedAutocompleteIndex: 0 })
+            this.setState({
+                suggestions: suggestions,
+                selectedAutocompleteIndex: 0,
+                caretPosition: this.props.prompt.buffer.cursor.column(),
+                caretOffset: caretOffset
+            })
         );
     },
     currentToken() {
@@ -127,9 +139,10 @@ export default React.createClass({
     render() {
         var classes = ['prompt-wrapper', this.props.status].join(' ');
 
+        // TODO: Don't access DOM in render.
         if (this.showAutocomplete()) {
             var autocomplete = <Autocomplete suggestions={this.state.suggestions}
-                                             caretPosition={$(this.getInputNode()).caret('offset')}
+                                             caretOffset={this.state.caretOffset}
                                              selectedIndex={this.state.selectedAutocompleteIndex}
                                              ref="autocomplete" />;
         }
