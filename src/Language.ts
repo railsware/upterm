@@ -44,22 +44,19 @@ class Language {
         this.parser.parse(input);
     }
 
-    lex(input: string): i.Lexeme[] {
+    lex(input: string): string[] {
         var lexer = this.parser.lexer;
         lexer.setInput(input);
-        var rawLexemes: string[] = [];
+
+        var lexemes: string[] = [];
         var lexeme = lexer.lex();
 
         while(typeof lexeme === 'string') {
-            rawLexemes.push(lexeme);
+            lexemes.push(lexeme);
             lexeme = lexer.lex();
         }
 
-        return _.map(rawLexemes, (lexeme) => {
-            return {
-                value: lexeme
-            };
-        })
+        return lexemes;
     }
 
     set onParsingError(handler: Function) {

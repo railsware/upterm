@@ -12,7 +12,7 @@ class Buffer extends events.EventEmitter {
     private attributes: i.Attributes = {color: e.Color.White, weight: e.Weight.Normal};
 
     constructor() {
-      super();
+        super();
     }
 
     writeString(string: string, attributes = this.attributes): void {
@@ -74,6 +74,7 @@ class Buffer extends events.EventEmitter {
 
     clear() {
         this.storage = [];
+        this.cursor.moveAbsolute({horizontal: 0, vertical: 0});
     }
 
     isEmpty(): boolean {

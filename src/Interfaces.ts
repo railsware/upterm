@@ -33,7 +33,3 @@ export interface Suggestion {
     description: string;
     type: string;
 }
-
-export interface Lexeme {
-    value: string;
-}

@@ -2,6 +2,7 @@ import _ from 'lodash';
 import React from 'react';
 import Autocomplete from './autocomplete';
 
+// TODO: Make sure we only update the view when the model changes.
 export default React.createClass({
     getInitialState() {
         return {
@@ -88,13 +89,13 @@ export default React.createClass({
     selectAutocomplete(event) {
         var target = event.target;
         var state = this.state;
+        this.props.prompt.replaceCurrentLexeme(state.suggestions[state.selectedAutocompleteIndex]);
 
         withCaret(target, () => {
-            target.innerHTML = state.suggestions[state.selectedAutocompleteIndex].value + '&nbsp;';
-
-            // TODO: replace only the current token.
+            target.innerHTML = this.props.prompt.buffer.toString() + '&nbsp;';
             return target.innerText.length;
         });
+
         // TODO: remove forceUpdate.
         this.forceUpdate();
     },
