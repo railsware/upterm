@@ -206,6 +206,14 @@ pre {
         content: 'H';
       }
 
+      &.command .icon:before {
+        content: 'C';
+      }
+
+      &.option .icon:before {
+        content: 'O';
+      }
+
       &.selected {
         background-color: #383E4A;
       }
