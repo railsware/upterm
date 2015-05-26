@@ -1,6 +1,7 @@
 import Utils = require('../Utils');
 import i = require('../Interfaces');
 import _ = require('lodash');
+var Fuse: any = require('fuse.js');
 
 class Command implements i.AutocompletionProvider {
     suggestions: i.Suggestion[] = [];
@@ -29,7 +30,13 @@ class Command implements i.AutocompletionProvider {
                 input.parse();
                 resolve([]);
             } catch (exception) {
-                resolve(this.suggestions);
+                var fuse = new Fuse(this.suggestions, {keys: ['value'], includeScore: true});
+                var result = fuse.search(input.getLastLexeme()).map((ranked: i.RankedSuggestion) => {
+                    ranked.score *= 10;
+                    return ranked;
+                });
+
+                resolve(result);
             }
         });
     }

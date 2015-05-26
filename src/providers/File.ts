@@ -21,7 +21,7 @@ class File implements i.AutocompletionProvider {
                     };
                 });
 
-                var fuse = new Fuse(all, {keys: ['value', 'synopsis']});
+                var fuse = new Fuse(all, {keys: ['value', 'synopsis'], includeScore: true});
 
                 var result = fuse.search(input.getLastLexeme());
                 resolve(result);
