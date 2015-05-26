@@ -1,6 +1,7 @@
 import i = require('../Interfaces');
 import _ = require('lodash');
 import Aliases = require('../Aliases');
+var Fuse: any = require('fuse.js');
 
 class Alias implements i.AutocompletionProvider {
     getSuggestions(currentDirectory: string, input: i.Parsable) {
@@ -9,15 +10,7 @@ class Alias implements i.AutocompletionProvider {
                 return resolve([]);
             }
 
-            var filtered: _.Dictionary<string> = {};
-
-            _.each(Aliases.aliases, (expanded: string, alias: string) => {
-                if(_.include(alias, input.getLastLexeme()) || _.include(expanded, input.getLastLexeme())) {
-                    filtered[alias] = expanded
-                }
-            });
-
-            var mapped: i.Suggestion[] = _.map(filtered, (expanded: string, alias: string) => {
+            var all = _.map(Aliases.aliases, (expanded: string, alias: string) => {
                 return {
                     value: alias,
                     priority: 0,
@@ -27,7 +20,10 @@ class Alias implements i.AutocompletionProvider {
                 };
             });
 
-            resolve(mapped);
+            var fuse = new Fuse(all, {keys: ['value', 'synopsis']});
+
+            var result = fuse.search(input.getLastLexeme());
+            resolve(result);
         });
     }
 }

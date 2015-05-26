@@ -1,6 +1,7 @@
 import i = require('../Interfaces');
 import _ = require('lodash');
 import Utils = require('../Utils');
+var Fuse: any = require('fuse.js');
 
 class File implements i.AutocompletionProvider {
     getSuggestions(currentDirectory: string, input: i.Parsable) {
@@ -10,11 +11,7 @@ class File implements i.AutocompletionProvider {
                     return resolve([]);
                 }
 
-                var filtered = _.filter(files, (fileName: string) => {
-                    return _.include(fileName.toLowerCase(), input.getLastLexeme().toLowerCase());
-                });
-
-                resolve(_.map(filtered, (fileName: string) => {
+                var all = _.map(files, (fileName: string) => {
                     return {
                         value: fileName,
                         priority: 0,
@@ -22,7 +19,12 @@ class File implements i.AutocompletionProvider {
                         description: '',
                         type: 'file'
                     };
-                }));
+                });
+
+                var fuse = new Fuse(all, {keys: ['value', 'synopsis']});
+
+                var result = fuse.search(input.getLastLexeme());
+                resolve(result);
             });
         });
     }

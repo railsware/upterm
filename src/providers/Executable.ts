@@ -1,7 +1,7 @@
 import Utils = require('../Utils');
 import i = require('../Interfaces');
 import _ = require('lodash')
-
+var Fuse: any = require('fuse.js');
 
 class Executable implements i.AutocompletionProvider {
     private paths: Array<string> = process.env.PATH.split(':');
@@ -25,11 +25,7 @@ class Executable implements i.AutocompletionProvider {
                 return resolve([]);
             }
 
-            var filtered = _.filter(this.executables, (executable: string) => {
-                return executable.startsWith(input.getLastLexeme());
-            });
-
-            resolve(_.map(filtered, (executable: string) => {
+            var all = _.map(this.executables, (executable: string) => {
                 return {
                     value: executable,
                     priority: 0,
@@ -37,7 +33,12 @@ class Executable implements i.AutocompletionProvider {
                     description: '',
                     type: 'executable'
                 };
-            }));
+            });
+
+            var fuse = new Fuse(all, {keys: ['value', 'synopsis']});
+
+            var result = fuse.search(input.getLastLexeme());
+            resolve(result);
         });
     }
 }

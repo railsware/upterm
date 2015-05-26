@@ -19,6 +19,7 @@
   ],
   "dependencies": {
     "font-awesome": "4.3.0",
+    "fuse.js": "1.2.2",
     "jison": "0.4.15",
     "jquery": "2.1.4",
     "lodash": "3.9.1",
