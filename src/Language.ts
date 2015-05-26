@@ -6,7 +6,7 @@ var grammar = `
 %lex
 %%
 \\s+    {/* skip whitespace */}
-\\w+    {return yytext;}
+[^\\s]+    {return yytext;}
 <<EOF>> {return 'EOF';}
 
 /lex
@@ -25,6 +25,7 @@ COMMAND
 GIT_OPTION
     : 'commit'
     | '--help'
+    | '--version'
     ;
 
 LS_OPTION
