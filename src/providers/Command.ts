@@ -1,46 +1,14 @@
 import Utils = require('../Utils');
 import i = require('../Interfaces');
-import _ = require('lodash')
-var jison = require("jison");
-
-var grammar = `
-%lex
-%%
-\\s+    {/* skip whitespace */}
-\\w+    {return yytext;}
-<<EOF>> {return 'EOF';}
-
-/lex
-
-%start COMMAND
-
-%%
-
-COMMAND
-    : 'git' GIT_OPTION EOF
-    | 'hub' GIT_OPTION EOF
-    | 'ls'  LS_OPTION EOF
-    | 'bundle' 'exec' COMMAND
-    ;
-
-GIT_OPTION
-    : 'commit'
-    | '--help'
-    ;
-
-LS_OPTION
-    : '--help'
-    ;
-        `;
+import _ = require('lodash');
+import Language = require('../Language');
 
 class Command implements i.AutocompletionProvider {
-    parser: any;
-    suggestions: i.Suggestion[];
+    language = new Language();
+    suggestions: i.Suggestion[] = [];
 
     constructor() {
-        this.parser = new jison.Parser(grammar);
-        this.suggestions = [];
-        this.parser.yy.parseError = (err: any, hash: any) => {
+        this.language.onParsingError = (err: any, hash: any) => {
             var filtered = _(hash.expected).filter((value: string) => {
                 return _.include(value, hash.token);
             }).map((value: string) => {
@@ -62,7 +30,7 @@ class Command implements i.AutocompletionProvider {
     getSuggestions(currentDirectory: string, input: string) {
         return new Promise((resolve) => {
             try {
-                this.parser.parse(input);
+                this.language.parse(input);
                 resolve([]);
             } catch (exception) {
                 resolve(this.suggestions);
