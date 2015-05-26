@@ -2,7 +2,7 @@ import Language = require('./Language');
 import i = require('./Interfaces');
 
 class ParsableString implements i.Parsable {
-    language = new Language();
+    static language = new Language();
     text: string;
 
     constructor(text: string) {
@@ -10,7 +10,7 @@ class ParsableString implements i.Parsable {
     }
 
     getLexemes(): string[] {
-        return this.language.lex(this.text);
+        return ParsableString.language.lex(this.text);
     }
 
     getText(): string {
@@ -22,11 +22,11 @@ class ParsableString implements i.Parsable {
     }
 
     parse(): void {
-        this.language.parse(this.getText());
+        ParsableString.language.parse(this.getText());
     }
 
     set onParsingError(handler: Function) {
-        this.language.onParsingError = handler
+        ParsableString.language.onParsingError = handler
     }
 }
 
