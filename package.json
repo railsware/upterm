@@ -22,7 +22,7 @@
     "fuse.js": "1.2.2",
     "jison": "0.4.15",
     "jquery": "2.1.4",
-    "lodash": "3.9.1",
+    "lodash": "3.9.3",
     "node-ansiparser": "1.0.2",
     "pty.js": "shockone/pty.js",
     "react": "0.13.3",
