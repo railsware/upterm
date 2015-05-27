@@ -82,6 +82,7 @@ body, pre {
 
   .prompt {
     display: inline-block;
+    white-space: pre-wrap;
     -webkit-appearance: none;
     background-color: map-get($colors, 'bright-black');
     border: none;
