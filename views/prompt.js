@@ -123,8 +123,8 @@ export default React.createClass({
         );
     },
     currentToken() {
-        // TODO: return only the token under cursor.
-        return this.getInputNode().innerText.split(/\s+/).pop();
+        // TODO: return the token under cursor.
+        return this.props.prompt.buffer.toString().split(/\s+/).pop();
     },
     showAutocomplete() {
         //TODO: use streams.
@@ -140,7 +140,6 @@ export default React.createClass({
     render() {
         var classes = ['prompt-wrapper', this.props.status].join(' ');
 
-        // TODO: Don't access DOM in render.
         if (this.showAutocomplete()) {
             var autocomplete = <Autocomplete suggestions={this.state.suggestions}
                                              caretOffset={this.state.caretOffset}
