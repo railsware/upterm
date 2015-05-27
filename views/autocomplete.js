@@ -28,8 +28,7 @@ export default React.createClass({
         }
 
         if (this.props.caretOffset.top + 300 > window.innerHeight) {
-            offset['bottom'] = 28;
-            suggestionViews = _(suggestionViews).reverse().value();
+            offset['bottom'] = 28 + (selectedSuggestionDescription ? 28 : 0);
         }
 
         return (
