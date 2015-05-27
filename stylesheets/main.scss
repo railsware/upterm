@@ -2,6 +2,17 @@
 
 $fa-font-path: "../node_modules/font-awesome/fonts";
 @import '../node_modules/font-awesome/scss/font-awesome';
+@import '../node_modules/octicons/octicons/sprockets-octicons';
+
+@font-face {
+  font-family: 'octicons';
+  src: url("../node_modules/octicons/octicons/octicons.eot?#iefix") format("embedded-opentype"),
+  url("../node_modules/octicons/octicons/octicons.woff") format("woff"),
+  url("../node_modules/octicons/octicons/octicons.ttf") format("truetype"),
+  url("../node_modules/octicons/octicons/octicons.svg#octicons") format("svg");
+  font-weight: normal;
+  font-style: normal;
+}
 
 a {
   color: map-get($colors, 'blue');
@@ -130,17 +141,24 @@ body, pre {
   width: 100%;
 
   @include info-panel;
-  
+
   .current-directory {
     display: inline-block;
   }
-  
+
   .vcs-data {
     display: inline-block;
     float: right;
     margin-right: 10px;
+
     .status {
       display: inline-block;
+
+      &:before {
+        @extend .octicon;
+        @extend .octicon-git-branch;
+        margin-right: 5px;
+      }
     }
   }
 }

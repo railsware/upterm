@@ -24,6 +24,7 @@
     "jquery": "2.1.4",
     "lodash": "3.9.3",
     "node-ansiparser": "1.0.2",
+    "octicons": "2.2.0",
     "pty.js": "shockone/pty.js",
     "react": "0.13.3",
     "react-json-inspector": "4.2.2",
