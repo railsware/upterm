@@ -3,6 +3,7 @@ import React from 'react';
 import Autocomplete from './autocomplete';
 
 // TODO: Make sure we only update the view when the model changes.
+// TODO: remove innerHTML and innerText
 export default React.createClass({
     getInitialState() {
         return {
@@ -20,12 +21,11 @@ export default React.createClass({
         return $(this.getInputNode()).caret('offset');
     },
     componentWillMount() {
-        var keysDownStream           = createEventHandler();
+        var keysDownStream = createEventHandler();
         var meaningfulKeysDownStream = keysDownStream.filter(isDefinedKey).map(stopBubblingUp);
         var [navigateAutocompleteStream, navigateHistoryStream] = meaningfulKeysDownStream
             .filter(event => keys.goDown(event) || keys.goUp(event))
             .partition(this.autocompleteIsShown);
-
 
         keysDownStream.filter(_.negate(isCommandKey))
             .forEach(event => this.setState({latestKeyCode: event.keyCode}));
@@ -60,8 +60,11 @@ export default React.createClass({
             setTimeout(() => this.props.prompt.execute(), 0);
         }
     },
+    getText() {
+        return this.props.prompt.buffer.toString();
+    },
     isEmpty() {
-        return this.props.prompt.buffer.toString().replace(/\s/g, '').length == 0;
+        return this.getText().replace(/\s/g, '').length == 0;
     },
     navigateHistory(event) {
         if (keys.goUp(event)) {
@@ -88,10 +91,10 @@ export default React.createClass({
         }
     },
     navigateAutocomplete(event) {
-        if(keys.goUp(event)) {
-            this.setState({ selectedAutocompleteIndex: Math.max(0, this.state.selectedAutocompleteIndex - 1) });
+        if (keys.goUp(event)) {
+            this.setState({selectedAutocompleteIndex: Math.max(0, this.state.selectedAutocompleteIndex - 1)});
         } else {
-            this.setState({ selectedAutocompleteIndex: Math.min(this.state.suggestions.length - 1, this.state.selectedAutocompleteIndex + 1) });
+            this.setState({selectedAutocompleteIndex: Math.min(this.state.suggestions.length - 1, this.state.selectedAutocompleteIndex + 1)});
         }
     },
     selectAutocomplete() {
@@ -103,7 +106,7 @@ export default React.createClass({
     },
     handleInput(event) {
         var target = event.target;
-        var caretOffset   = this.getCaretPixelOffset();
+        var caretOffset = this.getCaretPixelOffset();
         var caretPosition = window.getSelection().baseOffset;
         this.props.prompt.buffer.setTo(target.innerText);
         this.props.prompt.buffer.cursor.moveAbsolute({vertical: caretPosition});
@@ -116,25 +119,24 @@ export default React.createClass({
 
         //TODO: make it a stream.
         this.props.prompt.getSuggestions().then(suggestions =>
-            this.setState({
-                suggestions: suggestions,
-                selectedAutocompleteIndex: 0,
-                caretPosition: this.props.prompt.buffer.cursor.column(),
-                caretOffset: caretOffset
-            })
+                this.setState({
+                    suggestions: suggestions,
+                    selectedAutocompleteIndex: 0,
+                    caretPosition: this.props.prompt.buffer.cursor.column(),
+                    caretOffset: caretOffset
+                })
         );
     },
     currentToken() {
         // TODO: return the token under cursor.
-        return this.props.prompt.buffer.toString().split(/\s+/).pop();
+        return this.getText().split(/\s+/).pop();
     },
     showAutocomplete() {
         //TODO: use streams.
         return this.refs.command &&
             this.state.suggestions.length &&
             this.currentToken().length &&
-            this.props.status == 'not-started' &&
-            !_.contains([9, 13, 27], this.state.latestKeyCode);
+            this.props.status == 'not-started' && !_.contains([9, 13, 27], this.state.latestKeyCode);
     },
     autocompleteIsShown() {
         return this.refs.autocomplete;
@@ -146,7 +148,7 @@ export default React.createClass({
             var autocomplete = <Autocomplete suggestions={this.state.suggestions}
                                              caretOffset={this.state.caretOffset}
                                              selectedIndex={this.state.selectedAutocompleteIndex}
-                                             ref="autocomplete" />;
+                                             ref="autocomplete"/>;
         }
 
         return (
@@ -161,7 +163,7 @@ export default React.createClass({
                      ref="command"
                      contentEditable="true">
 
-                    {this.props.prompt.buffer.toString()}
+                    {this.getText()}
                 </div>
                 {autocomplete}
             </div>
