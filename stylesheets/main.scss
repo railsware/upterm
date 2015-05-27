@@ -215,6 +215,7 @@ pre {
       }
 
       .score {
+        color: map-get($colors, 'red');
         float: right;
         font-size: 0.8em;
         margin: 0.3em 3px 0 8px;
