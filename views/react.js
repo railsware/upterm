@@ -33,6 +33,20 @@ function focusLastInput(event) {
     withCaret(target, () => target.innerText.length);
 }
 
+function setCaretPosition(node, position) {
+    var selection = window.getSelection();
+    var range = document.createRange();
+
+    if (node.childNodes.length) {
+        range.setStart(node.childNodes[0], position);
+    } else {
+        range.setStart(node, 0);
+    }
+    range.collapse(true);
+    selection.removeAllRanges();
+    selection.addRange(range);
+}
+
 function withCaret(target, callback) {
     var selection = window.getSelection();
     var range = document.createRange();

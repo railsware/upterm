@@ -47,7 +47,13 @@ export default React.createClass({
     componentDidMount() {
         this.getInputNode().focus();
     },
-    componentDidUpdate: scrollToBottom,
+    componentDidUpdate(prevProps, prevState) {
+        if (prevState.caretPosition != this.state.caretPosition) {
+            setCaretPosition(this.getInputNode(), this.state.caretPosition);
+        }
+
+        scrollToBottom();
+    },
     execute(event) {
         // TODO: Make sure executing an empty command works well.
 
@@ -87,18 +93,12 @@ export default React.createClass({
             this.setState({ selectedAutocompleteIndex: Math.min(this.state.suggestions.length - 1, this.state.selectedAutocompleteIndex + 1) });
         }
     },
-    selectAutocomplete(event) {
-        var target = event.target;
+    selectAutocomplete() {
         var state = this.state;
         this.props.prompt.replaceCurrentLexeme(state.suggestions[state.selectedAutocompleteIndex]);
+        this.props.prompt.buffer.write(' ');
 
-        withCaret(target, () => {
-            target.innerHTML = this.props.prompt.buffer.toString() + '&nbsp;';
-            return target.innerText.length;
-        });
-
-        // TODO: remove forceUpdate.
-        this.forceUpdate();
+        this.setState({caretPosition: this.props.prompt.buffer.cursor.column()});
     },
     handleInput(event) {
         var target = event.target;
@@ -158,7 +158,10 @@ export default React.createClass({
                      onInput={this.handleInput}
                      type="text"
                      ref="command"
-                     contentEditable="true" />
+                     contentEditable="true">
+
+                    {this.props.prompt.buffer.toString()}
+                </div>
                 {autocomplete}
             </div>
         )
