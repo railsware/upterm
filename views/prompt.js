@@ -54,11 +54,14 @@ export default React.createClass({
 
         scrollToBottom();
     },
-    execute(event) {
-        // TODO: Make sure executing an empty command works well.
-
-        // Prevent two-line input on cd.
-        setTimeout(() => this.props.prompt.execute(), 0);
+    execute() {
+        if (!this.isEmpty()) {
+            // Prevent two-line input on cd.
+            setTimeout(() => this.props.prompt.execute(), 0);
+        }
+    },
+    isEmpty() {
+        return this.props.prompt.buffer.toString().replace(/\s/g, '').length == 0;
     },
     navigateHistory(event) {
         if (keys.goUp(event)) {
