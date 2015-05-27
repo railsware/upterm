@@ -14,7 +14,7 @@ class Autocompletion implements i.AutocompletionProvider {
         return Promise.all(_.map(this.providers, (provider) => {
             return provider.getSuggestions(currentDirectory, input);
         })).then((results) => {
-            return _(results).flatten().sortBy('score').map('item').uniq('value').take(this.limit).value();
+            return _(results).flatten().uniq('value').take(this.limit).value();
         });
     }
 }

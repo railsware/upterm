@@ -23,7 +23,7 @@ export interface Position {
 }
 
 export interface AutocompletionProvider {
-    getSuggestions(currentDirectory: string, input: Parsable): Promise<RankedSuggestion[]>;
+    getSuggestions(currentDirectory: string, input: Parsable): Promise<Suggestion[]>;
 }
 
 export interface Suggestion {
@@ -32,11 +32,6 @@ export interface Suggestion {
     synopsis: string;
     description: string;
     type: string;
-}
-
-export interface RankedSuggestion {
-    item: Suggestion;
-    score: number;
 }
 
 export interface Parsable {

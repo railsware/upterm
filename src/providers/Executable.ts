@@ -1,7 +1,7 @@
 import Utils = require('../Utils');
 import i = require('../Interfaces');
 import _ = require('lodash')
-var Fuse: any = require('fuse.js');
+var filter: any = require('fuzzaldrin').filter;
 
 class Executable implements i.AutocompletionProvider {
     private paths: Array<string> = process.env.PATH.split(':');
@@ -35,10 +35,7 @@ class Executable implements i.AutocompletionProvider {
                 };
             });
 
-            var fuse = new Fuse(all, {keys: ['value', 'synopsis'], includeScore: true});
-
-            var result = fuse.search(input.getLastLexeme());
-            resolve(result);
+            resolve(filter(all, input.getLastLexeme(), {key: 'value', maxResults: 30}));
         });
     }
 }

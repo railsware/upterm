@@ -2,7 +2,7 @@ import i = require('../Interfaces');
 import _ = require('lodash');
 import Aliases = require('../Aliases');
 import ExecutionHistory = require('../History');
-var Fuse: any = require('fuse.js');
+var filter: any = require('fuzzaldrin').filter;
 
 class History implements i.AutocompletionProvider {
     getSuggestions(currentDirectory: string, input: i.Parsable) {
@@ -18,10 +18,7 @@ class History implements i.AutocompletionProvider {
             });
 
 
-            var fuse = new Fuse(all, {keys: ['value', 'synopsis'], includeScore: true});
-
-            var result = fuse.search(input.getLastLexeme());
-            resolve(result);
+            resolve(filter(all, input.getLastLexeme(), {key: 'value', maxResults: 30}));
         });
     }
 }
