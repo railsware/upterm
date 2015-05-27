@@ -129,7 +129,14 @@ class Terminal extends events.EventEmitter {
         }
 
         _.each(state, (value: string, key: string) => {
-            (<any>this)[key] = value;
+            var setterName = `set${_.capitalize(key)}`;
+            var that = (<any>this);
+
+            if (that[setterName]) {
+                that[setterName](value);
+            } else {
+                that[key] = value;
+            }
         });
     }
 }
