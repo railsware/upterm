@@ -16,12 +16,22 @@ export default React.createClass({
             .on('vcs-data', (data) => { this.setState({vcsData: data}) });
     },
     handleKeyDown(event) {
-        // Ctrl+l
+        // Ctrl+L.
         if (event.ctrlKey && event.keyCode === 76) {
             this.props.terminal.clearInvocations();
 
             event.stopPropagation();
             event.preventDefault();
+        }
+
+        // Cmd+D.
+        if (event.metaKey && event.keyCode === 68) {
+            window.DEBUG = !window.DEBUG;
+
+            event.stopPropagation();
+            event.preventDefault();
+            this.forceUpdate();
+            console.log(`Debugging mode has been ${window.DEBUG ? 'enabled' : 'disabled'}.`);
         }
     },
     render() {
