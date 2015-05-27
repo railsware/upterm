@@ -28,7 +28,7 @@ class Executable implements i.AutocompletionProvider {
             var all = _.map(this.executables, (executable: string) => {
                 return {
                     value: executable,
-                    score: 0,
+                    score: 0.1,
                     synopsis: '',
                     description: '',
                     type: 'executable'

@@ -1,7 +1,7 @@
 import i = require('../Interfaces');
 import _ = require('lodash');
 import Aliases = require('../Aliases');
-var filter: any = require('fuzzaldrin').filter;
+var score: (i: string, m: string) => number = require('fuzzaldrin').score;
 
 class Alias implements i.AutocompletionProvider {
     getSuggestions(currentDirectory: string, input: i.Parsable) {
@@ -10,24 +10,19 @@ class Alias implements i.AutocompletionProvider {
                 return resolve([]);
             }
 
+            var lexeme = input.getLastLexeme();
+
             var all = _.map(Aliases.aliases, (expanded: string, alias: string) => {
                 return {
                     value: alias,
-                    score: 1,
+                    score: 2 * (score(alias, lexeme) + (score(expanded, lexeme) * 0.5)),
                     synopsis: expanded,
                     description: `Aliased to “${expanded}”.`,
                     type: 'alias',
                 };
             });
-            var byValue = filter(all, input.getLastLexeme(), {key: 'value', maxResults: 10});
 
-            var bySynopsis = _.clone(filter(_.difference(all, byValue), input.getLastLexeme(), {key: 'synopsis', maxResults: 10}))
-                .map((suggestion: i.Suggestion) => {
-                suggestion.score = -1;
-                return suggestion;
-            });
-
-            resolve(byValue.concat(bySynopsis));
+            resolve(_(all).sortBy('score').reverse().take(10).value());
         });
     }
 }

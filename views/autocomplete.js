@@ -11,6 +11,7 @@ export default React.createClass({
                     <i className="icon"></i>
                     <span className="value">{suggestion.value}</span>
                     <span className="synopsis">{suggestion.synopsis}</span>
+                    <span>{suggestion.score}</span>
                 </li>
             );
         });
