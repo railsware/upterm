@@ -28,7 +28,7 @@ export interface AutocompletionProvider {
 
 export interface Suggestion {
     value: string;
-    priority: number;
+    score: number;
     synopsis: string;
     description: string;
     type: string;

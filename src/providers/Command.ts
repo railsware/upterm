@@ -19,7 +19,7 @@ class Command implements i.AutocompletionProvider {
                     this.suggestions = _.map(filtered, (value: string) => {
                         return {
                             value: value,
-                            priority: 0,
+                            score: 10,
                             synopsis: '',
                             description: '',
                             type: value.startsWith('-') ? 'option' : 'command'

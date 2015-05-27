@@ -10,7 +10,7 @@ class History implements i.AutocompletionProvider {
             var all = _.map(ExecutionHistory.stack, (entry: string) => {
                 return {
                     value: entry,
-                    priority: 0,
+                    score: 0,
                     synopsis: '',
                     description: '',
                     type: 'history'

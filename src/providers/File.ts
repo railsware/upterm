@@ -14,7 +14,7 @@ class File implements i.AutocompletionProvider {
                 var all = _.map(files, (fileName: string) => {
                     return {
                         value: fileName,
-                        priority: 0,
+                        score: 0,
                         synopsis: '',
                         description: '',
                         type: 'file'
