@@ -24,9 +24,8 @@ class Prompt extends events.EventEmitter {
         this.history = History;
     }
 
-    send(value: string): void {
-        this.buffer.setTo(value);
-        this.history.append(value);
+    execute(): void {
+        this.history.append(this.buffer.toString());
         this.emit('send');
     }
 

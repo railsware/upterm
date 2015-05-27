@@ -25,6 +25,7 @@ COMMAND
 
 GIT_OPTION
     : 'commit'
+    | 'status'
     | '--help'
     | '--version'
     ;

@@ -57,10 +57,8 @@ export default React.createClass({
     execute(event) {
         // TODO: Make sure executing an empty command works well.
 
-        // TODO: send input read dynamically.
-        var text = event.target.innerText;
         // Prevent two-line input on cd.
-        setTimeout(() => this.props.prompt.send(text), 0);
+        setTimeout(() => this.props.prompt.execute(), 0);
     },
     navigateHistory(event) {
         if (keys.goUp(event)) {
