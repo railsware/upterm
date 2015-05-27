@@ -47,6 +47,7 @@ export default React.createClass({
     componentDidMount() {
         this.getInputNode().focus();
     },
+    componentDidUpdate: scrollToBottom,
     execute(event) {
         // TODO: Make sure executing an empty command works well.
 
