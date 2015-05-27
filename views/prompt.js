@@ -62,6 +62,10 @@ export default React.createClass({
     getText() {
         return this.props.prompt.buffer.toString();
     },
+    setText(text) {
+        this.props.prompt.buffer.setTo(text);
+        this.setState({caretPosition: this.props.prompt.buffer.cursor.column()});
+    },
     isEmpty() {
         return this.getText().replace(/\s/g, '').length == 0;
     },
@@ -70,22 +74,20 @@ export default React.createClass({
             var prevCommand = this.props.prompt.history.getPrevious();
 
             if (typeof prevCommand != 'undefined') {
-                this.props.prompt.buffer.setTo(prevCommand);
-                this.setState({caretPosition: this.props.prompt.buffer.cursor.column()});
+                this.setText(prevCommand);
             }
         } else {
-            var command = this.props.prompt.history.getNext();
-
-            this.props.prompt.buffer.setTo(command || '');
-            this.setState({caretPosition: this.props.prompt.buffer.cursor.column()});
+            this.setText(this.props.prompt.history.getNext() || '');
         }
     },
     navigateAutocomplete(event) {
         if (keys.goUp(event)) {
-            this.setState({selectedAutocompleteIndex: Math.max(0, this.state.selectedAutocompleteIndex - 1)});
+            var index = Math.max(0, this.state.selectedAutocompleteIndex - 1)
         } else {
-            this.setState({selectedAutocompleteIndex: Math.min(this.state.suggestions.length - 1, this.state.selectedAutocompleteIndex + 1)});
+            index = Math.min(this.state.suggestions.length - 1, this.state.selectedAutocompleteIndex + 1)
         }
+
+        this.setState({selectedAutocompleteIndex: index});
     },
     selectAutocomplete() {
         var state = this.state;
