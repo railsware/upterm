@@ -55,7 +55,7 @@ export default React.createClass({
     },
     execute() {
         if (!this.isEmpty()) {
-            // Prevent two-line input on cd.
+            // Timeout prevents two-line input on cd.
             setTimeout(() => this.props.prompt.execute(), 0);
         }
     },
