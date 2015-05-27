@@ -172,6 +172,21 @@ pre {
         margin-right: 5px;
       }
 
+      .score {
+        float: right;
+        font-size: 0.8em;
+        margin: 0.3em 3px 0 8px;
+
+        border-radius: 45%;
+
+        width: 40px;
+        height: 20px;
+        padding: 3px;
+
+        border: 1px solid;
+        text-align: center;
+      }
+
       .icon:before {
         content: ' ';
         vertical-align: middle;

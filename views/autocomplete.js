@@ -6,12 +6,14 @@ export default React.createClass({
         var offset = _.pick(this.props.caretOffset, 'left');
 
         var suggestionViews = this.props.suggestions.map((suggestion, index) => {
+            var scoreStyle = window.DEBUG == 1 ? {} : {display: 'none'};
+
             return (
                 <li {...this.getRenderingProps(suggestion, index)}>
                     <i className="icon"></i>
                     <span className="value">{suggestion.value}</span>
+                    <span style={scoreStyle} className="score">{suggestion.score.toFixed(2)}</span>
                     <span className="synopsis">{suggestion.synopsis}</span>
-                    <span>{suggestion.score}</span>
                 </li>
             );
         });
