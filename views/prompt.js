@@ -14,6 +14,7 @@ export default React.createClass({
         }
     },
     getInputNode() {
+        // TODO: Try to cache.
         return this.refs.command.getDOMNode()
     },
     getCaretPixelOffset() {
@@ -47,6 +48,7 @@ export default React.createClass({
         this.getInputNode().focus();
     },
     componentDidUpdate(prevProps, prevState) {
+        this.getInputNode().innerText = this.getText();
         if (prevState.caretPosition != this.state.caretPosition) {
             setCaretPosition(this.getInputNode(), this.state.caretPosition);
         }
@@ -147,10 +149,7 @@ export default React.createClass({
                      onInput={this.handleInput}
                      type="text"
                      ref="command"
-                     contentEditable="true">
-
-                    {this.getText()}
-                </div>
+                     contentEditable="true"/>
                 {autocomplete}
             </div>
         )
