@@ -62,6 +62,8 @@ class Invocation extends events.EventEmitter {
                 env: process.env
             });
 
+            this.status = e.Status.InProgress;
+
             this.command.on('data', (data: string) => {
                 this.parser.parse(data);
             }).on('exit', (code: number, signal: string) => {
