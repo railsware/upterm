@@ -144,6 +144,12 @@ body, pre {
 
   .current-directory {
     display: inline-block;
+
+    &:before {
+      @extend .octicon;
+      @extend .octicon-file-directory;
+      margin-right: 5px;
+    }
   }
 
   .vcs-data {
