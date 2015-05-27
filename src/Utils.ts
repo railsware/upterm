@@ -10,11 +10,7 @@ class Utils {
     }
 
     static filesIn(directory: string, callback: (files: string[]) => any): void {
-        fs.exists(directory, (pathExists: boolean) => {
-            if (!pathExists) {
-                return;
-            }
-
+        Utils.ifExists(directory, () => {
             fs.stat(directory, (error: NodeJS.ErrnoException, pathStat: fs.Stats) => {
                 if (!pathStat.isDirectory()) {
                     return;
@@ -28,6 +24,20 @@ class Utils {
                     callback(files);
                 })
             });
+        });
+    }
+
+    static ifExists(fileName: string, callback: Function, elseCallback?: Function) {
+        fs.exists(fileName, (pathExists: boolean) => {
+            if (!pathExists) {
+                if (elseCallback) {
+                    elseCallback()
+                } else {
+                    return;
+                }
+            }
+
+            callback();
         });
     }
 

@@ -1,10 +1,11 @@
 import fs = require('fs');
 import _ = require('lodash');
 import i = require('./Interfaces');
-import events = require('events')
-import Invocation = require('./Invocation')
-import Aliases = require('./Aliases')
-import History = require('./History')
+import events = require('events');
+import Invocation = require('./Invocation');
+import Aliases = require('./Aliases');
+import History = require('./History');
+import Utils = require('./Utils');
 var remote = require('remote');
 var app = remote.require('app');
 
@@ -12,6 +13,7 @@ class Terminal extends events.EventEmitter {
     invocations: Array<Invocation>;
     currentDirectory: string;
     history: History;
+    gitBranchWatcher: fs.FSWatcher;
 
     private stateFileName = `${process.env.HOME}/.black-screen-state`;
     private serializableProperties: _.Dictionary<string> = {currentDirectory: process.env.HOME};
@@ -60,6 +62,37 @@ class Terminal extends events.EventEmitter {
         remote.getCurrentWindow().setRepresentedFilename(value);
         this.currentDirectory = value;
         app.addRecentDocument(value);
+        this.watchGitBranch(value);
+    }
+
+    private watchGitBranch(directory: string): void {
+        if (this.gitBranchWatcher) {
+            this.gitBranchWatcher.close();
+        }
+        var gitDirectory = `${directory}/.git`;
+
+        Utils.ifExists(gitDirectory, () => {
+            this.setGitBranch(gitDirectory);
+            this.gitBranchWatcher = fs.watch(gitDirectory, (type, fileName) => {
+                if (fileName == 'HEAD') {
+                    this.setGitBranch(gitDirectory);
+                }
+            })
+        }, () => {
+            this.emit('vcs-data', {isRepository: false});
+        });
+    }
+
+    private setGitBranch(gitDirectory: string) {
+        fs.readFile(`${gitDirectory}/HEAD`, (error, buffer) => {
+            var data: i.VcsData = {
+                isRepository: true,
+                branch: /ref: refs\/heads\/(.*)/.exec(buffer.toString())[1],
+                // TODO: Set proper status.
+                status: 'clean'
+            };
+            this.emit('vcs-data', data);
+        });
     }
 
     private observeSerializableProperties(callback: Function): void {
@@ -90,11 +123,14 @@ class Terminal extends events.EventEmitter {
     private restore(): void {
         try {
             var state = JSON.parse(fs.readFileSync(this.stateFileName).toString());
-        } catch (error) {
+        } catch
+            (error) {
             state = this.serializableProperties;
         }
 
-        _.each(state, (value: string, key: string) => { (<any>this)[key] = value; });
+        _.each(state, (value: string, key: string) => {
+            (<any>this)[key] = value;
+        });
     }
 }
 

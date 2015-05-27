@@ -41,3 +41,9 @@ export interface Parsable {
     parse: () => void;
     onParsingError: Function;
 }
+
+export interface VcsData {
+    isRepository: boolean;
+    branch?: string;
+    status?: string;
+}
