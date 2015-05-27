@@ -3,7 +3,6 @@ import React from 'react';
 import Autocomplete from './autocomplete';
 
 // TODO: Make sure we only update the view when the model changes.
-// TODO: remove innerHTML and innerText
 export default React.createClass({
     getInitialState() {
         return {
@@ -71,23 +70,14 @@ export default React.createClass({
             var prevCommand = this.props.prompt.history.getPrevious();
 
             if (typeof prevCommand != 'undefined') {
-                var target = event.target;
-
-                withCaret(target, () => {
-                    target.innerText = prevCommand;
-
-                    return target.innerText.length;
-                });
+                this.props.prompt.buffer.setTo(prevCommand);
+                this.setState({caretPosition: this.props.prompt.buffer.cursor.column()});
             }
         } else {
             var command = this.props.prompt.history.getNext();
-            target = event.target;
 
-            withCaret(target, () => {
-                target.innerText = command || '';
-
-                return target.innerText.length;
-            });
+            this.props.prompt.buffer.setTo(command || '');
+            this.setState({caretPosition: this.props.prompt.buffer.cursor.column()});
         }
     },
     navigateAutocomplete(event) {
@@ -110,12 +100,6 @@ export default React.createClass({
         var caretPosition = window.getSelection().baseOffset;
         this.props.prompt.buffer.setTo(target.innerText);
         this.props.prompt.buffer.cursor.moveAbsolute({vertical: caretPosition});
-
-        //withCaret(target, function(oldPosition){
-        //    // Do syntax highlighting.
-        //    target.innerText = target.innerText.toUpperCase();
-        //    return oldPosition;
-        //});
 
         //TODO: make it a stream.
         this.props.prompt.getSuggestions().then(suggestions =>
