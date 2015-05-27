@@ -130,6 +130,19 @@ body, pre {
   width: 100%;
 
   @include info-panel;
+  
+  .current-directory {
+    display: inline-block;
+  }
+  
+  .vcs-data {
+    display: inline-block;
+    float: right;
+    margin-right: 10px;
+    .status {
+      display: inline-block;
+    }
+  }
 }
 
 .decoration-toggle {

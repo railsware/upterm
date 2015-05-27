@@ -3,8 +3,17 @@ import Invocation from './invocation';
 import StatusLine from './status_line';
 
 export default React.createClass({
-    componentDidMount() {
-        this.props.terminal.on('invocation', this.forceUpdate.bind(this));
+    getInitialState() {
+        return {vcsData: {
+            isRepository: true,
+            branch: 'name',
+            status: 'clean'
+        }};
+    },
+    componentWillMount() {
+        this.props.terminal
+            .on('invocation', this.forceUpdate.bind(this))
+            .on('vcs-data', (data) => { this.setState({vcsData: data}) });
     },
     handleKeyDown(event) {
         // Ctrl+l
@@ -27,7 +36,8 @@ export default React.createClass({
                 <div id="invocations">
                     {invocations}
                 </div>
-                <StatusLine currentWorkingDirectory={this.props.terminal.currentDirectory}/>
+                <StatusLine currentWorkingDirectory={this.props.terminal.currentDirectory}
+                            vcsData={this.state.vcsData}/>
             </div>
         );
     }

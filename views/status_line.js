@@ -5,6 +5,7 @@ export default React.createClass({
         return (
             <div id="status-line">
                 <CurrentDirectory currentWorkingDirectory={this.props.currentWorkingDirectory}/>
+                <VcsData data={this.props.vcsData}/>
             </div>
         )
     }
@@ -14,7 +15,21 @@ export default React.createClass({
 const CurrentDirectory = React.createClass({
     render() {
         return (
-            <div id="current-directory">{this.props.currentWorkingDirectory}</div>
+            <div className="current-directory">{this.props.currentWorkingDirectory}</div>
+        )
+    }
+});
+
+const VcsData = React.createClass({
+    render() {
+        if (!this.props.data.isRepository) {
+            return null;
+        }
+
+        return (
+            <div className="vcs-data">
+                <div className={`status ${this.props.data.status}`}>{this.props.data.branch}</div>
+            </div>
         )
     }
 });
