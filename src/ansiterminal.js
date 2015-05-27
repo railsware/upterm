@@ -4,6 +4,7 @@
  *  TODO:
  *  - rework buffer handling
  *  - mouse support
+ *  - bracketed paste mode
  *  - tabs, tab stops, tab width, tab output
  *  - tons of DCS codes
  *  - full width character support
@@ -16,12 +17,9 @@
 //      python -c "for i in range(256): print '\x1b[38;5;%dmm\x1b[0m' % i,"
 //      python -c "import sys; [sys.stdout.write('\x1b[38;2;%d;128;128mm\x1b[0m' % i) for i in range(256)]; sys.stdout.flush()"
 
-// FIXME: bug in resize policy
-//      must be relative to bottom
-
 // FIXME: tests are broken (need real pty in async mode)
 
-(function () {
+(function() {
     'use strict';
 
     /**
@@ -62,7 +60,7 @@
     }
 
     /** @return {object} Object with attributes in a readable manner. */
-    TChar.prototype.getAttributes = function () {
+    TChar.prototype.getAttributes = function() {
         var colorbits = this.attr >>> 24;
         var r = this.attr & 65535;
         var g = this.gb >>> 16;
@@ -79,12 +77,12 @@
             foreground: {
                 set: !!(colorbits & 4),
                 RGB: !!(colorbits & 8),
-                color: [r >>> 8, g >>> 8, b >>> 8]
+                color: [r>>>8, g>>>8, b>>>8]
             },
             background: {
                 set: !!(colorbits & 1),
                 RGB: !!(colorbits & 2),
-                color: [r & 255, g & 255, b & 255]
+                color: [r&255, g&255, b&255]
             }
         }
     };
@@ -126,6 +124,7 @@
         OSC: '\u001b]', PM: '\u001b^', APC: '\u001b_'
     };
 
+
     /**
      * ANSITerminal - an offscreen terminal.
      *
@@ -136,16 +135,12 @@
     function ANSITerminal(cols, rows) {
         this.rows = rows;
         this.cols = cols;
-        this.send = function (s) {
-        };                    // callback for writing back to stream
-        this.beep = function (tone, duration) {
-        };       // callback for sending console beep
-        this.appendScrollBuffer = function (elems) {
-        };    // callback for scrollbuffer append
-        this.clearScrollBuffer = function (elems) {
-        };     // callback for scrollbuffer clear
-        this.fetchLastScrollBufferLine = function () {
-        };  // get last line back from scrollbuffer
+        this.send = function (s) {};                            // callback for writing back to stream
+        this.beep = function (tone, duration) {};               // callback for sending console beep
+        this.appendScrollBuffer = function(elems){};            // callback for scrollbuffer append
+        this.clearScrollBuffer = function(elems){};             // callback for scrollbuffer clear
+        this.fetchLastScrollBufferLine = function(){};          // get last line back from scrollbuffer
+        this.changedMouseHandling = function(mode, protocol){}; // announce changes in mouse handling
 
         this.reset();
     }
@@ -177,10 +172,12 @@
         this.tab_width = 8;
         this.last_char = '';                    // for REP
         this.clearScrollBuffer();
+        this.mouse_mode = 0;                    // tracking modes for mouse 0=off, (9, 1000, 1001, 1002, 1003)
+        this.mouse_protocol = 0;                // 0 (normal), 1005 (utf-8), 1006 (sgr), 1015 (decimal)
     };
 
     /** @return {string} String representation of active buffer. */
-    ANSITerminal.prototype.toString = function () {
+    ANSITerminal.prototype.toString = function() {
         var s = '', j;
         for (var i = 0; i < this.buffer.length; ++i) {
             var last_nonspace = 0;  // FIXME: quick and dirty fill up from left
@@ -197,7 +194,7 @@
     };
 
     // resize buffer in respect of cursor position and scrolling
-    ANSITerminal.prototype._resize = function (cols, rows, buffer, cursor, scrolling) {
+    ANSITerminal.prototype._resize = function(cols, rows, buffer, cursor, scrolling) {
         // xterm behavior - shrink:
         //      delete higher rows til cursor then lowest to scrollbuffer
         // xterm behavior - enlarge:
@@ -209,7 +206,7 @@
         // shrink height
         if (rows < this.rows) {
             while (buffer.length > rows)
-                if (buffer.length > cursor.row + 1)
+                if (buffer.length > cursor.row+1)
                     buffer.pop();
                 else {
                     if (scrolling)
@@ -229,7 +226,7 @@
                 }
                 else {
                     row = [];
-                    for (var j = 0; j < this.cols; ++j)
+                    for (var j=0; j<this.cols; ++j)
                         row.push(new TChar(''));
                     buffer.push(row);
                 }
@@ -241,7 +238,7 @@
         var i;
         // shrink width
         if (cols < this.cols) {
-            for (i = 0; i < buffer.length; ++i) {
+            for (i=0; i<buffer.length; ++i) {
                 var remove = this.cols - cols;
                 do {
                     buffer[i].pop();
@@ -250,7 +247,7 @@
         }
         // enlarge width
         if (cols > this.cols) {
-            for (i = 0; i < buffer.length; ++i) {
+            for (i=0; i<buffer.length; ++i) {
                 var append = cols - this.cols;
                 do {
                     buffer[i].push(new TChar(''));
@@ -267,7 +264,7 @@
      * @param cols
      * @param rows
      */
-    ANSITerminal.prototype.resize = function (cols, rows) {
+    ANSITerminal.prototype.resize = function(cols, rows) {
         // skip insane values
         if ((cols < 2) || (rows < 2))
             return false;
@@ -334,11 +331,11 @@
             this.buffer[this.cursor.row][this.cursor.col].gb = this.colors;
             // fix box drawing -- this is a really ugly problem
             if (c >= '\u2500' && c <= '\u2547') {
-                if (this.textattributes && (this.textattributes & 65536)) {
+                if (this.textattributes && (this.textattributes&65536)) {
                     this.buffer[this.cursor.row][this.cursor.col].c = BOXSYMBOLS_BOLD[c] || c;
                     // unset bold here, but set intense instead if applicable
                     var attr = this.charattributes & ~65536;
-                    if (attr & 67108864 && !(attr & 134217728) && (attr >>> 8 & 255) < 8)
+                    if (attr&67108864 && !(attr&134217728) && (attr>>>8&255) < 8)
                         attr |= 2048;
                     this.buffer[this.cursor.row][this.cursor.col].attr = attr;
                 }
@@ -383,42 +380,22 @@
                 if (this.cursor.col >= this.cols)
                     this.cursor.col -= 1;
                 break;
-            case '\r':
-                this.cursor.col = 0;
-                break;
-            case '\t':
-                this.cht([0]);
-                break;
-            case '\x07':
-                this.beep();
-                break;
+            case '\r':    this.cursor.col = 0; break;
+            case '\t':    this.cht([0]); break;
+            case '\x07':  this.beep(); break;
             case '\x08':
                 this.cursor.col -= 1;
                 if (this.cursor.col < 0)
                     this.cursor.col = 0;
                 break;
-            case '\x0b':
-                this.inst_x('\n');
-                break;
-            case '\x0c':
-                this.inst_x('\n');
-                break;
-            case '\x0e':
-                this.charset = CHARSET_0;
-                break;  // activate G1
-            case '\x0f':
-                this.charset = null;
-                break;       // activate G0 FIXME
-            case '\x11':
-                console.log('unhandled DC1 (XON)');
-                break;  // TODO
-            case '\x12':
-                break;  // DC2
-            case '\x13':
-                console.log('unhandled DC3 (XOFF)');
-                break; // TODO
-            case '\x14':
-                break;  // DC4
+            case '\x0b':  this.inst_x('\n'); break;
+            case '\x0c':  this.inst_x('\n'); break;
+            case '\x0e':  this.charset = CHARSET_0; break;  // activate G1
+            case '\x0f':  this.charset = null; break;       // activate G0 FIXME
+            case '\x11':  console.log('unhandled DC1 (XON)'); break;  // TODO
+            case '\x12':  break;  // DC2
+            case '\x13':  console.log('unhandled DC3 (XOFF)'); break; // TODO
+            case '\x14':  break;  // DC4
             default:
                 console.log('inst_x unhandled:', flag.charCodeAt(0));
         }
@@ -439,99 +416,62 @@
         switch (collected) {
             case '':
                 switch (flag) {
-                    case '@':
-                        return this.ich(params);
-                    case 'E':
-                        return this.cnl(params);
-                    case 'F':
-                        return this.cpl(params);
-                    case 'G':
-                        return this.cha(params);
-                    case 'D':
-                        return this.cub(params);
-                    case 'B':
-                        return this.cud(params);
-                    case 'C':
-                        return this.cuf(params);
-                    case 'A':
-                        return this.cuu(params);
-                    case 'I':
-                        return this.cht(params);
-                    case 'Z':
-                        return this.cbt(params);
+                    case '@':  return this.ich(params);
+                    case 'E':  return this.cnl(params);
+                    case 'F':  return this.cpl(params);
+                    case 'G':  return this.cha(params);
+                    case 'D':  return this.cub(params);
+                    case 'B':  return this.cud(params);
+                    case 'C':  return this.cuf(params);
+                    case 'A':  return this.cuu(params);
+                    case 'I':  return this.cht(params);
+                    case 'Z':  return this.cbt(params);
                     case 'f':
-                    case 'H':
-                        return this.cup(params);
-                    case 'P':
-                        return this.dch(params);
-                    case 'J':
-                        return this.ed(params);
-                    case 'K':
-                        return this.el(params);
-                    case 'L':
-                        return this.il(params);
-                    case 'M':
-                        return this.dl(params);
-                    case 'S':
-                        return this.su(params);
-                    case 'T':
-                        return this.sd(params);
-                    case 'X':
-                        return this.ech(params);
-                    case 'a':
-                        return this.hpr(params);
-                    case 'b':
-                        return this.rep(params);
-                    case 'e':
-                        return this.vpr(params);
-                    case 'd':
-                        return this.vpa(params);
-                    case 'c':
-                        return this.send(TERM_STRING['CSI'] + '?64;1;2;6;9;15;18;21;22c');  // DA1
-                    case 'h':
-                        return this.high(collected, params);
-                    case 'l':
-                        return this.low(collected, params);
-                    case 'm':
-                        return this.sgr(params);
-                    case 'n':
-                        return this.dsr(collected, params);
-                    case 'r':
-                        return this.decstbm(params);
-                    case '`':
-                        return this.hpa(params);
+                    case 'H':  return this.cup(params);
+                    case 'P':  return this.dch(params);
+                    case 'J':  return this.ed(params);
+                    case 'K':  return this.el(params);
+                    case 'L':  return this.il(params);
+                    case 'M':  return this.dl(params);
+                    case 'S':  return this.su(params);
+                    case 'T':  return this.sd(params);
+                    case 'X':  return this.ech(params);
+                    case 'a':  return this.hpr(params);
+                    case 'b':  return this.rep(params);
+                    case 'e':  return this.vpr(params);
+                    case 'd':  return this.vpa(params);
+                    case 'c':  return this.send(TERM_STRING['CSI'] + '?64;1;2;6;9;15;18;21;22c');  // DA1
+                    case 'h':  return this.high(collected, params);
+                    case 'l':  return this.low(collected, params);
+                    case 'm':  return this.sgr(params);
+                    case 'n':  return this.dsr(collected, params);
+                    case 'r':  return this.decstbm(params);
+                    case '`':  return this.hpa(params);
                     default :
                         console.log('inst_c unhandled:', collected, params, flag);
                 }
                 break;
             case '?':
                 switch (flag) {
-                    case 'J':
-                        return this.ed(params);  // DECSED as normal ED
-                    case 'K':
-                        return this.el(params);  // DECSEL as normal EL
-                    case 'h':
-                        return this.high(collected, params);
-                    case 'l':
-                        return this.low(collected, params);
-                    case 'n':
-                        return this.dsr(collected, params);
+                    case 'J':  return this.ed(params);  // DECSED as normal ED
+                    case 'K':  return this.el(params);  // DECSEL as normal EL
+                    case 'h':  return this.high(collected, params);
+                    case 'l':  return this.low(collected, params);
+                    case 'n':  return this.dsr(collected, params);
                     default :
                         console.log('inst_c unhandled:', collected, params, flag);
                 }
                 break;
             case '>':
                 switch (flag) {
-                    case 'c':
-                        return this.send(TERM_STRING['CSI'] + '>41;1;0c');  // DA2
+                    case 'c':  return this.send(TERM_STRING['CSI'] + '>41;1;0c');  // DA2
                     default :
                         console.log('inst_c unhandled:', collected, params, flag);
                 }
                 break;
             case '!':
                 switch (flag) {
-                    case 'p':
-                        return this.decstr();
+                    case 'p':  return this.decstr();
                     default :
                         console.log('inst_c unhandled:', collected, params, flag);
                 }
@@ -548,8 +488,8 @@
         switch (flag) {
             // complete ESC codes from xterm:
             //    ESC H   Tab Set ( HTS is 0x88).  // TODO
-            //    ESC N   Single Shift Select of G2 CharCode Set ( SS2 is 0x8e). This affects next character only.
-            //    ESC O   Single Shift Select of G3 CharCode Set ( SS3 is 0x8f). This affects next character only.
+            //    ESC N   Single Shift Select of G2 Character Set ( SS2 is 0x8e). This affects next character only.
+            //    ESC O   Single Shift Select of G3 Character Set ( SS3 is 0x8f). This affects next character only.
             //    ESC P   Device Control String ( DCS is 0x90).
             //    ESC V   Start of Guarded Area ( SPA is 0x96).
             //    ESC W   End of Guarded Area ( EPA is 0x97).
@@ -567,7 +507,7 @@
             //        case '8':  // (#) DEC Screen Alignment Test (DECALN) - not supported
             //        case '@':  // (%) Select default character set. That is ISO 8859-1 (ISO 2022) - not supported
             //        case 'G':  // (%) Select UTF-8 character set (ISO 2022) - not supported
-            // (() Designate G0 CharCode Set (ISO 2022, VT100)
+            // (() Designate G0 Character Set (ISO 2022, VT100)
             // more flags: A B < %5 > 4 C 5 R f Q 9 K Y ` E 6 %6 Z H 7 =
             // more collected: ) G1, * G2, + G3, - G1, . G2, / G3
             case '0':
@@ -577,29 +517,23 @@
                 this.charset = null;  // always reset charset
                 break;
 //        case '6':  // Back Index (DECBI), VT420 and up - not supported
-            case '7':
-                return this.decsc();  // Save Cursor (DECSC)
-            case '8':
-                return this.decrc();  // Restore Cursor (DECRC)
+            case '7':  return this.decsc();  // Save Cursor (DECSC)
+            case '8':  return this.decrc();  // Restore Cursor (DECRC)
 //        case '9':  // Forward Index (DECFI), VT420 and up - not supported
 //        case '=':  // Application Keypad (DECKPAM)  // TODO
 //        case '>':  // Normal Keypad (DECKPNM)  // TODO
 //        case 'F':  // Cursor to lower left corner of screen  // TODO
-            case 'c':
-                return this.reset();  // Full Reset (RIS) http://vt100.net/docs/vt220-rm/chapter4.html
+            case 'c':  return this.reset();  // Full Reset (RIS) http://vt100.net/docs/vt220-rm/chapter4.html
 //        case 'l':  // Memory Lock (per HP terminals). Locks memory above the cursor. - not supported
 //        case 'm':  // Memory Unlock (per HP terminals). - not supported
-//        case 'n':  // Invoke the G2 CharCode Set as GL (LS2). - not supported
-//        case 'o':  // Invoke the G3 CharCode Set as GL (LS3). - not supported
-//        case '|':  // Invoke the G3 CharCode Set as GR (LS3R). - not supported
-//        case '}':  // Invoke the G2 CharCode Set as GR (LS2R). - not supported
-//        case '~':  // Invoke the G1 CharCode Set as GR (LS1R). - not supported
-            case 'E':
-                return this.nel();
-            case 'D':
-                return this.ind();
-            case 'M':
-                return this.reverse_index();  //    ESC M   Reverse Index ( RI is 0x8d).
+//        case 'n':  // Invoke the G2 Character Set as GL (LS2). - not supported
+//        case 'o':  // Invoke the G3 Character Set as GL (LS3). - not supported
+//        case '|':  // Invoke the G3 Character Set as GR (LS3R). - not supported
+//        case '}':  // Invoke the G2 Character Set as GR (LS2R). - not supported
+//        case '~':  // Invoke the G1 Character Set as GR (LS1R). - not supported
+            case 'E':  return this.nel();
+            case 'D':  return this.ind();
+            case 'M':  return this.reverse_index();  //    ESC M   Reverse Index ( RI is 0x8d).
             default :
                 console.log('inst_e unhandled:', collected, flag);
         }
@@ -674,8 +608,8 @@
     // FIXME: hacky solution with this.last_char
     ANSITerminal.prototype.rep = function (params) {
         var s = '',
-            c = this.last_char,
-            n = (params[0]) ? params[0] : 1;
+        c = this.last_char,
+        n = (params[0]) ? params[0] : 1;
         if (c) {
             do {
                 s += c;
@@ -759,7 +693,7 @@
 //        }
 //    }
         this.cursor.col = (Math.floor((this.cursor.col - 1) / this.tab_width) + 1 -
-        ((params[0]) ? params[0] : 1)) * this.tab_width;
+            ((params[0]) ? params[0] : 1)) * this.tab_width;
         if (this.cursor.col < 0)
             this.cursor.col = 0;
     };
@@ -767,7 +701,7 @@
     // cursor horizontal forward tabulation - http://vt100.net/docs/vt510-rm/CHT
     ANSITerminal.prototype.cht = function (params) {
         this.cursor.col = (Math.floor(this.cursor.col / this.tab_width) +
-        ((params[0]) ? params[0] : 1)) * this.tab_width;
+            ((params[0]) ? params[0] : 1)) * this.tab_width;
         if (this.cursor.col >= this.cols)
             this.cursor.col = this.cols - 1;
     };
@@ -881,7 +815,7 @@
         this.decsc();
         // DECAUPSS     Assign user preference supplemental set     --> Set selected in Set-Up. - unsupported
         // DECSASD      Select active status display    --> Main display. TODO do we need this?
-        // DECKPM       Keyboard position mode      --> CharCode codes. TODO do we need this?
+        // DECKPM       Keyboard position mode      --> Character codes. TODO do we need this?
         // DECRLM       Cursor direction            --> Reset (Left-to-right), regardless of NVR setting. TODO
         // DECPCTERM    PC Term mode                --> Always reset. TODO do we need this?
         // TODO: do we need to reset LNM?
@@ -931,9 +865,7 @@
         // TODO: separate DEC and ANSI
         for (var i = 0; i < params.length; ++i) {
             switch (params[i]) {
-                case    1:
-                    this.cursor_key_mode = true;
-                    break;     // DECCKM
+                case    1:  this.cursor_key_mode = true; break;     // DECCKM
                 case    4:
                     if (!collected)                                 // IRM
                         this.insert_mode = true;
@@ -958,15 +890,41 @@
                     else
                         console.log('unhandled high', collected, params[i]);
                     break;
-                case   25:
-                    this.show_cursor = true;
-                    break;         // DECTCEM (default)
+                case   25:  this.show_cursor = true; break;         // DECTCEM (default)
                 case   43:  // printer stuff not supported
                 case   44:
                 case   45:
                 case   46:
                 case   47:
                     break; // end printer stuff
+                /* mouse handling
+                 *  - 5 exclusive mouse modes:
+                 *      9       X10 (press only)
+                 *      1000    press and release events
+                 *      1001    hilite mouse tracking (??)
+                 *      1002    cell motion tracking (press, move on pressed, release)
+                 *      1003    all (press, move, release)
+                 *  - exclusive formatting:
+                 *      1005    utf-8 mouse mode
+                 *      1006    sgr mouse mode
+                 *      1015    urxvt mouse mode (decimal)
+                 *  - special focus event: 1004 (CSI I / CSI O)
+                 * */
+                case 9:
+                case 1000:
+                case 1001:
+                case 1002:
+                case 1003:
+                    this.mouse_mode = params[i];
+                    this.changedMouseHandling(this.mouse_mode, this.mouse_protocol);
+                    break;
+                //case 1004: // focusIn/Out events
+                case 1005:
+                case 1006:
+                case 1015:
+                    this.mouse_protocol = params[i];
+                    this.changedMouseHandling(this.mouse_mode, this.mouse_protocol);
+                    break;
                 case 1049:                                          // alt buffer
                     this.buffer = this.alternate_buffer;
                     this.cursor = this.alternate_cursor;
@@ -981,9 +939,7 @@
         // TODO: separate DEC and ANSI
         for (var i = 0; i < params.length; ++i) {
             switch (params[i]) {
-                case    1:
-                    this.cursor_key_mode = false;
-                    break;     // DECCKM (default)
+                case    1:  this.cursor_key_mode = false; break;     // DECCKM (default)
                 case    4:
                     if (!collected)                                  // IRM (default)
                         this.insert_mode = false;
@@ -1008,15 +964,28 @@
                     else
                         console.log('unhandled high', collected, params[i]);
                     break;
-                case   25:
-                    this.show_cursor = false;
-                    break;         // DECTCEM
+                case   25:  this.show_cursor = false; break;         // DECTCEM
                 case   43:  // printer stuff not supported
                 case   44:
                 case   45:
                 case   46:
                 case   47:
                     break; // end printer stuff
+                case 9:
+                case 1000:
+                case 1001:
+                case 1002:
+                case 1003:
+                    this.mouse_mode = 0;
+                    this.changedMouseHandling(this.mouse_mode, this.mouse_protocol);
+                    break;
+                //case 1004: // focusIn/Out events
+                case 1005:
+                case 1006:
+                case 1015:
+                    this.mouse_protocol = 0;
+                    this.changedMouseHandling(this.mouse_mode, this.mouse_protocol);
+                    break;
                 case 1049:
                     this.buffer = this.normal_buffer;
                     this.cursor = this.normal_cursor;
@@ -1182,7 +1151,7 @@
         if (this.reverse_video)
             attr |= 1048576;
 
-        for (var i = 0; i < params.length; ++i) {
+        for (var i=0; i<params.length; ++i) {
             // special treatment for extended colors
             if (ext_colors) {
                 // first run in ext_colors gives color mode
@@ -1194,14 +1163,14 @@
                             counter = 3;        // eval up to 3 params
                             // fg set SET+RGB: |(1<<26)|(1<<27)
                             // bg set SET+RGB: |(1<<24)|(1<<25)
-                            attr |= (ext_colors == 38) ? 201326592 : 50331648;
+                            attr |= (ext_colors==38) ? 201326592 : 50331648;
                             break;
                         case 5:
                             RGB_mode = false;
                             counter = 1;        // eval only 1 param
                             // fg clear RGB, set SET: &~(1<<27)|(1<<26)
                             // bg clear RGB, set SET: &~(1<<25)|(1<<24)
-                            attr = (ext_colors == 38)
+                            attr = (ext_colors==38)
                                 ? (attr & ~134217728) | 67108864
                                 : (attr & ~33554432) | 16777216;
                             break;
@@ -1248,31 +1217,15 @@
                 case 0:
                     attr = 0;
                     break;
-                case 1:
-                    attr |= 65536;
-                    break;    // bold on
-                case 2:
-                    break;  // not supported (faint)
-                case 3:
-                    attr |= 131072;
-                    break;   // italic on
-                case 4:
-                    attr |= 262144;
-                    break;   // underline on
-                case 5:
-                    attr |= 524288;
-                    break;   // blink on
-                case 6:
-                    attr |= 524288;
-                    break;   // only one blinking speed
-                case 7:
-                    attr |= 1048576;
-                    break;  // inverted on
-                case 8:
-                    attr |= 2097152;
-                    break;  // conceal on
-                case 9:
-                    break;  // not supported (crossed out)
+                case 1:  attr |= 65536; break;    // bold on
+                case 2:  break;  // not supported (faint)
+                case 3:  attr |= 131072; break;   // italic on
+                case 4:  attr |= 262144; break;   // underline on
+                case 5:  attr |= 524288; break;   // blink on
+                case 6:  attr |= 524288; break;   // only one blinking speed
+                case 7:  attr |= 1048576; break;  // inverted on
+                case 8:  attr |= 2097152; break;  // conceal on
+                case 9:  break;  // not supported (crossed out)
                 case 10:         // not supported (font selection)
                 case 11:
                 case 12:
@@ -1282,34 +1235,17 @@
                 case 16:
                 case 17:
                 case 18:
-                case 19:
-                    break;
-                case 20:
-                    break;  // not supported (fraktur)
-                case 21:
-                    break;  // not supported (bold: off or underline: double)
-                case 22:
-                    attr &= ~65536;
-                    break;      // bold off
-                case 23:
-                    attr &= ~131072;
-                    break;     // italic off
-                case 24:
-                    attr &= ~262144;
-                    break;     // underline off
-                case 25:
-                    attr &= ~524288;
-                    break;     // blink off
-                case 26:
-                    break;  // reserved
-                case 27:
-                    attr &= ~1048576;
-                    break;    // inverted off
-                case 28:
-                    attr &= ~2097152;
-                    break;    // conceal off
-                case 29:
-                    break;  // not supported (not crossed out)
+                case 19:  break;
+                case 20:  break;  // not supported (fraktur)
+                case 21:  break;  // not supported (bold: off or underline: double)
+                case 22:  attr &= ~65536; break;      // bold off
+                case 23:  attr &= ~131072; break;     // italic off
+                case 24:  attr &= ~262144; break;     // underline off
+                case 25:  attr &= ~524288; break;     // blink off
+                case 26:  break;  // reserved
+                case 27:  attr &= ~1048576; break;    // inverted off
+                case 28:  attr &= ~2097152; break;    // conceal off
+                case 29:  break;  // not supported (not crossed out)
                 case 30:
                 case 31:
                 case 32:
@@ -1320,11 +1256,9 @@
                 case 37:
                     // clear fg RGB, nullify fg, set fg SET, color
                     // -134283009 = ~(1<<27) & ~(255<<8)
-                    attr = (attr & -134283009) | 67108864 | (params[i] % 10 << 8);
+                    attr = (attr & -134283009) | 67108864 | (params[i]%10 << 8);
                     break;
-                case 38:
-                    ext_colors = 38;
-                    break;
+                case 38:  ext_colors = 38; break;
                 case 39:                                    // default foreground color
                     attr &= ~67108864;            // fg set to false (1<<26)
                     break;
@@ -1338,11 +1272,9 @@
                 case 47:
                     // clear bg RGB, nullify bg, set bg SET, color
                     // -33554688 = ~(1<<25) & ~255
-                    attr = (attr & -33554688) | 16777216 | params[i] % 10;
+                    attr = (attr & -33554688) | 16777216 | params[i]%10;
                     break;
-                case 48:
-                    ext_colors = 48;
-                    break;
+                case 48:  ext_colors = 48; break;
                 case 49:                                    // default background color
                     attr &= ~16777216;            // bg set to false
                     break;
@@ -1355,7 +1287,7 @@
                 case 96:
                 case 97:
                     // same as 37 but with |8 in color
-                    attr = (attr & -134283009) | 67108864 | (params[i] % 10 | 8 << 8);
+                    attr = (attr & -134283009) | 67108864 | (params[i]%10|8 << 8);
                     break;
                 case 100:
                 case 101:
@@ -1366,7 +1298,7 @@
                 case 106:
                 case 107:
                     // same as 47 but with |8 in color
-                    attr = (attr & -33554688) | 16777216 | params[i] % 10 | 8;
+                    attr = (attr & -33554688) | 16777216 | params[i]%10|8;
                     break;
                 default:
                     console.log('sgr unknown:', params[i]);
@@ -1391,7 +1323,7 @@
         module['exports'] = ANSITerminal;
     } else {
         if (typeof define === 'function' && define['amd']) {
-            define([], function () {
+            define([], function() {
                 return ANSITerminal;
             });
         } else {
