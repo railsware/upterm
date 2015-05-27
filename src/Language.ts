@@ -67,3 +67,4 @@ class Language {
 }
 
 export = Language
+
