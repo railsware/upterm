@@ -14,8 +14,8 @@ var keys = {
 function getDimensions() {
     var letter = document.getElementById('sizes-calculation');
     return {
-        columns: Math.floor(window.innerWidth / (letter.clientWidth / 10 + 1)),
-        rows:    Math.floor(window.innerHeight / letter.clientHeight)
+        columns: Math.floor(window.innerWidth / (letter.clientWidth / 10 + 1) + 10),
+        rows:    Math.floor(window.innerHeight / letter.clientHeight) - 3
     };
 }
 

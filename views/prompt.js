@@ -22,7 +22,29 @@ export default React.createClass({
     },
     componentWillMount() {
         var keysDownStream = createEventHandler();
-        var meaningfulKeysDownStream = keysDownStream.filter(isDefinedKey).map(stopBubblingUp);
+        var promptKeys = keysDownStream.filter(_ => this.props.status != 'in-progress');
+
+        keysDownStream
+            .filter(_ => this.props.status == 'in-progress')
+            .map(stopBubblingUp)
+            .forEach(event => {
+                if (event.key == 'Shift' || event.key == 'Alt' || event.key == 'Ctrl') {
+                    return;
+                }
+
+                if (event.nativeEvent.keyIdentifier.startsWith('U+')) {
+                    var code =parseInt(event.nativeEvent.keyIdentifier.substring(2), 16);
+                    var char = String.fromCharCode(code);
+                    if (!event.shiftKey && code >= 65 && code <= 90) {
+                        char = char.toLowerCase()
+                    }
+                } else {
+                    char = String.fromCharCode(event.keyCode);
+                }
+                this.props.command.write(char);
+            });
+
+        var meaningfulKeysDownStream = promptKeys.filter(isDefinedKey).map(stopBubblingUp);
         var [navigateAutocompleteStream, navigateHistoryStream] = meaningfulKeysDownStream
             .filter(event => keys.goDown(event) || keys.goUp(event))
             .partition(this.autocompleteIsShown);

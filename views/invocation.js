@@ -31,7 +31,9 @@ export default React.createClass({
 
         return (
             <div className="invocation">
-                <Prompt prompt={this.props.invocation.getPrompt()} status={this.props.invocation.status}/>
+                <Prompt prompt={this.props.invocation.getPrompt()}
+                        status={this.props.invocation.status}
+                        command={this.props.invocation.command}/>
                 {decorationToggle}
                 {buffer}
             </div>
