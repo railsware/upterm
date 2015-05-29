@@ -27,15 +27,15 @@
     "octicons": "2.2.0",
     "child_pty": "1.0.0",
     "react": "0.13.3",
-    "react-json-inspector": "4.2.2",
+    "react-json-inspector": "4.3.0",
     "rx": "2.5.2"
   },
   "devDependencies": {
     "babel": "5.4.7",
     "bower": "1.4.1",
     "chai": "2.3.0",
-    "electron-packager": "4.1.1",
-    "electron-prebuilt": "0.26",
+    "electron-packager": "4.1.2",
+    "electron-prebuilt": "0.27.1",
     "electron-rebuild": "0.1.4",
     "gulp": "3.8.11",
     "gulp-babel": "5.1.0",
@@ -53,7 +53,7 @@
     "cleanup": "rm -rf build",
     "forest-run": "PATH=node_modules/.bin:$PATH gulp && electron .",
     "watch": "PATH=node_modules/.bin:$PATH gulp watch",
-    "package": "PATH=node_modules/.bin:$PATH rm -rf '/Applications/Black Screen.app'; electron-packager . 'Black Screen' --platform=darwin --arch=x64 --version='0.26.0' --out='/Applications' --icon='./icon.icns'",
+    "package": "PATH=node_modules/.bin:$PATH rm -rf '/Applications/Black Screen.app'; electron-packager . 'Black Screen' --platform=darwin --arch=x64 --version='0.27.1' --out='/Applications' --icon='./icon.icns'",
     "test": "PATH=node_modules/.bin:$PATH mocha --compilers js:babel/register"
   },
   "license": "MIT"
