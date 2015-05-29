@@ -41,6 +41,7 @@ export default React.createClass({
             .forEach(event => this.setState({latestKeyCode: event.keyCode}));
 
         meaningfulKeysDownStream.filter(keys.enter)
+            .filter(_ => this.props.status != 'in-progress')
             .forEach(this.execute);
 
         meaningfulKeysDownStream.filter(this.autocompleteIsShown)
