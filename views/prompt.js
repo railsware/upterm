@@ -118,12 +118,12 @@ export default React.createClass({
 
         //TODO: make it a stream.
         this.props.prompt.getSuggestions().then(suggestions =>
-                this.setState({
-                    suggestions: suggestions,
-                    selectedAutocompleteIndex: 0,
-                    caretPosition: this.props.prompt.buffer.cursor.column(),
-                    caretOffset: caretOffset
-                })
+            this.setState({
+                suggestions: suggestions,
+                selectedAutocompleteIndex: 0,
+                caretPosition: this.props.prompt.buffer.cursor.column(),
+                caretOffset: caretOffset
+            })
         );
     },
     currentToken() {
