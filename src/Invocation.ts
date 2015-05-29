@@ -51,7 +51,7 @@ class Invocation extends events.EventEmitter {
                 var newDirectory = Command.cd(this.directory, this.prompt.getArguments());
                 this.emit('working-directory-changed', newDirectory);
             } catch (error) {
-                this.status = e.Status.Failure;
+                this.setStatus(e.Status.Failure);
                 this.buffer.writeString(error.message, {color: e.Color.Red});
             }
 
@@ -64,16 +64,16 @@ class Invocation extends events.EventEmitter {
                 env: process.env
             });
 
-            this.status = e.Status.InProgress;
+            this.setStatus(e.Status.InProgress);
 
             this.command.stdout.on('data', (data: string) => {
                 this.parser.parse(data.toString());
             });
             this.command.on('close', (code: number, signal: string) => {
                 if (code === 0) {
-                    this.status = e.Status.Success;
+                    this.setStatus(e.Status.Success);
                 } else {
-                    this.status = e.Status.Failure;
+                    this.setStatus(e.Status.Failure);
                 }
                 this.emit('end');
             })
@@ -136,6 +136,11 @@ class Invocation extends events.EventEmitter {
 
     getPrompt(): Prompt {
         return this.prompt;
+    }
+
+    setStatus(status: e.Status): void {
+        this.status = status;
+        this.emit('status', status);
     }
 }
 

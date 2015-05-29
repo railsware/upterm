@@ -3,10 +3,10 @@ import Prompt from './prompt';
 import DecorationToggle from './decoration_toggle';
 
 export default React.createClass({
-    componentDidMount() {
-        this.props.invocation.on('data', () =>
-                this.setState({ canBeDecorated: this.props.invocation.canBeDecorated()})
-        );
+    componentWillMount() {
+        this.props.invocation
+            .on('data', _ => this.setState({canBeDecorated: this.props.invocation.canBeDecorated()}))
+            .on('status', status => this.setState({status: status}));
     },
     componentDidUpdate: scrollToBottom,
 
@@ -32,7 +32,7 @@ export default React.createClass({
         return (
             <div className="invocation">
                 <Prompt prompt={this.props.invocation.getPrompt()}
-                        status={this.props.invocation.status}
+                        status={this.state.status}
                         invocation={this.props.invocation}/>
                 {decorationToggle}
                 {buffer}
