@@ -24,11 +24,12 @@ export default React.createClass({
         var keysDownStream = createEventHandler();
         var promptKeys = keysDownStream.filter(_ => this.props.status != 'in-progress');
 
+        // TODO: move to invocation.
         keysDownStream
             .filter(_ => this.props.status == 'in-progress')
             .map(stopBubblingUp)
             .forEach(event => {
-                this.props.command.write(event);
+                this.props.invocation.write(event);
             });
 
         var meaningfulKeysDownStream = promptKeys.filter(isDefinedKey).map(stopBubblingUp);

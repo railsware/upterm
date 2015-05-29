@@ -33,7 +33,7 @@ export default React.createClass({
             <div className="invocation">
                 <Prompt prompt={this.props.invocation.getPrompt()}
                         status={this.props.invocation.status}
-                        command={this.props.invocation.command}/>
+                        invocation={this.props.invocation}/>
                 {decorationToggle}
                 {buffer}
             </div>
