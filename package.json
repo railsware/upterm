@@ -25,7 +25,7 @@
     "lodash": "3.9.3",
     "node-ansiparser": "1.0.2",
     "octicons": "2.2.0",
-    "pty.js": "shockone/pty.js",
+    "child_pty": "1.0.0",
     "react": "0.13.3",
     "react-json-inspector": "4.2.2",
     "rx": "2.5.2"

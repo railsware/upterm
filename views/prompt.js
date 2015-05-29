@@ -28,20 +28,7 @@ export default React.createClass({
             .filter(_ => this.props.status == 'in-progress')
             .map(stopBubblingUp)
             .forEach(event => {
-                if (event.key == 'Shift' || event.key == 'Alt' || event.key == 'Ctrl') {
-                    return;
-                }
-
-                if (event.nativeEvent.keyIdentifier.startsWith('U+')) {
-                    var code =parseInt(event.nativeEvent.keyIdentifier.substring(2), 16);
-                    var char = String.fromCharCode(code);
-                    if (!event.shiftKey && code >= 65 && code <= 90) {
-                        char = char.toLowerCase()
-                    }
-                } else {
-                    char = String.fromCharCode(event.keyCode);
-                }
-                this.props.command.write(char);
+                this.props.command.write(event);
             });
 
         var meaningfulKeysDownStream = promptKeys.filter(isDefinedKey).map(stopBubblingUp);

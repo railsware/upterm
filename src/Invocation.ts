@@ -1,7 +1,9 @@
 /// <reference path="references.ts" />
 
-var pty = require('pty.js');
+var child_pty = require('child_pty');
+import child_process = require('child_process');
 import _ = require('lodash');
+import React = require('react');
 import events = require('events');
 import Parser = require('./Parser');
 import Prompt = require('./Prompt');
@@ -15,7 +17,7 @@ import DecoratorsList = require('./decorators/List');
 import DecoratorsBase = require('./decorators/Base');
 
 class Invocation extends events.EventEmitter {
-    private command: NodeJS.Process;
+    private command: child_process.ChildProcess;
     private parser: Parser;
     private prompt: Prompt;
     private buffer: Buffer;
@@ -55,8 +57,8 @@ class Invocation extends events.EventEmitter {
 
             this.emit('end');
         } else {
-            this.command = pty.spawn(command, this.prompt.getArguments(), {
-                cols: this.dimensions.columns,
+            this.command = child_pty.spawn(command, this.prompt.getArguments(), {
+                columns: this.dimensions.columns,
                 rows: this.dimensions.rows,
                 cwd: this.directory,
                 env: process.env
@@ -64,9 +66,10 @@ class Invocation extends events.EventEmitter {
 
             this.status = e.Status.InProgress;
 
-            this.command.on('data', (data: string) => {
-                this.parser.parse(data);
-            }).on('exit', (code: number, signal: string) => {
+            this.command.stdout.on('data', (data: string) => {
+                this.parser.parse(data.toString());
+            });
+            this.command.on('close', (code: number, signal: string) => {
                 if (code === 0) {
                     this.status = e.Status.Success;
                 } else {
@@ -77,6 +80,26 @@ class Invocation extends events.EventEmitter {
         }
     }
 
+    write(event: React.KeyboardEvent) {
+            if (event.key == 'Shift' || event.key == 'Alt' || event.key == 'Ctrl') {
+                return;
+            }
+
+            var identifier: string = (<any>event.nativeEvent).keyIdentifier;
+
+            if (identifier.startsWith('U+')) {
+                var code =parseInt(identifier.substring(2), 16);
+                var char = String.fromCharCode(code);
+                if (!event.shiftKey && code >= 65 && code <= 90) {
+                    char = char.toLowerCase()
+                }
+            } else {
+                char = String.fromCharCode(event.keyCode);
+            }
+
+            this.command.stdin.write(char);
+    }
+
     hasOutput(): boolean {
         return !this.buffer.isEmpty();
     }
@@ -85,7 +108,7 @@ class Invocation extends events.EventEmitter {
         this.dimensions = dimensions;
 
         if (this.command) {
-            this.command.kill(this.command.pid, 'SIGWINCH');
+            this.command.kill('SIGWINCH');
         }
     }
 
