@@ -61,60 +61,88 @@ body, pre {
 
 .prompt-wrapper {
   position: relative;
+  margin-top: 5px;
+
+  $decoration-width: 30px;
+  $height: 17px;
+  $arrow-z-index: 2;
+
+  @keyframes progress-bar-stripes {
+    from {
+      background-position: 0 0;
+    }
+    to {
+      background-position: 20px 0;
+    }
+  }
 
   .prompt-decoration {
     display: inline-block;
-    background-color: #353b44;
-    height: 16px;
+    height: 17px;
   }
 
   .arrow {
-    width: 0;
-    height: 0;
-    border-style: solid;
-    border-width: 8px 0 8px 8px;
-    border-color: transparent transparent transparent #353b44;
-    display: inline-block;
-    background-color: map-get($colors, 'bright-black');
-    vertical-align: middle;
-    margin-bottom: 2px;
-    margin-left: 15px;
+    position: relative;
+    width: $decoration-width;
+    height: $height;
+    margin: 0 auto;
+    overflow: hidden;
+    z-index: $arrow-z-index;
+
+    &:after {
+      content: '';
+      position: absolute;
+      width: 200%;
+      height: 200%;
+      top: -11px;
+      right: -8px;
+      background-color: #353b44;
+      transform-origin: 54% 0;
+      transform: rotate(45deg);
+      z-index: $arrow-z-index - 1;
+
+    }
   }
 
   &.failure {
-    .prompt-decoration {
+    .arrow:after {
       background-color: map-get($colors, 'red');
     }
+  }
 
-    .arrow {
-      border-left-color: map-get($colors, 'red');
+  &.in-progress {
+    .arrow:after {
+      // TODO: Show the gradient with a delay.
+      //transition: background-image 1s ease-in 5s;
+      animation: progress-bar-stripes 0.5s linear infinite;
+      background-image: linear-gradient(45deg, map-get($colors, 'bright-black') 25%, transparent 25%, transparent 50%, map-get($colors, 'bright-black') 50%, map-get($colors, 'bright-black') 75%, transparent 75%, transparent);
+      background-size: 20px 20px;
     }
   }
 
   .prompt {
-    display: inline-block;
-    white-space: pre-wrap;
-    -webkit-appearance: none;
-    background-color: map-get($colors, 'bright-black');
-    border: none;
-    outline: none;
+    position: absolute;
+    left: $decoration-width - 10px;
+    right: 0;
+    padding: 0 20px;
+    height: $height;
     color: map-get($colors, 'white');
+    background-color: map-get($colors, 'bright-black');
     font-family: 'Menlo', monospace !important;
     font-size: 14px;
-    width: 100%;
-    margin: 8px -100px 8px 0;
-    padding: 0 8px;
-    &:focus {
+
+    @mixin common {
+      display: inline-block;
+      white-space: pre-wrap;
       -webkit-appearance: none;
-      background-color: map-get($colors, 'bright-black');
       border: none;
       outline: none;
-      color: map-get($colors, 'white');
-      font-family: 'Menlo', monospace !important;
-      font-size: 14px;
-      width: 100%;
-      margin: 8px -100px 8px 0;
-      padding: 0 8px;
+    }
+
+    @include common;
+
+    &:focus {
+      @include common;
     }
   }
 }
