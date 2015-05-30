@@ -5,7 +5,7 @@ export enum CharCode {
     CarriageReturn = 13
 }
 
-export var ColorIndex: Array<any> = [
+export var ColorIndex: any[] = [
     'black', 'red', 'green', 'yellow', 'blue', 'magenta', 'cyan', 'white',
 
     'bright-black', 'bright-red', 'bright-green', 'bright-yellow',
