@@ -10,6 +10,7 @@ export interface Attributes {
     weight?: e.Weight;
     underline?: boolean;
     crossedOut?: boolean;
+    blinking?: boolean;
 }
 
 export interface Advancement {
