@@ -33,8 +33,10 @@ var CGR: { [indexer: string]: i.Attributes } = {
 
 var CSI = {
     mode: {
-        alternateScreen: 1049,
+        blinkingCursor: 12,
+        cursor: 25,
         scrollbar: 30,
+        alternateScreen: 1049,
         bracketedPaste: 2004,
     },
     flag: {
@@ -124,6 +126,12 @@ class Parser {
                         }
 
                         switch (params[0]) {
+                            case CSI.mode.blinkingCursor:
+                                this.buffer.setAttributes({'background-color': e.Color.White, blinking: true});
+                                break;
+                            case CSI.mode.cursor:
+                                this.buffer.setAttributes({'background-color': e.Color.White, blinking: false});
+                                break;
                             case CSI.mode.alternateScreen:
                                 Utils.log('Switching to an alternate screen.');
                                 break;
