@@ -50,7 +50,7 @@ a {
 body, pre {
   background-color: map-get($colors, 'black');
   color: map-get($colors, 'white');
-  font-family: 'Menlo', monospace !important;
+  font-family: 'Meslo LG S for Powerline', 'Menlo', monospace !important;
   font-size: 14px;
   margin: 0;
 }
@@ -128,7 +128,6 @@ body, pre {
     height: $height;
     color: map-get($colors, 'white');
     background-color: map-get($colors, 'bright-black');
-    font-family: 'Menlo', monospace !important;
     font-size: 14px;
 
     @mixin common {
