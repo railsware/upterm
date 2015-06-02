@@ -66,13 +66,14 @@ body, pre {
   $decoration-width: 30px;
   $height: 17px;
   $arrow-z-index: 2;
+  $progress-bar-stripes-size: 30px;
 
   @keyframes progress-bar-stripes {
     from {
       background-position: 0 0;
     }
     to {
-      background-position: 20px 0;
+      background-position: $progress-bar-stripes-size 0;
     }
   }
 
@@ -101,6 +102,7 @@ body, pre {
       transform: rotate(45deg);
       z-index: $arrow-z-index - 1;
 
+      background-size: 0; // Is used to animate the in-progress arrow.
     }
   }
 
@@ -112,11 +114,10 @@ body, pre {
 
   &.in-progress {
     .arrow:after {
-      // TODO: Show the gradient with a delay.
-      //transition: background-image 1s ease-in 5s;
+      transition: background 0.1s step-end;
       animation: progress-bar-stripes 0.5s linear infinite;
       background-image: linear-gradient(45deg, map-get($colors, 'bright-black') 25%, transparent 25%, transparent 50%, map-get($colors, 'bright-black') 50%, map-get($colors, 'bright-black') 75%, transparent 75%, transparent);
-      background-size: 20px 20px;
+      background-size: $progress-bar-stripes-size $progress-bar-stripes-size;
     }
   }
 
