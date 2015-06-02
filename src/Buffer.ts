@@ -68,10 +68,6 @@ class Buffer extends events.EventEmitter {
         return this.storage.map(callback);
     }
 
-    render() {
-        return React.createElement('pre', {className: 'output'}, null, ...this.storage.map(this.renderRow, this));
-    }
-
     clear() {
         this.storage = [];
         this.cursor.moveAbsolute({horizontal: 0, vertical: 0});
@@ -81,12 +77,33 @@ class Buffer extends events.EventEmitter {
         return this.storage.length === 0;
     }
 
+    render() {
+        return React.createElement('pre', {className: 'output'}, null, ...this.storage.map(this.renderRow, this));
+    }
+
     private renderRow(row: Array<Char>, index: number) {
 
         var consecutive: Array<any> = [];
         var current = {attributes: <i.Attributes>null, text: ''};
 
-        row.forEach((element: Char) => {
+        var rowWithCursor = row;
+        var cursorPosition = this.cursor.getPosition();
+
+        if (index == cursorPosition.row) {
+            rowWithCursor = _.clone(row);
+            if (rowWithCursor[cursorPosition.column]) {
+                var char = rowWithCursor[cursorPosition.column];
+                var newChar = new Char(char.toString(), _.merge(char.getAttributes(), this.attributes));
+            } else {
+                newChar = new Char(' ', this.attributes);
+            }
+
+            rowWithCursor[cursorPosition.column] = newChar;
+        }
+
+        rowWithCursor.forEach((element: Char, column: number) => {
+            if (!element) return;
+
             var attributes = element.getAttributes();
             var value = element.toString();
 
