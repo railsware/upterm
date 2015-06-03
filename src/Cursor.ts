@@ -1,6 +1,9 @@
 import i = require('./Interfaces');
 
 class Cursor {
+    private show = false;
+    private blink = false;
+
     constructor(private position: i.Position = {column: 0, row: 0}) {
     }
 
@@ -39,6 +42,22 @@ class Cursor {
 
     row(): number {
         return this.position.row;
+    }
+
+    getShow(): boolean {
+        return this.show;
+    }
+
+    getBlink(): boolean {
+        return this.blink;
+    }
+
+    setShow(state: boolean): void {
+        this.show = state;
+    }
+
+    setBlink(state: boolean): void {
+        this.blink = state;
     }
 }
 
