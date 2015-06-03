@@ -41,15 +41,16 @@ var CSI = {
     },
     flag: {
         eraseDisplay: 'J',
+        eraseInLine: 'K',
         selectGraphicRendition: 'm',
         cursorPosition: 'H',
         setMode: 'h',
         resetMode: 'l'
     },
-    eraseDisplay: {
-        toEndOfScreen: 0,
-        toBeginningOfScreen: 1,
-        entireScreen: 2,
+    erase: {
+        toEnd: 0,
+        toBeginning: 1,
+        entire: 2,
     }
 };
 
@@ -83,6 +84,8 @@ class Parser {
                 this.buffer.write(flag);
             },
             inst_c: (collected: any, params: Array<number>, flag: string) => {
+                Utils.log('csi', collected, params, flag);
+
                 switch (flag) {
                     case CSI.flag.selectGraphicRendition:
                         if (params.length == 0) {
@@ -103,16 +106,35 @@ class Parser {
                                 this.buffer.setAttributes(CGR[cgr] || {});
                             }
                         }
-
-                        Utils.log('csi', collected, params, flag);
                         break;
                     case CSI.flag.cursorPosition:
-                        this.buffer.cursor.moveAbsolute({vertical: params[0], horizontal: params[1]});
+                        this.buffer.moveCursorAbsolute({vertical: params[0], horizontal: params[1]});
                         break;
                     case CSI.flag.eraseDisplay:
                         switch (params[0]) {
-                            case CSI.eraseDisplay.entireScreen:
+                            case CSI.erase.entire:
                                 this.buffer.clear();
+                                break;
+                            case CSI.erase.toEnd:
+                            case undefined:
+                                this.buffer.clearToEnd();
+                                break;
+                            case CSI.erase.toBeginning:
+                                this.buffer.clearToBeginning();
+                                break;
+                        }
+                        break;
+                    case CSI.flag.eraseInLine:
+                        switch (params[0]) {
+                            case CSI.erase.entire:
+                                this.buffer.clearRow();
+                                break;
+                            case CSI.erase.toEnd:
+                            case undefined:
+                                this.buffer.clearRowToEnd();
+                                break;
+                            case CSI.erase.toBeginning:
+                                this.buffer.clearRowToBeginning();
                                 break;
                         }
                         break;
@@ -127,10 +149,10 @@ class Parser {
 
                         switch (params[0]) {
                             case CSI.mode.blinkingCursor:
-                                this.buffer.setAttributes({'background-color': e.Color.White, blinking: true});
+                                this.buffer.blinkCursor(true);
                                 break;
                             case CSI.mode.cursor:
-                                this.buffer.setAttributes({'background-color': e.Color.White, blinking: false});
+                                this.buffer.showCursor(true);
                                 break;
                             case CSI.mode.alternateScreen:
                                 Utils.log('Switching to an alternate screen.');
@@ -140,6 +162,26 @@ class Parser {
                                 break;
                             default:
                                 Utils.log('Unknown CSI mode:', params[0]);
+                        }
+                        break;
+                    case CSI.flag.resetMode:
+                        if (collected != DECPrivateMode) {
+                            return console.error('Private mode sequence should start with a ?. Started with', collected);
+                        }
+
+                        if (params.length != 1) {
+                            return console.error('CSI mode has multiple arguments:', params);
+                        }
+
+                        switch (params[0]) {
+                            case CSI.mode.blinkingCursor:
+                                this.buffer.blinkCursor(false);
+                                break;
+                            case CSI.mode.cursor:
+                                this.buffer.showCursor(false);
+                                break;
+                            default:
+                                Utils.log('Unknown CSI reset:', params[0]);
                         }
                         break;
                     default:
