@@ -68,9 +68,49 @@ class Buffer extends events.EventEmitter {
         return this.storage.map(callback);
     }
 
+    showCursor(state: boolean): void {
+        this.cursor.setShow(state);
+    }
+
+    blinkCursor(state: boolean): void {
+        this.cursor.setBlink(state);
+    }
+
+    moveCursorAbsolute(position: i.Advancement) {
+        this.cursor.moveAbsolute(position);
+        this.emit('data'); // Otherwise the view won't re-render on space in vim.
+    }
+
+    clearRow() {
+        var cursorPosition = this.cursor.getPosition();
+        this.storage[cursorPosition.row] = null;
+    }
+
+    clearRowToEnd() {
+        var cursorPosition = this.cursor.getPosition();
+        this.storage[cursorPosition.row].splice(cursorPosition.column, Number.MAX_VALUE);
+    }
+
+    clearRowToBeginning() {
+        var cursorPosition = this.cursor.getPosition();
+        this.storage[cursorPosition.row].splice(0, cursorPosition.column - 1);
+    }
+
     clear() {
         this.storage = [];
         this.cursor.moveAbsolute({horizontal: 0, vertical: 0});
+    }
+
+    clearToBeginning() {
+        var cursorPosition = this.cursor.getPosition();
+        this.clearRowToBeginning();
+        this.storage.splice(0, cursorPosition.row - 1);
+    }
+
+    clearToEnd() {
+        var cursorPosition = this.cursor.getPosition();
+        this.clearRowToEnd();
+        this.storage.splice(cursorPosition.row + 1, Number.MAX_VALUE);
     }
 
     isEmpty(): boolean {
@@ -82,30 +122,37 @@ class Buffer extends events.EventEmitter {
     }
 
     private renderRow(row: Array<Char>, index: number) {
-
         var consecutive: Array<any> = [];
         var current = {attributes: <i.Attributes>null, text: ''};
 
         var rowWithCursor = row;
         var cursorPosition = this.cursor.getPosition();
 
-        if (index == cursorPosition.row) {
+        if (index == cursorPosition.row && this.cursor.getShow()) {
             rowWithCursor = _.clone(row);
+            var cursorAttributes = {'background-color': e.Color.White};
+
             if (rowWithCursor[cursorPosition.column]) {
                 var char = rowWithCursor[cursorPosition.column];
-                var newChar = new Char(char.toString(), _.merge(char.getAttributes(), this.attributes));
+                var newChar = new Char(char.toString(), _.merge(char.getAttributes(), cursorAttributes));
             } else {
-                newChar = new Char(' ', this.attributes);
+                newChar = new Char(' ', cursorAttributes);
             }
 
             rowWithCursor[cursorPosition.column] = newChar;
         }
 
-        rowWithCursor.forEach((element: Char, column: number) => {
-            if (!element) return;
+        // Foreach "merges" consecutive undefined.
+        for (var i = 0, l = rowWithCursor.length; i != l; i++) {
+            var element = rowWithCursor[i];
 
-            var attributes = element.getAttributes();
-            var value = element.toString();
+            if (element) {
+                var attributes = element.getAttributes();
+                var value = element.toString();
+            } else {
+                attributes = {};
+                value = ' ';
+            }
 
             if (_.isEqual(attributes, current.attributes)) {
                 current.text += value;
@@ -114,7 +161,7 @@ class Buffer extends events.EventEmitter {
                 consecutive.push(current);
                 current = {attributes: attributes, text: value};
             }
-        });
+        }
 
         consecutive.push(current);
 
