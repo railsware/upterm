@@ -1,7 +1,7 @@
 import Utils = require('../Utils');
 import i = require('../Interfaces');
 import _ = require('lodash')
-var filter: any = require('fuzzaldrin').filter;
+var score: (i: string, m: string) => number = require('fuzzaldrin').score;
 
 var descriptions: {[indexer: string]: string} = {
     admin: 'Create and administer SCCS files',
@@ -188,17 +188,19 @@ class Executable implements i.AutocompletionProvider {
                 return resolve([]);
             }
 
+            var lexeme = input.getLastLexeme();
+
             var all = _.map(this.executables, (executable: string) => {
                 return {
                     value: executable,
-                    score: 0.1,
+                    score: 1.5 * score(executable, lexeme),
                     synopsis: '',
                     description: descriptions[executable],
                     type: 'executable'
                 };
             });
 
-            resolve(filter(all, input.getLastLexeme(), {key: 'value', maxResults: 30}));
+            resolve(_(all).sortBy('score').reverse().take(10).value());
         });
     }
 }
