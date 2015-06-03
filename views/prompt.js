@@ -27,6 +27,7 @@ export default React.createClass({
         // TODO: move to invocation.
         keysDownStream
             .filter(_ => this.props.status == 'in-progress')
+            .filter(event => !event.metaKey)
             .map(stopBubblingUp)
             .forEach(event => {
                 this.props.invocation.write(event);
