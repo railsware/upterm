@@ -22,16 +22,12 @@ export default React.createClass({
     },
     componentWillMount() {
         var keysDownStream = createEventHandler();
-        var promptKeys = keysDownStream.filter(_ => this.props.status != 'in-progress');
+        var [passThroughKeys, promptKeys] = keysDownStream.partition(_ => this.props.status == 'in-progress');
 
-        // TODO: move to invocation.
-        keysDownStream
-            .filter(_ => this.props.status == 'in-progress')
+        passThroughKeys
             .filter(event => !event.metaKey)
             .map(stopBubblingUp)
-            .forEach(event => {
-                this.props.invocation.write(event);
-            });
+            .forEach(event => this.props.invocation.write(event));
 
         var meaningfulKeysDownStream = promptKeys.filter(isDefinedKey).map(stopBubblingUp);
         var [navigateAutocompleteStream, navigateHistoryStream] = meaningfulKeysDownStream
@@ -41,9 +37,7 @@ export default React.createClass({
         keysDownStream.filter(_.negate(isCommandKey))
             .forEach(event => this.setState({latestKeyCode: event.keyCode}));
 
-        meaningfulKeysDownStream.filter(keys.enter)
-            .filter(_ => this.props.status != 'in-progress')
-            .forEach(this.execute);
+        promptKeys.filter(keys.enter).forEach(this.execute);
 
         meaningfulKeysDownStream.filter(this.autocompleteIsShown)
             .filter(keys.tab)
