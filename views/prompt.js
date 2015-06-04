@@ -121,6 +121,11 @@ export default React.createClass({
             })
         );
     },
+    handleKeyPress(event) {
+        if (this.props.status == 'in-progress') {
+            stopBubblingUp(event);
+        }
+    },
     currentToken() {
         // TODO: return the token under cursor.
         return this.getText().split(/\s+/).pop();
@@ -153,6 +158,7 @@ export default React.createClass({
                 <div className="prompt"
                      onKeyDown={this.handlers.onKeyDown}
                      onInput={this.handleInput}
+                     onKeyPress={this.handleKeyPress}
                      type="text"
                      ref="command"
                      contentEditable="true"/>

@@ -28,9 +28,16 @@ function focusLastInput(event) {
         return;
     }
 
+    var originalEvent = event.originalEvent;
+    var newEvent = new KeyboardEvent("keydown", _.pick(originalEvent, [
+            'altkey', 'bubbles', 'cancelBubble', 'cancelable', 'charCode',
+            'ctrlKey', 'keyIdentifier', 'metaKey', 'shiftKey'
+        ]));
     var target = _.last(document.getElementsByClassName('prompt'));
     target.focus();
     withCaret(target, () => target.innerText.length);
+    // TODO: Doesn't work when pressing a capital letter.
+    target.dispatchEvent(newEvent)
 }
 
 function setCaretPosition(node, position) {
