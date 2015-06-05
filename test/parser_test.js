@@ -1,5 +1,5 @@
 //import Parser from '../compiled/Parser';
-var Buffer = require('./Buffer');
+var Buffer = require('../compiled/Buffer');
 //var expect = require('chai').expect;
 
 
