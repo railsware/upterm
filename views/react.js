@@ -29,6 +29,11 @@ function focusLastInput(event) {
     }
 
     var originalEvent = event.originalEvent;
+
+    if (isMetaKey(originalEvent)) {
+        return;
+    }
+
     var newEvent = new KeyboardEvent("keydown", _.pick(originalEvent, [
             'altkey', 'bubbles', 'cancelBubble', 'cancelable', 'charCode',
             'ctrlKey', 'keyIdentifier', 'metaKey', 'shiftKey'
@@ -72,6 +77,10 @@ function withCaret(target, callback) {
 
 function isCommandKey(event) {
     return _.contains([16, 17, 18], event.keyCode) || event.ctrlKey || event.altKey || event.metaKey;
+}
+
+function isMetaKey(event) {
+    return _.some([event.key, event.keyIdentifier], key => _.includes(['Shift', 'Alt', 'Ctrl'], key));
 }
 
 function isDefinedKey(event) {

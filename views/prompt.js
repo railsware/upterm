@@ -25,7 +25,7 @@ export default React.createClass({
         var [passThroughKeys, promptKeys] = keysDownStream.partition(_ => this.props.status == 'in-progress');
 
         passThroughKeys
-            .filter(event => !event.metaKey)
+            .filter(_.negate(isMetaKey))
             .map(stopBubblingUp)
             .forEach(event => this.props.invocation.write(event));
 

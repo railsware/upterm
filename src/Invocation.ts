@@ -81,10 +81,6 @@ class Invocation extends events.EventEmitter {
     }
 
     write(event: React.KeyboardEvent) {
-            if (event.key == 'Shift' || event.key == 'Alt' || event.key == 'Ctrl') {
-                return;
-            }
-
             var identifier: string = (<any>event.nativeEvent).keyIdentifier;
 
             if (identifier.startsWith('U+')) {
