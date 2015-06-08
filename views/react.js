@@ -80,7 +80,8 @@ function isCommandKey(event) {
 }
 
 function isMetaKey(event) {
-    return _.some([event.key, event.keyIdentifier], key => _.includes(['Shift', 'Alt', 'Ctrl'], key));
+    return event.metaKey || _.some([event.key, event.keyIdentifier],
+                                   key => _.includes(['Shift', 'Alt', 'Ctrl'], key));
 }
 
 const isDefinedKey = _.memoize(event => _.some(_.values(keys), matcher => matcher(event)),
