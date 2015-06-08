@@ -26,7 +26,7 @@ class Prompt extends events.EventEmitter {
     }
 
     getCommandName(): string {
-        return this.expandCommand(this.buffer.toString())[0];
+        return this.getCommand()[0];
 
     }
 
@@ -34,7 +34,7 @@ class Prompt extends events.EventEmitter {
         return this.getCommand().slice(1);
     }
 
-    getCommand(): Array<string> {
+    getCommand(): string[] {
         return this.expandCommand(this.buffer.toString())
     }
 
