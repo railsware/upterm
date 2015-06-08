@@ -83,9 +83,8 @@ function isMetaKey(event) {
     return _.some([event.key, event.keyIdentifier], key => _.includes(['Shift', 'Alt', 'Ctrl'], key));
 }
 
-function isDefinedKey(event) {
-    return _.some(_.values(keys), matcher => matcher(event));
-}
+const isDefinedKey = _.memoize(event => _.some(_.values(keys), matcher => matcher(event)),
+                               event => [event.ctrlKey, event.keyCode]);
 
 function stopBubblingUp(event) {
     event.stopPropagation();
