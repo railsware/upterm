@@ -12,11 +12,13 @@ class Prompt extends events.EventEmitter {
     // TODO: change the type.
     history: any;
     private autocompletion = new Autocompletion();
+    private commandParts: string[];
 
     constructor(private directory: string) {
         super();
 
         this.buffer = new Buffer();
+        this.buffer.on('data', () => { this.commandParts = this.expandCommand(this.buffer.toString()); });
         this.history = History;
     }
 
@@ -35,7 +37,7 @@ class Prompt extends events.EventEmitter {
     }
 
     getCommand(): string[] {
-        return this.expandCommand(this.buffer.toString())
+        return this.commandParts;
     }
 
     getSuggestions(): Promise<i.Suggestion[]> {
