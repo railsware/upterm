@@ -65,7 +65,7 @@ class Prompt extends events.EventEmitter {
         const commandName = parts.shift();
         const alias: string = Aliases.find(commandName);
 
-        if (alias && Prompt.splitCommand(alias).shift() != command) {
+        if (alias && Prompt.splitCommand(alias).shift() != commandName) {
             return this.expandCommand(alias).concat(parts);
         } else {
             return parts.concat(commandName);
