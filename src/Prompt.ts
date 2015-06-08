@@ -77,7 +77,7 @@ class Prompt extends events.EventEmitter {
                 return this.expandCommand(alias).concat(args);
             }
         } else {
-            return args.concat(commandName);
+            return [commandName, ...args];
         }
     }
 }
