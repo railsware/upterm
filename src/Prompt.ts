@@ -60,15 +60,22 @@ class Prompt extends events.EventEmitter {
     }
 
     private expandCommand(command: string): Array<string> {
-        const parts = Prompt.splitCommand(command);
+        const args = Prompt.splitCommand(command);
 
-        const commandName = parts.shift();
+        const commandName = args.shift();
         const alias: string = Aliases.find(commandName);
 
-        if (alias && Prompt.splitCommand(alias).shift() != commandName) {
-            return this.expandCommand(alias).concat(parts);
+        if (alias) {
+            const aliasArgs = Prompt.splitCommand(alias);
+            const isRecursive = aliasArgs[0] == commandName;
+
+            if (isRecursive) {
+                return aliasArgs.concat(args)
+            } else {
+                return this.expandCommand(alias).concat(args);
+            }
         } else {
-            return parts.concat(commandName);
+            return args.concat(commandName);
         }
     }
 }
