@@ -17,10 +17,6 @@ class Prompt extends events.EventEmitter {
         super();
 
         this.buffer = new Buffer();
-        this.buffer.on('data', () => {
-            this.emit('data');
-        });
-
         this.history = History;
     }
 
