@@ -57,25 +57,23 @@ class Prompt extends events.EventEmitter {
         return new ParsableString(this.buffer.toString());
     }
 
+    private static splitCommand(command: string) : string[] {
+        return <string[]>command.match(/(?:[^\s']+|'[^']*')+/g) || [];
+    }
+
     private expandCommand(command: string): Array<string> {
         // Split by comma, but not inside quotes.
         // http://stackoverflow.com/questions/16261635/javascript-split-string-by-space-but-ignore-space-in-quotes-notice-not-to-spli
-        var parts = <string[]>command.match(/(?:[^\s']+|'[^']*')+/g);
+        const parts = Prompt.splitCommand(command);
 
-        if (!parts) {
-            return [];
-        }
-        var commandName = parts.shift();
+        const commandName = parts.shift();
+        const alias: string = Aliases.find(commandName);
 
-        var alias: string = Aliases.find(commandName);
-
-        if (alias) {
-            parts = this.expandCommand(alias).concat(parts);
+        if (alias && Prompt.splitCommand(alias).shift() != command) {
+            return this.expandCommand(alias).concat(parts);
         } else {
-            parts.unshift(commandName);
+            return parts.concat(commandName);
         }
-
-        return parts;
     }
 }
 
