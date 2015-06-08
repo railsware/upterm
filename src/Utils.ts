@@ -29,15 +29,11 @@ class Utils {
 
     static ifExists(fileName: string, callback: Function, elseCallback?: Function) {
         fs.exists(fileName, (pathExists: boolean) => {
-            if (!pathExists) {
-                if (elseCallback) {
-                    elseCallback()
-                } else {
-                    return;
-                }
+            if (pathExists) {
+                callback();
+            } else if (elseCallback) {
+                elseCallback()
             }
-
-            callback();
         });
     }
 
