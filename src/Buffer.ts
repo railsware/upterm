@@ -10,9 +10,78 @@ class Buffer extends events.EventEmitter {
     private storage: Array<Array<Char>> = [];
     public cursor: Cursor = new Cursor();
     private attributes: i.Attributes = {color: e.Color.White, weight: e.Weight.Normal};
+    private renderRow: Function;
 
     constructor() {
         super();
+
+        this.renderRow = _.memoize((row: Array<Char>, index: number, cursorPosition: i.Position) => {
+            var consecutive: Array<any> = [];
+            var current = {attributes: <i.Attributes>null, text: ''};
+
+            var rowWithCursor = row;
+
+            if (index == cursorPosition.row && this.cursor.getShow()) {
+                rowWithCursor = _.clone(row);
+                var cursorAttributes = {'background-color': e.Color.White};
+
+                if (rowWithCursor[cursorPosition.column]) {
+                    var char = rowWithCursor[cursorPosition.column];
+                    var newChar = new Char(char.toString(), _.merge(char.getAttributes(), cursorAttributes));
+                } else {
+                    newChar = new Char(' ', cursorAttributes);
+                }
+
+                rowWithCursor[cursorPosition.column] = newChar;
+            }
+
+            // Foreach "merges" consecutive undefined.
+            for (var i = 0, l = rowWithCursor.length; i != l; i++) {
+                var element = rowWithCursor[i];
+
+                if (element) {
+                    var attributes = element.getAttributes();
+                    var value = element.toString();
+                } else {
+                    attributes = {};
+                    value = ' ';
+                }
+
+                if (_.isEqual(attributes, current.attributes)) {
+                    current.text += value;
+                    current.attributes = attributes;
+                } else {
+                    consecutive.push(current);
+                    current = {attributes: attributes, text: value};
+                }
+            }
+
+            consecutive.push(current);
+
+            var children = consecutive.map((group, groupIndex) => {
+                return React.createElement(
+                    'span',
+                    _.merge(this.getHTMLAttributes(group.attributes), {key: `group-${groupIndex}`}),
+                    group.text
+                );
+            });
+
+            return React.createElement('div', {className: 'row', key: `row-${index}`}, null, ...children);
+        }, (row: Array<Char>, index: number, cursorPosition: i.Position) => {
+            if (cursorPosition.row == index) {
+                return [
+                    row,
+                    index,
+                    cursorPosition.row,
+                    cursorPosition.column,
+                    this.cursor.getBlink(),
+                    this.cursor.getShow()
+                ];
+            } else {
+                return [row, index];
+            }
+        })
+
     }
 
     writeString(string: string, attributes = this.attributes): void {
@@ -118,65 +187,11 @@ class Buffer extends events.EventEmitter {
     }
 
     render() {
-        return React.createElement( 'pre', {className: 'output'}, null,
+        return React.createElement('pre', {className: 'output'}, null,
             ...this.storage.map((row: Char[], index: number) => {
                 return this.renderRow(row, index, this.cursor.getPosition());
             })
         );
-    }
-
-    private renderRow(row: Array<Char>, index: number, cursorPosition: i.Position) {
-        var consecutive: Array<any> = [];
-        var current = {attributes: <i.Attributes>null, text: ''};
-
-        var rowWithCursor = row;
-
-        if (index == cursorPosition.row && this.cursor.getShow()) {
-            rowWithCursor = _.clone(row);
-            var cursorAttributes = {'background-color': e.Color.White};
-
-            if (rowWithCursor[cursorPosition.column]) {
-                var char = rowWithCursor[cursorPosition.column];
-                var newChar = new Char(char.toString(), _.merge(char.getAttributes(), cursorAttributes));
-            } else {
-                newChar = new Char(' ', cursorAttributes);
-            }
-
-            rowWithCursor[cursorPosition.column] = newChar;
-        }
-
-        // Foreach "merges" consecutive undefined.
-        for (var i = 0, l = rowWithCursor.length; i != l; i++) {
-            var element = rowWithCursor[i];
-
-            if (element) {
-                var attributes = element.getAttributes();
-                var value = element.toString();
-            } else {
-                attributes = {};
-                value = ' ';
-            }
-
-            if (_.isEqual(attributes, current.attributes)) {
-                current.text += value;
-                current.attributes = attributes;
-            } else {
-                consecutive.push(current);
-                current = {attributes: attributes, text: value};
-            }
-        }
-
-        consecutive.push(current);
-
-        var children = consecutive.map((group, groupIndex) => {
-            return React.createElement(
-                'span',
-                _.merge(this.getHTMLAttributes(group.attributes), {key: `group-${groupIndex}`}),
-                group.text
-            );
-        });
-
-        return React.createElement('div', {className: 'row', key: `row-${index}`}, null, ...children);
     }
 
     private getHTMLAttributes(attributes: i.Attributes): Object {
