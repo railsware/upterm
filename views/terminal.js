@@ -33,10 +33,6 @@ export default React.createClass({
             console.log(`Debugging mode has been ${window.DEBUG ? 'enabled' : 'disabled'}.`);
         }
     },
-    shouldComponentUpdate(nextProps, nextState) {
-        return this.state.invocations.length != nextState.invocations.length
-            || this.state.vcsData != nextState.vcsData;
-    },
     render() {
         var invocations = this.state.invocations.map(invocation => {
             return (
