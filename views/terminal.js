@@ -4,14 +4,15 @@ import StatusLine from './status_line';
 
 export default React.createClass({
     getInitialState() {
-        return {vcsData: {isRepository: false}};
+        return {
+            vcsData: {isRepository: false},
+            invocations: this.props.terminal.invocations
+        };
     },
     componentWillMount() {
         this.props.terminal
-            .on('invocation', this.forceUpdate.bind(this))
-            .on('vcs-data', (data) => {
-                this.setState({vcsData: data})
-            });
+            .on('invocation', _ => this.setState({invocations: this.props.terminal.invocations}))
+            .on('vcs-data', data => this.setState({vcsData: data}));
     },
     handleKeyDown(event) {
         // Ctrl+L.
@@ -32,8 +33,12 @@ export default React.createClass({
             console.log(`Debugging mode has been ${window.DEBUG ? 'enabled' : 'disabled'}.`);
         }
     },
+    shouldComponentUpdate(nextProps, nextState) {
+        return this.state.invocations.length != nextState.invocations.length
+            || this.state.vcsData != nextState.vcsData;
+    },
     render() {
-        var invocations = this.props.terminal.invocations.map((invocation) => {
+        var invocations = this.state.invocations.map(invocation => {
             return (
                 <Invocation key={invocation.id} invocation={invocation}/>
             )
@@ -41,9 +46,7 @@ export default React.createClass({
 
         return (
             <div className="terminal" onKeyDown={this.handleKeyDown}>
-                <div id="invocations">
-                    {invocations}
-                </div>
+                <div className="invocations">{invocations}</div>
                 <StatusLine currentWorkingDirectory={this.props.terminal.currentDirectory}
                             vcsData={this.state.vcsData}/>
             </div>
