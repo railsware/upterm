@@ -2,5 +2,8 @@
   "name": "black-screen",
   "dependencies": {
     "caret.js": "0.2.2"
+  },
+  "devDependencies": {
+    "livereload-js": "~2.2.1"
   }
 }

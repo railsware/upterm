@@ -70,7 +70,8 @@ gulp.task('sass', function () {
                .pipe($.cached('sass'))
                .pipe($.sass(options.sass.config).on("error", onError))
                .pipe($.concat(options.sass.target.fileName))
-               .pipe(gulp.dest(options.sass.target.directory));
+               .pipe(gulp.dest(options.sass.target.directory))
+               .pipe($.livereload());
 });
 
 gulp.task('react', function () {
@@ -89,6 +90,7 @@ gulp.task('clean', function (cb) {
 
 gulp.task('watch', function (cb) {
     watching = true;
+    $.livereload.listen();
     runSequence(
         'clean',
         ['typescript', 'sass', 'react'],

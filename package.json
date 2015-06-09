@@ -42,6 +42,7 @@
     "gulp-babel": "5.1.0",
     "gulp-cached": "^1.1.0",
     "gulp-concat": "2.5.2",
+    "gulp-livereload": "^3.8.0",
     "gulp-load-plugins": "^1.0.0-rc.1",
     "gulp-notify": "^2.2.0",
     "gulp-react": "3.0.1",
