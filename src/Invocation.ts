@@ -101,7 +101,7 @@ class Invocation extends events.EventEmitter {
         this.dimensions = dimensions;
 
         if (this.command) {
-            this.command.kill('SIGWINCH');
+            (<any>this.command.stdout).resize(dimensions);
         }
     }
 
