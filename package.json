@@ -57,10 +57,7 @@
     "webdriverio": "git://github.com/webdriverio/webdriverio.git"
   },
   "scripts": {
-    "install-all": "PATH=node_modules/.bin:$PATH rm -rf node_modules && npm install && electron-rebuild && bower install && npm run cleanup",
-    "cleanup": "rm -rf build",
-    "forest-run": "PATH=node_modules/.bin:$PATH gulp && electron .",
-    "watch": "PATH=node_modules/.bin:$PATH gulp watch",
+    "install-all": "PATH=node_modules/.bin:$PATH rm -rf node_modules && npm install && electron-rebuild && bower install",
     "package": "PATH=node_modules/.bin:$PATH rm -rf '/Applications/Black Screen.app'; electron-packager . 'Black Screen' --platform=darwin --arch=x64 --version='0.27.2' --out='/Applications' --icon='./icon.icns'",
     "test": "PATH=node_modules/.bin:$PATH mocha --compilers js:babel/register"
   },

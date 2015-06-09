@@ -20,7 +20,7 @@ npm run install-all
 ### Run
 
 ```bash
-npm run forest-run
+gulp
 ```
 
 ### Test

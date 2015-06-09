@@ -85,7 +85,7 @@ gulp.task('react', function () {
 
 
 gulp.task('clean', function (cb) {
-    require('del')([options.typeScript.target + '/**', 'node_modules/build/**'], cb);
+    require('del')([options.typeScript.target + '/**'], cb);
 });
 
 gulp.task('watch', function (cb) {
