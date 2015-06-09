@@ -34,11 +34,9 @@ export default React.createClass({
         }
     },
     render() {
-        var invocations = this.state.invocations.map(invocation => {
-            return (
+        var invocations = this.state.invocations.map(invocation =>
                 <Invocation key={invocation.id} invocation={invocation}/>
-            )
-        });
+        );
 
         return (
             <div className="terminal" onKeyDown={this.handleKeyDown}>
