@@ -43,6 +43,8 @@ export default React.createClass({
             .filter(keys.tab)
             .forEach(this.selectAutocomplete);
 
+        meaningfulKeysDownStream.filter(keys.deleteWord).forEach(this.deleteWord);
+
         navigateHistoryStream.forEach(this.navigateHistory);
         navigateAutocompleteStream.forEach(this.navigateAutocomplete);
 
@@ -101,6 +103,17 @@ export default React.createClass({
         var state = this.state;
         this.props.prompt.replaceCurrentLexeme(state.suggestions[state.selectedAutocompleteIndex]);
         this.props.prompt.buffer.write(' ');
+
+        this.setState({caretPosition: this.props.prompt.buffer.cursor.column()});
+    },
+    deleteWord() {
+        // TODO: Remove the word under the caret instead of the last one.
+        var newCommand = this.props.prompt.getCommand().slice(0, -1).join(' ');
+
+        if (newCommand.length) {
+            newCommand += ' ';
+        }
+        this.props.prompt.buffer.setTo(newCommand);
 
         this.setState({caretPosition: this.props.prompt.buffer.cursor.column()});
     },
