@@ -118,15 +118,18 @@ class Buffer extends events.EventEmitter {
     }
 
     render() {
-        return React.createElement('pre', {className: 'output'}, null, ...this.storage.map(this.renderRow, this));
+        return React.createElement( 'pre', {className: 'output'}, null,
+            ...this.storage.map((row: Char[], index: number) => {
+                return this.renderRow(row, index, this.cursor.getPosition());
+            })
+        );
     }
 
-    private renderRow(row: Array<Char>, index: number) {
+    private renderRow(row: Array<Char>, index: number, cursorPosition: i.Position) {
         var consecutive: Array<any> = [];
         var current = {attributes: <i.Attributes>null, text: ''};
 
         var rowWithCursor = row;
-        var cursorPosition = this.cursor.getPosition();
 
         if (index == cursorPosition.row && this.cursor.getShow()) {
             rowWithCursor = _.clone(row);
