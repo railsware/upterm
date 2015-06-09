@@ -4,16 +4,14 @@ import StatusLine from './status_line';
 
 export default React.createClass({
     getInitialState() {
-        return {vcsData: {
-            isRepository: true,
-            branch: 'name',
-            status: 'clean'
-        }};
+        return {vcsData: {isRepository: false}};
     },
     componentWillMount() {
         this.props.terminal
             .on('invocation', this.forceUpdate.bind(this))
-            .on('vcs-data', (data) => { this.setState({vcsData: data}) });
+            .on('vcs-data', (data) => {
+                this.setState({vcsData: data})
+            });
     },
     handleKeyDown(event) {
         // Ctrl+L.
