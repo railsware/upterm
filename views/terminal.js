@@ -42,7 +42,7 @@ export default React.createClass({
         });
 
         return (
-            <div id="board" onKeyDown={this.handleKeyDown}>
+            <div className="terminal" onKeyDown={this.handleKeyDown}>
                 <div id="invocations">
                     {invocations}
                 </div>

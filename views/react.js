@@ -2,7 +2,7 @@ import Terminal from './compiled/Terminal';
 import React from 'react';
 import _ from 'lodash';
 import Rx from 'rx';
-import Board from './compiled/views/board';
+import TerminalComponent from './compiled/views/terminal';
 
 var keys = {
     goUp: event => (event.ctrlKey && event.keyCode === 80) || event.keyCode === 38,
@@ -123,7 +123,7 @@ $(document).ready(() => {
 
     $(window).resize(() => terminal.resize(getDimensions()));
 
-    React.render(<Board terminal={window.terminal}/>, document.getElementById('black-board'));
+    React.render(<TerminalComponent terminal={window.terminal}/>, document.getElementById('black-board'));
 
     $(document).keydown(event => focusLastInput(event));
 });
