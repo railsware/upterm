@@ -156,6 +156,7 @@ class Parser {
                                 break;
                             case CSI.mode.alternateScreen:
                                 Utils.log('Switching to an alternate screen.');
+                                this.buffer.activeBuffer = 'alternate';
                                 break;
                             case CSI.mode.bracketedPaste:
                                 Utils.log('Enabling bracketed paste');

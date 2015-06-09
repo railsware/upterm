@@ -147,6 +147,20 @@ body, pre {
   }
 }
 
+.invocation.in-progress {
+  .output.alternate {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 3;
+
+    margin: 0;
+    padding: 5px 0;
+  }
+}
+
 .output {
   margin: 10px;
 }

@@ -30,8 +30,9 @@ export default React.createClass({
             decorationToggle = <DecorationToggle invocation={this}/>;
         }
 
+        const classNames = 'invocation ' + this.state.status;
         return (
-            <div className="invocation">
+            <div className={classNames}>
                 <Prompt prompt={this.props.invocation.getPrompt()}
                         status={this.state.status}
                         invocation={this.props.invocation}/>

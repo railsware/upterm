@@ -9,6 +9,7 @@ import _ = require('lodash');
 class Buffer extends events.EventEmitter {
     private storage: Array<Array<Char>> = [];
     public cursor: Cursor = new Cursor();
+    public activeBuffer = 'standard';
     private attributes: i.Attributes = {color: e.Color.White, weight: e.Weight.Normal};
     private renderRow: Function;
 
@@ -187,7 +188,7 @@ class Buffer extends events.EventEmitter {
     }
 
     render() {
-        return React.createElement('pre', {className: 'output'}, null,
+        return React.createElement('pre', {className: `output ${this.activeBuffer}`}, null,
             ...this.storage.map((row: Char[], index: number) => {
                 return this.renderRow(row, index, this.cursor.getPosition());
             })
