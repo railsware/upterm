@@ -1,18 +1,27 @@
-import React from 'react';
+import React from 'react/addons';
 import Terminal from '../Terminal';
 import TerminalComponent from './terminal';
 
 export default React.createClass({
     getInitialState() {
+        return {terminals: [this.createTerminal()]};
+    },
+    createTerminal() {
         let terminal = new Terminal(getDimensions());
         $(window).resize(() => terminal.resize(getDimensions()));
 
-        return {terminals: [terminal]};
+        return terminal
     },
     handleKeyDown(event) {
         // Cmd+_.
         if (event.metaKey && event.keyCode === 189) {
             console.log('Split horizontally.');
+            let terminal = new Terminal(getDimensions());
+            $(window).resize(() => terminal.resize(getDimensions()));
+
+            this.setState({
+                terminals: React.addons.update(this.state.terminals, {$push: [this.createTerminal()]})
+            });
 
             event.stopPropagation();
             event.preventDefault();
