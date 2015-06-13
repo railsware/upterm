@@ -293,19 +293,25 @@ pre {
 
       &.alias .icon {
         @extend .fa;
-        @extend .fa-step-forward;
+        @extend .fa-at;
+        color: map-get($colors, 'yellow');
       }
 
-      &.file .icon:before {
-        content: 'F';
+      &.file .icon {
+        @extend .fa;
+        @extend .fa-file;
       }
 
-      &.executable .icon:before {
-        content: 'E';
+      &.executable .icon, {
+        @extend .fa;
+        @extend .fa-play;
+        color: map-get($colors, 'green');
       }
 
-      &.history .icon:before {
-        content: 'H';
+      &.history .icon {
+        @extend .fa;
+        @extend .fa-long-arrow-up;
+        color: map-get($colors, 'blue');
       }
 
       &.command .icon:before {
