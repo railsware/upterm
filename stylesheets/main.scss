@@ -273,25 +273,27 @@ pre {
       }
 
       .icon:before {
-        content: ' ';
-        vertical-align: middle;
-        width: 2em;
-
         display: inline-block;
-        height: inherit;
+        content: ' ';
 
+        width: 2em;
+        height: 2em;
         line-height: 2em;
+
+
+        vertical-align: middle;
         text-align: center;
         font-style: normal;
 
         opacity: .5;
         margin-right: 10px;
 
-        background-color: rgba(0, 0, 0, 0.15)
+        background-color: rgba(0, 0, 0, 0.15);
       }
 
-      &.alias .icon:before {
-        content: 'A';
+      &.alias .icon {
+        @extend .fa;
+        @extend .fa-step-forward;
       }
 
       &.file .icon:before {
