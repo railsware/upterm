@@ -1,8 +1,7 @@
-import Terminal from './compiled/Terminal';
 import React from 'react';
 import _ from 'lodash';
 import Rx from 'rx';
-import TerminalComponent from './compiled/views/terminal';
+import TerminalLayout from './compiled/views/terminal_layout';
 
 var keys = {
     goUp: event => (event.ctrlKey && event.keyCode === 80) || event.keyCode === 38,
@@ -42,7 +41,6 @@ function focusLastInput(event) {
     var target = _.last(document.getElementsByClassName('prompt'));
     target.focus();
     withCaret(target, () => target.innerText.length);
-    // TODO: Doesn't work when pressing a capital letter.
     target.dispatchEvent(newEvent)
 }
 
@@ -119,11 +117,7 @@ function getEnumerablePropertyNames(target) {
 }
 
 $(document).ready(() => {
-    window.terminal = new Terminal(getDimensions());
-
-    $(window).resize(() => terminal.resize(getDimensions()));
-
-    React.render(<TerminalComponent terminal={window.terminal}/>, document.getElementById('black-board'));
-
+    React.render(<TerminalLayout/>, document.getElementById('black-board'));
+    // TODO: focus the last input of the active terminal.
     $(document).keydown(event => focusLastInput(event));
 });
