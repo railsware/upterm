@@ -317,7 +317,7 @@ pre {
 
       &.executable .icon, {
         @extend .fa;
-        @extend .fa-play;
+        @extend .fa-asterisk;
         color: map-get($colors, 'green');
       }
 
