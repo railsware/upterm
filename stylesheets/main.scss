@@ -177,7 +177,20 @@ body, pre {
   white-space: nowrap;
 }
 
-#status-line {
+.terminal-layout {
+  display: flex;
+
+  flex-wrap: nowrap;
+  flex-direction: column;
+}
+
+.terminal {
+  position: relative;
+  height: 100%;
+  width: 100%;
+}
+
+.status-line {
   position: fixed;
   bottom: 0;
   width: 100%;

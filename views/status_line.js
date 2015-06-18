@@ -3,7 +3,7 @@ import React from 'react';
 export default React.createClass({
     render() {
         return (
-            <div id="status-line">
+            <div className="status-line">
                 <CurrentDirectory currentWorkingDirectory={this.props.currentWorkingDirectory}/>
                 <VcsData data={this.props.vcsData}/>
             </div>
