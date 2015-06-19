@@ -323,7 +323,7 @@ pre {
 
       &.history .icon {
         @extend .fa;
-        @extend .fa-long-arrow-up;
+        @extend .fa-history;
         color: map-get($colors, 'blue');
       }
 
