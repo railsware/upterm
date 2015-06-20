@@ -63,7 +63,7 @@ gulp.task('typescript', function () {
                .pipe($.cached('ts'))
                .pipe($.typescript(options.typeScript.config).on("error", onError))
                .pipe(gulp.dest(options.typeScript.target))
-               .pipe($.notify("TypeScript has been compiled."));
+               .pipe($.notify({message: "TypeScript has been compiled.", onLast: true}));
 });
 
 gulp.task('sass', function () {
@@ -73,7 +73,7 @@ gulp.task('sass', function () {
                .pipe($.concat(options.sass.target.fileName))
                .pipe(gulp.dest(options.sass.target.directory))
                .pipe($.livereload())
-               .pipe($.notify("SCSS has been compiled."));
+               .pipe($.notify({message: "SCSS has been compiled.", onLast: true}));
 });
 
 gulp.task('react', function () {
@@ -82,8 +82,7 @@ gulp.task('react', function () {
                .pipe($.babel(options.react.config).on("error", onError))
                .pipe($.react().on("error", onError))
                .pipe(gulp.dest(options.react.target))
-               .pipe($.notify("React has been compiled."));
-
+               .pipe($.notify({message: "React has been compiled.", onLast: true}));
 });
 
 
