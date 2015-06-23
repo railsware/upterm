@@ -17,8 +17,7 @@ class GitDiff extends Base {
     }
 
     isApplicable(): boolean {
-        return _.isEqual(this.invocation.getPrompt().getWholeCommand(), ['git', 'diff'])
-            && !this.invocation.hasOutput();
+        return this.invocation.hasOutput() && _.isEqual(this.invocation.getPrompt().getWholeCommand(), ['git', 'diff']);
     }
 }
 
