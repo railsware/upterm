@@ -36,7 +36,7 @@ class Invocation extends events.EventEmitter {
 
         this.buffer = new Buffer();
         this.buffer.on('data', _.throttle(() => { this.emit('data'); }, 1000/60));
-        this.parser = new Parser(this.buffer);
+        this.parser = new Parser(this);
         this.id = `invocation-${new Date().getTime()}`
     }
 
@@ -77,20 +77,25 @@ class Invocation extends events.EventEmitter {
         }
     }
 
-    write(event: React.KeyboardEvent) {
-        var identifier: string = (<any>event.nativeEvent).keyIdentifier;
-
-        if (identifier.startsWith('U+')) {
-            var code =parseInt(identifier.substring(2), 16);
-            var char = String.fromCharCode(code);
-            if (!event.shiftKey && code >= 65 && code <= 90) {
-                char = char.toLowerCase()
-            }
+    write(input: string|React.KeyboardEvent) {
+        if (typeof input == 'string') {
+            var text = <string>input
         } else {
-            char = String.fromCharCode(event.keyCode);
+            var event = <React.KeyboardEvent>input;
+            var identifier: string = (<any>event.nativeEvent).keyIdentifier;
+
+            if (identifier.startsWith('U+')) {
+                var code =parseInt(identifier.substring(2), 16);
+                text = String.fromCharCode(code);
+                if (!event.shiftKey && code >= 65 && code <= 90) {
+                    text = text.toLowerCase()
+                }
+            } else {
+                text = String.fromCharCode(event.keyCode);
+            }
         }
 
-        this.command.stdin.write(char);
+        this.command.stdin.write(text);
     }
 
     hasOutput(): boolean {

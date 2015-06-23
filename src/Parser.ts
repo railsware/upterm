@@ -1,4 +1,5 @@
-var AnsiParser: AnsiParserConstructor = require('node-ansiparser');
+import Invocation = require("./Invocation");
+var ANSIParser: AnsiParserConstructor = require('node-ansiparser');
 
 import e = require('./Enums');
 import i = require('./Interfaces');
@@ -40,12 +41,12 @@ var CSI = {
         bracketedPaste: 2004,
     },
     flag: {
+        cursorPosition: 'H',
         eraseDisplay: 'J',
         eraseInLine: 'K',
-        selectGraphicRendition: 'm',
-        cursorPosition: 'H',
         setMode: 'h',
-        resetMode: 'l'
+        resetMode: 'l',
+        selectGraphicRendition: 'm'
     },
     erase: {
         toEnd: 0,
@@ -58,8 +59,10 @@ var DECPrivateMode = '?';
 
 class Parser {
     private parser: AnsiParser;
+    private buffer: Buffer;
 
-    constructor(private buffer: Buffer) {
+    constructor(private invocation: Invocation) {
+        this.buffer = this.invocation.getBuffer();
         this.parser = this.initializeAnsiParser();
     }
 
@@ -68,7 +71,7 @@ class Parser {
     }
 
     private initializeAnsiParser(): AnsiParser {
-        return new AnsiParser({
+        return new ANSIParser({
             inst_p: (text: string) => {
                 Utils.log('text', text);
 
@@ -123,6 +126,10 @@ class Parser {
                                 this.buffer.clearToBeginning();
                                 break;
                         }
+                        break;
+
+                    case 'c':
+                        this.invocation.write('\x1b>1;2;c');
                         break;
                     case CSI.flag.eraseInLine:
                         switch (params[0]) {
