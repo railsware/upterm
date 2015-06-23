@@ -28,7 +28,7 @@ class Char {
     isSpecial(): boolean {
         // http://www.asciitable.com/index/asciifull.gif
         var charCode = this.char.charCodeAt(0);
-        return charCode < 32 || charCode > 126;
+        return charCode < 32;
     }
 }
 
