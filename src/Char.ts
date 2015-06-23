@@ -1,8 +1,10 @@
 /// <reference path="references.ts" />
 
+import Utils = require("./Utils");
 var React = require('react');
 import i = require('./Interfaces');
 import e = require('./Enums');
+import _ = require('lodash');
 
 class Char {
     constructor(private char: string, private attributes: i.Attributes) {
@@ -16,7 +18,7 @@ class Char {
     }
 
     getAttributes(): i.Attributes {
-        return this.attributes;
+        return _.clone(this.attributes);
     }
 
     toString(): string {
@@ -25,7 +27,8 @@ class Char {
 
     isSpecial(): boolean {
         // http://www.asciitable.com/index/asciifull.gif
-        return this.getCharCode() < 32 || this.getCharCode() > 126;
+        var charCode = this.char.charCodeAt(0);
+        return charCode < 32 || charCode > 126;
     }
 }
 
