@@ -245,8 +245,9 @@ class Buffer extends events.EventEmitter {
         this.storage[row] = []
     }
 
-    private hasRow(row: number): boolean {
-        return typeof this.storage[row] == 'object';
+    private hasRow(rowIndex: number): boolean {
+        var row = this.storage[rowIndex];
+        return row && (typeof row == 'object');
     }
 }
 
