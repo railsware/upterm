@@ -189,7 +189,7 @@ class Parser {
                                 Utils.log('Enabling bracketed paste');
                                 break;
                             default:
-                                Utils.log('Unknown CSI mode:', params[0]);
+                                Utils.error('Unknown CSI mode:', params[0]);
                         }
                         break;
                     case CSI.flag.resetMode:
@@ -209,7 +209,7 @@ class Parser {
                                 this.buffer.showCursor(false);
                                 break;
                             default:
-                                Utils.log('Unknown CSI reset:', params[0]);
+                                Utils.error('Unknown CSI reset:', params[0]);
                         }
                         break;
                     default:
