@@ -188,7 +188,11 @@ class Buffer extends events.EventEmitter {
 
     clearRowToBeginning() {
         var cursorPosition = this.cursor.getPosition();
-        this.storage[cursorPosition.row].splice(0, cursorPosition.column - 1);
+        var row = this.storage[cursorPosition.row];
+
+        if (row) {
+            row.splice(0, cursorPosition.column - 1);
+        }
     }
 
     clear() {
