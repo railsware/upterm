@@ -7,6 +7,7 @@ export interface Dimensions {
 
 export interface Attributes {
     color?: e.Color;
+    'background-color'?: e.Color;
     weight?: e.Weight;
     underline?: boolean;
     crossedOut?: boolean;

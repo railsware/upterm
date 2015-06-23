@@ -118,6 +118,10 @@ class Buffer extends events.EventEmitter {
         this.emit('data');
     }
 
+    getAttributes(): i.Attributes {
+        return _.cloneDeep(this.attributes);
+    }
+
     setAttributes(attributes: i.Attributes): void {
         this.attributes = _.merge(this.attributes, attributes);
     }

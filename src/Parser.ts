@@ -9,11 +9,12 @@ import Buffer = require('./Buffer');
 import Color = e.Color;
 import Weight = e.Weight;
 
-var CGR: { [indexer: string]: i.Attributes } = {
+var CGR: { [indexer: string]: i.Attributes|string } = {
     0: {color: Color.White, weight: e.Weight.Normal, underline: false, 'background-color': Color.Black},
     1: {weight: Weight.Bold},
     2: {weight: Weight.Faint},
     4: {underline: true},
+    7: 'negative',
     30: {color: Color.Black},
     31: {color: Color.Red},
     32: {color: Color.Green},
@@ -22,6 +23,7 @@ var CGR: { [indexer: string]: i.Attributes } = {
     35: {color: Color.Magenta},
     36: {color: Color.Cyan},
     37: {color: Color.White},
+    38: 'color',
     40: {'background-color': Color.Black},
     41: {'background-color': Color.Red},
     42: {'background-color': Color.Green},
@@ -29,8 +31,13 @@ var CGR: { [indexer: string]: i.Attributes } = {
     44: {'background-color': Color.Blue},
     45: {'background-color': Color.Magenta},
     46: {'background-color': Color.Cyan},
-    47: {'background-color': Color.White}
+    47: {'background-color': Color.White},
+    48: 'background-color'
 };
+
+function isSetColorExtended(cgrValue: any) {
+    return cgrValue == 'color' || cgrValue == 'background-color';
+}
 
 var CSI = {
     mode: {
@@ -99,14 +106,27 @@ class Parser {
                         while (params.length) {
                             var cgr = params.shift();
 
-                            if (cgr == 48) {
+                            var attributeToSet = CGR[cgr];
+
+                            if (!attributeToSet) {
+                                Utils.error('cgr', cgr, params);
+                            } else if (isSetColorExtended(attributeToSet)) {
                                 var next = params.shift();
                                 if (next == 5) {
-                                    var backgroundColorIndex = params.shift();
-                                    this.buffer.setAttributes({'background-color': e.ColorIndex[backgroundColorIndex]});
+                                    var colorIndex = params.shift();
+                                    this.buffer.setAttributes({[<string>attributeToSet]: e.ColorIndex[colorIndex]});
+                                } else {
+                                    Utils.error('cgr', cgr, next, params);
                                 }
+                            } else if (attributeToSet == 'negative'){
+                                var attributes = this.buffer.getAttributes();
+
+                                this.buffer.setAttributes({
+                                    'background-color': attributes.color,
+                                    'color': attributes['background-color']
+                                });
                             } else {
-                                this.buffer.setAttributes(CGR[cgr] || {});
+                                this.buffer.setAttributes(attributeToSet);
                             }
                         }
                         break;
