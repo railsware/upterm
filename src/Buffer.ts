@@ -30,7 +30,8 @@ class Buffer extends events.EventEmitter {
                         rowWithCursor[i] = new Char(old.toString(), old.getAttributes());
                     }
                 }
-                var cursorAttributes = {'background-color': e.Color.White};
+                // TODO: change accordingly to the theme background color.
+                var cursorAttributes = {'background-color': e.Color.White, color: e.Color.Black};
 
                 if (rowWithCursor[cursorPosition.column]) {
                     var char = rowWithCursor[cursorPosition.column];
