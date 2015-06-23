@@ -149,7 +149,7 @@ class Parser {
                         break;
 
                     case 'c':
-                        this.invocation.write('\x1b>1;2;c');
+                        this.invocation.write('\x1b>1;2;');
                         break;
                     case CSI.flag.eraseInLine:
                         switch (params[0]) {
