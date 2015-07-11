@@ -12,7 +12,12 @@ class File implements i.AutocompletionProvider {
             }
 
             var enteredDirectoriesPath = Utils.normalizeDir(Path.dirname(input.getLastLexeme()));
-            var searchDirectory = Utils.normalizeDir(Path.join(currentDirectory, enteredDirectoriesPath));
+
+            if (Path.isAbsolute(enteredDirectoriesPath)) {
+                var searchDirectory = enteredDirectoriesPath;
+            } else {
+                searchDirectory = Utils.normalizeDir(Path.join(currentDirectory, enteredDirectoriesPath));
+            }
 
             Utils.stats(searchDirectory).then((fileInfos) => {
                 var all = _.map(fileInfos, (fileInfo: i.FileInfo) => {
