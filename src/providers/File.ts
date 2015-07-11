@@ -10,8 +10,8 @@ class File implements i.AutocompletionProvider {
             if (input.getLexemes().length < 2) {
                 return resolve([]);
             }
-            var parsed = Path.parse(input.getLastLexeme());
-            var enteredDirectoriesPath = Utils.normalizeDir(parsed.dir);
+            var baseName = Path.basename(input.getLastLexeme());
+            var enteredDirectoriesPath = Utils.normalizeDir(Path.dirname(input.getLastLexeme()));
 
             if (Path.isAbsolute(enteredDirectoriesPath)) {
                 var searchDirectory = enteredDirectoriesPath;
@@ -29,7 +29,7 @@ class File implements i.AutocompletionProvider {
 
                     var suggestion: i.Suggestion = {
                         value: name,
-                        score: score(name, input.getLastLexeme()) || score(name, parsed.base),
+                        score: score(name, input.getLastLexeme()) || score(name, baseName),
                         synopsis: '',
                         description: '',
                         type: 'file',
