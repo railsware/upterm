@@ -1,6 +1,7 @@
 /node_modules/
 /bower_components/
 /compiled/*
+/tmp/*
 /npm-debug.log
 /src/tsconfig.json
 /Black Screen.app/
