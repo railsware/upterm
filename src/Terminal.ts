@@ -6,6 +6,7 @@ import Invocation = require('./Invocation');
 import Aliases = require('./Aliases');
 import History = require('./History');
 import Utils = require('./Utils');
+import Serializer = require("./Serializer");
 var remote = require('remote');
 var app = remote.require('app');
 
@@ -16,7 +17,12 @@ class Terminal extends events.EventEmitter {
     gitBranchWatcher: fs.FSWatcher;
 
     private stateFileName = `${process.env.HOME}/.black-screen-state`;
-    private serializableProperties: _.Dictionary<string> = {currentDirectory: process.env.HOME};
+
+    // The value of the dictionary is the default value used if there is no serialized data.
+    private serializableProperties: _.Dictionary<any> = {
+        currentDirectory: `String:${process.env.HOME}`,
+        history: `History:[]`
+    };
 
     constructor(private dimensions: i.Dimensions) {
         super();
@@ -24,9 +30,7 @@ class Terminal extends events.EventEmitter {
         this.restore();
         this.history = new History();
 
-        this.observeSerializableProperties(() => {
-            this.serialize();
-        });
+        this.on('invocation', this.serialize.bind(this));
 
         Aliases.initialize();
 
@@ -97,24 +101,11 @@ class Terminal extends events.EventEmitter {
         });
     }
 
-    private observeSerializableProperties(callback: Function): void {
-        (<any>Object).observe(this, (changes: Array<ObjectChange>) => {
-            if (this.serializablePropertiesHasChanged(changes)) {
-                callback();
-            }
-        });
-    }
-
-    private serializablePropertiesHasChanged(changes: Array<ObjectChange>): boolean {
-        var names = _.map(changes, _.property('name'));
-        return !_.isEmpty(_.intersection(_.keys(this.serializableProperties), names));
-    }
-
     private serialize(): void {
         var values: _.Dictionary<string> = {};
 
         _.each(this.serializableProperties, (value: string, key: string) => {
-            values[key] = (<any>this)[key];
+            values[key] = Serializer.serialize((<any>this)[key]);
         });
 
         fs.writeFile(this.stateFileName, JSON.stringify(values), (error: any) => {
@@ -125,19 +116,19 @@ class Terminal extends events.EventEmitter {
     private restore(): void {
         try {
             var state = JSON.parse(fs.readFileSync(this.stateFileName).toString());
-        } catch
-            (error) {
+        } catch (error) {
             state = this.serializableProperties;
         }
 
         _.each(state, (value: string, key: string) => {
             var setterName = `set${_.capitalize(key)}`;
             var that = (<any>this);
+            var deserializedValue = Serializer.deserialize(value);
 
             if (that[setterName]) {
-                that[setterName](value);
+                that[setterName](deserializedValue);
             } else {
-                that[key] = value;
+                that[key] = deserializedValue;
             }
         });
     }

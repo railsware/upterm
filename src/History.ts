@@ -1,4 +1,5 @@
 class History {
+    static historySize = 1000;
     static pointer: number = 0;
     static stack: Array<string> = [];
 
@@ -10,6 +11,7 @@ class History {
         }
 
         this.stack.push(command);
+        this.stack.splice(0, this.stack.length - this.historySize); // Delete ancient history.
         this.pointer = this.stack.length;
     }
 
@@ -27,6 +29,15 @@ class History {
         }
 
         return this.stack[this.pointer];
+    }
+
+    serialize(): string {
+        return `History:${JSON.stringify(History.stack)}`;
+    }
+
+    static deserialize(serialized: string): void {
+        var stack: string[] = JSON.parse(serialized);
+        stack.forEach((item) => { this.append(item) });
     }
 }
 
