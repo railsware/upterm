@@ -1,5 +1,5 @@
 import fs = require('fs');
-import path = require('path');
+import Path = require('path');
 import i = require('./Interfaces');
 
 class Utils {
@@ -35,7 +35,7 @@ class Utils {
         return Utils.filesIn(directory).then((files) => {
             return Promise.all(files.map((fileName) => {
                 return new Promise((resolve, reject) => {
-                    fs.stat(path.join(directory, fileName), (error: NodeJS.ErrnoException, stat: fs.Stats) => {
+                    fs.stat(Path.join(directory, fileName), (error: NodeJS.ErrnoException, stat: fs.Stats) => {
                         if (error) {
                             reject(error);
                         }
@@ -55,6 +55,10 @@ class Utils {
                 elseCallback()
             }
         });
+    }
+
+    static normalizeDir(path: string): string {
+        return Path.normalize(path + Path.sep);
     }
 
     private static delegate(name: string, args: Array<any>): void {

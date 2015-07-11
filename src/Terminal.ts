@@ -62,7 +62,7 @@ class Terminal extends events.EventEmitter {
 
     setCurrentDirectory(value: string): void {
         remote.getCurrentWindow().setRepresentedFilename(value);
-        this.currentDirectory = value;
+        this.currentDirectory = Utils.normalizeDir(value);
         app.addRecentDocument(value);
         this.watchGitBranch(value);
     }

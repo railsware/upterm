@@ -45,7 +45,7 @@ class Prompt extends events.EventEmitter {
 
     replaceCurrentLexeme(suggestion: i.Suggestion): void {
         var lexemes = this.toParsableString().getLexemes();
-        lexemes[lexemes.length - 1] = suggestion.value;
+        lexemes[lexemes.length - 1] = `${suggestion.prefix || ""}${suggestion.value}`;
 
         this.buffer.setTo(lexemes.join(' '));
     }

@@ -36,6 +36,7 @@ export interface Suggestion {
     description: string;
     type: string;
     partial?: boolean;
+    prefix?: string;
 }
 
 export interface Parsable {
