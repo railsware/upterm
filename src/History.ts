@@ -35,16 +35,16 @@ class History {
         return this.stack[this.pointer];
     }
 
-    serialize(): string {
-        return `History:${JSON.stringify(History.stack)}`;
-    }
-
     static size(): number {
         return this.stack.length;
     }
 
     static clear(): void {
         this.stack = [];
+    }
+
+    serialize(): string {
+        return `History:${JSON.stringify(History.stack)}`;
     }
 
     static deserialize(serialized: string): void {
