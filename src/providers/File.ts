@@ -6,18 +6,19 @@ var filter: any = require('fuzzaldrin').filter;
 class File implements i.AutocompletionProvider {
     getSuggestions(currentDirectory: string, input: i.Parsable) {
         return new Promise((resolve) => {
-            Utils.filesIn(currentDirectory, (files) => {
-                if (input.getLexemes().length < 2) {
-                    return resolve([]);
-                }
+            if (input.getLexemes().length < 2) {
+                return resolve([]);
+            }
 
-                var all = _.map(files, (fileName: string) => {
+            Utils.stats(currentDirectory).then((fileInfos) => {
+                var all = _.map(fileInfos, (fileInfo: i.FileInfo) => {
                     return {
-                        value: fileName,
+                        value: fileInfo.name,
                         score: 0,
                         synopsis: '',
                         description: '',
-                        type: 'file'
+                        type: 'file',
+                        partial: fileInfo.stat.isDirectory()
                     };
                 });
 

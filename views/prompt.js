@@ -101,8 +101,12 @@ export default React.createClass({
     },
     selectAutocomplete() {
         var state = this.state;
-        this.props.prompt.replaceCurrentLexeme(state.suggestions[state.selectedAutocompleteIndex]);
-        this.props.prompt.buffer.write(' ');
+        const suggestion = state.suggestions[state.selectedAutocompleteIndex];
+        this.props.prompt.replaceCurrentLexeme(suggestion);
+
+        if (!suggestion.partial) {
+            this.props.prompt.buffer.write(' ');
+        }
 
         this.setState({caretPosition: this.props.prompt.buffer.cursor.column()});
     },

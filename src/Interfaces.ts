@@ -1,4 +1,5 @@
 import e = require('./Enums');
+import fs = require('fs');
 
 export interface Dimensions {
     columns: number;
@@ -34,6 +35,7 @@ export interface Suggestion {
     synopsis: string;
     description: string;
     type: string;
+    partial?: boolean;
 }
 
 export interface Parsable {
@@ -48,4 +50,9 @@ export interface VcsData {
     isRepository: boolean;
     branch?: string;
     status?: string;
+}
+
+export interface FileInfo {
+    name: string;
+    stat: fs.Stats;
 }

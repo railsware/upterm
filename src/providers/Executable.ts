@@ -1,6 +1,7 @@
 import Utils = require('../Utils');
 import i = require('../Interfaces');
 import _ = require('lodash')
+import Path = require('path')
 var score: (i: string, m: string) => number = require('fuzzaldrin').score;
 
 var descriptions: {[indexer: string]: string} = {
@@ -167,18 +168,12 @@ var descriptions: {[indexer: string]: string} = {
 };
 
 class Executable implements i.AutocompletionProvider {
-    private paths: Array<string> = process.env.PATH.split(':');
+    private paths: Array<string> = process.env.PATH.split(Path.delimiter);
     private executables: string[] = [];
 
     constructor() {
         this.paths.forEach((path) => {
-            Utils.filesIn(path, (files) => {
-                var executableNames = files.map((fileName) => {
-                    return fileName.split('/').pop();
-                });
-
-                this.executables = this.executables.concat(executableNames);
-            })
+            Utils.filesIn(path).then((files) => { this.executables = this.executables.concat(files); })
         });
     }
 
