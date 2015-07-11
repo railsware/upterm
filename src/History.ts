@@ -11,7 +11,11 @@ class History {
         }
 
         this.stack.push(command);
-        this.stack.splice(0, this.stack.length - this.historySize); // Delete ancient history.
+
+        if (this.size() > this.historySize) {
+            this.stack.splice(0, this.stack.length - this.historySize); // Delete ancient history.
+        }
+
         this.pointer = this.stack.length;
     }
 
@@ -37,6 +41,10 @@ class History {
 
     static size(): number {
         return this.stack.length;
+    }
+
+    static clear(): void {
+        this.stack = [];
     }
 
     static deserialize(serialized: string): void {

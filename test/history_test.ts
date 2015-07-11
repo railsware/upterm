@@ -6,6 +6,8 @@ var expect = chai.expect;
 
 describe('History', () => {
 
+    afterEach(() => { History.clear() });
+
     describe('size', () => {
         it('is zero after creation', (done) => {
             expect(History.size()).to.equals(0);
