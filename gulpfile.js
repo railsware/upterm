@@ -64,7 +64,6 @@ var options = {
 
 gulp.task('typescript', function () {
     return gulp.src(options.typeScript.source)
-               .pipe($.cached('ts'))
                .pipe($.typescript(options.typeScript.config).on("error", onError))
                .pipe(gulp.dest(options.typeScript.target))
                .pipe(notify("TypeScript has been compiled."));
