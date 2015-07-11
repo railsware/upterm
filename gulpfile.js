@@ -38,7 +38,7 @@ var options = {
     },
     typeScript: {
         source: 'src/**/*.ts',
-        target: 'compiled',
+        target: 'compiled/src',
         config: $.typescript.createProject({
             typescript: require('typescript'),
             target: 'ES5',
@@ -46,9 +46,12 @@ var options = {
             noImplicitAny: true,
             removeComments: true,
             preserveConstEnums: true,
-            sourceMap: true,
-            outDir: 'compiled'
+            sourceMap: true
         })
+    },
+    test: {
+        source: 'test/**/*.ts',
+        target: 'compiled/test'
     },
     sass: {
         source: ['stylesheets/*.scss', 'decorators/*.scss'],
@@ -106,6 +109,13 @@ gulp.task('watch', function (cb) {
             cb();
         }
     );
+});
+
+gulp.task('test', function () {
+    return gulp.src(options.test.source)
+        .pipe($.typescript(options.typeScript.config))
+        .pipe(gulp.dest(options.test.target))
+        .pipe($.mocha());
 });
 
 gulp.task('default', function () {

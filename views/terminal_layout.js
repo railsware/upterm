@@ -1,5 +1,5 @@
 import React from 'react/addons';
-import Terminal from '../Terminal';
+import Terminal from '../src/Terminal';
 import TerminalComponent from './terminal';
 
 export default React.createClass({

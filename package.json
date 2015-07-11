@@ -43,6 +43,7 @@
     "gulp-concat": "2.6.0",
     "gulp-livereload": "3.8.0",
     "gulp-load-plugins": "1.0.0-rc.1",
+    "gulp-mocha": "2.1.2",
     "gulp-notify": "2.2.0",
     "gulp-react": "3.0.1",
     "gulp-sass": "2.0.3",
@@ -53,14 +54,12 @@
     "react-tools": "0.13.3",
     "run-sequence": "1.1.1",
     "typescript": "1.5.0-beta",
-    "typescript-require": "^0.2.9",
     "webdriverio": "3.0.5"
   },
   "scripts": {
     "install-all": "PATH=node_modules/.bin:$PATH rm -rf node_modules && npm install && bower install && npm run rebuild-pty",
     "rebuild-pty": "HOME=~/.electron-gyp cd node_modules/child_pty; node-gyp rebuild --target=0.29.2 --arch=ia64 --dist-url=https://atom.io/download/atom-shell",
-    "package": "PATH=node_modules/.bin:$PATH rm -rf '/Applications/Black Screen.app'; electron-packager . 'Black Screen' --platform=darwin --arch=x64 --version='0.29.2' --out='/Applications' --icon='./icon.icns'",
-    "test": "PATH=node_modules/.bin:$PATH mocha --compilers ts:typescript-require"
+    "package": "PATH=node_modules/.bin:$PATH rm -rf '/Applications/Black Screen.app'; electron-packager . 'Black Screen' --platform=darwin --arch=x64 --version='0.29.2' --out='/Applications' --icon='./icon.icns'"
   },
   "license": "MIT"
 }

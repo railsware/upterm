@@ -35,6 +35,10 @@ class History {
         return `History:${JSON.stringify(History.stack)}`;
     }
 
+    static size(): number {
+        return this.stack.length;
+    }
+
     static deserialize(serialized: string): void {
         var stack: string[] = JSON.parse(serialized);
         stack.forEach((item) => { this.append(item) });
