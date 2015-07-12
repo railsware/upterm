@@ -1,7 +1,9 @@
-/// <reference path="../dts/typings/mocha/mocha.d.ts" />
-/// <reference path="../dts/typings/chai/chai.d.ts" />
+/// <reference path="../../dts/typings/mocha/mocha.d.ts" />
+/// <reference path="../../dts/typings/chai/chai.d.ts" />
+/// <reference path="../../src/references.ts" />
+
 import chai = require('chai');
-import History = require('../src/History');
+import History = require('../../src/History');
 var expect = chai.expect;
 
 describe('History', () => {
