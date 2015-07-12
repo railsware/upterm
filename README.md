@@ -1,3 +1,5 @@
+[![Join the chat at https://gitter.im/shockone/black-screen](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/react-ui-builder?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 ### What is it?
 
 Black Screen is a modern terminal emulator based on [Electron](http://electron.atom.io/) and exploiting
