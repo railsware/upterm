@@ -61,6 +61,18 @@ class Utils {
         return Path.normalize(path + Path.sep);
     }
 
+    static dirName(path: string): string {
+        return this.normalizeDir(path.endsWith(Path.sep) ? path : Path.dirname(path))
+    }
+
+    static baseName(path: string): string {
+        if (path.split(Path.sep).length == 1) {
+            return path;
+        } else {
+            return path.substring(this.dirName(path).length);
+        }
+    }
+
     private static delegate(name: string, args: Array<any>): void {
         if ((<any>window)['DEBUG']) {
             (<any>console)[name](...args);

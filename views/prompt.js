@@ -17,9 +17,6 @@ export default React.createClass({
         // TODO: Try to cache.
         return this.refs.command.getDOMNode()
     },
-    getCaretPixelOffset() {
-        return $(this.getInputNode()).caret('offset');
-    },
     componentWillMount() {
         var keysDownStream = createEventHandler();
         var [passThroughKeys, promptKeys] = keysDownStream.partition(_ => this.props.status == 'in-progress');
@@ -56,9 +53,15 @@ export default React.createClass({
         this.getInputNode().focus();
     },
     componentDidUpdate(prevProps, prevState) {
-        this.getInputNode().innerText = this.getText();
+        var inputNode = this.getInputNode();
+        inputNode.innerText = this.getText();
+
+        if (prevState.caretPosition != this.state.caretPosition || prevState.caretOffset != this.state.caretOffset) {
+            setCaretPosition(inputNode, this.state.caretPosition);
+        }
+
         if (prevState.caretPosition != this.state.caretPosition) {
-            setCaretPosition(this.getInputNode(), this.state.caretPosition);
+            this.setState({caretOffset: $(inputNode).caret('offset')});
         }
 
         scrollToBottom();
@@ -108,7 +111,14 @@ export default React.createClass({
             this.props.prompt.buffer.write(' ');
         }
 
-        this.setState({caretPosition: this.props.prompt.buffer.cursor.column()});
+        this.props.prompt.getSuggestions().then(suggestions => {
+                this.setState({
+                    suggestions: suggestions,
+                    selectedAutocompleteIndex: 0,
+                    caretPosition: this.props.prompt.buffer.cursor.column()
+                })
+            }
+        );
     },
     deleteWord() {
         // TODO: Remove the word under the caret instead of the last one.
@@ -123,7 +133,6 @@ export default React.createClass({
     },
     handleInput(event) {
         var target = event.target;
-        var caretOffset = this.getCaretPixelOffset();
         var caretPosition = window.getSelection().baseOffset;
         this.props.prompt.buffer.setTo(target.innerText);
         this.props.prompt.buffer.cursor.moveAbsolute({vertical: caretPosition});
@@ -133,8 +142,7 @@ export default React.createClass({
             this.setState({
                 suggestions: suggestions,
                 selectedAutocompleteIndex: 0,
-                caretPosition: this.props.prompt.buffer.cursor.column(),
-                caretOffset: caretOffset
+                caretPosition: this.props.prompt.buffer.cursor.column()
             })
         );
     },
@@ -151,8 +159,7 @@ export default React.createClass({
         //TODO: use streams.
         return this.refs.command &&
             this.state.suggestions.length &&
-            this.currentToken().length &&
-            this.props.status == 'not-started' && !_.contains([9, 13, 27], this.state.latestKeyCode);
+            this.props.status == 'not-started' && !_.contains([13, 27], this.state.latestKeyCode);
     },
     autocompleteIsShown() {
         return this.refs.autocomplete;

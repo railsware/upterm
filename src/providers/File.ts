@@ -10,13 +10,15 @@ class File implements i.AutocompletionProvider {
             if (input.getLexemes().length < 2) {
                 return resolve([]);
             }
-            var baseName = Path.basename(input.getLastLexeme());
-            var enteredDirectoriesPath = Utils.normalizeDir(Path.dirname(input.getLastLexeme()));
 
-            if (Path.isAbsolute(enteredDirectoriesPath)) {
-                var searchDirectory = enteredDirectoriesPath;
+            var lastLexeme = input.getLastLexeme();
+            var baseName = Utils.baseName(lastLexeme);
+            var dirName = Utils.dirName(lastLexeme);
+
+            if (Path.isAbsolute(lastLexeme)) {
+                var searchDirectory = dirName;
             } else {
-                searchDirectory = Utils.normalizeDir(Path.join(currentDirectory, enteredDirectoriesPath));
+                searchDirectory = Path.join(currentDirectory, dirName);
             }
 
             Utils.stats(searchDirectory).then((fileInfos) => {
@@ -29,7 +31,7 @@ class File implements i.AutocompletionProvider {
 
                     var suggestion: i.Suggestion = {
                         value: name,
-                        score: score(name, input.getLastLexeme()) || score(name, baseName),
+                        score: baseName ? score(name, baseName) : 1,
                         synopsis: '',
                         description: '',
                         type: 'file',
@@ -37,13 +39,21 @@ class File implements i.AutocompletionProvider {
                     };
 
                     if (searchDirectory != currentDirectory) {
-                        suggestion.prefix = enteredDirectoriesPath;
+                        suggestion.prefix = dirName;
                     }
 
                     return suggestion;
                 });
 
-                resolve(_(all).sortBy('score').reverse().take(10).value());
+                if (baseName) {
+                    var prepared = _(all).each((fileInfo) => { fileInfo.score = score(fileInfo.value, baseName) })
+                                         .sortBy('score').reverse().take(10).value();
+                } else {
+                    prepared = _(all).each((fileInfo) => { fileInfo.score = 1; }).take(30).value();
+                }
+
+
+                resolve(prepared);
             });
         });
     }

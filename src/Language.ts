@@ -210,6 +210,10 @@ class Language {
             lexeme = lexer.lex();
         }
 
+        if (input.endsWith(' ')) {
+            lexemes.push('');
+        }
+
         return lexemes;
     }
 
