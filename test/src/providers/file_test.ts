@@ -7,12 +7,14 @@ import File = require('../../../src/providers/File');
 import ParsableString = require('../../../src/ParsableString');
 var expect = chai.expect;
 
+chai.use(require('chai-things'));
+
 describe('History', () => {
     describe('size', () => {
-        it('works correctly with "../" lexeme', (callback) => {
-            new File().getSuggestions('/Users/me/', new ParsableString('cd ../')).then((results) => {
-                expect(results).to.eq(1);
-                callback();
+        it('works correctly with "../" lexeme', (done) => {
+            new File().getSuggestions(process.cwd(), new ParsableString('cd ../')).then((results) => {
+                (<any>expect(results).to.contain).a.thing.with.property('value', 'black-screen/');
+                done();
             })
         });
     });

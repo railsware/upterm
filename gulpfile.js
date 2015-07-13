@@ -111,11 +111,10 @@ gulp.task('watch', function (cb) {
     );
 });
 
-gulp.task('test', function () {
+gulp.task('compile-tests', function () {
     return gulp.src(options.test.source)
         .pipe($.typescript(options.typeScript.config))
-        .pipe(gulp.dest(options.test.target))
-        .pipe($.mocha());
+        .pipe(gulp.dest(options.test.target));
 });
 
 gulp.task('default', function () {
