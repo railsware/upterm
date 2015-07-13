@@ -151,10 +151,6 @@ export default React.createClass({
             stopBubblingUp(event);
         }
     },
-    currentToken() {
-        // TODO: return the token under cursor.
-        return this.getText().split(/\s+/).pop();
-    },
     showAutocomplete() {
         //TODO: use streams.
         return this.refs.command &&
