@@ -23,16 +23,19 @@ class File implements i.AutocompletionProvider {
 
             Utils.stats(searchDirectory).then((fileInfos) => {
                 var all = _.map(fileInfos, (fileInfo: i.FileInfo) => {
-                    let name = fileInfo.name;
 
                     if (fileInfo.stat.isDirectory()) {
-                        name = Utils.normalizeDir(name);
+                        var name: string = Utils.normalizeDir(name);
+                        var synopsis = '';
+                    } else {
+                        name = fileInfo.name;
+                        synopsis = Utils.humanFileSize(fileInfo.stat.size, true);
                     }
 
                     var suggestion: i.Suggestion = {
                         value: name,
                         score: 0,
-                        synopsis: '',
+                        synopsis: synopsis,
                         description: '',
                         type: 'file',
                         partial: fileInfo.stat.isDirectory(),
