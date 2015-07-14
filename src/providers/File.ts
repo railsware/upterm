@@ -31,7 +31,7 @@ class File implements i.AutocompletionProvider {
 
                     var suggestion: i.Suggestion = {
                         value: name,
-                        score: baseName ? score(name, baseName) : 1,
+                        score: 0,
                         synopsis: '',
                         description: '',
                         type: 'file',
