@@ -25,7 +25,7 @@ class File implements i.AutocompletionProvider {
                 var all = _.map(fileInfos, (fileInfo: i.FileInfo) => {
 
                     if (fileInfo.stat.isDirectory()) {
-                        var name: string = Utils.normalizeDir(name);
+                        var name: string = Utils.normalizeDir(fileInfo.name);
                         var synopsis = '';
                     } else {
                         name = fileInfo.name;
