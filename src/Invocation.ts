@@ -26,7 +26,7 @@ class Invocation extends events.EventEmitter {
 
     constructor(private directory: string,
                 private dimensions: i.Dimensions,
-                private history: History) {
+                private history: History = new History()) {
         super();
 
         this.prompt = new Prompt(directory);

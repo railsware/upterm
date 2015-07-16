@@ -43,6 +43,10 @@ class Prompt extends events.EventEmitter {
         return this.autocompletion.getSuggestions(this.directory, this.toParsableString())
     }
 
+    getBuffer(): Buffer {
+        return this.buffer;
+    }
+
     replaceCurrentLexeme(suggestion: i.Suggestion): void {
         var lexemes = this.toParsableString().getLexemes();
         lexemes[lexemes.length - 1] = `${suggestion.prefix || ""}${suggestion.value}`;

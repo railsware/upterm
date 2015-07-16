@@ -30,4 +30,6 @@ class Aliases {
     }
 }
 
+Aliases.initialize();
+
 export = Aliases;

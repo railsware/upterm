@@ -32,8 +32,6 @@ class Terminal extends events.EventEmitter {
 
         this.on('invocation', this.serialize.bind(this));
 
-        Aliases.initialize();
-
         this.clearInvocations();
     }
 

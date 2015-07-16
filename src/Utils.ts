@@ -90,7 +90,7 @@ class Utils {
     }
 
     private static delegate(name: string, args: Array<any>): void {
-        if ((<any>window)['DEBUG']) {
+        if ((typeof window != 'undefined') && (<any>window)['DEBUG']) {
             (<any>console)[name](...args);
         }
     }
