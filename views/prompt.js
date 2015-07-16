@@ -76,7 +76,7 @@ export default React.createClass({
         return this.props.prompt.buffer.toString();
     },
     setText(text) {
-        this.props.prompt.buffer.setTo(text);
+        this.props.invocation.setPromptText(text);
         this.setState({caretPosition: this.props.prompt.buffer.cursor.column()});
     },
     isEmpty() {
@@ -127,15 +127,11 @@ export default React.createClass({
         if (newCommand.length) {
             newCommand += ' ';
         }
-        this.props.prompt.buffer.setTo(newCommand);
 
-        this.setState({caretPosition: this.props.prompt.buffer.cursor.column()});
+        this.setText(newCommand);
     },
     handleInput(event) {
-        var target = event.target;
-        var caretPosition = window.getSelection().baseOffset;
-        this.props.prompt.buffer.setTo(target.innerText);
-        this.props.prompt.buffer.cursor.moveAbsolute({vertical: caretPosition});
+        this.setText(event.target.innerText);
 
         //TODO: make it a stream.
         this.props.prompt.getSuggestions().then(suggestions =>

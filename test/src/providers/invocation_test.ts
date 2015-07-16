@@ -12,7 +12,7 @@ describe('Invocation', () => {
     describe('execute', () => {
         it('can execute a command with a trailing space', (done) => {
             var invocation = new Invocation(process.cwd(), { columns: 40, rows: 40});
-            invocation.getPrompt().getBuffer().setTo('pwd ');
+            invocation.setPromptText('pwd ');
 
             invocation.on('end', () => {
                 expect(invocation.getBuffer().toString()).to.eq(process.cwd());
