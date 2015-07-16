@@ -32,7 +32,7 @@ class Prompt extends events.EventEmitter {
     }
 
     getArguments(): string[] {
-        return this.getWholeCommand().slice(1);
+        return this.getWholeCommand().slice(1).filter((argument) => { return argument.length > 0; });
     }
 
     getWholeCommand(): string[] {
