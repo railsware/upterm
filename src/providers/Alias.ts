@@ -1,21 +1,22 @@
 import i = require('../Interfaces');
 import _ = require('lodash');
 import Aliases = require('../Aliases');
+import Prompt = require("../Prompt");
 var score: (i: string, m: string) => number = require('fuzzaldrin').score;
 
 class Alias implements i.AutocompletionProvider {
-    getSuggestions(currentDirectory: string, input: i.Parsable) {
+    getSuggestions(prompt: Prompt) {
         return new Promise((resolve) => {
-            if (input.getLexemes().length > 1) {
+            if (prompt.getWholeCommand().length > 1) {
                 return resolve([]);
             }
 
-            var lexeme = input.getLastLexeme();
+            var lastArgument = prompt.getLastArgument();
 
             var all = _.map(Aliases.aliases, (expanded: string, alias: string) => {
                 return {
                     value: alias,
-                    score: 2 * (score(alias, lexeme) + (score(expanded, lexeme) * 0.5)),
+                    score: 2 * (score(alias, lastArgument) + (score(expanded, lastArgument) * 0.5)),
                     synopsis: expanded,
                     description: `Aliased to “${expanded}”.`,
                     type: 'alias',

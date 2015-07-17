@@ -1,5 +1,6 @@
 import e = require('./Enums');
 import fs = require('fs');
+import Prompt = require("./Prompt");
 
 export interface Dimensions {
     columns: number;
@@ -26,7 +27,7 @@ export interface Position {
 }
 
 export interface AutocompletionProvider {
-    getSuggestions(currentDirectory: string, input: Parsable): Promise<Suggestion[]>;
+    getSuggestions(prompt: Prompt): Promise<Suggestion[]>;
 }
 
 export interface Suggestion {

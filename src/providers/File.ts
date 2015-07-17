@@ -2,23 +2,24 @@ import i = require('../Interfaces');
 import _ = require('lodash');
 import Utils = require('../Utils');
 import Path = require('path');
+import Prompt = require("../Prompt");
 var score: (i: string, m: string) => number = require('fuzzaldrin').score;
 
 class File implements i.AutocompletionProvider {
-    getSuggestions(currentDirectory: string, input: i.Parsable) {
+    getSuggestions(prompt: Prompt) {
         return new Promise((resolve) => {
-            if (input.getLexemes().length < 2) {
+            if (prompt.getWholeCommand().length < 2) {
                 return resolve([]);
             }
 
-            var lastLexeme = input.getLastLexeme();
-            var baseName = Utils.baseName(lastLexeme);
-            var dirName = Utils.dirName(lastLexeme);
+            var lastArgument = prompt.getLastArgument();
+            var baseName = Utils.baseName(lastArgument);
+            var dirName = Utils.dirName(lastArgument);
 
-            if (Path.isAbsolute(lastLexeme)) {
+            if (Path.isAbsolute(lastArgument)) {
                 var searchDirectory = dirName;
             } else {
-                searchDirectory = Path.join(currentDirectory, dirName);
+                searchDirectory = Path.join(prompt.getCWD(), dirName);
             }
 
             Utils.stats(searchDirectory).then((fileInfos) => {
@@ -41,7 +42,7 @@ class File implements i.AutocompletionProvider {
                         partial: fileInfo.stat.isDirectory(),
                     };
 
-                    if (searchDirectory != currentDirectory) {
+                    if (searchDirectory != prompt.getCWD()) {
                         suggestion.prefix = dirName;
                     }
 

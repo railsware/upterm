@@ -42,10 +42,11 @@ class Invocation extends events.EventEmitter {
 
     execute(): void {
         var command = this.prompt.getCommandName();
+        var args = this.prompt.getArguments().filter((argument) => { return argument.length > 0; });
 
         if (Command.isBuiltIn(command)) {
             try {
-                var newDirectory = Command.cd(this.directory, this.prompt.getArguments());
+                var newDirectory = Command.cd(this.directory, args);
                 this.emit('working-directory-changed', newDirectory);
             } catch (error) {
                 this.setStatus(e.Status.Failure);
@@ -54,7 +55,7 @@ class Invocation extends events.EventEmitter {
 
             this.emit('end');
         } else {
-            this.command = child_pty.spawn(command, this.prompt.getArguments(), {
+            this.command = child_pty.spawn(command, args, {
                 columns: this.dimensions.columns,
                 rows: this.dimensions.rows,
                 cwd: this.directory,

@@ -32,7 +32,11 @@ class Prompt extends events.EventEmitter {
     }
 
     getArguments(): string[] {
-        return this.getWholeCommand().slice(1).filter((argument) => { return argument.length > 0; });
+        return this.getWholeCommand().slice(1);
+    }
+
+    getLastArgument(): string {
+        return this.getWholeCommand().slice(-1)[0] || '';
     }
 
     getWholeCommand(): string[] {
@@ -40,7 +44,11 @@ class Prompt extends events.EventEmitter {
     }
 
     getSuggestions(): Promise<i.Suggestion[]> {
-        return this.autocompletion.getSuggestions(this.directory, this.toParsableString())
+        return this.autocompletion.getSuggestions(this)
+    }
+
+    getCWD(): string {
+        return this.directory;
     }
 
     getBuffer(): Buffer {
@@ -54,7 +62,7 @@ class Prompt extends events.EventEmitter {
         this.buffer.setTo(lexemes.join(' '));
     }
 
-    private toParsableString(): ParsableString {
+    toParsableString(): ParsableString {
         return new ParsableString(this.buffer.toString());
     }
 }
