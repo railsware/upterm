@@ -39,7 +39,7 @@ class File implements i.AutocompletionProvider {
                         synopsis: synopsis,
                         description: '',
                         type: 'file',
-                        partial: fileInfo.stat.isDirectory(),
+                        partial: fileInfo.stat.isDirectory()
                     };
 
                     if (searchDirectory != prompt.getCWD()) {
