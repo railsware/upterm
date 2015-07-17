@@ -16,6 +16,7 @@ describe('History', () => {
         it('works correctly with "../" lexeme', (done) => {
             var invocation = new Invocation(process.cwd(), { columns: 40, rows: 40});
             invocation.setPromptText('cd ../');
+
             new File().getSuggestions(invocation.getPrompt()).then((results) => {
                 (<any>expect(results).to.contain).a.thing.with.property('value', 'black-screen/');
                 done();
@@ -25,10 +26,9 @@ describe('History', () => {
         it('does not display files for cd', (done) => {
             var invocation = new Invocation(process.cwd(), { columns: 40, rows: 40});
             invocation.setPromptText('cd ');
-            
+
             new File().getSuggestions(invocation.getPrompt()).then((results: Suggestion[]) => {
                 results.forEach((result) => {
-                    console.log(result.value);
                     return expect(result.value.endsWith("/")).to.be.true;
                 });
                 done();

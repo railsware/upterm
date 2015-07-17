@@ -23,7 +23,7 @@ class File implements i.AutocompletionProvider {
             }
 
             Utils.stats(searchDirectory).then((fileInfos) => {
-                var all = _.map(fileInfos, (fileInfo: i.FileInfo) => {
+                var all = _.map(fileInfos.filter(File.filter(prompt.getCommandName())), (fileInfo: i.FileInfo) => {
 
                     if (fileInfo.stat.isDirectory()) {
                         var name: string = Utils.normalizeDir(fileInfo.name);
@@ -60,6 +60,15 @@ class File implements i.AutocompletionProvider {
                 resolve(prepared);
             });
         });
+    }
+
+    static filter(command: string): (value: i.FileInfo, index: number, array: i.FileInfo[]) => boolean {
+        switch (command) {
+            case 'cd':
+                return (fileInfo: i.FileInfo) => { return fileInfo.stat.isDirectory(); };
+            default:
+                return (fileInfo: i.FileInfo) => { return true };
+        }
     }
 }
 
