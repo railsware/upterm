@@ -48,11 +48,12 @@ export default React.createClass({
         this.handlers = {
             onKeyDown: keysDownStream
         };
-
     },
     componentDidMount() {
+        $(this.getDOMNode()).fixedsticky();
+        $('.fixedsticky-dummy').remove();
+
         this.getInputNode().focus();
-        $('.prompt-wrapper').fixedsticky();
     },
     componentDidUpdate(prevProps, prevState) {
         var inputNode = this.getInputNode();
