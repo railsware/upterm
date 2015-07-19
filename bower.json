@@ -4,6 +4,7 @@
     "caret.js": "0.2.2"
   },
   "devDependencies": {
-    "livereload-js": "~2.2.1"
+    "livereload-js": "~2.2.1",
+    "filament-sticky": "~0.1.6"
   }
 }

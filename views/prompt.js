@@ -47,10 +47,12 @@ export default React.createClass({
 
         this.handlers = {
             onKeyDown: keysDownStream
-        }
+        };
+
     },
     componentDidMount() {
         this.getInputNode().focus();
+        $('.prompt-wrapper').fixedsticky();
     },
     componentDidUpdate(prevProps, prevState) {
         var inputNode = this.getInputNode();
@@ -157,7 +159,7 @@ export default React.createClass({
         return this.refs.autocomplete;
     },
     render() {
-        var classes = ['prompt-wrapper', this.props.status].join(' ');
+        var classes = ['prompt-wrapper', 'fixedsticky', this.props.status].join(' ');
 
         if (this.showAutocomplete()) {
             var autocomplete = <Autocomplete suggestions={this.state.suggestions}

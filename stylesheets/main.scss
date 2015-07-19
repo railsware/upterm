@@ -1,6 +1,10 @@
 @import 'colors';
 
 $fa-font-path: "../node_modules/font-awesome/fonts";
+$font-size: 14px;
+$prompt-padding: 5px;
+$default-shadow: 0 2px 8px 1px rgba(0, 0, 0, 0.3);
+
 @import '../node_modules/font-awesome/scss/font-awesome';
 @import '../node_modules/octicons/octicons/sprockets-octicons';
 
@@ -51,7 +55,7 @@ body, pre {
   background-color: map-get($colors, 'black');
   color: map-get($colors, 'white');
   font-family: 'Meslo LG S for Powerline', 'Menlo', monospace !important;
-  font-size: 14px;
+  font-size: $font-size;
   margin: 0;
 }
 
@@ -61,7 +65,7 @@ body, pre {
 
 .prompt-wrapper {
   position: relative;
-  margin-top: 5px;
+  padding-top: $prompt-padding;
 
   $decoration-width: 30px;
   $height: 17px;
@@ -129,7 +133,7 @@ body, pre {
     height: $height;
     color: map-get($colors, 'white');
     background-color: map-get($colors, 'bright-black');
-    font-size: 14px;
+    font-size: $font-size;
 
     @mixin common {
       display: inline-block;
@@ -144,6 +148,14 @@ body, pre {
     &:focus {
       @include common;
     }
+  }
+
+  &.fixedsticky-on {
+    width: 100%;
+    padding-bottom: $prompt-padding + $font-size + 3px;
+    box-shadow: $default-shadow;
+    height: $font-size;
+    background-color: map-get($colors, 'bright-black');
   }
 }
 
@@ -242,7 +254,7 @@ pre {
 .autocomplete {
   position: absolute;
 
-  box-shadow: 0 2px 8px 1px rgba(0, 0, 0, 0.3);
+  box-shadow: $default-shadow;
   background-color: map-get($colors, 'black');
 
   ul {
@@ -353,4 +365,8 @@ pre {
 
     @include info-panel;
   }
+}
+
+.fixedsticky {
+  top: 0;
 }
