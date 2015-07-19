@@ -13,7 +13,7 @@ export default React.createClass({
     getInitialState() {
         return {
             status: this.props.invocation.status,
-            decorate: true,
+            decorate: false,
             canBeDecorated: false
         };
     },
