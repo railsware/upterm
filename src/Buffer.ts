@@ -68,13 +68,13 @@ class Buffer extends events.EventEmitter {
 
             consecutive.push(current);
 
-            var children = consecutive.map((group, groupIndex) =>
-                React.createElement(
+            var children = consecutive.map((group, groupIndex) => {
+                return React.createElement(
                     'span',
                     _.merge(this.getHTMLAttributes(group.attributes), {key: `group-${groupIndex}`}),
                     group.text
-                )
-            );
+                );
+            });
 
             return React.createElement('div', {className: 'row', key: `row-${index}`}, null, ...children);
         }, (row: Array<Char>, index: number, cursorPosition: i.Position) => {
@@ -148,7 +148,11 @@ class Buffer extends events.EventEmitter {
     }
 
     toLines(): string[] {
-        return this.storage.map(row => row.map(char => char.toString()).join(''));
+        return this.storage.map((row) => {
+            return row.map((char) => {
+                return char.toString();
+            }).join('')
+        });
     }
 
     map<R>(callback: (row: Array<Char>, index: number) => R): R[] {
@@ -214,15 +218,17 @@ class Buffer extends events.EventEmitter {
 
     render() {
         return React.createElement('pre', {className: `output ${this.activeBuffer}`}, null,
-            ...this.storage.map((row: Char[], index: number) =>
-                this.renderRow(row, index, this.cursor.getPosition())
-            )
+            ...this.storage.map((row: Char[], index: number) => {
+                return this.renderRow(row, index, this.cursor.getPosition());
+            })
         );
     }
 
     private getHTMLAttributes(attributes: i.Attributes): Object {
         var htmlAttributes: _.Dictionary<any> = {};
-        _.each(attributes, (value, key) => htmlAttributes[`data-${key}`] = value);
+        _.each(attributes, (value, key) => {
+            htmlAttributes[`data-${key}`] = value;
+        });
 
         return htmlAttributes;
     }
