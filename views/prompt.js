@@ -1,6 +1,7 @@
 import _ from 'lodash';
 import React from 'react';
 import Autocomplete from './autocomplete';
+import DecorationToggle from './decoration_toggle';
 
 // TODO: Make sure we only update the view when the model changes.
 export default React.createClass({
@@ -169,6 +170,11 @@ export default React.createClass({
                                              ref="autocomplete"/>;
         }
 
+
+        if (this.props.invocationView.state.canBeDecorated) {
+            var decorationToggle = <DecorationToggle invocation={this.props.invocationView}/>;
+        }
+
         return (
             <div className={classes}>
                 <div className="prompt-decoration">
@@ -182,6 +188,7 @@ export default React.createClass({
                      ref="command"
                      contentEditable="true"/>
                 {autocomplete}
+                {decorationToggle}
             </div>
         )
     }

@@ -1,6 +1,5 @@
 import React from 'react';
 import Prompt from './prompt';
-import DecorationToggle from './decoration_toggle';
 
 export default React.createClass({
     componentWillMount() {
@@ -18,16 +17,10 @@ export default React.createClass({
         };
     },
     render() {
-        var buffer, decorationToggle;
-
         if (this.state.canBeDecorated && this.state.decorate) {
-            buffer = this.props.invocation.decorate();
+            var buffer = this.props.invocation.decorate();
         } else {
             buffer = this.props.invocation.getBuffer().render();
-        }
-
-        if (this.state.canBeDecorated) {
-            decorationToggle = <DecorationToggle invocation={this}/>;
         }
 
         const classNames = 'invocation ' + this.state.status;
@@ -35,8 +28,8 @@ export default React.createClass({
             <div className={classNames}>
                 <Prompt prompt={this.props.invocation.getPrompt()}
                         status={this.state.status}
-                        invocation={this.props.invocation}/>
-                {decorationToggle}
+                        invocation={this.props.invocation}
+                        invocationView={this}/>
                 {buffer}
             </div>
         );
