@@ -49,7 +49,7 @@ class History {
 
     static deserialize(serialized: string): void {
         var stack: string[] = JSON.parse(serialized);
-        stack.forEach((item) => { this.append(item) });
+        stack.forEach(item => this.append(item));
     }
 }
 

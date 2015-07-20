@@ -15,7 +15,7 @@ var list: Array<{new (invocation: Invocation): Base}> =
     _(fs.readdirSync(__dirname))
         .filter(isJSFile)
         .filter(isDecorator)
-        .map((fileName) => { return `./${fileName}`})
+        .map(fileName => `./${fileName}`)
         .map(require)
         .value();
 

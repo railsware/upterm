@@ -12,17 +12,15 @@ class Autocompletion implements i.AutocompletionProvider {
     limit = 30;
 
     getSuggestions(prompt: Prompt) {
-        return Promise.all(_.map(this.providers, (provider) => {
-            return provider.getSuggestions(prompt);
-        })).then((results) => {
-            return _(results)
-                    .flatten()
-                    .select((suggestion: i.Suggestion) => { return suggestion.score > 0 })
-                    .sortBy((suggestion: i.Suggestion) => { return -suggestion.score; })
-                    .uniq('value')
-                    .take(this.limit)
-                    .value();
-        });
+        return Promise.all(_.map(this.providers, provider => provider.getSuggestions(prompt))).then(results =>
+            _(results)
+                .flatten()
+                .select((suggestion: i.Suggestion) => suggestion.score > 0)
+                .sortBy((suggestion: i.Suggestion) => -suggestion.score)
+                .uniq('value')
+                .take(this.limit)
+                .value()
+        );
     }
 }
 

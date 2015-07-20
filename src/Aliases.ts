@@ -17,10 +17,7 @@ class Aliases {
         var zsh = child_pty.spawn(shellName, ['-i', '-c', 'alias'], {env: process.env});
 
         var aliases = '';
-        zsh.stdout.on('data', (text: string) => {
-            aliases += text.toString();
-        });
-
+        zsh.stdout.on('data', (text: string) => aliases += text.toString());
         zsh.on('exit', () => {
             aliases.split('\n').forEach((alias: string) => {
                 var split = alias.split('=');

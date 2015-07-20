@@ -50,10 +50,10 @@ class File implements i.AutocompletionProvider {
                 });
 
                 if (baseName) {
-                    var prepared = _(all).each((fileInfo) => { fileInfo.score = score(fileInfo.value, baseName) })
+                    var prepared = _(all).each(fileInfo => fileInfo.score = score(fileInfo.value, baseName))
                                          .sortBy('score').reverse().take(10).value();
                 } else {
-                    prepared = _(all).each((fileInfo) => { fileInfo.score = 1; }).take(30).value();
+                    prepared = _(all).each(fileInfo => fileInfo.score = 1).take(30).value();
                 }
 
 
@@ -65,9 +65,9 @@ class File implements i.AutocompletionProvider {
     static filter(command: string): (value: i.FileInfo, index: number, array: i.FileInfo[]) => boolean {
         switch (command) {
             case 'cd':
-                return (fileInfo: i.FileInfo) => { return fileInfo.stat.isDirectory(); };
+                return (fileInfo: i.FileInfo) => fileInfo.stat.isDirectory();
             default:
-                return (fileInfo: i.FileInfo) => { return true };
+                return (fileInfo: i.FileInfo) => true;
         }
     }
 }

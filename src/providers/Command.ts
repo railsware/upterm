@@ -12,11 +12,9 @@ class Command implements i.AutocompletionProvider {
             try {
                 var input = prompt.toParsableString();
                 input.onParsingError = (err: any, hash: any) => {
-                    var filtered = _(hash.expected).filter((value: string) => {
-                        return _.include(value, hash.token);
-                    }).map((value: string) => {
-                        return /^'(.*)'$/.exec(value)[1]
-                    }).value();
+                    var filtered = _(hash.expected).filter((value: string) => _.include(value, hash.token))
+                                                   .map((value: string) => /^'(.*)'$/.exec(value)[1])
+                                                   .value();
 
                     this.suggestions = _.map(filtered, (value: string) => {
                         return {

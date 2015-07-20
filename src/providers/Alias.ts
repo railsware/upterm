@@ -20,7 +20,7 @@ class Alias implements i.AutocompletionProvider {
                     synopsis: expanded,
                     description: `Aliased to “${expanded}”.`,
                     type: 'alias',
-                };
+                }
             });
 
             resolve(_(all).sortBy('score').reverse().take(10).value());

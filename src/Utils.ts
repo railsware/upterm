@@ -32,9 +32,9 @@ class Utils {
     }
 
     static stats(directory: string): Promise<i.FileInfo[]> {
-        return Utils.filesIn(directory).then((files) => {
-            return Promise.all(files.map((fileName) => {
-                return new Promise((resolve, reject) => {
+        return Utils.filesIn(directory).then(files =>
+            Promise.all(files.map(fileName =>
+                new Promise((resolve, reject) =>
                     fs.stat(Path.join(directory, fileName), (error: NodeJS.ErrnoException, stat: fs.Stats) => {
                         if (error) {
                             reject(error);
@@ -42,9 +42,9 @@ class Utils {
 
                         resolve({name: fileName, stat: stat});
                     })
-                })
-            }));
-        });
+                )
+            ))
+        );
     }
 
     static ifExists(fileName: string, callback: Function, elseCallback?: Function) {

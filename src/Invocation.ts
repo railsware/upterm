@@ -30,19 +30,17 @@ class Invocation extends events.EventEmitter {
         super();
 
         this.prompt = new Prompt(directory);
-        this.prompt.on('send', () => {
-            this.execute();
-        });
+        this.prompt.on('send', () => this.execute());
 
         this.buffer = new Buffer();
-        this.buffer.on('data', _.throttle(() => { this.emit('data'); }, 1000/60));
+        this.buffer.on('data', _.throttle(() => this.emit('data'), 1000/60));
         this.parser = new Parser(this);
         this.id = `invocation-${new Date().getTime()}`
     }
 
     execute(): void {
         var command = this.prompt.getCommandName();
-        var args = this.prompt.getArguments().filter((argument) => { return argument.length > 0; });
+        var args = this.prompt.getArguments().filter(argument => argument.length > 0);
 
         if (Command.isBuiltIn(command)) {
             try {
@@ -64,9 +62,7 @@ class Invocation extends events.EventEmitter {
 
             this.setStatus(e.Status.InProgress);
 
-            this.command.stdout.on('data', (data: string) => {
-                this.parser.parse(data.toString());
-            });
+            this.command.stdout.on('data', (data: string) => this.parser.parse(data.toString()));
             this.command.on('close', (code: number, signal: string) => {
                 if (code === 0) {
                     this.setStatus(e.Status.Success);

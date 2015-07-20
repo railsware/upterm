@@ -173,9 +173,9 @@ class Executable implements i.AutocompletionProvider {
     private executables: string[] = [];
 
     constructor() {
-        this.paths.forEach((path) => {
-            Utils.filesIn(path).then((files) => { this.executables = this.executables.concat(files); })
-        });
+        this.paths.forEach(path =>
+            Utils.filesIn(path).then(files => this.executables = this.executables.concat(files))
+        );
     }
 
     getSuggestions(prompt: Prompt) {

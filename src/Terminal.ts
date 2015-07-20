@@ -42,9 +42,9 @@ class Terminal extends events.EventEmitter {
                 app.dock.bounce('informational');
             }
             this.createInvocation();
-        }).once('working-directory-changed', (newWorkingDirectory: string) => {
-            this.setCurrentDirectory(newWorkingDirectory);
-        });
+        }).once('working-directory-changed', (newWorkingDirectory: string) =>
+            this.setCurrentDirectory(newWorkingDirectory)
+        );
         this.invocations = this.invocations.concat(invocation);
         this.emit('invocation');
     }
@@ -52,9 +52,7 @@ class Terminal extends events.EventEmitter {
     resize(dimensions: i.Dimensions): void {
         this.dimensions = dimensions;
 
-        this.invocations.forEach((invocation) => {
-            invocation.resize(dimensions);
-        });
+        this.invocations.forEach(invocation => invocation.resize(dimensions));
     }
 
     clearInvocations(): void {
@@ -82,9 +80,7 @@ class Terminal extends events.EventEmitter {
                     this.setGitBranch(gitDirectory);
                 }
             })
-        }, () => {
-            this.emit('vcs-data', {isRepository: false});
-        });
+        }, () => this.emit('vcs-data', {isRepository: false}));
     }
 
     private setGitBranch(gitDirectory: string) {
@@ -102,9 +98,9 @@ class Terminal extends events.EventEmitter {
     private serialize(): void {
         var values: _.Dictionary<string> = {};
 
-        _.each(this.serializableProperties, (value: string, key: string) => {
-            values[key] = Serializer.serialize((<any>this)[key]);
-        });
+        _.each(this.serializableProperties, (value: string, key: string) =>
+            values[key] = Serializer.serialize((<any>this)[key])
+        );
 
         fs.writeFile(this.stateFileName, JSON.stringify(values), (error: any) => {
             if (error) debugger;
