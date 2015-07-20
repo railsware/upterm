@@ -6,92 +6,88 @@ import i = require('./Interfaces');
 import e = require('./Enums');
 import _ = require('lodash');
 import Utils = require("./Utils");
+import {memoize} from "./Decorators";
 
 class Buffer extends events.EventEmitter {
     private storage: Array<Array<Char>> = [];
     public cursor: Cursor = new Cursor();
     public activeBuffer = 'standard';
     private attributes: i.Attributes = {color: e.Color.White, weight: e.Weight.Normal};
-    private renderRow: Function;
 
     constructor() {
         super();
+    }
 
-        this.renderRow = _.memoize((row: Array<Char>, index: number, cursorPosition: i.Position) => {
-            var consecutive: Array<any> = [];
-            var current = {attributes: <i.Attributes>null, text: ''};
+    @memoize((row: Array<Char>, index: number, cursor: Cursor): any[] => {
+        var key: any[] = [row, index];
 
-            if (index == cursorPosition.row && this.cursor.getShow()) {
-                var rowWithCursor: Char[] = [];
+        if (cursor.getPosition().row == index) {
+            key = key.concat([cursor.getPosition(), cursor.getBlink(), cursor.getShow()]);
+        }
 
-                for (var i = 0; i != row.length; ++i) {
-                    var old = row[i];
-                    if (old) {
-                        rowWithCursor[i] = new Char(old.toString(), old.getAttributes());
-                    }
+        return key;
+    })
+    renderRow(row: Array<Char>, index: number, cursor: Cursor): any {
+        var consecutive: Array<any> = [];
+        var current = {attributes: <i.Attributes>null, text: ''};
+        var cursorPosition = cursor.getPosition();
+
+        if (index == cursorPosition.row && this.cursor.getShow()) {
+            var rowWithCursor: Char[] = [];
+
+            for (var i = 0; i != row.length; ++i) {
+                var old = row[i];
+                if (old) {
+                    rowWithCursor[i] = new Char(old.toString(), old.getAttributes());
                 }
-                // TODO: change accordingly to the theme background color.
-                var cursorAttributes = {'background-color': e.Color.White, color: e.Color.Black};
+            }
+            // TODO: change accordingly to the theme background color.
+            var cursorAttributes = {'background-color': e.Color.White, color: e.Color.Black};
 
-                if (rowWithCursor[cursorPosition.column]) {
-                    var char = rowWithCursor[cursorPosition.column];
-                    var newChar = new Char(char.toString(), _.merge(char.getAttributes(), cursorAttributes));
-                } else {
-                    newChar = new Char(' ', cursorAttributes);
-                }
-
-                rowWithCursor[cursorPosition.column] = newChar;
+            if (rowWithCursor[cursorPosition.column]) {
+                var char = rowWithCursor[cursorPosition.column];
+                var newChar = new Char(char.toString(), _.merge(char.getAttributes(), cursorAttributes));
             } else {
-                rowWithCursor = row;
+                newChar = new Char(' ', cursorAttributes);
             }
 
-            // Foreach "merges" consecutive undefined.
-            for (var i = 0, l = rowWithCursor.length; i != l; i++) {
-                var element = rowWithCursor[i];
+            rowWithCursor[cursorPosition.column] = newChar;
+        } else {
+            rowWithCursor = row;
+        }
 
-                if (element) {
-                    var attributes = element.getAttributes();
-                    var value = element.toString();
-                } else {
-                    attributes = {};
-                    value = ' ';
-                }
+        // Foreach "merges" consecutive undefined.
+        for (var i = 0, l = rowWithCursor.length; i != l; i++) {
+            var element = rowWithCursor[i];
 
-                if (_.isEqual(attributes, current.attributes)) {
-                    current.text += value;
-                    current.attributes = attributes;
-                } else {
-                    consecutive.push(current);
-                    current = {attributes: attributes, text: value};
-                }
+            if (element) {
+                var attributes = element.getAttributes();
+                var value = element.toString();
+            } else {
+                attributes = {};
+                value = ' ';
             }
 
-            consecutive.push(current);
+            if (_.isEqual(attributes, current.attributes)) {
+                current.text += value;
+                current.attributes = attributes;
+            } else {
+                consecutive.push(current);
+                current = {attributes: attributes, text: value};
+            }
+        }
 
-            var children = consecutive.map((group, groupIndex) => {
-                return React.createElement(
+        consecutive.push(current);
+
+        var children = consecutive.map((group, groupIndex) =>
+                React.createElement(
                     'span',
                     _.merge(this.getHTMLAttributes(group.attributes), {key: `group-${groupIndex}`}),
                     group.text
-                );
-            });
+                )
+        );
 
-            return React.createElement('div', {className: 'row', key: `row-${index}`}, null, ...children);
-        }, (row: Array<Char>, index: number, cursorPosition: i.Position) => {
-            if (cursorPosition.row == index) {
-                return [
-                    row,
-                    index,
-                    cursorPosition.row,
-                    cursorPosition.column,
-                    this.cursor.getBlink(),
-                    this.cursor.getShow()
-                ];
-            } else {
-                return [row, index];
-            }
-        })
-
+        return React.createElement('div', {className: 'row', key: `row-${index}`}, null, ...children);
     }
 
     writeString(string: string, attributes = this.attributes): void {
@@ -219,7 +215,7 @@ class Buffer extends events.EventEmitter {
     render() {
         return React.createElement('pre', {className: `output ${this.activeBuffer}`}, null,
             ...this.storage.map((row: Char[], index: number) => {
-                return this.renderRow(row, index, this.cursor.getPosition());
+                return this.renderRow(row, index, this.cursor);
             })
         );
     }

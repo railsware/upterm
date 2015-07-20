@@ -46,6 +46,7 @@ var options = {
             noImplicitAny: true,
             removeComments: true,
             preserveConstEnums: true,
+            experimentalDecorators: true,
             sourceMap: true
         })
     },
