@@ -201,8 +201,8 @@ export default React.createClass({
                      contentEditable="true"/>
                 {autocomplete}
                 <div className="actions">
-                    {scrollToTop}
                     {decorationToggle}
+                    {scrollToTop}
                 </div>
             </div>
         )

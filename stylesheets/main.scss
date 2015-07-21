@@ -51,6 +51,10 @@ a {
   box-sizing: border-box;
 }
 
+html {
+  -webkit-backface-visibility: hidden;
+}
+
 body, pre {
   background-color: map-get($colors, 'black');
   color: map-get($colors, 'white');
@@ -162,12 +166,25 @@ body, pre {
     float: right;
     margin-right: 15px;
 
-    .scroll-to-top {
-      color: map-get($colors, 'white');
-
+    @mixin action {
       text-align: center;
       width: $font-size;
       display: inline-block;
+      margin: 0 3px;
+    }
+
+    .scroll-to-top {
+      @include action;
+      color: map-get($colors, 'white');
+    }
+
+    .decoration-toggle {
+      @include action;
+      color: map-get($colors, 'green');
+
+      &.disabled {
+        color: map-get($colors, 'white');
+      }
     }
   }
 }
@@ -246,17 +263,6 @@ body, pre {
         margin-right: 5px;
       }
     }
-  }
-}
-
-.decoration-toggle {
-  color: map-get($colors, 'green');
-
-  position: absolute;
-  right: 1em;
-
-  &.disabled {
-    color: map-get($colors, 'white');
   }
 }
 
