@@ -157,6 +157,19 @@ body, pre {
     height: $font-size;
     background-color: map-get($colors, 'bright-black');
   }
+
+  .actions {
+    float: right;
+    margin-right: 15px;
+
+    .scroll-to-top {
+      color: map-get($colors, 'white');
+
+      text-align: center;
+      width: $font-size;
+      display: inline-block;
+    }
+  }
 }
 
 .invocation.in-progress {

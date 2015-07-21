@@ -146,6 +146,12 @@ export default React.createClass({
             })
         );
     },
+    handleScrollToTop(event) {
+        stopBubblingUp(event);
+
+        const offset = $(this.props.invocationView.getDOMNode()).offset().top - 10;
+        $('html, body').animate({ scrollTop: offset }, 300);
+    },
     handleKeyPress(event) {
         if (this.props.status == 'in-progress') {
             stopBubblingUp(event);
@@ -175,6 +181,12 @@ export default React.createClass({
             var decorationToggle = <DecorationToggle invocation={this.props.invocationView}/>;
         }
 
+        if (this.props.invocation.hasOutput()) {
+            var scrollToTop = <a href="#" className="scroll-to-top" onClick={this.handleScrollToTop}>
+                <i className="fa fa-long-arrow-up"></i>
+            </a>;
+        }
+
         return (
             <div className={classes}>
                 <div className="prompt-decoration">
@@ -188,7 +200,10 @@ export default React.createClass({
                      ref="command"
                      contentEditable="true"/>
                 {autocomplete}
-                {decorationToggle}
+                <div className="actions">
+                    {scrollToTop}
+                    {decorationToggle}
+                </div>
             </div>
         )
     }
