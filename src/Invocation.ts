@@ -107,7 +107,7 @@ class Invocation extends events.EventEmitter {
     resize(dimensions: i.Dimensions) {
         this.dimensions = dimensions;
 
-        if (this.command) {
+        if (this.command && this.status == e.Status.InProgress) {
             (<any>this.command.stdout).resize(dimensions);
         }
     }
