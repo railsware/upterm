@@ -70,6 +70,8 @@ body, pre {
 .prompt-wrapper {
   position: relative;
   padding-top: $prompt-padding;
+  width: 100%;
+  background-color: map-get($colors, 'bright-black');
 
   $decoration-width: 30px;
   $height: 17px;
@@ -105,7 +107,7 @@ body, pre {
       height: 200%;
       top: -11px;
       right: -8px;
-      background-color: #353b44;
+      background-color: lighten(map-get($colors, 'bright-black'), 10% );
       transform-origin: 54% 0;
       transform: rotate(45deg);
       z-index: $arrow-z-index - 1;
@@ -152,14 +154,6 @@ body, pre {
     &:focus {
       @include common;
     }
-  }
-
-  &.fixedsticky-on {
-    width: 100%;
-    padding-bottom: $prompt-padding + $font-size + 3px;
-    box-shadow: $default-shadow;
-    height: $font-size;
-    background-color: map-get($colors, 'bright-black');
   }
 
   .actions {
