@@ -4,7 +4,9 @@ export default React.createClass({
     getInitialState() {
         return {enabled: this.props.invocation.state.decorate};
     },
-    handleClick() {
+    handleClick(event) {
+        stopBubblingUp(event);
+
         var newState = !this.state.enabled;
         this.setState({enabled: newState});
         this.props.invocation.setState({decorate: newState});
