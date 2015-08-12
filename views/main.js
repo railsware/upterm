@@ -1,7 +1,7 @@
 import React from 'react';
 import _ from 'lodash';
 import Rx from 'rx';
-import TerminalLayout from './compiled/views/terminal_layout';
+import {TerminalLayout} from '/Users/me/dev/black-screen/compiled/src/views/TerminalLayout';
 
 var keys = {
     goUp: event => (event.ctrlKey && event.keyCode === 80) || event.keyCode === 38,
@@ -10,14 +10,6 @@ var keys = {
     tab: event => event.keyCode === 9,
     deleteWord: event => event.ctrlKey && event.keyCode == 87
 };
-
-function getDimensions() {
-    var letter = document.getElementById('sizes-calculation');
-    return {
-        columns: Math.floor(window.innerWidth / (letter.clientWidth + 0.5)),
-        rows:    Math.floor(window.innerHeight / letter.clientHeight)
-    };
-}
 
 function scrollToBottom() {
     $('html body').animate({ scrollTop: $(document).height() }, 0);

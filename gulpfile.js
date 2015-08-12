@@ -37,17 +37,18 @@ var options = {
         config: { stage: 0 }
     },
     typeScript: {
-        source: 'src/**/*.ts',
+        source: 'src/**/*',
         target: 'compiled/src',
         config: $.typescript.createProject({
             typescript: require('typescript'),
             target: 'ES5',
             module: 'commonjs',
-            noImplicitAny: true,
+            //noImplicitAny: true, TODO: enable.
             removeComments: true,
             preserveConstEnums: true,
             experimentalDecorators: true,
-            sourceMap: true
+            sourceMap: true,
+            jsx: 'react'
         })
     },
     test: {
