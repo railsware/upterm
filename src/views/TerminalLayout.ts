@@ -49,7 +49,7 @@ export class TerminalLayout extends React.Component<{}, State> {
             (terminal, index) => React.createElement(TerminalComponent, {"terminal": terminal, "key": index})
         );
 
-        return React.createElement("div", {className: "terminal-layout", onKeyDown: this.handleKeyDown}, terminals)
+        return React.createElement("div", {className: "terminal-layout", onKeyDown: this.handleKeyDown.bind(this)}, terminals)
     }
 
     private getWindowDimensions() {

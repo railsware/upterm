@@ -30,7 +30,7 @@ export default class TerminalComponent extends React.Component<Props, State> {
     }
     handleKeyDown(event: React.KeyboardEvent) {
         // Ctrl+L.
-        if (event.ctrlKey && event.keyCode === 76) {
+        if (event.ctrlKey && event.keyCode == 76) {
             this.props.terminal.clearInvocations();
 
             event.stopPropagation();
@@ -38,7 +38,7 @@ export default class TerminalComponent extends React.Component<Props, State> {
         }
 
         // Cmd+D.
-        if (event.metaKey && event.keyCode === 68) {
+        if (event.metaKey && event.keyCode == 68) {
             (<any>window).DEBUG = !(<any>window).DEBUG;
 
             event.stopPropagation();
@@ -52,7 +52,7 @@ export default class TerminalComponent extends React.Component<Props, State> {
                 React.createElement(InvocationComponent, { key: invocation.id, invocation: invocation }, [])
         );
 
-        return React.createElement( 'div', { className: 'terminal', onKeyDown: this.handleKeyDown },
+        return React.createElement( 'div', { className: 'terminal', onKeyDown: this.handleKeyDown.bind(this) },
             React.createElement( 'div', { className: 'invocations' }, invocations ),
             React.createElement(StatusLine, { currentWorkingDirectory: this.props.terminal.currentDirectory, vcsData: this.state.vcsData })
         );
