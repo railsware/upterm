@@ -1,14 +1,17 @@
 import React = require('react');
-const Invocation = require('../../views/invocation');
+import Terminal = require('../Terminal');
+import Invocation = require('../Invocation');
+import {VcsData} from '../Interfaces';
+const InvocationComponent = require('../../views/invocation');
 const StatusLine = require('../../views/status_line');
 
 interface Props {
-    terminal: any;
+    terminal: Terminal;
 }
 
 interface State {
-    vcsData?: any;
-    invocations?: any[];
+    vcsData?: VcsData;
+    invocations?: Invocation[];
 }
 
 export default class TerminalComponent extends React.Component<Props, State> {
@@ -46,7 +49,7 @@ export default class TerminalComponent extends React.Component<Props, State> {
     }
     render() {
         var invocations = this.state.invocations.map(invocation =>
-                React.createElement(Invocation, { key: invocation.id, invocation: invocation }, [])
+                React.createElement(InvocationComponent, { key: invocation.id, invocation: invocation }, [])
         );
 
         return React.createElement( 'div', { className: 'terminal', onKeyDown: this.handleKeyDown },
