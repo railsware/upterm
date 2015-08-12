@@ -38,7 +38,7 @@ class Buffer extends events.EventEmitter {
             for (var i = 0; i != row.length; ++i) {
                 var old = row[i];
                 if (old) {
-                    rowWithCursor[i] = new Char(old.toString(), old.getAttributes());
+                    rowWithCursor[i] = Char.flyweight(old.toString(), old.getAttributes());
                 }
             }
             // TODO: change accordingly to the theme background color.
@@ -46,9 +46,9 @@ class Buffer extends events.EventEmitter {
 
             if (rowWithCursor[cursorPosition.column]) {
                 var char = rowWithCursor[cursorPosition.column];
-                var newChar = new Char(char.toString(), _.merge(char.getAttributes(), cursorAttributes));
+                var newChar = Char.flyweight(char.toString(), _.merge(char.getAttributes(), cursorAttributes));
             } else {
-                newChar = new Char(' ', cursorAttributes);
+                newChar = Char.flyweight(' ', cursorAttributes);
             }
 
             rowWithCursor[cursorPosition.column] = newChar;
@@ -102,7 +102,7 @@ class Buffer extends events.EventEmitter {
     }
 
     write(raw: string, attributes = this.attributes): void {
-        var char = new Char(raw, this.getAttributes());
+        var char = Char.flyweight(raw, this.getAttributes());
 
         if (char.isSpecial()) {
             switch (char.getCharCode()) {

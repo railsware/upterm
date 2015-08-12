@@ -5,8 +5,14 @@ var React = require('react');
 import i = require('./Interfaces');
 import e = require('./Enums');
 import _ = require('lodash');
+import {memoize} from "./Decorators";
 
 class Char {
+    @memoize()
+    static flyweight(char: string, attributes: i.Attributes) {
+        return new Char(char, attributes);
+
+    }
     constructor(private char: string, private attributes: i.Attributes) {
         if (char.length != 1) {
             throw(`Char can be created only from a single character; passed ${char.length}: ${char}`);
