@@ -1,8 +1,7 @@
 import Terminal = require('../Terminal');
-const TerminalComponent = require('../../views/terminal');
+import TerminalComponent from './TerminalComponent';
 import React = require('react');
 const main = require('../../views/main');
-const letter = document.getElementById('sizes-calculation');
 
 interface State {
     terminals: Terminal[];
@@ -54,6 +53,8 @@ export class TerminalLayout extends React.Component<{}, State> {
     }
 
     private getWindowDimensions() {
+        var letter = document.getElementById('sizes-calculation');
+
         return {
             columns: Math.floor(window.innerWidth / (letter.clientWidth + 0.5)),
             rows: Math.floor(window.innerHeight / letter.clientHeight)
