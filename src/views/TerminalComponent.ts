@@ -28,7 +28,7 @@ export default class TerminalComponent extends React.Component<Props, State> {
             .on('invocation', _ => this.setState({invocations: this.props.terminal.invocations}))
             .on('vcs-data', data => this.setState({vcsData: data}));
     }
-    handleKeyDown(event) {
+    handleKeyDown(event: React.KeyboardEvent) {
         // Ctrl+L.
         if (event.ctrlKey && event.keyCode === 76) {
             this.props.terminal.clearInvocations();
