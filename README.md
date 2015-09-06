@@ -27,6 +27,14 @@ npm run install-all
 gulp
 ```
 
+### Package
+
+To create a standalone application, run:
+
+```bash
+npm run package
+```
+
 ### Test
 
 * Install [selenium-standalone](https://github.com/vvo/selenium-standalone)
