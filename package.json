@@ -48,7 +48,7 @@
     "gulp-react": "3.0.1",
     "gulp-sass": "2.0.4",
     "gulp-shell": "0.4.2",
-    "gulp-typescript": "2.8.0",
+    "gulp-typescript": "2.8.2",
     "gulp-util": "3.0.6",
     "mocha": "2.2.5",
     "react-tools": "0.13.3",

@@ -1,7 +1,6 @@
 import Terminal = require('../Terminal');
 import TerminalComponent from './TerminalComponent';
 import React = require('react');
-const main = require('../../views/main');
 
 interface State {
     terminals: Terminal[];
