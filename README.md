@@ -41,6 +41,13 @@ npm run package
 * `selenium-standalone start`
 * `npm run test`
 
+### TODO
+
+* VT100 compliant ANSI support.
+* Environment variables support.
+* Panes and tabs.
+* Man files parsing for better autocompletion.
+
 ### License
 
 The MIT License.
