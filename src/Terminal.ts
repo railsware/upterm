@@ -16,11 +16,12 @@ class Terminal extends events.EventEmitter {
     history: History;
     gitBranchWatcher: fs.FSWatcher;
 
-    private stateFileName = `${process.env.HOME}/.black-screen-state`;
+    private homeDirectory = `${process.platform === 'win32' ? process.env.USERPROFILE : process.env.HOME}`;
+    private stateFileName = `${this.homeDirectory}/.black-screen-state`;
 
     // The value of the dictionary is the default value used if there is no serialized data.
     private serializableProperties: _.Dictionary<any> = {
-        currentDirectory: `String:${process.env.HOME}`,
+        currentDirectory: `String:${this.homeDirectory}`,
         history: `History:[]`
     };
 
