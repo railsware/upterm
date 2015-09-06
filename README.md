@@ -17,6 +17,8 @@ capabilities of contemporary interfaces in contrast to most of the terminal emul
 
 ### Installation
 
+Right now only OS X is supported, but we plan to make it work on all the major platforms.
+
 ```bash
 npm run install-all
 ```
