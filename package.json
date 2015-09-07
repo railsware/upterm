@@ -57,10 +57,10 @@
     "webdriverio": "3.1.0"
   },
   "scripts": {
-    "install-all": "PATH=node_modules/.bin:$PATH rm -rf node_modules && npm install && bower install && npm run rebuild-pty",
+    "install-all": "rm -rf node_modules && npm install && bower install && npm run rebuild-pty",
     "rebuild-pty": "HOME=~/.electron-gyp cd node_modules/child_pty; node-gyp rebuild --target=0.30.0 --arch=ia64 --dist-url=https://atom.io/download/atom-shell",
-    "package": "PATH=node_modules/.bin:$PATH rm -rf '/Applications/Black Screen.app'; electron-packager . 'Black Screen' --platform=darwin --arch=x64 --version='0.30.0' --out='/Applications' --icon='./icon.icns'",
-    "test": "PATH=node_modules/.bin:$PATH gulp typescript; gulp compile-tests; electron run-tests.js"
+    "package": "rm -rf '/Applications/Black Screen.app'; electron-packager . 'Black Screen' --platform=darwin --arch=x64 --version='0.30.0' --out='/Applications' --icon='./icon.icns'",
+    "test": "gulp typescript; gulp compile-tests; electron run-tests.js"
   },
   "license": "MIT"
 }
