@@ -1,6 +1,5 @@
 /// <reference path="references.ts" />
 
-//var child_pty = require('child_pty');
 import child_process = require('child_process');
 import _ = require('lodash');
 import React = require('react');
@@ -83,7 +82,23 @@ class Invocation extends events.EventEmitter {
                 this.emit('end');
             });
             */
-            var process = new BufferedProcess(command, args);
+            var _bufferedProcess = new BufferedProcess(command, args, {
+                columns: this.dimensions.columns,
+                rows: this.dimensions.rows,
+                cwd: this.directory,
+                env: process.env
+            }, (std) => {
+                console.log('Output: ', std);
+
+                this.parser.parse(std.toString());
+            }, (err) => {
+                console.log('Error: ', err);
+
+                this.parser.parse(err.toString())
+                this.setStatus(e.Status.Failure);
+            }, () => {
+                this.emit('end');
+            });
         }
     }
 

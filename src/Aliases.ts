@@ -1,4 +1,3 @@
-//var child_pty = require('child_pty');
 import _ = require('lodash')
 
 class Aliases {
