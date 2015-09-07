@@ -19,18 +19,6 @@ class BufferedProcess extends events.EventEmitter {
 			cmdArgs = args.filter((arg) => {
 				if (arg) return true;
 			});
-			cmdArgs = cmdArgs.map((arg) => {
-				if(this.isExplorerCommand(command) && /^\/[a-zA-Z]+,.*$/.test(arg)) {
-					/**
-					 * Don't wrap /root,C:\folder style arguments to explorer calls in
-                     * quotes since they will not be interpreted correctly if they are
-                     */
-					return arg;
-				} else {
-					/* Wrap in quotes the arg */
-					return `\"${arg.toString().replace(/"/g, '\\"')}\"`;
-				}
-			});
 
 			if (/\s/.test(command)) {
 				cmdArgs.unshift(`\"${command}\"`);
@@ -39,6 +27,7 @@ class BufferedProcess extends events.EventEmitter {
 			}
 
 			cmdArgs = ['/s', '/c', cmdArgs.join(' ')];
+			cmdOptions = _.clone(options);
 			cmdOptions['windowsVerbatimArguments'] = true;
 
 			this.execute(this.getCmdPath(), cmdArgs, cmdOptions);

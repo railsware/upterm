@@ -62,26 +62,6 @@ class Invocation extends events.EventEmitter {
                     break;
             }
         } else {
-            /* PLATFORM DEPENDANT CODE
-            this.command = child_pty.spawn(command, args, {
-                columns: this.dimensions.columns,
-                rows: this.dimensions.rows,
-                cwd: this.directory,
-                env: process.env
-            });
-
-            this.setStatus(e.Status.InProgress);
-
-            this.command.stdout.on('data', (data: string) => this.parser.parse(data.toString()));
-            this.command.on('close', (code: number, signal: string) => {
-                if (code === 0) {
-                    this.setStatus(e.Status.Success);
-                } else {
-                    this.setStatus(e.Status.Failure);
-                }
-                this.emit('end');
-            });
-            */
             var _bufferedProcess = new BufferedProcess(command, args, {
                 columns: this.dimensions.columns,
                 rows: this.dimensions.rows,
