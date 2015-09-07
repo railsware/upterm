@@ -57,6 +57,10 @@ npm run package
 * Panes and tabs.
 * Man files parsing for better autocompletion.
 
+### Contributing
+
+See [contributing guide](https://github.com/shockone/black-screen/blob/master/CONTRIBUTING.md).
+
 ### License
 
 The MIT License.
