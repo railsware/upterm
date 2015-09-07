@@ -90,7 +90,7 @@ class Utils {
     }
 
     static getHomeDirectory(): string {
-        return process.platform === 'win32' ? process.env.USERPROFILE : process.env.HOME;
+        return process.env[(process.platform === 'win32') ? 'USERPROFILE' : 'HOME'];
     }
 
     private static delegate(name: string, args: Array<any>): void {
