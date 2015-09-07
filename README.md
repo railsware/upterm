@@ -52,7 +52,7 @@ npm run package
 
 ### Contributing
 
-See [contributing guide](https://github.com/shockone/black-screen/CONTRIBUTING.md).
+See [contributing guide](https://github.com/shockone/black-screen/blob/master/CONTRIBUTING.md).
 
 ### License
 
