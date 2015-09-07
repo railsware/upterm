@@ -49,6 +49,7 @@ npm run package
 
 ### TODO
 
+* [Improve application packaging](https://github.com/shockone/black-screen/issues/55)
 * VT100 compliant ANSI support.
 * Environment variables support.
 * Panes and tabs.
