@@ -2,8 +2,8 @@ import React = require('react');
 import Terminal = require('../Terminal');
 import Invocation = require('../Invocation');
 import {VcsData} from '../Interfaces';
-const InvocationComponent = require('../../views/invocation');
-const StatusLine = require('../../views/status_line');
+const InvocationComponent = require('./invocation');
+const StatusLine = require('./status_line');
 
 interface Props {
     terminal: Terminal;

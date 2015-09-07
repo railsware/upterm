@@ -1,8 +1,7 @@
 import React from 'react';
 import _ from 'lodash';
 import Rx from 'rx';
-import {TerminalLayout} from './compiled/src/views/TerminalLayout.js';
-
+import {TerminalLayout} from './scripts/views/TerminalLayout.js';
 
 var keys = {
     goUp: event => (event.ctrlKey && event.keyCode === 80) || event.keyCode === 38,

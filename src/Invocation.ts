@@ -127,6 +127,7 @@ class Invocation extends events.EventEmitter {
     }
 
     canBeDecorated(): boolean {
+        /* FIX ME! */
         for (var Decorator of DecoratorsList) {
             if ((new Decorator(this)).isApplicable()) {
                 return true;

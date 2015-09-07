@@ -1,7 +1,8 @@
 //TODO: Use gulp 4.
-const gulp        = require('gulp');
-const $           = require('gulp-load-plugins')();
-const runSequence = require('run-sequence').use(gulp);
+var gulp        = require('gulp');
+var $           = require('gulp-load-plugins')();
+var runSequence = require('run-sequence').use(gulp);
+var path        = require('path');
 
 var watching = false;
 
@@ -32,13 +33,13 @@ function notify(message) {
 
 var options = {
     react: {
-        source: 'views/*.js',
-        target: 'compiled/views',
+        source: 'static/views/*.js',
+        target: 'dist/scripts/views',
         config: { stage: 0 }
     },
     typeScript: {
         source: 'src/**/*',
-        target: 'compiled/src',
+        target: 'dist/scripts',
         config: $.typescript.createProject({
             typescript: require('typescript'),
             target: 'ES5',
@@ -53,19 +54,29 @@ var options = {
     },
     test: {
         source: 'test/**/*.ts',
-        target: 'compiled/test'
+        target: 'dist/test'
     },
     sass: {
-        source: ['stylesheets/*.scss', 'decorators/*.scss'],
+        source: ['static/*.scss'],
         target: {
-            directory: 'compiled',
-            fileName: 'all.css'
+            directory: 'dist',
+            fileName: 'main.css'
         },
         config: {
             errLogToConsole: true
         }
     }
 };
+
+gulp.task('copy-static-js', function() {
+    return gulp.src('static/**/*.js')
+                .pipe(gulp.dest( path.join('dist/scripts') ));
+});
+
+gulp.task('copy-static-html', function() {
+    return gulp.src('static/*.html')
+               .pipe(gulp.dest( path.join('dist') ));
+});
 
 gulp.task('typescript', function () {
     return gulp.src(options.typeScript.source)
@@ -104,6 +115,7 @@ gulp.task('watch', function (cb) {
     $.livereload.listen();
     runSequence(
         'clean',
+        ['copy-static-js', 'copy-static-html'],
         ['typescript', 'sass', 'react'],
         function() {
             gulp.watch(options.sass.source, ['sass']);

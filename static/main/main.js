@@ -7,7 +7,6 @@ process.env.PATH += ':/usr/local/bin';
 var mainWindow;
 
 app.on('ready', function () {
-
     mainWindow = new BrowserWindow({
         width: 700,
         height: 450,
