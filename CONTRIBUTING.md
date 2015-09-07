@@ -21,9 +21,9 @@ npm run package
  
 I've important changes!
 ------
-1. ![Clone repo](https://help.github.com/articles/importing-a-git-repository-using-the-command-line/)
-2. ![Create separate branch](https://github.com/Kunena/Kunena-Forum/wiki/Create-a-new-branch-with-git-and-manage-branches)(to prevent unreleated updates)
+1. [Clone repo](https://help.github.com/articles/importing-a-git-repository-using-the-command-line/)
+2. [Create separate branch](https://github.com/Kunena/Kunena-Forum/wiki/Create-a-new-branch-with-git-and-manage-branches)(to prevent unreleated updates)
 3. Apply your changes
-4. ![Create pull request](https://help.github.com/articles/creating-a-pull-request/)
+4. [Create pull request](https://help.github.com/articles/creating-a-pull-request/)
 
 In pull request assume what you have been done.
