@@ -19,21 +19,18 @@ capabilities of contemporary interfaces in contrast to most of the terminal emul
 
 Note: Only OS X is currently supported, but we plan to make Black Screen work on all the major platforms.
 
-#### Download
+###### Download
 ```bash
 git clone https://github.com/shockone/black-screen
 ```
-
-#### Run
+###### Install Dependencies
 ```bash
 cd black-screen
 npm run install-all
 ```
-
-Start with:
-
+###### Start
 ```bash
-gulp
+npm start
 ```
 
 #### Package
