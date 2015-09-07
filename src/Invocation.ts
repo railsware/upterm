@@ -99,6 +99,12 @@ class Invocation extends events.EventEmitter {
             }, () => {
                 this.emit('end');
             });
+
+            _bufferedProcess.onError((error: Object) => {
+                this.setStatus(e.Status.Failure);
+
+                this.emit('end');
+            });
         }
     }
 

@@ -50,9 +50,15 @@ class BufferedProcess extends events.EventEmitter {
 	}
 
 	execute(command: string, args: string[], options: Object): void {
-		// TODO: Handle error
-		console.log(command, args, options);
-		this.process = ChildProcess.spawn(command, args, options);
+		//console.log(command, args, options);
+		
+		try {
+			this.process = ChildProcess.spawn(command, args, options);
+		} catch(spawnError) {
+			process.nextTick(() => {
+				this.handleError(spawnError)
+			});
+		}
 	}
 
 	handleEvents(stdout, stderr, exit): void {
@@ -93,11 +99,11 @@ class BufferedProcess extends events.EventEmitter {
 	}
 
 	onError(callback): void {
-		this.on('error', callback);
+		this.on('will-throw-error', callback);
 	}
 
-	handleError(error): void {
-		this.emit('error', { error: error });
+	handleError(error): any {
+		this.emit('will-throw-error', { error: error });
 	}
 
 	bufferStream(stream, onLines, onDone): void {
