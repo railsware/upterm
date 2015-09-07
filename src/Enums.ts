@@ -2,6 +2,7 @@ import _ = require('lodash');
 
 export enum CharCode {
     Bell = 7,
+    Tab = 9,
     NewLine = 10,
     CarriageReturn = 13
 }

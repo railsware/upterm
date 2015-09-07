@@ -114,6 +114,9 @@ class Buffer extends events.EventEmitter {
 
                     Utils.log('bell');
                     break;
+                case e.CharCode.Tab:
+                    this.writeString("\t");
+                    break;
                 case e.CharCode.NewLine:
                     this.cursor.moveRelative({vertical: 1}).moveAbsolute({horizontal: 0});
                     break;
