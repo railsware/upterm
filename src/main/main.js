@@ -8,11 +8,9 @@ var mainWindow;
 
 app.on('ready', function () {
 
-    var atomScreen = require('screen');
-    var size = atomScreen.getPrimaryDisplay().workAreaSize;
     mainWindow = new BrowserWindow({
-        width: size.width,
-        height: size.height,
+        width: 700,
+        height: 450,
         resizable: true
     });
 

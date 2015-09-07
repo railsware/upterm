@@ -18,6 +18,7 @@
     "console"
   ],
   "dependencies": {
+    "child_pty": "1.0.0",
     "font-awesome": "4.3.0",
     "fuzzaldrin": "2.1.0",
     "jison": "0.4.15",
@@ -25,7 +26,6 @@
     "lodash": "3.10.0",
     "node-ansiparser": "1.0.2",
     "octicons": "2.2.0",
-    "child_pty": "1.0.0",
     "react": "0.13.3",
     "react-json-inspector": "5.1.0",
     "rx": "2.5.3"

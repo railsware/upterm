@@ -2,7 +2,7 @@
 
 $fa-font-path: "../node_modules/font-awesome/fonts";
 $font-size: 14px;
-$prompt-padding: 5px;
+$prompt-padding: 3px;
 $default-shadow: 0 2px 8px 1px rgba(0, 0, 0, 0.3);
 
 @import '../node_modules/font-awesome/scss/font-awesome';
@@ -58,7 +58,7 @@ html {
 body, pre {
   background-color: map-get($colors, 'black');
   color: map-get($colors, 'white');
-  font-family: 'Meslo LG S for Powerline', 'Menlo', monospace !important;
+  font-family: 'Inconsolata', 'Meslo LG S for Powerline', 'Menlo', monospace !important;
   font-size: $font-size;
   margin: 0;
 }
@@ -135,7 +135,7 @@ body, pre {
     position: absolute;
     left: $decoration-width - 10px;
     right: 0;
-    padding: 0 20px;
+    padding: 1px 20px;
     height: $height;
     color: map-get($colors, 'white');
     background-color: map-get($colors, 'bright-black');
@@ -234,11 +234,13 @@ body, pre {
   position: fixed;
   bottom: 0;
   width: 100%;
+  z-index: 2;
 
   @include info-panel;
 
   .current-directory {
     display: inline-block;
+    font-weight: 600;
 
     &:before {
       @extend .octicon;
@@ -260,6 +262,18 @@ body, pre {
         @extend .octicon-git-branch;
         margin-right: 5px;
       }
+
+      &.clean {
+        color: #8AD843;
+      }
+
+      &.modified {
+        color: #E9C059;
+      }
+
+      &.deleted {
+        color: #D75857;
+      }
     }
   }
 }
@@ -275,6 +289,7 @@ pre {
   background-color: map-get($colors, 'black');
 
   ul {
+    list-style: none;
     max-height: 300px;
 
     overflow: auto;
@@ -283,7 +298,7 @@ pre {
     margin: 0;
 
     li {
-      list-style-type: none;
+      cursor: pointer;
       padding: 2px;
 
       .value {

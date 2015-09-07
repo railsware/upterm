@@ -89,6 +89,10 @@ class Utils {
         return bytes.toFixed(1)+''+units[u];
     }
 
+    static getHomeDirectory(): string {
+        return process.platform === 'win32' ? process.env.USERPROFILE : process.env.HOME;
+    }
+
     private static delegate(name: string, args: Array<any>): void {
         if ((typeof window != 'undefined') && (<any>window)['DEBUG']) {
             (<any>console)[name](...args);

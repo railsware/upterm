@@ -1,6 +1,6 @@
 /// <reference path="references.ts" />
 
-var child_pty = require('child_pty');
+//var child_pty = require('child_pty');
 import child_process = require('child_process');
 import _ = require('lodash');
 import React = require('react');
@@ -15,6 +15,8 @@ import e = require('./Enums');
 //TODO: Make them attributes;
 import DecoratorsList = require('./decorators/List');
 import DecoratorsBase = require('./decorators/Base');
+
+import BufferedProcess = require('./BufferedProcess');
 
 class Invocation extends events.EventEmitter {
     private command: child_process.ChildProcess;
@@ -43,16 +45,25 @@ class Invocation extends events.EventEmitter {
         var args = this.prompt.getArguments().filter(argument => argument.length > 0);
 
         if (Command.isBuiltIn(command)) {
-            try {
-                var newDirectory = Command.cd(this.directory, args);
-                this.emit('working-directory-changed', newDirectory);
-            } catch (error) {
-                this.setStatus(e.Status.Failure);
-                this.buffer.writeString(error.message, {color: e.Color.Red});
-            }
+            /* TODO: Improve this */
+            switch (command) {
+                case 'cd':
+                    try {
+                        var newDirectory = Command.cd(this.directory, args);
+                        this.emit('working-directory-changed', newDirectory);
+                    } catch (error) {
+                        this.setStatus(e.Status.Failure);
+                        this.buffer.writeString(error.message, {color: e.Color.Red});
+                    }
 
-            this.emit('end');
+                    this.emit('end');
+                    break;
+                case 'clear':
+                    this.emit('clear');
+                    break;
+            }
         } else {
+            /* PLATFORM DEPENDANT CODE
             this.command = child_pty.spawn(command, args, {
                 columns: this.dimensions.columns,
                 rows: this.dimensions.rows,
@@ -70,7 +81,9 @@ class Invocation extends events.EventEmitter {
                     this.setStatus(e.Status.Failure);
                 }
                 this.emit('end');
-            })
+            });
+            */
+            var process = new BufferedProcess(command, args);
         }
     }
 

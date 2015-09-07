@@ -1,4 +1,4 @@
-var child_pty = require('child_pty');
+//var child_pty = require('child_pty');
 import _ = require('lodash')
 
 class Aliases {
@@ -14,7 +14,7 @@ class Aliases {
     }
 
     static importAliasesFrom(shellName: string): void {
-        var zsh = child_pty.spawn(shellName, ['-i', '-c', 'alias'], {env: process.env});
+        /*var zsh = child_pty.spawn(shellName, ['-i', '-c', 'alias'], {env: process.env});
 
         var aliases = '';
         zsh.stdout.on('data', (text: string) => aliases += text.toString());
@@ -23,7 +23,7 @@ class Aliases {
                 var split = alias.split('=');
                 this.aliases[split[0]] = /'?([^']*)'?/.exec(split[1])[1];
             });
-        });
+        });*/
     }
 }
 

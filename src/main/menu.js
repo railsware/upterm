@@ -3,7 +3,7 @@ var MenuItem = require('menu-item');
 
 module.exports = {
     setMenu: function (app, mainWindow) {
-        if (process.platform == 'darwin') {
+        if (process.platform == 'darwin' || process.platform == 'win32') {
             var template = [
                 {
                     label: 'Black Screen',
@@ -93,7 +93,7 @@ module.exports = {
                             label: 'Reload',
                             accelerator: 'Command+R',
                             click: function () {
-                                mainWindow.restart();
+                                mainWindow.reload();
                             }
                         },
                         {

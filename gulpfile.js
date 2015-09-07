@@ -71,6 +71,7 @@ gulp.task('typescript', function () {
     return gulp.src(options.typeScript.source)
                .pipe($.typescript(options.typeScript.config).on("error", onError))
                .pipe(gulp.dest(options.typeScript.target))
+               .pipe($.livereload())
                .pipe(notify("TypeScript has been compiled."));
 });
 

@@ -25,8 +25,8 @@ export default class TerminalComponent extends React.Component<Props, State> {
     }
     componentWillMount() {
         this.props.terminal
-            .on('invocation', _ => this.setState({invocations: this.props.terminal.invocations}))
-            .on('vcs-data', data => this.setState({vcsData: data}));
+            .on('invocation', _ => this.setState({ invocations: this.props.terminal.invocations }))
+            .on('vcs-data', data => this.setState({ vcsData: data }));
     }
     handleKeyDown(event: React.KeyboardEvent) {
         // Ctrl+L.
