@@ -1,0 +1,12 @@
+#!/usr/bin/env node
+var ChildProcess = require('child_process');
+var path = require('path');
+
+process.chdir(path.dirname(__dirname));
+
+var child = ChildProcess.exec('npm -v', {}, function(error, stdout, stderr) {
+	if (error)
+		process.exit(error.code || 1);
+
+	console.log(stdout);
+});
