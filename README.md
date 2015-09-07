@@ -20,13 +20,14 @@ capabilities of contemporary interfaces in contrast to most of the terminal emul
 Right now only OS X is supported, but we plan to make it work on all the major platforms.
 
 ```bash
-npm run install-all
+$ npm run install-all
+$ npm install --global gulp
 ```
 
 ### Run
 
 ```bash
-gulp
+$ gulp
 ```
 
 ### Package
@@ -34,7 +35,7 @@ gulp
 To create a standalone application, run:
 
 ```bash
-npm run package
+$ npm run package
 ```
 
 ### Test
