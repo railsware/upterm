@@ -2,8 +2,8 @@
 
 ### What is it?
 
-Black Screen is a modern terminal emulator (and, unfortunately, a shell) based on [Electron](http://electron.atom.io/) and exploiting
-capabilities of contemporary interfaces in contrast to most of the terminal emulators.
+Black Screen is a modern terminal emulator (and shell) based on [Electron](http://electron.atom.io/).
+As opposed to most of the terminal emulators, it exploits the capabilities of contemporary interfaces.
 
 ![](https://dl.dropboxusercontent.com/spa/dlqheu39w0arg9q/ucvbthot.png)
 
