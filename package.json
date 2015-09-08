@@ -60,7 +60,7 @@
     "install-all": "rm -rf node_modules && npm install && bower install && npm run rebuild-pty",
     "rebuild-pty": "HOME=~/.electron-gyp cd node_modules/child_pty; node-gyp rebuild --target=0.30.0 --arch=ia64 --dist-url=https://atom.io/download/atom-shell",
     "start": "gulp",
-    "package": "rm -rf '/Applications/Black Screen.app'; electron-packager . 'Black Screen' --platform=darwin --arch=x64 --version='0.30.0' --out='/Applications' --icon='./icon.icns'",
+    "package": "electron-packager . 'Black Screen' --overwrite --platform=darwin --arch=x64 --version='0.30.0' --out='/Applications' --icon='./icon.icns'",
     "test": "gulp typescript; gulp compile-tests; electron run-tests.js"
   },
   "license": "MIT"
