@@ -2,7 +2,7 @@
   "name": "black-screen",
   "version": "0.0.1",
   "description": "A terminal emulator for the 21st century.",
-  "main": "scripts/main/main.js",
+  "main": "scripts/browser/main.js",
   "authors": [
     "Volodymyr Shatsky <shockone89@gmail.com>",
     "Konstantin Azizov <azizovkostya97@gmail.com>"

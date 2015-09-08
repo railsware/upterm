@@ -146,7 +146,7 @@ gulp.task('watch', function (callback) {
             gulp.watch(options.sass.source, ['sass']);
             gulp.watch(options.react.source, ['react']);
             gulp.watch(options.typeScript.source, ['typescript']);
-
+            
             callback();
         }
     );

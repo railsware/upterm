@@ -6,7 +6,8 @@ import Invocation = require('./Invocation');
 import Aliases = require('./Aliases');
 import History = require('./History');
 import Utils = require('./Utils');
-import Serializer = require("./Serializer");
+import Serializer = require('./Serializer');
+
 var remote = require('remote');
 var app = remote.require('app');
 
