@@ -26,7 +26,7 @@ git clone https://github.com/black-screen/black-screen
 ###### Install Dependencies
 ```bash
 cd black-screen
-npm run install-all
+npm install
 ```
 ###### Start
 ```bash
