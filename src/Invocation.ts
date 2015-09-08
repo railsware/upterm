@@ -127,12 +127,14 @@ class Invocation extends events.EventEmitter {
     }
 
     canBeDecorated(): boolean {
-        /* FIX ME! */
-        for (var Decorator of DecoratorsList) {
-            if ((new Decorator(this)).isApplicable()) {
-                return true;
-            }
-        }
+        DecoratorsList.forEach((decorator) => {
+            var _decorator = new decorator(this);
+
+            if (typeof _decorator.isApplicable !== 'undefined') {
+                return _decorator.isApplicable();
+            } else return false;
+        });
+
         return false;
     }
 
