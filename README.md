@@ -19,6 +19,29 @@ As opposed to most of the terminal emulators, it exploits the capabilities of co
 
 Note: Only OS X is currently supported, but we plan to make Black Screen work on all the major platforms.
 
+###### Prerequisites
+You'll need a working node installation, and bower installed globally.
+We'll use [homebrew](http://brew.sh/) to install node.
+
+If the following commands both display paths to these executables,
+you can skip this section:
+
+```bash
+which npm
+which bower
+```
+
+Otherwise you'll need to complete the following steps:
+```bash
+brew install node
+npm install -g bower
+```
+
+(Optional) Disable bower prompt during installs.
+```bash
+echo '{"analytics": false}' > ~/.bowerrc
+```
+
 ###### Download
 ```bash
 git clone https://github.com/black-screen/black-screen
