@@ -59,8 +59,8 @@
   "scripts": {
     "start": "gulp",
     "install": "bower install",
-    "package-windows": "electron-packager ./dist \"Black Screen\" --asar --prune --platform=\"win32\" --arch=\"ia32\" --version=\"0.31.2\" --out=\"./.build\" --icon=\"./static/icon.icns\"",
-    "package-osx": "electron-packager ./dist 'Black Screen' --asar --prune --platform=darwin --arch=x64 --version='0.31.2' --out='./.build' --icon='./static/icon.icns'",
+    "package-windows": "electron-packager ./dist \"Black Screen\" --asar --prune --overwrite --platform=\"win32\" --arch=\"ia32\" --version=\"0.31.2\" --out=\"./.build\" --icon=\"./static/icon.icns\"",
+    "package-osx": "electron-packager ./dist 'Black Screen' --asar --prune --overwrite --platform=darwin --arch=x64 --version='0.31.2' --out='./.build' --icon='./static/icon.icns'",
     "test": "gulp typescript; gulp compile-tests; electron run-tests.js"
   },
   "license": "MIT"
