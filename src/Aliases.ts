@@ -12,8 +12,11 @@ class Aliases {
         return this.aliases[alias];
     }
 
+    /* TODO: Fix child_pty issues */
     static importAliasesFrom(shellName: string): void {
-        /*var zsh = child_pty.spawn(shellName, ['-i', '-c', 'alias'], {env: process.env});
+        if (process.platform !== 'darwin') return;
+
+        var zsh = require('child_pty').spawn(shellName, ['-i', '-c', 'alias'], {env: process.env});
 
         var aliases = '';
         zsh.stdout.on('data', (text: string) => aliases += text.toString());
@@ -22,7 +25,7 @@ class Aliases {
                 var split = alias.split('=');
                 this.aliases[split[0]] = /'?([^']*)'?/.exec(split[1])[1];
             });
-        });*/
+        });
     }
 }
 

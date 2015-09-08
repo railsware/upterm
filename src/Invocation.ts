@@ -39,12 +39,12 @@ class Invocation extends events.EventEmitter {
         this.id = `invocation-${new Date().getTime()}`
     }
 
+    /* TODO: Fix child_pty issues */
     execute(): void {
         var command = this.prompt.getCommandName();
         var args = this.prompt.getArguments().filter(argument => argument.length > 0);
 
         if (Command.isBuiltIn(command)) {
-            /* TODO: Improve this */
             switch (command) {
                 case 'cd':
                     try {
@@ -52,7 +52,7 @@ class Invocation extends events.EventEmitter {
                         this.emit('working-directory-changed', newDirectory);
                     } catch (error) {
                         this.setStatus(e.Status.Failure);
-                        this.buffer.writeString(error.message, {color: e.Color.Red});
+                        this.buffer.writeString(error.message, { color: e.Color.Red });
                     }
 
                     this.emit('end');
@@ -61,6 +61,25 @@ class Invocation extends events.EventEmitter {
                     this.emit('clear');
                     break;
             }
+        } else if (process.platform === 'darwin') {
+            this.command = require('child_pty').spawn(command, args, {
+                columns: this.dimensions.columns,
+                rows: this.dimensions.rows,
+                cwd: this.directory,
+                env: process.env
+            });
+
+            this.setStatus(e.Status.InProgress);
+
+            this.command.stdout.on('data', (data: string) => this.parser.parse(data.toString()));
+            this.command.on('close', (code: number, signal: string) => {
+                if (code === 0) {
+                    this.setStatus(e.Status.Success);
+                } else {
+                    this.setStatus(e.Status.Failure);
+                }
+                this.emit('end');
+            });
         } else {
             var _bufferedProcess = new BufferedProcess(command, args, {
                 columns: this.dimensions.columns,
