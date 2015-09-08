@@ -1,5 +1,9 @@
 /// <reference path="references.ts" />
 
+var stripAnsi = require('strip-ansi');
+
+import pty = require('pty.js');
+import path = require('path');
 import child_process = require('child_process');
 import _ = require('lodash');
 import React = require('react');
@@ -15,10 +19,8 @@ import e = require('./Enums');
 import DecoratorsList = require('./decorators/List');
 import DecoratorsBase = require('./decorators/Base');
 
-import BufferedProcess = require('./BufferedProcess');
-
 class Invocation extends events.EventEmitter {
-    private command: child_process.ChildProcess;
+    private command: pty.Terminal;
     private parser: Parser;
     private prompt: Prompt;
     private buffer: Buffer;
@@ -39,7 +41,6 @@ class Invocation extends events.EventEmitter {
         this.id = `invocation-${new Date().getTime()}`
     }
 
-    /* TODO: Fix child_pty issues */
     execute(): void {
         var command = this.prompt.getCommandName();
         var args = this.prompt.getArguments().filter(argument => argument.length > 0);
@@ -61,46 +62,29 @@ class Invocation extends events.EventEmitter {
                     this.emit('clear');
                     break;
             }
-        } else if (process.platform === 'darwin') {
-            this.command = require('child_pty').spawn(command, args, {
-                columns: this.dimensions.columns,
+        } else {
+            if (process.platform == 'win32') {
+                args.unshift(command);
+                args = ['/s', '/c', args.join(' ')];
+                command = this.getCmdPath();
+            }
+
+            this.command = pty.spawn(command, args, {
+                cols: this.dimensions.columns,
                 rows: this.dimensions.rows,
                 cwd: this.directory,
                 env: process.env
             });
 
             this.setStatus(e.Status.InProgress);
-
-            this.command.stdout.on('data', (data: string) => this.parser.parse(data.toString()));
-            this.command.on('close', (code: number, signal: string) => {
-                if (code === 0) {
+          
+            this.command.stdout.on('data', (data: string) => this.parser.parse(stripAnsi( data.toString() )));
+            this.command.on('exit', (code: number) => {
+                if (!code || code === 0) {
                     this.setStatus(e.Status.Success);
                 } else {
                     this.setStatus(e.Status.Failure);
                 }
-                this.emit('end');
-            });
-        } else {
-            var _bufferedProcess = new BufferedProcess(command, args, {
-                columns: this.dimensions.columns,
-                rows: this.dimensions.rows,
-                cwd: this.directory,
-                env: process.env
-            }, (std) => {
-                console.log('Output: ', std);
-
-                this.parser.parse(std.toString());
-            }, (err) => {
-                console.log('Error: ', err);
-
-                this.parser.parse(err.toString())
-                this.setStatus(e.Status.Failure);
-            }, () => {
-                this.emit('end');
-            });
-
-            _bufferedProcess.onError((error: Object) => {
-                this.setStatus(e.Status.Failure);
 
                 this.emit('end');
             });
@@ -109,6 +93,16 @@ class Invocation extends events.EventEmitter {
 
     setPromptText(value: string): void {
         this.prompt.getBuffer().setTo(value);
+    }
+
+    getCmdPath(): string {
+        if (process.env.comspec) {
+            return process.env.comspec;
+        }
+        else if (process.env.SystemRoot) {
+            return path.join(process.env.SystemRoot, 'System32', 'cmd.exe');
+        }
+        else return 'cmd.exe';
     }
 
     // Writes to the process' stdin.
@@ -141,7 +135,7 @@ class Invocation extends events.EventEmitter {
         this.dimensions = dimensions;
 
         if (this.command && this.status == e.Status.InProgress) {
-            (<any>this.command.stdout).resize(dimensions);
+            this.command.resize(dimensions.columns, dimensions.rows);
         }
     }
 

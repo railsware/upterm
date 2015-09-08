@@ -26,10 +26,11 @@
     "jquery": "2.1.4",
     "lodash": "3.10.0",
     "node-ansiparser": "1.0.2",
+    "pty.js": "https://github.com/iiegor/pty2.js/tarball/master",
     "react": "0.13.3",
     "react-json-inspector": "5.1.0",
     "rx": "2.5.3",
-    "child_pty": "1.0.0"
+    "strip-ansi": "^3.0.0"
   },
   "devDependencies": {
     "babel": "5.6.23",
@@ -58,8 +59,9 @@
     "webdriverio": "3.1.0"
   },
   "scripts": {
+    "preinstall": "npm prune",
+    "install": "bower prune; bower install",
     "start": "gulp",
-    "install": "bower install",
     "package-windows": "electron-packager ./dist \"Black Screen\" --asar --prune --overwrite --platform=\"win32\" --arch=\"ia32\" --version=\"0.31.2\" --out=\"./.build\" --icon=\"./static/icon.icns\"",
     "package-osx": "electron-packager ./dist 'Black Screen' --asar --prune --overwrite --platform=darwin --arch=x64 --version='0.31.2' --out='./.build' --icon='./static/icon.icns'",
     "test": "gulp typescript; gulp compile-tests; electron run-tests.js"
