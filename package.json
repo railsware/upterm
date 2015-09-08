@@ -43,6 +43,7 @@
     "del": "1.2.0",
     "electron-packager": "5.1.0",
     "electron-prebuilt": "0.31.2",
+    "electron-rebuild": "^1.0.0",
     "gulp": "3.9.0",
     "gulp-babel": "5.2.1",
     "gulp-cached": "1.1.0",
@@ -64,7 +65,7 @@
   },
   "scripts": {
     "preinstall": "npm prune",
-    "postinstall": "HOME=~/.electron-gyp bower prune; bower install; cd node_modules/pty.js; node-gyp rebuild --target=0.31.2 --arch=ia64 --dist-url=https://atom.io/download/atom-shell",
+    "postinstall": "bower prune; bower install; electron-rebuild",
     "start": "gulp",
     "package": "electron-packager . 'Black Screen' --overwrite --platform=darwin --arch=x64 --version='0.31.2' --out='/Applications' --icon='./icon.icns'",
     "test": "gulp typescript; gulp compile-tests; electron run-tests.js"
