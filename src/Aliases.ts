@@ -1,4 +1,4 @@
-var child_pty = require('child_pty');
+import pty = require('pty.js');
 import _ = require('lodash')
 
 class Aliases {
@@ -14,7 +14,7 @@ class Aliases {
     }
 
     static importAliasesFrom(shellName: string): void {
-        var zsh = child_pty.spawn(shellName, ['-i', '-c', 'alias'], {env: process.env});
+        var zsh = pty.spawn(shellName, ['-i', '-c', 'alias'], {env: process.env});
 
         var aliases = '';
         zsh.stdout.on('data', (text: string) => aliases += text.toString());

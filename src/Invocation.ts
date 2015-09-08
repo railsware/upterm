@@ -1,6 +1,6 @@
 /// <reference path="references.ts" />
 
-var child_pty = require('child_pty');
+import pty = require('pty.js');
 import child_process = require('child_process');
 import _ = require('lodash');
 import React = require('react');
@@ -17,7 +17,7 @@ import DecoratorsList = require('./decorators/List');
 import DecoratorsBase = require('./decorators/Base');
 
 class Invocation extends events.EventEmitter {
-    private command: child_process.ChildProcess;
+    private command: pty.Terminal;
     private parser: Parser;
     private prompt: Prompt;
     private buffer: Buffer;
@@ -53,8 +53,8 @@ class Invocation extends events.EventEmitter {
 
             this.emit('end');
         } else {
-            this.command = child_pty.spawn(command, args, {
-                columns: this.dimensions.columns,
+            this.command = pty.spawn(command, args, {
+                cols: this.dimensions.columns,
                 rows: this.dimensions.rows,
                 cwd: this.directory,
                 env: process.env
@@ -63,12 +63,13 @@ class Invocation extends events.EventEmitter {
             this.setStatus(e.Status.InProgress);
 
             this.command.stdout.on('data', (data: string) => this.parser.parse(data.toString()));
-            this.command.on('close', (code: number, signal: string) => {
+            this.command.on('exit', (code: number) => {
                 if (code === 0) {
                     this.setStatus(e.Status.Success);
                 } else {
                     this.setStatus(e.Status.Failure);
                 }
+
                 this.emit('end');
             })
         }
@@ -108,7 +109,7 @@ class Invocation extends events.EventEmitter {
         this.dimensions = dimensions;
 
         if (this.command && this.status == e.Status.InProgress) {
-            (<any>this.command.stdout).resize(dimensions);
+            this.command.resize(dimensions.columns, dimensions.rows);
         }
     }
 
