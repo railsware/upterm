@@ -1,19 +1,19 @@
 @import 'colors';
 
-$fa-font-path: "../node_modules/font-awesome/fonts";
+$fa-font-path: "bower_components/font-awesome/fonts";
 $font-size: 14px;
 $prompt-padding: 3px;
 $default-shadow: 0 2px 8px 1px rgba(0, 0, 0, 0.3);
 
-@import '../node_modules/font-awesome/scss/font-awesome';
-@import '../node_modules/octicons/octicons/sprockets-octicons';
+@import '../bower_components/font-awesome/scss/font-awesome';
+@import '../bower_components/octicons/octicons/sprockets-octicons';
 
 @font-face {
   font-family: 'octicons';
-  src: url("../node_modules/octicons/octicons/octicons.eot?#iefix") format("embedded-opentype"),
-  url("../node_modules/octicons/octicons/octicons.woff") format("woff"),
-  url("../node_modules/octicons/octicons/octicons.ttf") format("truetype"),
-  url("../node_modules/octicons/octicons/octicons.svg#octicons") format("svg");
+  src: url("bower_components/octicons/octicons/octicons.eot?#iefix") format("embedded-opentype"),
+  url("bower_components/octicons/octicons/octicons.woff") format("woff"),
+  url("bower_components/octicons/octicons/octicons.ttf") format("truetype"),
+  url("bower_components/octicons/octicons/octicons.svg#octicons") format("svg");
   font-weight: normal;
   font-style: normal;
 }

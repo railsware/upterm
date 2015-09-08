@@ -3,6 +3,7 @@ var gulp        = require('gulp');
 var $           = require('gulp-load-plugins')();
 var runSequence = require('run-sequence').use(gulp);
 var path        = require('path');
+var del         = require('del');
 
 var watching = false;
 
@@ -14,7 +15,7 @@ gulp.on('stop', function () {
     }
 });
 
-function onError(err) {
+function onError (err) {
     var self = this;
     return $.notify.onError(function () {
         $.util.beep();
@@ -27,7 +28,7 @@ function onError(err) {
     })(err);
 }
 
-function notify(message) {
+function notify (message) {
     return $.notify({title: "Black Screen Watcher", message: message, onLast: true});
 }
 
@@ -68,61 +69,95 @@ var options = {
     }
 };
 
-gulp.task('copy-static-js', function() {
+gulp.task('copy-static-js', function () {
     return gulp.src('static/**/*.js')
-                .pipe(gulp.dest( path.join('dist/scripts') ));
+        .pipe(gulp.dest( path.join('dist/scripts') ));
 });
 
-gulp.task('copy-static-html', function() {
+gulp.task('copy-static-html', function () {
     return gulp.src('static/*.html')
-               .pipe(gulp.dest( path.join('dist') ));
+        .pipe(gulp.dest( path.join('dist') ));
+});
+
+gulp.task('copy-package', function () {
+    return gulp.src('package.json')
+        .pipe(gulp.dest( path.join('dist') ));
+});
+
+gulp.task('copy-bower_components', function () { 
+    return gulp.src([
+            'bower_components/filament-sticky/fixedsticky.css',
+            'bower_components/caret.js/dist/jquery.caret.min.js',
+            'bower_components/filament-sticky/fixedsticky.js',
+            'bower_components/octicons/**/*',
+            'bower_components/font-awesome/**/*'
+        ], { base: './' })
+        .pipe(gulp.dest( path.join('dist') ));
 });
 
 gulp.task('typescript', function () {
     return gulp.src(options.typeScript.source)
-               .pipe($.typescript(options.typeScript.config).on("error", onError))
-               .pipe(gulp.dest(options.typeScript.target))
-               .pipe($.livereload())
-               .pipe(notify("TypeScript has been compiled."));
+        .pipe($.typescript(options.typeScript.config).on("error", onError))
+        .pipe(gulp.dest(options.typeScript.target))
+        .pipe($.livereload({quiet: true}))
+        .pipe(notify("TypeScript has been compiled."));
 });
 
 gulp.task('sass', function () {
     return gulp.src(options.sass.source)
-               .pipe($.cached('sass'))
-               .pipe($.sass(options.sass.config).on("error", onError))
-               .pipe($.concat(options.sass.target.fileName))
-               .pipe(gulp.dest(options.sass.target.directory))
-               .pipe($.livereload())
-               .pipe(notify("SCSS has been compiled."));
+        .pipe($.cached('sass'))
+        .pipe($.sass(options.sass.config).on("error", onError))
+        .pipe($.concat(options.sass.target.fileName))
+        .pipe(gulp.dest(options.sass.target.directory))
+        .pipe($.livereload())
+        .pipe(notify("SCSS has been compiled."));
 });
 
 gulp.task('react', function () {
     return gulp.src(options.react.source)
-               .pipe($.cached('react'))
-               .pipe($.babel(options.react.config).on("error", onError))
-               .pipe($.react().on("error", onError))
-               .pipe(gulp.dest(options.react.target))
-               .pipe(notify("React has been compiled."));
+        .pipe($.cached('react'))
+        .pipe($.babel(options.react.config).on("error", onError))
+        .pipe($.react().on("error", onError))
+        .pipe(gulp.dest(options.react.target))
+        .pipe($.livereload())
+        .pipe(notify("React has been compiled."));
 });
 
 
-gulp.task('clean', function (cb) {
-    require('del')([options.typeScript.target + '/**'], cb);
+gulp.task('clean', function (callback) {
+    del([options.typeScript.target + '/**'], callback);
 });
 
-gulp.task('watch', function (cb) {
+gulp.task('clean-all', function (callback) {
+    del(path.join('dist'), callback);
+});
+
+var copyTasks = ['copy-static-js', 'copy-static-html', 'copy-package', 'copy-bower_components'];
+var buildTasks = ['typescript', 'sass', 'react'];
+
+gulp.task('watch', function (callback) {
     watching = true;
     $.livereload.listen();
     runSequence(
         'clean',
-        ['copy-static-js', 'copy-static-html'],
-        ['typescript', 'sass', 'react'],
+        copyTasks,
+        buildTasks,
         function() {
             gulp.watch(options.sass.source, ['sass']);
             gulp.watch(options.react.source, ['react']);
             gulp.watch(options.typeScript.source, ['typescript']);
-            cb();
+
+            callback();
         }
+    );
+});
+
+gulp.task('build', function (callback) {
+    runSequence(
+        'clean-all',
+        copyTasks,
+        buildTasks,
+        callback
     );
 });
 

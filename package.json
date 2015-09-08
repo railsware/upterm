@@ -2,7 +2,7 @@
   "name": "black-screen",
   "version": "0.0.1",
   "description": "A terminal emulator for the 21st century.",
-  "main": "src/main/main.js",
+  "main": "scripts/main/main.js",
   "authors": [
     "Volodymyr Shatsky <shockone89@gmail.com>",
     "Konstantin Azizov <azizovkostya97@gmail.com>"
@@ -21,13 +21,11 @@
     "console"
   ],
   "dependencies": {
-    "font-awesome": "4.3.0",
     "fuzzaldrin": "2.1.0",
     "jison": "0.4.15",
     "jquery": "2.1.4",
     "lodash": "3.10.0",
     "node-ansiparser": "1.0.2",
-    "octicons": "2.2.0",
     "react": "0.13.3",
     "react-json-inspector": "5.1.0",
     "rx": "2.5.3"

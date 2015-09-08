@@ -1,10 +1,12 @@
 {
   "name": "black-screen",
   "dependencies": {
-    "caret.js": "0.2.2"
+    "caret.js": "0.2.2",
+    "font-awesome": "~4.4.0",
+    "octicons": "~3.1.0",
+    "filament-sticky": "~0.1.6"
   },
   "devDependencies": {
-    "livereload-js": "~2.2.1",
-    "filament-sticky": "~0.1.6"
+    "livereload-js": "~2.2.1"
   }
 }
