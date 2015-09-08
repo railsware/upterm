@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "description": "A terminal emulator for the 21st century.",
   "main": "src/main/main.js",
-  "authors": ["Volodymyr Shatsky <shockone89@gmail.com>", "Konstantin Azizov <azizovkostya97@gmail.com>"],
+  "authors": ["Volodymyr Shatsky <shockone89@gmail.com>", "Konstantin Azizov <azizovkostya97@gmail.com>", "Volodymyr Barna <roberto.te.ua@gmail.com>"],
   "repository": {
     "type": "git",
     "url": "https://github.com/shockone/black-screen.git"
@@ -31,7 +31,8 @@
     "rx": "2.5.3"
   },
   "devDependencies": {
-    "babel": "5.6.23",
+    "babel": "5.8.23",
+    "babel-core": "5.8.23",
     "bower": "1.4.1",
     "chai": "3.2.0",
     "chai-things": "0.2.0",
@@ -39,7 +40,7 @@
     "electron-packager": "5.0.1",
     "electron-prebuilt": "0.30.0",
     "gulp": "3.9.0",
-    "gulp-babel": "5.1.0",
+    "gulp-babel": "5.2.1",
     "gulp-cached": "1.1.0",
     "gulp-concat": "2.6.0",
     "gulp-livereload": "3.8.0",
