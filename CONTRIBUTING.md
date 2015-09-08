@@ -1,13 +1,14 @@
 I've found a bug!
 -----
-Awesome, now let's gather as much information as possible.
+Awesome, but hold on! First of all, make sure that someone else hasn't found this bug previously, previously, and, if no related issues are found, let's gather as much information as possible.
 
-1. Make sure that you using latest version
-```bash
-git pull -u
-rm -r "/Applications/Black Screen"*
-npm run package
-```
+1. Make sure that you are using the latest version.
+
+  ```bash
+  git pull -u
+  rm -r "/Applications/Black Screen"*
+  npm run package
+  ```
 2. Write steps to reproduce this issue
 3. Make screenshots
 4. Gather debug logs
