@@ -17,7 +17,9 @@ If not, before reporting the issue you'll need to gather some information by fol
 5. Gather debug logs.
 
  5.1. Open developer tools (View -> Toggle Developer Tools).
+ 
  5.2. Find Console.
+ 
  5.3. Copy the output and paste it into the issue.
  
 I have some important changes!
