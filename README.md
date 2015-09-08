@@ -21,7 +21,17 @@ Note: Only OS X is currently supported, but we plan to make Black Screen work on
 
 ###### Prerequisites
 You'll need a working node installation, and bower installed globally.
-Use [homebrew](http://brew.sh/) to install node.
+We'll use [homebrew](http://brew.sh/) to install node.
+
+If the following commands both display paths to these executables,
+you can skip this section:
+
+```bash
+which npm
+which bower
+```
+
+Otherwise you'll need to complete the following steps:
 ```bash
 brew install node
 npm install -g bower
