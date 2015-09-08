@@ -48,7 +48,12 @@ var CSI = {
         bracketedPaste: 2004,
     },
     flag: {
-        cursorPosition: 'H',
+        CUP: 'H',
+        CUU: 'A',
+        CUD: 'B',
+        CUF: 'C',
+        CUB: 'D',
+        HVP: 'f',
         eraseDisplay: 'J',
         eraseInLine: 'K',
         setMode: 'h',
@@ -130,8 +135,21 @@ class Parser {
                             }
                         }
                         break;
-                    case CSI.flag.cursorPosition:
-                        this.buffer.moveCursorAbsolute({vertical: params[0], horizontal: params[1]});
+                    case CSI.flag.CUU:
+                        this.buffer.moveCursorRelative({vertical: -(params[1] || 1)});
+                        break;
+                    case CSI.flag.CUD:
+                        this.buffer.moveCursorRelative({vertical: (params[1] || 1)});
+                        break;
+                    case CSI.flag.CUF:
+                        this.buffer.moveCursorRelative({horizontal: (params[1] || 1)});
+                        break;
+                    case CSI.flag.CUB:
+                        this.buffer.moveCursorRelative({horizontal: -(params[1] || 1)});
+                        break;
+                    case CSI.flag.CUP:
+                    case CSI.flag.HVP:
+                        this.buffer.moveCursorAbsolute({vertical: params[0] || 1, horizontal: params[1] || 1});
                         break;
                     case CSI.flag.eraseDisplay:
                         switch (params[0]) {
@@ -216,8 +234,23 @@ class Parser {
                         Utils.error('csi', collected, params, flag);
                 }
             },
-            inst_e: function (collected: any, flag: any) {
-                Utils.error('esc', collected, flag);
+            inst_e: (collected: any, flag: string) => {
+                switch (flag) {
+                    case 'A':
+                        this.buffer.moveCursorRelative({vertical: -1});
+                        break;
+                    case 'B':
+                        this.buffer.moveCursorRelative({vertical: 1});
+                        break;
+                    case 'C':
+                        this.buffer.moveCursorRelative({horizontal: 1});
+                        break;
+                    case 'D':
+                        this.buffer.moveCursorRelative({horizontal: -1});
+                        break;
+                    default:
+                        Utils.error('esc', collected, flag);
+                }
             }
         });
     }

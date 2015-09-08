@@ -163,6 +163,11 @@ class Buffer extends events.EventEmitter {
         this.cursor.setBlink(state);
     }
 
+    moveCursorRelative(position: i.Advancement) {
+        this.cursor.moveRelative(position);
+        this.emit('data'); // Otherwise the view won't re-render on space in vim.
+    }
+
     moveCursorAbsolute(position: i.Advancement) {
         this.cursor.moveAbsolute(position);
         this.emit('data'); // Otherwise the view won't re-render on space in vim.
@@ -215,7 +220,8 @@ class Buffer extends events.EventEmitter {
     render() {
         return React.createElement('pre', {className: `output ${this.activeBuffer}`}, null,
             ...this.storage.map((row: Char[], index: number) => {
-                return this.renderRow(row, index, this.cursor);
+                // TODO: The or part should be removed.
+                return this.renderRow(row || [], index, this.cursor);
             })
         );
     }
