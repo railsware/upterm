@@ -1,4 +1,4 @@
-var pty = require('pty.js');
+import pty = require('pty.js');
 import _ = require('lodash')
 
 class Aliases {

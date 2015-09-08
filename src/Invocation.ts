@@ -1,6 +1,6 @@
 /// <reference path="references.ts" />
 
-var pty = require('pty.js');
+import pty = require('pty.js');
 import child_process = require('child_process');
 import _ = require('lodash');
 import React = require('react');
@@ -15,9 +15,10 @@ import e = require('./Enums');
 //TODO: Make them attributes;
 import DecoratorsList = require('./decorators/List');
 import DecoratorsBase = require('./decorators/Base');
+import {Terminal} from "pty.js";
 
 class Invocation extends events.EventEmitter {
-    private command: child_process.ChildProcess;
+    private command: pty.Terminal;
     private parser: Parser;
     private prompt: Prompt;
     private buffer: Buffer;
