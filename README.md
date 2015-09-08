@@ -21,7 +21,7 @@ Note: Only OS X is currently supported, but we plan to make Black Screen work on
 
 ###### Download
 ```bash
-git clone https://github.com/shockone/black-screen
+git clone https://github.com/black-screen/black-screen
 ```
 ###### Install Dependencies
 ```bash
