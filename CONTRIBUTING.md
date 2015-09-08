@@ -1,6 +1,6 @@
 I've found a bug!
 -----
-Awesome, but hold up! First of all, make sure that someone else hasn't found this bug previously, previously, and, if no related issues are found, let's gather as much information as possible.
+Awesome, but hold on! First of all, make sure that someone else hasn't found this bug previously, previously, and, if no related issues are found, let's gather as much information as possible.
 
 1. Make sure that you are using the latest version.
 
