@@ -170,6 +170,6 @@ gulp.task('compile-tests', function () {
 gulp.task('default', function () {
     runSequence(
         'watch',
-        $.shell.task('PATH=node_modules/.bin:$PATH electron .')
+        $.shell.task('PATH=node_modules/.bin:$PATH electron ./dist')
     );
 });
