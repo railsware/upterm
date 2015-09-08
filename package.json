@@ -3,7 +3,10 @@
   "version": "0.0.1",
   "description": "A terminal emulator for the 21st century.",
   "main": "src/main/main.js",
-  "authors": ["Volodymyr Shatsky <shockone89@gmail.com>", "Konstantin Azizov <azizovkostya97@gmail.com>"],
+  "authors": [
+    "Volodymyr Shatsky <shockone89@gmail.com>",
+    "Konstantin Azizov <azizovkostya97@gmail.com>"
+  ],
   "repository": {
     "type": "git",
     "url": "https://github.com/shockone/black-screen.git"
@@ -57,9 +60,9 @@
   },
   "scripts": {
     "start": "gulp",
-    "install-all": "npm install && bower install",
-    "package-windows": "electron-packager . \"Black Screen\" --asar --prune --platform=\"win32\" --arch=\"ia32\" --version=\"0.31.2\" --out=\"./.build\" --icon=\"./icon.icns\"",
-    "package-osx": "electron-packager . 'Black Screen' --asar --prune --platform=darwin --arch=x64 --version='0.31.2' --out='./.build' --icon='./icon.icns'",
+    "install": "bower install",
+    "package-windows": "electron-packager ./dist \"Black Screen\" --asar --prune --platform=\"win32\" --arch=\"ia32\" --version=\"0.31.2\" --out=\"./.build\" --icon=\"./static/icon.icns\"",
+    "package-osx": "electron-packager ./dist 'Black Screen' --asar --prune --platform=darwin --arch=x64 --version='0.31.2' --out='./.build' --icon='./static/icon.icns'",
     "test": "gulp typescript; gulp compile-tests; electron run-tests.js"
   },
   "license": "MIT"

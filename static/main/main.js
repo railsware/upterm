@@ -17,3 +17,7 @@ app.on('ready', function () {
     mainWindow.focus();
     menu.setMenu(app, mainWindow);
 });
+
+app.on('window-all-closed', function() {
+  app.quit();
+});
