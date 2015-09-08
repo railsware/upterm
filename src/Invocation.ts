@@ -1,6 +1,6 @@
 /// <reference path="references.ts" />
 
-var pty = require('pty.js');
+import pty = require('pty.js');
 import child_process = require('child_process');
 import _ = require('lodash');
 import React = require('react');
@@ -17,7 +17,7 @@ import DecoratorsList = require('./decorators/List');
 import DecoratorsBase = require('./decorators/Base');
 
 class Invocation extends events.EventEmitter {
-    private command: child_process.ChildProcess;
+    private command: pty.Terminal;
     private parser: Parser;
     private prompt: Prompt;
     private buffer: Buffer;
@@ -109,7 +109,7 @@ class Invocation extends events.EventEmitter {
         this.dimensions = dimensions;
 
         if (this.command && this.status == e.Status.InProgress) {
-            (<any>this.command).resize(dimensions.columns, dimensions.rows);
+            this.command.resize(dimensions.columns, dimensions.rows);
         }
     }
 
