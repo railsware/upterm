@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "description": "A terminal emulator for the 21st century.",
   "main": "src/main/main.js",
-  "authors": ["Volodymyr Shatsky <shockone89@gmail.com>", "Konstantin Azizov <azizovkostya97@gmail.com>"],
+  "authors": ["Volodymyr Shatsky <shockone89@gmail.com>", "Konstantin Azizov <azizovkostya97@gmail.com>", "Volodymyr Barna <roberto.te.ua@gmail.com>"],
   "repository": {
     "type": "git",
     "url": "https://github.com/shockone/black-screen.git"
