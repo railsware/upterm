@@ -15,7 +15,6 @@ import e = require('./Enums');
 //TODO: Make them attributes;
 import DecoratorsList = require('./decorators/List');
 import DecoratorsBase = require('./decorators/Base');
-import {Terminal} from "pty.js";
 
 class Invocation extends events.EventEmitter {
     private command: pty.Terminal;
