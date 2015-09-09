@@ -7,19 +7,68 @@ process.env.PATH += ':/usr/local/bin';
 var mainWindow;
 
 app.on('ready', function () {
-
-    var atomScreen = require('screen');
-    var size = atomScreen.getPrimaryDisplay().workAreaSize;
-    mainWindow = new BrowserWindow({
-        width: size.width,
-        height: size.height,
-	'web-preferences': {
-		'overlay-scrollbars': true
-	},
-        resizable: true
-    });
-
-    mainWindow.loadUrl('file://' + __dirname + '/../../index.html');
-    mainWindow.focus();
-    menu.setMenu(app, mainWindow);
+	mainWindow = createWindow();
 });
+
+app.on('window-all-closed', function() {
+	if(process.platform != 'darwin') {
+		app.quit();
+	}
+});
+
+app.on('activate-with-no-open-windows', function () {
+	mainWindow = createWindow();
+});
+
+function createWindow() {
+	var path = require("path");
+	var fs = require("fs");
+	var userPrefsPath = path.join(app.getDataPath(), "preferences.json");
+	var data;
+	
+	//Reading user's preferences file
+	try {
+		data = JSON.parse(fs.readFileSync(userPrefsPath, 'utf8'));
+	} catch(e) {
+		console.log(e.toString());
+	}
+	
+	var window = new BrowserWindow({
+		width: 700, 
+		height: 450,
+		'web-preferences': {
+			'overlay-scrollbars': true
+		},
+		resizable: true,
+		show: false
+	});
+	
+	if(data) {
+		//Applying user's preferences
+		if(data.maximized) {
+			window.maximize();
+		} else {
+			window.setBounds(data.bounds);
+		}
+	}
+	
+	window.loadUrl('file://' + __dirname + '/../../index.html');
+	menu.setMenu(app, mainWindow);
+	
+	window.on('close', function () {
+		//Remembering window size and position before exit
+		var data = {
+			bounds: mainWindow.getBounds(),
+			maximized: window.isMaximized()
+		};
+		
+		fs.writeFileSync(userPrefsPath, JSON.stringify(data));
+	});
+	
+	window.webContents.on('did-finish-load', function () {
+		mainWindow.show();
+		mainWindow.focus();
+	});
+	
+	return window;
+}
