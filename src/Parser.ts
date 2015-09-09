@@ -328,13 +328,13 @@ class Parser {
                 short = 'Cursor Position [row;column] (default = [1,1]) (CUP).';
                 url = 'http://www.vt100.net/docs/vt510-rm/CUP';
 
-                this.buffer.moveCursorAbsolute({vertical: params[0] || 0, horizontal: params[1] || 0});
+                this.buffer.moveCursorAbsolute({vertical: (params[0] - 1) || 0, horizontal: (params[1] - 1) || 0});
                 break;
             case 'f':
                 short = 'Horizontal and Vertical Position [row;column] (default = [1,1]) (HVP).';
                 url = 'http://www.vt100.net/docs/vt510-rm/HVP';
 
-                this.buffer.moveCursorAbsolute({vertical: params[0] || 0, horizontal: params[1] || 0});
+                this.buffer.moveCursorAbsolute({vertical: (params[0] - 1) || 0, horizontal: (params[1] - 1) || 0});
                 break;
             case 'J':
                 switch (params[0]) {
