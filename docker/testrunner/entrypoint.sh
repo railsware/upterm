@@ -1,12 +1,20 @@
 #!/bin/bash
 cd /black-screen
-if [ -e .init ]
-then
+echo "FORCE: "$FORCE
+if [[ ! -d node_modules ]] || [[ -n $FORCE ]]
+	then
+	selenium-standalone install
 	chown -R testrunner:users .
 	sudo -u testrunner echo '{ "interactive": false }' > /home/testrunner/.bowerrc
-	sudo -u testrunner npm run install-all
+	sudo -u testrunner npm install
 fi
-touch .init
+
+if [[ -n $FORCE ]]
+	then
+	unset FORCE
+fi
+
 selenium-standalone start &
 sleep 5
 xvfb-run npm run test
+rm -rf pulse-*
