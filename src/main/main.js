@@ -13,6 +13,9 @@ app.on('ready', function () {
     mainWindow = new BrowserWindow({
         width: size.width,
         height: size.height,
+	'web-preferences': {
+		'overlay-scrollbars': true
+	},
         resizable: true
     });
 
