@@ -26,7 +26,7 @@
     "jquery": "2.1.4",
     "lodash": "3.10.0",
     "node-ansiparser": "1.0.2",
-    "pty.js": "https://github.com/iiegor/pty2.js/tarball/master",
+    "pty.js": "http://github.com/iiegor/pty2.js/tarball/master",
     "react": "0.13.3",
     "react-json-inspector": "5.1.0",
     "rx": "2.5.3",

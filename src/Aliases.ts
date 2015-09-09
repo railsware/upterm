@@ -22,7 +22,7 @@ class Aliases {
 
         var aliases = '';
         zsh.on('data', (text: string) => aliases += stripAnsi( text.toString() ));
-        zsh.on('close', () => {
+        zsh.on('exit', () => {
             aliases.split('\n').forEach((alias: string) => {
                 var split = alias.split('=');
                 this.aliases[split[0]] = /'?([^']*)'?/.exec(split[1])[1];

@@ -79,9 +79,9 @@ class Invocation extends events.EventEmitter {
             this.setStatus(e.Status.InProgress);
           
             this.command.on('data', (data: string) => this.parser.parse(stripAnsi( data.toString() )));
-            this.command.on('close', (code: number) => {
-                /* TODO: Code is `undefined` */
-                if (!code || code === 0) {
+            this.command.on('exit', (code: number) => {
+                /* TODO: Code is `undefined` on win32 with pty2.js */
+                if (/*code === 0*/!code) {
                     this.setStatus(e.Status.Success);
                 } else {
                     this.setStatus(e.Status.Failure);
