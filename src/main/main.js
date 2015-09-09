@@ -23,11 +23,11 @@ app.on('activate-with-no-open-windows', function () {
 function createWindow() {
 	var path = require("path");
 	var fs = require("fs");
-	var initPath = path.join(app.getDataPath(), "init.json");
+	var userPrefsPath = path.join(app.getDataPath(), "preferences.json");
 	var data;
 	
 	try {
-		data = JSON.parse(fs.readFileSync(initPath, 'utf8'));
+		data = JSON.parse(fs.readFileSync(userPrefsPath, 'utf8'));
 	} catch(e) {
 		console.log(e.toString());
 	}
@@ -43,7 +43,11 @@ function createWindow() {
 	});
 	
 	if(data) {
-		window.setBounds(data.bounds);
+		if(data.maximized) {
+			window.maximize();
+		} else {
+			window.setBounds(data.bounds);
+		}
 	}
 	
 	window.loadUrl('file://' + __dirname + '/../../index.html');
@@ -51,10 +55,11 @@ function createWindow() {
 	
 	window.on('close', function () {
 		var data = {
-			bounds: mainWindow.getBounds()
+			bounds: mainWindow.getBounds(),
+			maximized: window.isMaximized()
 		};
 		
-		fs.writeFileSync(initPath, JSON.stringify(data));
+		fs.writeFileSync(userPrefsPath, JSON.stringify(data));
 	});
 	
 	window.webContents.on('did-finish-load', function () {
