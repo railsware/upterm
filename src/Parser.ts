@@ -70,6 +70,8 @@ class Parser {
                 for (var i = 0; i != text.length; ++i) {
                     this.buffer.write(text.charAt(i));
                 }
+
+                logPosition(this.buffer.cursor);
             },
             inst_o: function (s: any) {
                 Utils.error('osc', s);
@@ -101,11 +103,13 @@ class Parser {
                     handlerResult = this.csiHandler(collected, params, flag);
 
                     if (handlerResult.status == 'handled') {
-                        Utils.log(`%cCSI ${collected} ${flag}`, "color: blue", handlerResult.description, handlerResult.url);
+                        Utils.log(`%cCSI ${params} ${flag}`, "color: blue", handlerResult.description, handlerResult.url);
                     } else {
-                        Utils.error(`%cCSI ${collected} ${flag}`, "color: blue", handlerResult.description, handlerResult.url);
+                        Utils.error(`%cCSI ${params} ${flag}`, "color: blue", handlerResult.description, handlerResult.url);
                     }
                 }
+
+                logPosition(this.buffer.cursor);
             },
             /**
              * ESC handler.
@@ -118,6 +122,8 @@ class Parser {
                 } else {
                     Utils.error(`%cESC ${collected} ${flag}`, "color: blue", handlerResult.description, handlerResult.url);
                 }
+
+                logPosition(this.buffer.cursor);
             }
         });
     }
@@ -265,6 +271,8 @@ class Parser {
         var url = '';
         var status = 'handled';
 
+        var param = <number>(Array.isArray(params) ? params[0] : params);
+
         switch (flag) {
             case 'm':
                 short = 'Some CGR stuff';
@@ -305,21 +313,21 @@ class Parser {
             case 'A':
                 short = 'Cursor Up Ps Times (default = 1) (CUU).';
 
-                this.buffer.moveCursorRelative({vertical: -(params[1] || 1)});
+                this.buffer.moveCursorRelative({vertical: -or1(param)});
                 break;
             case 'B':
                 short = 'Cursor Down Ps Times (default = 1) (CUD).';
-                this.buffer.moveCursorRelative({vertical: (params[1] || 1)});
+                this.buffer.moveCursorRelative({vertical: or1(param)});
                 break;
             case 'C':
                 short = 'Cursor Forward Ps Times (default = 1) (CUF).';
 
-                this.buffer.moveCursorRelative({horizontal: (params[1] || 1)});
+                this.buffer.moveCursorRelative({horizontal: or1(param)});
                 break;
             case 'D':
                 short = 'Cursor Backward Ps Times (default = 1) (CUB).';
 
-                this.buffer.moveCursorRelative({horizontal: -(params[1] || 1)});
+                this.buffer.moveCursorRelative({horizontal: -or1(param)});
                 break;
             // CSI Ps E  Cursor Next Line Ps Times (default = 1) (CNL).
             // CSI Ps F  Cursor Preceding Line Ps Times (default = 1) (CPL).
@@ -328,16 +336,16 @@ class Parser {
                 short = 'Cursor Position [row;column] (default = [1,1]) (CUP).';
                 url = 'http://www.vt100.net/docs/vt510-rm/CUP';
 
-                this.buffer.moveCursorAbsolute({vertical: (params[0] - 1) || 0, horizontal: (params[1] - 1) || 0});
+                this.buffer.moveCursorAbsolute({vertical: or1(params[0]) - 1, horizontal: or1(params[1]) - 1});
                 break;
             case 'f':
                 short = 'Horizontal and Vertical Position [row;column] (default = [1,1]) (HVP).';
                 url = 'http://www.vt100.net/docs/vt510-rm/HVP';
 
-                this.buffer.moveCursorAbsolute({vertical: (params[0] - 1) || 0, horizontal: (params[1] - 1) || 0});
+                this.buffer.moveCursorAbsolute({vertical: or1(params[0]) - 1, horizontal: or1(params[1]) - 1});
                 break;
             case 'J':
-                switch (params[0]) {
+                switch (param) {
                     case CSI.erase.entire:
                         this.buffer.clear();
                         break;
@@ -355,7 +363,7 @@ class Parser {
                 this.invocation.write('\x1b>1;2;');
                 break;
             case 'K':
-                switch (params[0]) {
+                switch (param) {
                     case CSI.erase.entire:
                         this.buffer.clearRow();
                         break;
@@ -382,3 +390,17 @@ class Parser {
 }
 
 export = Parser;
+
+function or1(number: number) {
+    if (number == null) {
+        return 1;
+    } else {
+        return number;
+    }
+}
+
+
+function logPosition(cursor) {
+    var position = cursor.getPosition();
+    Utils.log(`%crow: ${position.row}\tcolumn: ${position.column}`, "color: green");
+}
