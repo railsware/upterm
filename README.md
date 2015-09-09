@@ -2,8 +2,8 @@
 
 ### What is it?
 
-Black Screen is a modern terminal emulator (and shell) based on [Electron](http://electron.atom.io/).
-As opposed to most of the terminal emulators, it exploits the capabilities of contemporary interfaces.
+Black Screen is a modern terminal emulator based on [Electron](http://electron.atom.io/) and exploiting
+capabilities of contemporary interfaces in contrast to most of the terminal emulators.
 
 ![](https://dl.dropboxusercontent.com/spa/dlqheu39w0arg9q/ucvbthot.png)
 
@@ -17,23 +17,17 @@ As opposed to most of the terminal emulators, it exploits the capabilities of co
 
 ### Installation
 
-Note: Only OS X is currently supported, but we plan to make Black Screen work on all the major platforms.
-
-###### Download
 ```bash
-git clone https://github.com/black-screen/black-screen
-```
-###### Install Dependencies
-```bash
-cd black-screen
-npm install
-```
-###### Start
-```bash
-npm start
+npm run install-all
 ```
 
-#### Package
+### Run
+
+```bash
+gulp
+```
+
+### Package
 
 To create a standalone application, run:
 
@@ -49,11 +43,10 @@ npm run package
 
 ### TODO
 
-You can find the list of items currently being worked on in this issue: [TODO](https://github.com/shockone/black-screen/issues/58)
-
-### Contributing
-
-See [contributing guide](https://github.com/shockone/black-screen/blob/master/CONTRIBUTING.md).
+* VT100 compliant ANSI support.
+* Environment variables support.
+* Panes and tabs.
+* Man files parsing for better autocompletion.
 
 ### License
 

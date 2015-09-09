@@ -62,7 +62,7 @@
     "preinstall": "npm prune",
     "install": "bower prune; bower install",
     "start": "gulp",
-    "package-windows": "electron-packager ./dist \"Black Screen\" --overwrite --platform=\"win32\" --arch=\"ia32\" --version=\"0.30.0\" --out=\"./.build\" --icon=\"./static/icon.icns\"",
+    "package-windows": "electron-packager ./dist \"Black Screen\" --overwrite --platform=\"win32\" --asar --arch=\"ia32\" --version=\"0.30.0\" --out=\"./.build\" --icon=\"./static/icon.icns\"",
     "package-osx": "electron-packager ./dist 'Black Screen' --prune --overwrite --platform=darwin --arch=x64 --version='0.30.0' --out='./.build' --icon='./static/icon.icns'",
     "test": "gulp typescript; gulp compile-tests; electron run-tests.js"
   },
