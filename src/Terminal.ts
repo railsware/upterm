@@ -52,7 +52,7 @@ class Terminal extends events.EventEmitter {
     resize(dimensions: i.Dimensions): void {
         this.dimensions = dimensions;
 
-        this.invocations.forEach(invocation => invocation.resize(dimensions));
+        this.invocations.forEach(invocation => invocation.setDimensions(dimensions));
     }
 
     clearInvocations(): void {
