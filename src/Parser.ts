@@ -40,14 +40,6 @@ function isSetColorExtended(cgrValue: any) {
 }
 
 var CSI = {
-    mode: {
-        DECCOLM: 3,
-        blinkingCursor: 12,
-        cursor: 25,
-        scrollbar: 30,
-        alternateScreen: 1049,
-        bracketedPaste: 2004,
-    },
     flag: {
         CUP: 'H',
         CUU: 'A',
@@ -57,8 +49,6 @@ var CSI = {
         HVP: 'f',
         eraseDisplay: 'J',
         eraseInLine: 'K',
-        setMode: 'h',
-        resetMode: 'l',
         selectGraphicRendition: 'm'
     },
     erase: {
@@ -99,8 +89,30 @@ class Parser {
                 Utils.log('flag', flag);
                 this.buffer.write(flag);
             },
+            /**
+             * CSI handler.
+             */
             inst_c: (collected: any, params: Array<number>, flag: string) => {
                 Utils.log('csi', collected, params, flag);
+
+                if (collected == '?') {
+                    if (params.length != 1) {
+                        return Utils.error(`CSI private mode has ${params.length} parameters: ${params}`);
+                    }
+                    if (flag != 'h' && flag != 'l') {
+                        return Utils.error(`CSI private mode has an incorrect flag: ${flag}`);
+                    }
+                    var mode = params[0];
+                    var handlerResult = this.decPrivateModeHandler(mode, flag);
+
+                    if (handlerResult.status == 'handled') {
+                        Utils.log(`%cCSI ? ${mode} ${flag}`, "color: blue", handlerResult.description, handlerResult.url);
+                    } else {
+                        Utils.error(`%cCSI ? ${mode} ${flag}`, "color: blue", handlerResult.description, handlerResult.url);
+                    }
+
+                    return
+                }
 
                 switch (flag) {
                     case CSI.flag.selectGraphicRendition:
@@ -184,56 +196,6 @@ class Parser {
                                 break;
                         }
                         break;
-                    case CSI.flag.setMode:
-                        if (collected != DECPrivateMode) {
-                            return console.error('Private mode sequence should start with a ?. Started with', collected);
-                        }
-
-                        if (params.length != 1) {
-                            return console.error('CSI mode has multiple arguments:', params);
-                        }
-
-                        switch (params[0]) {
-                            case CSI.mode.blinkingCursor:
-                                this.buffer.blinkCursor(true);
-                                break;
-                            case CSI.mode.cursor:
-                                this.buffer.showCursor(true);
-                                break;
-                            case CSI.mode.alternateScreen:
-                                Utils.log('Switching to an alternate screen.');
-                                this.buffer.activeBuffer = 'alternate';
-                                break;
-                            case CSI.mode.bracketedPaste:
-                                Utils.log('Enabling bracketed paste');
-                                break;
-                            default:
-                                Utils.error('Unknown CSI mode:', params[0]);
-                        }
-                        break;
-                    case CSI.flag.resetMode:
-                        if (collected != DECPrivateMode) {
-                            return console.error('Private mode sequence should start with a ?. Started with', collected);
-                        }
-
-                        if (params.length != 1) {
-                            return console.error('CSI mode has multiple arguments:', params);
-                        }
-
-                        switch (params[0]) {
-                            case CSI.mode.DECCOLM:
-                                this.invocation.setDimensions({columns: 80, rows: this.invocation.getDimensions().rows});
-                                break;
-                            case CSI.mode.blinkingCursor:
-                                this.buffer.blinkCursor(false);
-                                break;
-                            case CSI.mode.cursor:
-                                this.buffer.showCursor(false);
-                                break;
-                            default:
-                                Utils.error('Unknown CSI reset:', params[0]);
-                        }
-                        break;
                     default:
                         Utils.error('csi', collected, params, flag);
                 }
@@ -257,6 +219,73 @@ class Parser {
                 }
             }
         });
+    }
+
+    private decPrivateModeHandler(ps: number, flag: string) {
+        var description = '';
+        var url = '';
+        var status = 'handled';
+        var isSet = flag == 'h';
+
+        //noinspection FallThroughInSwitchStatementJS
+        switch (ps) {
+            case 3:
+                url = "http://www.vt100.net/docs/vt510-rm/DECCOLM";
+
+                if (!isSet) {
+                    description = "80 Column Mode (DECCOLM)";
+
+                    this.invocation.setDimensions({columns: 80, rows: this.invocation.getDimensions().rows});
+                    break;
+                }
+            case 12:
+                if (isSet) {
+                    description = "Start Blinking Cursor (att610).";
+
+                    this.buffer.blinkCursor(true);
+                } else {
+                    description = "Stop Blinking Cursor (att610).";
+
+                    this.buffer.blinkCursor(false);
+                }
+
+                break;
+            case 25:
+                url = "http://www.vt100.net/docs/vt510-rm/DECTCEM";
+
+                if (isSet) {
+                    description = "Show Cursor (DECTCEM).";
+
+                    this.buffer.showCursor(true);
+                } else {
+                    description = "Hide Cursor (DECTCEM).";
+
+                    this.buffer.showCursor(false);
+                }
+                break;
+            case 1049:
+                if (isSet) {
+                    description = "Save cursor as in DECSC and use Alternate Screen Buffer, clearing it first.  (This may be disabled by the titeInhibit resource).  This combines the effects of the 1047  and 1048  modes.  Use this with terminfo-based applications rather than the 47  mode.";
+
+                    this.buffer.activeBuffer = 'alternate';
+                    // TODO: Add Implementation
+                    break;
+                }
+            case 2004:
+                if (isSet) {
+                    description = "Set bracketed paste mode.";
+                    // TODO: Add Implementation
+                    break;
+                }
+            default:
+                status = 'unhandled';
+        }
+
+        return {
+            status: status,
+            description: description,
+            url: url
+        };
     }
 }
 
