@@ -41,11 +41,11 @@ function isSetColorExtended(cgrValue: any) {
 
 var CSI = {
     flag: {
-        CUP: 'H',
         CUU: 'A',
         CUD: 'B',
         CUF: 'C',
         CUB: 'D',
+        CUP: 'H',
         HVP: 'f',
         eraseDisplay: 'J',
         eraseInLine: 'K',
@@ -57,8 +57,6 @@ var CSI = {
         entire: 2,
     }
 };
-
-var DECPrivateMode = '?';
 
 class Parser {
     private parser: AnsiParser;
@@ -93,8 +91,6 @@ class Parser {
              * CSI handler.
              */
             inst_c: (collected: any, params: Array<number>, flag: string) => {
-                Utils.log('csi', collected, params, flag);
-
                 if (collected == '?') {
                     if (params.length != 1) {
                         return Utils.error(`CSI private mode has ${params.length} parameters: ${params}`);
@@ -136,7 +132,7 @@ class Parser {
                                 } else {
                                     Utils.error('cgr', cgr, next, params);
                                 }
-                            } else if (attributeToSet == 'negative'){
+                            } else if (attributeToSet == 'negative') {
                                 var attributes = this.buffer.getAttributes();
 
                                 this.buffer.setAttributes({
@@ -199,26 +195,92 @@ class Parser {
                     default:
                         Utils.error('csi', collected, params, flag);
                 }
+
+                Utils.log('csi', collected, params, flag);
             },
+            /**
+             * ESC handler.
+             */
             inst_e: (collected: any, flag: string) => {
-                switch (flag) {
-                    case 'A':
-                        this.buffer.moveCursorRelative({vertical: -1});
-                        break;
-                    case 'B':
-                        this.buffer.moveCursorRelative({vertical: 1});
-                        break;
-                    case 'C':
-                        this.buffer.moveCursorRelative({horizontal: 1});
-                        break;
-                    case 'D':
-                        this.buffer.moveCursorRelative({horizontal: -1});
-                        break;
-                    default:
-                        Utils.error('esc', collected, flag);
+                var handlerResult = this.escapeHandler(collected, flag);
+
+                if (handlerResult.status == 'handled') {
+                    Utils.log(`%cESC ${collected} ${flag}`, "color: blue", handlerResult.description, handlerResult.url);
+                } else {
+                    Utils.error(`%cESC ${collected} ${flag}`, "color: blue", handlerResult.description, handlerResult.url);
                 }
             }
         });
+    }
+
+    private escapeHandler(collected: any, flag: string) {
+        var short = '';
+        var long = '';
+        var url = '';
+        var status = 'handled';
+
+        if (collected) {
+            if (collected == '#' && flag == '8') {
+                short = 'DEC Screen Alignment Test (DECALN).';
+                url = "http://www.vt100.net/docs/vt510-rm/DECALN";
+
+                var dimensions = this.invocation.getDimensions();
+
+                for (var i = 0; i != dimensions.rows; ++i) {
+                    this.buffer.moveCursorAbsolute({vertical: i, horizontal: 0});
+                    this.buffer.writeString(Array(dimensions.columns).join("E"));
+                }
+
+                this.buffer.moveCursorAbsolute({vertical: 0, horizontal: 0});
+            } else {
+                status = 'unhandled';
+            }
+        } else {
+            switch (flag) {
+                case 'A':
+                    short = "Cursor up.";
+
+                    this.buffer.moveCursorRelative({vertical: -1});
+                    break;
+                case 'B':
+                    short = "Cursor down.";
+
+                    this.buffer.moveCursorRelative({vertical: 1});
+                    break;
+                case 'C':
+                    short = "Cursor right.";
+
+                    this.buffer.moveCursorRelative({horizontal: 1});
+                    break;
+                case 'D':
+                    short = "Cursor left.";
+
+                    this.buffer.moveCursorRelative({horizontal: -1});
+                    break;
+                case 'M':
+                    short = "Reverse Index (RI).";
+                    long = "Move the active position to the same horizontal position on the preceding line. If the active position is at the top margin, a scroll down is performed. Format Effector";
+
+                    this.buffer.moveCursorRelative({vertical: -1});
+                    break;
+                case 'E':
+                    short = "Next Line (NEL).";
+                    long = "This sequence causes the active position to move to the first position on the next line downward. If the active position is at the bottom margin, a scroll up is performed. Format Effector";
+
+                    this.buffer.moveCursorRelative({vertical: 1});
+                    this.buffer.moveCursorAbsolute({horizontal: 0});
+                    break;
+                default:
+                    status = 'unhandled';
+            }
+        }
+
+        return {
+            status: status,
+            description: short,
+            longDescription: long,
+            url: url
+        };
     }
 
     private decPrivateModeHandler(ps: number, flag: string) {
