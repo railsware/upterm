@@ -77,8 +77,10 @@ class Parser {
                 Utils.error('osc', s);
             },
             inst_x: (flag: string) => {
-                Utils.log('flag', flag);
+                Utils.log('flag', flag, flag.charCodeAt(0));
                 this.buffer.write(flag);
+
+                logPosition(this.buffer.cursor);
             },
             /**
              * CSI handler.
@@ -174,13 +176,13 @@ class Parser {
                     break;
                 case 'M':
                     short = "Reverse Index (RI).";
-                    long = "Move the active position to the same horizontal position on the preceding line. If the active position is at the top margin, a scroll down is performed. Format Effector";
+                    long = "Move the active position to the same horizontal position on the preceding line. If the active position is at the top margin, a scroll down is performed.";
 
                     this.buffer.moveCursorRelative({vertical: -1});
                     break;
                 case 'E':
                     short = "Next Line (NEL).";
-                    long = "This sequence causes the active position to move to the first position on the next line downward. If the active position is at the bottom margin, a scroll up is performed. Format Effector";
+                    long = "This sequence causes the active position to move to the first position on the next line downward. If the active position is at the bottom margin, a scroll up is performed.";
 
                     this.buffer.moveCursorRelative({vertical: 1});
                     this.buffer.moveCursorAbsolute({horizontal: 0});
