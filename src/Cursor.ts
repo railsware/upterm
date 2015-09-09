@@ -4,7 +4,7 @@ class Cursor {
     private show = false;
     private blink = false;
 
-    constructor(private position: i.Position = {column: 0, row: 0}) {
+    constructor(private position: i.Position = {row: 0, column: 0}) {
     }
 
     moveAbsolute(advancement: i.Advancement): Cursor {
@@ -19,17 +19,26 @@ class Cursor {
         return this;
     }
 
-    moveRelative(advancement: i.Advancement): Cursor {
-        this.moveAbsolute({
-            vertical: this.row() + (advancement.vertical || 0),
-            horizontal: this.column() + (advancement.horizontal || 0)
-        });
+    moveRelative(advancement: i.Advancement, dimensions?: i.Dimensions): Cursor {
+        var vertical = Math.max(0, this.row() + (advancement.vertical || 0));
+        var horizontal = Math.max(0, this.column() + (advancement.horizontal || 0));
+
+        if (dimensions) {
+            vertical = Math.min(dimensions.rows - 1, vertical);
+            horizontal = Math.min(dimensions.columns - 1, horizontal);
+        }
+
+        this.moveAbsolute({ vertical: vertical, horizontal: horizontal });
 
         return this;
     }
 
-    next(): void {
-        this.moveRelative({horizontal: 1});
+    next(dimensions: i.Dimensions): void {
+        if (this.column() < dimensions.columns - 1) {
+            this.moveRelative({horizontal: 1});
+        } else {
+            this.moveRelative({vertical: 1}).moveAbsolute({horizontal: 0});
+        }
     }
 
     getPosition(): i.Position {
