@@ -18,7 +18,9 @@ As opposed to most of the terminal emulators, it exploits the capabilities of co
 
 ### Installation
 
-Note: Only OS X is currently supported, but we plan to make Black Screen work on all the major platforms.
+Note: Only OS X is currently supported, but we plan to make Black Screen work on all the major platforms. Though it also works on Linux, it isn't supported yet.
+
+Warning: Black Screen is still in its beta phase and isn't completely ready for day-to-day usage.
 
 ###### Download
 ```bash
