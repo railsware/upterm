@@ -22,7 +22,7 @@
     "console"
   ],
   "dependencies": {
-    "font-awesome": "4.3.0",
+    "font-awesome": "4.4.0",
     "fuzzaldrin": "2.1.0",
     "jison": "0.4.15",
     "jquery": "2.1.4",
