@@ -32,7 +32,7 @@ class Invocation extends events.EventEmitter {
         this.prompt = new Prompt(directory);
         this.prompt.on('send', () => this.execute());
 
-        this.buffer = new Buffer();
+        this.buffer = new Buffer(dimensions);
         this.buffer.on('data', _.throttle(() => this.emit('data'), 1000/60));
         this.parser = new Parser(this);
         this.id = `invocation-${new Date().getTime()}`
@@ -105,10 +105,15 @@ class Invocation extends events.EventEmitter {
         return !this.buffer.isEmpty();
     }
 
-    resize(dimensions: i.Dimensions) {
+    getDimensions(): i.Dimensions {
+        return this.dimensions;
+    }
+
+    setDimensions(dimensions: i.Dimensions) {
         this.dimensions = dimensions;
 
         if (this.command && this.status == e.Status.InProgress) {
+            this.buffer.setDimensions(dimensions);
             this.command.resize(dimensions.columns, dimensions.rows);
         }
     }
