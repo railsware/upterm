@@ -40,17 +40,6 @@ function isSetColorExtended(cgrValue: any) {
 }
 
 var CSI = {
-    flag: {
-        CUU: 'A',
-        CUD: 'B',
-        CUF: 'C',
-        CUB: 'D',
-        CUP: 'H',
-        HVP: 'f',
-        eraseDisplay: 'J',
-        eraseInLine: 'K',
-        selectGraphicRendition: 'm'
-    },
     erase: {
         toEnd: 0,
         toBeginning: 1,
@@ -72,6 +61,8 @@ class Parser {
     }
 
     private initializeAnsiParser(): AnsiParser {
+        // TODO: The parser is a mess, but I tried to make it
+        // TODO: an easy to clean up mess.
         return new ANSIParser({
             inst_p: (text: string) => {
                 Utils.log('text', text);
@@ -106,97 +97,15 @@ class Parser {
                     } else {
                         Utils.error(`%cCSI ? ${mode} ${flag}`, "color: blue", handlerResult.description, handlerResult.url);
                     }
+                } else {
+                    handlerResult = this.csiHandler(collected, params, flag);
 
-                    return
+                    if (handlerResult.status == 'handled') {
+                        Utils.log(`%cCSI ${collected} ${flag}`, "color: blue", handlerResult.description, handlerResult.url);
+                    } else {
+                        Utils.error(`%cCSI ${collected} ${flag}`, "color: blue", handlerResult.description, handlerResult.url);
+                    }
                 }
-
-                switch (flag) {
-                    case CSI.flag.selectGraphicRendition:
-                        if (params.length == 0) {
-                            this.buffer.setAttributes(CGR[0]);
-                            return;
-                        }
-
-                        while (params.length) {
-                            var cgr = params.shift();
-
-                            var attributeToSet = CGR[cgr];
-
-                            if (!attributeToSet) {
-                                Utils.error('cgr', cgr, params);
-                            } else if (isSetColorExtended(attributeToSet)) {
-                                var next = params.shift();
-                                if (next == 5) {
-                                    var colorIndex = params.shift();
-                                    this.buffer.setAttributes({[<string>attributeToSet]: e.ColorIndex[colorIndex]});
-                                } else {
-                                    Utils.error('cgr', cgr, next, params);
-                                }
-                            } else if (attributeToSet == 'negative') {
-                                var attributes = this.buffer.getAttributes();
-
-                                this.buffer.setAttributes({
-                                    'background-color': attributes.color,
-                                    'color': attributes['background-color']
-                                });
-                            } else {
-                                this.buffer.setAttributes(attributeToSet);
-                            }
-                        }
-                        break;
-                    case CSI.flag.CUU:
-                        this.buffer.moveCursorRelative({vertical: -(params[1] || 1)});
-                        break;
-                    case CSI.flag.CUD:
-                        this.buffer.moveCursorRelative({vertical: (params[1] || 1)});
-                        break;
-                    case CSI.flag.CUF:
-                        this.buffer.moveCursorRelative({horizontal: (params[1] || 1)});
-                        break;
-                    case CSI.flag.CUB:
-                        this.buffer.moveCursorRelative({horizontal: -(params[1] || 1)});
-                        break;
-                    case CSI.flag.CUP:
-                    case CSI.flag.HVP:
-                        this.buffer.moveCursorAbsolute({vertical: params[0] || 1, horizontal: params[1] || 1});
-                        break;
-                    case CSI.flag.eraseDisplay:
-                        switch (params[0]) {
-                            case CSI.erase.entire:
-                                this.buffer.clear();
-                                break;
-                            case CSI.erase.toEnd:
-                            case undefined:
-                                this.buffer.clearToEnd();
-                                break;
-                            case CSI.erase.toBeginning:
-                                this.buffer.clearToBeginning();
-                                break;
-                        }
-                        break;
-
-                    case 'c':
-                        this.invocation.write('\x1b>1;2;');
-                        break;
-                    case CSI.flag.eraseInLine:
-                        switch (params[0]) {
-                            case CSI.erase.entire:
-                                this.buffer.clearRow();
-                                break;
-                            case CSI.erase.toEnd:
-                            case undefined:
-                                this.buffer.clearRowToEnd();
-                                break;
-                            case CSI.erase.toBeginning:
-                                this.buffer.clearRowToBeginning();
-                                break;
-                        }
-                        break;
-                    default:
-                        Utils.error('csi', collected, params, flag);
-                }
-
-                Utils.log('csi', collected, params, flag);
             },
             /**
              * ESC handler.
@@ -346,6 +255,127 @@ class Parser {
         return {
             status: status,
             description: description,
+            url: url
+        };
+    }
+
+    private csiHandler(collected: any, params: Array<number>, flag: string) {
+        var short = '';
+        var long = '';
+        var url = '';
+        var status = 'handled';
+
+        switch (flag) {
+            case 'm':
+                short = 'Some CGR stuff';
+
+                if (params.length == 0) {
+                    short = 'Reset CGR';
+                    this.buffer.setAttributes(CGR[0]);
+                    break;
+                }
+
+                while (params.length) {
+                    var cgr = params.shift();
+
+                    var attributeToSet = CGR[cgr];
+
+                    if (!attributeToSet) {
+                        Utils.error('cgr', cgr, params);
+                    } else if (isSetColorExtended(attributeToSet)) {
+                        var next = params.shift();
+                        if (next == 5) {
+                            var colorIndex = params.shift();
+                            this.buffer.setAttributes({[<string>attributeToSet]: e.ColorIndex[colorIndex]});
+                        } else {
+                            Utils.error('cgr', cgr, next, params);
+                        }
+                    } else if (attributeToSet == 'negative') {
+                        var attributes = this.buffer.getAttributes();
+
+                        this.buffer.setAttributes({
+                            'background-color': attributes.color,
+                            'color': attributes['background-color']
+                        });
+                    } else {
+                        this.buffer.setAttributes(attributeToSet);
+                    }
+                }
+                break;
+            case 'A':
+                short = 'Cursor Up Ps Times (default = 1) (CUU).';
+
+                this.buffer.moveCursorRelative({vertical: -(params[1] || 1)});
+                break;
+            case 'B':
+                short = 'Cursor Down Ps Times (default = 1) (CUD).';
+                this.buffer.moveCursorRelative({vertical: (params[1] || 1)});
+                break;
+            case 'C':
+                short = 'Cursor Forward Ps Times (default = 1) (CUF).';
+
+                this.buffer.moveCursorRelative({horizontal: (params[1] || 1)});
+                break;
+            case 'D':
+                short = 'Cursor Backward Ps Times (default = 1) (CUB).';
+
+                this.buffer.moveCursorRelative({horizontal: -(params[1] || 1)});
+                break;
+            // CSI Ps E  Cursor Next Line Ps Times (default = 1) (CNL).
+            // CSI Ps F  Cursor Preceding Line Ps Times (default = 1) (CPL).
+            // CSI Ps G  Cursor Character Absolute  [column] (default = [row,1]) (CHA).
+            case 'H':
+                short = 'Cursor Position [row;column] (default = [1,1]) (CUP).';
+                url = 'http://www.vt100.net/docs/vt510-rm/CUP';
+
+                this.buffer.moveCursorAbsolute({vertical: params[0] || 0, horizontal: params[1] || 0});
+                break;
+            case 'f':
+                short = 'Horizontal and Vertical Position [row;column] (default = [1,1]) (HVP).';
+                url = 'http://www.vt100.net/docs/vt510-rm/HVP';
+
+                this.buffer.moveCursorAbsolute({vertical: params[0] || 0, horizontal: params[1] || 0});
+                break;
+            case 'J':
+                switch (params[0]) {
+                    case CSI.erase.entire:
+                        this.buffer.clear();
+                        break;
+                    case CSI.erase.toEnd:
+                    case undefined:
+                        this.buffer.clearToEnd();
+                        break;
+                    case CSI.erase.toBeginning:
+                        this.buffer.clearToBeginning();
+                        break;
+                }
+                break;
+
+            case 'c':
+                this.invocation.write('\x1b>1;2;');
+                break;
+            case 'K':
+                switch (params[0]) {
+                    case CSI.erase.entire:
+                        this.buffer.clearRow();
+                        break;
+                    case CSI.erase.toEnd:
+                    case undefined:
+                        this.buffer.clearRowToEnd();
+                        break;
+                    case CSI.erase.toBeginning:
+                        this.buffer.clearRowToBeginning();
+                        break;
+                }
+                break;
+            default:
+                status = 'unhandled';
+        }
+
+        return {
+            status: status,
+            description: short,
+            longDescription: long,
             url: url
         };
     }
