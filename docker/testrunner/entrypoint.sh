@@ -1,17 +1,12 @@
 #!/bin/bash
 cd /black-screen
-echo "FORCE: "$FORCE
-if [[ ! -d node_modules ]] || [[ -n $FORCE ]]
+if [[ -z $STARTED ]] && ( [[ ! -d node_modules ]] || [[ -n $FORCE ]] )
 	then
 	selenium-standalone install
 	chown -R testrunner:users .
 	sudo -u testrunner echo '{ "interactive": false }' > /home/testrunner/.bowerrc
 	sudo -u testrunner npm install
-fi
-
-if [[ -n $FORCE ]]
-	then
-	unset FORCE
+	STARTED=true	
 fi
 
 selenium-standalone start &

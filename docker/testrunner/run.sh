@@ -1,7 +1,7 @@
 #!/bin/bash
 
 
-RUNOPTIONS=" -i =t "
+RUNOPTIONS=" -i -t "
 
 
 #Processing the second argument
@@ -24,16 +24,11 @@ fi
 #Processing the first argument
 if [[ -n $1  ]]
   then
-  if [[ $1 -ne "-f" ]]
-    then
-    path=$1
-  elif [[ $1 -eq "-f" ]]
+  if [[ $1 -eq "-f" ]]
     then
     force=true
   else
-    echo "unrecognized option"
-    echo "available options: ./run.sh [-f] [repodir]"
-    exit
+    path=$1
   fi
 fi
 

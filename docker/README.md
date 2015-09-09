@@ -9,7 +9,7 @@ It doesn't contain the source code, so you need to mount the git repo at **/blac
 
 ##### Usage
 
-Change into the testrunner directory
+**Change into the testrunner directory**
 
 - build the container with ```docker build -t black-screen_testrunner . ```
 - first startup: ```docker run --name bs-testrunner -v `pwd`/black-screen:/black-screen black-screen_testrunner ``` (Replace \`pwd\`/black-screen with your absolute path to the repo)
@@ -20,12 +20,12 @@ For all tasks are scripts available:
  - run/re-run `./run.sh`
 
 Optional parameters for `./run.sh`:
-- [-f]  Force to rebuild the container (normally restart the container if there's one available)
+- [-f]  Force to rebuild the container, for e.g. updating of node dependencies (normally restart the container if there's one available)
 - [repodir] Specify the repository directory, default ist workingdir/black-screen (**Important**: must be an absolute path)
 
 
 **Additional Notes**:
-The build and the first startup needs time, but any further start will run a lot faster.
+The build and the first startup needs time, but any further start will run a lot faster. When you rebuild the image, keep in mind to use -f with `./run.sh`.
 
 
 ##### Components in *testrunner*:
