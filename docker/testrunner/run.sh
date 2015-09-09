@@ -1,19 +1,34 @@
 #!/bin/bash
 
 
+# Why -i -t ? Because we get nice terminal colours... And could stop the test with ^C
 RUNOPTIONS=" -i -t "
 
 
-#Processing the second argument
+
+# Firstly mask the /es to, because they break the script
 
 if [[ -n $2 ]]
   then
-  if [[ $2 -eq "-f" ]]
+  SECOND="`echo ${2//\//\\/}`"
+fi
+
+if [[ -n $1 ]]
+  then
+  FIRST="`echo ${1//\//\\/}`"
+fi
+
+
+# Second Argument available?
+
+if [[ -n "$SECOND" ]]
+  then
+  if [[ "$SECOND" == "-f" ]]
     then
     force=true
-  elif [[ $1 -eq "-f" ]]
+  elif [[ "$FIRST" == "-f" ]]
     then
-    path=$2
+    path=$SECOND
   else
     echo "unrecognized option"
     echo "available options: ./run.sh [-f] [repodir]"
@@ -21,14 +36,17 @@ if [[ -n $2 ]]
   fi
 fi
 
+
+
 #Processing the first argument
-if [[ -n $1  ]]
+
+if [[ -n "$FIRST"  ]]
   then
-  if [[ $1 -eq "-f" ]]
+  if [[ "$FIRST" == "-f" ]]
     then
     force=true
   else
-    path=$1
+    path=$FIRST
   fi
 fi
 
@@ -49,26 +67,27 @@ id=`docker ps -aq -f name=bs-testrunner`
 #Determine if it's an absolute or relative path, substitute if neccessary
 if [[ -n $path ]]
   then
-  if [[ ${path:0:1} -eq "." ]]
+  path_available=true
+  if [[ ${path:0:2} == './' ]]
     then
-    path=`pwd`/$path
+    path="`pwd`/$path"
   fi
 fi
 
 
-#a path is given, but the container is already runnig? Sorry, we couldn't get further :-(
-if [[ -n $path && ${#id} -gt 1 && ! $force ]]
+#a path is given, but the container is already runnig? Sorry, we couldn't continue :-(
+if [[ -n $path_available && ${#id} -gt 1 && ! $force ]]
   then
   echo "Sorry, you could not change your repo location in a running container"
   exit
 fi
 
-#check if a path is given (arg 1)
-if [[ -n $path  ]]
+#check if a path is given (arg 1), if not take default
+if [[ -n $path_available  ]]
   then
-  black-screen_path="$path"
+  blackscreen_path="`echo ${path//\//\\/}`"
 else
-  blackscreen_path=`pwd`/black-screen
+  blackscreen_path="`pwd`/black-screen"
 fi
 
 

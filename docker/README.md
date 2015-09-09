@@ -21,7 +21,13 @@ For all tasks are scripts available:
 
 Optional parameters for `./run.sh`:
 - [-f]  Force to rebuild the container, for e.g. updating of node dependencies (normally restart the container if there's one available)
-- [repodir] Specify the repository directory, default ist workingdir/black-screen (**Important**: must be an absolute path)
+- [repodir] Specify the repository directory, default ist workingdir/black-screen (Could be an absolute or an relative path)
+
+The order of the options is not relevant
+
+**Example**
+`./run.sh -f ./my/git/folder/black-screen`
+
 
 
 **Additional Notes**:
