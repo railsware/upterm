@@ -75,7 +75,7 @@ gulp.task('copy-static-js', function () {
 });
 
 gulp.task('copy-static-html', function () {
-    return gulp.src('static/*.html')
+    return gulp.src(['static/*.html', 'static/images/**'], { base: './static' })
         .pipe(gulp.dest( path.join('dist') ));
 });
 

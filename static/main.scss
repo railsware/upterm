@@ -222,6 +222,95 @@ body, pre {
 
   flex-wrap: nowrap;
   flex-direction: column;
+
+  padding-top: 35px;
+}
+
+.terminal-header {
+  position: fixed;
+  display: block;
+  width: 100%;
+  height: 35px;
+  background-color: rgb(35, 37, 43);
+  padding: 0 6px;
+  -webkit-user-select: none;
+  z-index: 999;
+  -webkit-app-region: drag;
+
+  .actions-wrapper {
+    display: -ms-flexbox;
+    display: -webkit-flex;
+    display: flex;
+
+    -webkit-align-items: center;
+    -webkit-box-align: center;
+
+    align-items: center;
+
+    float: right;
+    height: 100%;
+
+    .actions-list {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+      display: -webkit-box;
+
+      .actions-item > .img {
+        background-repeat: no-repeat;
+        height: 21px;
+        width: 25px;
+
+        cursor: default;
+        -webkit-app-region: no-drag;
+
+        &.close {
+          background-image: url('./images/close.png');
+          width: 45px;
+        }
+
+        &.close:hover {
+          background-image: url('./images/close-hover.png');
+        }
+
+        &.close:active {
+          background-image: url('./images/close-pressed.png');
+        }
+
+        &.max {
+          background-image: url('./images/max.png');
+        }
+
+        &.max:hover {
+          background-image: url('./images/max-hover.png');
+        }
+
+        &.max:active {
+          background-image: url('./images/max-pressed.png');
+        }
+        
+        &.max.restore {
+          background-image: url('./images/restore.png') !important;
+        }
+
+        &.max.restore:hover {
+          background-image: url('./images/restore-hover.png') !important;
+        }
+
+        &.min {
+          background-image: url('./images/min.png');
+        }
+
+        &.min:hover {
+          background-image: url('./images/min-hover.png');
+        }
+
+        &.min:active {
+          background-image: url('./images/min-pressed.png');
+        }
+      }
+    }
+  }
 }
 
 .terminal {
@@ -287,6 +376,8 @@ pre {
 
   box-shadow: $default-shadow;
   background-color: map-get($colors, 'black');
+
+  z-index: 1000; // more than the header!
 
   ul {
     list-style: none;

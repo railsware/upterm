@@ -2,11 +2,15 @@ import Terminal = require('../Terminal');
 import TerminalComponent from './TerminalComponent';
 import React = require('react');
 
+var remote = require('remote');
+var currentWindow = remote.getCurrentWindow();
+
 interface State {
     terminals: Terminal[];
 }
 
 export class TerminalLayout extends React.Component<{}, State> {
+
     constructor(props) {
         super(props);
 
@@ -47,8 +51,24 @@ export class TerminalLayout extends React.Component<{}, State> {
         let terminals = this.state.terminals.map(
             (terminal, index) => React.createElement(TerminalComponent, {"terminal": terminal, "key": index})
         );
+        let restore = false;
 
-        return React.createElement("div", {className: "terminal-layout", onKeyDown: this.handleKeyDown.bind(this)}, terminals)
+        return React.createElement("div", null,
+            React.createElement("div", {className: "terminal-header"}, 
+                React.createElement("div", {className: "actions-wrapper"}, 
+                    React.createElement("ul", {className: "actions-list"}, 
+                        React.createElement("li", { className: "actions-item" }, React.createElement("div", { className: "img min", onClick: () => currentWindow.minimize() })), 
+                        React.createElement("li", { className: "actions-item" }, React.createElement("div", { className: "img max", onClick: () => {
+                            currentWindow[restore ? 'restore' : 'maximize']();
+
+                            restore = !restore;
+                        } })), 
+                        React.createElement("li", {className: "actions-item"}, React.createElement("div", {className: "img close", onClick: () => remote.require('app').quit() }))
+                    )
+                )
+            ), 
+            React.createElement("div", { className: "terminal-layout", onKeyDown: this.handleKeyDown.bind(this) }, terminals)
+        );
     }
 
     private getWindowDimensions() {
@@ -59,4 +79,5 @@ export class TerminalLayout extends React.Component<{}, State> {
             rows: Math.floor(window.innerHeight / letter.clientHeight)
         };
     }
+
 }

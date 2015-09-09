@@ -101,7 +101,7 @@ export = {
                         },
                         {
                             label: 'Toggle Developer Tools',
-                            accelerator: 'Alt+Command+I',
+                            accelerator: 'Ctrl+<+J',
                             click: () => mainWindow.toggleDevTools()
                         }
                     ]

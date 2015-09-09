@@ -6,6 +6,7 @@ var browserWindow = require('browser-window');
 import fs = require('fs');
 import path = require('path');
 import menu = require('./Menu');
+import {EventEmitter} from 'events';
 
 process.env.PATH += ':/usr/local/bin';
 
@@ -19,22 +20,19 @@ function start() {
 	        resizable: true,
 	        'web-preferences': {
 	        	'overlay-scrollbars': true
-	        }
+	        },
+	        frame: false
 	    });
 
 	    mainWindow.loadUrl('file://' + __dirname + '/../../index.html');
 	    mainWindow.focus();
 	    menu.setMenu(app, mainWindow);
 
-	    app.on('application:about', function() {
-	    	console.log('about!');
-	    });
-
 	    console.log('App load time: ' + (Date.now() - global.shellStartTime) + 'ms');
 	});
 
 	app.on('window-all-closed', function() {
-		if (process.platform != 'darwin') app.quit();
+		app.quit();
 	});
 }
 
