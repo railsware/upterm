@@ -1,3 +1,4 @@
+[![Checkout out our Waffle.io board](https://badge.waffle.io/black-screen/black-screen.png?label=Ready)](https://waffle.io/black-screen/black-screen)
 [![Join the chat at https://gitter.im/shockone/black-screen](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/shockone/black-screen?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 ### What is it?
@@ -17,7 +18,9 @@ As opposed to most of the terminal emulators, it exploits the capabilities of co
 
 ### Installation
 
-Note: Only OS X is currently supported, but we plan to make Black Screen work on all the major platforms.
+Note: Only OS X is currently supported, but we plan to make Black Screen work on all the major platforms. Though it also works on Linux, it isn't supported yet.
+
+Warning: Black Screen is still in its beta phase and isn't completely ready for day-to-day usage.
 
 ###### Download
 ```bash
