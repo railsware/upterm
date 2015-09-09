@@ -26,6 +26,7 @@ function createWindow() {
 	var userPrefsPath = path.join(app.getDataPath(), "preferences.json");
 	var data;
 	
+	//Reading user's preferences file
 	try {
 		data = JSON.parse(fs.readFileSync(userPrefsPath, 'utf8'));
 	} catch(e) {
@@ -43,6 +44,7 @@ function createWindow() {
 	});
 	
 	if(data) {
+		//Applying user's preferences
 		if(data.maximized) {
 			window.maximize();
 		} else {
@@ -54,6 +56,7 @@ function createWindow() {
 	menu.setMenu(app, mainWindow);
 	
 	window.on('close', function () {
+		//Remembering window size and position before exit
 		var data = {
 			bounds: mainWindow.getBounds(),
 			maximized: window.isMaximized()
