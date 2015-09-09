@@ -15,15 +15,14 @@ class Aliases {
         return this.aliases[alias];
     }
 
-    /* TODO: Fix child_pty issues */
     static importAliasesFrom(shellName: string): void {
-        if (process.platform !== 'darwin') return;
+        if (process.platform === 'win32') return;
 
-        var zsh = require('child_pty').spawn(shellName, ['-i', '-c', 'alias'], {env: process.env});
+        var zsh = pty.spawn(shellName, ['-i', '-c', 'alias'], {env: process.env});
 
         var aliases = '';
-        zsh.stdout.on('data', (text: string) => aliases += text.toString());
-        zsh.on('exit', () => {
+        zsh.stdout.on('data', (text: string) => aliases += stripAnsi( text.toString() ));
+        zsh.on('close', () => {
             aliases.split('\n').forEach((alias: string) => {
                 var split = alias.split('=');
                 this.aliases[split[0]] = /'?([^']*)'?/.exec(split[1])[1];
