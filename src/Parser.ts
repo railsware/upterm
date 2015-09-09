@@ -41,6 +41,7 @@ function isSetColorExtended(cgrValue: any) {
 
 var CSI = {
     mode: {
+        DECCOLM: 3,
         blinkingCursor: 12,
         cursor: 25,
         scrollbar: 30,
@@ -220,6 +221,9 @@ class Parser {
                         }
 
                         switch (params[0]) {
+                            case CSI.mode.DECCOLM:
+                                this.invocation.setDimensions({columns: 80, rows: this.invocation.getDimensions().rows});
+                                break;
                             case CSI.mode.blinkingCursor:
                                 this.buffer.blinkCursor(false);
                                 break;
