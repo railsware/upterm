@@ -347,15 +347,22 @@ class Parser {
                 this.buffer.moveCursorAbsolute({vertical: or1(params[0]) - 1, horizontal: or1(params[1]) - 1});
                 break;
             case 'J':
+                url = "http://www.vt100.net/docs/vt510-rm/ED";
                 switch (param) {
                     case CSI.erase.entire:
+                        short = "Erase Entire Display (ED).";
+
                         this.buffer.clear();
                         break;
                     case CSI.erase.toEnd:
                     case undefined:
+                        short = "Erase Display Below (ED).";
+
                         this.buffer.clearToEnd();
                         break;
                     case CSI.erase.toBeginning:
+                        short = "Erase Display Above (ED).";
+
                         this.buffer.clearToBeginning();
                         break;
                 }
@@ -365,15 +372,20 @@ class Parser {
                 this.invocation.write('\x1b>1;2;');
                 break;
             case 'K':
+                url = "http://www.vt100.net/docs/vt510-rm/DECSEL";
                 switch (param) {
                     case CSI.erase.entire:
+                        short = "Erase the Line (DECSEL).";
+
                         this.buffer.clearRow();
                         break;
                     case CSI.erase.toEnd:
                     case undefined:
+                        short = "Erase Line to Right (DECSEL).";
                         this.buffer.clearRowToEnd();
                         break;
                     case CSI.erase.toBeginning:
+                        short = "Erase Line to Left (DECSEL).";
                         this.buffer.clearRowToBeginning();
                         break;
                 }

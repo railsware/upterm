@@ -208,7 +208,9 @@ class Buffer extends events.EventEmitter {
         var row = this.storage[cursorPosition.row];
 
         if (row) {
-            row.splice(0, cursorPosition.column - 1);
+            for (var i = 0; i <= cursorPosition.column; ++i) {
+                row[i] = null;
+            }
         }
         this.emit('data');
     }
@@ -222,7 +224,10 @@ class Buffer extends events.EventEmitter {
     clearToBeginning() {
         var cursorPosition = this.cursor.getPosition();
         this.clearRowToBeginning();
-        this.storage.splice(0, cursorPosition.row - 1);
+
+        for (var i = 0; i != cursorPosition.row; ++i) {
+            this.storage[i] = [];
+        }
         this.emit('data');
     }
 
