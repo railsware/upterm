@@ -32,7 +32,7 @@ function createWindow() {
 	});
 	
 	window.loadUrl('file://' + __dirname + '/../../index.html');
-	menu.setMenu(app, mainWindow);
+	menu.setMenu(app, window);
 	
 	window.on('closed', function() {
 		window = null;
