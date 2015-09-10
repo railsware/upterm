@@ -315,21 +315,21 @@ class Parser {
             case 'A':
                 short = 'Cursor Up Ps Times (default = 1) (CUU).';
 
-                this.buffer.moveCursorRelative({vertical: -or1(param)});
+                this.buffer.moveCursorRelative({vertical: -(param || 1)});
                 break;
             case 'B':
                 short = 'Cursor Down Ps Times (default = 1) (CUD).';
-                this.buffer.moveCursorRelative({vertical: or1(param)});
+                this.buffer.moveCursorRelative({vertical: (param || 1)});
                 break;
             case 'C':
                 short = 'Cursor Forward Ps Times (default = 1) (CUF).';
 
-                this.buffer.moveCursorRelative({horizontal: or1(param)});
+                this.buffer.moveCursorRelative({horizontal: (param || 1)});
                 break;
             case 'D':
                 short = 'Cursor Backward Ps Times (default = 1) (CUB).';
 
-                this.buffer.moveCursorRelative({horizontal: -or1(param)});
+                this.buffer.moveCursorRelative({horizontal: -(param || 1)});
                 break;
             // CSI Ps E  Cursor Next Line Ps Times (default = 1) (CNL).
             // CSI Ps F  Cursor Preceding Line Ps Times (default = 1) (CPL).
