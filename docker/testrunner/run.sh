@@ -56,8 +56,8 @@ image=`docker images | grep black-screen_testrunner`
 if [[ ${#image} -lt 1 ]]
   then
   echo "No black-screen_testrunner image available"
-  echo "Please buld it with ./build.sh"
-  exit
+  echo "building..."
+  docker build -t black-screen_testrunner .
 fi
 
 #show the docker processe with the name bs-testrunner
