@@ -33,12 +33,8 @@ class Cursor {
         return this;
     }
 
-    next(dimensions: i.Dimensions): void {
-        if (this.column() < dimensions.columns - 1) {
-            this.moveRelative({horizontal: 1});
-        } else {
-            this.moveRelative({vertical: 1}).moveAbsolute({horizontal: 0});
-        }
+    next(): void {
+        this.moveRelative({horizontal: 1});
     }
 
     getPosition(): i.Position {

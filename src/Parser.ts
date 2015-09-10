@@ -65,22 +65,22 @@ class Parser {
         // TODO: an easy to clean up mess.
         return new ANSIParser({
             inst_p: (text: string) => {
-                Utils.log('text', text);
+                Utils.log('text', text, text.charCodeAt(0), text.length);
 
                 for (var i = 0; i != text.length; ++i) {
                     this.buffer.write(text.charAt(i));
                 }
 
-                logPosition(this.buffer.cursor);
+                logPosition(this.buffer);
             },
             inst_o: function (s: any) {
                 Utils.error('osc', s);
             },
             inst_x: (flag: string) => {
-                Utils.log('flag', flag, flag.charCodeAt(0));
+                Utils.log('flag', flag, flag.charCodeAt(0), flag.length);
                 this.buffer.write(flag);
 
-                logPosition(this.buffer.cursor);
+                logPosition(this.buffer);
             },
             /**
              * CSI handler.
@@ -111,7 +111,7 @@ class Parser {
                     }
                 }
 
-                logPosition(this.buffer.cursor);
+                logPosition(this.buffer);
             },
             /**
              * ESC handler.
@@ -125,7 +125,7 @@ class Parser {
                     Utils.error(`%cESC ${collected} ${flag}`, "color: blue", handlerResult.description, handlerResult.url);
                 }
 
-                logPosition(this.buffer.cursor);
+                logPosition(this.buffer);
             }
         });
     }
@@ -170,9 +170,10 @@ class Parser {
                     this.buffer.moveCursorRelative({horizontal: 1});
                     break;
                 case 'D':
-                    short = "Cursor left.";
+                    short = "Index (IND).";
+                    url = "http://www.vt100.net/docs/vt510-rm/IND";
 
-                    this.buffer.moveCursorRelative({horizontal: -1});
+                    this.buffer.moveCursorRelative({vertical: 1});
                     break;
                 case 'M':
                     short = "Reverse Index (RI).";
@@ -414,7 +415,8 @@ function or1(number: number) {
 }
 
 
-function logPosition(cursor) {
-    var position = cursor.getPosition();
+// TODO: Move to Utils.
+function logPosition(buffer: Buffer) {
+    var position = buffer.cursor.getPosition();
     Utils.log(`%crow: ${position.row}\tcolumn: ${position.column}`, "color: green");
 }

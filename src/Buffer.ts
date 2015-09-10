@@ -118,7 +118,6 @@ class Buffer extends events.EventEmitter {
                     break;
                 case e.CharCode.Backspace:
                     this.cursor.moveRelative({horizontal: -1});
-                    this.clearCurrent();
                     break;
                 case e.CharCode.NewLine:
                     this.cursor.moveRelative({vertical: 1}).moveAbsolute({horizontal: 0});
@@ -130,8 +129,12 @@ class Buffer extends events.EventEmitter {
                     Utils.error(`Couldn't write a special char '${charObject}' with char code ${charObject.toString().charCodeAt(0)}.`);
             }
         } else {
+            if (this.cursor.column() >= this.dimensions.columns) {
+                this.cursor.moveRelative({vertical: 1}).moveAbsolute({horizontal: 0});
+            }
+
             this.set(this.cursor.getPosition(), charObject);
-            this.cursor.next(this.dimensions);
+            this.cursor.next();
         }
 
         this.emit('data');
