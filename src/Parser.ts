@@ -221,6 +221,13 @@ class Parser {
 
                     this.invocation.setDimensions({columns: 80, rows: this.invocation.getDimensions().rows});
                 }
+                this.buffer.clear();
+                // TODO
+                // If you change the DECCOLM setting, the terminal:
+                //      Sets the left, right, top and bottom scrolling margins to their default positions.
+                //      Erases all data in page memory.
+                // DECCOLM resets vertical split screen mode (DECLRMM) to unavailable.
+                // DECCOLM clears data from the status line if the status line is set to host-writable.
                 break;
             case 12:
                 if (isSet) {
