@@ -89,6 +89,15 @@ class Invocation extends events.EventEmitter {
 
             if (identifier.startsWith('U+')) {
                 var code =parseInt(identifier.substring(2), 16);
+
+                /**
+                 * In VT-100 emulation mode backspace should be translated to delete.
+                 * http://www.braun-home.net/michael/mbedit/info/misc/VT100_commands.htm
+                 */
+                if(code == e.CharCode.Backspace) {
+                    code = e.CharCode.Delete;
+                }
+
                 text = String.fromCharCode(code);
                 if (!event.shiftKey && code >= 65 && code <= 90) {
                     text = text.toLowerCase()
