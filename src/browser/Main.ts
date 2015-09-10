@@ -7,10 +7,11 @@ import fs = require('fs');
 import path = require('path');
 import menu = require('./Menu');
 import {EventEmitter} from 'events';
+import cp = require('child_process');
 
 process.env.PATH += ':/usr/local/bin';
 
-function start() {
+var start = function() {
 	setupHome();
 
 	app.on('ready', function () {
@@ -36,7 +37,7 @@ function start() {
 	});
 }
 
-function setupHome() {
+var setupHome = function() {
 	if (process.env.BLACKSCREEN_HOME) return;
 
 	var home = path.join(app.getHomeDir(), '.blackscreen');

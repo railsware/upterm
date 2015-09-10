@@ -1,8 +1,8 @@
 /// <reference path="references.ts" />
 
+var pty = require('partty');
 var stripAnsi = require('strip-ansi');
 
-import pty = require('pty.js');
 import path = require('path');
 import child_process = require('child_process');
 import _ = require('lodash');
@@ -20,7 +20,7 @@ import DecoratorsList = require('./decorators/List');
 import DecoratorsBase = require('./decorators/Base');
 
 class Invocation extends events.EventEmitter {
-    private command: pty.Terminal;
+    private command: any;
     private parser: Parser;
     private prompt: Prompt;
     private buffer: Buffer;
@@ -77,10 +77,11 @@ class Invocation extends events.EventEmitter {
             });
 
             this.setStatus(e.Status.InProgress);
-          
+
             this.command.on('data', (data: string) => this.parser.parse(stripAnsi( data.toString() )));
             this.command.on('exit', (code: number) => {
                 /* TODO: Code is `undefined` on win32 with pty2.js */
+                console.log(code)
                 if (/*code === 0*/!code) {
                     this.setStatus(e.Status.Success);
                 } else {

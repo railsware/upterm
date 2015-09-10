@@ -1,6 +1,6 @@
+var pty = require('partty');
 var stripAnsi = require('strip-ansi');
 
-import pty = require('pty.js');
 import _ = require('lodash');
 
 class Aliases {
