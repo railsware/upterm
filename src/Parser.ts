@@ -65,7 +65,7 @@ class Parser {
         // TODO: an easy to clean up mess.
         return new ANSIParser({
             inst_p: (text: string) => {
-                Utils.log('text', text, text.charCodeAt(0), text.length);
+                Utils.info('text', text, text.charCodeAt(0), text.length);
 
                 for (var i = 0; i != text.length; ++i) {
                     this.buffer.write(text.charAt(i));
@@ -77,7 +77,7 @@ class Parser {
                 Utils.error('osc', s);
             },
             inst_x: (flag: string) => {
-                Utils.log('flag', flag, flag.charCodeAt(0), flag.length);
+                Utils.info('flag', flag, flag.charCodeAt(0), flag.length);
                 this.buffer.write(flag);
 
                 logPosition(this.buffer);
@@ -97,7 +97,7 @@ class Parser {
                     var handlerResult = this.decPrivateModeHandler(mode, flag);
 
                     if (handlerResult.status == 'handled') {
-                        Utils.log(`%cCSI ? ${mode} ${flag}`, "color: blue", handlerResult.description, handlerResult.url);
+                        Utils.info(`%cCSI ? ${mode} ${flag}`, "color: blue", handlerResult.description, handlerResult.url);
                     } else {
                         Utils.error(`%cCSI ? ${mode} ${flag}`, "color: blue", handlerResult.description, handlerResult.url);
                     }
@@ -105,7 +105,7 @@ class Parser {
                     handlerResult = this.csiHandler(collected, params, flag);
 
                     if (handlerResult.status == 'handled') {
-                        Utils.log(`%cCSI ${params} ${flag}`, "color: blue", handlerResult.description, handlerResult.url);
+                        Utils.info(`%cCSI ${params} ${flag}`, "color: blue", handlerResult.description, handlerResult.url);
                     } else {
                         Utils.error(`%cCSI ${params} ${flag}`, "color: blue", handlerResult.description, handlerResult.url);
                     }
@@ -120,7 +120,7 @@ class Parser {
                 var handlerResult = this.escapeHandler(collected, flag);
 
                 if (handlerResult.status == 'handled') {
-                    Utils.log(`%cESC ${collected} ${flag}`, "color: blue", handlerResult.description, handlerResult.url);
+                    Utils.info(`%cESC ${collected} ${flag}`, "color: blue", handlerResult.description, handlerResult.url);
                 } else {
                     Utils.error(`%cESC ${collected} ${flag}`, "color: blue", handlerResult.description, handlerResult.url);
                 }
@@ -212,12 +212,16 @@ class Parser {
             case 3:
                 url = "http://www.vt100.net/docs/vt510-rm/DECCOLM";
 
-                if (!isSet) {
-                    description = "80 Column Mode (DECCOLM)";
+                if (isSet) {
+                    description = "132 Column Mode (DECCOLM).";
+
+                    this.invocation.setDimensions({columns: 132, rows: this.invocation.getDimensions().rows});
+                } else {
+                    description = "80 Column Mode (DECCOLM).";
 
                     this.invocation.setDimensions({columns: 80, rows: this.invocation.getDimensions().rows});
-                    break;
                 }
+                break;
             case 12:
                 if (isSet) {
                     description = "Start Blinking Cursor (att610).";
@@ -418,5 +422,5 @@ function or1(number: number) {
 // TODO: Move to Utils.
 function logPosition(buffer: Buffer) {
     var position = buffer.cursor.getPosition();
-    Utils.log(`%crow: ${position.row}\tcolumn: ${position.column}`, "color: green");
+    Utils.debug(`%crow: ${position.row}\tcolumn: ${position.column}`, "color: green");
 }
