@@ -7,6 +7,14 @@ class Utils {
         this.delegate('log', args);
     }
 
+    static info(...args: any[]): void {
+        this.delegate('info', args);
+    }
+
+    static debug(...args: any[]): void {
+        this.delegate('debug', args);
+    }
+
     static error(...args: any[]): void {
         this.delegate('error', args);
     }
