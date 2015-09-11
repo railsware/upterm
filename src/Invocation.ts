@@ -158,18 +158,18 @@ class CommandExecutor {
                     }
                 });
             }
-        }).then((strategy) => strategy.startExecution());
+        }).then((strategy: CommandExecutionStrategy) => strategy.startExecution());
     }
 }
 
-interface CommandExecutionStrategy {
-    startExecution(): Promise<any>;
-}
-
-class BuiltInCommandExecutionStrategy implements CommandExecutionStrategy {
-    constructor(private invocation: Invocation, private command: string, private args: string[]) {
+abstract class CommandExecutionStrategy {
+    constructor(protected invocation: Invocation, protected command: string, protected args: string[]) {
     }
 
+    abstract startExecution(): Promise<any>;
+}
+
+class BuiltInCommandExecutionStrategy extends CommandExecutionStrategy {
     startExecution(): Promise<any> {
         return new Promise((resolve, reject) => {
             try {
@@ -183,10 +183,7 @@ class BuiltInCommandExecutionStrategy implements CommandExecutionStrategy {
     }
 }
 
-class SystemFileExecutionStrategy implements CommandExecutionStrategy {
-    constructor(private invocation: Invocation, private command: string, private args: string[]) {
-    }
-
+class SystemFileExecutionStrategy extends CommandExecutionStrategy {
     startExecution(): Promise<any> {
         return new Promise((resolve, reject) => {
             // TODO: move command to this class.
@@ -209,10 +206,7 @@ class SystemFileExecutionStrategy implements CommandExecutionStrategy {
     }
 }
 
-class NullExecutionStrategy implements CommandExecutionStrategy {
-    constructor(private invocation: Invocation, private command: string, private args: string[]) {
-    }
-
+class NullExecutionStrategy extends CommandExecutionStrategy {
     startExecution(): Promise<any> {
         return new Promise((resolve, reject) => reject(`Black Screen: command "${this.command}" not found.`));
     }
