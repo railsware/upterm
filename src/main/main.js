@@ -34,7 +34,7 @@ function createWindow() {
 	}
 	
 	var window = new BrowserWindow({
-		width: 700, 
+		width: 700,
 		height: 450,
 		'web-preferences': {
 			'overlay-scrollbars': true
@@ -53,21 +53,23 @@ function createWindow() {
 	}
 	
 	window.loadUrl('file://' + __dirname + '/../../index.html');
-	menu.setMenu(app, mainWindow);
+	menu.setMenu(app, window);
 	
 	window.on('close', function () {
-		//Remembering window size and position before exit
+		//Remember window size and position before exit
 		var data = {
-			bounds: mainWindow.getBounds(),
+			bounds: window.getBounds(),
 			maximized: window.isMaximized()
 		};
 		
 		fs.writeFileSync(userPrefsPath, JSON.stringify(data));
+		
+		window = null;
 	});
 	
 	window.webContents.on('did-finish-load', function () {
-		mainWindow.show();
-		mainWindow.focus();
+		window.show();
+		window.focus();
 	});
 	
 	return window;
