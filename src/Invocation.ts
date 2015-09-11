@@ -18,15 +18,15 @@ import DecoratorsBase = require('./decorators/Base');
 import Utils = require("./Utils");
 
 class Invocation extends events.EventEmitter {
-    private command: pty.Terminal;
-    private parser: Parser;
+    public command: pty.Terminal;
+    public parser: Parser;
     private prompt: Prompt;
     private buffer: Buffer;
     public id: string;
     public status: e.Status = e.Status.NotStarted;
 
-    constructor(private directory: string,
-                private dimensions: i.Dimensions,
+    constructor(public directory: string,
+                public dimensions: i.Dimensions,
                 private history: History = new History()) {
         super();
 
@@ -34,54 +34,27 @@ class Invocation extends events.EventEmitter {
         this.prompt.on('send', () => this.execute());
 
         this.buffer = new Buffer(dimensions);
-        this.buffer.on('data', _.throttle(() => this.emit('data'), 1000/60));
+        this.buffer.on('data', _.throttle(() => this.emit('data'), 1000 / 60));
         this.parser = new Parser(this);
         this.id = `invocation-${new Date().getTime()}`
     }
 
     execute(): void {
-        var command = this.prompt.getCommandName();
-        var args = this.prompt.getArguments().filter(argument => argument.length > 0);
+        this.setStatus(e.Status.InProgress);
 
-        if (Command.isBuiltIn(command)) {
-            try {
-                var newDirectory = Command.cd(this.directory, args);
-                this.emit('working-directory-changed', newDirectory);
-            } catch (error) {
+        CommandExecutor.execute(this).then(
+            () => {
+                this.setStatus(e.Status.Success);
+                this.emit('end')
+            },
+            (errorMessage) => {
                 this.setStatus(e.Status.Failure);
-                this.buffer.writeString(error.message, {color: e.Color.Red});
-            }
-
-            this.emit('end');
-        } else {
-            Utils.getExecutablesInPaths().then(executables => {
-                if (_.include(executables, command)) {
-                    this.command = pty.spawn(command, args, {
-                        cols: this.dimensions.columns,
-                        rows: this.dimensions.rows,
-                        cwd: this.directory,
-                        env: process.env
-                    });
-
-                    this.setStatus(e.Status.InProgress);
-
-                    this.command.stdout.on('data', (data: string) => this.parser.parse(data.toString()));
-                    this.command.on('exit', (code: number) => {
-                        if (code === 0) {
-                            this.setStatus(e.Status.Success);
-                        } else {
-                            this.setStatus(e.Status.Failure);
-                        }
-
-                        this.emit('end');
-                    })
-                } else {
-                    this.parser.parse(`Black Screen: command "${command}" not found.`);
-                    this.setStatus(e.Status.Failure);
-                    this.emit('end');
+                if (errorMessage) {
+                    this.buffer.writeString(errorMessage, {color: e.Color.Red});
                 }
-            });
-        }
+                this.emit('end');
+            }
+        );
     }
 
     setPromptText(value: string): void {
@@ -97,13 +70,13 @@ class Invocation extends events.EventEmitter {
             var identifier: string = (<any>event.nativeEvent).keyIdentifier;
 
             if (identifier.startsWith('U+')) {
-                var code =parseInt(identifier.substring(2), 16);
+                var code = parseInt(identifier.substring(2), 16);
 
                 /**
                  * In VT-100 emulation mode backspace should be translated to delete.
                  * http://www.braun-home.net/michael/mbedit/info/misc/VT100_commands.htm
                  */
-                if(code == e.CharCode.Backspace) {
+                if (code == e.CharCode.Backspace) {
                     code = e.CharCode.Delete;
                 }
 
@@ -165,6 +138,83 @@ class Invocation extends events.EventEmitter {
     setStatus(status: e.Status): void {
         this.status = status;
         this.emit('status', status);
+    }
+}
+
+class CommandExecutor {
+    static execute(invocation: Invocation): Promise<CommandExecutionStrategy> {
+        var command = invocation.getPrompt().getCommandName();
+        var args = invocation.getPrompt().getArguments().filter(argument => argument.length > 0);
+
+        return new Promise((resolve) => {
+            if (Command.isBuiltIn(command)) {
+                resolve(new BuiltInCommandExecutionStrategy(invocation, command, args));
+            } else {
+                Utils.getExecutablesInPaths().then(executables => {
+                    if (_.include(executables, command)) {
+                        resolve(new SystemFileExecutionStrategy(invocation, command, args));
+                    } else {
+                        resolve(new NullExecutionStrategy(invocation, command, args));
+                    }
+                });
+            }
+        }).then((strategy) => strategy.startExecution());
+    }
+}
+
+interface CommandExecutionStrategy {
+    startExecution(): Promise<any>;
+}
+
+class BuiltInCommandExecutionStrategy implements CommandExecutionStrategy {
+    constructor(private invocation: Invocation, private command: string, private args: string[]) {
+    }
+
+    startExecution(): Promise<any> {
+        return new Promise((resolve, reject) => {
+            try {
+                var newDirectory = Command.cd(this.invocation.directory, this.args);
+                this.invocation.emit('working-directory-changed', newDirectory);
+                resolve();
+            } catch (error) {
+                reject(error.message);
+            }
+        })
+    }
+}
+
+class SystemFileExecutionStrategy implements CommandExecutionStrategy {
+    constructor(private invocation: Invocation, private command: string, private args: string[]) {
+    }
+
+    startExecution(): Promise<any> {
+        return new Promise((resolve, reject) => {
+            // TODO: move command to this class.
+            this.invocation.command = pty.spawn(this.command, this.args, {
+                cols: this.invocation.dimensions.columns,
+                rows: this.invocation.dimensions.rows,
+                cwd: this.invocation.directory,
+                env: process.env
+            });
+
+            this.invocation.command.stdout.on('data', (data: string) => this.invocation.parser.parse(data.toString()));
+            this.invocation.command.on('exit', (code: number) => {
+                if (code === 0) {
+                    resolve();
+                } else {
+                    reject();
+                }
+            })
+        })
+    }
+}
+
+class NullExecutionStrategy implements CommandExecutionStrategy {
+    constructor(private invocation: Invocation, private command: string, private args: string[]) {
+    }
+
+    startExecution(): Promise<any> {
+        return new Promise((resolve, reject) => reject(`Black Screen: command "${this.command}" not found.`));
     }
 }
 
