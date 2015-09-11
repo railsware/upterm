@@ -37,14 +37,17 @@ class Terminal extends events.EventEmitter {
 
     createInvocation(): void {
         var invocation = new Invocation(this.currentDirectory, this.dimensions, this.history);
-        invocation.once('end', () => {
-            if (app.dock) {
-                app.dock.bounce('informational');
-            }
-            this.createInvocation();
-        }).once('working-directory-changed', (newWorkingDirectory: string) =>
-            this.setCurrentDirectory(newWorkingDirectory)
-        );
+
+        invocation
+            .once('clear', _ => this.clearInvocations())
+            .once('end', _ => {
+                if (app.dock) {
+                    app.dock.bounce('informational');
+                }
+                this.createInvocation();
+            })
+            .once('working-directory-changed', (newWorkingDirectory: string) => this.setCurrentDirectory(newWorkingDirectory));
+
         this.invocations = this.invocations.concat(invocation);
         this.emit('invocation');
     }

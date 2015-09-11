@@ -5,7 +5,7 @@
 
 /// <reference path="../node/node.d.ts" />
 
-declare module 'pty.js' {
+declare module 'ptyw.js' {
     /** Options that can be used when creating a new pseudo-terminal. */
     interface TerminalOptions {
         name?: string;

@@ -1,7 +1,6 @@
 /// <reference path="references.ts" />
 
-import pty = require('pty.js');
-import child_process = require('child_process');
+import pty = require('ptyw.js');
 import _ = require('lodash');
 import React = require('react');
 import events = require('events');
@@ -18,7 +17,7 @@ import DecoratorsBase = require('./decorators/Base');
 import Utils = require("./Utils");
 
 class Invocation extends events.EventEmitter {
-    private command: pty.Terminal;
+    private command: any;
     private parser: Parser;
     private prompt: Prompt;
     private buffer: Buffer;
@@ -44,18 +43,31 @@ class Invocation extends events.EventEmitter {
         var args = this.prompt.getArguments().filter(argument => argument.length > 0);
 
         if (Command.isBuiltIn(command)) {
-            try {
-                var newDirectory = Command.cd(this.directory, args);
-                this.emit('working-directory-changed', newDirectory);
-            } catch (error) {
-                this.setStatus(e.Status.Failure);
-                this.buffer.writeString(error.message, {color: e.Color.Red});
-            }
+            switch (command) {
+                case 'cd':
+                    try {
+                        var newDirectory = Command.cd(this.directory, args);
+                        this.emit('working-directory-changed', newDirectory);
+                    } catch (error) {
+                        this.setStatus(e.Status.Failure);
+                        this.buffer.writeString(error.message, {color: e.Color.Red});
+                    }
 
-            this.emit('end');
+                    this.emit('end');
+                    break;
+                case 'clear':
+                    this.emit('clear');
+                    break;
+            }
         } else {
             Utils.getExecutablesInPaths().then(executables => {
                 if (_.include(executables, command)) {
+                    if (process.platform === 'win32') {
+                        args.unshift(command);
+                        args = ['/s', '/c', args.join(' ')];
+                        command = Utils.getCmdPath();
+                    }
+
                     this.command = pty.spawn(command, args, {
                         cols: this.dimensions.columns,
                         rows: this.dimensions.rows,
@@ -65,16 +77,19 @@ class Invocation extends events.EventEmitter {
 
                     this.setStatus(e.Status.InProgress);
 
-                    this.command.stdout.on('data', (data: string) => this.parser.parse(data.toString()));
-                    this.command.on('exit', (code: number) => {
-                        if (code === 0) {
-                            this.setStatus(e.Status.Success);
-                        } else {
-                            this.setStatus(e.Status.Failure);
-                        }
+                    /* TODO: See Buffer::renderRow() */
+                    this.command
+                        .on('data', (data: string) => this.parser.parse( data ))
+                        .on('exit', (code: number) => {
+                            /* In windows there is no code returned (null) so instead of comparing to 0 we check if its 0 or null with ! */
+                            if (!code) {
+                                this.setStatus(e.Status.Success);
+                            } else {
+                                this.setStatus(e.Status.Failure);
+                            }
 
-                        this.emit('end');
-                    })
+                            this.emit('end');
+                        });
                 } else {
                     this.parser.parse(`Black Screen: command "${command}" not found.`);
                     this.setStatus(e.Status.Failure);

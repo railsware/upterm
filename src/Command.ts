@@ -21,8 +21,8 @@ class Command {
         return newDirectory;
     }
 
-    static isBuiltIn(command: String): any {
-        return command == 'cd';
+    static isBuiltIn(command: string): any {
+        return command === 'cd' || command === 'clear';
     }
 }
 

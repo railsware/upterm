@@ -123,6 +123,16 @@ class Utils {
         });
     }
 
+    static getCmdPath(): string {
+        if (process.env.comspec) {
+            return process.env.comspec;
+        }
+        else if (process.env.SystemRoot) {
+            return Path.join(process.env.SystemRoot, 'System32', 'cmd.exe');
+        }
+        else return 'cmd.exe';
+    }
+
     private static delegate(name: string, args: Array<any>): void {
         if ((typeof window != 'undefined') && (<any>window)['DEBUG']) {
             (<any>console)[name](...args);

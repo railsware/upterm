@@ -1,4 +1,4 @@
-import pty = require('pty.js');
+import pty = require('ptyw.js');
 import _ = require('lodash')
 
 class Aliases {
@@ -14,6 +14,8 @@ class Aliases {
     }
 
     static importAliasesFrom(shellName: string): void {
+        if (process.platform === 'win32') return;
+        
         var zsh = pty.spawn(shellName, ['-i', '-c', 'alias'], {env: process.env});
 
         var aliases = '';
