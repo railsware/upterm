@@ -29,14 +29,14 @@ interface CommandExecutionStrategyConstructor {
     new (invocation: Invocation, command: string, args: string[]): CommandExecutionStrategy;
 }
 
-export abstract class CommandExecutionStrategy {
+abstract class CommandExecutionStrategy {
     constructor(protected invocation: Invocation, protected command: string, protected args: string[]) {
     }
 
     abstract startExecution(): Promise<{}>;
 }
 
-export class BuiltInCommandExecutionStrategy extends CommandExecutionStrategy {
+class BuiltInCommandExecutionStrategy extends CommandExecutionStrategy {
     startExecution() {
         return new Promise((resolve, reject) => {
             try {
@@ -50,7 +50,7 @@ export class BuiltInCommandExecutionStrategy extends CommandExecutionStrategy {
     }
 }
 
-export class SystemFileExecutionStrategy extends CommandExecutionStrategy {
+class SystemFileExecutionStrategy extends CommandExecutionStrategy {
     startExecution() {
         return new Promise((resolve, reject) => {
             // TODO: move command to this class.
@@ -73,7 +73,7 @@ export class SystemFileExecutionStrategy extends CommandExecutionStrategy {
     }
 }
 
-export class NullExecutionStrategy extends CommandExecutionStrategy {
+class NullExecutionStrategy extends CommandExecutionStrategy {
     startExecution() {
         return new Promise((resolve, reject) => reject(`Black Screen: command "${this.command}" not found.`));
     }
