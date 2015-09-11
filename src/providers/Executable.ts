@@ -169,14 +169,6 @@ var descriptions: {[indexer: string]: string} = {
 };
 
 class Executable implements i.AutocompletionProvider {
-    private paths: Array<string> = process.env.PATH.split(Path.delimiter);
-    private executables: string[] = [];
-
-    constructor() {
-        this.paths.forEach(path =>
-            Utils.filesIn(path).then(files => this.executables = this.executables.concat(files))
-        );
-    }
 
     getSuggestions(prompt: Prompt) {
         return new Promise((resolve) => {
@@ -184,19 +176,21 @@ class Executable implements i.AutocompletionProvider {
                 return resolve([]);
             }
 
-            var lastArgument = prompt.getLastArgument();
+            Utils.getExecutablesInPaths().then(executables => {
+                var lastArgument = prompt.getLastArgument();
 
-            var all = _.map(this.executables, (executable: string) => {
-                return {
-                    value: executable,
-                    score: 1.5 * score(executable, lastArgument),
-                    synopsis: '',
-                    description: descriptions[executable],
-                    type: 'executable'
-                };
+                var all = _.map(executables, (executable: string) => {
+                    return {
+                        value: executable,
+                        score: 1.5 * score(executable, lastArgument),
+                        synopsis: '',
+                        description: descriptions[executable],
+                        type: 'executable'
+                    };
+                });
+
+                resolve(_(all).sortBy('score').reverse().take(10).value());
             });
-
-            resolve(_(all).sortBy('score').reverse().take(10).value());
         });
     }
 }

@@ -1,8 +1,12 @@
 import fs = require('fs');
 import Path = require('path');
 import i = require('./Interfaces');
+import _ = require('lodash');
 
 class Utils {
+    public static paths: Array<string> = process.env.PATH.split(Path.delimiter);
+    public static executables: Array<string> = [];
+
     static log(...args: any[]): void {
         this.delegate('log', args);
     }
@@ -65,6 +69,16 @@ class Utils {
         });
     }
 
+    static isDirectory(directoryName: string): Promise<boolean> {
+        return new Promise((resolve) => {
+            Utils.ifExists(directoryName, () => {
+                fs.stat(directoryName, (error: NodeJS.ErrnoException, pathStat: fs.Stats) => {
+                    resolve(pathStat.isDirectory());
+                });
+            }, () => resolve(false));
+        });
+    }
+
     static normalizeDir(path: string): string {
         return Path.normalize(path + Path.sep);
     }
@@ -97,10 +111,30 @@ class Utils {
         return bytes.toFixed(1)+''+units[u];
     }
 
+    static getExecutablesInPaths(): Promise<string[]> {
+        return new Promise((resolve) => {
+            if (this.executables.length) {
+                resolve(this.executables);
+            } else {
+                return this.filterWithPromising(this.paths, this.isDirectory).then(paths =>
+                        Promise.all(paths.map(this.filesIn)).then((allFiles: string[][]) => resolve(_.uniq(allFiles.reduce((acc, files) => acc.concat(files)))))
+                )
+            }
+        });
+    }
+
     private static delegate(name: string, args: Array<any>): void {
         if ((typeof window != 'undefined') && (<any>window)['DEBUG']) {
             (<any>console)[name](...args);
         }
+    }
+
+    static filterWithPromising<T>(values: T[], filter: (T) => Promise<boolean>): Promise<T[]> {
+        return new Promise((resolve) => {
+            Promise
+                .all(values.map(value => new Promise((rs) => filter(value).then(rs, () => rs(false)))))
+                .then(filterResults => resolve(_(values).zip(filterResults).filter(z => z[1]).map(z => z[0]).value()));
+        });
     }
 }
 

@@ -15,6 +15,7 @@ import e = require('./Enums');
 //TODO: Make them attributes;
 import DecoratorsList = require('./decorators/List');
 import DecoratorsBase = require('./decorators/Base');
+import Utils = require("./Utils");
 
 class Invocation extends events.EventEmitter {
     private command: pty.Terminal;
@@ -53,25 +54,33 @@ class Invocation extends events.EventEmitter {
 
             this.emit('end');
         } else {
-            this.command = pty.spawn(command, args, {
-                cols: this.dimensions.columns,
-                rows: this.dimensions.rows,
-                cwd: this.directory,
-                env: process.env
-            });
+            Utils.getExecutablesInPaths().then(executables => {
+                if (_.include(executables, command)) {
+                    this.command = pty.spawn(command, args, {
+                        cols: this.dimensions.columns,
+                        rows: this.dimensions.rows,
+                        cwd: this.directory,
+                        env: process.env
+                    });
 
-            this.setStatus(e.Status.InProgress);
+                    this.setStatus(e.Status.InProgress);
 
-            this.command.stdout.on('data', (data: string) => this.parser.parse(data.toString()));
-            this.command.on('exit', (code: number) => {
-                if (code === 0) {
-                    this.setStatus(e.Status.Success);
+                    this.command.stdout.on('data', (data: string) => this.parser.parse(data.toString()));
+                    this.command.on('exit', (code: number) => {
+                        if (code === 0) {
+                            this.setStatus(e.Status.Success);
+                        } else {
+                            this.setStatus(e.Status.Failure);
+                        }
+
+                        this.emit('end');
+                    })
                 } else {
+                    this.parser.parse(`Black Screen: command "${command}" not found.`);
                     this.setStatus(e.Status.Failure);
+                    this.emit('end');
                 }
-
-                this.emit('end');
-            })
+            });
         }
     }
 
