@@ -17,7 +17,7 @@ import DecoratorsBase = require('./decorators/Base');
 import Utils = require("./Utils");
 
 class Invocation extends events.EventEmitter {
-    private command: any;
+    private command: pty.Terminal;
     private parser: Parser;
     private prompt: Prompt;
     private buffer: Buffer;
