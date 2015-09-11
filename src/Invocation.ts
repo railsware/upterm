@@ -16,6 +16,7 @@ import e = require('./Enums');
 import DecoratorsList = require('./decorators/List');
 import DecoratorsBase = require('./decorators/Base');
 import Utils = require("./Utils");
+import CommandExecutor from "./CommandExecutor";
 
 class Invocation extends events.EventEmitter {
     public command: pty.Terminal;
@@ -138,77 +139,6 @@ class Invocation extends events.EventEmitter {
     setStatus(status: e.Status): void {
         this.status = status;
         this.emit('status', status);
-    }
-}
-
-class CommandExecutor {
-    static execute(invocation: Invocation): Promise<CommandExecutionStrategy> {
-        var command = invocation.getPrompt().getCommandName();
-        var args = invocation.getPrompt().getArguments().filter(argument => argument.length > 0);
-
-        return new Promise((resolve) => {
-            if (Command.isBuiltIn(command)) {
-                resolve(new BuiltInCommandExecutionStrategy(invocation, command, args));
-            } else {
-                Utils.getExecutablesInPaths().then(executables => {
-                    if (_.include(executables, command)) {
-                        resolve(new SystemFileExecutionStrategy(invocation, command, args));
-                    } else {
-                        resolve(new NullExecutionStrategy(invocation, command, args));
-                    }
-                });
-            }
-        }).then((strategy: CommandExecutionStrategy) => strategy.startExecution());
-    }
-}
-
-abstract class CommandExecutionStrategy {
-    constructor(protected invocation: Invocation, protected command: string, protected args: string[]) {
-    }
-
-    abstract startExecution(): Promise<any>;
-}
-
-class BuiltInCommandExecutionStrategy extends CommandExecutionStrategy {
-    startExecution(): Promise<any> {
-        return new Promise((resolve, reject) => {
-            try {
-                var newDirectory = Command.cd(this.invocation.directory, this.args);
-                this.invocation.emit('working-directory-changed', newDirectory);
-                resolve();
-            } catch (error) {
-                reject(error.message);
-            }
-        })
-    }
-}
-
-class SystemFileExecutionStrategy extends CommandExecutionStrategy {
-    startExecution(): Promise<any> {
-        return new Promise((resolve, reject) => {
-            // TODO: move command to this class.
-            this.invocation.command = pty.spawn(this.command, this.args, {
-                cols: this.invocation.dimensions.columns,
-                rows: this.invocation.dimensions.rows,
-                cwd: this.invocation.directory,
-                env: process.env
-            });
-
-            this.invocation.command.stdout.on('data', (data: string) => this.invocation.parser.parse(data.toString()));
-            this.invocation.command.on('exit', (code: number) => {
-                if (code === 0) {
-                    resolve();
-                } else {
-                    reject();
-                }
-            })
-        })
-    }
-}
-
-class NullExecutionStrategy extends CommandExecutionStrategy {
-    startExecution(): Promise<any> {
-        return new Promise((resolve, reject) => reject(`Black Screen: command "${this.command}" not found.`));
     }
 }
 
