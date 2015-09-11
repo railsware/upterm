@@ -33,11 +33,11 @@ export abstract class CommandExecutionStrategy {
     constructor(protected invocation: Invocation, protected command: string, protected args: string[]) {
     }
 
-    abstract startExecution(): Promise<any>;
+    abstract startExecution(): Promise<{}>;
 }
 
 export class BuiltInCommandExecutionStrategy extends CommandExecutionStrategy {
-    startExecution(): Promise<any> {
+    startExecution() {
         return new Promise((resolve, reject) => {
             try {
                 var newDirectory = Command.cd(this.invocation.directory, this.args);
@@ -51,7 +51,7 @@ export class BuiltInCommandExecutionStrategy extends CommandExecutionStrategy {
 }
 
 export class SystemFileExecutionStrategy extends CommandExecutionStrategy {
-    startExecution(): Promise<any> {
+    startExecution() {
         return new Promise((resolve, reject) => {
             // TODO: move command to this class.
             this.invocation.command = pty.spawn(this.command, this.args, {
@@ -74,7 +74,7 @@ export class SystemFileExecutionStrategy extends CommandExecutionStrategy {
 }
 
 export class NullExecutionStrategy extends CommandExecutionStrategy {
-    startExecution(): Promise<any> {
+    startExecution() {
         return new Promise((resolve, reject) => reject(`Black Screen: command "${this.command}" not found.`));
     }
 }
