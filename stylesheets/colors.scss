@@ -7,7 +7,6 @@ $base-colors: (
         'blue': #66A5DF,
         'magenta': #C699C5,
         'cyan': #6EC6C6,
-        'grey': #3E4451,
 
         'bright-black': #2D323A,
         'bright-red': #dd8494,
@@ -28,7 +27,10 @@ $base-colors: (
   @return $RGB;
 }
 
-$extra-colors: ();
+$extra-colors: (
+        'selection-color': rgba(lighten(map-get($colors, 'bright-black'), 10%), 0.7)
+);
+
 @for $index from 0 through 215 {
   $R: floor($index / 36);
   $G: floor(($index % 36) / 6);
