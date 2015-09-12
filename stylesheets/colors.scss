@@ -28,7 +28,7 @@ $base-colors: (
 }
 
 $extra-colors: (
-        'selection-color': rgba(lighten(map-get($colors, 'bright-black'), 10%), 0.7)
+        'selection-color': rgba(lighten(map-get($base-colors, 'bright-black'), 10%), 0.7)
 );
 
 @for $index from 0 through 215 {
