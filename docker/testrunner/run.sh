@@ -54,7 +54,7 @@ fi
 
 
 
-#Third argument?
+#Second argument?
 
 if [[ -n "$SECOND" ]]
   then
@@ -71,7 +71,7 @@ fi
 
 
 
-#Third argument?
+#First argument?
 
 if [[ -n "$FIRST" ]]
   then
@@ -102,22 +102,12 @@ if [[ ${#image} -lt 1 ]]
   then
   echo "No black-screen_testrunner image available"
   echo "building..."
-  code=$(docker build -t "$IMAGE_NAME" .)
-  if [[ $code != 0 ]]
-  then
-    echo "docker build failed :-("
-    exit
-  fi
+  docker build -t "$IMAGE_NAME" .
 elif [[ -n "$build" ]]
   then
   echo "Rebuilding the image..."
   docker rmi -f "$IMAGE_NAME"
-  code=$(docker build -t "$IMAGE_NAME" .)
-  if [[ $code != 0 ]]
-    then
-    echo "docker build failed :-("
-    exit
-  fi
+  docker build -t "$IMAGE_NAME" .
 fi
 
 
