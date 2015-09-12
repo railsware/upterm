@@ -1,11 +1,11 @@
-import i = require('../Interfaces');
-import _ = require('lodash');
-import Aliases = require('../Aliases');
-import ExecutionHistory = require('../History');
-import Prompt = require("../Prompt");
+import * as i from '../Interfaces';
+import * as _ from 'lodash';
+import Aliases from '../Aliases';
+import ExecutionHistory from '../History';
+import Prompt from "../Prompt";
 var score: (i: string, m: string) => number = require('fuzzaldrin').score;
 
-class History implements i.AutocompletionProvider {
+export default class History implements i.AutocompletionProvider {
     getSuggestions(prompt: Prompt) {
         return new Promise((resolve) => {
             var lastArgument = prompt.getLastArgument();
@@ -24,5 +24,3 @@ class History implements i.AutocompletionProvider {
         });
     }
 }
-
-export = History;

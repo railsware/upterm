@@ -1,6 +1,6 @@
-import e = require('./Enums');
-import fs = require('fs');
-import Prompt = require("./Prompt");
+import * as e from './Enums';
+import * as fs from 'fs';
+import Prompt from "./Prompt";
 
 export interface Dimensions {
     columns: number;

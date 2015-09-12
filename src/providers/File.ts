@@ -1,11 +1,11 @@
-import i = require('../Interfaces');
-import _ = require('lodash');
-import Utils = require('../Utils');
-import Path = require('path');
-import Prompt = require("../Prompt");
+import * as i from '../Interfaces';
+import * as _ from 'lodash';
+import Utils from '../Utils';
+import * as Path from 'path';
+import Prompt from "../Prompt";
 var score: (i: string, m: string) => number = require('fuzzaldrin').score;
 
-class File implements i.AutocompletionProvider {
+export default class File implements i.AutocompletionProvider {
     getSuggestions(prompt: Prompt) {
         return new Promise((resolve) => {
             if (prompt.getWholeCommand().length < 2) {
@@ -71,5 +71,3 @@ class File implements i.AutocompletionProvider {
         }
     }
 }
-
-export = File;

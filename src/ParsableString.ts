@@ -1,8 +1,8 @@
-import Language = require('./Language');
-import i = require('./Interfaces');
-import Aliases = require("./Aliases");
+import Language from './Language';
+import * as i from './Interfaces';
+import Aliases from "./Aliases";
 
-class ParsableString implements i.Parsable {
+export default class ParsableString implements i.Parsable {
     static language = new Language();
     text: string;
 
@@ -54,5 +54,3 @@ class ParsableString implements i.Parsable {
         ParsableString.language.onParsingError = handler
     }
 }
-
-export = ParsableString

@@ -1,6 +1,6 @@
-import React = require('react');
-import Terminal = require('../Terminal');
-import Invocation = require('../Invocation');
+import * as React from 'react';
+import Terminal from '../Terminal';
+import Invocation from '../Invocation';
 import {VcsData} from '../Interfaces';
 const InvocationComponent = require('../../views/invocation');
 const StatusLine = require('../../views/status_line');

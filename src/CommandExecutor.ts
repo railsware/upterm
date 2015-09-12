@@ -1,8 +1,8 @@
-import Invocation = require("./Invocation");
-import Command = require("./Command");
-import Utils = require("./Utils");
-import pty = require('ptyw.js');
-import _ = require('lodash');
+import Invocation from "./Invocation";
+import Command from "./Command";
+import Utils from './Utils';
+import * as pty from 'ptyw.js';
+import * as _ from 'lodash';
 
 export default class CommandExecutor {
     static execute(invocation: Invocation): Promise<CommandExecutionStrategy> {
@@ -25,9 +25,7 @@ export default class CommandExecutor {
     }
 }
 
-interface CommandExecutionStrategyConstructor {
-    new (invocation: Invocation, command: string, args: string[]): CommandExecutionStrategy;
-}
+type CommandExecutionStrategyConstructor = { new (invocation: Invocation, command: string, args: string[]): CommandExecutionStrategy }
 
 abstract class CommandExecutionStrategy {
     constructor(protected invocation: Invocation, protected command: string, protected args: string[]) {

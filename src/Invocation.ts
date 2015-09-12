@@ -1,23 +1,24 @@
 /// <reference path="references.ts" />
 
-import pty = require('ptyw.js');
-import _ = require('lodash');
-import React = require('react');
-import events = require('events');
-import Parser = require('./Parser');
-import Prompt = require('./Prompt');
-import Buffer = require('./Buffer');
-import Command = require('./Command');
-import History = require('./History');
-import i = require('./Interfaces');
-import e = require('./Enums');
+import * as pty from 'ptyw.js';
+import * as child_process from 'child_process';
+import * as _ from 'lodash';
+import * as React from 'react';
+import * as events from 'events';
+import Parser from './Parser';
+import Prompt from './Prompt';
+import Buffer from './Buffer';
+import Command from './Command';
+import History from './History';
+import * as i from './Interfaces';
+import * as e from './Enums';
 //TODO: Make them attributes;
-import DecoratorsList = require('./decorators/List');
-import DecoratorsBase = require('./decorators/Base');
-import Utils = require("./Utils");
+import {list} from './decorators/List';
+import DecoratorsBase from './decorators/Base';
+import Utils from './Utils';
 import CommandExecutor from "./CommandExecutor";
 
-class Invocation extends events.EventEmitter {
+export default class Invocation extends events.EventEmitter {
     public command: pty.Terminal;
     public parser: Parser;
     private prompt: Prompt;
@@ -110,8 +111,14 @@ class Invocation extends events.EventEmitter {
     }
 
     canBeDecorated(): boolean {
-        for (var Decorator of DecoratorsList) {
-            if ((new Decorator(this)).isApplicable()) {
+        for (var Decorator of list) {
+            var decorator = new Decorator(this);
+
+            if (this.status == e.Status.InProgress && !decorator.shouldDecorateRunningPrograms()) {
+                continue;
+            }
+
+            if (decorator.isApplicable()) {
                 return true;
             }
         }
@@ -119,7 +126,7 @@ class Invocation extends events.EventEmitter {
     }
 
     decorate(): any {
-        for (var Decorator of DecoratorsList) {
+        for (var Decorator of list) {
             var decorator: DecoratorsBase = new Decorator(this);
             if (decorator.isApplicable()) {
                 return decorator.decorate();
@@ -140,5 +147,3 @@ class Invocation extends events.EventEmitter {
         this.emit('status', status);
     }
 }
-
-export = Invocation;

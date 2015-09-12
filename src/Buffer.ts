@@ -1,14 +1,14 @@
-import events = require('events');
-import Char = require('./Char');
-import Cursor = require('./Cursor');
-import React = require('react');
-import i = require('./Interfaces');
-import e = require('./Enums');
-import _ = require('lodash');
-import Utils = require("./Utils");
+import * as events from 'events';
+import Char from './Char';
+import Cursor from './Cursor';
+import * as React from 'react';
+import * as i from './Interfaces';
+import * as e from './Enums';
+import * as _ from 'lodash';
+import Utils from './Utils';
 import {memoize} from "./Decorators";
 
-class Buffer extends events.EventEmitter {
+export default class Buffer extends events.EventEmitter {
     private storage: Array<Array<Char>> = [];
     public cursor: Cursor = new Cursor();
     public activeBuffer = 'standard';
@@ -287,5 +287,3 @@ class Buffer extends events.EventEmitter {
         return row && (typeof row == 'object');
     }
 }
-
-export = Buffer;

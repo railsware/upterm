@@ -1,13 +1,13 @@
 /// <reference path="references.ts" />
 
-import Utils = require("./Utils");
+import Utils from './Utils';
 var React = require('react');
-import i = require('./Interfaces');
-import e = require('./Enums');
-import _ = require('lodash');
+import * as i from './Interfaces';
+import * as e from './Enums';
+import * as _ from 'lodash';
 import {memoize} from "./Decorators";
 
-class Char {
+export default class Char {
     @memoize()
     static flyweight(char: string, attributes: i.Attributes) {
         return new Char(char, attributes);
@@ -37,5 +37,3 @@ class Char {
         return charCode < 32 && charCode != 9;
     }
 }
-
-export = Char

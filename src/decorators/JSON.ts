@@ -1,8 +1,8 @@
 var JSONTree = require('../../../decorators/json');
-import Base = require('./Base');
-import React = require('react');
+import Base from './Base';
+import * as React from 'react';
 
-class Json extends Base {
+export default class Json extends Base {
     decorate(): any {
         return React.createElement(JSONTree, {data: JSON.parse(this.stringifiedOutputBuffer())});
     }
@@ -20,5 +20,3 @@ class Json extends Base {
         return this.invocation.getBuffer().toString();
     }
 }
-
-export = Json;

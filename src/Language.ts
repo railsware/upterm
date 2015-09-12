@@ -1,6 +1,6 @@
 var jison = require("jison");
-import i = require('./Interfaces');
-import _ = require('lodash');
+import * as i from './Interfaces';
+import * as _ from 'lodash';
 
 var grammar = `
 %lex
@@ -187,7 +187,7 @@ LS_OPTION
     ;
         `;
 
-class Language {
+export default class Language {
     parser: any;
 
     constructor() {
@@ -221,6 +221,4 @@ class Language {
         this.parser.yy.parseError = handler;
     }
 }
-
-export = Language
 

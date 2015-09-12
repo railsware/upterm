@@ -1,8 +1,8 @@
-import _ = require('lodash');
-import Base = require('./Base');
-import React = require('react');
+import * as _ from 'lodash';
+import Base from './Base';
+import * as React from 'react';
 
-class GitDiff extends Base {
+export default class GitDiff extends Base {
     decorate(): any {
         var rows = this.invocation.getBuffer().toLines().map((row: string) => {
             if (/^\s*\+/.test(row)) {
@@ -20,5 +20,3 @@ class GitDiff extends Base {
         return this.invocation.hasOutput() && _.isEqual(this.invocation.getPrompt().getWholeCommand(), ['git', 'diff']);
     }
 }
-
-export = GitDiff;
