@@ -2,10 +2,15 @@
 
 
 # Why -i -t ? Because we get nice terminal colours... And could stop the test with ^C
-RUNOPTIONS=" -i -t "
+if [[ $NONINTERACTIVE != true ]]
+       then
+       RUNOPTIONS=" -i -t "
+fi
 
 IMAGE_NAME="black-screen_testrunner"
 CONTAINER_NAME="bs-testrunner"
+
+
 
 # Help?
 if [[ $1 == "--help" ]]
