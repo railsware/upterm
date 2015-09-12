@@ -1,6 +1,6 @@
-import i = require('./Interfaces');
+import * as i from './Interfaces';
 
-class Cursor {
+export default class Cursor {
     private show = false;
     private blink = false;
 
@@ -65,5 +65,3 @@ class Cursor {
         this.blink = state;
     }
 }
-
-export = Cursor;

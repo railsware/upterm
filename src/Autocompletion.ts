@@ -1,13 +1,13 @@
-import Executable = require('./providers/Executable');
-import Command = require('./providers/Command');
-import File = require('./providers/File');
-import Alias = require('./providers/Alias');
-import History = require('./providers/History');
-import _ = require('lodash');
-import i = require('./Interfaces');
-import Prompt = require("./Prompt");
+import Executable from './providers/Executable';
+import Command from './providers/Command';
+import File from './providers/File';
+import Alias from './providers/Alias';
+import History from './providers/History';
+import * as _ from 'lodash';
+import * as i from './Interfaces';
+import Prompt from "./Prompt";
 
-class Autocompletion implements i.AutocompletionProvider {
+export default class Autocompletion implements i.AutocompletionProvider {
     providers = [new Command(), new Alias(), new Executable(), new File(), new History()];
     limit = 30;
 
@@ -23,5 +23,3 @@ class Autocompletion implements i.AutocompletionProvider {
         );
     }
 }
-
-export = Autocompletion;

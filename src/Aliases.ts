@@ -1,7 +1,7 @@
-import pty = require('pty.js');
-import _ = require('lodash')
+import * as pty from 'pty.js';
+import * as _ from 'lodash'
 
-class Aliases {
+export default class Aliases {
     static aliases: _.Dictionary<string>;
 
     static initialize(): void {
@@ -28,5 +28,3 @@ class Aliases {
 }
 
 Aliases.initialize();
-
-export = Aliases;

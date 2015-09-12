@@ -1,13 +1,13 @@
-import events = require('events');
-import Autocompletion = require('./Autocompletion');
-import Buffer = require('./Buffer');
-import Aliases = require('./Aliases');
-import History = require('./History');
-import _ = require('lodash');
-import i = require('./Interfaces');
-import ParsableString = require('./ParsableString');
+import * as events from 'events';
+import Autocompletion from './Autocompletion';
+import Buffer from './Buffer';
+import Aliases from './Aliases';
+import History from './History';
+import * as _ from 'lodash';
+import * as i from './Interfaces';
+import ParsableString from './ParsableString';
 
-class Prompt extends events.EventEmitter {
+export default class Prompt extends events.EventEmitter {
     buffer: Buffer;
     // TODO: change the type.
     history: any;
@@ -66,5 +66,3 @@ class Prompt extends events.EventEmitter {
         return new ParsableString(this.buffer.toString());
     }
 }
-
-export = Prompt;

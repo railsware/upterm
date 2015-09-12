@@ -1,8 +1,8 @@
-import fs = require('fs');
-import Path = require('path');
+import * as fs from 'fs';
+import * as Path from 'path';
 
 // A class representing built in commands
-class Command {
+export default class Command {
     static cd(currentDirectory: string, args: Array<string>): string {
         if (!args.length) {
             return process.env.HOME;
@@ -25,5 +25,3 @@ class Command {
         return command == 'cd';
     }
 }
-
-export = Command;

@@ -1,10 +1,10 @@
-import Invocation = require("./Invocation");
+import Invocation from "./Invocation";
 var ANSIParser: AnsiParserConstructor = require('node-ansiparser');
 
-import e = require('./Enums');
-import i = require('./Interfaces');
-import Utils = require('./Utils');
-import Buffer = require('./Buffer');
+import * as e from './Enums';
+import * as i from './Interfaces';
+import Utils from './Utils';
+import Buffer from './Buffer';
 
 import Color = e.Color;
 import Weight = e.Weight;
@@ -47,7 +47,7 @@ var CSI = {
     }
 };
 
-class Parser {
+export default class Parser {
     private parser: AnsiParser;
     private buffer: Buffer;
 
@@ -414,8 +414,6 @@ class Parser {
         };
     }
 }
-
-export = Parser;
 
 function or1(number: number) {
     if (number == null) {

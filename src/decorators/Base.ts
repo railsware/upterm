@@ -1,6 +1,6 @@
-import Invocation = require('../Invocation');
+import Invocation from '../Invocation';
 
-class Base {
+export default class Base {
     constructor(protected invocation: Invocation) {
     }
 
@@ -12,5 +12,3 @@ class Base {
         throw new Error('This method should be implemented in a subclass');
     }
 }
-
-export = Base;

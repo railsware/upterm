@@ -1,10 +1,10 @@
-import Utils = require('../Utils');
-import i = require('../Interfaces');
-import _ = require('lodash');
-import Prompt = require("../Prompt");
+import Utils from '../Utils';
+import * as i from '../Interfaces';
+import * as _ from 'lodash';
+import Prompt from "../Prompt";
 var filter: any = require('fuzzaldrin').filter;
 
-class Command implements i.AutocompletionProvider {
+export default class Command implements i.AutocompletionProvider {
     suggestions: i.Suggestion[] = [];
 
     getSuggestions(prompt: Prompt) {
@@ -35,5 +35,3 @@ class Command implements i.AutocompletionProvider {
         });
     }
 }
-
-export = Command;

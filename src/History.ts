@@ -1,4 +1,4 @@
-class History {
+export default class History {
     static historySize = 1000;
     static pointer: number = 0;
     static stack: Array<string> = [];
@@ -52,5 +52,3 @@ class History {
         stack.forEach(item => this.append(item));
     }
 }
-
-export = History;

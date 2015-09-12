@@ -1,6 +1,6 @@
-import Terminal = require('../Terminal');
+import Terminal from '../Terminal';
 import TerminalComponent from './TerminalComponent';
-import React = require('react');
+import * as React from 'react';
 
 interface State {
     terminals: Terminal[];

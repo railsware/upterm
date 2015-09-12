@@ -1,9 +1,9 @@
-import fs = require('fs');
-import Path = require('path');
-import i = require('./Interfaces');
-import _ = require('lodash');
+import * as fs from 'fs';
+import * as Path from 'path';
+import * as i from './Interfaces';
+import * as _ from 'lodash';
 
-class Utils {
+export default class Utils {
     public static paths: Array<string> = process.env.PATH.split(Path.delimiter);
     public static executables: Array<string> = [];
 
@@ -137,5 +137,3 @@ class Utils {
         });
     }
 }
-
-export = Utils;

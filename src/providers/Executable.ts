@@ -1,8 +1,8 @@
-import Utils = require('../Utils');
-import i = require('../Interfaces');
-import _ = require('lodash')
-import Path = require('path')
-import Prompt = require("../Prompt");
+import Utils from '../Utils';
+import * as i from '../Interfaces';
+import * as _ from 'lodash'
+import * as Path from 'path'
+import Prompt from "../Prompt";
 var score: (i: string, m: string) => number = require('fuzzaldrin').score;
 
 var descriptions: {[indexer: string]: string} = {
@@ -168,7 +168,7 @@ var descriptions: {[indexer: string]: string} = {
     zcat: 'Expand and concatenate data'
 };
 
-class Executable implements i.AutocompletionProvider {
+export default class Executable implements i.AutocompletionProvider {
 
     getSuggestions(prompt: Prompt) {
         return new Promise((resolve) => {
@@ -194,5 +194,3 @@ class Executable implements i.AutocompletionProvider {
         });
     }
 }
-
-export = Executable;

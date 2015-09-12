@@ -1,16 +1,16 @@
-import fs = require('fs');
-import _ = require('lodash');
-import i = require('./Interfaces');
-import events = require('events');
-import Invocation = require('./Invocation');
-import Aliases = require('./Aliases');
-import History = require('./History');
-import Utils = require('./Utils');
-import Serializer = require("./Serializer");
+import * as fs from 'fs';
+import * as _ from 'lodash';
+import * as i from './Interfaces';
+import * as events from 'events';
+import Invocation from './Invocation';
+import Aliases from './Aliases';
+import History from './History';
+import Utils from './Utils';
+import Serializer from "./Serializer";
 var remote = require('remote');
 var app = remote.require('app');
 
-class Terminal extends events.EventEmitter {
+export default class Terminal extends events.EventEmitter {
     invocations: Array<Invocation>;
     currentDirectory: string;
     history: History;
@@ -127,5 +127,3 @@ class Terminal extends events.EventEmitter {
         });
     }
 }
-
-export = Terminal;

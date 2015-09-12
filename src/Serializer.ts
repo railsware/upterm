@@ -1,7 +1,7 @@
-import _ = require('lodash');
-import History = require('./History');
+import * as _ from 'lodash';
+import History from './History';
 
-class Serializer {
+export default class Serializer {
     static serialize(serializable: any): string {
         if (typeof serializable.serialize == 'function') {
             return serializable.serialize();
@@ -22,5 +22,3 @@ class Serializer {
         }
     }
 }
-
-export = Serializer

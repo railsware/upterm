@@ -1,8 +1,8 @@
-import Invocation = require("./Invocation");
-import Command = require("./Command");
-import Utils = require("./Utils");
-import pty = require('pty.js');
-import _ = require('lodash');
+import Invocation from "./Invocation";
+import Command from "./Command";
+import Utils from './Utils';
+import * as pty from 'pty.js';
+import * as _ from 'lodash';
 
 export default class CommandExecutor {
     static execute(invocation: Invocation): Promise<CommandExecutionStrategy> {
