@@ -58,7 +58,7 @@ a {
 }
 
 ::selection {
-  background: map-get($colors, 'grey');
+  background: map-get($colors, 'selection-color');
 }
 
 html {
