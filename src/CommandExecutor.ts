@@ -25,9 +25,7 @@ export default class CommandExecutor {
     }
 }
 
-interface CommandExecutionStrategyConstructor {
-    new (invocation: Invocation, command: string, args: string[]): CommandExecutionStrategy;
-}
+type CommandExecutionStrategyConstructor = { new (invocation: Invocation, command: string, args: string[]): CommandExecutionStrategy }
 
 abstract class CommandExecutionStrategy {
     constructor(protected invocation: Invocation, protected command: string, protected args: string[]) {
