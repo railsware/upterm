@@ -22,7 +22,7 @@ class Command {
     }
 
     static isBuiltIn(command: string): any {
-        return command === 'cd' || command === 'clear';
+        return command === 'cd';
     }
 }
 

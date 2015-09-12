@@ -1,7 +1,7 @@
 import Invocation = require("./Invocation");
 import Command = require("./Command");
 import Utils = require("./Utils");
-import pty = require('pty.js');
+import pty = require('ptyw.js');
 import _ = require('lodash');
 
 export default class CommandExecutor {
@@ -53,6 +53,12 @@ class BuiltInCommandExecutionStrategy extends CommandExecutionStrategy {
 class SystemFileExecutionStrategy extends CommandExecutionStrategy {
     startExecution() {
         return new Promise((resolve, reject) => {
+            if (process.platform === 'win32') {
+                this.args.unshift(this.command);
+                this.args = ['/s', '/c', this.args.join(' ')];
+                this.command = Utils.getCmdPath();
+            }
+
             // TODO: move command to this class.
             this.invocation.command = pty.spawn(this.command, this.args, {
                 cols: this.invocation.dimensions.columns,
@@ -63,7 +69,8 @@ class SystemFileExecutionStrategy extends CommandExecutionStrategy {
 
             this.invocation.command.stdout.on('data', (data: string) => this.invocation.parser.parse(data.toString()));
             this.invocation.command.on('exit', (code: number) => {
-                if (code === 0) {
+                /* In windows there is no code returned (null) so instead of comparing to 0 we check if its 0 or null with ! */
+                if (!code) {
                     resolve();
                 } else {
                     reject();
