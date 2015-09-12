@@ -7,6 +7,7 @@ if [[ ! -e /.firstrun ]] && ( [[ ! -d /node_modules ]] || [[ -n $FORCE ]] )
 	if [[ ! -d /node_modules ]]
 		then
 		mkdir /node_modules
+		ln -s * /node_modules/
 	fi
 
 	npm install -g selenium-standalone
