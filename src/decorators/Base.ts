@@ -1,14 +1,20 @@
 import Invocation from '../Invocation';
 
-export default class Base {
+abstract class Base {
     constructor(protected invocation: Invocation) {
     }
 
-    decorate(): any {
-        throw new Error('This method should be implemented in a subclass');
-    }
+    abstract isApplicable(): boolean;
+    abstract decorate(): any;
 
-    isApplicable(): boolean {
-        throw new Error('This method should be implemented in a subclass');
+    /**
+     * @note Returning `true` from this method
+     *       will result in rendering performance
+     *       decrease because the output will be
+     *       re-decorated after each data chunk.
+     */
+    shouldDecorateRunningPrograms(): boolean {
+        return false;
     }
 }
+export default Base;

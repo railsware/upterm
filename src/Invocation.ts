@@ -112,7 +112,13 @@ export default class Invocation extends events.EventEmitter {
 
     canBeDecorated(): boolean {
         for (var Decorator of list) {
-            if ((new Decorator(this)).isApplicable()) {
+            var decorator = new Decorator(this);
+
+            if (this.status == e.Status.InProgress && !decorator.shouldDecorateRunningPrograms()) {
+                continue;
+            }
+
+            if (decorator.isApplicable()) {
                 return true;
             }
         }
