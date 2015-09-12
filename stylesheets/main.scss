@@ -57,6 +57,10 @@ a {
   box-sizing: border-box;
 }
 
+::selection {
+  background: map-get($colors, 'bright-black');
+}
+
 html {
   -webkit-backface-visibility: hidden;
 }
