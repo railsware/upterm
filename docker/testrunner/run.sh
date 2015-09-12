@@ -4,9 +4,23 @@
 # Why -i -t ? Because we get nice terminal colours... And could stop the test with ^C
 RUNOPTIONS=" -i -t "
 
+IMAGE_NAME="black-screen_testrunner"
+CONTAINER_NAME="bs-testrunner"
+
+# Help?
+if [[ $1 == "--help" ]]
+  then
+  echo "./run.sh [-f] [-b] [path/to/your/black-screen]"
+  exit
+fi
 
 
-# Firstly mask the /es to, because they break the script
+# Firstly mask the slashes to, because they break the script
+
+if [[ -n $3 ]]
+  then
+  THIRD="`echo ${2//\//\\/}`"
+fi
 
 if [[ -n $2 ]]
   then
@@ -19,49 +33,90 @@ if [[ -n $1 ]]
 fi
 
 
-# Second Argument available?
+
+#Third argument?
+
+if [[ -n "$THIRD" ]]
+  then
+  if [[ "$THIRD" == "-b" ]]
+    then
+    build=true
+  elif [[ "$THIRD" == "-f" ]]
+    then
+    force=true
+  else
+    path="$THIRD"
+  fi
+fi
+
+
+
+#Third argument?
 
 if [[ -n "$SECOND" ]]
   then
-  if [[ "$SECOND" == "-f" ]]
+  if [[ "$SECOND" == "-b" ]]
+    then
+    build=true
+  elif [[ "$SECOND" == "-f" ]]
     then
     force=true
+  else
+    path="$SECOND"
+  fi
+fi
+
+
+
+#Third argument?
+
+if [[ -n "$FIRST" ]]
+  then
+  if [[ "$FIRST" == "-b" ]]
+    then
+    build=true
   elif [[ "$FIRST" == "-f" ]]
     then
-    path=$SECOND
+    force=true
   else
-    echo "unrecognized option"
-    echo "available options: ./run.sh [-f] [repodir]"
+    path="$FIRST"
+  fi
+fi
+
+
+
+
+
+
+#grep the image
+
+image=`docker images | grep "$IMAGE_NAME"`
+if [[ ${#image} -lt 1 ]]
+  then
+  echo "No black-screen_testrunner image available"
+  echo "building..."
+  code=$(docker build -t "$IMAGE_NAME" .)
+  if [[ $code != 0 ]]
+  then
+    echo "docker build failed :-("
+    exit
+  fi
+elif [[ -n "$build" ]]
+  then
+  echo "Rebuilding the image..."
+  docker rmi "$IMAGE_NAME"
+  code=$(docker build -t "$IMAGE_NAME" .)
+  if [[ $code != 0 ]]
+    then
+    echo "docker build failed :-("
     exit
   fi
 fi
 
 
 
-#Processing the first argument
-
-if [[ -n "$FIRST"  ]]
-  then
-  if [[ "$FIRST" == "-f" ]]
-    then
-    force=true
-  else
-    path=$FIRST
-  fi
-fi
-
-
-#grep the black-screen_testrunner image
-image=`docker images | grep black-screen_testrunner`
-if [[ ${#image} -lt 1 ]]
-  then
-  echo "No black-screen_testrunner image available"
-  echo "building..."
-  docker build -t black-screen_testrunner .
-fi
-
 #show the docker processe with the name bs-testrunner
-id=`docker ps -aq -f name=bs-testrunner`
+id=`docker ps -aq -f name="$CONTAINER_NAME"`
 
 
 #Determine if it's an absolute or relative path, substitute if neccessary
@@ -96,18 +151,18 @@ fi
 if [[ ${#id} -gt 1 && -z $force ]]
   then
   echo "Restarting old container..."
-  docker restart bs-testrunner
-  docker attach bs-testrunner
+  docker restart "$CONTAINER_NAME"
+  docker attach "$CONTAINER_NAME"
 elif [[ ${#id} -gt 1 ]]
   then
   echo "Force to rebuild the container"
-  docker rm -f bs-testrunner
-  docker run --name bs-testrunner $RUNOPTIONS -e FORCE=true -v "$blackscreen_path":/black-screen black-screen_testrunner
+  docker rm -f "$CONTAINER_NAME"
+  docker run --name "$CONTAINER_NAME" $RUNOPTIONS -e FORCE=true -v "$blackscreen_path":/black-screen "$IMAGE_NAME"
 elif [[ -n $force ]]
   then
   echo "Force to rebuild the container"
-  docker run --name bs-testrunner $RUNOPTIONS -e FORCE=true -v "$blackscreen_path":/black-screen black-screen_testrunner
+  docker run --name "$CONTAINER_NAME" $RUNOPTIONS -e FORCE=true -v "$blackscreen_path":/black-screen "$IMAGE_NAME"
 else
   echo "Run the container"
-  docker run --name bs-testrunner $RUNOPTIONS -v "$blackscreen_path":/black-screen black-screen_testrunner
+  docker run --name "$CONTAINER_NAME" $RUNOPTIONS -v "$blackscreen_path":/black-screen "$IMAGE_NAME"
 fi
