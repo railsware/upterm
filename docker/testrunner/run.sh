@@ -32,8 +32,6 @@ if [[ -n $1 ]]
   FIRST="`echo ${1//\//\\/}`"
 fi
 
-
-
 #Third argument?
 
 if [[ -n "$THIRD" ]]
@@ -84,7 +82,11 @@ if [[ -n "$FIRST" ]]
 fi
 
 
-
+# Rebuild the image? Means you need to rebuild the container...
+if [[ -n $build ]]
+  then
+  force=true
+fi
 
 
 
@@ -104,7 +106,7 @@ if [[ ${#image} -lt 1 ]]
 elif [[ -n "$build" ]]
   then
   echo "Rebuilding the image..."
-  docker rmi "$IMAGE_NAME"
+  docker rmi -f "$IMAGE_NAME"
   code=$(docker build -t "$IMAGE_NAME" .)
   if [[ $code != 0 ]]
     then
