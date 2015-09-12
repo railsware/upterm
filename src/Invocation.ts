@@ -15,17 +15,18 @@ import e = require('./Enums');
 import DecoratorsList = require('./decorators/List');
 import DecoratorsBase = require('./decorators/Base');
 import Utils = require("./Utils");
+import CommandExecutor from "./CommandExecutor";
 
 class Invocation extends events.EventEmitter {
-    private command: pty.Terminal;
-    private parser: Parser;
+    public command: pty.Terminal;
+    public parser: Parser;
     private prompt: Prompt;
     private buffer: Buffer;
     public id: string;
     public status: e.Status = e.Status.NotStarted;
 
-    constructor(private directory: string,
-                private dimensions: i.Dimensions,
+    constructor(public directory: string,
+                public dimensions: i.Dimensions,
                 private history: History = new History()) {
         super();
 
@@ -33,12 +34,13 @@ class Invocation extends events.EventEmitter {
         this.prompt.on('send', () => this.execute());
 
         this.buffer = new Buffer(dimensions);
-        this.buffer.on('data', _.throttle(() => this.emit('data'), 1000/60));
+        this.buffer.on('data', _.throttle(() => this.emit('data'), 1000 / 60));
         this.parser = new Parser(this);
         this.id = `invocation-${new Date().getTime()}`
     }
 
     execute(): void {
+<<<<<<< HEAD
         var command = this.prompt.getCommandName();
         var args = this.prompt.getArguments().filter(argument => argument.length > 0);
 
@@ -94,9 +96,23 @@ class Invocation extends events.EventEmitter {
                     this.parser.parse(`Black Screen: command "${command}" not found.`);
                     this.setStatus(e.Status.Failure);
                     this.emit('end');
+=======
+        this.setStatus(e.Status.InProgress);
+
+        CommandExecutor.execute(this).then(
+            () => {
+                this.setStatus(e.Status.Success);
+                this.emit('end')
+            },
+            (errorMessage) => {
+                this.setStatus(e.Status.Failure);
+                if (errorMessage) {
+                    this.buffer.writeString(errorMessage, {color: e.Color.Red});
+>>>>>>> 72844dc2fe215facfc2fc3957c418d02bdde41a3
                 }
-            });
-        }
+                this.emit('end');
+            }
+        );
     }
 
     setPromptText(value: string): void {
@@ -112,13 +128,13 @@ class Invocation extends events.EventEmitter {
             var identifier: string = (<any>event.nativeEvent).keyIdentifier;
 
             if (identifier.startsWith('U+')) {
-                var code =parseInt(identifier.substring(2), 16);
+                var code = parseInt(identifier.substring(2), 16);
 
                 /**
                  * In VT-100 emulation mode backspace should be translated to delete.
                  * http://www.braun-home.net/michael/mbedit/info/misc/VT100_commands.htm
                  */
-                if(code == e.CharCode.Backspace) {
+                if (code == e.CharCode.Backspace) {
                     code = e.CharCode.Delete;
                 }
 
