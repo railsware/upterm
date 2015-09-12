@@ -1,13 +1,14 @@
 import * as fs from 'fs';
 import * as Path from 'path';
+import Utils from './Utils';
 
 // A class representing built in commands
 export default class Command {
     static cd(currentDirectory: string, args: Array<string>): string {
         if (!args.length) {
-            return process.env.HOME;
+            return Utils.getHomeDirectory();
         }
-        var path = args[0].replace(/^~/, process.env.HOME);
+        var path = args[0].replace(/^~/, Utils.getHomeDirectory());
         var newDirectory = Path.resolve(currentDirectory, path);
 
         if (!fs.existsSync(newDirectory)) {

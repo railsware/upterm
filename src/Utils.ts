@@ -133,6 +133,10 @@ export default class Utils {
         else return 'cmd.exe';
     }
 
+    static getHomeDirectory(): string {
+        return process.env[(process.platform === 'win32') ? 'USERPROFILE' : 'HOME'];
+    }
+
     private static delegate(name: string, args: Array<any>): void {
         if ((typeof window != 'undefined') && (<any>window)['DEBUG']) {
             (<any>console)[name](...args);
