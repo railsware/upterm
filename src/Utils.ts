@@ -123,16 +123,6 @@ export default class Utils {
         });
     }
 
-    static getCmdPath(): string {
-        if (process.env.comspec) {
-            return process.env.comspec;
-        }
-        else if (process.env.SystemRoot) {
-            return Path.join(process.env.SystemRoot, 'System32', 'cmd.exe');
-        }
-        else return 'cmd.exe';
-    }
-
     static getHomeDirectory(): string {
         return process.env[(process.platform === 'win32') ? 'USERPROFILE' : 'HOME'];
     }

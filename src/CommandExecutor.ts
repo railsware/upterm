@@ -1,6 +1,7 @@
 import Invocation from "./Invocation";
 import Command from "./Command";
 import Utils from './Utils';
+import * as Path from 'path';
 import * as pty from 'ptyw.js';
 import * as _ from 'lodash';
 
@@ -43,12 +44,6 @@ class SystemFileExecutionStrategy extends CommandExecutionStrategy {
 
     startExecution() {
         return new Promise((resolve, reject) => {
-            if (process.platform === 'win32') {
-                this.args.unshift(this.command);
-                this.args = ['/s', '/c', this.args.join(' ')];
-                this.command = Utils.getCmdPath();
-            }
-
             // TODO: move command to this class.
             this.invocation.command = pty.spawn(process.env.SHELL, ['-c', `${this.command} ${this.args.join(' ')}`], {
                 cols: this.invocation.dimensions.columns,
@@ -59,14 +54,54 @@ class SystemFileExecutionStrategy extends CommandExecutionStrategy {
 
             this.invocation.command.stdout.on('data', (data: string) => this.invocation.parser.parse(data.toString()));
             this.invocation.command.on('exit', (code: number) => {
-                /* In windows there is no code returned (null) so instead of comparing to 0 we check if its 0 or null with ! */
-                if (!code) {
+                if (code === 0) {
                     resolve();
                 } else {
                     reject();
                 }
             })
         })
+    }
+}
+
+class WindowsSystemFileExecutionStrategy extends CommandExecutionStrategy {
+    static canExecute(command: string): Promise<boolean> {
+        return new Promise(resolve => Utils.getExecutablesInPaths().then(executables => resolve(_.include(executables, command))));
+    }
+
+    startExecution() {
+        return new Promise((resolve, reject) => {
+            this.args.unshift(this.command);
+            this.args = ['/s', '/c', this.args.join(' ')];
+            this.command = this.cmdPath;
+
+            this.invocation.command = pty.spawn(this.command, this.args, {
+                cols: this.invocation.dimensions.columns,
+                rows: this.invocation.dimensions.rows,
+                cwd: this.invocation.directory,
+                env: process.env
+            });
+
+            this.invocation.command.stdout.on('data', (data: string) => this.invocation.parser.parse(data.toString()));
+            this.invocation.command.on('exit', (code: number) => {
+                /* In windows there is no code returned (null) so instead of comparing to 0 we check if its 0 or null with ! */
+                if (Number(code) === 0) {
+                    resolve();
+                } else {
+                    reject();
+                }
+            })
+        })
+    }
+
+    private get cmdPath(): string {
+        if (process.env.comspec) {
+            return process.env.comspec;
+        }
+        else if (process.env.SystemRoot) {
+            return require('path').join(process.env.SystemRoot, 'System32', 'cmd.exe');
+        }
+        else return 'cmd.exe';
     }
 }
 
@@ -83,14 +118,17 @@ class NullExecutionStrategy extends CommandExecutionStrategy {
 export default class CommandExecutor {
     private static executors = [
         BuiltInCommandExecutionStrategy,
-        SystemFileExecutionStrategy,
+        process.platform === 'win32' ? WindowsSystemFileExecutionStrategy : SystemFileExecutionStrategy
     ];
 
     static execute(invocation: Invocation): Promise<CommandExecutionStrategy> {
         var command = invocation.getPrompt().getCommandName();
 
-        return Utils.filterWithPromising(this.executors.concat(NullExecutionStrategy), executor => executor.canExecute(command))
-            .then(applicableExecutors => new applicableExecutors[0](invocation, command).startExecution());
+        return Utils.filterWithPromising(
+            this.executors.concat(NullExecutionStrategy), 
+            executor => executor.canExecute(command))
+                .then(applicableExecutors => new applicableExecutors[0](invocation, command).startExecution()
+        );
     }
 }
 
