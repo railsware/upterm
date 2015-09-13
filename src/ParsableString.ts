@@ -38,7 +38,7 @@ export default class ParsableString implements i.Parsable {
 
         if (alias) {
             const aliasArgs = this.getLexemes(alias);
-            const isRecursive = aliasArgs[0] == commandName;
+            const isRecursive = aliasArgs[0] === commandName;
 
             if (isRecursive) {
                 return aliasArgs.concat(args);

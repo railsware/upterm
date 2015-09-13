@@ -3,7 +3,7 @@ var MenuItem = require('menu-item');
 
 module.exports = {
     setMenu: function (app, mainWindow) {
-        if (process.platform == 'darwin') {
+        if (process.platform === 'darwin') {
             var template = [
                 {
                     label: 'Black Screen',

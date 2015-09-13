@@ -21,7 +21,7 @@ export default class Buffer extends events.EventEmitter {
     @memoize((row: Array<Char>, index: number, cursor: Cursor): any[] => {
         var key: any[] = [row, index];
 
-        if (cursor.getPosition().row == index) {
+        if (cursor.getPosition().row === index) {
             key = key.concat([cursor.getPosition(), cursor.getBlink(), cursor.getShow()]);
         }
 
@@ -34,10 +34,10 @@ export default class Buffer extends events.EventEmitter {
         var current = {attributes: <i.Attributes>null, text: ''};
         var cursorPosition = cursor.getPosition();
 
-        if (index == cursorPosition.row && this.cursor.getShow()) {
+        if (index === cursorPosition.row && this.cursor.getShow()) {
             var rowWithCursor: Char[] = [];
 
-            for (var i = 0; i != row.length; ++i) {
+            for (var i = 0; i !== row.length; ++i) {
                 var old = row[i];
                 if (old) {
                     rowWithCursor[i] = Char.flyweight(old.toString(), old.getAttributes());
@@ -59,7 +59,7 @@ export default class Buffer extends events.EventEmitter {
         }
 
         // Foreach "merges" consecutive undefined.
-        for (var i = 0, l = rowWithCursor.length; i != l; i++) {
+        for (var i = 0, l = rowWithCursor.length; i !== l; i++) {
             var element = rowWithCursor[i];
 
             if (element) {
@@ -93,7 +93,7 @@ export default class Buffer extends events.EventEmitter {
     }
 
     writeString(string: string, attributes = this.attributes): void {
-        for (var i = 0; i != string.length; ++i) {
+        for (var i = 0; i !== string.length; ++i) {
             this.write(string.charAt(i), attributes);
         }
     }
@@ -228,7 +228,7 @@ export default class Buffer extends events.EventEmitter {
         var cursorPosition = this.cursor.getPosition();
         this.clearRowToBeginning();
 
-        for (var i = 0; i != cursorPosition.row; ++i) {
+        for (var i = 0; i !== cursorPosition.row; ++i) {
             this.storage[i] = [];
         }
         this.emit('data');
@@ -281,6 +281,6 @@ export default class Buffer extends events.EventEmitter {
 
     private hasRow(rowIndex: number): boolean {
         var row = this.storage[rowIndex];
-        return row && (typeof row == 'object');
+        return row && (typeof row === 'object');
     }
 }

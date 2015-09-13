@@ -88,7 +88,7 @@ export default class Utils {
     }
 
     static baseName(path: string): string {
-        if (path.split(Path.sep).length == 1) {
+        if (path.split(Path.sep).length === 1) {
             return path;
         } else {
             return path.substring(this.dirName(path).length);
@@ -124,7 +124,7 @@ export default class Utils {
     }
 
     private static delegate(name: string, args: Array<any>): void {
-        if ((typeof window != 'undefined') && (<any>window)['DEBUG']) {
+        if ((typeof window !== 'undefined') && (<any>window)['DEBUG']) {
             (<any>console)[name](...args);
         }
     }

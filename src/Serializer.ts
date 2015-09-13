@@ -3,9 +3,9 @@ import History from './History';
 
 export default class Serializer {
     static serialize(serializable: any): string {
-        if (typeof serializable.serialize == 'function') {
+        if (typeof serializable.serialize === 'function') {
             return serializable.serialize();
-        } else if (typeof serializable == 'string') {
+        } else if (typeof serializable === 'string') {
             return `String:${serializable}`;
         } else {
             console.error(`Don't know how to serialize ${serializable}`);

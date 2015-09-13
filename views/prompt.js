@@ -20,7 +20,7 @@ export default React.createClass({
     },
     componentWillMount() {
         var keysDownStream = createEventHandler();
-        var [passThroughKeys, promptKeys] = keysDownStream.partition(_ => this.props.status == 'in-progress');
+        var [passThroughKeys, promptKeys] = keysDownStream.partition(_ => this.props.status === 'in-progress');
 
         passThroughKeys
             .filter(_.negate(isMetaKey))
@@ -60,11 +60,11 @@ export default React.createClass({
         var inputNode = this.getInputNode();
         inputNode.innerText = this.getText();
 
-        if (prevState.caretPosition != this.state.caretPosition || prevState.caretOffset != this.state.caretOffset) {
+        if (prevState.caretPosition !== this.state.caretPosition || prevState.caretOffset !== this.state.caretOffset) {
             setCaretPosition(inputNode, this.state.caretPosition);
         }
 
-        if (prevState.caretPosition != this.state.caretPosition) {
+        if (prevState.caretPosition !== this.state.caretPosition) {
             this.setState({caretOffset: $(inputNode).caret('offset')});
         }
 
@@ -84,13 +84,13 @@ export default React.createClass({
         this.setState({caretPosition: this.props.prompt.buffer.cursor.column()});
     },
     isEmpty() {
-        return this.getText().replace(/\s/g, '').length == 0;
+        return this.getText().replace(/\s/g, '').length === 0;
     },
     navigateHistory(event) {
         if (keys.goUp(event)) {
             var prevCommand = this.props.prompt.history.getPrevious();
 
-            if (typeof prevCommand != 'undefined') {
+            if (typeof prevCommand !== 'undefined') {
                 this.setText(prevCommand);
             }
         } else {
@@ -153,7 +153,7 @@ export default React.createClass({
         $('html, body').animate({ scrollTop: offset }, 300);
     },
     handleKeyPress(event) {
-        if (this.props.status == 'in-progress') {
+        if (this.props.status === 'in-progress') {
             stopBubblingUp(event);
         }
     },
@@ -161,7 +161,7 @@ export default React.createClass({
         //TODO: use streams.
         return this.refs.command &&
             this.state.suggestions.length &&
-            this.props.status == 'not-started' && !_.contains([13, 27], this.state.latestKeyCode);
+            this.props.status === 'not-started' && !_.contains([13, 27], this.state.latestKeyCode);
     },
     autocompleteIsShown() {
         return this.refs.autocomplete;

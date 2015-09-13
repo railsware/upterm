@@ -22,6 +22,6 @@ export default class Command {
     }
 
     static isBuiltIn(command: String): any {
-        return command == 'cd';
+        return command === 'cd';
     }
 }
