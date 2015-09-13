@@ -44,7 +44,7 @@ class SystemFileExecutionStrategy extends CommandExecutionStrategy {
     startExecution() {
         return new Promise((resolve, reject) => {
             // TODO: move command to this class.
-            this.invocation.command = pty.spawn(this.command, this.args, {
+            this.invocation.command = pty.spawn(process.env.SHELL, ['-c', `${this.command} ${this.args.join(' ')}`], {
                 cols: this.invocation.dimensions.columns,
                 rows: this.invocation.dimensions.rows,
                 cwd: this.invocation.directory,
