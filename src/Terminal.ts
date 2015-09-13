@@ -16,11 +16,11 @@ export default class Terminal extends events.EventEmitter {
     history: History;
     gitBranchWatcher: fs.FSWatcher;
 
-    private stateFileName = `${Utils.getHomeDirectory()}/.black-screen-state`;
+    private stateFileName = `${Utils.homeDirectory}/.black-screen-state`;
 
     // The value of the dictionary is the default value used if there is no serialized data.
     private serializableProperties: _.Dictionary<any> = {
-        currentDirectory: `String:${Utils.getHomeDirectory()}`,
+        currentDirectory: `String:${Utils.homeDirectory}`,
         history: `History:[]`
     };
 

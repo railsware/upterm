@@ -37,7 +37,7 @@ class BuiltInCommandExecutionStrategy extends CommandExecutionStrategy {
     }
 }
 
-class SystemFileExecutionStrategy extends CommandExecutionStrategy {
+class UnixSystemFileExecutionStrategy extends CommandExecutionStrategy {
     static canExecute(command: string): Promise<boolean> {
         return new Promise(resolve => Utils.getExecutablesInPaths().then(executables => resolve(_.include(executables, command))));
     }
@@ -66,16 +66,12 @@ class SystemFileExecutionStrategy extends CommandExecutionStrategy {
 
 class WindowsSystemFileExecutionStrategy extends CommandExecutionStrategy {
     static canExecute(command: string): Promise<boolean> {
-        return new Promise(resolve => Utils.getExecutablesInPaths().then(executables => resolve(_.include(executables, command))));
+        return new Promise(resolve => resolve(Utils.isWindows));
     }
 
     startExecution() {
         return new Promise((resolve, reject) => {
-            this.args.unshift(this.command);
-            this.args = ['/s', '/c', this.args.join(' ')];
-            this.command = this.cmdPath;
-
-            this.invocation.command = pty.spawn(this.command, this.args, {
+            this.invocation.command = pty.spawn(this.cmdPath, ['/s', '/c', this.invocation.getPrompt().getWholeCommand().join(' ')], {
                 cols: this.invocation.dimensions.columns,
                 rows: this.invocation.dimensions.rows,
                 cwd: this.invocation.directory,
@@ -83,14 +79,7 @@ class WindowsSystemFileExecutionStrategy extends CommandExecutionStrategy {
             });
 
             this.invocation.command.stdout.on('data', (data: string) => this.invocation.parser.parse(data.toString()));
-            this.invocation.command.on('exit', (code: number) => {
-                /* In windows there is no code returned (null) so instead of comparing to 0 we check if its 0 or null with ! */
-                if (Number(code) === 0) {
-                    resolve();
-                } else {
-                    reject();
-                }
-            })
+            this.invocation.command.on('exit', (code: number) => resolve());
         })
     }
 
@@ -118,7 +107,8 @@ class NullExecutionStrategy extends CommandExecutionStrategy {
 export default class CommandExecutor {
     private static executors = [
         BuiltInCommandExecutionStrategy,
-        process.platform === 'win32' ? WindowsSystemFileExecutionStrategy : SystemFileExecutionStrategy
+        WindowsSystemFileExecutionStrategy,
+        UnixSystemFileExecutionStrategy
     ];
 
     static execute(invocation: Invocation): Promise<CommandExecutionStrategy> {

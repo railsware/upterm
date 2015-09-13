@@ -6,9 +6,9 @@ import Utils from './Utils';
 export default class Command {
     static cd(currentDirectory: string, args: Array<string>): string {
         if (!args.length) {
-            return Utils.getHomeDirectory();
+            return Utils.homeDirectory;
         }
-        var path = args[0].replace(/^~/, Utils.getHomeDirectory());
+        var path = args[0].replace(/^~/, Utils.homeDirectory);
         var newDirectory = Path.resolve(currentDirectory, path);
 
         if (!fs.existsSync(newDirectory)) {
