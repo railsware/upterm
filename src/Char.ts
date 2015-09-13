@@ -14,7 +14,7 @@ export default class Char {
 
     }
     constructor(private char: string, private attributes: i.Attributes) {
-        if (char.length != 1) {
+        if (char.length !== 1) {
             throw(`Char can be created only from a single character; passed ${char.length}: ${char}`);
         }
     }
@@ -34,6 +34,6 @@ export default class Char {
     isSpecial(): boolean {
         // http://www.asciitable.com/index/asciifull.gif
         var charCode = this.char.charCodeAt(0);
-        return charCode < 32 && charCode != 9;
+        return charCode < 32 && charCode !== 9;
     }
 }

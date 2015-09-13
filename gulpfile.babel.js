@@ -46,7 +46,7 @@ const options = {
             removeComments: true,
             preserveConstEnums: true,
             experimentalDecorators: true,
-            sourceMap: true,
+            sourceMap: true, // TODO: Not supported anymore. Use gulp-sourcemap.
             jsx: "react"
         })
     },

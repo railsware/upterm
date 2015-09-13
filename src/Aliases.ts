@@ -6,26 +6,30 @@ export default class Aliases {
 
     static initialize(): void {
         this.aliases = {};
-        this.importAliasesFrom('zsh');
+        this.importAliases();
     }
 
     static find(alias: string): string {
         return this.aliases[alias];
     }
 
-    static importAliasesFrom(shellName: string): void {
+    private static importAliases(shellName: string = process.env.SHELL): void {
         if (process.platform === 'win32') return;
         
-        var zsh = pty.spawn(shellName, ['-i', '-c', 'alias'], {env: process.env});
+        var shell = pty.spawn(shellName, ['-i', '-c', 'alias'], {env: process.env});
 
         var aliases = '';
-        zsh.stdout.on('data', (text: string) => aliases += text.toString());
-        zsh.on('exit', () => {
-            aliases.split('\n').forEach((alias: string) => {
-                var split = alias.split('=');
-                this.aliases[split[0]] = /'?([^']*)'?/.exec(split[1])[1];
-            });
-        });
+        shell.stdout.on('data', (text: string) => aliases += text.toString());
+        shell.on('exit', () =>
+            aliases.split('\n').forEach(alias => {
+                let split = alias.split('=');
+
+                let name = /(alias )?(.*)/.exec(split[0])[2];
+                let value = /'?([^']*)'?/.exec(split[1])[1];
+
+                this.aliases[name] = value;
+            })
+        );
     }
 }
 

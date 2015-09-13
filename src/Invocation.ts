@@ -64,7 +64,7 @@ export default class Invocation extends events.EventEmitter {
 
     // Writes to the process' stdin.
     write(input: string|React.KeyboardEvent) {
-        if (typeof input == 'string') {
+        if (typeof input === 'string') {
             var text = <string>input
         } else {
             var event = <React.KeyboardEvent>input;
@@ -77,7 +77,7 @@ export default class Invocation extends events.EventEmitter {
                  * In VT-100 emulation mode backspace should be translated to delete.
                  * http://www.braun-home.net/michael/mbedit/info/misc/VT100_commands.htm
                  */
-                if (code == e.CharCode.Backspace) {
+                if (code === e.CharCode.Backspace) {
                     code = e.CharCode.Delete;
                 }
 
@@ -104,7 +104,7 @@ export default class Invocation extends events.EventEmitter {
     setDimensions(dimensions: i.Dimensions) {
         this.dimensions = dimensions;
 
-        if (this.command && this.status == e.Status.InProgress) {
+        if (this.command && this.status === e.Status.InProgress) {
             this.buffer.setDimensions(dimensions);
             this.command.resize(dimensions.columns, dimensions.rows);
         }
@@ -114,7 +114,7 @@ export default class Invocation extends events.EventEmitter {
         for (var Decorator of list) {
             var decorator = new Decorator(this);
 
-            if (this.status == e.Status.InProgress && !decorator.shouldDecorateRunningPrograms()) {
+            if (this.status === e.Status.InProgress && !decorator.shouldDecorateRunningPrograms()) {
                 continue;
             }
 

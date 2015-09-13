@@ -79,7 +79,7 @@ export default class Terminal extends events.EventEmitter {
         Utils.ifExists(gitDirectory, () => {
             this.setGitBranch(gitDirectory);
             this.gitBranchWatcher = fs.watch(gitDirectory, (type, fileName) => {
-                if (fileName == 'HEAD') {
+                if (fileName === 'HEAD') {
                     this.setGitBranch(gitDirectory);
                 }
             })

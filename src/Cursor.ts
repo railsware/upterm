@@ -8,11 +8,11 @@ export default class Cursor {
     }
 
     moveAbsolute(advancement: i.Advancement): Cursor {
-        if (typeof advancement.horizontal != 'undefined') {
+        if (typeof advancement.horizontal !== 'undefined') {
             this.position.column = advancement.horizontal;
         }
 
-        if (typeof advancement.vertical != 'undefined') {
+        if (typeof advancement.vertical !== 'undefined') {
             this.position.row = advancement.vertical;
         }
 

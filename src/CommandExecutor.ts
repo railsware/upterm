@@ -4,37 +4,25 @@ import Utils from './Utils';
 import * as pty from 'ptyw.js';
 import * as _ from 'lodash';
 
-export default class CommandExecutor {
-    static execute(invocation: Invocation): Promise<CommandExecutionStrategy> {
-        var command = invocation.getPrompt().getCommandName();
-        var args = invocation.getPrompt().getArguments().filter(argument => argument.length > 0);
-
-        return new Promise((resolve) => {
-            if (Command.isBuiltIn(command)) {
-                resolve(BuiltInCommandExecutionStrategy);
-            } else {
-                Utils.getExecutablesInPaths().then(executables => {
-                    if (_.include(executables, command)) {
-                        resolve(SystemFileExecutionStrategy);
-                    } else {
-                        resolve(NullExecutionStrategy);
-                    }
-                });
-            }
-        }).then((strategyConstructor: CommandExecutionStrategyConstructor) => new strategyConstructor(invocation, command, args).startExecution());
-    }
-}
-
-type CommandExecutionStrategyConstructor = { new (invocation: Invocation, command: string, args: string[]): CommandExecutionStrategy }
-
 abstract class CommandExecutionStrategy {
-    constructor(protected invocation: Invocation, protected command: string, protected args: string[]) {
+    protected args: string[];
+
+    constructor(protected invocation: Invocation, protected command: string) {
+        this.args = invocation.getPrompt().getArguments().filter(argument => argument.length > 0);
+    }
+
+    static canExecute(command: string): Promise<boolean> {
+        return new Promise(resolve => resolve(false));
     }
 
     abstract startExecution(): Promise<{}>;
 }
 
 class BuiltInCommandExecutionStrategy extends CommandExecutionStrategy {
+    static canExecute(command: string): Promise<boolean> {
+        return new Promise(resolve => resolve(Command.isBuiltIn(command)));
+    }
+
     startExecution() {
         return new Promise((resolve, reject) => {
             try {
@@ -49,6 +37,10 @@ class BuiltInCommandExecutionStrategy extends CommandExecutionStrategy {
 }
 
 class SystemFileExecutionStrategy extends CommandExecutionStrategy {
+    static canExecute(command: string): Promise<boolean> {
+        return new Promise(resolve => Utils.getExecutablesInPaths().then(executables => resolve(_.include(executables, command))));
+    }
+
     startExecution() {
         return new Promise((resolve, reject) => {
             if (process.platform === 'win32') {
@@ -58,7 +50,7 @@ class SystemFileExecutionStrategy extends CommandExecutionStrategy {
             }
 
             // TODO: move command to this class.
-            this.invocation.command = pty.spawn(this.command, this.args, {
+            this.invocation.command = pty.spawn(process.env.SHELL, ['-c', `${this.command} ${this.args.join(' ')}`], {
                 cols: this.invocation.dimensions.columns,
                 rows: this.invocation.dimensions.rows,
                 cwd: this.invocation.directory,
@@ -79,7 +71,26 @@ class SystemFileExecutionStrategy extends CommandExecutionStrategy {
 }
 
 class NullExecutionStrategy extends CommandExecutionStrategy {
+    static canExecute(command: string): Promise<boolean> {
+        return new Promise(resolve => resolve(true));
+    }
+
     startExecution() {
         return new Promise((resolve, reject) => reject(`Black Screen: command "${this.command}" not found.`));
     }
 }
+
+export default class CommandExecutor {
+    private static executors = [
+        BuiltInCommandExecutionStrategy,
+        SystemFileExecutionStrategy,
+    ];
+
+    static execute(invocation: Invocation): Promise<CommandExecutionStrategy> {
+        var command = invocation.getPrompt().getCommandName();
+
+        return Utils.filterWithPromising(this.executors.concat(NullExecutionStrategy), executor => executor.canExecute(command))
+            .then(applicableExecutors => new applicableExecutors[0](invocation, command).startExecution());
+    }
+}
+

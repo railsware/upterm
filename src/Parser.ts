@@ -36,7 +36,7 @@ var CGR: { [indexer: string]: i.Attributes|string } = {
 };
 
 function isSetColorExtended(cgrValue: any) {
-    return cgrValue == 'color' || cgrValue == 'background-color';
+    return cgrValue === 'color' || cgrValue === 'background-color';
 }
 
 var CSI = {
@@ -67,7 +67,7 @@ export default class Parser {
             inst_p: (text: string) => {
                 Utils.info('text', text, text.charCodeAt(0), text.length);
 
-                for (var i = 0; i != text.length; ++i) {
+                for (var i = 0; i !== text.length; ++i) {
                     this.buffer.write(text.charAt(i));
                 }
 
@@ -86,17 +86,17 @@ export default class Parser {
              * CSI handler.
              */
             inst_c: (collected: any, params: Array<number>, flag: string) => {
-                if (collected == '?') {
-                    if (params.length != 1) {
+                if (collected === '?') {
+                    if (params.length !== 1) {
                         return Utils.error(`CSI private mode has ${params.length} parameters: ${params}`);
                     }
-                    if (flag != 'h' && flag != 'l') {
+                    if (flag !== 'h' && flag !== 'l') {
                         return Utils.error(`CSI private mode has an incorrect flag: ${flag}`);
                     }
                     var mode = params[0];
                     var handlerResult = this.decPrivateModeHandler(mode, flag);
 
-                    if (handlerResult.status == 'handled') {
+                    if (handlerResult.status === 'handled') {
                         Utils.info(`%cCSI ? ${mode} ${flag}`, "color: blue", handlerResult.description, handlerResult.url);
                     } else {
                         Utils.error(`%cCSI ? ${mode} ${flag}`, "color: blue", handlerResult.description, handlerResult.url);
@@ -104,7 +104,7 @@ export default class Parser {
                 } else {
                     handlerResult = this.csiHandler(collected, params, flag);
 
-                    if (handlerResult.status == 'handled') {
+                    if (handlerResult.status === 'handled') {
                         Utils.info(`%cCSI ${params} ${flag}`, "color: blue", handlerResult.description, handlerResult.url);
                     } else {
                         Utils.error(`%cCSI ${params} ${flag}`, "color: blue", handlerResult.description, handlerResult.url);
@@ -119,7 +119,7 @@ export default class Parser {
             inst_e: (collected: any, flag: string) => {
                 var handlerResult = this.escapeHandler(collected, flag);
 
-                if (handlerResult.status == 'handled') {
+                if (handlerResult.status === 'handled') {
                     Utils.info(`%cESC ${collected} ${flag}`, "color: blue", handlerResult.description, handlerResult.url);
                 } else {
                     Utils.error(`%cESC ${collected} ${flag}`, "color: blue", handlerResult.description, handlerResult.url);
@@ -137,13 +137,13 @@ export default class Parser {
         var status = 'handled';
 
         if (collected) {
-            if (collected == '#' && flag == '8') {
+            if (collected === '#' && flag === '8') {
                 short = 'DEC Screen Alignment Test (DECALN).';
                 url = "http://www.vt100.net/docs/vt510-rm/DECALN";
 
                 var dimensions = this.invocation.getDimensions();
 
-                for (var i = 0; i != dimensions.rows; ++i) {
+                for (var i = 0; i !== dimensions.rows; ++i) {
                     this.buffer.moveCursorAbsolute({vertical: i, horizontal: 0});
                     this.buffer.writeString(Array(dimensions.columns).join("E"));
                 }
@@ -205,7 +205,7 @@ export default class Parser {
         var description = '';
         var url = '';
         var status = 'handled';
-        var isSet = flag == 'h';
+        var isSet = flag === 'h';
 
         //noinspection FallThroughInSwitchStatementJS
         switch (ps) {
@@ -291,7 +291,7 @@ export default class Parser {
             case 'm':
                 short = 'Some CGR stuff';
 
-                if (params.length == 0) {
+                if (params.length === 0) {
                     short = 'Reset CGR';
                     this.buffer.setAttributes(CGR[0]);
                     break;
@@ -306,13 +306,13 @@ export default class Parser {
                         Utils.error('cgr', cgr, params);
                     } else if (isSetColorExtended(attributeToSet)) {
                         var next = params.shift();
-                        if (next == 5) {
+                        if (next === 5) {
                             var colorIndex = params.shift();
                             this.buffer.setAttributes({[<string>attributeToSet]: e.ColorIndex[colorIndex]});
                         } else {
                             Utils.error('cgr', cgr, next, params);
                         }
-                    } else if (attributeToSet == 'negative') {
+                    } else if (attributeToSet === 'negative') {
                         var attributes = this.buffer.getAttributes();
 
                         this.buffer.setAttributes({
@@ -416,7 +416,7 @@ export default class Parser {
 }
 
 function or1(number: number) {
-    if (number == null) {
+    if (number === null) {
         return 1;
     } else {
         return number;

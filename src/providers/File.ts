@@ -42,7 +42,7 @@ export default class File implements i.AutocompletionProvider {
                         partial: fileInfo.stat.isDirectory()
                     };
 
-                    if (searchDirectory != prompt.getCWD()) {
+                    if (searchDirectory !== prompt.getCWD()) {
                         suggestion.prefix = dirName;
                     }
 
