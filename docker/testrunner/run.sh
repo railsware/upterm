@@ -3,6 +3,7 @@
 
 # Why -i -t ? Because we get nice terminal colours... And could stop the test with ^C
 # Could be deactivated if NONINTERACTIVE is set true, for e.g. ci or things like that
+
 if [[ $NONINTERACTIVE != true ]]
        then
        RUNOPTIONS=" -i -t "
@@ -27,6 +28,7 @@ function test {
 
 
 # Help?
+
 if [[ $1 == "--help" ]]
   then
   echo "./run.sh [-f] [-b] [path/to/your/black-screen]"
@@ -116,6 +118,7 @@ if [[ ${#image} -lt 1 ]]
   then
   echo "No black-screen_testrunner image available"
   echo "building..."
+  build=true
   test docker build -t "$IMAGE_NAME" .
 elif [[ -n "$build" ]]
   then
