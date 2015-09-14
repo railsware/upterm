@@ -2,6 +2,7 @@
 
 
 # Why -i -t ? Because we get nice terminal colours... And could stop the test with ^C
+# Could be deactivated if NONINTERACTIVE is set true, for e.g. ci or things like that
 if [[ $NONINTERACTIVE != true ]]
        then
        RUNOPTIONS=" -i -t "
