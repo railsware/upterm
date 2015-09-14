@@ -12,6 +12,19 @@ IMAGE_NAME="black-screen_testrunner"
 CONTAINER_NAME="bs-testrunner"
 
 
+#test if command executen succeeds
+
+function test {
+  "$@"
+  status=$?
+  if [[ $status -ne 0 ]]
+    then
+    echo "Error while executing $1 with exit code $status"
+    exit
+  fi
+  return
+}
+
 
 # Help?
 if [[ $1 == "--help" ]]
@@ -103,14 +116,13 @@ if [[ ${#image} -lt 1 ]]
   then
   echo "No black-screen_testrunner image available"
   echo "building..."
-  docker build -t "$IMAGE_NAME" .
+  test docker build -t "$IMAGE_NAME" .
 elif [[ -n "$build" ]]
   then
   echo "Rebuilding the image..."
-  docker rmi -f "$IMAGE_NAME"
-  docker build -t "$IMAGE_NAME" .
+  test docker rmi -f "$IMAGE_NAME"
+  test docker build -t "$IMAGE_NAME" .
 fi
-
 
 
 #show the docker processe with the name bs-testrunner
@@ -138,9 +150,9 @@ fi
 #check if a path is given (arg 1), if not take default
 if [[ -n $path_available  ]]
   then
-  blackscreen_path="`echo ${path//\//\\/}`"
+  mount="-v `echo ${path//\//\\/}`:/black-screen"
 else
-  blackscreen_path="`pwd`/black-screen"
+  mount="" 
 fi
 
 
@@ -149,18 +161,18 @@ fi
 if [[ ${#id} -gt 1 && -z $force ]]
   then
   echo "Restarting old container..."
-  docker restart "$CONTAINER_NAME"
-  docker attach "$CONTAINER_NAME"
+  test docker restart "$CONTAINER_NAME"
+  test docker attach "$CONTAINER_NAME"
 elif [[ ${#id} -gt 1 ]]
   then
   echo "Force to rebuild the container"
-  docker rm -f "$CONTAINER_NAME"
-  docker run --name "$CONTAINER_NAME" $RUNOPTIONS -e FORCE=true -v "$blackscreen_path":/black-screen "$IMAGE_NAME"
+  test docker rm -f "$CONTAINER_NAME"
+  test docker run --name "$CONTAINER_NAME" $RUNOPTIONS -e FORCE=true "$mount" "$IMAGE_NAME"
 elif [[ -n $force ]]
   then
   echo "Force to rebuild the container"
-  docker run --name "$CONTAINER_NAME" $RUNOPTIONS -e FORCE=true -v "$blackscreen_path":/black-screen "$IMAGE_NAME"
+  test docker run --name "$CONTAINER_NAME" $RUNOPTIONS -e FORCE=true "$mount" "$IMAGE_NAME"
 else
   echo "Run the container"
-  docker run --name "$CONTAINER_NAME" $RUNOPTIONS -v "$blackscreen_path":/black-screen "$IMAGE_NAME"
+  test docker run --name "$CONTAINER_NAME" $RUNOPTIONS "$mount" "$IMAGE_NAME"
 fi
