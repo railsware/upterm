@@ -167,12 +167,12 @@ elif [[ ${#id} -gt 1 ]]
   then
   echo "Force to rebuild the container"
   test docker rm -f "$CONTAINER_NAME"
-  test docker run --name "$CONTAINER_NAME" $RUNOPTIONS -e FORCE=true "$mount" "$IMAGE_NAME"
+  test docker run --name "$CONTAINER_NAME" $RUNOPTIONS -e FORCE=true $mount "$IMAGE_NAME"
 elif [[ -n $force ]]
   then
   echo "Force to rebuild the container"
-  test docker run --name "$CONTAINER_NAME" $RUNOPTIONS -e FORCE=true "$mount" "$IMAGE_NAME"
+  test docker run --name "$CONTAINER_NAME" $RUNOPTIONS -e FORCE=true $mount "$IMAGE_NAME"
 else
   echo "Run the container"
-  test docker run --name "$CONTAINER_NAME" $RUNOPTIONS "$mount" "$IMAGE_NAME"
+  test docker run --name "$CONTAINER_NAME" $RUNOPTIONS $mount "$IMAGE_NAME"
 fi
