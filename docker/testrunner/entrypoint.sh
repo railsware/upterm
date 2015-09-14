@@ -18,16 +18,23 @@ if [[ ! -e /.firstrun ]] && ( [[ ! -d /black-screen_copy ]] || [[ -n $FORCE ]] )
 		mkdir /black-screen_copy
 	fi
 
+	if [[ ! -d /node_modules ]]
+		then
+		mkdir /node_modules
+	fi
+
 	cd /black-screen_copy
 	cp -R /black-screen/* /black-screen_copy/
 	npm install -g selenium-standalone
 	selenium-standalone install
 	chown -R testrunner:users .
 	sudo -u testrunner echo '{ "interactive": false }' > /home/testrunner/.bowerrc
-	sudo -u testrunner npm install
+	sudo -u testrunner --prefix /node_modules npm install
+	ln -s /node_modules/node_modules /black-screen_copy
 	touch /.firstrun
 else
-	# rm -rf /black-screen_copy/* TODO: Find a solution to save the needed npm and bower modules..
+	rm -rf /black-screen_copy/* #TODO: Find a solution to save the needed npm and bower modules..
+	ln -s /node_modules/node_modules /black-screen_copy
 	cp -Rf /black-screen/* /black-screen_copy/
 fi
 
