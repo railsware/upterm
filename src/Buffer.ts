@@ -34,7 +34,10 @@ export default class Buffer extends events.EventEmitter {
         var current = {attributes: <i.Attributes>null, text: ''};
         var cursorPosition = cursor.getPosition();
 
-        if (index === cursorPosition.row && this.cursor.getShow()) {
+        /* Quick fix for the strange character at the end (https://github.com/black-screen/black-screen/pull/56#issuecomment-139653723) */
+        if (process.platform === 'win32' && row.length < 1) return;
+
+        if (index == cursorPosition.row && this.cursor.getShow()) {
             var rowWithCursor: Char[] = [];
 
             for (var i = 0; i !== row.length; ++i) {

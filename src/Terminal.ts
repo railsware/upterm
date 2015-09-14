@@ -16,11 +16,11 @@ export default class Terminal extends events.EventEmitter {
     history: History;
     gitBranchWatcher: fs.FSWatcher;
 
-    private stateFileName = `${process.env.HOME}/.black-screen-state`;
+    private stateFileName = `${Utils.homeDirectory}/.black-screen-state`;
 
     // The value of the dictionary is the default value used if there is no serialized data.
     private serializableProperties: _.Dictionary<any> = {
-        currentDirectory: `String:${process.env.HOME}`,
+        currentDirectory: `String:${Utils.homeDirectory}`,
         history: `History:[]`
     };
 
@@ -37,14 +37,17 @@ export default class Terminal extends events.EventEmitter {
 
     createInvocation(): void {
         var invocation = new Invocation(this.currentDirectory, this.dimensions, this.history);
-        invocation.once('end', () => {
-            if (app.dock) {
-                app.dock.bounce('informational');
-            }
-            this.createInvocation();
-        }).once('working-directory-changed', (newWorkingDirectory: string) =>
-            this.setCurrentDirectory(newWorkingDirectory)
-        );
+
+        invocation
+            .once('clear', _ => this.clearInvocations())
+            .once('end', _ => {
+                if (app.dock) {
+                    app.dock.bounce('informational');
+                }
+                this.createInvocation();
+            })
+            .once('working-directory-changed', (newWorkingDirectory: string) => this.setCurrentDirectory(newWorkingDirectory));
+
         this.invocations = this.invocations.concat(invocation);
         this.emit('invocation');
     }

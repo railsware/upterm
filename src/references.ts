@@ -6,4 +6,4 @@
 /// <reference path="../dts/typings/jquery/jquery.d.ts" />
 /// <reference path="../dts/typings/lodash/lodash.d.ts" />
 /// <reference path="../dts/typings/react/react.d.ts" />
-/// <reference path="../dts/typings/pty.js/pty.js.d.ts" />
+/// <reference path="../dts/typings/ptyw.js/ptyw.js.d.ts" />

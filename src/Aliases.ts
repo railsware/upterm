@@ -1,5 +1,5 @@
-import * as pty from 'pty.js';
-import * as _ from 'lodash'
+import * as pty from 'ptyw.js';
+import * as _ from 'lodash';
 
 export default class Aliases {
     static aliases: _.Dictionary<string>;
@@ -14,6 +14,8 @@ export default class Aliases {
     }
 
     private static importAliases(shellName: string = process.env.SHELL): void {
+        if (process.platform === 'win32') return;
+        
         var shell = pty.spawn(shellName, ['-i', '-c', 'alias'], {env: process.env});
 
         var aliases = '';

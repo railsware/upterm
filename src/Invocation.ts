@@ -1,6 +1,6 @@
 /// <reference path="references.ts" />
 
-import * as pty from 'pty.js';
+import * as pty from 'ptyw.js';
 import * as child_process from 'child_process';
 import * as _ from 'lodash';
 import * as React from 'react';

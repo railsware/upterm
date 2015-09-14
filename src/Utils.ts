@@ -123,6 +123,14 @@ export default class Utils {
         });
     }
 
+    static get isWindows(): boolean {
+        return process.platform === 'win32';
+    }
+
+    static get homeDirectory(): string {
+        return process.env[(Utils.isWindows) ? 'USERPROFILE' : 'HOME'];
+    }
+
     private static delegate(name: string, args: Array<any>): void {
         if ((typeof window !== 'undefined') && (<any>window)['DEBUG']) {
             (<any>console)[name](...args);
