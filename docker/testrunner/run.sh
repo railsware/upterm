@@ -119,6 +119,7 @@ if [[ ${#image} -lt 1 ]]
   echo "No black-screen_testrunner image available"
   echo "building..."
   build=true
+  force=true
   test docker build -t "$IMAGE_NAME" .
 elif [[ -n "$build" ]]
   then
