@@ -10,13 +10,14 @@ This image basically just executes the tests of black-screen.
 `./run.sh`
 
 Optional parameters for `./run.sh`:
+- [-b] Force to rebuild the image, e.g. when a newer Dockerfile is available.
 - [-f]  Force to rebuild the container, for e.g. updating of node dependencies (normally restart the container if there's one available)
-- [repodir] Specify the repository directory, default ist workingdir/black-screen (Could be an absolute or an relative path)
+- [repodir] Specify the repository directory, if no directory is given it will clone the latest from github (Could be an absolute or an relative path)
 
 The order of the options is not relevant. If the image isn't present, it will build it for you.
 
 **Example**
-`./run.sh -f ./my/git/folder/black-screen`
+`./run.sh -f ./my/git/folder/black-screen -b`
 
 
 

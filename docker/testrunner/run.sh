@@ -152,7 +152,7 @@ if [[ -n $path_available  ]]
   then
   mount="-v `echo ${path//\//\\/}`:/black-screen"
 else
-  mount="" 
+  mount=""
 fi
 
 
