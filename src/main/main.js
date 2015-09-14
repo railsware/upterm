@@ -22,15 +22,13 @@ app.on('activate-with-no-open-windows', function () {
 
 function createWindow() {
 	var window = new BrowserWindow({
-		width: 700,
-		height: 450,
 		'web-preferences': {
 			'overlay-scrollbars': true
 		},
 		resizable: true,
 		show: false
 	});
-	
+
 	window.loadUrl('file://' + __dirname + '/../../index.html');
 	menu.setMenu(app, window);
 	

@@ -16,6 +16,11 @@ export interface Attributes {
     blinking?: boolean;
 }
 
+export interface Size {
+    height: number;
+    width: number;
+}
+
 export interface Advancement {
     vertical?: number;
     horizontal?: number;

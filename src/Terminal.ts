@@ -11,7 +11,7 @@ var remote = require('remote');
 var app = remote.require('app');
 
 export default class Terminal extends events.EventEmitter {
-    invocations: Array<Invocation>;
+    invocations: Array<Invocation> = [];
     currentDirectory: string;
     history: History;
     gitBranchWatcher: fs.FSWatcher;
@@ -27,7 +27,9 @@ export default class Terminal extends events.EventEmitter {
     constructor(private dimensions: i.Dimensions) {
         super();
 
-        this.restore();
+        // TODO: We want to deserialize properties only for the first instance
+        // TODO: of Terminal for the application.
+        this.deserialize();
         this.history = new History();
 
         this.on('invocation', this.serialize.bind(this));
@@ -52,7 +54,7 @@ export default class Terminal extends events.EventEmitter {
         this.emit('invocation');
     }
 
-    resize(dimensions: i.Dimensions): void {
+    setDimensions(dimensions: i.Dimensions): void {
         this.dimensions = dimensions;
 
         this.invocations.forEach(invocation => invocation.setDimensions(dimensions));
@@ -110,7 +112,7 @@ export default class Terminal extends events.EventEmitter {
         })
     }
 
-    private restore(): void {
+    private deserialize(): void {
         try {
             var state = JSON.parse(fs.readFileSync(this.stateFileName).toString());
         } catch (error) {

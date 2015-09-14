@@ -1,7 +1,7 @@
 import React from 'react';
 import _ from 'lodash';
 import Rx from 'rx';
-import {TerminalLayout} from './compiled/src/views/TerminalLayout.js';
+import ApplicationView from './compiled/src/views/ApplicationView.js';
 
 
 var keys = {
@@ -110,7 +110,7 @@ function getEnumerablePropertyNames(target) {
 }
 
 $(document).ready(() => {
-    React.render(<TerminalLayout/>, document.getElementById('black-board'));
+    React.render(<ApplicationView/>, document.getElementById('black-board'));
     // TODO: focus the last input of the active terminal.
     $(document).keydown(event => focusLastInput(event));
 });
