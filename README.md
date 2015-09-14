@@ -1,9 +1,10 @@
+[![Checkout out our Waffle.io board](https://badge.waffle.io/black-screen/black-screen.png?label=Ready)](https://waffle.io/black-screen/black-screen)
 [![Join the chat at https://gitter.im/shockone/black-screen](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/shockone/black-screen?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 ### What is it?
 
-Black Screen is a modern terminal emulator (and, unfortunately, a shell) based on [Electron](http://electron.atom.io/) and exploiting
-capabilities of contemporary interfaces in contrast to most of the terminal emulators.
+Black Screen is a modern terminal emulator (and shell) based on [Electron](http://electron.atom.io/).
+As opposed to most of the terminal emulators, it exploits the capabilities of contemporary interfaces.
 
 ![](https://dl.dropboxusercontent.com/spa/dlqheu39w0arg9q/ucvbthot.png)
 
@@ -17,7 +18,9 @@ capabilities of contemporary interfaces in contrast to most of the terminal emul
 
 ### Installation
 
-Note: Only OS X is currently supported, but we plan to make Black Screen work on all the major platforms.
+Note: Only OS X is currently supported, but we plan to make Black Screen work on all the major platforms. Though it also works on Linux, it isn't supported yet.
+
+Warning: Black Screen is still in its beta phase and isn't completely ready for day-to-day usage.
 
 ###### Download
 ```bash
@@ -26,7 +29,7 @@ git clone https://github.com/black-screen/black-screen
 ###### Install Dependencies
 ```bash
 cd black-screen
-npm run install-all
+npm install
 ```
 ###### Start
 ```bash

@@ -93,8 +93,8 @@ gulp.task("react", () =>
 );
 
 
-gulp.task("clean", cb => {
-    require("del")([options.typeScript.target + "/**"], cb);
+gulp.task("clean", () => {
+    require("del").sync([options.typeScript.target + "/**"]);
 });
 
 gulp.task("watch", cb => {
