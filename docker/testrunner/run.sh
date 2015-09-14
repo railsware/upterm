@@ -13,7 +13,7 @@ IMAGE_NAME="black-screen_testrunner"
 CONTAINER_NAME="bs-testrunner"
 
 
-#test if command executen succeeds
+#test if command execution succeeds
 
 function test {
   "$@"
@@ -146,7 +146,7 @@ fi
 #a path is given, but the container is already runnig? Sorry, we couldn't continue :-(
 if [[ -n $path_available && ${#id} -gt 1 && ! $force ]]
   then
-  echo "Sorry, you could not change your repo location in a running container"
+  echo "Sorry, you could not change your repo location in a running container. Use -f to rebuild the container."
   exit
 fi
 
