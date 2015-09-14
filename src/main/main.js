@@ -21,6 +21,18 @@ app.on('activate-with-no-open-windows', function () {
 });
 
 function createWindow() {
+	var path = require("path");
+	var fs = require("fs");
+	var userPrefsPath = path.join(app.getDataPath(), "preferences.json");
+	var data;
+	
+	//Reading user's preferences file
+	try {
+		data = JSON.parse(fs.readFileSync(userPrefsPath, 'utf8'));
+	} catch(e) {
+		console.log(e.toString());
+	}
+	
 	var window = new BrowserWindow({
 		width: 700,
 		height: 450,
@@ -31,16 +43,33 @@ function createWindow() {
 		show: false
 	});
 	
+	if(data) {
+		//Applying user's preferences
+		if(data.maximized) {
+			window.maximize();
+		} else {
+			window.setBounds(data.bounds);
+		}
+	}
+	
 	window.loadUrl('file://' + __dirname + '/../../index.html');
 	menu.setMenu(app, window);
 	
-	window.on('closed', function() {
+	window.on('close', function () {
+		//Remember window size and position before exit
+		var data = {
+			bounds: window.getBounds(),
+			maximized: window.isMaximized()
+		};
+		
+		fs.writeFileSync(userPrefsPath, JSON.stringify(data));
+		
 		window = null;
 	});
 	
 	window.webContents.on('did-finish-load', function () {
-		mainWindow.show();
-		mainWindow.focus();
+		window.show();
+		window.focus();
 	});
 	
 	return window;
