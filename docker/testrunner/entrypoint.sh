@@ -27,6 +27,7 @@ if [[ ! -e /.firstrun ]] && ( [[ ! -d /black-screen_copy ]] || [[ -n $FORCE ]] )
 	sudo -u testrunner npm install
 	touch /.firstrun
 else
+	rm -rf /black-screen_copy/*
 	cp -R /black-screen/* /black-screen_copy/
 fi
 
