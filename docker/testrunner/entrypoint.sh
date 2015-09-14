@@ -1,5 +1,4 @@
 #!/bin/bash
-cd /black-screen
 
 if [[ ! -d /black-screen ]]
 	then
