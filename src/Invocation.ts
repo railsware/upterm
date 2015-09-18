@@ -1,4 +1,4 @@
-/// <reference path="references.ts" />
+/// <reference path="References.ts" />
 
 import * as pty from 'ptyw.js';
 import * as child_process from 'child_process';

@@ -1,4 +1,4 @@
-/// <reference path="references.ts" />
+/// <reference path="References.ts" />
 
 import Utils from './Utils';
 var React = require('react');

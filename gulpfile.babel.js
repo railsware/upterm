@@ -31,40 +31,50 @@ function notify(message) {
 
 const options = {
     react: {
-        source: "views/*.js",
-        target: "compiled/views",
-        config: {stage: 0}
+        source: 'static/views/*.js',
+        target: 'dist/scripts/views',
+        config: { stage: 0 }
     },
     typeScript: {
-        source: "src/**/*",
-        target: "compiled/src",
+        source: 'src/**/*',
+        target: 'dist/scripts',
         config: $.typescript.createProject({
-            typescript: require("typescript"),
-            target: "ES5",
-            module: "commonjs",
+            typescript: require('typescript'),
+            target: 'ES5',
+            module: 'commonjs',
             //noImplicitAny: true, TODO: enable.
             removeComments: true,
             preserveConstEnums: true,
             experimentalDecorators: true,
-            sourceMap: true, // TODO: Not supported anymore. Use gulp-sourcemap.
-            jsx: "react"
+            sourceMap: true,
+            jsx: 'react'
         })
     },
     test: {
-        source: "test/**/*.ts",
-        target: "compiled/test"
+        source: 'test/**/*.ts',
+        target: 'dist/test'
     },
     sass: {
-        source: ["stylesheets/*.scss", "decorators/*.scss"],
+        source: ['static/*.scss'],
         target: {
-            directory: "compiled",
-            fileName: "all.css"
+            directory: 'dist',
+            fileName: 'main.css'
         },
         config: {
             errLogToConsole: true
         }
     }
 };
+
+gulp.task('copy-static-js', () =>
+        gulp.src('static/**/*.js')
+            .pipe(gulp.dest( 'dist/scripts' ))
+);
+
+gulp.task('copy-static-res', () =>
+        gulp.src(['static/images/**'], { base: './static' })
+            .pipe(gulp.dest( 'dist' ))
+);
 
 gulp.task("typescript", () =>
         gulp.src(options.typeScript.source)
@@ -102,6 +112,7 @@ gulp.task("watch", cb => {
     $.livereload.listen();
     runSequence(
         "clean",
+        ["copy-static-res", "copy-static-js"],
         ["typescript", "sass", "react"],
         () => {
             gulp.watch(options.sass.source, ["sass"]);
