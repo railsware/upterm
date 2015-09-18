@@ -1,10 +1,10 @@
 /node_modules/
 /bower_components/
-/compiled/*
 /tmp/*
 /npm-debug.log
 /src/tsconfig.json
 /Black Screen.app/
+/dist/*
 
 # Created by https://www.gitignore.io/api/osx
 
