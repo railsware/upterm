@@ -65,12 +65,8 @@
     "preinstall": "npm prune",
     "postinstall": "bower prune; bower install; electron-rebuild",
     "start": "gulp",
-<<<<<<< HEAD
     "package-windows": "electron-packager . \"Black Screen\" --prune --overwrite --platform=\"win32\" --arch=\"ia32\" --version=\"0.33.0\" --out=\"./.build\" --icon=\"./static/icon.ico\"",
     "package-osx": "electron-packager . 'Black Screen' --overwrite --platform=darwin --arch=x64 --version='0.33.0' --out='/.build' --icon='./icon.icns'",
-=======
-    "package": "electron-packager . 'Black Screen' --overwrite --platform=darwin --arch=x64 --version='0.33.0' --out='/Applications' --icon='./icon.icns'",
->>>>>>> df6ffb188eeaeac30f883bd7394c098c0637f7c0
     "test": "gulp typescript; gulp compile-tests; electron run-tests.js"
   },
   "license": "MIT"
