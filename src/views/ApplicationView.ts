@@ -67,7 +67,10 @@ export default class ApplicationView extends React.Component<{}, State> {
     private restoreState() {
         var contentSize = JSON.parse(localStorage.getItem('content-size'));
         if (contentSize) {
-            this.browserWindow.setContentSize(contentSize.width, contentSize.height);
+            window.resizeTo(
+                contentSize.width + (window.outerWidth - window.innerWidth),
+                contentSize.height + (window.outerHeight - window.innerHeight)
+            );
         }
 
         var windowPosition = JSON.parse(localStorage.getItem('window-position'));

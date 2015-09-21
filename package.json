@@ -34,13 +34,13 @@
   },
   "devDependencies": {
     "babel": "5.8.23",
-    "babel-core": "5.8.23",
+    "babel-core": "5.8.25",
     "bower": "1.5.2",
-    "chai": "3.2.0",
+    "chai": "3.3.0",
     "chai-things": "0.2.0",
-    "del": "2.0.1",
+    "del": "2.0.2",
     "electron-packager": "5.1.0",
-    "electron-prebuilt": "^0.33.0",
+    "electron-prebuilt": "0.33.0",
     "electron-rebuild": "^1.0.0",
     "gulp": "3.9.0",
     "gulp-babel": "5.2.1",
@@ -52,21 +52,25 @@
     "gulp-react": "3.0.1",
     "gulp-sass": "2.0.4",
     "gulp-shell": "0.4.3",
-    "gulp-typescript": "2.8.2",
+    "gulp-typescript": "2.9.0",
     "gulp-util": "3.0.6",
-    "mocha": "2.3.2",
-    "node-gyp": "3.0.1",
+    "mocha": "2.3.3",
+    "node-gyp": "3.0.3",
     "react-tools": "0.13.3",
-    "run-sequence": "1.1.2",
-    "typescript": "1.6.0-beta",
-    "webdriverio": "3.2.1"
+    "run-sequence": "1.1.3",
+    "typescript": "1.6.2",
+    "webdriverio": "3.2.4"
   },
   "scripts": {
     "preinstall": "npm prune",
     "postinstall": "bower prune; bower install; electron-rebuild",
     "start": "gulp",
+<<<<<<< HEAD
     "package-windows": "electron-packager . \"Black Screen\" --prune --overwrite --platform=\"win32\" --arch=\"ia32\" --version=\"0.33.0\" --out=\"./.build\" --icon=\"./static/icon.ico\"",
     "package-osx": "electron-packager . 'Black Screen' --overwrite --platform=darwin --arch=x64 --version='0.33.0' --out='/.build' --icon='./icon.icns'",
+=======
+    "package": "electron-packager . 'Black Screen' --overwrite --platform=darwin --arch=x64 --version='0.33.0' --out='/Applications' --icon='./icon.icns'",
+>>>>>>> df6ffb188eeaeac30f883bd7394c098c0637f7c0
     "test": "gulp typescript; gulp compile-tests; electron run-tests.js"
   },
   "license": "MIT"
