@@ -273,15 +273,15 @@ body, pre {
       }
 
       &.clean {
-        color: #8AD843;
+        color: map-get($colors, 'green');
       }
 
       &.modified {
-        color: #E9C059;
+        color: map-get($colors, 'orange');
       }
 
       &.deleted {
-        color: #D75857;
+        color: map-get($colors, 'red');
       }
     }
   }
