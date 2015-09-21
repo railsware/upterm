@@ -1,10 +1,12 @@
-var Menu = require('menu');
-var MenuItem = require('menu-item');
+var menu = require('menu');
+var menuItem = require('menu-item');
 
-module.exports = {
-    setMenu: function (app, mainWindow) {
-        if (process.platform === 'darwin') {
-            var template = [
+export = {
+    setMenu: (app, mainWindow) => {
+        var _menu;
+
+        if (process.platform == 'darwin' || process.platform == 'win32') {
+            var template: Object[] = [
                 {
                     label: 'Black Screen',
                     submenu: [
@@ -42,9 +44,7 @@ module.exports = {
                         {
                             label: 'Quit',
                             accelerator: 'Command+Q',
-                            click: function () {
-                                app.quit();
-                            }
+                            click: () => app.quit()
                         }
                     ]
                 },
@@ -92,23 +92,17 @@ module.exports = {
                         {
                             label: 'Reload',
                             accelerator: 'Command+R',
-                            click: function () {
-                                mainWindow.restart();
-                            }
+                            click: () => mainWindow.reload()
                         },
                         {
                             label: 'Toggle Full Screen',
                             accelerator: 'Ctrl+Command+F',
-                            click: function () {
-                                mainWindow.setFullScreen(!mainWindow.isFullScreen());
-                            }
+                            click: () => mainWindow.setFullScreen(!mainWindow.isFullScreen())
                         },
                         {
                             label: 'Toggle Developer Tools',
-                            accelerator: 'Alt+Command+I',
-                            click: function () {
-                                mainWindow.toggleDevTools();
-                            }
+                            accelerator: 'Ctrl+<+J',
+                            click: () => mainWindow.toggleDevTools()
                         }
                     ]
                 },
@@ -139,18 +133,16 @@ module.exports = {
                     submenu: [
                         {
                             label: 'GitHub Repository',
-                            click: function () {
-                                require('shell').openExternal('https://github.com/shockone/black-screen')
-                            }
+                            click: () => require('shell').openExternal('https://github.com/shockone/black-screen')
                         }
                     ]
                 }
             ];
 
-            menu = Menu.buildFromTemplate(template);
-            Menu.setApplicationMenu(menu);
+            _menu = menu.buildFromTemplate(template);
+            menu.setApplicationMenu(_menu);
         } else {
-            template = [
+            var template: Object[] = [
                 {
                     label: '&File',
                     submenu: [
@@ -161,9 +153,7 @@ module.exports = {
                         {
                             label: '&Close',
                             accelerator: 'Ctrl+W',
-                            click: function () {
-                                mainWindow.close();
-                            }
+                            click: () => mainWindow.close()
                         }
                     ]
                 },
@@ -173,23 +163,17 @@ module.exports = {
                         {
                             label: '&Reload',
                             accelerator: 'Ctrl+R',
-                            click: function () {
-                                mainWindow.restart();
-                            }
+                            click: () => mainWindow.restart()
                         },
                         {
                             label: 'Toggle &Full Screen',
                             accelerator: 'F11',
-                            click: function () {
-                                mainWindow.setFullScreen(!mainWindow.isFullScreen());
-                            }
+                            click: () => mainWindow.setFullScreen(!mainWindow.isFullScreen())
                         },
                         {
                             label: 'Toggle &Developer Tools',
                             accelerator: 'Alt+Ctrl+I',
-                            click: function () {
-                                mainWindow.toggleDevTools();
-                            }
+                            click: () => mainWindow.toggleDevTools()
                         }
                     ]
                 },
@@ -198,16 +182,14 @@ module.exports = {
                     submenu: [
                         {
                             label: 'GitHub Repository',
-                            click: function () {
-                                require('shell').openExternal('https://github.com/shockone/black-screen')
-                            }
+                            click: () => require('shell').openExternal('https://github.com/shockone/black-screen')
                         }
                     ]
                 }
-            ];
+           ];
 
-            menu = Menu.buildFromTemplate(template);
-            mainWindow.setMenu(menu);
+            _menu = menu.buildFromTemplate(template);
+            mainWindow.setMenu(_menu);
         }
     }
 };

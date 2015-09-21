@@ -1,5 +1,5 @@
 var Mocha = require('mocha');
-var testDir = 'compiled/test/';
+var testDir = 'dist/test/';
 var mocha = new Mocha();
 
 Mocha.utils.lookupFiles(testDir, ['js'], true).forEach(mocha.addFile.bind(mocha));

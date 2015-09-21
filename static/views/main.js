@@ -1,7 +1,7 @@
 import React from 'react';
 import _ from 'lodash';
 import Rx from 'rx';
-import ApplicationView from './compiled/src/views/ApplicationView.js';
+import ApplicationView from './dist/scripts/views/ApplicationView.js';
 
 
 var keys = {
