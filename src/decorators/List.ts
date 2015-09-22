@@ -12,10 +12,9 @@ function isJSFile(fileName: string) {
 }
 
 export var list = <(new (invocation: Invocation) => Base)[]>
-    _(fs.readdirSync(__dirname))
+    _._(fs.readdirSync(__dirname))
         .filter(isJSFile)
         .filter(isDecorator)
         .map(fileName => `./${fileName}`)
         .map(require)
-        .pluck('default')
         .value();

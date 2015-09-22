@@ -13,7 +13,7 @@ export default class Autocompletion implements i.AutocompletionProvider {
 
     getSuggestions(prompt: Prompt) {
         return Promise.all(_.map(this.providers, provider => provider.getSuggestions(prompt))).then(results =>
-            _(results)
+            _._(results)
                 .flatten()
                 .select((suggestion: i.Suggestion) => suggestion.score > 0)
                 .sortBy((suggestion: i.Suggestion) => -suggestion.score)

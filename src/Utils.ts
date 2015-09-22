@@ -141,7 +141,7 @@ export default class Utils {
         return new Promise((resolve) => {
             Promise
                 .all(values.map(value => new Promise((rs) => filter(value).then(rs, () => rs(false)))))
-                .then(filterResults => resolve(_(values).zip(filterResults).filter(z => z[1]).map(z => z[0]).value()));
+                .then(filterResults => resolve(_._(values).zip(filterResults).filter(z => z[1]).map(z => z[0]).value()));
         });
     }
 }

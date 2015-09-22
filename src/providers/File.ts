@@ -50,10 +50,10 @@ export default class File implements i.AutocompletionProvider {
                 });
 
                 if (baseName) {
-                    var prepared = _(all).each(fileInfo => fileInfo.score = score(fileInfo.value, baseName))
+                    var prepared = _._(all).each(fileInfo => fileInfo.score = score(fileInfo.value, baseName))
                                          .sortBy('score').reverse().take(10).value();
                 } else {
-                    prepared = _(all).each(fileInfo => fileInfo.score = 1).take(30).value();
+                    prepared = _._(all).each(fileInfo => fileInfo.score = 1).take(30).value();
                 }
 
 

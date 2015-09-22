@@ -38,9 +38,10 @@ const options = {
     typeScript: {
         source: "src/**/*",
         target: "compiled/src",
+        babelConfig: { whitelist: ['strict', 'es6.modules', 'es6.spread', 'es6.parameters']},
         config: $.typescript.createProject({
             typescript: require("typescript"),
-            target: "ES5",
+            target: "ES6",
             module: "commonjs",
             //noImplicitAny: true, TODO: enable.
             removeComments: true,
@@ -69,6 +70,7 @@ const options = {
 gulp.task("typescript", () =>
         gulp.src(options.typeScript.source)
             .pipe($.typescript(options.typeScript.config).on("error", onError))
+            .pipe($.babel(options.typeScript.babelConfig).on("error", onError))
             .pipe(gulp.dest(options.typeScript.target))
             .pipe(notify("TypeScript has been compiled."))
 );

@@ -189,7 +189,7 @@ export default class Executable implements i.AutocompletionProvider {
                     };
                 });
 
-                resolve(_(all).sortBy('score').reverse().take(10).value());
+                resolve(_._(all).sortBy('score').reverse().take(10).value());
             });
         });
     }
