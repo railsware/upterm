@@ -17,9 +17,10 @@ import {list} from './decorators/List';
 import DecoratorsBase from './decorators/Base';
 import Utils from './Utils';
 import CommandExecutor from "./CommandExecutor";
+import PTY from "./PTY";
 
 export default class Invocation extends events.EventEmitter {
-    public command: pty.Terminal;
+    public command: PTY;
     public parser: Parser;
     private prompt: Prompt;
     private buffer: Buffer;
@@ -90,7 +91,7 @@ export default class Invocation extends events.EventEmitter {
             }
         }
 
-        this.command.stdin.write(text);
+        this.command.write(text);
     }
 
     hasOutput(): boolean {
@@ -106,7 +107,7 @@ export default class Invocation extends events.EventEmitter {
 
         if (this.command && this.status === e.Status.InProgress) {
             this.buffer.setDimensions(dimensions);
-            this.command.resize(dimensions.columns, dimensions.rows);
+            this.command.dimensions = dimensions;
         }
     }
 

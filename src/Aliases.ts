@@ -1,5 +1,6 @@
 import * as pty from 'ptyw.js';
 import * as _ from 'lodash';
+import PTY from "./PTY";
 
 export default class Aliases {
     static aliases: _.Dictionary<string>;
@@ -15,13 +16,12 @@ export default class Aliases {
 
     private static importAliases(shellName: string = process.env.SHELL): void {
         if (process.platform === 'win32') return;
-        
-        var shell = pty.spawn(shellName, ['-i', '-c', 'alias'], {env: process.env});
 
-        var aliases = '';
-        shell.stdout.on('data', (text: string) => aliases += text.toString());
-        shell.on('exit', () =>
-            aliases.split('\n').forEach(alias => {
+        let aliases = '';
+        new PTY(
+            shellName, ['-i', '-c', 'alias'], process.env.HOME, {columns: 80, rows: 20},
+            text => aliases += text,
+            exitCode => aliases.split('\n').forEach(alias => {
                 let split = alias.split('=');
 
                 let name = /(alias )?(.*)/.exec(split[0])[2];

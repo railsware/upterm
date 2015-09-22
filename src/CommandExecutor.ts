@@ -1,9 +1,8 @@
 import Invocation from "./Invocation";
 import Command from "./Command";
 import Utils from './Utils';
-import * as Path from 'path';
-import * as pty from 'ptyw.js';
 import * as _ from 'lodash';
+import PTY from "./PTY";
 
 abstract class CommandExecutionStrategy {
     protected args: string[];
@@ -44,22 +43,11 @@ class UnixSystemFileExecutionStrategy extends CommandExecutionStrategy {
 
     startExecution() {
         return new Promise((resolve, reject) => {
-            // TODO: move command to this class.
-            this.invocation.command = pty.spawn(process.env.SHELL, ['-c', `${this.command} ${this.args.join(' ')}`], {
-                cols: this.invocation.dimensions.columns,
-                rows: this.invocation.dimensions.rows,
-                cwd: this.invocation.directory,
-                env: process.env
-            });
-
-            this.invocation.command.stdout.on('data', (data: string) => this.invocation.parser.parse(data.toString()));
-            this.invocation.command.on('exit', (code: number) => {
-                if (code === 0) {
-                    resolve();
-                } else {
-                    reject();
-                }
-            })
+            this.invocation.command = new PTY(
+                this.command, this.args, this.invocation.directory, this.invocation.dimensions,
+                data => this.invocation.parser.parse(data),
+                exitCode => exitCode === 0 ? resolve() : reject
+            );
         })
     }
 }
@@ -70,16 +58,12 @@ class WindowsSystemFileExecutionStrategy extends CommandExecutionStrategy {
     }
 
     startExecution() {
-        return new Promise((resolve, reject) => {
-            this.invocation.command = pty.spawn(this.cmdPath, ['/s', '/c', this.invocation.getPrompt().getWholeCommand().join(' ')], {
-                cols: this.invocation.dimensions.columns,
-                rows: this.invocation.dimensions.rows,
-                cwd: this.invocation.directory,
-                env: process.env
-            });
-
-            this.invocation.command.stdout.on('data', (data: string) => this.invocation.parser.parse(data.toString()));
-            this.invocation.command.on('exit', (code: number) => resolve());
+        return new Promise((resolve) => {
+            this.invocation.command = new PTY(
+                this.cmdPath, ['/s', '/c', this.invocation.getPrompt().getWholeCommand().join(' ')], this.invocation.directory, this.invocation.dimensions,
+                data => this.invocation.parser.parse(data),
+                exitCode => resolve()
+            );
         })
     }
 
