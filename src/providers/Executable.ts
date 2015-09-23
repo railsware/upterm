@@ -170,27 +170,25 @@ var descriptions: {[indexer: string]: string} = {
 
 export default class Executable implements i.AutocompletionProvider {
 
-    getSuggestions(prompt: Prompt) {
-        return new Promise((resolve) => {
-            if (prompt.getWholeCommand().length > 1) {
-                return resolve([]);
-            }
+    async getSuggestions(prompt: Prompt) {
+        if (prompt.getWholeCommand().length > 1) {
+            return [];
+        }
 
-            Utils.getExecutablesInPaths().then(executables => {
-                var lastArgument = prompt.getLastArgument();
+        var executables = await Utils.getExecutablesInPaths();
 
-                var all = _.map(executables, (executable: string) => {
-                    return {
-                        value: executable,
-                        score: 1.5 * score(executable, lastArgument),
-                        synopsis: '',
-                        description: descriptions[executable],
-                        type: 'executable'
-                    };
-                });
+        var lastArgument = prompt.getLastArgument();
 
-                resolve(_._(all).sortBy('score').reverse().take(10).value());
-            });
+        var all = _.map(executables, (executable: string) => {
+            return {
+                value: executable,
+                score: 1.5 * score(executable, lastArgument),
+                synopsis: '',
+                description: descriptions[executable],
+                type: 'executable'
+            };
         });
+
+        return _._(all).sortBy('score').reverse().take(10).value();
     }
 }

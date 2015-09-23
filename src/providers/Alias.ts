@@ -5,10 +5,9 @@ import Prompt from "../Prompt";
 var score: (i: string, m: string) => number = require('fuzzaldrin').score;
 
 export default class Alias implements i.AutocompletionProvider {
-    getSuggestions(prompt: Prompt) {
-        return new Promise((resolve) => {
+    async getSuggestions(prompt: Prompt) {
             if (prompt.getWholeCommand().length > 1) {
-                return resolve([]);
+                return [];
             }
 
             var lastArgument = prompt.getLastArgument();
@@ -23,7 +22,6 @@ export default class Alias implements i.AutocompletionProvider {
                 }
             });
 
-            resolve(_._(all).sortBy('score').reverse().take(10).value());
-        });
+            return _._(all).sortBy('score').reverse().take(10).value();
     }
 }
