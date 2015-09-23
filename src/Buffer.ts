@@ -13,6 +13,8 @@ export default class Buffer extends events.EventEmitter {
     public cursor: Cursor = new Cursor();
     public activeBuffer = 'standard';
     private attributes: i.Attributes = {color: e.Color.White, weight: e.Weight.Normal};
+    private isOriginModeSet = false;
+    private margins: i.Margins = {};
 
     constructor(private dimensions: i.Dimensions) {
         super();
@@ -120,22 +122,27 @@ export default class Buffer extends events.EventEmitter {
                     Utils.log('bell');
                     break;
                 case e.CharCode.Backspace:
-                    this.cursor.moveRelative({horizontal: -1});
+                    this.moveCursorRelative({horizontal: -1});
+                    break;
+                case e.CharCode.Tab:
+                    this.moveCursorAbsolute({horizontal: Math.floor((this.cursor.column() + 8) / 8) * 8});
                     break;
                 case e.CharCode.NewLine:
-                    this.cursor.moveRelative({vertical: 1}).moveAbsolute({horizontal: 0});
+                    if (this.isOriginModeSet && this.cursor.row() == this.margins.bottom) {
+                        this.storage.splice(this.margins.bottom + 1, 0, []);
+                        this.storage.splice(this.margins.top, 1);
+                    } else {
+                        this.moveCursorRelative({vertical: 1}).moveCursorAbsolute({horizontal: 0});
+                    }
+
                     break;
                 case e.CharCode.CarriageReturn:
-                    this.cursor.moveAbsolute({horizontal: 0});
+                    this.moveCursorAbsolute({horizontal: 0});
                     break;
                 default:
                     Utils.error(`Couldn't write a special char '${charObject}' with char code ${charObject.toString().charCodeAt(0)}.`);
             }
         } else {
-            if (this.cursor.column() >= this.dimensions.columns) {
-                this.cursor.moveRelative({vertical: 1}).moveAbsolute({horizontal: 0});
-            }
-
             this.set(this.cursor.getPosition(), charObject);
             this.cursor.next();
         }
@@ -177,20 +184,18 @@ export default class Buffer extends events.EventEmitter {
         this.emit('data');
     }
 
-    moveCursorRelative(position: i.Advancement) {
-        this.cursor.moveRelative(position, this.dimensions);
+    moveCursorRelative(position: i.Advancement): Buffer {
+        this.cursor.moveRelative(position);
         this.emit('data');
+
+        return this;
     }
 
-    moveCursorAbsolute(position: i.Advancement) {
-        this.cursor.moveAbsolute(position);
+    moveCursorAbsolute(position: i.Advancement): Buffer {
+        this.cursor.moveAbsolute(position, this.homePosition);
         this.emit('data');
-    }
 
-    clearCurrent() {
-        var cursorPosition = this.cursor.getPosition();
-        this.storage[cursorPosition.row][cursorPosition.column] = null;
-        this.emit('data');
+        return this;
     }
 
     clearRow() {
@@ -223,7 +228,7 @@ export default class Buffer extends events.EventEmitter {
 
     clear() {
         this.storage = [];
-        this.cursor.moveAbsolute({horizontal: 0, vertical: 0});
+        this.moveCursorAbsolute({horizontal: 0, vertical: 0});
         this.emit('data');
     }
 
@@ -259,6 +264,27 @@ export default class Buffer extends events.EventEmitter {
 
     setDimensions(dimensions: i.Dimensions): void {
         this.dimensions = dimensions;
+    }
+
+    set originMode(mode: boolean) {
+        this.isOriginModeSet = mode;
+    }
+
+    setMargins(margins: i.Margins): void {
+        this.margins = margins;
+    }
+
+    at(position: i.Position): Char {
+        let row = this.storage[position.row];
+        return row && row[position.column];
+    }
+
+    private get homePosition(): i.Position {
+        if (this.isOriginModeSet) {
+            return {row: this.margins.top || 0, column: this.margins.left || 0};
+        } else {
+            return {row: 0, column: 0};
+        }
     }
 
     private getHTMLAttributes(attributes: i.Attributes): Object {
