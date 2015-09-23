@@ -1,26 +1,33 @@
 import * as fs from 'fs';
 import * as Path from 'path';
 import * as i from './Interfaces';
+import * as e from './Enums';
 import * as _ from 'lodash';
 
 export default class Utils {
     public static paths: Array<string> = process.env.PATH.split(Path.delimiter);
     public static executables: Array<string> = [];
 
-    static log(...args: any[]): void {
-        this.delegate('log', args);
-    }
-
     static info(...args: any[]): void {
-        this.delegate('info', args);
+        this.print(e.LogLevel.Info, args);
     }
 
     static debug(...args: any[]): void {
-        this.delegate('debug', args);
+        this.print(e.LogLevel.Debug, args);
+    }
+
+    static log(...args: any[]): void {
+        this.print(e.LogLevel.Log, args);
     }
 
     static error(...args: any[]): void {
-        this.delegate('error', args);
+        this.print(e.LogLevel.Error, args);
+    }
+
+    static print(level: e.LogLevel, args: Array<any>): void {
+        if ((typeof window !== 'undefined') && (<any>window)['DEBUG']) {
+            console[level](...args);
+        }
     }
 
     static filesIn(directory: string): Promise<string[]> {
@@ -129,12 +136,6 @@ export default class Utils {
 
     static get homeDirectory(): string {
         return process.env[(Utils.isWindows) ? 'USERPROFILE' : 'HOME'];
-    }
-
-    private static delegate(name: string, args: Array<any>): void {
-        if ((typeof window !== 'undefined') && (<any>window)['DEBUG']) {
-            (<any>console)[name](...args);
-        }
     }
 
     static filterWithPromising<T>(values: T[], filter: (T) => Promise<boolean>): Promise<T[]> {

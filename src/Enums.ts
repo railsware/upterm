@@ -48,3 +48,10 @@ export enum Weight {
     Bold = <Weight><any>'bold',
     Faint = <Weight><any>'faint'
 }
+
+export enum LogLevel {
+    Info = <LogLevel><any>'info',
+    Debug = <LogLevel><any>'debug',
+    Log = <LogLevel><any>'log',
+    Error = <LogLevel><any>'error',
+}
