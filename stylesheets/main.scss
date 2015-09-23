@@ -213,6 +213,12 @@ body, pre {
 
 .output {
   margin: 10px;
+
+  // To display even empty rows. The height might need tweaking.
+  // TODO: Remove if we always have a fixed buffer width.
+  .row {
+    height: $font-size + 4px;
+  }
 }
 
 #black-board {
