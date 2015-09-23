@@ -67,7 +67,7 @@
     "preinstall": "npm prune",
     "postinstall": "bower prune; bower install; electron-rebuild",
     "start": "gulp",
-    "package": "electron-packager . 'Black Screen' --overwrite --platform=darwin --arch=x64 --version='0.33.0' --out='/Applications' --icon='./icon.icns'",
+    "package": "gulp build && electron-packager . 'Black Screen' --overwrite --platform=darwin --arch=x64 --version='0.33.0' --out='/Applications' --icon='./icon.icns'",
     "test": "gulp typescript; gulp compile-tests; electron run-tests.js"
   },
   "license": "MIT"
