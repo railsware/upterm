@@ -3,6 +3,7 @@ import * as _ from 'lodash';
 export enum CharCode {
     Bell = 7,
     Backspace = 8,
+    Tab = 9,
     NewLine = 10,
     CarriageReturn = 13,
     Delete = 127
