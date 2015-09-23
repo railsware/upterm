@@ -7,28 +7,24 @@ export default class Cursor {
     constructor(private position: i.Position = {row: 0, column: 0}) {
     }
 
-    moveAbsolute(advancement: i.Advancement): Cursor {
-        if (typeof advancement.horizontal !== 'undefined') {
-            this.position.column = advancement.horizontal;
+    // TODO: Use Position instead of Advancement.
+    moveAbsolute(advancement: i.Advancement, homePosition: i.Position): Cursor {
+        if (typeof advancement.horizontal === 'number') {
+            this.position.column = homePosition.column + advancement.horizontal;
         }
 
-        if (typeof advancement.vertical !== 'undefined') {
-            this.position.row = advancement.vertical;
+        if (typeof advancement.vertical === 'number') {
+            this.position.row = homePosition.row + advancement.vertical;
         }
 
         return this;
     }
 
-    moveRelative(advancement: i.Advancement, dimensions?: i.Dimensions): Cursor {
+    moveRelative(advancement: i.Advancement): Cursor {
         var vertical = Math.max(0, this.row() + (advancement.vertical || 0));
         var horizontal = Math.max(0, this.column() + (advancement.horizontal || 0));
 
-        if (dimensions) {
-            vertical = Math.min(dimensions.rows - 1, vertical);
-            horizontal = Math.min(dimensions.columns - 1, horizontal);
-        }
-
-        this.moveAbsolute({ vertical: vertical, horizontal: horizontal });
+        this.moveAbsolute({ vertical: vertical, horizontal: horizontal }, {column: 0, row: 0});
 
         return this;
     }
