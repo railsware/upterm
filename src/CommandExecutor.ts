@@ -11,16 +11,16 @@ abstract class CommandExecutionStrategy {
         this.args = invocation.getPrompt().getArguments().filter(argument => argument.length > 0);
     }
 
-    static canExecute(command: string): Promise<boolean> {
-        return new Promise(resolve => resolve(false));
+    static async canExecute(command: string): Promise<boolean> {
+        return false;
     }
 
     abstract startExecution(): Promise<{}>;
 }
 
 class BuiltInCommandExecutionStrategy extends CommandExecutionStrategy {
-    static canExecute(command: string): Promise<boolean> {
-        return new Promise(resolve => resolve(Command.isBuiltIn(command)));
+    static async canExecute(command) {
+        return Command.isBuiltIn(command);
     }
 
     startExecution() {
@@ -37,8 +37,8 @@ class BuiltInCommandExecutionStrategy extends CommandExecutionStrategy {
 }
 
 class UnixSystemFileExecutionStrategy extends CommandExecutionStrategy {
-    static canExecute(command: string): Promise<boolean> {
-        return new Promise(resolve => Utils.getExecutablesInPaths().then(executables => resolve(_.include(executables, command))));
+    static async canExecute(command) {
+        return _.include(await Utils.getExecutablesInPaths(), command);
     }
 
     startExecution() {
@@ -53,8 +53,8 @@ class UnixSystemFileExecutionStrategy extends CommandExecutionStrategy {
 }
 
 class WindowsSystemFileExecutionStrategy extends CommandExecutionStrategy {
-    static canExecute(command: string): Promise<boolean> {
-        return new Promise(resolve => resolve(Utils.isWindows));
+    static async canExecute(command) {
+        return Utils.isWindows;
     }
 
     startExecution() {
@@ -79,8 +79,8 @@ class WindowsSystemFileExecutionStrategy extends CommandExecutionStrategy {
 }
 
 class NullExecutionStrategy extends CommandExecutionStrategy {
-    static canExecute(command: string): Promise<boolean> {
-        return new Promise(resolve => resolve(true));
+    static async canExecute(command) {
+        return true;
     }
 
     startExecution() {
