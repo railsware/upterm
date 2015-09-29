@@ -100,12 +100,14 @@ gulp.task("clean", () => {
     require("del").sync([options.typeScript.target + "/**"]);
 });
 
+gulp.task("build", ["typescript", "sass", "react"]);
+
 gulp.task("watch", cb => {
     watching = true;
     $.livereload.listen();
     runSequence(
         "clean",
-        ["typescript", "sass", "react"],
+        "build",
         () => {
             gulp.watch(options.sass.source, ["sass"]);
             gulp.watch(options.react.source, ["react"]);
