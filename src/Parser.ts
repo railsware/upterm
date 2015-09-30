@@ -1,4 +1,5 @@
 import Invocation from "./Invocation";
+import Char from "./Char";
 var ANSIParser: AnsiParserConstructor = require('node-ansiparser');
 
 import * as e from './Enums';
@@ -65,11 +66,9 @@ export default class Parser {
         // TODO: an easy to clean up mess.
         return new ANSIParser({
             inst_p: (text: string) => {
-                Utils.info('text', text, text.charCodeAt(0), text.length);
+                Utils.info('text', text, text.split('').map(letter => letter.charCodeAt(0)));
 
-                for (var i = 0; i !== text.length; ++i) {
-                    this.buffer.write(text.charAt(i));
-                }
+                this.buffer.writeString(text);
 
                 logPosition(this.buffer);
             },
@@ -77,7 +76,11 @@ export default class Parser {
                 Utils.error('osc', s);
             },
             inst_x: (flag: string) => {
-                Utils.info('flag', flag, flag.charCodeAt(0), flag.length);
+                var char = Char.flyweight(flag, this.invocation.getBuffer().getAttributes());
+                var name = e.CharCode[char.getCharCode()];
+
+                Utils.print((name ? e.LogLevel.Log : e.LogLevel.Error), flag.split('').map((_, index) => flag.charCodeAt(index)));
+
                 this.buffer.write(flag);
 
                 logPosition(this.buffer);
@@ -229,6 +232,12 @@ export default class Parser {
                 // DECCOLM resets vertical split screen mode (DECLRMM) to unavailable.
                 // DECCOLM clears data from the status line if the status line is set to host-writable.
                 break;
+            case 6:
+                description = "Origin Mode (DECOM).";
+                url = "http://www.vt100.net/docs/vt510-rm/DECOM";
+
+                this.invocation.getBuffer().originMode = isSet;
+                break;
             case 12:
                 if (isSet) {
                     description = "Start Blinking Cursor (att610).";
@@ -379,7 +388,6 @@ export default class Parser {
                         break;
                 }
                 break;
-
             case 'c':
                 this.invocation.write('\x1b>1;2;');
                 break;
@@ -401,6 +409,16 @@ export default class Parser {
                         this.buffer.clearRowToBeginning();
                         break;
                 }
+                break;
+            case 'r':
+                url = "http://www.vt100.net/docs/vt510-rm/DECSTBM";
+                short = "Set Scrolling Region [top;bottom] (default = full size of window) (DECSTBM).";
+
+                let bottom = <number>(params[1] ? params[1] - 1 : null);
+                let top = <number>(params[0] ? params[0] - 1 : null);
+
+                this.buffer.setMargins({top: top, bottom: bottom});
+                this.buffer.moveCursorAbsolute({horizontal: 0, vertical: 0});
                 break;
             default:
                 status = 'unhandled';
@@ -427,5 +445,5 @@ function or1(number: number) {
 // TODO: Move to Utils.
 function logPosition(buffer: Buffer) {
     var position = buffer.cursor.getPosition();
-    Utils.debug(`%crow: ${position.row}\tcolumn: ${position.column}`, "color: green");
+    Utils.debug(`%crow: ${position.row}\tcolumn: ${position.column}\t value: ${buffer.at(position)}`, "color: green");
 }

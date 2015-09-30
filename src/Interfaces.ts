@@ -63,3 +63,10 @@ export interface FileInfo {
     name: string;
     stat: fs.Stats;
 }
+
+export interface Margins {
+    top?: number;
+    bottom?: number;
+    left?: number;
+    right?: number;
+}

@@ -3,6 +3,7 @@ import * as _ from 'lodash';
 export enum CharCode {
     Bell = 7,
     Backspace = 8,
+    Tab = 9,
     NewLine = 10,
     CarriageReturn = 13,
     Delete = 127
@@ -46,4 +47,11 @@ export enum Weight {
     Normal = <Weight><any>'normal',
     Bold = <Weight><any>'bold',
     Faint = <Weight><any>'faint'
+}
+
+export enum LogLevel {
+    Info = <LogLevel><any>'info',
+    Debug = <LogLevel><any>'debug',
+    Log = <LogLevel><any>'log',
+    Error = <LogLevel><any>'error',
 }
