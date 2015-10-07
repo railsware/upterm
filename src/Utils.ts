@@ -30,6 +30,12 @@ export default class Utils {
         }
     }
 
+    static times(n: number, action: Function): void {
+        for(let i = 0; i != n; ++i) {
+            action();
+        }
+    }
+
     static filesIn(directory: string): Promise<string[]> {
         return new Promise((resolve, reject) => {
             Utils.ifExists(directory, () => {

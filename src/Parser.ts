@@ -410,6 +410,18 @@ export default class Parser {
                         break;
                 }
                 break;
+            case 'L':
+                url = "http://www.vt100.net/docs/vt510-rm/IL";
+                short = "Inserts one or more blank lines, starting at the cursor. (DL)";
+
+                this.buffer.scrollUp(param || 1, this.buffer.cursor.row());
+                break;
+            case 'M':
+                url = "http://www.vt100.net/docs/vt510-rm/DL";
+                short = "Deletes one or more lines in the scrolling region, starting with the line that has the cursor. (DL)";
+
+                this.buffer.scrollDown(param || 1, this.buffer.cursor.row());
+                break;
             case 'r':
                 url = "http://www.vt100.net/docs/vt510-rm/DECSTBM";
                 short = "Set Scrolling Region [top;bottom] (default = full size of window) (DECSTBM).";

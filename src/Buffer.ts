@@ -129,8 +129,7 @@ export default class Buffer extends events.EventEmitter {
                     break;
                 case e.CharCode.NewLine:
                     if (this.isOriginModeSet && this.cursor.row() == this.margins.bottom) {
-                        this.storage.splice(this.margins.bottom + 1, 0, []);
-                        this.storage.splice(this.margins.top, 1);
+                        this.scrollDown(1);
                     } else {
                         this.moveCursorRelative({vertical: 1}).moveCursorAbsolute({horizontal: 0});
                     }
@@ -150,6 +149,16 @@ export default class Buffer extends events.EventEmitter {
         this.emit('data');
     }
 
+    scrollUp(count, addAtLine) {
+        this.storage.splice(this.margins.bottom - count + 1, count);
+        Utils.times(count, () => this.storage.splice(addAtLine, 0, []));
+    }
+
+    scrollDown(count, deletedLine = this.margins.top) {
+        Utils.times(count, () => this.storage.splice(this.margins.bottom + 1, 0, []));
+        this.storage.splice(deletedLine, count);
+    }
+
     getAttributes(): i.Attributes {
         return _.clone(this.attributes);
     }
@@ -163,7 +172,7 @@ export default class Buffer extends events.EventEmitter {
     }
 
     toLines(): string[] {
-        return this.storage.map((row) => {
+        return this.map((row) => {
             return row.map((char) => {
                 return char.toString();
             }).join('')
@@ -171,7 +180,11 @@ export default class Buffer extends events.EventEmitter {
     }
 
     map<R>(callback: (row: Array<Char>, index: number) => R): R[] {
-        return this.storage.map(callback);
+        var mapped = [];
+        for (let i = 0; i !== this.storage.length; ++i) {
+            mapped.push(callback(this.storage[i], i));
+        }
+        return mapped
     }
 
     showCursor(state: boolean): void {
