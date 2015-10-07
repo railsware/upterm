@@ -10,7 +10,7 @@ import Buffer from './Buffer';
 import Color = e.Color;
 import Weight = e.Weight;
 
-var CGR: { [indexer: string]: i.Attributes|string } = {
+var SGR: { [indexer: string]: i.Attributes|string } = {
     0: {color: Color.White, weight: e.Weight.Normal, underline: false, 'background-color': Color.Black},
     1: {weight: Weight.Bold},
     2: {weight: Weight.Faint},
@@ -36,8 +36,8 @@ var CGR: { [indexer: string]: i.Attributes|string } = {
     48: 'background-color'
 };
 
-function isSetColorExtended(cgrValue: any) {
-    return cgrValue === 'color' || cgrValue === 'background-color';
+function isSetColorExtended(sgrValue: any) {
+    return sgrValue === 'color' || sgrValue === 'background-color';
 }
 
 var CSI = {
@@ -298,28 +298,28 @@ export default class Parser {
 
         switch (flag) {
             case 'm':
-                short = 'Some CGR stuff';
+                short = 'Some SGR stuff';
 
                 if (params.length === 0) {
-                    short = 'Reset CGR';
-                    this.buffer.setAttributes(CGR[0]);
+                    short = 'Reset SGR';
+                    this.buffer.setAttributes(SGR[0]);
                     break;
                 }
 
                 while (params.length) {
-                    var cgr = params.shift();
+                    var sgr = params.shift();
 
-                    var attributeToSet = CGR[cgr];
+                    var attributeToSet = SGR[sgr];
 
                     if (!attributeToSet) {
-                        Utils.error('cgr', cgr, params);
+                        Utils.error('sgr', sgr, params);
                     } else if (isSetColorExtended(attributeToSet)) {
                         var next = params.shift();
                         if (next === 5) {
                             var colorIndex = params.shift();
                             this.buffer.setAttributes({[<string>attributeToSet]: e.ColorIndex[colorIndex]});
                         } else {
-                            Utils.error('cgr', cgr, next, params);
+                            Utils.error('sgr', sgr, next, params);
                         }
                     } else if (attributeToSet === 'negative') {
                         var attributes = this.buffer.getAttributes();
