@@ -128,7 +128,7 @@ export default class Buffer extends events.EventEmitter {
                     this.moveCursorAbsolute({horizontal: Math.floor((this.cursor.column() + 8) / 8) * 8});
                     break;
                 case e.CharCode.NewLine:
-                    if (this.isOriginModeSet && this.cursor.row() == this.margins.bottom) {
+                    if (this.cursor.row() == this.margins.bottom) {
                         this.scrollDown(1);
                     } else {
                         this.moveCursorRelative({vertical: 1}).moveCursorAbsolute({horizontal: 0});
