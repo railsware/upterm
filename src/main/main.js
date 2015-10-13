@@ -7,39 +7,42 @@ process.env.PATH += ':/usr/local/bin';
 var mainWindow;
 
 app.on('ready', function () {
-	mainWindow = createWindow();
+    mainWindow = createWindow();
 });
 
-app.on('window-all-closed', function() {
-	if(process.platform !== 'darwin') {
-		app.quit();
-	}
+app.on('window-all-closed', function () {
+    if (process.platform !== 'darwin') {
+        app.quit();
+    }
 });
 
 app.on('activate-with-no-open-windows', function () {
-	mainWindow = createWindow();
+    mainWindow = createWindow();
 });
 
 function createWindow() {
-	var window = new BrowserWindow({
-		'web-preferences': {
-			'overlay-scrollbars': true
-		},
-		resizable: true,
-		show: false
-	});
+    var workAreaSize = require('screen').getPrimaryDisplay().workAreaSize;
+    var window = new BrowserWindow({
+        'web-preferences': {
+            'overlay-scrollbars': true
+        },
+        resizable: true,
+        width: workAreaSize.width,
+        height: workAreaSize.height,
+        show: false
+    });
 
-	window.loadUrl('file://' + __dirname + '/../../index.html');
-	menu.setMenu(app, window);
-	
-	window.on('closed', function() {
-		window = null;
-	});
-	
-	window.webContents.on('did-finish-load', function () {
-		mainWindow.show();
-		mainWindow.focus();
-	});
+    window.loadUrl('file://' + __dirname + '/../../index.html');
+    menu.setMenu(app, window);
 
-	return window;
+    window.on('closed', function () {
+        window = null;
+    });
+
+    window.webContents.on('did-finish-load', function () {
+        mainWindow.show();
+        mainWindow.focus();
+    });
+
+    return window;
 }
