@@ -1,9 +1,9 @@
-[![Checkout out our Waffle.io board](https://badge.waffle.io/black-screen/black-screen.svg?label=Ready)](https://waffle.io/black-screen/black-screen)
 [![Join the chat at https://gitter.im/shockone/black-screen](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/shockone/black-screen?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 ### What is it?
 
-Black Screen is a modern terminal emulator (and shell) based on [Electron](http://electron.atom.io/). As opposed to most of the terminal emulators, it exploits the capabilities of contemporary interfaces.
+Black Screen is a modern terminal emulator (and partially a shell) based on [Electron](http://electron.atom.io/). 
+As opposed to most of the terminal emulators, it exploits the capabilities of contemporary interfaces.
 
 ![](https://dl.dropboxusercontent.com/spa/dlqheu39w0arg9q/ucvbthot.png)
 
