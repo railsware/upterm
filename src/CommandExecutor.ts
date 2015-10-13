@@ -46,7 +46,7 @@ class UnixSystemFileExecutionStrategy extends CommandExecutionStrategy {
             this.invocation.command = new PTY(
                 this.command, this.args, this.invocation.directory, this.invocation.dimensions,
                 data => this.invocation.parser.parse(data),
-                exitCode => exitCode === 0 ? resolve() : reject
+                exitCode => exitCode === 0 ? resolve() : reject()
             );
         })
     }
