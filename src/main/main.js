@@ -40,6 +40,6 @@ function createWindow() {
 		mainWindow.show();
 		mainWindow.focus();
 	});
-	
+
 	return window;
 }

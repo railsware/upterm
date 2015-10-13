@@ -2,21 +2,17 @@ import Application from '../Application';
 import TerminalComponent from './TerminalComponent';
 import * as React from 'react';
 import * as i from '../Interfaces';
-var remote = require('remote');
 
 interface State {
     application: Application;
 }
 
 export default class ApplicationView extends React.Component<{}, State> {
-    private browserWindow = remote.getCurrentWindow();
-
     constructor(props) {
         super(props);
-        this.restoreState();
 
+        $(window).resize(() => this.state.application.contentSize = this.contentSize)
         this.state = {application: new Application(this.charSize, this.contentSize)};
-        this.subscribeToEvents();
     }
 
     handleKeyDown(event: React.KeyboardEvent) {
@@ -62,31 +58,5 @@ export default class ApplicationView extends React.Component<{}, State> {
             width: letter.clientWidth + 0.5,
             height: letter.clientHeight,
         };
-    };
-
-    private restoreState() {
-        var contentSize = JSON.parse(localStorage.getItem('content-size'));
-        if (contentSize) {
-            window.resizeTo(
-                contentSize.width + (window.outerWidth - window.innerWidth),
-                contentSize.height + (window.outerHeight - window.innerHeight)
-            );
-        }
-
-        var windowPosition = JSON.parse(localStorage.getItem('window-position'));
-        if (windowPosition) {
-            this.browserWindow.setPosition(...windowPosition);
-        }
-    };
-
-    private subscribeToEvents() {
-        this.browserWindow.on('move', () => {
-            localStorage.setItem('window-position', JSON.stringify(this.browserWindow.getPosition()));
-        });
-
-        $(window).resize(() => {
-            localStorage.setItem('content-size', JSON.stringify(this.contentSize));
-            this.state.application.contentSize = this.contentSize;
-        })
     };
 }
