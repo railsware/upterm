@@ -17,6 +17,11 @@ export default class Application {
         return this._terminals;
     }
 
+    // FIXME when support multiple terminals.
+    get activeTerminal() {
+        return this.terminals[0];
+    }
+
     set contentSize(newSize) {
         this._contentSize = newSize;
 

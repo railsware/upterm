@@ -13,6 +13,9 @@ export default class ApplicationView extends React.Component<{}, State> {
 
         $(window).resize(() => this.state.application.contentSize = this.contentSize);
         this.state = {application: new Application(this.charSize, this.contentSize)};
+        require('ipc').on('change-working-directory', (directory: string) =>
+            this.state.application.activeTerminal.currentDirectory = directory
+        );
     }
 
     handleKeyDown(event: React.KeyboardEvent) {

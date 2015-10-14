@@ -5,12 +5,12 @@ var menu = require('./menu');
 process.env.PATH += ':/usr/local/bin';
 
 var mainWindow;
-app.on('open-file', function (a, b) {
-    console.log(a);
-    console.log(b);
+
+app.on('open-file', function (event, file) {
+    getMainWindow().webContents.send('change-working-directory', file);
 });
 
-app.on('ready', createWindow);
+app.on('ready', getMainWindow);
 
 app.on('mainWindow-all-closed', function () {
     if (process.platform !== 'darwin') {
@@ -18,10 +18,10 @@ app.on('mainWindow-all-closed', function () {
     }
 });
 
-app.on('activate-with-no-open-windows', createWindow);
+app.on('activate-with-no-open-windows', getMainWindow);
 
-function createWindow() {
-    if (mainWindow) return;
+function getMainWindow() {
+    if (mainWindow) return mainWindow;
 
     var workAreaSize = require('screen').getPrimaryDisplay().workAreaSize;
     mainWindow = new BrowserWindow({
