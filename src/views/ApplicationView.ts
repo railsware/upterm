@@ -11,7 +11,7 @@ export default class ApplicationView extends React.Component<{}, State> {
     constructor(props) {
         super(props);
 
-        $(window).resize(() => this.state.application.contentSize = this.contentSize)
+        $(window).resize(() => this.state.application.contentSize = this.contentSize);
         this.state = {application: new Application(this.charSize, this.contentSize)};
     }
 

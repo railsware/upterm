@@ -93,7 +93,7 @@ export default class Terminal extends events.EventEmitter {
 
         Utils.ifExists(gitDirectory, () => {
             this.updateGitData(gitDirectory);
-            this.gitBranchWatcher = fs.watch(this._currentDirectory, {recursive: true},
+            this.gitBranchWatcher = fs.watch(this.currentDirectory, {recursive: true},
                 (type, fileName) => {
                     if (!this.gitLocked && (!fileName.startsWith('.git') || fileName == gitHeadFileName || fileName.startsWith(gitHeadsDirectoryName))) {
                         this.updateGitData(gitDirectory)
@@ -107,7 +107,7 @@ export default class Terminal extends events.EventEmitter {
         this.gitLocked = true;
         fs.readFile(`${gitDirectory}/HEAD`, (error, buffer) => {
             var changes = '';
-            new PTY('git', ['status', '--porcelain'], this._currentDirectory, {columns: 80, rows: 20},
+            new PTY('git', ['status', '--porcelain'], this.currentDirectory, {columns: 80, rows: 20},
                 text => changes += text,
                 exitCode => {
                     var status = changes.length ? 'dirty' : 'clean';
