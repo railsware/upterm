@@ -276,6 +276,10 @@ body, pre {
         @extend .octicon-git-branch;
         margin-right: 5px;
       }
+
+      &.dirty {
+        color: map-get($colors, 'blue');
+      }
     }
   }
 }
