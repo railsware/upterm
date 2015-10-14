@@ -42,6 +42,7 @@ export interface Suggestion {
     description: string;
     type: string;
     partial?: boolean;
+    replateAll?: boolean;
     prefix?: string;
 }
 

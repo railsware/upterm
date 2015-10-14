@@ -84,6 +84,9 @@ export default React.createClass({
     getText() {
         return this.props.prompt.buffer.toString();
     },
+    replaceText(text) {
+        this.setText(text, text.length);
+    },
     setText(text, position = getCaretPosition()) {
         this.props.invocation.setPromptText(text);
         this.setState({caretPosition: position});
@@ -96,11 +99,11 @@ export default React.createClass({
             var prevCommand = this.props.prompt.history.getPrevious();
 
             if (typeof prevCommand !== 'undefined') {
-                this.setText(prevCommand, prevCommand.length);
+                this.replaceText(prevCommand);
             }
         } else {
             var nextCommand = this.props.prompt.history.getNext() || '';
-            this.setText(nextCommand, nextCommand.length);
+            this.replaceText(nextCommand);
         }
     },
     navigateAutocomplete(event) {
@@ -115,11 +118,16 @@ export default React.createClass({
     selectAutocomplete() {
         var state = this.state;
         const suggestion = state.suggestions[state.selectedAutocompleteIndex];
-        this.props.prompt.replaceCurrentLexeme(suggestion);
-        this.setState({caretPosition: this.getText().length});
 
-        if (!suggestion.partial) {
-            this.props.prompt.buffer.write(' ');
+        if (suggestion.replaceAll) {
+            this.replaceText(suggestion.value)
+        } else {
+            this.props.prompt.replaceCurrentLexeme(suggestion);
+            this.setState({caretPosition: this.getText().length});
+
+            if (!suggestion.partial) {
+                this.props.prompt.buffer.write(' ');
+            }
         }
 
         this.props.prompt.getSuggestions().then(suggestions =>
@@ -134,7 +142,7 @@ export default React.createClass({
             newCommand += ' ';
         }
 
-        this.setText(newCommand, this.getText().length);
+        this.replaceText(newCommand);
     },
     handleInput(event) {
         this.setText(event.target.innerText);

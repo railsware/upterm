@@ -15,6 +15,7 @@ export default class History implements i.AutocompletionProvider {
                 score: 0.1 * score(entry, lastArgument),
                 synopsis: '',
                 description: '',
+                replaceAll: true,
                 type: 'history'
             };
         });
