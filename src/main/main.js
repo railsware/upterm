@@ -24,9 +24,14 @@ function createWindow() {
     var workAreaSize = require('screen').getPrimaryDisplay().workAreaSize;
     var window = new BrowserWindow({
         'web-preferences': {
+            'experimental-features': true,
+            'experimental-canvas-features': true,
+            'subpixel-font-scaling': true,
             'overlay-scrollbars': true
         },
         resizable: true,
+        'min-width': 500,
+        'min-height': 300,
         width: workAreaSize.width,
         height: workAreaSize.height,
         show: false
@@ -40,8 +45,8 @@ function createWindow() {
     });
 
     window.webContents.on('did-finish-load', function () {
-        mainWindow.show();
-        mainWindow.focus();
+        window.show();
+        window.focus();
     });
 
     return window;
