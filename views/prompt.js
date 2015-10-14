@@ -1,5 +1,6 @@
 import _ from 'lodash';
 import React from 'react';
+import ReactDOM from 'react-dom';
 import Autocomplete from './autocomplete';
 import DecorationToggle from './decoration_toggle';
 
@@ -13,10 +14,6 @@ export default React.createClass({
             caretPosition: 0,
             caretOffset: 0
         }
-    },
-    getInputNode() {
-        // TODO: Try to cache.
-        return this.refs.command.getDOMNode()
     },
     componentWillMount() {
         var keysDownStream = createEventHandler();
@@ -51,25 +48,25 @@ export default React.createClass({
         };
     },
     componentDidMount() {
-        $(this.getDOMNode()).fixedsticky();
+
+        $(ReactDOM.findDOMNode(this)).fixedsticky();
         $('.fixedsticky-dummy').remove();
 
-        this.getInputNode().focus();
+        this.refs.command.focus();
     },
     componentDidUpdate(prevProps, prevState) {
         if (this.props.status !== 'not-started') {
             return;
         }
 
-        var inputNode = this.getInputNode();
-        inputNode.innerText = this.getText();
+        this.refs.command.innerText = this.getText();
 
         if (this.state.caretPosition !== getCaretPosition() || prevState.caretOffset !== this.state.caretOffset) {
-            setCaretPosition(inputNode, this.state.caretPosition);
+            setCaretPosition(this.refs.command, this.state.caretPosition);
         }
 
         if (prevState.caretPosition !== this.state.caretPosition) {
-            this.setState({caretOffset: $(inputNode).caret('offset')});
+            this.setState({caretOffset: $(this.refs.command).caret('offset')});
         }
 
         scrollToBottom();

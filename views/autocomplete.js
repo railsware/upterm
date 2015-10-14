@@ -1,4 +1,5 @@
-import React from 'react/addons';
+import React from 'react';
+import update from 'react-addons-update';
 import _ from 'lodash';
 
 export default React.createClass({
@@ -48,7 +49,7 @@ export default React.createClass({
         };
 
         if (index === this.props.selectedIndex) {
-            props = React.addons.update(props, {
+            props = update(props, {
                     className: {$push: ['selected']},
                     ref: {$set: 'selected'}
                 }
@@ -61,6 +62,6 @@ export default React.createClass({
     },
 
     componentDidUpdate() {
-        this.refs.selected.getDOMNode().scrollIntoView(false);
+        this.refs.selected.scrollIntoView(false);
     }
 });
