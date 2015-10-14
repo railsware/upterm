@@ -43,15 +43,12 @@ export default class Terminal extends events.EventEmitter {
     createInvocation(): void {
         var invocation = new Invocation(this);
 
-        invocation
-            .once('clear', _ => this.clearInvocations())
-            .once('end', _ => {
-                if (app.dock) {
-                    app.dock.bounce('informational');
-                }
-                this.createInvocation();
-            })
-            .once('working-directory-changed', (newWorkingDirectory: string) => this.currentDirectory = newWorkingDirectory);
+        invocation.once('end', () => {
+            if (app.dock) {
+                app.dock.bounce('informational');
+            }
+            this.createInvocation();
+        });
 
         this.invocations = this.invocations.concat(invocation);
         this.emit('invocation');

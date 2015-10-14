@@ -23,7 +23,7 @@ const executors = {
             }
         }
 
-        invocation.emit('working-directory-changed', newDirectory);
+        invocation.terminal.currentDirectory = newDirectory;
     },
     clear: (invocation: Invocation, args: Array<string>): void => {
         setTimeout(() => invocation.terminal.clearInvocations(), 0);
