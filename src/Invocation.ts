@@ -5,6 +5,7 @@ import * as child_process from 'child_process';
 import * as _ from 'lodash';
 import * as React from 'react';
 import * as events from 'events';
+import Terminal from "./Terminal";
 import Parser from './Parser';
 import Prompt from './Prompt';
 import Buffer from './Buffer';
@@ -27,15 +28,13 @@ export default class Invocation extends events.EventEmitter {
     public id: string;
     public status: e.Status = e.Status.NotStarted;
 
-    constructor(public directory: string,
-                public dimensions: i.Dimensions,
-                private history: History = new History()) {
+    constructor(private _terminal: Terminal) {
         super();
 
-        this.prompt = new Prompt(directory);
+        this.prompt = new Prompt(this.directory);
         this.prompt.on('send', () => this.execute());
 
-        this.buffer = new Buffer(dimensions);
+        this.buffer = new Buffer(this.dimensions);
         this.buffer.on('data', _.throttle(() => this.emit('data'), 1000 / 60));
         this.parser = new Parser(this);
         this.id = `invocation-${new Date().getTime()}`
@@ -94,20 +93,35 @@ export default class Invocation extends events.EventEmitter {
         this.command.write(text);
     }
 
+    get terminal(): Terminal {
+        return this._terminal;
+    }
+
+    get directory(): string {
+        return this.terminal.currentDirectory;
+    }
+
+    get dimensions(): i.Dimensions {
+        return this.terminal.dimensions;
+    }
+
     hasOutput(): boolean {
         return !this.buffer.isEmpty();
     }
 
     getDimensions(): i.Dimensions {
-        return this.dimensions;
+        return this.terminal.dimensions;
     }
 
     setDimensions(dimensions: i.Dimensions) {
-        this.dimensions = dimensions;
+        this.terminal.dimensions = dimensions;
+        this.wing();
+    }
 
+    wing(): void {
         if (this.command && this.status === e.Status.InProgress) {
-            this.buffer.setDimensions(dimensions);
-            this.command.dimensions = dimensions;
+            this.buffer.setDimensions(this.dimensions);
+            this.command.dimensions = this.dimensions;
         }
     }
 

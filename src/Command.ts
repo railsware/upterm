@@ -22,6 +22,10 @@ export default class Command {
         return newDirectory;
     }
 
+    static clear(): void {
+
+    }
+
     static isBuiltIn(command: string): any {
         return command === 'cd';
     }

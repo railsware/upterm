@@ -14,7 +14,7 @@ var app = remote.require('app');
 
 export default class Terminal extends events.EventEmitter {
     invocations: Array<Invocation> = [];
-    currentDirectory: string;
+    private _currentDirectory: string;
     history: History;
     gitBranchWatcher: fs.FSWatcher;
     gitLocked: boolean = false;
@@ -27,7 +27,7 @@ export default class Terminal extends events.EventEmitter {
         history: `History:[]`
     };
 
-    constructor(private dimensions: i.Dimensions) {
+    constructor(private _dimensions: i.Dimensions) {
         super();
 
         // TODO: We want to deserialize properties only for the first instance
@@ -41,7 +41,7 @@ export default class Terminal extends events.EventEmitter {
     }
 
     createInvocation(): void {
-        var invocation = new Invocation(this.currentDirectory, this.dimensions, this.history);
+        var invocation = new Invocation(this);
 
         invocation
             .once('clear', _ => this.clearInvocations())
@@ -51,16 +51,19 @@ export default class Terminal extends events.EventEmitter {
                 }
                 this.createInvocation();
             })
-            .once('working-directory-changed', (newWorkingDirectory: string) => this.setCurrentDirectory(newWorkingDirectory));
+            .once('working-directory-changed', (newWorkingDirectory: string) => this.currentDirectory = newWorkingDirectory);
 
         this.invocations = this.invocations.concat(invocation);
         this.emit('invocation');
     }
 
-    setDimensions(dimensions: i.Dimensions): void {
-        this.dimensions = dimensions;
+    get dimensions(): i.Dimensions {
+        return this._dimensions;
+    }
 
-        this.invocations.forEach(invocation => invocation.setDimensions(dimensions));
+    set dimensions(value: i.Dimensions) {
+        this._dimensions = value;
+        this.invocations.forEach(invocation => invocation.wing());
     }
 
     clearInvocations(): void {
@@ -68,14 +71,19 @@ export default class Terminal extends events.EventEmitter {
         this.createInvocation();
     }
 
-    setCurrentDirectory(value: string): void {
-        remote.getCurrentWindow().setRepresentedFilename(value);
-        this.currentDirectory = Utils.normalizeDir(value);
-        app.addRecentDocument(value);
-        this.watchGitBranch(value);
+    get currentDirectory(): string {
+        return this._currentDirectory;
     }
 
-    private watchGitBranch(directory: string): void {
+    set currentDirectory(value: string) {
+        this._currentDirectory = Utils.normalizeDir(value);
+        this.watchVCS(value);
+
+        remote.getCurrentWindow().setRepresentedFilename(value);
+        app.addRecentDocument(value);
+    }
+
+    private watchVCS(directory: string): void {
         if (this.gitBranchWatcher) {
             this.gitBranchWatcher.close();
         }
@@ -85,7 +93,7 @@ export default class Terminal extends events.EventEmitter {
 
         Utils.ifExists(gitDirectory, () => {
             this.updateGitData(gitDirectory);
-            this.gitBranchWatcher = fs.watch(this.currentDirectory, {recursive: true},
+            this.gitBranchWatcher = fs.watch(this._currentDirectory, {recursive: true},
                 (type, fileName) => {
                     if (!this.gitLocked && (!fileName.startsWith('.git') || fileName == gitHeadFileName || fileName.startsWith(gitHeadsDirectoryName))) {
                         this.updateGitData(gitDirectory)
@@ -99,7 +107,7 @@ export default class Terminal extends events.EventEmitter {
         this.gitLocked = true;
         fs.readFile(`${gitDirectory}/HEAD`, (error, buffer) => {
             var changes = '';
-            new PTY('git', ['status', '--porcelain'], this.currentDirectory, {columns: 80, rows: 20},
+            new PTY('git', ['status', '--porcelain'], this._currentDirectory, {columns: 80, rows: 20},
                 text => changes += text,
                 exitCode => {
                     var status = changes.length ? 'dirty' : 'clean';

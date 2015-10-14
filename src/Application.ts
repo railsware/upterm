@@ -20,7 +20,7 @@ export default class Application {
     set contentSize(newSize) {
         this._contentSize = newSize;
 
-        this.terminals.forEach(terminal => terminal.setDimensions(this.contentDimensions))
+        this.terminals.forEach(terminal => terminal.dimensions = this.contentDimensions)
     }
 
     get contentSize(): i.Size {
