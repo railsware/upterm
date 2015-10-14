@@ -60,7 +60,7 @@ export default React.createClass({
         var inputNode = this.getInputNode();
         inputNode.innerText = this.getText();
 
-        if (prevState.caretPosition !== this.state.caretPosition || prevState.caretOffset !== this.state.caretOffset) {
+        if (this.state.caretPosition !== getCaretPosition() || prevState.caretOffset !== this.state.caretOffset) {
             setCaretPosition(inputNode, this.state.caretPosition);
         }
 
@@ -79,9 +79,9 @@ export default React.createClass({
     getText() {
         return this.props.prompt.buffer.toString();
     },
-    setText(text) {
+    setText(text, position = getCaretPosition()) {
         this.props.invocation.setPromptText(text);
-        this.setState({caretPosition: this.props.prompt.buffer.cursor.column()});
+        this.setState({caretPosition: position});
     },
     isEmpty() {
         return this.getText().replace(/\s/g, '').length === 0;
@@ -91,10 +91,11 @@ export default React.createClass({
             var prevCommand = this.props.prompt.history.getPrevious();
 
             if (typeof prevCommand !== 'undefined') {
-                this.setText(prevCommand);
+                this.setText(prevCommand, prevCommand.length);
             }
         } else {
-            this.setText(this.props.prompt.history.getNext() || '');
+            var nextCommand = this.props.prompt.history.getNext() || '';
+            this.setText(nextCommand, nextCommand.length);
         }
     },
     navigateAutocomplete(event) {
@@ -110,18 +111,14 @@ export default React.createClass({
         var state = this.state;
         const suggestion = state.suggestions[state.selectedAutocompleteIndex];
         this.props.prompt.replaceCurrentLexeme(suggestion);
+        this.setState({caretPosition: this.getText().length});
 
         if (!suggestion.partial) {
             this.props.prompt.buffer.write(' ');
         }
 
-        this.props.prompt.getSuggestions().then(suggestions => {
-                this.setState({
-                    suggestions: suggestions,
-                    selectedAutocompleteIndex: 0,
-                    caretPosition: this.props.prompt.buffer.cursor.column()
-                })
-            }
+        this.props.prompt.getSuggestions().then(suggestions =>
+            this.setState({suggestions: suggestions, selectedAutocompleteIndex: 0})
         );
     },
     deleteWord() {
@@ -132,18 +129,15 @@ export default React.createClass({
             newCommand += ' ';
         }
 
-        this.setText(newCommand);
+        this.setText(newCommand, this.getText().length);
     },
     handleInput(event) {
         this.setText(event.target.innerText);
 
+        //TODO: remove repetition.
         //TODO: make it a stream.
         this.props.prompt.getSuggestions().then(suggestions =>
-            this.setState({
-                suggestions: suggestions,
-                selectedAutocompleteIndex: 0,
-                caretPosition: this.props.prompt.buffer.cursor.column()
-            })
+            this.setState({suggestions: suggestions, selectedAutocompleteIndex: 0})
         );
     },
     handleScrollToTop(event) {

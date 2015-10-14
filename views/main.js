@@ -51,6 +51,10 @@ function setCaretPosition(node, position) {
     selection.addRange(range);
 }
 
+function getCaretPosition() {
+    return window.getSelection().baseOffset;
+}
+
 function withCaret(target, callback) {
     var selection = window.getSelection();
     var range = document.createRange();
