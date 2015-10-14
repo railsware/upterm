@@ -57,6 +57,10 @@ export default React.createClass({
         this.getInputNode().focus();
     },
     componentDidUpdate(prevProps, prevState) {
+        if (this.props.status !== 'not-started') {
+            return;
+        }
+
         var inputNode = this.getInputNode();
         inputNode.innerText = this.getText();
 
@@ -69,6 +73,7 @@ export default React.createClass({
         }
 
         scrollToBottom();
+
     },
     execute() {
         if (!this.isEmpty()) {
