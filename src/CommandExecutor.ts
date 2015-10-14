@@ -26,8 +26,7 @@ class BuiltInCommandExecutionStrategy extends CommandExecutionStrategy {
     startExecution() {
         return new Promise((resolve, reject) => {
             try {
-                var newDirectory = Command.cd(this.invocation.directory, this.args);
-                this.invocation.emit('working-directory-changed', newDirectory);
+                Command.executor(this.command)(this.invocation, this.args);
                 resolve();
             } catch (error) {
                 reject(error.message);

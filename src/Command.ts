@@ -1,32 +1,43 @@
+import * as _ from 'lodash';
 import * as fs from 'fs';
 import * as Path from 'path';
 import Utils from './Utils';
+import Invocation from "./Invocation";
+
+const executors = {
+    cd: (invocation: Invocation, args: Array<string>): void => {
+        var newDirectory: string;
+
+        if (!args.length) {
+            newDirectory = Utils.homeDirectory;
+        } else {
+            var path = args[0].replace(/^~/, Utils.homeDirectory);
+            newDirectory = Path.resolve(invocation.directory, path);
+
+            if (!fs.existsSync(newDirectory)) {
+                throw new Error(`The directory ${newDirectory} doesn't exist.`);
+            }
+
+            if (!fs.statSync(newDirectory).isDirectory()) {
+                throw new Error(`${newDirectory} is not a directory.`);
+            }
+        }
+
+        invocation.emit('working-directory-changed', newDirectory);
+    },
+    clear: (invocation: Invocation, args: Array<string>): void => {
+        setTimeout(() => invocation.terminal.clearInvocations(), 0);
+    }
+};
 
 // A class representing built in commands
 export default class Command {
-    static cd(currentDirectory: string, args: Array<string>): string {
-        if (!args.length) {
-            return Utils.homeDirectory;
-        }
-        var path = args[0].replace(/^~/, Utils.homeDirectory);
-        var newDirectory = Path.resolve(currentDirectory, path);
 
-        if (!fs.existsSync(newDirectory)) {
-            throw new Error(`The directory ${newDirectory} doesn't exist.`);
-        }
-
-        if (!fs.statSync(newDirectory).isDirectory()) {
-            throw new Error(`${newDirectory} is not a directory.`);
-        }
-
-        return newDirectory;
-    }
-
-    static clear(): void {
-
+    static executor(command: string): (i: Invocation, args: string[]) => void {
+        return executors[command];
     }
 
     static isBuiltIn(command: string): any {
-        return command === 'cd';
+        return _.include(['cd', 'clear'], command);
     }
 }
