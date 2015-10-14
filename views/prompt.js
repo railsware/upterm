@@ -189,7 +189,7 @@ export default React.createClass({
         return (
             <div className={classes}>
                 <div className="prompt-decoration">
-                    <div className="arrow"/>
+                    <div className="arrow"></div>
                 </div>
                 <div className="prompt"
                      onKeyDown={this.handlers.onKeyDown}
@@ -197,7 +197,7 @@ export default React.createClass({
                      onKeyPress={this.handleKeyPress}
                      type="text"
                      ref="command"
-                     contentEditable="true"/>
+                     contentEditable="true"></div>
                 {autocomplete}
                 <div className="actions">
                     {decorationToggle}
