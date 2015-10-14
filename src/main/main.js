@@ -5,24 +5,26 @@ var menu = require('./menu');
 process.env.PATH += ':/usr/local/bin';
 
 var mainWindow;
-
-app.on('ready', function () {
-    mainWindow = createWindow();
+app.on('open-file', function (a, b) {
+    console.log(a);
+    console.log(b);
 });
 
-app.on('window-all-closed', function () {
+app.on('ready', createWindow);
+
+app.on('mainWindow-all-closed', function () {
     if (process.platform !== 'darwin') {
         app.quit();
     }
 });
 
-app.on('activate-with-no-open-windows', function () {
-    mainWindow = createWindow();
-});
+app.on('activate-with-no-open-windows', createWindow);
 
 function createWindow() {
+    if (mainWindow) return;
+
     var workAreaSize = require('screen').getPrimaryDisplay().workAreaSize;
-    var window = new BrowserWindow({
+    mainWindow = new BrowserWindow({
         'web-preferences': {
             'experimental-features': true,
             'experimental-canvas-features': true,
@@ -37,17 +39,15 @@ function createWindow() {
         show: false
     });
 
-    window.loadUrl('file://' + __dirname + '/../../index.html');
-    menu.setMenu(app, window);
+    mainWindow.loadUrl('file://' + __dirname + '/../../index.html');
+    menu.setMenu(app, mainWindow);
 
-    window.on('closed', function () {
-        window = null;
+    mainWindow.on('closed', function () {
+        mainWindow = null;
     });
 
-    window.webContents.on('did-finish-load', function () {
-        window.show();
-        window.focus();
+    mainWindow.webContents.on('did-finish-load', function () {
+        mainWindow.show();
+        mainWindow.focus();
     });
-
-    return window;
 }
