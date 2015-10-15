@@ -3,15 +3,17 @@ import * as i from './Interfaces';
 import Aliases from "./Aliases";
 
 export default class ParsableString {
-    static language = new Language();
-    text: string;
+    private static language = new Language();
+    private text: string;
+    private _lexemes: string[];
 
     constructor(text: string) {
         this.text = text;
+        this._lexemes = ParsableString.language.lex(text);
     }
 
-    getLexemes(text = this.getText()): string[] {
-        return ParsableString.language.lex(text);
+    get lexemes(): string[] {
+        return this._lexemes;
     }
 
     getText(): string {
@@ -19,21 +21,22 @@ export default class ParsableString {
     }
 
     get lastLexeme(): string {
-        return this.getLexemes().slice(-1)[0] || '';
+        return this.lexemes.slice(-1)[0] || '';
     }
 
     parse(): void {
         ParsableString.language.parse(this.expandToArray().join(' '));
     }
 
+    // TODO: it doesn't belong here.
     expandToArray(text = this.getText()): string[] {
-        const args = this.getLexemes(text);
+        const args = ParsableString.language.lex(text);
 
         const commandName = args.shift();
         const alias: string = Aliases.find(commandName);
 
         if (alias) {
-            const aliasArgs = this.getLexemes(alias);
+            const aliasArgs = ParsableString.language.lex(alias);
             const isRecursive = aliasArgs[0] === commandName;
 
             if (isRecursive) {

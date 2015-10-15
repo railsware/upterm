@@ -61,14 +61,10 @@ export default class Prompt extends events.EventEmitter {
 
     // TODO: Now it's last lexeme instead of current.
     replaceCurrentLexeme(suggestion: i.Suggestion): void {
-        var lexemes = this.parsableString.getLexemes();
+        var lexemes = this.parsableString.lexemes;
         lexemes[lexemes.length - 1] = `${suggestion.prefix || ""}${suggestion.value}`;
 
         this.buffer.setTo(lexemes.join(' '));
-    }
-
-    toParsableString(): ParsableString {
-        return new ParsableString(this.buffer.toString());
     }
 
     get parsableString(): ParsableString {
