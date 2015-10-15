@@ -9,7 +9,7 @@ export default class Command implements i.AutocompletionProvider {
 
     async getSuggestions(prompt: Prompt) {
         try {
-            var input = prompt.toParsableString();
+            var input = prompt.parsableString;
             input.onParsingError = (err: any, hash: any) => {
                 var filtered = _._(hash.expected).filter((value: string) => _.include(value, hash.token))
                     .map((value: string) => /^'(.*)'$/.exec(value)[1])

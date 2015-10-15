@@ -13,12 +13,16 @@ export default class Prompt extends events.EventEmitter {
     history: any;
     private autocompletion = new Autocompletion();
     private commandParts: string[];
+    private _parsableString: ParsableString;
 
     constructor(private directory: string) {
         super();
 
         this.buffer = new Buffer({columns: 99999, rows: 99999});
-        this.buffer.on('data', () => { this.commandParts = this.toParsableString().expandToArray(); });
+        this.buffer.on('data', () => {
+            this.parsableString = new ParsableString(this.buffer.toString());
+            this.commandParts = this.parsableString.expandToArray();
+        });
         this.history = History;
     }
 
@@ -57,7 +61,7 @@ export default class Prompt extends events.EventEmitter {
 
     // TODO: Now it's last lexeme instead of current.
     replaceCurrentLexeme(suggestion: i.Suggestion): void {
-        var lexemes = this.toParsableString().getLexemes();
+        var lexemes = this.parsableString.getLexemes();
         lexemes[lexemes.length - 1] = `${suggestion.prefix || ""}${suggestion.value}`;
 
         this.buffer.setTo(lexemes.join(' '));
@@ -65,5 +69,13 @@ export default class Prompt extends events.EventEmitter {
 
     toParsableString(): ParsableString {
         return new ParsableString(this.buffer.toString());
+    }
+
+    get parsableString(): ParsableString {
+        return this._parsableString;
+    }
+
+    set parsableString(value: ParsableString) {
+        this._parsableString = value;
     }
 }

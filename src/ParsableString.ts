@@ -2,7 +2,7 @@ import Language from './Language';
 import * as i from './Interfaces';
 import Aliases from "./Aliases";
 
-export default class ParsableString implements i.Parsable {
+export default class ParsableString {
     static language = new Language();
     text: string;
 
@@ -18,7 +18,7 @@ export default class ParsableString implements i.Parsable {
         return this.text;
     }
 
-    getLastLexeme(): string {
+    get lastLexeme(): string {
         return this.getLexemes().slice(-1)[0] || '';
     }
 

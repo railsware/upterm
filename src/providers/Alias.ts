@@ -6,16 +6,16 @@ var score: (i: string, m: string) => number = require('fuzzaldrin').score;
 
 export default class Alias implements i.AutocompletionProvider {
     async getSuggestions(prompt: Prompt) {
-        if (prompt.getWholeCommand().length > 1) {
+        if (prompt.parsableString.getLexemes().length > 1) {
             return [];
         }
 
-        var lastArgument = prompt.getLastArgument();
+        var lastLexeme = prompt.parsableString.lastLexeme;
 
-        var all = _.map(Aliases.aliases, (expanded: string, alias: string) => {
+        var all = _.map(Aliases.aliases, (alias: string, expanded: string) => {
             return {
                 value: alias,
-                score: 2 * (score(alias, lastArgument) + (score(expanded, lastArgument) * 0.5)),
+                score: 2 * (score(alias, lastLexeme) + (score(expanded, lastLexeme) * 0.5)),
                 synopsis: expanded,
                 description: `Aliased to “${expanded}”.`,
                 type: 'alias',

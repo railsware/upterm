@@ -46,14 +46,6 @@ export interface Suggestion {
     prefix?: string;
 }
 
-export interface Parsable {
-    getLexemes: () => string[];
-    getLastLexeme: () => string;
-    getText: () => string;
-    parse: () => void;
-    onParsingError: Function;
-}
-
 export interface VcsData {
     isRepository: boolean;
     branch?: string;
