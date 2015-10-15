@@ -23,11 +23,7 @@ export default class ParsableString {
     }
 
     parse(): void {
-        ParsableString.language.parse(this.expand());
-    }
-
-    expand(): string {
-        return this.expandToArray().join(' ');
+        ParsableString.language.parse(this.expandToArray().join(' '));
     }
 
     expandToArray(text = this.getText()): string[] {
