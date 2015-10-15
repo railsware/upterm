@@ -9,7 +9,8 @@ var keys = {
     goDown: event => (event.ctrlKey && event.keyCode === 78) || event.keyCode === 40,
     enter: event => event.keyCode === 13,
     tab: event => event.keyCode === 9,
-    deleteWord: event => event.ctrlKey && event.keyCode === 87
+    deleteWord: event => event.ctrlKey && event.keyCode === 87,
+    interrupt: event => event.ctrlKey && event.keyCode === 67
 };
 
 function scrollToBottom() {
@@ -78,6 +79,10 @@ function isCommandKey(event) {
 function isMetaKey(event) {
     return event.metaKey || _.some([event.key, event.keyIdentifier],
                                    key => _.includes(['Shift', 'Alt', 'Ctrl'], key));
+}
+
+function isShellHandledKey(event) {
+    return keys.interrupt(event);
 }
 
 const isDefinedKey = _.memoize(event => _.some(_.values(keys), matcher => matcher(event)),

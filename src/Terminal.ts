@@ -60,7 +60,7 @@ export default class Terminal extends events.EventEmitter {
 
     set dimensions(value: i.Dimensions) {
         this._dimensions = value;
-        this.invocations.forEach(invocation => invocation.wing());
+        this.invocations.forEach(invocation => invocation.winch());
     }
 
     clearInvocations(): void {

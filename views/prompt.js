@@ -17,10 +17,11 @@ export default React.createClass({
     },
     componentWillMount() {
         var keysDownStream = createEventHandler();
-        var [passThroughKeys, promptKeys] = keysDownStream.partition(_ => this.props.status === 'in-progress');
+        var [inProgressKeys, promptKeys] = keysDownStream.partition(_ => this.props.status === 'in-progress');
 
-        passThroughKeys
+        inProgressKeys
             .filter(_.negate(isMetaKey))
+            .filter(_.negate(isShellHandledKey))
             .map(stopBubblingUp)
             .forEach(event => this.props.invocation.write(event));
 
@@ -39,6 +40,7 @@ export default React.createClass({
             .forEach(this.selectAutocomplete);
 
         meaningfulKeysDownStream.filter(keys.deleteWord).forEach(this.deleteWord);
+        inProgressKeys.filter(keys.interrupt).forEach(() => this.props.invocation.interrupt());
 
         navigateHistoryStream.forEach(this.navigateHistory);
         navigateAutocompleteStream.forEach(this.navigateAutocomplete);
@@ -196,6 +198,7 @@ export default React.createClass({
                 <div className="prompt-decoration">
                     <div className="arrow"></div>
                 </div>
+                <div className="prompt-info" title={this.props.status}></div>
                 <div className="prompt"
                      onKeyDown={this.handlers.onKeyDown}
                      onInput={this.handleInput}

@@ -45,7 +45,11 @@ export default class Invocation extends events.EventEmitter {
 
         CommandExecutor.execute(this).then(
             () => {
-                this.setStatus(e.Status.Success);
+                // Need to check the status here because it's
+                // executed even after the process was killed.
+                if (this.status === e.Status.InProgress) {
+                    this.setStatus(e.Status.Success);
+                }
                 this.emit('end')
             },
             (errorMessage) => {
@@ -115,10 +119,17 @@ export default class Invocation extends events.EventEmitter {
 
     setDimensions(dimensions: i.Dimensions) {
         this.terminal.dimensions = dimensions;
-        this.wing();
+        this.winch();
     }
 
-    wing(): void {
+    interrupt(): void {
+        if (this.command && this.status === e.Status.InProgress) {
+            this.command.kill('SIGINT');
+            this.setStatus(e.Status.Interrupted);
+        }
+    }
+
+    winch(): void {
         if (this.command && this.status === e.Status.InProgress) {
             this.buffer.setDimensions(this.dimensions);
             this.command.dimensions = this.dimensions;

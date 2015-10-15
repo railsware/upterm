@@ -131,6 +131,24 @@ body, pre {
       background-color: map-get($colors, 'red');
     }
   }
+  .prompt-info {
+    position: absolute;
+    left: 6px;
+    top: 6px;
+    z-index: 2;
+  }
+
+  &.interrupted {
+    .arrow:after {
+      background-color: map-get($colors, 'red');
+    }
+
+    .prompt-info {
+      @extend .fa;
+      @extend .fa-close;
+      color: map-get($colors, 'black');
+    }
+  }
 
   &.in-progress {
     .arrow:after {

@@ -33,4 +33,8 @@ export default class PTY {
     set dimensions(dimensions: i.Dimensions) {
         this.process.send({resize: [dimensions.columns, dimensions.rows]});
     }
+
+    kill(signal: string): void {
+        this.process.send({signal: signal});
+    }
 }

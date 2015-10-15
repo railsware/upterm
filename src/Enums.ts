@@ -40,6 +40,7 @@ export enum Status {
     NotStarted = <Status><any>'not-started',
     InProgress = <Status><any>'in-progress',
     Failure = <Status><any>'failure',
+    Interrupted = <Status><any>'interrupted',
     Success = <Status><any>'success',
 }
 
