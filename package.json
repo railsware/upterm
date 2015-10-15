@@ -72,7 +72,7 @@
     "postinstall": "bower prune; bower install; npm run recompile",
     "recompile": "HOME=~/.electron-gyp cd node_modules/ptyw.js; node-gyp rebuild --target=$npm_package_electronVersion --arch=x64 --dist-url=https://atom.io/download/atom-shell",
     "start": "gulp",
-    "package": "gulp build && electron-packager . $npm_package_productName --overwrite --platform=darwin --arch=x64 --version=$npm_package_electronVersion --out='/Applications' --icon='./icon.icns'",
+    "package": "gulp build && electron-packager . \"$npm_package_productName\" --overwrite --platform=darwin --arch=x64 --version=$npm_package_electronVersion --out='/Applications' --icon='./icon.icns'",
     "test": "gulp typescript; gulp compile-tests; electron run-tests.js"
   },
   "license": "MIT"
