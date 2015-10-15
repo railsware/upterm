@@ -19,6 +19,10 @@ export default class History {
         this.pointer = this.stack.length;
     }
 
+    static get last(): string {
+        return this.stack[this.stack.length - 1];
+    }
+
     static getPrevious(): string {
         if (this.pointer > 0) {
             this.pointer -= 1;

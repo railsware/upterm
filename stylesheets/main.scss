@@ -365,7 +365,7 @@ pre {
         @extend .fa-file;
       }
 
-      &.executable .icon, {
+      &.executable .icon {
         @extend .fa;
         @extend .fa-asterisk;
         color: map-get($colors, 'green');
@@ -374,6 +374,12 @@ pre {
       &.history .icon {
         @extend .fa;
         @extend .fa-history;
+        color: map-get($colors, 'blue');
+      }
+
+      &.history-expansion .icon {
+        @extend .fa;
+        @extend .fa-exclamation;
         color: map-get($colors, 'blue');
       }
 
