@@ -5,14 +5,14 @@ import Aliases from './Aliases';
 import History from './History';
 import * as _ from 'lodash';
 import * as i from './Interfaces';
-import ParsableString from './ParsableString';
+import ParsableString from './CommandExpander';
 
 export default class Prompt extends events.EventEmitter {
     buffer: Buffer;
     // TODO: change the type.
     history: any;
     private autocompletion = new Autocompletion();
-    private commandParts: string[];
+    private expanded: string[];
     private _parsableString: ParsableString;
 
     constructor(private directory: string) {
@@ -21,7 +21,7 @@ export default class Prompt extends events.EventEmitter {
         this.buffer = new Buffer({columns: 99999, rows: 99999});
         this.buffer.on('data', () => {
             this.parsableString = new ParsableString(this.buffer.toString());
-            this.commandParts = this.parsableString.expandToArray();
+            this.expanded = this.parsableString.expand();
         });
         this.history = History;
     }
@@ -31,20 +31,20 @@ export default class Prompt extends events.EventEmitter {
         this.emit('send');
     }
 
-    getCommandName(): string {
-        return this.getWholeCommand()[0];
+    get commandName(): string {
+        return this.commandWithArguments[0];
     }
 
-    getArguments(): string[] {
-        return this.getWholeCommand().slice(1);
+    get arguments(): string[] {
+        return this.commandWithArguments.slice(1);
     }
 
-    getLastArgument(): string {
-        return this.getWholeCommand().slice(-1)[0] || '';
+    get lastArgument(): string {
+        return this.commandWithArguments.slice(-1)[0] || '';
     }
 
-    getWholeCommand(): string[] {
-        return this.commandParts;
+    get commandWithArguments(): string[] {
+        return this.expanded;
     }
 
     getSuggestions(): Promise<i.Suggestion[]> {

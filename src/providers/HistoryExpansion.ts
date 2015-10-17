@@ -4,23 +4,32 @@ import * as _ from 'lodash';
 import Prompt from "../Prompt";
 var filter: any = require('fuzzaldrin').filter;
 import History from '../History';
+import {historyCommands, isCompleteHistoryCommand, historyReplacement} from '../CommandExpander';
 
 export default class HistoryExpansion implements i.AutocompletionProvider {
     suggestions: i.Suggestion[] = [];
 
     async getSuggestions(prompt: Prompt) {
-        if (prompt.getWholeCommand().length > 1) {
-            return [];
-        }
+        const lexeme = prompt.parsableString.lastLexeme;
 
-        if (prompt.getLastArgument().startsWith('!')) {
+        if (isCompleteHistoryCommand(lexeme)) {
             return [{
-                value: History.last,
+                value: lexeme,
                 score: 1,
-                synopsis: '!!',
+                synopsis: historyReplacement(lexeme),
                 description: 'Previous command',
                 type: 'history-expansion',
             }]
+        } else if (lexeme.startsWith('!')) {
+            return _.map(historyCommands, (command, description) => {
+                return {
+                    value: command,
+                    score: 1,
+                    synopsis: historyReplacement(command),
+                    description: description,
+                    type: 'history-expansion',
+                }
+            })
         } else {
             return [];
         }

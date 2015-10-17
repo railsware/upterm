@@ -1,6 +1,7 @@
 export default class History {
     static historySize = 1000;
     static pointer: number = 0;
+    // FIXME: should be reversed.
     static stack: Array<string> = [];
 
     static append(command: string): void {

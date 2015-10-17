@@ -7,11 +7,11 @@ var score: (i: string, m: string) => number = require('fuzzaldrin').score;
 
 export default class File implements i.AutocompletionProvider {
     async getSuggestions(prompt: Prompt) {
-        if (prompt.getWholeCommand().length < 2) {
+        if (prompt.commandWithArguments.length < 2) {
             return [];
         }
 
-        var lastArgument = prompt.getLastArgument();
+        var lastArgument = prompt.lastArgument;
         var baseName = Utils.baseName(lastArgument);
         var dirName = Utils.dirName(lastArgument);
 
@@ -23,7 +23,7 @@ export default class File implements i.AutocompletionProvider {
 
         let fileInfos = await Utils.stats(searchDirectory);
 
-        var all = _.map(fileInfos.filter(File.filter(prompt.getCommandName())), (fileInfo: i.FileInfo) => {
+        var all = _.map(fileInfos.filter(File.filter(prompt.commandName)), (fileInfo: i.FileInfo): i.Suggestion => {
 
             if (fileInfo.stat.isDirectory()) {
                 var name: string = Utils.normalizeDir(fileInfo.name);
@@ -50,10 +50,10 @@ export default class File implements i.AutocompletionProvider {
         });
 
         if (baseName) {
-            var prepared = _._(all).each(fileInfo => fileInfo.score = score(fileInfo.value, baseName))
+            var prepared = _._(all).each(suggestion => suggestion.score = score(suggestion.value, baseName))
                 .sortBy('score').reverse().take(10).value();
         } else {
-            prepared = _._(all).each(fileInfo => fileInfo.score = 1).take(30).value();
+            prepared = _._(all).each(suggestion => suggestion.score = 1).take(30).value();
         }
 
         return prepared;

@@ -135,7 +135,7 @@ export default React.createClass({
     },
     deleteWord() {
         // TODO: Remove the word under the caret instead of the last one.
-        var newCommand = this.props.prompt.getWholeCommand().slice(0, -1).join(' ');
+        var newCommand = this.props.prompt.commandWithArguments.slice(0, -1).join(' ');
 
         if (newCommand.length) {
             newCommand += ' ';

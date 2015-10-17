@@ -171,13 +171,13 @@ var descriptions: {[indexer: string]: string} = {
 export default class Executable implements i.AutocompletionProvider {
 
     async getSuggestions(prompt: Prompt) {
-        if (prompt.getWholeCommand().length > 1) {
+        if (prompt.commandWithArguments.length > 1) {
             return [];
         }
 
         var executables = await Utils.getExecutablesInPaths();
 
-        var lastArgument = prompt.getLastArgument();
+        var lastArgument = prompt.lastArgument;
 
         var all = _.map(executables, (executable: string) => {
             return {

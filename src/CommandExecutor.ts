@@ -8,7 +8,7 @@ abstract class CommandExecutionStrategy {
     protected args: string[];
 
     constructor(protected invocation: Invocation, protected command: string) {
-        this.args = invocation.getPrompt().getArguments().filter(argument => argument.length > 0);
+        this.args = invocation.getPrompt().arguments.filter(argument => argument.length > 0);
     }
 
     static async canExecute(command: string): Promise<boolean> {
@@ -59,7 +59,7 @@ class WindowsSystemFileExecutionStrategy extends CommandExecutionStrategy {
     startExecution() {
         return new Promise((resolve) => {
             this.invocation.command = new PTY(
-                this.cmdPath, ['/s', '/c', this.invocation.getPrompt().getWholeCommand().join(' ')], this.invocation.directory, this.invocation.dimensions,
+                this.cmdPath, ['/s', '/c', this.invocation.getPrompt().commandWithArguments.join(' ')], this.invocation.directory, this.invocation.dimensions,
                 data => this.invocation.parser.parse(data),
                 exitCode => resolve()
             );
@@ -95,7 +95,7 @@ export default class CommandExecutor {
     ];
 
     static execute(invocation: Invocation): Promise<CommandExecutionStrategy> {
-        var command = invocation.getPrompt().getCommandName();
+        var command = invocation.getPrompt().commandName;
 
         return Utils.filterWithPromising(
             this.executors.concat(NullExecutionStrategy), 

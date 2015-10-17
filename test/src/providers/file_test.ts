@@ -4,7 +4,7 @@
 
 import chai = require('chai');
 import File = require('../../../src/providers/File');
-import ParsableString = require('../../../src/ParsableString');
+import ParsableString = require('../../../src/CommandExpander');
 import {Suggestion} from "../../../src/Interfaces";
 import Invocation = require("../../../src/Invocation");
 var expect = chai.expect;
