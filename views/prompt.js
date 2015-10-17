@@ -122,11 +122,11 @@ export default React.createClass({
             this.replaceText(suggestion.value)
         } else {
             this.props.prompt.replaceCurrentLexeme(suggestion);
-            this.setState({caretPosition: this.getText().length});
-
             if (!suggestion.partial) {
                 this.props.prompt.buffer.write(' ');
             }
+
+            this.setState({caretPosition: this.getText().length});
         }
 
         this.props.prompt.getSuggestions().then(suggestions =>
