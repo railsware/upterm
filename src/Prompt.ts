@@ -27,7 +27,7 @@ export default class Prompt extends events.EventEmitter {
     }
 
     execute(): void {
-        this.history.append(this.buffer.toString());
+        this.history.add(this.buffer.toString());
         this.emit('send');
     }
 
