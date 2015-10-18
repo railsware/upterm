@@ -14,9 +14,9 @@ export default class Alias implements i.AutocompletionProvider {
 
         var all = _.map(Aliases.aliases, (alias: string, expanded: string) => {
             return {
-                value: alias,
+                value: expanded,
                 score: 2 * (score(alias, lastLexeme) + (score(expanded, lastLexeme) * 0.5)),
-                synopsis: expanded,
+                synopsis: alias,
                 description: `Aliased to “${expanded}”.`,
                 type: 'alias',
             }
