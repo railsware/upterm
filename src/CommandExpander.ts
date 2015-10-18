@@ -237,7 +237,7 @@ function expandHistory(text: string): string[] {
     return lex(lex(text).map(lexeme => historyReplacement(lexeme)).join(' '));
 }
 
-export const historyCommands: {[key: string]: string} = {
+export const historyCommands: _.Dictionary<string> = {
     'The previous command': '!!',
     'The first argument of the previous command': '!^',
     'The last argument of the previous command': '!$',
