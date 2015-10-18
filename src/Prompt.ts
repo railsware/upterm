@@ -9,8 +9,6 @@ import ParsableString from './CommandExpander';
 
 export default class Prompt extends events.EventEmitter {
     buffer: Buffer;
-    // TODO: change the type.
-    history: any;
     private autocompletion = new Autocompletion();
     private expanded: string[];
     private _parsableString: ParsableString;
@@ -23,11 +21,10 @@ export default class Prompt extends events.EventEmitter {
             this.parsableString = new ParsableString(this.buffer.toString());
             this.expanded = this.parsableString.expand();
         });
-        this.history = History;
     }
 
     execute(): void {
-        this.history.add(this.buffer.toString());
+        History.add(this.buffer.toString());
         this.emit('send');
     }
 

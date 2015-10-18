@@ -3,6 +3,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import Autocomplete from './autocomplete';
 import DecorationToggle from './decoration_toggle';
+import History from '../src/History';
 
 // TODO: Make sure we only update the view when the model changes.
 export default React.createClass({
@@ -95,13 +96,13 @@ export default React.createClass({
     },
     navigateHistory(event) {
         if (keys.goUp(event)) {
-            var prevCommand = this.props.prompt.history.getPrevious();
+            var prevCommand = History.getPrevious();
 
             if (typeof prevCommand !== 'undefined') {
                 this.replaceText(prevCommand);
             }
         } else {
-            var nextCommand = this.props.prompt.history.getNext() || '';
+            var nextCommand = History.getNext() || '';
             this.replaceText(nextCommand);
         }
     },
