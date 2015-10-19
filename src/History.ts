@@ -12,82 +12,46 @@ export class HistoryEntry {
     }
 }
 
-// Stack-like data structure with random access and default.
-class Storage {
-    private maxEntriesCount = 100;
-    private storage: HistoryEntry[] = [];
-    private defaultEntry: HistoryEntry = new HistoryEntry('', []);
+export class History {
+    static pointer: number = 0;
+    private static maxEntriesCount = 100;
+    private static storage: HistoryEntry[] = [];
+    private static defaultEntry: HistoryEntry = new HistoryEntry('', []);
 
-    private findIndex(entry: HistoryEntry): number {
-        return _.findIndex(this.storage, stackedEntry => stackedEntry.raw === entry.raw);
-    }
-
-    private remove(entry: HistoryEntry): void {
-        const duplicateIndex = this.findIndex(entry);
-        if (duplicateIndex !== -1) {
-            this.storage.splice(duplicateIndex, 1);
-        }
-    }
-
-    get all(): HistoryEntry[] {
+    static get all(): HistoryEntry[] {
         return this.storage;
     }
 
-    get count(): number {
-        return this.storage.length - 1;
+    static get last(): HistoryEntry {
+        return this.at(0);
     }
 
-    add(entry: HistoryEntry): void {
+    static lastWithPrefix(prefix: string): HistoryEntry {
+        return this.find(entry => entry.raw.startsWith(prefix));
+    }
+
+    static at(position: number): HistoryEntry {
+        const index = (position >= 0) ? (position + 1) : (this.count + position + 1);
+        return this.storage[index] || this.defaultEntry;
+    }
+
+    static add(entry: HistoryEntry): void {
         this.remove(entry);
         this.storage.unshift(entry);
 
         if (this.count > this.maxEntriesCount) {
             this.storage.splice(this.maxEntriesCount - 1);
         }
-    }
 
-    find(searcher: (he: HistoryEntry) => boolean): HistoryEntry {
-        return _.find(this.storage, searcher);
-    }
-
-    at(position: number): HistoryEntry {
-        return this.storage[position] || this.defaultEntry;
-    }
-}
-
-export class History {
-    static pointer: number = 0;
-    static storage = new Storage();
-
-    static add(entry: HistoryEntry): void {
-        this.storage.add(entry);
         this.pointer = -1;
     }
 
-    static get all(): HistoryEntry[] {
-        return this.storage.all;
-    }
-
-    static at(position: number): HistoryEntry {
-        // TODO: handle cases when the index is outside of stack.
-        const index = (position >= 0) ? (position + 1) : (this.storage.count + position + 1);
-        return this.storage.at(index);
-    }
-
-    static get last(): HistoryEntry {
-        return this.storage.at(0);
-    }
-
-    static lastWithPrefix(prefix: string): HistoryEntry {
-        return this.storage.find(entry => entry.raw.startsWith(prefix));
-    }
-
     static getPrevious(): string {
-        if (this.pointer < this.storage.count) {
+        if (this.pointer < this.count) {
             this.pointer += 1;
         }
 
-        return this.storage.at(this.pointer).raw;
+        return this.at(this.pointer).raw;
     }
 
     static getNext(): string {
@@ -95,16 +59,35 @@ export class History {
             this.pointer -= 1;
         }
 
-        return this.storage.at(this.pointer).raw;
+        return this.at(this.pointer).raw;
     }
 
-    serialize(): string {
+    private static get count(): number {
+        return this.storage.length - 1;
+    }
+
+    static serialize(): string {
         return `History:${JSON.stringify(History.storage)}`;
     }
 
     static deserialize(serialized: string): void {
         //var stack: string[] = JSON.parse(serialized).reverse();
         //stack.forEach(item => this.add(item));
+    }
+
+    private static findIndex(entry: HistoryEntry): number {
+        return _.findIndex(this.storage, stackedEntry => stackedEntry.raw === entry.raw);
+    }
+
+    private static remove(entry: HistoryEntry): void {
+        const duplicateIndex = this.findIndex(entry);
+        if (duplicateIndex !== -1) {
+            this.storage.splice(duplicateIndex, 1);
+        }
+    }
+
+    private static find(searcher: (he: HistoryEntry) => boolean): HistoryEntry {
+        return _.find(this.storage, searcher);
     }
 }
 
