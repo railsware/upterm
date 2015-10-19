@@ -309,6 +309,7 @@ pre {
 
 .autocomplete {
   position: absolute;
+  min-width: 250px;
 
   box-shadow: $default-shadow;
   background-color: map-get($colors, 'black');
