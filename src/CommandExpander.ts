@@ -259,7 +259,7 @@ export function historyReplacement(lexeme: string): string {
 
     const position = parseInt(matcher);
     if (!isNaN(position)) {
-        return History.at(position);
+        return History.at(position).raw;
     }
 
     const lastCommand = History.last;

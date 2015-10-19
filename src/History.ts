@@ -68,10 +68,10 @@ export class History {
         return this.storage.all;
     }
 
-    static at(position: number): string {
+    static at(position: number): HistoryEntry {
         // TODO: handle cases when the index is outside of stack.
         const index = (position >= 0) ? (position + 1) : (this.storage.count + position + 1);
-        return this.storage.at(index).raw;
+        return this.storage.at(index);
     }
 
     static get last(): HistoryEntry {
