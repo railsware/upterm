@@ -50,25 +50,20 @@ export default class Invocation extends events.EventEmitter {
                 if (this.status === e.Status.InProgress) {
                     this.setStatus(e.Status.Success);
                 }
-                this.onEnd();
+                this.emit('end');
             },
             (errorMessage) => {
                 this.setStatus(e.Status.Failure);
                 if (errorMessage) {
                     this.buffer.writeString(errorMessage, {color: e.Color.Red});
                 }
-                this.onEnd();
+                this.emit('end');
             }
         );
     }
 
     setPromptText(value: string): void {
         this.prompt.getBuffer().setTo(value);
-    }
-
-    onEnd(): void {
-        this.emit('end');
-        this.prompt.onEnd();
     }
 
     // Writes to the process' stdin.

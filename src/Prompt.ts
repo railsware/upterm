@@ -13,7 +13,6 @@ export default class Prompt extends events.EventEmitter {
     private _expanded: string[];
     private _lexemes: string[];
     private historyExpanded: string[];
-    private startTime: number;
 
     constructor(private directory: string) {
         super();
@@ -27,12 +26,8 @@ export default class Prompt extends events.EventEmitter {
     }
 
     execute(): void {
-        this.startTime = Date.now();
+        History.add(new HistoryEntry(this.buffer.toString(), this.historyExpanded));
         this.emit('send');
-    }
-
-    onEnd(): void {
-        History.add(new HistoryEntry(this.buffer.toString(), this.historyExpanded, this.startTime, Date.now()));
     }
 
     get commandName(): string {

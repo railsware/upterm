@@ -1,7 +1,7 @@
 import * as _ from 'lodash';
 
 export class HistoryEntry {
-    constructor(private _raw: string, private _historyExpanded: string[], private startTime: number, private endTime: number) {}
+    constructor(private _raw: string, private _historyExpanded: string[]) {}
 
     get raw(): string {
         return this._raw;
@@ -16,7 +16,7 @@ export class HistoryEntry {
 class Storage {
     private maxEntriesCount = 100;
     private storage: HistoryEntry[] = [];
-    private defaultEntry: HistoryEntry = new HistoryEntry('', [], 0, 0);
+    private defaultEntry: HistoryEntry = new HistoryEntry('', []);
 
     private findIndex(entry: HistoryEntry): number {
         return _.findIndex(this.storage, stackedEntry => stackedEntry.raw === entry.raw);
