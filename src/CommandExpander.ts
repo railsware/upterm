@@ -257,26 +257,24 @@ export function historyReplacement(lexeme: string): string {
 
     const matcher = lexeme.substring(1);
 
-    const parsed = parseInt(matcher);
-    if (!isNaN(parsed)) {
-        // TODO: handle cases when the index is outside of stack.
-        const index = (parsed >= 0) ? (parsed + 1) : (History.stack.length + parsed);
-        return History.stack[index];
+    const position = parseInt(matcher);
+    if (!isNaN(position)) {
+        return History.at(position);
     }
 
     const lastCommand = History.last;
     switch (lexeme) {
         case historyCommands['The previous command']:
-            return lastCommand;
+            return lastCommand.expanded.join(' ');
         case historyCommands['The first argument of the previous command']:
-            return lex(lastCommand)[1];
+            return lastCommand.expanded[1];
         case historyCommands['The last argument of the previous command']:
-            return _.last(lex(lastCommand));
+            return _.last(lastCommand.expanded);
         case historyCommands['All arguments of the previous command']:
-            return lex(lastCommand).slice(1).join(' ');
+            return lastCommand.expanded.slice(1).join(' ');
     }
 
-    return History.stack[_.findLastIndex(History.stack, entry => entry.startsWith(matcher))];
+    return History.lastWithPrefix(matcher);
 }
 
 

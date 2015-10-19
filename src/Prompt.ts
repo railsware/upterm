@@ -2,7 +2,7 @@ import * as events from 'events';
 import Autocompletion from './Autocompletion';
 import Buffer from './Buffer';
 import Aliases from './Aliases';
-import History from './History';
+import {History, HistoryEntry} from './History';
 import * as _ from 'lodash';
 import * as i from './Interfaces';
 import ParsableString from './CommandExpander';
@@ -12,6 +12,7 @@ export default class Prompt extends events.EventEmitter {
     private autocompletion = new Autocompletion();
     private expanded: string[];
     private _parsableString: ParsableString;
+    private startTime: number;
 
     constructor(private directory: string) {
         super();
@@ -24,8 +25,12 @@ export default class Prompt extends events.EventEmitter {
     }
 
     execute(): void {
-        History.add(this.buffer.toString());
+        this.startTime = Date.now();
         this.emit('send');
+    }
+
+    onEnd(): void {
+        History.add(new HistoryEntry(this.buffer.toString(), this.expanded, this.startTime, Date.now()));
     }
 
     get commandName(): string {

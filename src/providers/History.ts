@@ -9,10 +9,10 @@ export default class History implements i.AutocompletionProvider {
     async getSuggestions(prompt: Prompt) {
         var lastArgument = prompt.lastArgument;
 
-        var all = ExecutionHistory.stack.filter(entry => entry.length > 3).map(entry => {
+        var all = ExecutionHistory.all.filter(entry => entry.raw.length > 3).map(entry => {
             return {
-                value: entry,
-                score: 0.1 * score(entry, lastArgument),
+                value: entry.raw,
+                score: 0.1 * score(entry.raw, lastArgument),
                 synopsis: '',
                 description: '',
                 replaceAll: true,
