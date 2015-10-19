@@ -2,6 +2,7 @@ import Utils from '../Utils';
 import * as i from '../Interfaces';
 import * as _ from 'lodash';
 import Prompt from "../Prompt";
+import {parser} from "../CommandExpander";
 var filter: any = require('fuzzaldrin').filter;
 
 export default class Command implements i.AutocompletionProvider {
@@ -9,8 +10,7 @@ export default class Command implements i.AutocompletionProvider {
 
     async getSuggestions(prompt: Prompt) {
         try {
-            var input = prompt.parsableString;
-            input.onParsingError = (err: any, hash: any) => {
+            parser.yy.parseError = (err: any, hash: any) => {
                 var filtered = _._(hash.expected).filter((value: string) => _.include(value, hash.token))
                     .map((value: string) => /^'(.*)'$/.exec(value)[1])
                     .value();
@@ -26,7 +26,7 @@ export default class Command implements i.AutocompletionProvider {
                 });
             };
 
-            input.parse();
+            parser.parse(prompt.expanded.join(' '));
             return [];
         } catch (exception) {
             return filter(this.suggestions, prompt.lastArgument, {key: 'value', maxResults: 30});

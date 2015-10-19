@@ -171,7 +171,7 @@ var descriptions: {[indexer: string]: string} = {
 export default class Executable implements i.AutocompletionProvider {
 
     async getSuggestions(prompt: Prompt) {
-        if (prompt.commandWithArguments.length > 1) {
+        if (prompt.expanded.length > 1) {
             return [];
         }
 

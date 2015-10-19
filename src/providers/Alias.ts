@@ -6,11 +6,11 @@ var score: (i: string, m: string) => number = require('fuzzaldrin').score;
 
 export default class Alias implements i.AutocompletionProvider {
     async getSuggestions(prompt: Prompt) {
-        if (prompt.parsableString.lexemes.length > 1) {
+        if (prompt.lexemes.length > 1) {
             return [];
         }
 
-        var lastLexeme = prompt.parsableString.lastLexeme;
+        const lastLexeme = prompt.lastLexeme;
 
         var all = _.map(Aliases.aliases, (alias: string, expanded: string) => {
             return {

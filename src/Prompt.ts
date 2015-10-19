@@ -5,13 +5,14 @@ import Aliases from './Aliases';
 import {History, HistoryEntry} from './History';
 import * as _ from 'lodash';
 import * as i from './Interfaces';
-import ParsableString from './CommandExpander';
+import {expandAliases, expandHistory, lex} from './CommandExpander';
 
 export default class Prompt extends events.EventEmitter {
     buffer: Buffer;
     private autocompletion = new Autocompletion();
-    private expanded: string[];
-    private _parsableString: ParsableString;
+    private _expanded: string[];
+    private _lexemes: string[];
+    private historyExpanded: string[];
     private startTime: number;
 
     constructor(private directory: string) {
@@ -19,8 +20,9 @@ export default class Prompt extends events.EventEmitter {
 
         this.buffer = new Buffer({columns: 99999, rows: 99999});
         this.buffer.on('data', () => {
-            this.parsableString = new ParsableString(this.buffer.toString());
-            this.expanded = this.parsableString.expand();
+            this._lexemes = lex(this.buffer.toString());
+            this.historyExpanded = expandHistory(this._lexemes);
+            this._expanded = expandAliases(this.historyExpanded);
         });
     }
 
@@ -30,23 +32,31 @@ export default class Prompt extends events.EventEmitter {
     }
 
     onEnd(): void {
-        History.add(new HistoryEntry(this.buffer.toString(), this.expanded, this.startTime, Date.now()));
+        History.add(new HistoryEntry(this.buffer.toString(), this.historyExpanded, this.startTime, Date.now()));
     }
 
     get commandName(): string {
-        return this.commandWithArguments[0];
+        return this.expanded[0];
     }
 
     get arguments(): string[] {
-        return this.commandWithArguments.slice(1);
+        return this.expanded.slice(1);
     }
 
     get lastArgument(): string {
-        return this.commandWithArguments.slice(-1)[0] || '';
+        return this.expanded.slice(-1)[0] || '';
     }
 
-    get commandWithArguments(): string[] {
-        return this.expanded;
+    get expanded(): string[] {
+        return this._expanded;
+    }
+
+    get lexemes(): string[] {
+        return this._lexemes;
+    }
+
+    get lastLexeme(): string {
+        return _.last(this.lexemes) || '';
     }
 
     getSuggestions(): Promise<i.Suggestion[]> {
@@ -63,17 +73,9 @@ export default class Prompt extends events.EventEmitter {
 
     // TODO: Now it's last lexeme instead of current.
     replaceCurrentLexeme(suggestion: i.Suggestion): void {
-        var lexemes = this.parsableString.lexemes;
+        var lexemes = _.clone(this._lexemes);
         lexemes[lexemes.length - 1] = `${suggestion.prefix || ""}${suggestion.value}`;
 
         this.buffer.setTo(lexemes.join(' '));
-    }
-
-    get parsableString(): ParsableString {
-        return this._parsableString;
-    }
-
-    set parsableString(value: ParsableString) {
-        this._parsableString = value;
     }
 }

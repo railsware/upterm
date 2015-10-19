@@ -7,7 +7,7 @@ var score: (i: string, m: string) => number = require('fuzzaldrin').score;
 
 export default class File implements i.AutocompletionProvider {
     async getSuggestions(prompt: Prompt) {
-        if (prompt.commandWithArguments.length < 2) {
+        if (prompt.expanded.length < 2) {
             return [];
         }
 

@@ -194,10 +194,33 @@ LS_OPTION
     ;
         `;
 
-let parser = new jison.Parser(grammar);
+export let parser = new jison.Parser(grammar);
 let lexer = parser.lexer;
 
-function lex(input: string): string[] {
+export function expandHistory(lexemes: string[]): string[] {
+    return _.flatten(lexemes.map(lexeme => historyReplacement(lexeme)));
+}
+
+export function expandAliases(lexemes: string[]): string[] {
+    const commandName = lexemes[0];
+    const args = lexemes.slice(1);
+    const alias: string = Aliases.find(commandName);
+
+    if (alias) {
+        const aliasArgs = lex(alias);
+        const isRecursive = aliasArgs[0] === commandName;
+
+        if (isRecursive) {
+            return aliasArgs.concat(args);
+        } else {
+            return expandAliases(lex(alias)).concat(args);
+        }
+    } else {
+        return [commandName, ...args];
+    }
+}
+
+export function lex(input: string): string[] {
     lexer.setInput(input);
 
     var lexemes: string[] = [];
@@ -215,28 +238,6 @@ function lex(input: string): string[] {
     return lexemes;
 }
 
-function expandAliases(args: string[]): string[] {
-    const commandName = args.shift();
-    const alias: string = Aliases.find(commandName);
-
-    if (alias) {
-        const aliasArgs = lex(alias);
-        const isRecursive = aliasArgs[0] === commandName;
-
-        if (isRecursive) {
-            return aliasArgs.concat(args);
-        } else {
-            return expandAliases(lex(alias)).concat(args);
-        }
-    } else {
-        return [commandName, ...args];
-    }
-}
-
-function expandHistory(text: string): string[] {
-    return lex(lex(text).map(lexeme => historyReplacement(lexeme)).join(' '));
-}
-
 export const historyCommands: _.Dictionary<string> = {
     'The previous command': '!!',
     'The first argument of the previous command': '!^',
@@ -250,64 +251,29 @@ export function isCompleteHistoryCommand(lexeme) {
 
 // FIXME: figure out why this function is called three times for a command with three letters.
 // FIXME: add recursive replacement, so that two !! in a row would work.
-export function historyReplacement(lexeme: string): string {
+export function historyReplacement(lexeme: string): string[] {
     if (!isCompleteHistoryCommand(lexeme)) {
-        return lexeme;
+        return [lexeme];
     }
 
     const matcher = lexeme.substring(1);
 
     const position = parseInt(matcher);
     if (!isNaN(position)) {
-        return History.at(position).raw;
+        return [History.at(position).raw];
     }
 
     const lastCommand = History.last;
     switch (lexeme) {
         case historyCommands['The previous command']:
-            return lastCommand.expanded.join(' ');
+            return lastCommand.historyExpanded;
         case historyCommands['The first argument of the previous command']:
-            return lastCommand.expanded[1];
+            return lastCommand.historyExpanded.slice(0, 1);
         case historyCommands['The last argument of the previous command']:
-            return _.last(lastCommand.expanded);
+            return [_.last(lastCommand.historyExpanded)];
         case historyCommands['All arguments of the previous command']:
-            return lastCommand.expanded.slice(1).join(' ');
+            return lastCommand.historyExpanded.slice(1);
     }
 
-    return History.lastWithPrefix(matcher);
-}
-
-
-export default class CommandExpander {
-    private text: string;
-    private _lexemes: string[];
-
-    constructor(text: string) {
-        this.text = text;
-        this._lexemes = lex(text);
-    }
-
-    get lexemes(): string[] {
-        return this._lexemes;
-    }
-
-    getText(): string {
-        return this.text;
-    }
-
-    get lastLexeme(): string {
-        return this.lexemes.slice(-1)[0] || '';
-    }
-
-    parse(): void {
-        parser.parse(this.expand().join(' '));
-    }
-
-    expand(): string[] {
-        return expandAliases(expandHistory(this.getText()));
-    }
-
-    set onParsingError(handler: Function) {
-        parser.yy.parseError = handler;
-    }
+    return [History.lastWithPrefix(matcher).raw];
 }

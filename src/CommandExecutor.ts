@@ -3,6 +3,7 @@ import Command from "./Command";
 import Utils from './Utils';
 import * as _ from 'lodash';
 import PTY from "./PTY";
+import * as Path from 'path';
 
 abstract class CommandExecutionStrategy {
     protected args: string[];
@@ -59,7 +60,7 @@ class WindowsSystemFileExecutionStrategy extends CommandExecutionStrategy {
     startExecution() {
         return new Promise((resolve) => {
             this.invocation.command = new PTY(
-                this.cmdPath, ['/s', '/c', this.invocation.getPrompt().commandWithArguments.join(' ')], this.invocation.directory, this.invocation.dimensions,
+                this.cmdPath, ['/s', '/c', this.invocation.getPrompt().expanded.join(' ')], this.invocation.directory, this.invocation.dimensions,
                 data => this.invocation.parser.parse(data),
                 exitCode => resolve()
             );
@@ -71,7 +72,7 @@ class WindowsSystemFileExecutionStrategy extends CommandExecutionStrategy {
             return process.env.comspec;
         }
         else if (process.env.SystemRoot) {
-            return require('path').join(process.env.SystemRoot, 'System32', 'cmd.exe');
+            return Path.join(process.env.SystemRoot, 'System32', 'cmd.exe');
         }
         else return 'cmd.exe';
     }

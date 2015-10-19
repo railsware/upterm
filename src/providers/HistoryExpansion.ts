@@ -10,13 +10,13 @@ export default class HistoryExpansion implements i.AutocompletionProvider {
     suggestions: i.Suggestion[] = [];
 
     async getSuggestions(prompt: Prompt) {
-        const lexeme = prompt.parsableString.lastLexeme;
+        const lexeme = prompt.lastLexeme;
 
         if (isCompleteHistoryCommand(lexeme)) {
             return [{
                 value: lexeme,
                 score: 1,
-                synopsis: historyReplacement(lexeme),
+                synopsis: historyReplacement(lexeme).join(' '),
                 description: 'Previous command',
                 type: 'history-expansion',
             }]
@@ -25,7 +25,7 @@ export default class HistoryExpansion implements i.AutocompletionProvider {
                 return {
                     value: command,
                     score: 1,
-                    synopsis: historyReplacement(command),
+                    synopsis: historyReplacement(command).join(' '),
                     description: description,
                     type: 'history-expansion',
                 }

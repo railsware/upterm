@@ -17,6 +17,6 @@ export default class GitDiff extends Base {
     }
 
     isApplicable(): boolean {
-        return this.invocation.hasOutput() && _.isEqual(this.invocation.getPrompt().commandWithArguments, ['git', 'diff']);
+        return this.invocation.hasOutput() && _.isEqual(this.invocation.getPrompt().expanded, ['git', 'diff']);
     }
 }

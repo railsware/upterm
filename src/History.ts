@@ -1,14 +1,14 @@
 import * as _ from 'lodash';
 
 export class HistoryEntry {
-    constructor(private _raw: string, private _expanded: string[], private startTime: number, private endTime: number) {}
+    constructor(private _raw: string, private _historyExpanded: string[], private startTime: number, private endTime: number) {}
 
     get raw(): string {
         return this._raw;
     }
 
-    get expanded(): string[] {
-        return this._expanded;
+    get historyExpanded(): string[] {
+        return this._historyExpanded;
     }
 }
 
@@ -78,8 +78,8 @@ export class History {
         return this.storage.at(0);
     }
 
-    static lastWithPrefix(prefix: string): string {
-        return this.storage.find(entry => entry.raw.startsWith(prefix)).raw;
+    static lastWithPrefix(prefix: string): HistoryEntry {
+        return this.storage.find(entry => entry.raw.startsWith(prefix));
     }
 
     static getPrevious(): string {
