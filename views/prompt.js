@@ -96,14 +96,9 @@ export default React.createClass({
     },
     navigateHistory(event) {
         if (keys.goUp(event)) {
-            var prevCommand = History.getPrevious();
-
-            if (typeof prevCommand !== 'undefined') {
-                this.replaceText(prevCommand);
-            }
+            this.replaceText(History.getPrevious());
         } else {
-            var nextCommand = History.getNext() || '';
-            this.replaceText(nextCommand);
+            this.replaceText(History.getNext());
         }
     },
     navigateAutocomplete(event) {

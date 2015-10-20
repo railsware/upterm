@@ -15,7 +15,7 @@ var app = remote.require('app');
 export default class Terminal extends events.EventEmitter {
     invocations: Array<Invocation> = [];
     private _currentDirectory: string;
-    history: History;
+    history: typeof History;
     gitBranchWatcher: fs.FSWatcher;
     gitLocked: boolean = false;
 
@@ -33,7 +33,7 @@ export default class Terminal extends events.EventEmitter {
         // TODO: We want to deserialize properties only for the first instance
         // TODO: of Terminal for the application.
         this.deserialize();
-        this.history = new History();
+        this.history = History;
 
         this.on('invocation', this.serialize.bind(this));
 

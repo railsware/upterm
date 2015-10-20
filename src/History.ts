@@ -10,11 +10,15 @@ export class HistoryEntry {
     get historyExpanded(): string[] {
         return this._historyExpanded;
     }
+
+    toArray(): any[] {
+        return [this.raw, this.historyExpanded];
+    }
 }
 
 export class History {
     static pointer: number = 0;
-    private static maxEntriesCount = 100;
+    private static maxEntriesCount: number = 100;
     private static storage: HistoryEntry[] = [];
     private static defaultEntry: HistoryEntry = new HistoryEntry('', []);
 
@@ -23,7 +27,7 @@ export class History {
     }
 
     static get last(): HistoryEntry {
-        return this.at(0);
+        return this.at(-1);
     }
 
     static lastWithPrefix(prefix: string): HistoryEntry {
@@ -31,8 +35,15 @@ export class History {
     }
 
     static at(position: number): HistoryEntry {
-        const index = (position >= 0) ? (position + 1) : (this.count + position + 1);
-        return this.storage[index] || this.defaultEntry;
+        if (position === 0) {
+            return this.defaultEntry;
+        }
+
+        if (position < 0) {
+            return this.storage[-(position + 1)] || this.defaultEntry;
+        }
+
+        return this.storage[this.count - 1] || this.defaultEntry;
     }
 
     static add(entry: HistoryEntry): void {
@@ -43,7 +54,7 @@ export class History {
             this.storage.splice(this.maxEntriesCount - 1);
         }
 
-        this.pointer = -1;
+        this.pointer = 0;
     }
 
     static getPrevious(): string {
@@ -51,28 +62,32 @@ export class History {
             this.pointer += 1;
         }
 
-        return this.at(this.pointer).raw;
+        return this.at(-this.pointer).raw;
     }
 
     static getNext(): string {
-        if (this.pointer >= 0) {
+        if (this.pointer > 0) {
             this.pointer -= 1;
         }
 
-        return this.at(this.pointer).raw;
+        return this.at(-this.pointer).raw;
     }
 
     private static get count(): number {
-        return this.storage.length - 1;
+        return this.storage.length;
     }
 
     static serialize(): string {
-        return `History:${JSON.stringify(History.storage)}`;
+        return `History:${JSON.stringify(History.storage.map(entry => entry.toArray()))}`;
     }
 
     static deserialize(serialized: string): void {
-        //var stack: string[] = JSON.parse(serialized).reverse();
-        //stack.forEach(item => this.add(item));
+        this.storage =  JSON.parse(serialized).map((entry: any[]) => {
+            let raw: string = entry[0];
+            let historyExpanded: string[] = entry[1];
+
+            return new HistoryEntry(raw, historyExpanded);
+        });
     }
 
     private static findIndex(entry: HistoryEntry): number {
