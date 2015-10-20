@@ -7,7 +7,7 @@ export default React.createClass({
         var offset = _.pick(this.props.caretOffset, 'left');
 
         var suggestionViews = this.props.suggestions.map((suggestion, index) => {
-            var scoreStyle = window.DEBUG === 1 ? {} : {display: 'none'};
+            var scoreStyle = window.DEBUG ? {} : {display: 'none'};
 
             return (
                 <li {...this.getRenderingProps(suggestion, index)}>
