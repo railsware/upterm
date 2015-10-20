@@ -4,34 +4,39 @@ import * as _ from 'lodash';
 import Prompt from "../Prompt";
 var filter: any = require('fuzzaldrin').filter;
 import History from '../History';
-import {historyCommands, isCompleteHistoryCommand, historyReplacement} from '../CommandExpander';
+import {isCompleteHistoryCommand, historyReplacement} from '../CommandExpander';
 
 export default class HistoryExpansion implements i.AutocompletionProvider {
     suggestions: i.Suggestion[] = [];
 
+    private static descriptions: _.Dictionary<string> = {
+        '!!': 'The previous command',
+        '!^': 'The first argument of the previous command',
+        '!$': 'The last argument of the previous command',
+        '!*': 'All arguments of the previous command',
+    };
+
     async getSuggestions(prompt: Prompt) {
         const lexeme = prompt.lastLexeme;
 
-        if (isCompleteHistoryCommand(lexeme)) {
-            return [{
-                value: lexeme,
+        return _.map(this.commands(lexeme), (description, command) => {
+            return {
+                value: command,
                 score: 4,
-                synopsis: historyReplacement(lexeme).join(' '),
-                description: 'Previous command',
+                synopsis: historyReplacement(command).join(' '),
+                description: description,
                 type: 'history-expansion',
-            }]
+            }
+        })
+    }
+
+    private commands(lexeme: string): _.Dictionary<string> {
+        if (isCompleteHistoryCommand(lexeme)) {
+            return {[lexeme]: HistoryExpansion.descriptions[lexeme]};
         } else if (lexeme.startsWith('!')) {
-            return _.map(historyCommands, (command, description) => {
-                return {
-                    value: command,
-                    score: 4,
-                    synopsis: historyReplacement(command).join(' '),
-                    description: description,
-                    type: 'history-expansion',
-                }
-            })
+            return HistoryExpansion.descriptions;
         } else {
-            return [];
+            return {};
         }
     }
 }

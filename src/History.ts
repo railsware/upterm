@@ -31,7 +31,7 @@ export class History {
     }
 
     static lastWithPrefix(prefix: string): HistoryEntry {
-        return this.find(entry => entry.raw.startsWith(prefix));
+        return this.find(entry => entry.raw.startsWith(prefix)) || this.defaultEntry;
     }
 
     static at(position: number): HistoryEntry {

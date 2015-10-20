@@ -238,13 +238,6 @@ export function lex(input: string): string[] {
     return lexemes;
 }
 
-export const historyCommands: _.Dictionary<string> = {
-    'The previous command': '!!',
-    'The first argument of the previous command': '!^',
-    'The last argument of the previous command': '!$',
-    'All arguments of the previous command': '!*',
-};
-
 export function isCompleteHistoryCommand(lexeme) {
     return lexeme[0] === '!' && lexeme.length > 1;
 }
@@ -265,13 +258,13 @@ export function historyReplacement(lexeme: string): string[] {
 
     const lastCommand = History.last;
     switch (lexeme) {
-        case historyCommands['The previous command']:
+        case '!!':
             return lastCommand.historyExpanded;
-        case historyCommands['The first argument of the previous command']:
+        case '!^':
             return lastCommand.historyExpanded.slice(0, 1);
-        case historyCommands['The last argument of the previous command']:
+        case '!$':
             return [_.last(lastCommand.historyExpanded)];
-        case historyCommands['All arguments of the previous command']:
+        case '$*':
             return lastCommand.historyExpanded.slice(1);
     }
 
