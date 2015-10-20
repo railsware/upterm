@@ -15,7 +15,7 @@ export default class HistoryExpansion implements i.AutocompletionProvider {
         if (isCompleteHistoryCommand(lexeme)) {
             return [{
                 value: lexeme,
-                score: 1,
+                score: 4,
                 synopsis: historyReplacement(lexeme).join(' '),
                 description: 'Previous command',
                 type: 'history-expansion',
@@ -24,7 +24,7 @@ export default class HistoryExpansion implements i.AutocompletionProvider {
             return _.map(historyCommands, (command, description) => {
                 return {
                     value: command,
-                    score: 1,
+                    score: 4,
                     synopsis: historyReplacement(command).join(' '),
                     description: description,
                     type: 'history-expansion',
