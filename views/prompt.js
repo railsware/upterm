@@ -62,9 +62,11 @@ export default React.createClass({
             return;
         }
 
+        var newCaretPosition = getCaretPosition();
         this.refs.command.innerText = this.getText();
 
-        if (this.state.caretPosition !== getCaretPosition() || prevState.caretOffset !== this.state.caretOffset) {
+        if (this.state.caretPosition !== newCaretPosition || prevState.caretOffset !== this.state.caretOffset) {
+            this.state.caretPosition = newCaretPosition;
             setCaretPosition(this.refs.command, this.state.caretPosition);
         }
 
