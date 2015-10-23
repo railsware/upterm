@@ -165,7 +165,7 @@ export default React.createClass({
 
         if (keys.left(event) && position > 0) {
             --position;
-        } else if (keys.right(event) && position < this.getText().length - 1) {
+        } else if (keys.right(event) && position < this.getText().length) {
             ++position;
         } else {
           return;
