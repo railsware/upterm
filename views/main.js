@@ -9,6 +9,8 @@ var keys = {
     goDown: event => (event.ctrlKey && event.keyCode === 78) || event.keyCode === 40,
     enter: event => event.keyCode === 13,
     tab: event => event.keyCode === 9,
+    left: event => event.keyCode === 37,
+    right: event => event.keyCode === 39,
     deleteWord: event => event.ctrlKey && event.keyCode === 87,
     interrupt: event => event.ctrlKey && event.keyCode === 67
 };
@@ -87,6 +89,10 @@ function isShellHandledKey(event) {
 
 const isDefinedKey = _.memoize(event => _.some(_.values(keys), matcher => matcher(event)),
                                event => [event.ctrlKey, event.keyCode]);
+
+function isArrowKey(event) {
+    return keys.left(event) || keys.right(event);
+}
 
 function stopBubblingUp(event) {
     event.stopPropagation();
