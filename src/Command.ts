@@ -27,6 +27,10 @@ const executors = {
     },
     clear: (invocation: Invocation, args: Array<string>): void => {
         setTimeout(() => invocation.terminal.clearInvocations(), 0);
+    },
+    exit: (invocation: Invocation, args: Array<string>): void => {
+        var app = require('remote').require('app');
+        app.quit();
     }
 };
 
@@ -38,6 +42,6 @@ export default class Command {
     }
 
     static isBuiltIn(command: string): any {
-        return _.include(['cd', 'clear'], command);
+        return _.include(['cd', 'clear', 'exit'], command);
     }
 }
