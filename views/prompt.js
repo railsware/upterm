@@ -151,7 +151,7 @@ export default React.createClass({
     handleScrollToTop(event) {
         stopBubblingUp(event);
 
-        const offset = $(this.props.invocationView.getDOMNode()).offset().top - 10;
+        const offset = $(ReactDOM.findDOMNode(this.props.invocationView)).offset().top - 10;
         $('html, body').animate({ scrollTop: offset }, 300);
     },
     handleKeyPress(event) {
