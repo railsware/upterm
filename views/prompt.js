@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import React from 'react';
 import ReactDOM from 'react-dom';
-import Autocomplete from './autocomplete';
+import Autocomplete from '../src/views/Autocomplete';
 import DecorationToggle from './decoration_toggle';
 import History from '../src/History';
 
@@ -10,7 +10,7 @@ export default React.createClass({
     getInitialState() {
         return {
             suggestions: [],
-            selectedAutocompleteIndex: 0,
+            highlightedSuggestionIndex: 0,
             latestKeyCode: null,
             caretPosition: 0,
             caretOffset: 0
@@ -103,16 +103,16 @@ export default React.createClass({
     },
     navigateAutocomplete(event) {
         if (keys.goUp(event)) {
-            var index = Math.max(0, this.state.selectedAutocompleteIndex - 1)
+            var index = Math.max(0, this.state.highlightedSuggestionIndex - 1)
         } else {
-            index = Math.min(this.state.suggestions.length - 1, this.state.selectedAutocompleteIndex + 1)
+            index = Math.min(this.state.suggestions.length - 1, this.state.highlightedSuggestionIndex + 1)
         }
 
-        this.setState({selectedAutocompleteIndex: index});
+        this.setState({highlightedSuggestionIndex: index});
     },
     selectAutocomplete() {
         var state = this.state;
-        const suggestion = state.suggestions[state.selectedAutocompleteIndex];
+        const suggestion = state.suggestions[state.highlightedSuggestionIndex];
 
         if (suggestion.replaceAll) {
             this.replaceText(suggestion.value)
@@ -126,7 +126,7 @@ export default React.createClass({
         }
 
         this.props.prompt.getSuggestions().then(suggestions =>
-            this.setState({suggestions: suggestions, selectedAutocompleteIndex: 0})
+            this.setState({suggestions: suggestions, highlightedSuggestionIndex: 0})
         );
     },
     deleteWord() {
@@ -145,7 +145,7 @@ export default React.createClass({
         //TODO: remove repetition.
         //TODO: make it a stream.
         this.props.prompt.getSuggestions().then(suggestions =>
-            this.setState({suggestions: suggestions, selectedAutocompleteIndex: 0})
+            this.setState({suggestions: suggestions, highlightedSuggestionIndex: 0})
         );
     },
     handleScrollToTop(event) {
@@ -174,7 +174,7 @@ export default React.createClass({
         if (this.showAutocomplete()) {
             var autocomplete = <Autocomplete suggestions={this.state.suggestions}
                                              caretOffset={this.state.caretOffset}
-                                             selectedIndex={this.state.selectedAutocompleteIndex}
+                                             highlightedIndex={this.state.highlightedSuggestionIndex}
                                              ref="autocomplete"/>;
         }
 

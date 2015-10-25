@@ -1,3 +1,4 @@
+/// <reference path="../dts/BlackScreenWindow.d.ts" />
 /// <reference path="../node_modules/typescript/lib/lib.es6.d.ts" />
 
 /// <reference path="../dts/AnsiParser.d.ts" />
