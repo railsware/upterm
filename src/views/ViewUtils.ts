@@ -4,3 +4,8 @@ export function stopBubblingUp(event: Event) {
 
     return event;
 }
+
+
+export function scrollToBottom() {
+    $('html body').animate({ scrollTop: $(document).height() }, 0);
+}

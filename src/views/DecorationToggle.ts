@@ -1,9 +1,9 @@
 import * as React from 'react';
 import {stopBubblingUp} from './ViewUtils';
+import Invocation from './Invocation';
 
 interface Props {
-    // TODO: change after rewriting InvocationView.
-    invocation: any;
+    invocation: Invocation;
 }
 
 interface State {

@@ -3,7 +3,7 @@ import Terminal from '../Terminal';
 import Invocation from '../Invocation';
 import {VcsData} from '../Interfaces';
 import StatusLine from './StatusLine';
-const InvocationComponent = require('../../views/invocation');
+import InvocationComponent from './Invocation';
 
 interface Props {
     terminal: Terminal;
