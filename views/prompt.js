@@ -2,7 +2,7 @@ import _ from 'lodash';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import Autocomplete from '../src/views/Autocomplete';
-import DecorationToggle from './decoration_toggle';
+import DecorationToggle from '../src/views/DecorationToggle';
 import History from '../src/History';
 
 // TODO: Make sure we only update the view when the model changes.

@@ -14,7 +14,7 @@ export default class Autocomplete extends React.Component<AutocompleteProps, {}>
         const suggestionViews = this.props.suggestions.map((suggestion, index) => {
             return React.createElement(Suggestion, {
                 suggestion: suggestion,
-                index: index,
+                key: index,
                 isHighlighted: index === this.props.highlightedIndex
             });
         });
@@ -38,7 +38,7 @@ export default class Autocomplete extends React.Component<AutocompleteProps, {}>
 
 interface SuggestionProps {
     suggestion: i.Suggestion;
-    index: number;
+    key: number;
     isHighlighted: boolean;
 }
 
@@ -51,7 +51,7 @@ class Suggestion extends React.Component<SuggestionProps, {}> {
             classes.push('highlighted');
         }
 
-        return React.createElement('li', {className: classes.join(' '), key: this.props.index,},
+        return React.createElement('li', {className: classes.join(' ')},
             React.createElement('i', {className: 'icon'}),
             React.createElement('span', {className: 'value'}, this.props.suggestion.value),
             React.createElement('span', { style: scoreStyle, className: 'score' }, this.props.suggestion.score.toFixed(2)),
