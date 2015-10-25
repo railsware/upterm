@@ -1,5 +1,4 @@
 /node_modules/
-/bower_components/
 /compiled/*
 /tmp/*
 /npm-debug.log

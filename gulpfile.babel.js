@@ -82,7 +82,6 @@ gulp.task("sass", () =>
             .pipe($.sass(options.sass.config).on("error", onError))
             .pipe($.concat(options.sass.target.fileName))
             .pipe(gulp.dest(options.sass.target.directory))
-            .pipe($.livereload())
             .pipe(notify("SCSS has been compiled."))
 );
 
@@ -104,7 +103,6 @@ gulp.task("build", ["typescript", "sass", "react"]);
 
 gulp.task("watch", cb => {
     watching = true;
-    $.livereload.listen();
     runSequence(
         "clean",
         "build",
