@@ -1,53 +1,43 @@
-var app = require('app');
-var BrowserWindow = require('browser-window');
-var menu = require('./Menu');
+const app = require('app');
+const BrowserWindow = require('browser-window');
+let menu = require('./Menu');
 
-process.env.PATH += ':/usr/local/bin';
+let browserWindow = null;
 
-var mainWindow;
-
-app.on('open-file', function (event, file) {
-    getMainWindow().webContents.send('change-working-directory', file);
-});
-
-app.on('ready', getMainWindow);
-
-app.on('mainWindow-all-closed', function () {
-    if (process.platform !== 'darwin') {
-        app.quit();
-    }
-});
-
-app.on('activate-with-no-open-windows', getMainWindow);
+app.on('open-file', (event, file) => getMainWindow().webContents.send('change-working-directory', file))
+    .on('ready', getMainWindow)
+    .on('activate-with-no-open-windows', getMainWindow)
+    .on('mainWindow-all-closed', () => process.platform === 'darwin' || app.quit());
 
 function getMainWindow() {
-    if (mainWindow) return mainWindow;
+    const workAreaSize = require('screen').getPrimaryDisplay().workAreaSize;
 
-    var workAreaSize = require('screen').getPrimaryDisplay().workAreaSize;
-    mainWindow = new BrowserWindow({
-        'web-preferences': {
-            'experimental-features': true,
-            'experimental-canvas-features': true,
-            'subpixel-font-scaling': true,
-            'overlay-scrollbars': true
-        },
-        resizable: true,
-        'min-width': 500,
-        'min-height': 300,
-        width: workAreaSize.width,
-        height: workAreaSize.height,
-        show: false
-    });
+    if (!browserWindow) {
+        browserWindow = new BrowserWindow({
+            'web-preferences': {
+                'experimental-features': true,
+                'experimental-canvas-features': true,
+                'subpixel-font-scaling': true,
+                'overlay-scrollbars': true
+            },
+            resizable: true,
+            'min-width': 500,
+            'min-height': 300,
+            width: workAreaSize.width,
+            height: workAreaSize.height,
+            show: false
+        });
 
-    mainWindow.loadUrl('file://' + __dirname + '/../views/index.html');
-    menu.setMenu(app, mainWindow);
+        browserWindow.loadUrl('file://' + __dirname + '/../views/index.html');
+        menu.setMenu(app, browserWindow);
 
-    mainWindow.on('closed', function () {
-        mainWindow = null;
-    });
+        browserWindow.on('closed', () => browserWindow = null);
 
-    mainWindow.webContents.on('did-finish-load', function () {
-        mainWindow.show();
-        mainWindow.focus();
-    });
+        browserWindow.webContents.on('did-finish-load', () => {
+            browserWindow.show();
+            browserWindow.focus();
+        });
+    }
+
+    return browserWindow;
 }
