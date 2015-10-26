@@ -35,6 +35,7 @@ export default React.createClass({
             .forEach(event => this.setState({latestKeyCode: event.keyCode}));
 
         promptKeys.filter(keys.enter).forEach(this.execute);
+        promptKeys.filter(isArrowKey).forEach(this.handleArrowKey);
 
         meaningfulKeysDownStream.filter(this.autocompleteIsShown)
             .filter(keys.tab)
@@ -158,6 +159,19 @@ export default React.createClass({
         if (this.props.status === 'in-progress') {
             stopBubblingUp(event);
         }
+    },
+    handleArrowKey(event) {
+        var position = this.state.caretPosition;
+
+        if (keys.left(event) && position > 0) {
+            --position;
+        } else if (keys.right(event) && position < this.getText().length) {
+            ++position;
+        } else {
+          return;
+        }
+
+        this.setState({caretPosition: position});
     },
     showAutocomplete() {
         //TODO: use streams.
