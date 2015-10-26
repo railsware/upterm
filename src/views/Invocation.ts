@@ -3,6 +3,7 @@ import * as e from '../Enums';
 import InvocationModel from '../Invocation';
 import {scrollToBottom} from './ViewUtils';
 import Prompt from './Prompt';
+import BufferComponent from "./BufferComponent";
 
 interface Props {
     invocation: InvocationModel
@@ -37,7 +38,7 @@ export default class Invocation extends React.Component<Props, State> {
         if (this.state.canBeDecorated && this.state.decorate) {
             var buffer = this.props.invocation.decorate();
         } else {
-            buffer = this.props.invocation.getBuffer().render();
+            buffer = React.createElement(BufferComponent, {buffer: this.props.invocation.getBuffer()});
         }
 
         const classNames = 'invocation ' + this.state.status;

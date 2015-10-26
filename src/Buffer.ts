@@ -9,7 +9,7 @@ import Utils from './Utils';
 import {memoize} from "./Decorators";
 
 export default class Buffer extends events.EventEmitter {
-    private storage: Array<Array<Char>> = [];
+    private _storage: Array<Array<Char>> = [];
     public cursor: Cursor = new Cursor();
     public activeBuffer = 'standard';
     private attributes: i.Attributes = {color: e.Color.White, weight: e.Weight.Normal};
@@ -18,6 +18,10 @@ export default class Buffer extends events.EventEmitter {
 
     constructor(private dimensions: i.Dimensions) {
         super();
+    }
+
+    public get storage(): Array<Array<Char>> {
+        return this._storage;
     }
 
     @memoize((row: Array<Char>, index: number, cursor: Cursor): any[] => {
@@ -150,13 +154,13 @@ export default class Buffer extends events.EventEmitter {
     }
 
     scrollUp(count, addAtLine) {
-        this.storage.splice(this.margins.bottom - count + 1, count);
-        Utils.times(count, () => this.storage.splice(addAtLine, 0, []));
+        this._storage.splice(this.margins.bottom - count + 1, count);
+        Utils.times(count, () => this._storage.splice(addAtLine, 0, []));
     }
 
     scrollDown(count, deletedLine = this.margins.top) {
-        Utils.times(count, () => this.storage.splice(this.margins.bottom + 1, 0, []));
-        this.storage.splice(deletedLine, count);
+        Utils.times(count, () => this._storage.splice(this.margins.bottom + 1, 0, []));
+        this._storage.splice(deletedLine, count);
     }
 
     getAttributes(): i.Attributes {
@@ -181,8 +185,8 @@ export default class Buffer extends events.EventEmitter {
 
     map<R>(callback: (row: Array<Char>, index: number) => R): R[] {
         var mapped = [];
-        for (let i = 0; i !== this.storage.length; ++i) {
-            mapped.push(callback(this.storage[i], i));
+        for (let i = 0; i !== this._storage.length; ++i) {
+            mapped.push(callback(this._storage[i], i));
         }
         return mapped
     }
@@ -213,13 +217,13 @@ export default class Buffer extends events.EventEmitter {
 
     clearRow() {
         var cursorPosition = this.cursor.getPosition();
-        this.storage[cursorPosition.row] = null;
+        this._storage[cursorPosition.row] = null;
         this.emit('data');
     }
 
     clearRowToEnd() {
         var cursorPosition = this.cursor.getPosition();
-        var row = this.storage[cursorPosition.row];
+        var row = this._storage[cursorPosition.row];
 
         if (row) {
             row.splice(cursorPosition.column, Number.MAX_VALUE);
@@ -229,7 +233,7 @@ export default class Buffer extends events.EventEmitter {
 
     clearRowToBeginning() {
         var cursorPosition = this.cursor.getPosition();
-        var row = this.storage[cursorPosition.row];
+        var row = this._storage[cursorPosition.row];
 
         if (row) {
             for (var i = 0; i <= cursorPosition.column; ++i) {
@@ -240,7 +244,7 @@ export default class Buffer extends events.EventEmitter {
     }
 
     clear() {
-        this.storage = [];
+        this._storage = [];
         this.moveCursorAbsolute({horizontal: 0, vertical: 0});
         this.emit('data');
     }
@@ -250,7 +254,7 @@ export default class Buffer extends events.EventEmitter {
         this.clearRowToBeginning();
 
         for (var i = 0; i !== cursorPosition.row; ++i) {
-            this.storage[i] = [];
+            this._storage[i] = [];
         }
         this.emit('data');
     }
@@ -258,21 +262,12 @@ export default class Buffer extends events.EventEmitter {
     clearToEnd() {
         var cursorPosition = this.cursor.getPosition();
         this.clearRowToEnd();
-        this.storage.splice(cursorPosition.row + 1, Number.MAX_VALUE);
+        this._storage.splice(cursorPosition.row + 1, Number.MAX_VALUE);
         this.emit('data');
     }
 
     isEmpty(): boolean {
-        return this.storage.length === 0;
-    }
-
-    render() {
-        return React.createElement('pre', {className: `output ${this.activeBuffer}`}, null,
-            ...this.storage.map((row: Char[], index: number) => {
-                // TODO: The or part should be removed.
-                return this.renderRow(row || [], index, this.cursor);
-            })
-        );
+        return this._storage.length === 0;
     }
 
     setDimensions(dimensions: i.Dimensions): void {
@@ -288,7 +283,7 @@ export default class Buffer extends events.EventEmitter {
     }
 
     at(position: i.Position): Char {
-        let row = this.storage[position.row];
+        let row = this._storage[position.row];
         return row && row[position.column];
     }
 
@@ -314,15 +309,15 @@ export default class Buffer extends events.EventEmitter {
             this.addRow(position.row);
         }
 
-        this.storage[position.row][position.column] = char;
+        this._storage[position.row][position.column] = char;
     }
 
     private addRow(row: number): void {
-        this.storage[row] = []
+        this._storage[row] = []
     }
 
     private hasRow(rowIndex: number): boolean {
-        var row = this.storage[rowIndex];
+        var row = this._storage[rowIndex];
         return row && (typeof row === 'object');
     }
 }
