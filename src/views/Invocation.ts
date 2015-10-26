@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as e from '../Enums';
 import InvocationModel from '../Invocation';
 import {scrollToBottom} from './ViewUtils';
-const Prompt = require('../../views/prompt');
+import Prompt from './Prompt';
 
 interface Props {
     invocation: InvocationModel

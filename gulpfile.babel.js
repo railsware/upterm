@@ -38,7 +38,7 @@ const options = {
     typeScript: {
         source: "src/**/*",
         target: "compiled/src",
-        babelConfig: { whitelist: ['strict', 'es6.modules', 'es6.spread', 'es6.parameters']},
+        babelConfig: { whitelist: ['strict', 'es6.modules', 'es6.spread', 'es6.parameters', 'es6.destructuring']},
         config: $.typescript.createProject({
             typescript: require("typescript"),
             target: "ES6",

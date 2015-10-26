@@ -1,4 +1,4 @@
-export function stopBubblingUp(event: Event) {
+export function stopBubblingUp(event: Event): Event {
     event.stopPropagation();
     event.preventDefault();
 
@@ -6,6 +6,6 @@ export function stopBubblingUp(event: Event) {
 }
 
 
-export function scrollToBottom() {
+export function scrollToBottom(): void {
     $('html body').animate({ scrollTop: $(document).height() }, 0);
 }
