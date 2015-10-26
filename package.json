@@ -3,7 +3,7 @@
   "productName": "Black Screen",
   "version": "0.0.1",
   "description": "A terminal emulator for the 21st century.",
-  "main": "src/main/main.js",
+  "main": "compiled/src/main/Main.js",
   "authors": [
     "Volodymyr Shatsky <shockone89@gmail.com>",
     "Konstantin Azizov <azizovkostya97@gmail.com>",
@@ -55,7 +55,6 @@
     "gulp-livereload": "3.8.1",
     "gulp-load-plugins": "1.0.0",
     "gulp-notify": "2.2.0",
-    "gulp-react": "3.1.0",
     "gulp-sass": "2.0.4",
     "gulp-shell": "0.5.0",
     "gulp-typescript": "2.9.2",

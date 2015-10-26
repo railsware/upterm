@@ -1,6 +1,6 @@
 var app = require('app');
 var BrowserWindow = require('browser-window');
-var menu = require('./menu');
+var menu = require('./Menu');
 
 process.env.PATH += ':/usr/local/bin';
 
@@ -39,7 +39,7 @@ function getMainWindow() {
         show: false
     });
 
-    mainWindow.loadUrl('file://' + __dirname + '/../../index.html');
+    mainWindow.loadUrl('file://' + __dirname + '/../views/index.html');
     menu.setMenu(app, mainWindow);
 
     mainWindow.on('closed', function () {

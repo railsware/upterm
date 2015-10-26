@@ -30,11 +30,6 @@ function notify(message) {
 }
 
 const options = {
-    react: {
-        source: "views/*.js",
-        target: "compiled/views",
-        config: {stage: 0}
-    },
     typeScript: {
         source: "src/**/*",
         target: "compiled/src",
@@ -85,21 +80,15 @@ gulp.task("sass", () =>
             .pipe(notify("SCSS has been compiled."))
 );
 
-gulp.task("react", () =>
-        gulp.src(options.react.source)
-            .pipe($.cached("react"))
-            .pipe($.babel(options.react.config).on("error", onError))
-            .pipe($.react().on("error", onError))
-            .pipe(gulp.dest(options.react.target))
-            .pipe(notify("React has been compiled."))
+gulp.task("copy-html", () =>
+    gulp.src('./src/views/index.html').pipe(gulp.dest('./compiled/src/views'))
 );
-
 
 gulp.task("clean", () => {
     require("del").sync([options.typeScript.target + "/**"]);
 });
 
-gulp.task("build", ["typescript", "sass", "react"]);
+gulp.task("build", ["typescript", "sass", "copy-html"]);
 
 gulp.task("watch", cb => {
     watching = true;
@@ -108,7 +97,6 @@ gulp.task("watch", cb => {
         "build",
         () => {
             gulp.watch(options.sass.source, ["sass"]);
-            gulp.watch(options.react.source, ["react"]);
             gulp.watch(options.typeScript.source, ["typescript"]);
             cb();
         }

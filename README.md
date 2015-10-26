@@ -24,19 +24,13 @@ Warning: Black Screen is still in its beta phase and isn't completely ready for 
 ###### Download
 
 ```bash
-git clone https://github.com/black-screen/black-screen
+git clone https://github.com/black-screen/black-screen; cd black-screen
 ```
 
-###### Install Dependencies
+###### Install Dependencies & Run
 
 ```bash
-cd black-screen
-npm install
-```
-
-###### Start
-
-```bash
+npm i
 npm start
 ```
 

@@ -147,7 +147,7 @@ module.exports = {
                 }
             ];
 
-            menu = Menu.buildFromTemplate(template);
+            let menu = Menu.buildFromTemplate(template);
             Menu.setApplicationMenu(menu);
         } else {
             template = [
