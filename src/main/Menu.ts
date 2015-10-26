@@ -1,8 +1,7 @@
-var Menu = require('menu');
-var MenuItem = require('menu-item');
+const Menu = require('menu');
 
 module.exports = {
-    setMenu: function (app, mainWindow) {
+    setMenu: (app, browserWindow) => {
         if (process.platform === 'darwin') {
             var template = [
                 {
@@ -93,21 +92,21 @@ module.exports = {
                             label: 'Reload',
                             accelerator: 'Command+R',
                             click: function () {
-                                mainWindow.restart();
+                                browserWindow.restart();
                             }
                         },
                         {
                             label: 'Toggle Full Screen',
                             accelerator: 'Ctrl+Command+F',
                             click: function () {
-                                mainWindow.setFullScreen(!mainWindow.isFullScreen());
+                                browserWindow.setFullScreen(!browserWindow.isFullScreen());
                             }
                         },
                         {
                             label: 'Toggle Developer Tools',
                             accelerator: 'Alt+Command+I',
                             click: function () {
-                                mainWindow.toggleDevTools();
+                                browserWindow.toggleDevTools();
                             }
                         }
                     ]
@@ -158,21 +157,21 @@ module.exports = {
                             label: '&Reload',
                             accelerator: 'Ctrl+R',
                             click: function () {
-                                mainWindow.restart();
+                                browserWindow.restart();
                             }
                         },
                         {
                             label: 'Toggle &Full Screen',
                             accelerator: 'F11',
                             click: function () {
-                                mainWindow.setFullScreen(!mainWindow.isFullScreen());
+                                browserWindow.setFullScreen(!browserWindow.isFullScreen());
                             }
                         },
                         {
                             label: 'Toggle &Developer Tools',
                             accelerator: 'Alt+Ctrl+I',
                             click: function () {
-                                mainWindow.toggleDevTools();
+                                browserWindow.toggleDevTools();
                             }
                         }
                     ]
@@ -190,8 +189,8 @@ module.exports = {
                 }
             ];
 
-            menu = Menu.buildFromTemplate(template);
-            mainWindow.setMenu(menu);
+            let menu = Menu.buildFromTemplate(template);
+            browserWindow.setMenu(menu);
         }
     }
 };
