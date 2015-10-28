@@ -11,10 +11,6 @@ interface Props {
 }
 
 export default class BufferComponent extends React.Component<Props, {}> {
-    constructor(props) {
-        super(props);
-    }
-
     render() {
         return React.createElement('pre', {className: `output ${this.props.buffer.activeBuffer}`},
             this.props.buffer.toArray().map((row, index) => React.createElement(RowComponent, {
