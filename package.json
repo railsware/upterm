@@ -27,6 +27,7 @@
     "fixed-sticky": "^0.1.6",
     "font-awesome": "4.4.0",
     "fuzzaldrin": "2.1.0",
+    "immutable": "3.7.5",
     "jison": "0.4.15",
     "jquery": "2.1.4",
     "jquery.caret": "^0.2.1",
