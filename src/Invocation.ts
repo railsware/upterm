@@ -131,7 +131,7 @@ export default class Invocation extends events.EventEmitter {
 
     winch(): void {
         if (this.command && this.status === e.Status.InProgress) {
-            this.buffer.setDimensions(this.dimensions);
+            this.buffer.dimensions = this.dimensions;
             this.command.dimensions = this.dimensions;
         }
     }

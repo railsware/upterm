@@ -429,7 +429,7 @@ export default class Parser {
                 let bottom = <number>(params[1] ? params[1] - 1 : null);
                 let top = <number>(params[0] ? params[0] - 1 : null);
 
-                this.buffer.setMargins({top: top, bottom: bottom});
+                this.buffer.margins = {top: top, bottom: bottom};
                 this.buffer.moveCursorAbsolute({horizontal: 0, vertical: 0});
                 break;
             default:

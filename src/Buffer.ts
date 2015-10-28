@@ -14,9 +14,9 @@ export default class Buffer extends events.EventEmitter {
     public activeBuffer = 'standard';
     private attributes: i.Attributes = {color: e.Color.White, weight: e.Weight.Normal};
     private isOriginModeSet = false;
-    private margins: i.Margins = {};
+    private _margins: i.Margins = {};
 
-    constructor(private dimensions: i.Dimensions) {
+    constructor(private _dimensions: i.Dimensions) {
         super();
     }
 
@@ -50,7 +50,7 @@ export default class Buffer extends events.EventEmitter {
                     this.moveCursorAbsolute({horizontal: Math.floor((this.cursor.column() + 8) / 8) * 8});
                     break;
                 case e.CharCode.NewLine:
-                    if (this.cursor.row() == this.margins.bottom) {
+                    if (this.cursor.row() === this._margins.bottom) {
                         this.scrollDown(1);
                     } else {
                         this.moveCursorRelative({vertical: 1}).moveCursorAbsolute({horizontal: 0});
@@ -80,12 +80,12 @@ export default class Buffer extends events.EventEmitter {
     };
 
     scrollUp(count, addAtLine) {
-        this.storage = this.storage.splice(this.margins.bottom - count + 1, count).toList();
+        this.storage = this.storage.splice(this._margins.bottom - count + 1, count).toList();
         Utils.times(count, () => this.storage = this.storage.splice(addAtLine, 0, []).toList());
     }
 
-    scrollDown(count, deletedLine = this.margins.top) {
-        Utils.times(count, () => this.storage = this.storage.splice(this.margins.bottom + 1, 0, []).toList());
+    scrollDown(count, deletedLine = this._margins.top) {
+        Utils.times(count, () => this.storage = this.storage.splice(this._margins.bottom + 1, 0, []).toList());
         this.storage = this.storage.splice(deletedLine, count).toList();
     }
 
@@ -188,16 +188,16 @@ export default class Buffer extends events.EventEmitter {
         return this.storage.size === 0;
     }
 
-    setDimensions(dimensions: i.Dimensions): void {
-        this.dimensions = dimensions;
+    set dimensions(dimensions: i.Dimensions) {
+        this._dimensions = dimensions;
     }
 
     set originMode(mode: boolean) {
         this.isOriginModeSet = mode;
     }
 
-    setMargins(margins: i.Margins): void {
-        this.margins = margins;
+    set margins(margins: i.Margins) {
+        this._margins = margins;
     }
 
     at(position: i.Position): Char {
@@ -206,7 +206,7 @@ export default class Buffer extends events.EventEmitter {
 
     private get homePosition(): i.Position {
         if (this.isOriginModeSet) {
-            return {row: this.margins.top || 0, column: this.margins.left || 0};
+            return {row: this._margins.top || 0, column: this._margins.left || 0};
         } else {
             return {row: 0, column: 0};
         }
