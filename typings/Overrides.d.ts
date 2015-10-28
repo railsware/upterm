@@ -21,3 +21,12 @@ interface AnsiParserConstructor {
 interface AnsiParser {
     parse(data: string): any;
 }
+
+declare module _ {
+    interface LoDashStatic {
+        _: LoDashStatic;
+    }
+}
+declare module "fs" {
+    export function watch(filename: string, options: { persistent?: boolean; recursive?: boolean }, listener?: (event: string, filename: string) => any): FSWatcher;
+}
