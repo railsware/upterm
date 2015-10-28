@@ -29,10 +29,6 @@ export default class Cursor {
         return this;
     }
 
-    next(): void {
-        this.moveRelative({horizontal: 1});
-    }
-
     getPosition(): i.Position {
         return this.position;
     }

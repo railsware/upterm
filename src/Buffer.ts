@@ -65,19 +65,11 @@ export default class Buffer extends events.EventEmitter {
             }
         } else {
             this.set(this.cursorPosition, charObject);
-            this.advanceCursor();
+            this.moveCursorRelative({horizontal: 1});
         }
 
         this.emit('data');
     }
-
-    private advanceCursor() {
-        this.cursor.next();
-        if (!this.storage.hasIn([this.cursorPosition.row, this.cursorPosition.column])) {
-            this.set(this.cursorPosition, Char.flyweight(' ', {}));
-
-        }
-    };
 
     scrollUp(count, addAtLine) {
         this.storage = this.storage.splice(this._margins.bottom - count + 1, count).toList();
@@ -98,7 +90,18 @@ export default class Buffer extends events.EventEmitter {
     }
 
     toArray(): Array<List<Char>> {
-        return this.storage.toArray();
+        let storage = this.storage;
+
+        if (this.cursor.getShow() || this.cursor.getBlink()) {
+            if (!storage.has(this.cursorPosition.row)) {
+                storage = storage.set(this.cursorPosition.row, List<Char>());
+            }
+
+            let char = this.storage.getIn([this.cursorPosition.row, this.cursorPosition.column]) || Char.empty;
+            storage = storage.setIn([this.cursorPosition.row, this.cursorPosition.column], Char.flyweight(char.toString(), _.merge(char.getAttributes(), {cursor: true})));
+        }
+
+        return storage.toArray();
     }
 
     toLines(): string[] {
@@ -148,7 +151,7 @@ export default class Buffer extends events.EventEmitter {
     }
 
     clearRowToBeginning() {
-        let replacement = new Array(this.cursorPosition.column).fill(Char.flyweight(' ', {}));
+        let replacement = new Array(this.cursorPosition.column).fill(Char.empty);
         this.storage = this.storage.update(
             this.cursorPosition.row,
             row => row.splice(0, this.cursorPosition.column + 1, replacement).toList())
@@ -159,7 +162,6 @@ export default class Buffer extends events.EventEmitter {
     clear() {
         this.storage = List<List<Char>>();
         this.moveCursorAbsolute({horizontal: 0, vertical: 0});
-        this.emit('data');
     }
 
     clearToBeginning() {
@@ -213,7 +215,7 @@ export default class Buffer extends events.EventEmitter {
     }
 
     private set(position: i.Position, char: Char): void {
-        if (!this.storage.has(position.row)) {
+        if (!this.storage.get(position.row)) {
             this.storage = this.storage.set(position.row, List<Char>());
         }
 

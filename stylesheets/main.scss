@@ -38,6 +38,11 @@ a {
   }
 }
 
+[data-cursor='true'] {
+  background-color: map-get($colors, 'white');
+  color: map-get($colors, 'black');
+}
+
 [data-weight='bold'] {
   font-weight: bold;
 }
