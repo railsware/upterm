@@ -31,7 +31,9 @@ export default class Invocation extends React.Component<Props, State> {
     }
 
     componentDidUpdate() {
-        scrollToBottom();
+        if (this.props.invocation.getBuffer().activeBuffer === e.Buffer.Standard) {
+            scrollToBottom();
+        }
     }
 
     render() {

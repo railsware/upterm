@@ -11,7 +11,7 @@ import {List} from 'immutable';
 export default class Buffer extends events.EventEmitter {
     private storage = List<List<Char>>();
     public cursor: Cursor = new Cursor();
-    public activeBuffer = 'standard';
+    public activeBuffer = e.Buffer.Standard;
     private attributes: i.Attributes = {color: e.Color.White, weight: e.Weight.Normal};
     private isOriginModeSet = false;
     private _margins: i.Margins = {};

@@ -267,7 +267,7 @@ export default class Parser {
                 if (isSet) {
                     description = "Save cursor as in DECSC and use Alternate Screen Buffer, clearing it first.  (This may be disabled by the titeInhibit resource).  This combines the effects of the 1047  and 1048  modes.  Use this with terminfo-based applications rather than the 47  mode.";
 
-                    this.buffer.activeBuffer = 'alternate';
+                    this.buffer.activeBuffer = e.Buffer.Alternate;
                     // TODO: Add Implementation
                     break;
                 }
