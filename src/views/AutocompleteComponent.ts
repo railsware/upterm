@@ -9,7 +9,7 @@ interface AutocompleteProps {
     highlightedIndex: number;
 }
 
-export default class Autocomplete extends React.Component<AutocompleteProps, {}> {
+export default class AutocompleteComponent extends React.Component<AutocompleteProps, {}> {
     render() {
         const suggestionViews = this.props.suggestions.map((suggestion, index) => {
             return React.createElement(Suggestion, {

@@ -2,7 +2,7 @@ const ReactDOM = require('react-dom');
 import * as React from 'react';
 import * as _ from 'lodash';
 import ApplicationComponent from './ApplicationComponent';
-import {isMetaKey} from './Prompt';
+import {isMetaKey} from './PromptComponent';
 
 function focusLastInput(event) {
     if (_.contains(event.target.classList, 'prompt') || event.metaKey) {

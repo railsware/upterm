@@ -1,6 +1,6 @@
 import * as React from 'react';
 import {stopBubblingUp} from './ViewUtils';
-import Invocation from './Invocation';
+import Invocation from './InvocationComponent';
 
 interface Props {
     invocation: Invocation;
@@ -10,7 +10,7 @@ interface State {
     enabled: boolean;
 }
 
-export default class DecorationToggle extends React.Component<Props, State> {
+export default class DecorationToggleComponent extends React.Component<Props, State> {
     constructor(props) {
         super(props);
 

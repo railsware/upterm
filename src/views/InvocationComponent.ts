@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as e from '../Enums';
 import InvocationModel from '../Invocation';
 import {scrollToBottom} from './ViewUtils';
-import Prompt from './Prompt';
+import PromptComponent from './PromptComponent';
 import BufferComponent from "./BufferComponent";
 
 interface Props {
@@ -15,7 +15,7 @@ interface State {
     decorate?: boolean;
 }
 
-export default class Invocation extends React.Component<Props, State> {
+export default class InvocationComponent extends React.Component<Props, State> {
     constructor(props) {
         super(props);
 
@@ -48,7 +48,7 @@ export default class Invocation extends React.Component<Props, State> {
         return React.createElement(
             'div',
             { className: classNames },
-            React.createElement(Prompt, { prompt: this.props.invocation.getPrompt(),
+            React.createElement(PromptComponent, { prompt: this.props.invocation.getPrompt(),
                 status: this.state.status,
                 invocation: this.props.invocation,
                 invocationView: this }),

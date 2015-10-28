@@ -1,13 +1,13 @@
 import * as _ from 'lodash';
 import * as e from '../Enums';
 import * as React from 'react';
-import Autocomplete from './Autocomplete';
-import DecorationToggle from './DecorationToggle';
+import AutocompleteComponent from './AutocompleteComponent';
+import DecorationToggleComponent from './DecorationToggleComponent';
 import History from '../History';
 import {stopBubblingUp, scrollToBottom} from './ViewUtils';
 import Invocation from "../Invocation";
 import {Suggestion} from "../Interfaces";
-import InvocationView from "./Invocation";
+import InvocationComponent from "./InvocationComponent";
 import PromptModel from "../Prompt";
 const Rx = require('rx');
 const ReactDOM = require("react-dom");
@@ -83,7 +83,7 @@ function createEventHandler():any {
 interface Props {
     status: e.Status;
     invocation: Invocation;
-    invocationView: InvocationView;
+    invocationView: InvocationComponent;
     prompt: PromptModel;
 }
 
@@ -97,7 +97,7 @@ interface State {
 
 
 // TODO: Make sure we only update the view when the model changes.
-export default class Prompt extends React.Component<Props, State> {
+export default class PromptComponent extends React.Component<Props, State> {
     private handlers:{
         onKeyDown: Function;
     };
@@ -289,7 +289,7 @@ export default class Prompt extends React.Component<Props, State> {
         var classes = ['prompt-wrapper', 'fixedsticky', this.props.status].join(' ');
 
         if (this.showAutocomplete()) {
-            var autocomplete = React.createElement(Autocomplete, {
+            var autocomplete = React.createElement(AutocompleteComponent, {
                 suggestions: this.state.suggestions,
                 caretOffset: this.state.caretOffset,
                 highlightedIndex: this.state.highlightedSuggestionIndex,
@@ -298,7 +298,7 @@ export default class Prompt extends React.Component<Props, State> {
         }
 
         if (this.props.invocationView.state.canBeDecorated) {
-            var decorationToggle = React.createElement(DecorationToggle, {invocation: this.props.invocationView});
+            var decorationToggle = React.createElement(DecorationToggleComponent, {invocation: this.props.invocationView});
         }
 
         if (this.props.invocation.hasOutput()) {

@@ -2,8 +2,8 @@ import * as React from 'react';
 import Terminal from '../Terminal';
 import Invocation from '../Invocation';
 import {VcsData} from '../Interfaces';
-import StatusLine from './StatusLine';
-import InvocationComponent from './Invocation';
+import StatusLineComponent from './StatusLineComponent';
+import InvocationComponent from './InvocationComponent';
 
 interface Props {
     terminal: Terminal;
@@ -54,7 +54,7 @@ export default class TerminalComponent extends React.Component<Props, State> {
 
         return React.createElement( 'div', { className: 'terminal', onKeyDown: this.handleKeyDown.bind(this) },
             React.createElement( 'div', { className: 'invocations' }, invocations ),
-            React.createElement(StatusLine, { currentWorkingDirectory: this.props.terminal.currentDirectory, vcsData: this.state.vcsData })
+            React.createElement(StatusLineComponent, { currentWorkingDirectory: this.props.terminal.currentDirectory, vcsData: this.state.vcsData })
         );
     }
 }
