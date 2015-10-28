@@ -4,6 +4,7 @@ import * as e from '../Enums';
 import Buffer from "../Buffer";
 import Char from "../Char";
 import Cursor from "../Cursor";
+import {groupWhen} from "../Utils";
 import {List} from 'immutable';
 
 interface Props {
@@ -25,15 +26,22 @@ interface RowProps {
     row: Immutable.List<Char>;
 }
 
+const charGrouper = (a, b) => JSON.stringify(a.getAttributes()) === JSON.stringify(b.getAttributes());
+
+
 class RowComponent extends React.Component<RowProps, {}> {
     shouldComponentUpdate(nextProps: RowProps) {
         return this.props.row !== nextProps.row;
     }
     render() {
+        let rowWithoutHoles = this.props.row.toArray().map(char => char || Char.empty);
+        let charGroups: Char[][] = groupWhen(charGrouper, rowWithoutHoles);
+
         return React.createElement('div',
             {className: 'row'},
-            this.props.row.map((char, index) => React.createElement(CharComponent, {
-                char: char || Char.empty,
+            charGroups.map((charGroup: Char[], index) => React.createElement(CharGroupComponent, {
+                text: charGroup.map(char => char.toString()).join(''),
+                attributes: charGroup[0].getAttributes(),
                 key: index,
             }))
         );
@@ -41,18 +49,17 @@ class RowComponent extends React.Component<RowProps, {}> {
     }
 }
 
-interface CharProps {
-    char: Char;
+interface CharGroupProps {
+    text: string;
+    attributes: i.Attributes;
 }
 
-class CharComponent extends React.Component<CharProps, {}> {
-    shouldComponentUpdate(nextProps: CharProps) {
-        return this.props.char !== nextProps.char;
+class CharGroupComponent extends React.Component<CharGroupProps, {}> {
+    shouldComponentUpdate(nextProps: CharGroupProps) {
+        return JSON.stringify(this.props) !== JSON.stringify(nextProps);
     }
     render() {
-        let attributes = this.props.char.getAttributes();
-
-        return React.createElement('span', this.getHTMLAttributes(attributes), this.props.char.toString());
+        return React.createElement('span', this.getHTMLAttributes(this.props.attributes), this.props.text);
     }
 
     private getHTMLAttributes(attributes:i.Attributes):Object {

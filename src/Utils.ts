@@ -158,3 +158,29 @@ export default class Utils {
         });
     }
 }
+
+/**
+ * Copied from here: https://ghc.haskell.org/trac/ghc/ticket/1408
+ *
+ * groupWhen :: (a -> a -> Bool) -> [a] -> [[a]]
+ * groupWhen _ []    = []
+ * groupWhen _ [a]   = [[a]]
+ * groupWhen f (a:l) = if f a (head c) then (a:c):r
+ *                                     else [a]:c:r
+ *   where (c:r) = groupWhen f l
+ *
+ * @example groupWhen (<) [1,2,3,2,10,12,10,11] -- Group into strictly increasing sublists
+ */
+export function groupWhen<A>(f: (a: A, b: A) => boolean, input: A[]): A[][] {
+    if (input.length === 0) return [];
+    if (input.length === 1) return [input];
+
+    let [a, ...l] = input;
+    let [c, ...r] = groupWhen(f, l);
+
+    if (f(a, c[0])) {
+        return [[a, ...c], ...r];
+    } else {
+        return [[a], c, ...r];
+    }
+}
