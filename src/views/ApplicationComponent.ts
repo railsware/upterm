@@ -8,7 +8,7 @@ interface State {
 }
 
 export default class ApplicationComponent extends React.Component<{}, State> {
-    constructor(props) {
+    constructor(props: {}) {
         super(props);
 
         $(window).resize(() => this.state.application.contentSize = this.contentSize);

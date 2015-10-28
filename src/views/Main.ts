@@ -1,15 +1,17 @@
+import SyntheticEvent = __React.SyntheticEvent;
+import KeyboardEvent = __React.KeyboardEvent;
 const ReactDOM = require('react-dom');
 import * as React from 'react';
 import * as _ from 'lodash';
 import ApplicationComponent from './ApplicationComponent';
 import {isMetaKey} from './PromptComponent';
 
-function focusLastInput(event) {
+function focusLastInput(event: JQueryKeyEventObject) {
     if (_.contains(event.target.classList, 'prompt') || event.metaKey) {
         return;
     }
 
-    var originalEvent = event.originalEvent;
+    var originalEvent = <any>event.originalEvent;
 
     if (isMetaKey(originalEvent)) {
         return;
@@ -25,7 +27,7 @@ function focusLastInput(event) {
     target.dispatchEvent(newEvent)
 }
 
-function withCaret(target, callback) {
+function withCaret(target: Node, callback: (n: number) => number) {
     var selection = window.getSelection();
     var range = document.createRange();
 

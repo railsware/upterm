@@ -11,13 +11,13 @@ interface State {
 }
 
 export default class DecorationToggleComponent extends React.Component<Props, State> {
-    constructor(props) {
+    constructor(props: Props) {
         super(props);
 
         this.state = {enabled: this.props.invocation.state.decorate};
     }
 
-    handleClick(event) {
+    handleClick(event: KeyboardEvent) {
         stopBubblingUp(event);
 
         const newState = !this.state.enabled;

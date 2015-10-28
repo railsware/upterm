@@ -1,7 +1,7 @@
 const Menu = require('menu');
 
 module.exports = {
-    setMenu: (app, browserWindow) => {
+    setMenu: (app: any, browserWindow: any) => {
         if (process.platform === 'darwin') {
             var template = [
                 {
@@ -13,10 +13,6 @@ module.exports = {
                         },
                         {
                             type: 'separator'
-                        },
-                        {
-                            label: 'Services',
-                            submenu: []
                         },
                         {
                             type: 'separator'

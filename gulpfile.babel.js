@@ -38,7 +38,7 @@ const options = {
             typescript: require("typescript"),
             target: "ES6",
             module: "commonjs",
-            //noImplicitAny: true, TODO: enable.
+            noImplicitAny: true,
             removeComments: true,
             preserveConstEnums: true,
             experimentalDecorators: true,

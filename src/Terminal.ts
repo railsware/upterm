@@ -105,8 +105,8 @@ export default class Terminal extends events.EventEmitter {
         fs.readFile(`${gitDirectory}/HEAD`, (error, buffer) => {
             var changes = '';
             new PTY('git', ['status', '--porcelain'], this.currentDirectory, {columns: 80, rows: 20},
-                text => changes += text,
-                exitCode => {
+                (text: string) => changes += text,
+                (exitCode: number) => {
                     var status = changes.length ? 'dirty' : 'clean';
 
                     var data: i.VcsData = {

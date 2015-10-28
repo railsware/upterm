@@ -71,12 +71,12 @@ export default class Buffer extends events.EventEmitter {
         this.emit('data');
     }
 
-    scrollUp(count, addAtLine) {
+    scrollUp(count: number, addAtLine: number) {
         this.storage = this.storage.splice(this._margins.bottom - count + 1, count).toList();
         Utils.times(count, () => this.storage = this.storage.splice(addAtLine, 0, List<Char>()).toList());
     }
 
-    scrollDown(count, deletedLine = this._margins.top) {
+    scrollDown(count: number, deletedLine = this._margins.top) {
         Utils.times(count, () => this.storage = this.storage.splice(this._margins.bottom + 1, 0, List<Char>()).toList());
         this.storage = this.storage.splice(deletedLine, count).toList();
     }

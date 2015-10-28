@@ -31,8 +31,8 @@ export default class Utils {
     }
 
     static print(level: e.LogLevel, args: Array<any>): void {
-        if ((typeof window !== 'undefined') && (<any>window)['DEBUG']) {
-            console[level](...args);
+        if ((typeof window !== 'undefined') && window.DEBUG) {
+            (<Function>(<any>console)[level])(...args);
         }
     }
 
@@ -150,7 +150,7 @@ export default class Utils {
         return process.env[(Utils.isWindows) ? 'USERPROFILE' : 'HOME'];
     }
 
-    static filterWithPromising<T>(values: T[], filter: (T) => Promise<boolean>): Promise<T[]> {
+    static filterWithPromising<T>(values: T[], filter: (t: T) => Promise<boolean>): Promise<T[]> {
         return new Promise((resolve) => {
             Promise
                 .all(values.map(value => new Promise((rs) => filter(value).then(rs, () => rs(false)))))

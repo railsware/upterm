@@ -20,8 +20,8 @@ export default class Aliases {
         let aliases = '';
         new PTY(
             shellName, ['-i', '-c', 'alias'], process.env.HOME, {columns: 80, rows: 20},
-            text => aliases += text,
-            exitCode => aliases.split('\n').forEach(alias => {
+            (text: string) => aliases += text,
+            (exitCode: number) => aliases.split('\n').forEach(alias => {
                 let split = alias.split('=');
 
                 let name = /(alias )?(.*)/.exec(split[0])[2];

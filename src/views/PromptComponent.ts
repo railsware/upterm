@@ -9,21 +9,22 @@ import Invocation from "../Invocation";
 import {Suggestion} from "../Interfaces";
 import InvocationComponent from "./InvocationComponent";
 import PromptModel from "../Prompt";
+import KeyboardEvent = __React.KeyboardEvent;
 const Rx = require('rx');
 const ReactDOM = require("react-dom");
 
 
 var keys = {
-    goUp: event => (event.ctrlKey && event.keyCode === 80) || event.keyCode === 38,
-    goDown: event => (event.ctrlKey && event.keyCode === 78) || event.keyCode === 40,
-    enter: event => event.keyCode === 13,
-    tab: event => event.keyCode === 9,
-    deleteWord: event => event.ctrlKey && event.keyCode === 87,
-    interrupt: event => event.ctrlKey && event.keyCode === 67
+    goUp: (event: KeyboardEvent) => (event.ctrlKey && event.keyCode === 80) || event.keyCode === 38,
+    goDown: (event: KeyboardEvent) => (event.ctrlKey && event.keyCode === 78) || event.keyCode === 40,
+    enter: (event: KeyboardEvent) => event.keyCode === 13,
+    tab: (event: KeyboardEvent) => event.keyCode === 9,
+    deleteWord: (event: KeyboardEvent) => event.ctrlKey && event.keyCode === 87,
+    interrupt: (event: KeyboardEvent) => event.ctrlKey && event.keyCode === 67
 };
 
 
-function setCaretPosition(node, position) {
+function setCaretPosition(node: Node, position: number) {
     var selection = window.getSelection();
     var range = document.createRange();
 
@@ -41,21 +42,21 @@ function getCaretPosition():number {
     return window.getSelection().anchorOffset;
 }
 
-function isCommandKey(event) {
+function isCommandKey(event: KeyboardEvent) {
     return _.contains([16, 17, 18], event.keyCode) || event.ctrlKey || event.altKey || event.metaKey;
 }
 
-export function isMetaKey(event) {
+export function isMetaKey(event: KeyboardEvent) {
     return event.metaKey || _.some([event.key, event.keyIdentifier],
             key => _.includes(['Shift', 'Alt', 'Ctrl'], key));
 }
 
-function isShellHandledKey(event) {
+function isShellHandledKey(event: KeyboardEvent) {
     return keys.interrupt(event);
 }
 
-const isDefinedKey = _.memoize(event => _.some(_.values(keys), (matcher:(event:React.KeyboardEvent) => boolean) => matcher(event)),
-    event => [event.ctrlKey, event.keyCode]);
+const isDefinedKey = _.memoize((event: React.KeyboardEvent) => _.some(_.values(keys), (matcher: (event: React.KeyboardEvent) => boolean) => matcher(event)),
+    (event: React.KeyboardEvent) => [event.ctrlKey, event.keyCode]);
 
 // TODO: Figure out how it works.
 function createEventHandler():any {
@@ -63,8 +64,8 @@ function createEventHandler():any {
         subject.onNext.apply(subject, arguments);
     };
 
-    function getEnumerablePropertyNames(target) {
-        var result = [];
+    function getEnumerablePropertyNames(target: _.Dictionary<any>) {
+        var result: string[] = [];
         for (var key in target) {
             result.push(key);
         }
@@ -102,24 +103,24 @@ export default class PromptComponent extends React.Component<Props, State> {
         onKeyDown: Function;
     };
 
-    constructor(props) {
+    constructor(props: Props) {
         super(props);
         var keysDownStream = createEventHandler();
-        var [inProgressKeys, promptKeys] = keysDownStream.partition(_ => this.props.status === e.Status.InProgress);
+        var [inProgressKeys, promptKeys] = keysDownStream.partition(() => this.props.status === e.Status.InProgress);
 
         inProgressKeys
             .filter(_.negate(isMetaKey))
             .filter(_.negate(isShellHandledKey))
             .map(stopBubblingUp)
-            .forEach(event => this.props.invocation.write(event));
+            .forEach((event: React.KeyboardEvent) => this.props.invocation.write(event));
 
         var meaningfulKeysDownStream = promptKeys.filter(isDefinedKey).map(stopBubblingUp);
         var [navigateAutocompleteStream, navigateHistoryStream] = meaningfulKeysDownStream
-            .filter(event => keys.goDown(event) || keys.goUp(event))
+            .filter((event: KeyboardEvent) => keys.goDown(event) || keys.goUp(event))
             .partition(() => this.autocompleteIsShown());
 
         keysDownStream.filter(_.negate(isCommandKey))
-            .forEach(event => this.setState({latestKeyCode: event.keyCode}));
+            .forEach((event: KeyboardEvent) => this.setState({latestKeyCode: event.keyCode}));
 
         promptKeys.filter(keys.enter).forEach(() => this.execute());
 
@@ -130,8 +131,8 @@ export default class PromptComponent extends React.Component<Props, State> {
         meaningfulKeysDownStream.filter(keys.deleteWord).forEach(() => this.deleteWord());
         inProgressKeys.filter(keys.interrupt).forEach(() => this.props.invocation.interrupt());
 
-        navigateHistoryStream.forEach(event => this.navigateHistory(event));
-        navigateAutocompleteStream.forEach(event => this.navigateAutocomplete(event));
+        navigateHistoryStream.forEach((event: KeyboardEvent) => this.navigateHistory(event));
+        navigateAutocompleteStream.forEach((event: KeyboardEvent) => this.navigateAutocomplete(event));
 
         this.state = {
             suggestions: [],
@@ -159,7 +160,7 @@ export default class PromptComponent extends React.Component<Props, State> {
         return <any>this.refs['command'];
     }
 
-    componentDidUpdate(prevProps, prevState) {
+    componentDidUpdate(prevProps: Props, prevState: State) {
         if (this.props.status !== e.Status.NotStarted) {
             return;
         }
@@ -189,11 +190,11 @@ export default class PromptComponent extends React.Component<Props, State> {
         return this.props.prompt.buffer.toString();
     }
 
-    replaceText(text) {
+    replaceText(text: string) {
         this.setText(text, text.length);
     }
 
-    setText(text, position = getCaretPosition()) {
+    setText(text: string, position = getCaretPosition()) {
         this.props.invocation.setPromptText(text);
         this.setState({caretPosition: position});
     }
@@ -202,7 +203,7 @@ export default class PromptComponent extends React.Component<Props, State> {
         return this.getText().replace(/\s/g, '').length === 0;
     }
 
-    navigateHistory(event) {
+    navigateHistory(event: KeyboardEvent) {
         if (keys.goUp(event)) {
             this.replaceText(History.getPrevious());
         } else {
@@ -210,7 +211,7 @@ export default class PromptComponent extends React.Component<Props, State> {
         }
     }
 
-    navigateAutocomplete(event) {
+    navigateAutocomplete(event: KeyboardEvent) {
         if (keys.goUp(event)) {
             var index = Math.max(0, this.state.highlightedSuggestionIndex - 1)
         } else {
@@ -251,8 +252,8 @@ export default class PromptComponent extends React.Component<Props, State> {
         this.replaceText(newCommand);
     }
 
-    handleInput(event) {
-        this.setText(event.target.innerText);
+    handleInput(event: React.SyntheticEvent) {
+        this.setText((<HTMLElement>event.target).innerText);
 
         //TODO: remove repetition.
         //TODO: make it a stream.
@@ -261,14 +262,14 @@ export default class PromptComponent extends React.Component<Props, State> {
         );
     }
 
-    handleScrollToTop(event) {
+    handleScrollToTop(event: Event) {
         stopBubblingUp(event);
 
         const offset = $(ReactDOM.findDOMNode(this.props.invocationView)).offset().top - 10;
         $('html, body').animate({scrollTop: offset}, 300);
     }
 
-    handleKeyPress(event) {
+    handleKeyPress(event: Event) {
         if (this.props.status === e.Status.InProgress) {
             stopBubblingUp(event);
         }

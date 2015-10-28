@@ -16,7 +16,7 @@ interface State {
 }
 
 export default class InvocationComponent extends React.Component<Props, State> {
-    constructor(props) {
+    constructor(props: Props) {
         super(props);
 
         this.state = {
@@ -26,8 +26,8 @@ export default class InvocationComponent extends React.Component<Props, State> {
         };
 
         this.props.invocation
-            .on('data', _ => this.setState({canBeDecorated: this.props.invocation.canBeDecorated()}))
-            .on('status', status => this.setState({status: status}));
+            .on('data', () => this.setState({canBeDecorated: this.props.invocation.canBeDecorated()}))
+            .on('status', (status: e.Status) => this.setState({status: status}));
     }
 
     componentDidUpdate() {

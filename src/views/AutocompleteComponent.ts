@@ -3,8 +3,10 @@ import * as i from '../Interfaces';
 import * as _ from 'lodash';
 const ReactDOM = require("react-dom");
 
+type Offset = {top: number, left: number, bottom: number};
+
 interface AutocompleteProps {
-    caretOffset: {top: number, left: number};
+    caretOffset: Offset;
     suggestions: i.Suggestion[];
     highlightedIndex: number;
 }
@@ -24,9 +26,9 @@ export default class AutocompleteComponent extends React.Component<AutocompleteP
             var descriptionElement = React.createElement('div', {className: 'description'}, suggestionDescription);
         }
 
-        let offset = _.pick(this.props.caretOffset, 'left');
+        let offset = <Offset>_.pick(this.props.caretOffset, 'left');
         if (this.props.caretOffset.top + 300 > window.innerHeight) {
-            offset['bottom'] = 28 + (suggestionDescription ? 28 : 0);
+            offset.bottom = 28 + (suggestionDescription ? 28 : 0);
         }
 
         return React.createElement('div', {className: 'autocomplete', style: offset},

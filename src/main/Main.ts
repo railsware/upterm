@@ -2,9 +2,9 @@ const app = require('app');
 const BrowserWindow = require('browser-window');
 let menu = require('./Menu');
 
-let browserWindow = null;
+let browserWindow: any = null;
 
-app.on('open-file', (event, file) => getMainWindow().webContents.send('change-working-directory', file))
+app.on('open-file', (event: Event, file: string) => getMainWindow().webContents.send('change-working-directory', file))
     .on('ready', getMainWindow)
     .on('activate-with-no-open-windows', getMainWindow)
     .on('mainWindow-all-closed', () => process.platform === 'darwin' || app.quit());
@@ -31,7 +31,7 @@ function getMainWindow() {
         browserWindow.loadUrl('file://' + __dirname + '/../views/index.html');
         menu.setMenu(app, browserWindow);
 
-        browserWindow.on('closed', () => browserWindow = null);
+        browserWindow.on('closed', (): void => browserWindow = null);
 
         browserWindow.webContents.on('did-finish-load', () => {
             browserWindow.show();

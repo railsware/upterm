@@ -3,6 +3,11 @@ import * as Invocation from "./Invocation";
 import * as i from "./Interfaces";
 const ptyInternalPath = require.resolve('./PTYInternal');
 
+interface Message {
+    data?: string;
+    exit?: number;
+}
+
 export default class PTY {
     private process: NodeJS.Process;
 
@@ -15,7 +20,7 @@ export default class PTY {
             {env: process.env, cwd: cwd}
         );
 
-        this.process.on('message', (message) => {
+        this.process.on('message', (message: Message) => {
             if (message.hasOwnProperty('data')) {
                 dataHandler(message.data);
             } else if (message.hasOwnProperty('exit')) {

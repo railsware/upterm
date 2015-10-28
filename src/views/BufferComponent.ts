@@ -26,7 +26,7 @@ interface RowProps {
     row: Immutable.List<Char>;
 }
 
-const charGrouper = (a, b) => JSON.stringify(a.getAttributes()) === JSON.stringify(b.getAttributes());
+const charGrouper = (a: any, b: any) => JSON.stringify(a.getAttributes()) === JSON.stringify(b.getAttributes());
 
 
 class RowComponent extends React.Component<RowProps, {}> {
@@ -39,7 +39,7 @@ class RowComponent extends React.Component<RowProps, {}> {
 
         return React.createElement('div',
             {className: 'row'},
-            charGroups.map((charGroup: Char[], index) => React.createElement(CharGroupComponent, {
+            charGroups.map((charGroup: Char[], index: number) => React.createElement(CharGroupComponent, {
                 text: charGroup.map(char => char.toString()).join(''),
                 attributes: charGroup[0].getAttributes(),
                 key: index,

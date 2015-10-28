@@ -30,3 +30,9 @@ declare module _ {
 declare module "fs" {
     export function watch(filename: string, options: { persistent?: boolean; recursive?: boolean }, listener?: (event: string, filename: string) => any): FSWatcher;
 }
+
+declare namespace __React {
+    interface KeyboardEvent {
+        keyIdentifier: number;
+    }
+}

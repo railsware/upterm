@@ -238,7 +238,7 @@ export function lex(input: string): string[] {
     return lexemes;
 }
 
-export function isCompleteHistoryCommand(lexeme) {
+export function isCompleteHistoryCommand(lexeme: string) {
     return lexeme[0] === '!' && lexeme.length > 1;
 }
 
