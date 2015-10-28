@@ -73,7 +73,7 @@ html {
 body, pre {
   background-color: map-get($colors, 'black');
   color: map-get($colors, 'white');
-  font-family: 'Meslo LG S for Powerline', 'Menlo', monospace !important;
+  font-family: 'Hack', 'Meslo LG S for Powerline', 'Menlo', monospace !important;
   font-size: $font-size;
   margin: 0;
 }
