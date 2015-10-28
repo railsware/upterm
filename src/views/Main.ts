@@ -1,7 +1,7 @@
 const ReactDOM = require('react-dom');
 import * as React from 'react';
 import * as _ from 'lodash';
-import ApplicationView from './ApplicationView';
+import ApplicationComponent from './ApplicationComponent';
 import {isMetaKey} from './Prompt';
 
 function focusLastInput(event) {
@@ -42,7 +42,7 @@ function withCaret(target, callback) {
 }
 
 $(document).ready(() => {
-    ReactDOM.render(React.createElement(ApplicationView), document.getElementById('black-board'));
+    ReactDOM.render(React.createElement(ApplicationComponent), document.getElementById('black-board'));
     // TODO: focus the last input of the active terminal.
     $(document).keydown(event => focusLastInput(event));
 });

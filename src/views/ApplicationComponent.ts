@@ -7,7 +7,7 @@ interface State {
     application: Application;
 }
 
-export default class ApplicationView extends React.Component<{}, State> {
+export default class ApplicationComponent extends React.Component<{}, State> {
     constructor(props) {
         super(props);
 
