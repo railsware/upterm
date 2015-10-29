@@ -2,7 +2,7 @@
 
 $fa-font-path: "../node_modules/font-awesome/fonts";
 $font-size: 14px;
-$prompt-padding: 5px;
+$prompt-padding: 0px;
 $default-shadow: 0 2px 8px 1px rgba(0, 0, 0, 0.3);
 
 @import '../node_modules/font-awesome/scss/font-awesome';
@@ -80,13 +80,18 @@ body, pre {
 
 .invocations {
   margin-bottom: 40px;
+  margin-top: 5px;
 }
 
 .prompt-wrapper {
   position: relative;
   padding-top: $prompt-padding;
+  left: 0;
+  padding-right: 0;
+  padding-left: 0;
   width: 100%;
   background-color: map-get($colors, 'bright-black');
+
 
   $decoration-width: 30px;
   $height: 17px;
@@ -105,6 +110,8 @@ body, pre {
   .prompt-decoration {
     display: inline-block;
     height: 17px;
+    vertical-align: top;
+    position: absolute;
   }
 
   .arrow {
@@ -165,14 +172,15 @@ body, pre {
   }
 
   .prompt {
-    position: absolute;
-    left: $decoration-width - 10px;
-    right: 0;
+    position: relative;
+    left: -10px;
     padding: 0 20px;
-    height: $height;
+    height: 100%;
+    text-indent: $decoration-width;
     color: map-get($colors, 'white');
     background-color: map-get($colors, 'bright-black');
     font-size: $font-size;
+
 
     @mixin common {
       display: inline-block;
@@ -264,9 +272,11 @@ body, pre {
 }
 
 .terminal {
-  position: relative;
+  position: absolute;
   height: 100%;
   width: 100%;
+  overflow-x: hidden;
+  top: 0;
 }
 
 .status-line {
