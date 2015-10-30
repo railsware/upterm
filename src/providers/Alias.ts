@@ -11,8 +11,7 @@ export default class Alias implements i.AutocompletionProvider {
         }
 
         const lastLexeme = prompt.lastLexeme;
-
-        var all = _.map(Aliases.aliases, (alias: string, expanded: string) => {
+        var all = _.map(Aliases.all, (alias: string, expanded: string) => {
             return {
                 value: expanded,
                 score: 2 * (score(alias, lastLexeme) + (score(expanded, lastLexeme) * 0.5)),

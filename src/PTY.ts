@@ -43,3 +43,14 @@ export default class PTY {
         this.process.send({signal: signal});
     }
 }
+
+export function executeCommand(command: string, args: string[] = [], directory: string = process.env.HOME): Promise<string> {
+    return new Promise((resolve, reject) => {
+        let output = '';
+        new PTY(
+            command, args, directory, {columns: 80, rows: 20},
+            (text: string) => output += text,
+            (exitCode: number) => exitCode === 0 ? resolve(output) : reject(exitCode)
+        );
+    });
+}
