@@ -23,8 +23,13 @@ export default class Application {
     }
 
     addTerminal(): void {
-        this.terminals.push(new Terminal(this.contentDimensions));
-        this._activeTerminalIndex = this.terminals.length - 1;
+        let terminal = new Terminal(this.contentDimensions);
+        this.terminals.push(terminal);
+        this.activateTerminal(terminal);
+    }
+
+    activateTerminal(terminal: Terminal): void {
+        this._activeTerminalIndex = this.terminals.indexOf(terminal);
     }
 
     set contentSize(newSize) {

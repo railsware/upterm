@@ -49,7 +49,11 @@ export default class ApplicationComponent extends React.Component<{}, State> {
             (terminal, index) => React.createElement(TerminalComponent, {
                 terminal: terminal,
                 key: index,
-                active: terminal === this.application.activeTerminal
+                active: terminal === this.application.activeTerminal,
+                activateTerminal: (terminal: Terminal) => {
+                    this.application.activateTerminal(terminal);
+                    this.forceUpdate();
+                }
             })
         );
 

@@ -8,6 +8,7 @@ import InvocationComponent from './InvocationComponent';
 interface Props {
     terminal: Terminal;
     active: boolean;
+    activateTerminal: (t: Terminal) => void;
 }
 
 interface State {
@@ -24,11 +25,19 @@ export default class TerminalComponent extends React.Component<Props, State> {
             invocations: this.props.terminal.invocations
         }
     }
+
     componentWillMount() {
         this.props.terminal
             .on('invocation', () => this.setState({invocations: this.props.terminal.invocations}))
             .on('vcs-data', (data: VcsData) => this.setState({vcsData: data}));
     }
+
+    handleClick() {
+        if (!this.props.active) {
+            this.props.activateTerminal(this.props.terminal);
+        }
+    }
+
     handleKeyDown(event: React.KeyboardEvent) {
         // Ctrl+L.
         if (event.ctrlKey && event.keyCode === 76) {
@@ -48,16 +57,24 @@ export default class TerminalComponent extends React.Component<Props, State> {
             console.log(`Debugging mode has been ${(<any>window).DEBUG ? 'enabled' : 'disabled'}.`);
         }
     }
+
     render() {
         var invocations = this.state.invocations.map(invocation =>
-                React.createElement(InvocationComponent, { key: invocation.id, invocation: invocation }, [])
+            React.createElement(InvocationComponent, {key: invocation.id, invocation: invocation}, [])
         );
 
         let activenessClass = this.props.active ? 'active' : 'inactive';
 
-        return React.createElement( 'div', { className: `terminal ${activenessClass}`, onKeyDown: this.handleKeyDown.bind(this) },
-            React.createElement( 'div', { className: 'invocations' }, invocations ),
-            React.createElement(StatusLineComponent, { currentWorkingDirectory: this.props.terminal.currentDirectory, vcsData: this.state.vcsData })
+        return React.createElement('div', {
+                className: `terminal ${activenessClass}`,
+                onClick: this.handleClick.bind(this),
+                onKeyDown: this.handleKeyDown.bind(this)
+            },
+            React.createElement('div', {className: 'invocations'}, invocations),
+            React.createElement(StatusLineComponent, {
+                currentWorkingDirectory: this.props.terminal.currentDirectory,
+                vcsData: this.state.vcsData
+            })
         );
     }
 }
