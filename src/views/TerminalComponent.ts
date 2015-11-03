@@ -7,6 +7,7 @@ import InvocationComponent from './InvocationComponent';
 
 interface Props {
     terminal: Terminal;
+    active: boolean;
 }
 
 interface State {
@@ -52,7 +53,9 @@ export default class TerminalComponent extends React.Component<Props, State> {
                 React.createElement(InvocationComponent, { key: invocation.id, invocation: invocation }, [])
         );
 
-        return React.createElement( 'div', { className: 'terminal', onKeyDown: this.handleKeyDown.bind(this) },
+        let activenessClass = this.props.active ? 'active' : 'inactive';
+
+        return React.createElement( 'div', { className: `terminal ${activenessClass}`, onKeyDown: this.handleKeyDown.bind(this) },
             React.createElement( 'div', { className: 'invocations' }, invocations ),
             React.createElement(StatusLineComponent, { currentWorkingDirectory: this.props.terminal.currentDirectory, vcsData: this.state.vcsData })
         );

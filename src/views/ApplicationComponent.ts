@@ -2,19 +2,25 @@ import Application from '../Application';
 import TerminalComponent from './TerminalComponent';
 import * as React from 'react';
 import * as i from '../Interfaces';
+import Terminal from "../Terminal";
 
 interface State {
-    application: Application;
+    terminals: Terminal[];
 }
 
 export default class ApplicationComponent extends React.Component<{}, State> {
+    private application: Application;
+
     constructor(props: {}) {
         super(props);
 
-        $(window).resize(() => this.state.application.contentSize = this.contentSize);
-        this.state = {application: new Application(this.charSize, this.contentSize)};
+        this.application = new Application(this.charSize, this.contentSize);
+        this.state = {terminals: this.application.terminals};
+
+        $(window).resize(() => this.application.contentSize = this.contentSize);
+
         require('ipc').on('change-working-directory', (directory: string) =>
-            this.state.application.activeTerminal.currentDirectory = directory
+            this.application.activeTerminal.currentDirectory = directory
         );
     }
 
@@ -23,6 +29,8 @@ export default class ApplicationComponent extends React.Component<{}, State> {
         if (event.metaKey && event.keyCode === 189) {
             console.log('Split horizontally.');
 
+            this.application.addTerminal();
+            this.setState({terminals: this.application.terminals});
             event.stopPropagation();
             event.preventDefault();
         }
@@ -37,8 +45,12 @@ export default class ApplicationComponent extends React.Component<{}, State> {
     }
 
     render() {
-        let terminals = this.state.application.terminals.map(
-            (terminal, index) => React.createElement(TerminalComponent, {"terminal": terminal, "key": index})
+        let terminals = this.state.terminals.map(
+            (terminal, index) => React.createElement(TerminalComponent, {
+                terminal: terminal,
+                key: index,
+                active: terminal === this.application.activeTerminal
+            })
         );
 
         return React.createElement("div", {

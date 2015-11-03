@@ -5,21 +5,26 @@ export default class Application {
     private _terminals: Terminal[] = [];
     private _contentSize: i.Size;
     private _charSize: i.Size;
+    private _activeTerminalIndex: number;
 
     constructor(charSize: i.Size, windowSize: i.Size) {
         this._charSize = charSize;
         this.contentSize = windowSize;
 
-        this.terminals.push(new Terminal(this.contentDimensions));
+        this.addTerminal();
     }
 
     get terminals() {
         return this._terminals;
     }
 
-    // FIXME when support multiple terminals.
-    get activeTerminal() {
-        return this.terminals[0];
+    get activeTerminal(): Terminal {
+        return this.terminals[this._activeTerminalIndex];
+    }
+
+    addTerminal(): void {
+        this.terminals.push(new Terminal(this.contentDimensions));
+        this._activeTerminalIndex = this.terminals.length - 1;
     }
 
     set contentSize(newSize) {

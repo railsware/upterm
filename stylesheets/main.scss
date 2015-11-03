@@ -267,6 +267,11 @@ body, pre {
   position: relative;
   height: 100%;
   width: 100%;
+
+  &.inactive {
+    opacity: 0.4;
+    border: 1px solid map-get($colors, 'white');
+  }
 }
 
 .status-line {
