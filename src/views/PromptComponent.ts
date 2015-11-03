@@ -38,7 +38,7 @@ function setCaretPosition(node: Node, position: number) {
     selection.addRange(range);
 }
 
-function getCaretPosition():number {
+function getCaretPosition(): number {
     return window.getSelection().anchorOffset;
 }
 
@@ -59,8 +59,8 @@ const isDefinedKey = _.memoize((event: React.KeyboardEvent) => _.some(_.values(k
     (event: React.KeyboardEvent) => [event.ctrlKey, event.keyCode]);
 
 // TODO: Figure out how it works.
-function createEventHandler():any {
-    var subject:any = function () {
+function createEventHandler(): any {
+    var subject: any = function () {
         subject.onNext.apply(subject, arguments);
     };
 
@@ -99,7 +99,7 @@ interface State {
 
 // TODO: Make sure we only update the view when the model changes.
 export default class PromptComponent extends React.Component<Props, State> {
-    private handlers:{
+    private handlers: {
         onKeyDown: Function;
     };
 
@@ -117,7 +117,7 @@ export default class PromptComponent extends React.Component<Props, State> {
         var meaningfulKeysDownStream = promptKeys.filter(isDefinedKey).map(stopBubblingUp);
         var [navigateAutocompleteStream, navigateHistoryStream] = meaningfulKeysDownStream
             .filter((event: KeyboardEvent) => keys.goDown(event) || keys.goUp(event))
-            .partition(() => this.autocompleteIsShown());
+            .partition(() => this.isAutocompleteShown());
 
         keysDownStream.filter(_.negate(isCommandKey))
             .forEach((event: KeyboardEvent) => this.setState({latestKeyCode: event.keyCode}));
@@ -125,7 +125,7 @@ export default class PromptComponent extends React.Component<Props, State> {
         promptKeys.filter(keys.enter).forEach(() => this.execute());
         promptKeys.filter(keys.interrupt).forEach(() => this.setText(""));
 
-        meaningfulKeysDownStream.filter(() => this.autocompleteIsShown())
+        meaningfulKeysDownStream.filter(() => this.isAutocompleteShown())
             .filter(keys.tab)
             .forEach(() => this.selectAutocomplete());
 
@@ -157,16 +157,12 @@ export default class PromptComponent extends React.Component<Props, State> {
         this.commandNode.focus();
     }
 
-    private get commandNode():HTMLInputElement {
-        return <any>this.refs['command'];
-    }
-
     componentDidUpdate(prevProps: Props, prevState: State) {
         if (this.props.status !== e.Status.NotStarted) {
             return;
         }
 
-        this.commandNode.innerText = this.getText();
+        this.commandNode.innerText = this.text;
 
         if (this.state.caretPosition !== getCaretPosition() || prevState.caretOffset !== this.state.caretOffset) {
             setCaretPosition(this.commandNode, this.state.caretPosition);
@@ -178,113 +174,6 @@ export default class PromptComponent extends React.Component<Props, State> {
 
         scrollToBottom();
 
-    }
-
-    execute() {
-        if (!this.isEmpty()) {
-            // Timeout prevents two-line input on cd.
-            setTimeout(() => this.props.prompt.execute(), 0);
-        }
-    }
-
-    getText() {
-        return this.props.prompt.buffer.toString();
-    }
-
-    replaceText(text: string) {
-        this.setText(text, text.length);
-    }
-
-    setText(text: string, position = getCaretPosition()) {
-        this.props.prompt.buffer.setTo(text);
-        this.setState({caretPosition: position});
-    }
-
-    isEmpty() {
-        return this.getText().replace(/\s/g, '').length === 0;
-    }
-
-    navigateHistory(event: KeyboardEvent) {
-        if (keys.goUp(event)) {
-            this.replaceText(History.getPrevious());
-        } else {
-            this.replaceText(History.getNext());
-        }
-    }
-
-    navigateAutocomplete(event: KeyboardEvent) {
-        if (keys.goUp(event)) {
-            var index = Math.max(0, this.state.highlightedSuggestionIndex - 1)
-        } else {
-            index = Math.min(this.state.suggestions.length - 1, this.state.highlightedSuggestionIndex + 1)
-        }
-
-        this.setState({highlightedSuggestionIndex: index});
-    }
-
-    selectAutocomplete() {
-        var state = this.state;
-        const suggestion = state.suggestions[state.highlightedSuggestionIndex];
-
-        if (suggestion.replaceAll) {
-            this.replaceText(suggestion.value)
-        } else {
-            this.props.prompt.replaceCurrentLexeme(suggestion);
-            if (!suggestion.partial) {
-                this.props.prompt.buffer.write(' ');
-            }
-
-            this.setState({caretPosition: this.getText().length});
-        }
-
-        this.props.prompt.getSuggestions().then(suggestions =>
-            this.setState({suggestions: suggestions, highlightedSuggestionIndex: 0})
-        );
-    }
-
-    deleteWord() {
-        // TODO: Remove the word under the caret instead of the last one.
-        var newCommand = this.props.prompt.expanded.slice(0, -1).join(' ');
-
-        if (newCommand.length) {
-            newCommand += ' ';
-        }
-
-        this.replaceText(newCommand);
-    }
-
-    handleInput(event: React.SyntheticEvent) {
-        this.setText((<HTMLElement>event.target).innerText);
-
-        //TODO: remove repetition.
-        //TODO: make it a stream.
-        this.props.prompt.getSuggestions().then(suggestions =>
-            this.setState({suggestions: suggestions, highlightedSuggestionIndex: 0})
-        );
-    }
-
-    handleScrollToTop(event: Event) {
-        stopBubblingUp(event);
-
-        const offset = $(ReactDOM.findDOMNode(this.props.invocationView)).offset().top - 10;
-        $('html, body').animate({scrollTop: offset}, 300);
-    }
-
-    handleKeyPress(event: Event) {
-        if (this.props.status === e.Status.InProgress) {
-            stopBubblingUp(event);
-        }
-    }
-
-    showAutocomplete() {
-        //TODO: use streams.
-        return this.commandNode &&
-            this.state.suggestions.length &&
-            this.props.status === e.Status.NotStarted && !_.contains([13, 27], this.state.latestKeyCode);
-    }
-
-    autocompleteIsShown():boolean {
-        return !!this.refs['autocomplete'];
     }
 
     render() {
@@ -337,5 +226,117 @@ export default class PromptComponent extends React.Component<Props, State> {
                 scrollToTop
             )
         );
+    }
+
+    private execute(): void {
+        if (!this.isEmpty()) {
+            // Timeout prevents two-line input on cd.
+            setTimeout(() => this.props.prompt.execute(), 0);
+        }
+    }
+
+    private get commandNode(): HTMLInputElement {
+        return <any>this.refs['command'];
+    }
+
+    private get text(): string {
+        return this.props.prompt.buffer.toString();
+    }
+
+    private setText(text: string, position = getCaretPosition()): void {
+        this.props.prompt.buffer.setTo(text);
+        this.setState({caretPosition: position});
+    }
+
+    private replaceText(text: string): void {
+        this.setText(text, text.length);
+    }
+
+    private deleteWord(): void {
+        // TODO: Remove the word under the caret instead of the last one.
+        var newCommand = this.props.prompt.expanded.slice(0, -1).join(' ');
+
+        if (newCommand.length) {
+            newCommand += ' ';
+        }
+
+        this.replaceText(newCommand);
+    }
+
+    private isEmpty(): boolean {
+        return this.text.replace(/\s/g, '').length === 0;
+    }
+
+    private navigateHistory(event: KeyboardEvent): void {
+        if (keys.goUp(event)) {
+            this.replaceText(History.getPrevious());
+        } else {
+            this.replaceText(History.getNext());
+        }
+    }
+
+    private navigateAutocomplete(event: KeyboardEvent): void {
+        if (keys.goUp(event)) {
+            var index = Math.max(0, this.state.highlightedSuggestionIndex - 1)
+        } else {
+            index = Math.min(this.state.suggestions.length - 1, this.state.highlightedSuggestionIndex + 1)
+        }
+
+        this.setState({highlightedSuggestionIndex: index});
+    }
+
+    private selectAutocomplete(): void {
+        var state = this.state;
+        const suggestion = state.suggestions[state.highlightedSuggestionIndex];
+
+        if (suggestion.replaceAll) {
+            this.replaceText(suggestion.value)
+        } else {
+            this.props.prompt.replaceCurrentLexeme(suggestion);
+            if (!suggestion.partial) {
+                this.props.prompt.buffer.write(' ');
+            }
+
+            this.setState({caretPosition: this.text.length});
+        }
+
+        this.props.prompt.getSuggestions().then(suggestions =>
+            this.setState({suggestions: suggestions, highlightedSuggestionIndex: 0})
+        );
+    }
+
+    private showAutocomplete(): boolean {
+        //TODO: use streams.
+        return this.commandNode &&
+            !this.isEmpty() &&
+            this.state.suggestions.length &&
+            this.props.status === e.Status.NotStarted && !_.contains([13, 27], this.state.latestKeyCode);
+    }
+
+    private isAutocompleteShown(): boolean {
+        return !!this.refs['autocomplete'];
+    }
+
+    private handleInput(event: React.SyntheticEvent) {
+        this.setText((<HTMLElement>event.target).innerText);
+
+        //TODO: remove repetition.
+        //TODO: make it a stream.
+        this.props.prompt.getSuggestions().then(suggestions =>
+            this.setState({suggestions: suggestions, highlightedSuggestionIndex: 0})
+        );
+    }
+
+    private handleScrollToTop(event: Event) {
+        stopBubblingUp(event);
+
+        const offset = $(ReactDOM.findDOMNode(this.props.invocationView)).offset().top - 10;
+        $('html, body').animate({scrollTop: offset}, 300);
+    }
+
+    private handleKeyPress(event: Event) {
+        if (this.props.status === e.Status.InProgress) {
+            stopBubblingUp(event);
+        }
     }
 }
