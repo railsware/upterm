@@ -22,7 +22,7 @@
     "shell",
     "console"
   ],
-  "electronVersion": "0.34.1",
+  "electronVersion": "0.34.2",
   "dependencies": {
     "fixed-sticky": "^0.1.6",
     "font-awesome": "4.4.0",
@@ -42,6 +42,10 @@
   "devDependencies": {
     "babel": "6.0.15",
     "babel-core": "6.0.17",
+    "babel-plugin-transform-es2015-destructuring": "6.0.14",
+    "babel-plugin-transform-es2015-modules-commonjs": "6.0.15",
+    "babel-plugin-transform-es2015-parameters": "6.0.14",
+    "babel-plugin-transform-es2015-spread": "6.0.14",
     "chai": "3.4.0",
     "chai-things": "0.2.0",
     "del": "2.0.2",
