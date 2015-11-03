@@ -62,10 +62,6 @@ export default class Prompt extends events.EventEmitter {
         return this.directory;
     }
 
-    getBuffer(): Buffer {
-        return this.buffer;
-    }
-
     // TODO: Now it's last lexeme instead of current.
     replaceCurrentLexeme(suggestion: i.Suggestion): void {
         var lexemes = _.clone(this._lexemes);

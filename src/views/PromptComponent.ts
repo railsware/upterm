@@ -123,6 +123,7 @@ export default class PromptComponent extends React.Component<Props, State> {
             .forEach((event: KeyboardEvent) => this.setState({latestKeyCode: event.keyCode}));
 
         promptKeys.filter(keys.enter).forEach(() => this.execute());
+        promptKeys.filter(keys.interrupt).forEach(() => this.setText(""));
 
         meaningfulKeysDownStream.filter(() => this.autocompleteIsShown())
             .filter(keys.tab)
@@ -195,7 +196,7 @@ export default class PromptComponent extends React.Component<Props, State> {
     }
 
     setText(text: string, position = getCaretPosition()) {
-        this.props.invocation.setPromptText(text);
+        this.props.prompt.buffer.setTo(text);
         this.setState({caretPosition: position});
     }
 

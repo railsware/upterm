@@ -62,10 +62,6 @@ export default class Invocation extends events.EventEmitter {
         );
     }
 
-    setPromptText(value: string): void {
-        this.prompt.getBuffer().setTo(value);
-    }
-
     // Writes to the process' stdin.
     write(input: string|React.KeyboardEvent) {
         if (typeof input === 'string') {
