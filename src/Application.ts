@@ -1,5 +1,6 @@
 import Terminal from "./Terminal";
 import * as i from "./Interfaces";
+import * as _ from 'lodash';
 const IPC = require('ipc');
 
 export default class Application {
@@ -33,7 +34,7 @@ export default class Application {
     removeTerminal(terminal: Terminal): Application {
         _.pull(this.terminals, terminal);
 
-        if (_(this.terminals).isEmpty()) {
+        if (_.isEmpty(this.terminals)) {
             IPC.send('quit');
         }
 
@@ -47,7 +48,7 @@ export default class Application {
     set contentSize(newSize) {
         this._contentSize = newSize;
 
-        this.terminals.forEach(terminal => terminal.dimensions = this.contentDimensions)
+        this.terminals.forEach((terminal: Terminal) => terminal.dimensions = this.contentDimensions)
     }
 
     get contentSize(): i.Size {

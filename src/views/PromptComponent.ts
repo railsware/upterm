@@ -158,10 +158,6 @@ export default class PromptComponent extends React.Component<Props, State> {
     }
 
     componentDidUpdate(prevProps: Props, prevState: State) {
-        if (!prevProps.hasLocusOfAttention && this.props.hasLocusOfAttention) {
-            this.commandNode.focus();
-        }
-
         if (this.props.status !== e.Status.NotStarted) {
             return;
         }
@@ -178,6 +174,9 @@ export default class PromptComponent extends React.Component<Props, State> {
 
         scrollToBottom();
 
+        if (!prevProps.hasLocusOfAttention && this.props.hasLocusOfAttention) {
+            this.commandNode.focus()
+        }
     }
 
     render() {
@@ -311,9 +310,10 @@ export default class PromptComponent extends React.Component<Props, State> {
 
     private showAutocomplete(): boolean {
         //TODO: use streams.
-        return this.commandNode &&
-            !this.isEmpty() &&
+        return this.props.hasLocusOfAttention &&
             this.state.suggestions.length &&
+            this.commandNode &&
+            !this.isEmpty() &&
             this.props.status === e.Status.NotStarted && !_.contains([13, 27], this.state.latestKeyCode);
     }
 
