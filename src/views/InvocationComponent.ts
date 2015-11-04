@@ -6,7 +6,8 @@ import PromptComponent from './PromptComponent';
 import BufferComponent from "./BufferComponent";
 
 interface Props {
-    invocation: InvocationModel
+    invocation: InvocationModel;
+    hasLocusOfAttention: boolean;
 }
 
 interface State {
@@ -50,6 +51,7 @@ export default class InvocationComponent extends React.Component<Props, State> {
             { className: classNames },
             React.createElement(PromptComponent, { prompt: this.props.invocation.getPrompt(),
                 status: this.state.status,
+                hasLocusOfAttention: this.props.hasLocusOfAttention,
                 invocation: this.props.invocation,
                 invocationView: this }),
             buffer

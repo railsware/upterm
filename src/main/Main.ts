@@ -1,5 +1,6 @@
 const app = require('app');
 const BrowserWindow = require('browser-window');
+const IPC = require('ipc');
 let menu = require('./Menu');
 
 let browserWindow: any = null;
@@ -8,6 +9,8 @@ app.on('open-file', (event: Event, file: string) => getMainWindow().webContents.
     .on('ready', getMainWindow)
     .on('activate-with-no-open-windows', getMainWindow)
     .on('mainWindow-all-closed', () => process.platform === 'darwin' || app.quit());
+
+IPC.on('quit', app.quit);
 
 function getMainWindow() {
     const workAreaSize = require('screen').getPrimaryDisplay().workAreaSize;

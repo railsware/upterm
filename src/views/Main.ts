@@ -7,7 +7,8 @@ import ApplicationComponent from './ApplicationComponent';
 import {isMetaKey} from './PromptComponent';
 
 function focusLastInput(event: JQueryKeyEventObject) {
-    if (_.contains(event.target.classList, 'prompt') || event.metaKey) {
+    //if (event.metaKey || (_.contains(event.target.classList, 'prompt') && $(event.target).parent('.terminal.active').length)) {
+    if (event.metaKey || (_.contains(event.target.classList, 'prompt'))) {
         return;
     }
 
@@ -21,7 +22,7 @@ function focusLastInput(event: JQueryKeyEventObject) {
             'altkey', 'bubbles', 'cancelBubble', 'cancelable', 'charCode',
             'ctrlKey', 'keyIdentifier', 'metaKey', 'shiftKey'
         ]));
-    var target = $('.prompt').last().get(0);
+    var target = $('.terminal.active .prompt').last().get(0);
     target.focus();
     withCaret(target, () => target.innerText.length);
     target.dispatchEvent(newEvent)

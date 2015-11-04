@@ -7,7 +7,7 @@ import InvocationComponent from './InvocationComponent';
 
 interface Props {
     terminal: Terminal;
-    active: boolean;
+    isActive: boolean;
     activateTerminal: (t: Terminal) => void;
 }
 
@@ -33,7 +33,7 @@ export default class TerminalComponent extends React.Component<Props, State> {
     }
 
     handleClick() {
-        if (!this.props.active) {
+        if (!this.props.isActive) {
             this.props.activateTerminal(this.props.terminal);
         }
     }
@@ -59,11 +59,15 @@ export default class TerminalComponent extends React.Component<Props, State> {
     }
 
     render() {
-        var invocations = this.state.invocations.map(invocation =>
-            React.createElement(InvocationComponent, {key: invocation.id, invocation: invocation}, [])
+        var invocations = this.state.invocations.map((invocation: Invocation, index: number) =>
+            React.createElement(InvocationComponent, {
+                key: invocation.id,
+                invocation: invocation,
+                hasLocusOfAttention: this.props.isActive && index === this.state.invocations.length - 1
+            }, [])
         );
 
-        let activenessClass = this.props.active ? 'active' : 'inactive';
+        let activenessClass = this.props.isActive ? 'active' : 'inactive';
 
         return React.createElement('div', {
                 className: `terminal ${activenessClass}`,

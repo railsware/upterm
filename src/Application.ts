@@ -1,5 +1,6 @@
 import Terminal from "./Terminal";
 import * as i from "./Interfaces";
+const IPC = require('ipc');
 
 export default class Application {
     private _terminals: Terminal[] = [];
@@ -22,10 +23,21 @@ export default class Application {
         return this.terminals[this._activeTerminalIndex];
     }
 
-    addTerminal(): void {
+    addTerminal(): Terminal {
         let terminal = new Terminal(this.contentDimensions);
         this.terminals.push(terminal);
-        this.activateTerminal(terminal);
+
+        return terminal;
+    }
+
+    removeTerminal(terminal: Terminal): Application {
+        _.pull(this.terminals, terminal);
+
+        if (_(this.terminals).isEmpty()) {
+            IPC.send('quit');
+        }
+
+        return this;
     }
 
     activateTerminal(terminal: Terminal): void {

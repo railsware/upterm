@@ -86,6 +86,7 @@ interface Props {
     invocation: Invocation;
     invocationView: InvocationComponent;
     prompt: PromptModel;
+    hasLocusOfAttention: boolean;
 }
 
 interface State {
@@ -150,7 +151,6 @@ export default class PromptComponent extends React.Component<Props, State> {
     }
 
     componentDidMount() {
-
         $(ReactDOM.findDOMNode(this)).fixedsticky();
         $('.fixedsticky-dummy').remove();
 
@@ -158,6 +158,10 @@ export default class PromptComponent extends React.Component<Props, State> {
     }
 
     componentDidUpdate(prevProps: Props, prevState: State) {
+        if (!prevProps.hasLocusOfAttention && this.props.hasLocusOfAttention) {
+            this.commandNode.focus();
+        }
+
         if (this.props.status !== e.Status.NotStarted) {
             return;
         }

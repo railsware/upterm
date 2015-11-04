@@ -2,6 +2,7 @@ import Application from '../Application';
 import TerminalComponent from './TerminalComponent';
 import * as React from 'react';
 import * as i from '../Interfaces';
+import * as _ from 'lodash';
 import Terminal from "../Terminal";
 
 interface State {
@@ -15,6 +16,8 @@ export default class ApplicationComponent extends React.Component<{}, State> {
         super(props);
 
         this.application = new Application(this.charSize, this.contentSize);
+        this.application.activateTerminal(this.application.terminals[0]);
+
         this.state = {terminals: this.application.terminals};
 
         $(window).resize(() => this.application.contentSize = this.contentSize);
@@ -24,13 +27,12 @@ export default class ApplicationComponent extends React.Component<{}, State> {
         );
     }
 
-    handleKeyDown(event: React.KeyboardEvent) {
+    handleKeyDown(event: JQueryKeyEventObject) {
         // Cmd+_.
         if (event.metaKey && event.keyCode === 189) {
-            console.log('Split horizontally.');
-
-            this.application.addTerminal();
+            this.application.activateTerminal(this.application.addTerminal());
             this.setState({terminals: this.application.terminals});
+
             event.stopPropagation();
             event.preventDefault();
         }
@@ -42,6 +44,18 @@ export default class ApplicationComponent extends React.Component<{}, State> {
             event.stopPropagation();
             event.preventDefault();
         }
+
+        // Ctrl+D.
+        if (event.ctrlKey && event.keyCode === 68) {
+            this.application
+                .removeTerminal(this.application.activeTerminal)
+                .activateTerminal(_.last(this.application.terminals));
+
+            this.setState({terminals: this.application.terminals});
+
+            event.stopPropagation();
+            event.preventDefault();
+        }
     }
 
     render() {
@@ -49,7 +63,7 @@ export default class ApplicationComponent extends React.Component<{}, State> {
             (terminal, index) => React.createElement(TerminalComponent, {
                 terminal: terminal,
                 key: index,
-                active: terminal === this.application.activeTerminal,
+                isActive: terminal === this.application.activeTerminal,
                 activateTerminal: (terminal: Terminal) => {
                     this.application.activateTerminal(terminal);
                     this.forceUpdate();
