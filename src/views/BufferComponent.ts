@@ -34,6 +34,7 @@ class RowComponent extends React.Component<RowProps, {}> {
     shouldComponentUpdate(nextProps: RowProps) {
         return this.props.row !== nextProps.row;
     }
+
     render() {
         let rowWithoutHoles = this.props.row.toArray().map(char => char || Char.empty);
         let charGroups: Char[][] = groupWhen(charGrouper, rowWithoutHoles);
@@ -59,12 +60,13 @@ class CharGroupComponent extends React.Component<CharGroupProps, {}> {
     shouldComponentUpdate(nextProps: CharGroupProps) {
         return JSON.stringify(this.props) !== JSON.stringify(nextProps);
     }
+
     render() {
         return React.createElement('span', this.getHTMLAttributes(this.props.attributes), this.props.text);
     }
 
-    private getHTMLAttributes(attributes:i.Attributes):Object {
-        var htmlAttributes:_.Dictionary<any> = {};
+    private getHTMLAttributes(attributes: i.Attributes): Object {
+        var htmlAttributes: _.Dictionary<any> = {};
         _.each(attributes, (value, key) => {
             htmlAttributes[`data-${key}`] = value;
         });
