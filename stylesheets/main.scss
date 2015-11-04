@@ -273,6 +273,7 @@ body, pre {
   height: 100%;
   width: 100%;
   flex: 1;
+  overflow-x: scroll;
 
   &.inactive {
     opacity: 0.4;

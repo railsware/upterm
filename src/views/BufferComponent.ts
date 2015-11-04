@@ -1,6 +1,7 @@
 import * as React from 'react';
 import * as i from '../Interfaces';
 import * as e from '../Enums';
+import * as _ from 'lodash';
 import Buffer from "../Buffer";
 import Char from "../Char";
 import Cursor from "../Cursor";
