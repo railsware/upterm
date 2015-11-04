@@ -44,7 +44,7 @@ function withCaret(target: Node, callback: (n: number) => number) {
 }
 
 $(document).ready(() => {
-    ReactDOM.render(React.createElement(ApplicationComponent), document.getElementById('black-board'));
+    ReactDOM.render(React.createElement(ApplicationComponent), document.getElementById('black-screen'));
     // TODO: focus the last input of the active terminal.
     $(document).keydown(event => focusLastInput(event));
 });

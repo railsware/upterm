@@ -244,7 +244,7 @@ body, pre {
   }
 }
 
-#black-board {
+#black-screen {
   margin-bottom: 24px;
 }
 
@@ -261,12 +261,18 @@ body, pre {
 
   flex-wrap: nowrap;
   flex-direction: column;
+
+  position: absolute;
+  width: 100%;
+  top: 0;
+  bottom: 2em;
 }
 
 .terminal {
   position: relative;
   height: 100%;
   width: 100%;
+  flex: 1;
 
   &.inactive {
     opacity: 0.4;
