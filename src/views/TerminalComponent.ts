@@ -1,9 +1,11 @@
 import * as React from 'react';
+import * as _ from 'lodash';
 import Terminal from '../Terminal';
 import Invocation from '../Invocation';
 import {VcsData} from '../Interfaces';
 import StatusLineComponent from './StatusLineComponent';
 import InvocationComponent from './InvocationComponent';
+import DOMElement = __React.DOMElement;
 
 interface Props {
     terminal: Terminal;
@@ -32,32 +34,6 @@ export default class TerminalComponent extends React.Component<Props, State> {
             .on('vcs-data', (data: VcsData) => this.setState({ vcsData: data }));
     }
 
-    handleClick() {
-        if (!this.props.isActive) {
-            this.props.activateTerminal(this.props.terminal);
-        }
-    }
-
-    handleKeyDown(event: React.KeyboardEvent) {
-        // Ctrl+L.
-        if (event.ctrlKey && event.keyCode === 76) {
-            this.props.terminal.clearInvocations();
-
-            event.stopPropagation();
-            event.preventDefault();
-        }
-
-        // Cmd+D.
-        if (event.metaKey && event.keyCode === 68) {
-            (<any>window).DEBUG = !(<any>window).DEBUG;
-
-            event.stopPropagation();
-            event.preventDefault();
-            this.forceUpdate();
-            console.log(`Debugging mode has been ${(<any>window).DEBUG ? 'enabled' : 'disabled'}.`);
-        }
-    }
-
     render() {
         var invocations = this.state.invocations.map((invocation: Invocation, index: number) =>
             React.createElement(InvocationComponent, {
@@ -71,8 +47,9 @@ export default class TerminalComponent extends React.Component<Props, State> {
 
         return React.createElement('div', {
                 className: `terminal ${activenessClass}`,
-                onClick: this.handleClick.bind(this),
-                onKeyDown: this.handleKeyDown.bind(this)
+                tabIndex: 0,
+                onClickCapture: this.handleClick.bind(this),
+                onKeyDownCapture: this.handleKeyDown.bind(this)
             },
             React.createElement('div', { className: 'invocations' }, invocations),
             React.createElement(StatusLineComponent, {
@@ -80,5 +57,38 @@ export default class TerminalComponent extends React.Component<Props, State> {
                 vcsData: this.state.vcsData
             })
         );
+    }
+
+    private handleClick() {
+        if (!this.props.isActive) {
+            this.props.activateTerminal(this.props.terminal);
+        }
+    }
+
+    private handleKeyDown(event: KeyboardEvent) {
+        if (!_.contains(document.activeElement.classList, 'prompt')) {
+            this.focusLastPrompt(<HTMLDivElement>event.target);
+        }
+
+        // Ctrl+L.
+        if (event.ctrlKey && event.keyCode === 76) {
+            this.props.terminal.clearInvocations();
+
+            event.stopPropagation();
+        }
+
+        // Cmd+D.
+        if (event.metaKey && event.keyCode === 68) {
+            window.DEBUG = !window.DEBUG;
+
+            event.stopPropagation();
+            this.forceUpdate();
+
+            console.log(`Debugging mode has been ${window.DEBUG ? 'enabled' : 'disabled'}.`);
+        }
+    }
+
+    private focusLastPrompt(terminalNode: HTMLDivElement): void {
+        _.last(terminalNode.getElementsByClassName('prompt')).focus();
     }
 }
