@@ -89,6 +89,7 @@ export default class TerminalComponent extends React.Component<Props, State> {
     }
 
     private focusLastPrompt(terminalNode: HTMLDivElement): void {
-        _.last(terminalNode.getElementsByClassName('prompt')).focus();
+        const lastPrompt = <HTMLDivElement>_.last(terminalNode.getElementsByClassName('prompt'));
+        lastPrompt.focus();
     }
 }
