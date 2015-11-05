@@ -27,8 +27,8 @@ export default class InvocationComponent extends React.Component<Props, State> {
         };
 
         this.props.invocation
-            .on('data', () => this.setState({canBeDecorated: this.props.invocation.canBeDecorated()}))
-            .on('status', (status: e.Status) => this.setState({status: status}));
+            .on('data', () => this.setState({ canBeDecorated: this.props.invocation.canBeDecorated() }))
+            .on('status', (status: e.Status) => this.setState({ status: status }));
     }
 
     componentDidUpdate() {
@@ -41,7 +41,7 @@ export default class InvocationComponent extends React.Component<Props, State> {
         if (this.state.canBeDecorated && this.state.decorate) {
             var buffer = this.props.invocation.decorate();
         } else {
-            buffer = React.createElement(BufferComponent, {buffer: this.props.invocation.getBuffer()});
+            buffer = React.createElement(BufferComponent, { buffer: this.props.invocation.getBuffer() });
         }
 
         const classNames = 'invocation ' + this.state.status;
@@ -49,11 +49,13 @@ export default class InvocationComponent extends React.Component<Props, State> {
         return React.createElement(
             'div',
             { className: classNames },
-            React.createElement(PromptComponent, { prompt: this.props.invocation.getPrompt(),
+            React.createElement(PromptComponent, {
+                prompt: this.props.invocation.getPrompt(),
                 status: this.state.status,
                 hasLocusOfAttention: this.props.hasLocusOfAttention,
                 invocation: this.props.invocation,
-                invocationView: this }),
+                invocationView: this
+            }),
             buffer
         );
     }

@@ -1,5 +1,3 @@
-/// <reference path="references.ts" />
-
 import Utils from './Utils';
 var React = require('react');
 import * as i from './Interfaces';

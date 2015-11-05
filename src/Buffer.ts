@@ -12,7 +12,7 @@ export default class Buffer extends events.EventEmitter {
     private storage = List<List<Char>>();
     public cursor: Cursor = new Cursor();
     public activeBuffer = e.Buffer.Standard;
-    private attributes: i.Attributes = {color: e.Color.White, weight: e.Weight.Normal};
+    private attributes: i.Attributes = { color: e.Color.White, weight: e.Weight.Normal };
     private isOriginModeSet = false;
     private _margins: i.Margins = {};
 
@@ -44,28 +44,28 @@ export default class Buffer extends events.EventEmitter {
                     Utils.log('bell');
                     break;
                 case e.CharCode.Backspace:
-                    this.moveCursorRelative({horizontal: -1});
+                    this.moveCursorRelative({ horizontal: -1 });
                     break;
                 case e.CharCode.Tab:
-                    this.moveCursorAbsolute({horizontal: Math.floor((this.cursor.column() + 8) / 8) * 8});
+                    this.moveCursorAbsolute({ horizontal: Math.floor((this.cursor.column() + 8) / 8) * 8 });
                     break;
                 case e.CharCode.NewLine:
                     if (this.cursor.row() === this._margins.bottom) {
                         this.scrollDown(1);
                     } else {
-                        this.moveCursorRelative({vertical: 1}).moveCursorAbsolute({horizontal: 0});
+                        this.moveCursorRelative({ vertical: 1 }).moveCursorAbsolute({ horizontal: 0 });
                     }
 
                     break;
                 case e.CharCode.CarriageReturn:
-                    this.moveCursorAbsolute({horizontal: 0});
+                    this.moveCursorAbsolute({ horizontal: 0 });
                     break;
                 default:
                     Utils.error(`Couldn't write a special char '${charObject}' with char code ${charObject.toString().charCodeAt(0)}.`);
             }
         } else {
             this.set(this.cursorPosition, charObject);
-            this.moveCursorRelative({horizontal: 1});
+            this.moveCursorRelative({ horizontal: 1 });
         }
 
         this.emit('data');
@@ -98,7 +98,7 @@ export default class Buffer extends events.EventEmitter {
             }
 
             let char = this.storage.getIn([this.cursorPosition.row, this.cursorPosition.column]) || Char.empty;
-            storage = storage.setIn([this.cursorPosition.row, this.cursorPosition.column], Char.flyweight(char.toString(), _.merge(char.getAttributes(), {cursor: true})));
+            storage = storage.setIn([this.cursorPosition.row, this.cursorPosition.column], Char.flyweight(char.toString(), _.merge(char.getAttributes(), { cursor: true })));
         }
 
         return storage.toArray();
@@ -145,7 +145,7 @@ export default class Buffer extends events.EventEmitter {
         this.storage = this.storage.update(
             this.cursorPosition.row,
             List<Char>(),
-            (row: List<Char>) => row.take( this.cursorPosition.column).toList()
+            (row: List<Char>) => row.take(this.cursorPosition.column).toList()
         );
         this.emit('data');
     }
@@ -161,7 +161,7 @@ export default class Buffer extends events.EventEmitter {
 
     clear() {
         this.storage = List<List<Char>>();
-        this.moveCursorAbsolute({horizontal: 0, vertical: 0});
+        this.moveCursorAbsolute({ horizontal: 0, vertical: 0 });
     }
 
     clearToBeginning() {
@@ -208,9 +208,9 @@ export default class Buffer extends events.EventEmitter {
 
     private get homePosition(): i.Position {
         if (this.isOriginModeSet) {
-            return {row: this._margins.top || 0, column: this._margins.left || 0};
+            return { row: this._margins.top || 0, column: this._margins.left || 0 };
         } else {
-            return {row: 0, column: 0};
+            return { row: 0, column: 0 };
         }
     }
 

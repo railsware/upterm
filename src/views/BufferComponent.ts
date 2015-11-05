@@ -14,7 +14,7 @@ interface Props {
 
 export default class BufferComponent extends React.Component<Props, {}> {
     render() {
-        return React.createElement('pre', {className: `output ${this.props.buffer.activeBuffer}`},
+        return React.createElement('pre', { className: `output ${this.props.buffer.activeBuffer}` },
             this.props.buffer.toArray().map((row, index) => React.createElement(RowComponent, {
                 row: row || List<Char>(),
                 key: index
@@ -40,7 +40,7 @@ class RowComponent extends React.Component<RowProps, {}> {
         let charGroups: Char[][] = groupWhen(charGrouper, rowWithoutHoles);
 
         return React.createElement('div',
-            {className: 'row'},
+            { className: 'row' },
             charGroups.map((charGroup: Char[], index: number) => React.createElement(CharGroupComponent, {
                 text: charGroup.map(char => char.toString()).join(''),
                 attributes: charGroup[0].getAttributes(),

@@ -17,7 +17,7 @@ export default class PTY {
     constructor(command: string, args: string[], cwd: string, dimensions: i.Dimensions, dataHandler: Function, exitHandler: Function) {
         this.process = (<any>ChildProcess).fork(ptyInternalPath,
             [command, dimensions.columns, dimensions.rows, ...args],
-            {env: process.env, cwd: cwd}
+            { env: process.env, cwd: cwd }
         );
 
         this.process.on('message', (message: Message) => {
@@ -32,15 +32,15 @@ export default class PTY {
     }
 
     write(data: string): void {
-        this.process.send({input: data});
+        this.process.send({ input: data });
     }
 
     set dimensions(dimensions: i.Dimensions) {
-        this.process.send({resize: [dimensions.columns, dimensions.rows]});
+        this.process.send({ resize: [dimensions.columns, dimensions.rows] });
     }
 
     kill(signal: string): void {
-        this.process.send({signal: signal});
+        this.process.send({ signal: signal });
     }
 }
 
@@ -48,7 +48,7 @@ export function executeCommand(command: string, args: string[] = [], directory: 
     return new Promise((resolve, reject) => {
         let output = '';
         new PTY(
-            command, args, directory, {columns: 80, rows: 20},
+            command, args, directory, { columns: 80, rows: 20 },
             (text: string) => output += text,
             (exitCode: number) => exitCode === 0 ? resolve(output) : reject(exitCode)
         );

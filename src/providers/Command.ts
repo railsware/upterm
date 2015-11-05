@@ -29,7 +29,7 @@ export default class Command implements i.AutocompletionProvider {
             parser.parse(prompt.expanded.join(' '));
             return [];
         } catch (exception) {
-            return filter(this.suggestions, prompt.lastArgument, {key: 'value', maxResults: 30});
+            return filter(this.suggestions, prompt.lastArgument, { key: 'value', maxResults: 30 });
         }
     }
 }

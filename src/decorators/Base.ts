@@ -5,6 +5,7 @@ abstract class Base {
     }
 
     abstract isApplicable(): boolean;
+
     abstract decorate(): any;
 
     /**

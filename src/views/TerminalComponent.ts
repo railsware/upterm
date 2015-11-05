@@ -21,15 +21,15 @@ export default class TerminalComponent extends React.Component<Props, State> {
         super(props);
 
         this.state = {
-            vcsData: {isRepository: false},
+            vcsData: { isRepository: false },
             invocations: this.props.terminal.invocations
         }
     }
 
     componentWillMount() {
         this.props.terminal
-            .on('invocation', () => this.setState({invocations: this.props.terminal.invocations}))
-            .on('vcs-data', (data: VcsData) => this.setState({vcsData: data}));
+            .on('invocation', () => this.setState({ invocations: this.props.terminal.invocations }))
+            .on('vcs-data', (data: VcsData) => this.setState({ vcsData: data }));
     }
 
     handleClick() {
@@ -74,7 +74,7 @@ export default class TerminalComponent extends React.Component<Props, State> {
                 onClick: this.handleClick.bind(this),
                 onKeyDown: this.handleKeyDown.bind(this)
             },
-            React.createElement('div', {className: 'invocations'}, invocations),
+            React.createElement('div', { className: 'invocations' }, invocations),
             React.createElement(StatusLineComponent, {
                 currentWorkingDirectory: this.props.terminal.currentDirectory,
                 vcsData: this.state.vcsData

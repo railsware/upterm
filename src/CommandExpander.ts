@@ -226,7 +226,7 @@ export function lex(input: string): string[] {
     var lexemes: string[] = [];
     var lexeme = lexer.lex();
 
-    while(typeof lexeme === 'string') {
+    while (typeof lexeme === 'string') {
         lexemes.push(lexeme);
         lexeme = lexer.lex();
     }

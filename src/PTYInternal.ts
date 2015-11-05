@@ -1,6 +1,6 @@
 import * as pty from 'ptyw.js';
 
-let commandName= process.argv[2];
+let commandName = process.argv[2];
 let args = process.argv.slice(5);
 let columns = parseInt(process.argv[3]);
 let rows = parseInt(process.argv[4]);
@@ -42,6 +42,6 @@ process.on('message', (message: IncomingMessage) => {
     }
 });
 
-fork.on('data', (data: string) => process.send({data: data}));
-fork.on('exit', (code: number) => process.send({exit: code}));
+fork.on('data', (data: string) => process.send({ data: data }));
+fork.on('exit', (code: number) => process.send({ exit: code }));
 

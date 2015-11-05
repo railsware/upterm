@@ -121,7 +121,7 @@ export default class PromptComponent extends React.Component<Props, State> {
             .partition(() => this.isAutocompleteShown());
 
         keysDownStream.filter(_.negate(isCommandKey))
-            .forEach((event: KeyboardEvent) => this.setState({latestKeyCode: event.keyCode}));
+            .forEach((event: KeyboardEvent) => this.setState({ latestKeyCode: event.keyCode }));
 
         promptKeys.filter(keys.enter).forEach(() => this.execute());
         promptKeys.filter(keys.interrupt).forEach(() => this.setText(""));
@@ -169,7 +169,7 @@ export default class PromptComponent extends React.Component<Props, State> {
         }
 
         if (prevState.caretPosition !== this.state.caretPosition) {
-            this.setState({caretOffset: $(this.commandNode).caret('offset')});
+            this.setState({ caretOffset: $(this.commandNode).caret('offset') });
         }
 
         scrollToBottom();
@@ -192,26 +192,26 @@ export default class PromptComponent extends React.Component<Props, State> {
         }
 
         if (this.props.invocationView.state.canBeDecorated) {
-            var decorationToggle = React.createElement(DecorationToggleComponent, {invocation: this.props.invocationView});
+            var decorationToggle = React.createElement(DecorationToggleComponent, { invocation: this.props.invocationView });
         }
 
         if (this.props.invocation.hasOutput()) {
             var scrollToTop = React.createElement(
                 'a',
-                {href: '#', className: 'scroll-to-top', onClick: this.handleScrollToTop.bind(this)},
-                React.createElement('i', {className: 'fa fa-long-arrow-up'})
+                { href: '#', className: 'scroll-to-top', onClick: this.handleScrollToTop.bind(this) },
+                React.createElement('i', { className: 'fa fa-long-arrow-up' })
             );
         }
 
         return React.createElement(
             'div',
-            {className: classes},
+            { className: classes },
             React.createElement(
                 'div',
-                {className: 'prompt-decoration'},
-                React.createElement('div', {className: 'arrow'})
+                { className: 'prompt-decoration' },
+                React.createElement('div', { className: 'arrow' })
             ),
-            React.createElement('div', {className: 'prompt-info', title: this.props.status}),
+            React.createElement('div', { className: 'prompt-info', title: this.props.status }),
             React.createElement('div', {
                 className: 'prompt',
                 onKeyDown: this.handlers.onKeyDown.bind(this),
@@ -224,7 +224,7 @@ export default class PromptComponent extends React.Component<Props, State> {
             autocomplete,
             React.createElement(
                 'div',
-                {className: 'actions'},
+                { className: 'actions' },
                 decorationToggle,
                 scrollToTop
             )
@@ -248,7 +248,7 @@ export default class PromptComponent extends React.Component<Props, State> {
 
     private setText(text: string, position = getCaretPosition()): void {
         this.props.prompt.buffer.setTo(text);
-        this.setState({caretPosition: position});
+        this.setState({ caretPosition: position });
     }
 
     private replaceText(text: string): void {
@@ -285,7 +285,7 @@ export default class PromptComponent extends React.Component<Props, State> {
             index = Math.min(this.state.suggestions.length - 1, this.state.highlightedSuggestionIndex + 1)
         }
 
-        this.setState({highlightedSuggestionIndex: index});
+        this.setState({ highlightedSuggestionIndex: index });
     }
 
     private selectAutocomplete(): void {
@@ -300,11 +300,11 @@ export default class PromptComponent extends React.Component<Props, State> {
                 this.props.prompt.buffer.write(' ');
             }
 
-            this.setState({caretPosition: this.text.length});
+            this.setState({ caretPosition: this.text.length });
         }
 
         this.props.prompt.getSuggestions().then(suggestions =>
-            this.setState({suggestions: suggestions, highlightedSuggestionIndex: 0})
+            this.setState({ suggestions: suggestions, highlightedSuggestionIndex: 0 })
         );
     }
 
@@ -312,8 +312,7 @@ export default class PromptComponent extends React.Component<Props, State> {
         //TODO: use streams.
         return this.props.hasLocusOfAttention &&
             this.state.suggestions.length &&
-            this.commandNode &&
-            !this.isEmpty() &&
+            this.commandNode && !this.isEmpty() &&
             this.props.status === e.Status.NotStarted && !_.contains([13, 27], this.state.latestKeyCode);
     }
 
@@ -327,7 +326,7 @@ export default class PromptComponent extends React.Component<Props, State> {
         //TODO: remove repetition.
         //TODO: make it a stream.
         this.props.prompt.getSuggestions().then(suggestions =>
-            this.setState({suggestions: suggestions, highlightedSuggestionIndex: 0})
+            this.setState({ suggestions: suggestions, highlightedSuggestionIndex: 0 })
         );
     }
 
@@ -335,7 +334,7 @@ export default class PromptComponent extends React.Component<Props, State> {
         stopBubblingUp(event);
 
         const offset = $(ReactDOM.findDOMNode(this.props.invocationView)).offset().top - 10;
-        $('html, body').animate({scrollTop: offset}, 300);
+        $('html, body').animate({ scrollTop: offset }, 300);
     }
 
     private handleKeyPress(event: Event) {

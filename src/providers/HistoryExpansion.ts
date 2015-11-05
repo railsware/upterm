@@ -32,7 +32,7 @@ export default class HistoryExpansion implements i.AutocompletionProvider {
 
     private commands(lexeme: string): _.Dictionary<string> {
         if (isCompleteHistoryCommand(lexeme)) {
-            return {[lexeme]: HistoryExpansion.descriptions[lexeme]};
+            return { [lexeme]: HistoryExpansion.descriptions[lexeme] };
         } else if (lexeme.startsWith('!')) {
             return HistoryExpansion.descriptions;
         } else {

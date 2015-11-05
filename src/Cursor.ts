@@ -4,7 +4,7 @@ export default class Cursor {
     private show = false;
     private blink = false;
 
-    constructor(private position: i.Position = {row: 0, column: 0}) {
+    constructor(private position: i.Position = { row: 0, column: 0 }) {
     }
 
     // TODO: Use Position instead of Advancement.
@@ -24,7 +24,7 @@ export default class Cursor {
         var vertical = Math.max(0, this.row() + (advancement.vertical || 0));
         var horizontal = Math.max(0, this.column() + (advancement.horizontal || 0));
 
-        this.moveAbsolute({ vertical: vertical, horizontal: horizontal }, {column: 0, row: 0});
+        this.moveAbsolute({ vertical: vertical, horizontal: horizontal }, { column: 0, row: 0 });
 
         return this;
     }

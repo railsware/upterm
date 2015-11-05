@@ -23,7 +23,7 @@ export default class AutocompleteComponent extends React.Component<AutocompleteP
 
         const suggestionDescription = this.props.suggestions[this.props.highlightedIndex].description;
         if (suggestionDescription) {
-            var descriptionElement = React.createElement('div', {className: 'description'}, suggestionDescription);
+            var descriptionElement = React.createElement('div', { className: 'description' }, suggestionDescription);
         }
 
         let offset = <Offset>_.pick(this.props.caretOffset, 'left');
@@ -31,7 +31,7 @@ export default class AutocompleteComponent extends React.Component<AutocompleteP
             offset.bottom = 28 + (suggestionDescription ? 28 : 0);
         }
 
-        return React.createElement('div', {className: 'autocomplete', style: offset},
+        return React.createElement('div', { className: 'autocomplete', style: offset },
             React.createElement('ul', null, suggestionViews),
             descriptionElement
         );
@@ -46,18 +46,21 @@ interface SuggestionProps {
 
 class Suggestion extends React.Component<SuggestionProps, {}> {
     render() {
-        const scoreStyle = window.DEBUG ? {} : {display: 'none'};
+        const scoreStyle = window.DEBUG ? {} : { display: 'none' };
         let classes = [this.props.suggestion.type];
 
         if (this.props.isHighlighted) {
             classes.push('highlighted');
         }
 
-        return React.createElement('li', {className: classes.join(' ')},
-            React.createElement('i', {className: 'icon'}),
-            React.createElement('span', {className: 'value'}, this.props.suggestion.value),
-            React.createElement('span', { style: scoreStyle, className: 'score' }, this.props.suggestion.score.toFixed(2)),
-            React.createElement('span', {className: 'synopsis'}, this.props.suggestion.synopsis)
+        return React.createElement('li', { className: classes.join(' ') },
+            React.createElement('i', { className: 'icon' }),
+            React.createElement('span', { className: 'value' }, this.props.suggestion.value),
+            React.createElement('span', {
+                style: scoreStyle,
+                className: 'score'
+            }, this.props.suggestion.score.toFixed(2)),
+            React.createElement('span', { className: 'synopsis' }, this.props.suggestion.synopsis)
         );
     }
 

@@ -18,7 +18,7 @@ export default class ApplicationComponent extends React.Component<{}, State> {
         this.application = new Application(this.charSize, this.contentSize);
         this.application.activateTerminal(this.application.terminals[0]);
 
-        this.state = {terminals: this.application.terminals};
+        this.state = { terminals: this.application.terminals };
 
         $(window).resize(() => this.application.contentSize = this.contentSize);
 
@@ -31,7 +31,7 @@ export default class ApplicationComponent extends React.Component<{}, State> {
         // Cmd+_.
         if (event.metaKey && event.keyCode === 189) {
             this.application.activateTerminal(this.application.addTerminal());
-            this.setState({terminals: this.application.terminals});
+            this.setState({ terminals: this.application.terminals });
 
             event.stopPropagation();
             event.preventDefault();
@@ -51,7 +51,7 @@ export default class ApplicationComponent extends React.Component<{}, State> {
                 .removeTerminal(this.application.activeTerminal)
                 .activateTerminal(_.last(this.application.terminals));
 
-            this.setState({terminals: this.application.terminals});
+            this.setState({ terminals: this.application.terminals });
 
             event.stopPropagation();
             event.preventDefault();

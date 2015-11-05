@@ -99,10 +99,10 @@ export default class CommandExecutor {
         var command = invocation.getPrompt().commandName;
 
         return Utils.filterWithPromising(
-            this.executors.concat(NullExecutionStrategy), 
+            this.executors.concat(NullExecutionStrategy),
             executor => executor.canExecute(command))
-                .then(applicableExecutors => new applicableExecutors[0](invocation, command).startExecution()
-        );
+            .then(applicableExecutors => new applicableExecutors[0](invocation, command).startExecution()
+            );
     }
 }
 

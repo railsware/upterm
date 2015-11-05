@@ -8,9 +8,9 @@ interface StatusLineProps {
 
 export default class StatusLine extends React.Component<StatusLineProps, {}> {
     render() {
-        return React.createElement('div', {className: 'status-line'},
-            React.createElement(CurrentDirectory, {currentWorkingDirectory: this.props.currentWorkingDirectory}),
-            React.createElement(VcsData, {data: this.props.vcsData})
+        return React.createElement('div', { className: 'status-line' },
+            React.createElement(CurrentDirectory, { currentWorkingDirectory: this.props.currentWorkingDirectory }),
+            React.createElement(VcsData, { data: this.props.vcsData })
         );
     }
 }
@@ -22,7 +22,7 @@ interface CurrentDirectoryProps {
 
 class CurrentDirectory extends React.Component<CurrentDirectoryProps, {}> {
     render() {
-        return React.createElement('div', {className: 'current-directory'}, this.props.currentWorkingDirectory);
+        return React.createElement('div', { className: 'current-directory' }, this.props.currentWorkingDirectory);
     }
 }
 
@@ -37,8 +37,8 @@ class VcsData extends React.Component<VcsDataProps, {}> {
             return null;
         }
 
-        return React.createElement('div', {className: 'vcs-data'},
-            React.createElement('div', {className: `status ${this.props.data.status}`}, this.props.data.branch)
+        return React.createElement('div', { className: 'vcs-data' },
+            React.createElement('div', { className: `status ${this.props.data.status}` }, this.props.data.branch)
         );
     }
 }

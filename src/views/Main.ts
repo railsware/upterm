@@ -19,9 +19,9 @@ function focusLastInput(event: JQueryKeyEventObject) {
     }
 
     var newEvent = new KeyboardEvent("keydown", _.pick(originalEvent, [
-            'altkey', 'bubbles', 'cancelBubble', 'cancelable', 'charCode',
-            'ctrlKey', 'keyIdentifier', 'metaKey', 'shiftKey'
-        ]));
+        'altkey', 'bubbles', 'cancelBubble', 'cancelable', 'charCode',
+        'ctrlKey', 'keyIdentifier', 'metaKey', 'shiftKey'
+    ]));
     var target = $('.terminal.active .prompt').last().get(0);
     target.focus();
     withCaret(target, () => target.innerText.length);

@@ -90,14 +90,14 @@ export default class Terminal extends events.EventEmitter {
 
         Utils.ifExists(gitDirectory, () => {
             this.updateGitData(gitDirectory);
-            this.gitBranchWatcher = fs.watch(this.currentDirectory, {recursive: true},
+            this.gitBranchWatcher = fs.watch(this.currentDirectory, { recursive: true },
                 (type, fileName) => {
                     if (!this.gitLocked && (!fileName.startsWith('.git') || fileName == gitHeadFileName || fileName.startsWith(gitHeadsDirectoryName))) {
                         this.updateGitData(gitDirectory)
                     }
                 }
             )
-        }, () => this.emit('vcs-data', {isRepository: false}));
+        }, () => this.emit('vcs-data', { isRepository: false }));
     }
 
     private updateGitData(gitDirectory: string) {
