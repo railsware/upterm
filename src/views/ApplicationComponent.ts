@@ -4,6 +4,7 @@ import * as React from 'react';
 import * as i from '../Interfaces';
 import * as _ from 'lodash';
 import Terminal from "../Terminal";
+const IPC = require('ipc');
 
 interface State {
     terminals: Terminal[];
@@ -21,8 +22,7 @@ export default class ApplicationComponent extends React.Component<{}, State> {
         this.state = { terminals: this.application.terminals };
 
         $(window).resize(() => this.application.contentSize = this.contentSize);
-
-        require('ipc').on('change-working-directory', (directory: string) =>
+        IPC.on('change-working-directory', (directory: string) =>
             this.application.activeTerminal.currentDirectory = directory
         );
     }
@@ -34,7 +34,6 @@ export default class ApplicationComponent extends React.Component<{}, State> {
             this.setState({ terminals: this.application.terminals });
 
             event.stopPropagation();
-            event.preventDefault();
         }
 
         // Cmd+|.
@@ -42,7 +41,6 @@ export default class ApplicationComponent extends React.Component<{}, State> {
             console.log('Split vertically.');
 
             event.stopPropagation();
-            event.preventDefault();
         }
 
         // Ctrl+D.
@@ -54,7 +52,6 @@ export default class ApplicationComponent extends React.Component<{}, State> {
             this.setState({ terminals: this.application.terminals });
 
             event.stopPropagation();
-            event.preventDefault();
         }
     }
 
@@ -73,7 +70,7 @@ export default class ApplicationComponent extends React.Component<{}, State> {
 
         return React.createElement("div", {
             className: "application",
-            onKeyDown: this.handleKeyDown.bind(this)
+            onKeyDownCapture: this.handleKeyDown.bind(this)
         }, terminals)
     }
 
