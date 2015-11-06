@@ -4,16 +4,23 @@ import * as _ from 'lodash';
 const IPC = require('ipc');
 
 export default class Application {
+    private static _instance: Application;
     private _terminals: Terminal[] = [];
     private _contentSize: i.Size;
     private _charSize: i.Size;
     private _activeTerminalIndex: number;
 
-    constructor(charSize: i.Size, windowSize: i.Size) {
-        this._charSize = charSize;
-        this.contentSize = windowSize;
+    constructor() {
+        if (Application._instance) {
+            throw new Error('Use Application.getInstance() instead.');
+        }
+    }
 
-        this.addTerminal();
+    static getInstance(): Application {
+        if (!Application._instance) {
+            Application._instance = new Application();
+        }
+        return Application._instance;
     }
 
     get terminals() {
@@ -55,8 +62,12 @@ export default class Application {
         return this._contentSize;
     }
 
-    private get charSize() {
+    get charSize() {
         return this._charSize
+    }
+
+    set charSize(size: i.Size) {
+        this._charSize = size;
     }
 
     get contentDimensions(): i.Dimensions {
