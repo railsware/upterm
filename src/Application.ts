@@ -1,31 +1,54 @@
 import Terminal from "./Terminal";
 import * as i from "./Interfaces";
+import * as _ from 'lodash';
+const IPC = require('ipc');
 
 export default class Application {
     private _terminals: Terminal[] = [];
     private _contentSize: i.Size;
     private _charSize: i.Size;
+    private _activeTerminalIndex: number;
 
     constructor(charSize: i.Size, windowSize: i.Size) {
         this._charSize = charSize;
         this.contentSize = windowSize;
 
-        this.terminals.push(new Terminal(this.contentDimensions));
+        this.addTerminal();
     }
 
     get terminals() {
         return this._terminals;
     }
 
-    // FIXME when support multiple terminals.
-    get activeTerminal() {
-        return this.terminals[0];
+    get activeTerminal(): Terminal {
+        return this.terminals[this._activeTerminalIndex];
+    }
+
+    addTerminal(): Terminal {
+        let terminal = new Terminal(this.contentDimensions);
+        this.terminals.push(terminal);
+
+        return terminal;
+    }
+
+    removeTerminal(terminal: Terminal): Application {
+        _.pull(this.terminals, terminal);
+
+        if (_.isEmpty(this.terminals)) {
+            IPC.send('quit');
+        }
+
+        return this;
+    }
+
+    activateTerminal(terminal: Terminal): void {
+        this._activeTerminalIndex = this.terminals.indexOf(terminal);
     }
 
     set contentSize(newSize) {
         this._contentSize = newSize;
 
-        this.terminals.forEach(terminal => terminal.dimensions = this.contentDimensions)
+        this.terminals.forEach((terminal: Terminal) => terminal.dimensions = this.contentDimensions)
     }
 
     get contentSize(): i.Size {

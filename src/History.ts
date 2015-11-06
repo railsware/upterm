@@ -1,7 +1,8 @@
 import * as _ from 'lodash';
 
 export class HistoryEntry {
-    constructor(private _raw: string, private _historyExpanded: string[]) {}
+    constructor(private _raw: string, private _historyExpanded: string[]) {
+    }
 
     get raw(): string {
         return this._raw;
@@ -82,7 +83,7 @@ export class History {
     }
 
     static deserialize(serialized: string): void {
-        this.storage =  JSON.parse(serialized).map((entry: any[]) => {
+        this.storage = JSON.parse(serialized).map((entry: any[]) => {
             let raw: string = entry[0];
             let historyExpanded: string[] = entry[1];
 

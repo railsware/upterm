@@ -2,8 +2,8 @@
 
 ### What is it?
 
-Black Screen is a modern terminal emulator (and partially a shell) based on [Electron](http://electron.atom.io/). 
-As opposed to most of the terminal emulators, it exploits the capabilities of contemporary interfaces.
+Black Screen is both a terminal emulator and an *interactive* shell based on [Electron](http://electron.atom.io/).
+Unlike most of the emulators, it exploits capabilities of contemporary interfaces.
 
 ![](https://dl.dropboxusercontent.com/spa/dlqheu39w0arg9q/ucvbthot.png)
 
@@ -24,19 +24,13 @@ Warning: Black Screen is still in its beta phase and isn't completely ready for 
 ###### Download
 
 ```bash
-git clone https://github.com/black-screen/black-screen
+git clone https://github.com/black-screen/black-screen; cd black-screen
 ```
 
-###### Install Dependencies
+###### Install Dependencies & Run
 
 ```bash
-cd black-screen
-npm install
-```
-
-###### Start
-
-```bash
+npm i
 npm start
 ```
 

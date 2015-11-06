@@ -44,6 +44,11 @@ export enum Status {
     Success = <Status><any>'success',
 }
 
+export enum Buffer {
+    Standard = <Buffer><any>'standard',
+    Alternate = <Buffer><any>'alternate'
+}
+
 export enum Weight {
     Normal = <Weight><any>'normal',
     Bold = <Weight><any>'bold',

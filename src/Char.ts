@@ -1,5 +1,3 @@
-/// <reference path="references.ts" />
-
 import Utils from './Utils';
 var React = require('react');
 import * as i from './Interfaces';
@@ -8,11 +6,14 @@ import * as _ from 'lodash';
 import {memoize} from "./Decorators";
 
 export default class Char {
+    static empty = Char.flyweight(' ', {});
+
     @memoize()
     static flyweight(char: string, attributes: i.Attributes) {
         return new Char(char, attributes);
 
     }
+
     constructor(private char: string, private attributes: i.Attributes) {
         if (char.length !== 1) {
             throw(`Char can be created only from a single character; passed ${char.length}: ${char}`);

@@ -8,7 +8,7 @@ import Aliases from './Aliases';
 import History from './History';
 import Utils from './Utils';
 import Serializer from "./Serializer";
-import PTY from "./PTY";
+import {executeCommand} from "./PTY";
 var remote = require('remote');
 var app = remote.require('app');
 
@@ -80,7 +80,7 @@ export default class Terminal extends events.EventEmitter {
         app.addRecentDocument(value);
     }
 
-    private watchVCS(directory: string): void {
+    private watchVCS(directory: string) {
         if (this.gitBranchWatcher) {
             this.gitBranchWatcher.close();
         }
@@ -90,34 +90,32 @@ export default class Terminal extends events.EventEmitter {
 
         Utils.ifExists(gitDirectory, () => {
             this.updateGitData(gitDirectory);
-            this.gitBranchWatcher = fs.watch(this.currentDirectory, {recursive: true},
+            this.gitBranchWatcher = fs.watch(this.currentDirectory, { recursive: true },
                 (type, fileName) => {
                     if (!this.gitLocked && (!fileName.startsWith('.git') || fileName == gitHeadFileName || fileName.startsWith(gitHeadsDirectoryName))) {
                         this.updateGitData(gitDirectory)
                     }
                 }
             )
-        }, () => this.emit('vcs-data', {isRepository: false}));
+        }, () => this.emit('vcs-data', { isRepository: false }));
     }
 
     private updateGitData(gitDirectory: string) {
         this.gitLocked = true;
-        fs.readFile(`${gitDirectory}/HEAD`, (error, buffer) => {
-            var changes = '';
-            new PTY('git', ['status', '--porcelain'], this.currentDirectory, {columns: 80, rows: 20},
-                text => changes += text,
-                exitCode => {
-                    var status = changes.length ? 'dirty' : 'clean';
 
-                    var data: i.VcsData = {
-                        isRepository: true,
-                        branch: /ref: refs\/heads\/(.*)/.exec(buffer.toString())[1],
-                        status: status
-                    };
-                    this.emit('vcs-data', data);
-                    this.gitLocked = false
-                }
-            );
+        fs.readFile(`${gitDirectory}/HEAD`, (error, buffer) => {
+            executeCommand('git', ['status', '--porcelain'], this.currentDirectory).then(changes => {
+                var status = changes.length ? 'dirty' : 'clean';
+
+                var data: i.VcsData = {
+                    isRepository: true,
+                    branch: /ref: refs\/heads\/(.*)/.exec(buffer.toString())[1],
+                    status: status
+                };
+
+                this.emit('vcs-data', data);
+                this.gitLocked = false
+            });
         });
     }
 

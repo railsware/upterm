@@ -17,4 +17,5 @@ export var list = <(new (invocation: Invocation) => Base)[]>
         .filter(isDecorator)
         .map(fileName => `./${fileName}`)
         .map(require)
+        .pluck('default')
         .value();

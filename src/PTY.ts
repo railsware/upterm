@@ -3,6 +3,11 @@ import * as Invocation from "./Invocation";
 import * as i from "./Interfaces";
 const ptyInternalPath = require.resolve('./PTYInternal');
 
+interface Message {
+    data?: string;
+    exit?: number;
+}
+
 export default class PTY {
     private process: NodeJS.Process;
 
@@ -12,10 +17,10 @@ export default class PTY {
     constructor(command: string, args: string[], cwd: string, dimensions: i.Dimensions, dataHandler: Function, exitHandler: Function) {
         this.process = (<any>ChildProcess).fork(ptyInternalPath,
             [command, dimensions.columns, dimensions.rows, ...args],
-            {env: process.env, cwd: cwd}
+            { env: process.env, cwd: cwd }
         );
 
-        this.process.on('message', (message) => {
+        this.process.on('message', (message: Message) => {
             if (message.hasOwnProperty('data')) {
                 dataHandler(message.data);
             } else if (message.hasOwnProperty('exit')) {
@@ -27,14 +32,25 @@ export default class PTY {
     }
 
     write(data: string): void {
-        this.process.send({input: data});
+        this.process.send({ input: data });
     }
 
     set dimensions(dimensions: i.Dimensions) {
-        this.process.send({resize: [dimensions.columns, dimensions.rows]});
+        this.process.send({ resize: [dimensions.columns, dimensions.rows] });
     }
 
     kill(signal: string): void {
-        this.process.send({signal: signal});
+        this.process.send({ signal: signal });
     }
+}
+
+export function executeCommand(command: string, args: string[] = [], directory: string = process.env.HOME): Promise<string> {
+    return new Promise((resolve, reject) => {
+        let output = '';
+        new PTY(
+            command, args, directory, { columns: 80, rows: 20 },
+            (text: string) => output += text,
+            (exitCode: number) => exitCode === 0 ? resolve(output) : reject(exitCode)
+        );
+    });
 }

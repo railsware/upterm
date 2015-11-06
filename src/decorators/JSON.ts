@@ -4,7 +4,7 @@ import * as React from 'react';
 
 export default class Json extends Base {
     decorate(): any {
-        return React.createElement(JSONTree, {data: JSON.parse(this.stringifiedOutputBuffer())});
+        return React.createElement(JSONTree, { data: JSON.parse(this.stringifiedOutputBuffer()) });
     }
 
     isApplicable(): boolean {

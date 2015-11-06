@@ -17,7 +17,7 @@ export default class Prompt extends events.EventEmitter {
     constructor(private directory: string) {
         super();
 
-        this.buffer = new Buffer({columns: 99999, rows: 99999});
+        this.buffer = new Buffer({ columns: 99999, rows: 99999 });
         this.buffer.on('data', () => {
             this._lexemes = lex(this.buffer.toString());
             this.historyExpanded = expandHistory(this._lexemes);
@@ -60,10 +60,6 @@ export default class Prompt extends events.EventEmitter {
 
     getCWD(): string {
         return this.directory;
-    }
-
-    getBuffer(): Buffer {
-        return this.buffer;
     }
 
     // TODO: Now it's last lexeme instead of current.

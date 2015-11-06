@@ -1,36 +1,32 @@
 import * as pty from 'ptyw.js';
 import * as _ from 'lodash';
-import PTY from "./PTY";
+import {executeCommand} from "./PTY";
+import {memoize} from "./Decorators"
 
 export default class Aliases {
-    static aliases: _.Dictionary<string>;
+    private static aliases: _.Dictionary<string>;
 
-    static initialize(): void {
-        this.aliases = {};
-        this.importAliases();
+    static get all(): _.Dictionary<string> {
+        return this.aliases;
     }
 
     static find(alias: string): string {
         return this.aliases[alias];
     }
 
-    private static importAliases(shellName: string = process.env.SHELL): void {
-        if (process.platform === 'win32') return;
+    static async load() {
+        const output = await executeCommand(process.env.SHELL, ['-i', '-c', 'alias']);
 
-        let aliases = '';
-        new PTY(
-            shellName, ['-i', '-c', 'alias'], process.env.HOME, {columns: 80, rows: 20},
-            text => aliases += text,
-            exitCode => aliases.split('\n').forEach(alias => {
-                let split = alias.split('=');
+        this.aliases = output.split('\n').reduce((accumulator: _.Dictionary<string>, aliasLine: string) => {
+            let split = aliasLine.split('=');
 
-                let name = /(alias )?(.*)/.exec(split[0])[2];
-                let value = /'?([^']*)'?/.exec(split[1])[1];
+            let name = /(alias )?(.*)/.exec(split[0])[2];
+            let value = /'?([^']*)'?/.exec(split[1])[1];
 
-                this.aliases[name] = value;
-            })
-        );
+            accumulator[name] = value;
+            return accumulator
+        }, <_.Dictionary<string>>{});
     }
 }
 
-Aliases.initialize();
+Aliases.load();

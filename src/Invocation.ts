@@ -1,5 +1,3 @@
-/// <reference path="references.ts" />
-
 import * as pty from 'ptyw.js';
 import * as child_process from 'child_process';
 import * as _ from 'lodash';
@@ -55,15 +53,11 @@ export default class Invocation extends events.EventEmitter {
             (errorMessage) => {
                 this.setStatus(e.Status.Failure);
                 if (errorMessage) {
-                    this.buffer.writeString(errorMessage, {color: e.Color.Red});
+                    this.buffer.writeString(errorMessage, { color: e.Color.Red });
                 }
                 this.emit('end');
             }
         );
-    }
-
-    setPromptText(value: string): void {
-        this.prompt.getBuffer().setTo(value);
     }
 
     // Writes to the process' stdin.
@@ -131,7 +125,7 @@ export default class Invocation extends events.EventEmitter {
 
     winch(): void {
         if (this.command && this.status === e.Status.InProgress) {
-            this.buffer.setDimensions(this.dimensions);
+            this.buffer.dimensions = this.dimensions;
             this.command.dimensions = this.dimensions;
         }
     }

@@ -38,6 +38,11 @@ a {
   }
 }
 
+[data-cursor='true'] {
+  background-color: map-get($colors, 'white');
+  color: map-get($colors, 'black');
+}
+
 [data-weight='bold'] {
   font-weight: bold;
 }
@@ -68,7 +73,7 @@ html {
 body, pre {
   background-color: map-get($colors, 'black');
   color: map-get($colors, 'white');
-  font-family: 'Meslo LG S for Powerline', 'Menlo', monospace !important;
+  font-family: 'Hack', 'Meslo LG S for Powerline', 'Menlo', monospace !important;
   font-size: $font-size;
   margin: 0;
 }
@@ -239,7 +244,7 @@ body, pre {
   }
 }
 
-#black-board {
+#black-screen {
   margin-bottom: 24px;
 }
 
@@ -256,12 +261,27 @@ body, pre {
 
   flex-wrap: nowrap;
   flex-direction: column;
+
+  position: absolute;
+  width: 100%;
+  top: 0;
+  bottom: 2em;
 }
 
 .terminal {
-  position: relative;
   height: 100%;
   width: 100%;
+  flex: 1;
+  overflow-x: scroll;
+
+  &.inactive {
+    opacity: 0.4;
+    border: 1px solid map-get($colors, 'white');
+
+    & .invocations {
+      pointer-events: none;
+    }
+  }
 }
 
 .status-line {
@@ -410,7 +430,7 @@ pre {
         content: 'O';
       }
 
-      &.selected {
+      &.highlighted {
         background-color: #383E4A;
       }
     }

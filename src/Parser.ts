@@ -11,28 +11,28 @@ import Color = e.Color;
 import Weight = e.Weight;
 
 var SGR: { [indexer: string]: i.Attributes|string } = {
-    0: {color: Color.White, weight: e.Weight.Normal, underline: false, 'background-color': Color.Black},
-    1: {weight: Weight.Bold},
-    2: {weight: Weight.Faint},
-    4: {underline: true},
+    0: { color: Color.White, weight: e.Weight.Normal, underline: false, 'background-color': Color.Black },
+    1: { weight: Weight.Bold },
+    2: { weight: Weight.Faint },
+    4: { underline: true },
     7: 'negative',
-    30: {color: Color.Black},
-    31: {color: Color.Red},
-    32: {color: Color.Green},
-    33: {color: Color.Yellow},
-    34: {color: Color.Blue},
-    35: {color: Color.Magenta},
-    36: {color: Color.Cyan},
-    37: {color: Color.White},
+    30: { color: Color.Black },
+    31: { color: Color.Red },
+    32: { color: Color.Green },
+    33: { color: Color.Yellow },
+    34: { color: Color.Blue },
+    35: { color: Color.Magenta },
+    36: { color: Color.Cyan },
+    37: { color: Color.White },
     38: 'color',
-    40: {'background-color': Color.Black},
-    41: {'background-color': Color.Red},
-    42: {'background-color': Color.Green},
-    43: {'background-color': Color.Yellow},
-    44: {'background-color': Color.Blue},
-    45: {'background-color': Color.Magenta},
-    46: {'background-color': Color.Cyan},
-    47: {'background-color': Color.White},
+    40: { 'background-color': Color.Black },
+    41: { 'background-color': Color.Red },
+    42: { 'background-color': Color.Green },
+    43: { 'background-color': Color.Yellow },
+    44: { 'background-color': Color.Blue },
+    45: { 'background-color': Color.Magenta },
+    46: { 'background-color': Color.Cyan },
+    47: { 'background-color': Color.White },
     48: 'background-color'
 };
 
@@ -147,11 +147,11 @@ export default class Parser {
                 var dimensions = this.invocation.getDimensions();
 
                 for (var i = 0; i !== dimensions.rows; ++i) {
-                    this.buffer.moveCursorAbsolute({vertical: i, horizontal: 0});
+                    this.buffer.moveCursorAbsolute({ vertical: i, horizontal: 0 });
                     this.buffer.writeString(Array(dimensions.columns).join("E"));
                 }
 
-                this.buffer.moveCursorAbsolute({vertical: 0, horizontal: 0});
+                this.buffer.moveCursorAbsolute({ vertical: 0, horizontal: 0 });
             } else {
                 status = 'unhandled';
             }
@@ -160,36 +160,36 @@ export default class Parser {
                 case 'A':
                     short = "Cursor up.";
 
-                    this.buffer.moveCursorRelative({vertical: -1});
+                    this.buffer.moveCursorRelative({ vertical: -1 });
                     break;
                 case 'B':
                     short = "Cursor down.";
 
-                    this.buffer.moveCursorRelative({vertical: 1});
+                    this.buffer.moveCursorRelative({ vertical: 1 });
                     break;
                 case 'C':
                     short = "Cursor right.";
 
-                    this.buffer.moveCursorRelative({horizontal: 1});
+                    this.buffer.moveCursorRelative({ horizontal: 1 });
                     break;
                 case 'D':
                     short = "Index (IND).";
                     url = "http://www.vt100.net/docs/vt510-rm/IND";
 
-                    this.buffer.moveCursorRelative({vertical: 1});
+                    this.buffer.moveCursorRelative({ vertical: 1 });
                     break;
                 case 'M':
                     short = "Reverse Index (RI).";
                     long = "Move the active position to the same horizontal position on the preceding line. If the active position is at the top margin, a scroll down is performed.";
 
-                    this.buffer.moveCursorRelative({vertical: -1});
+                    this.buffer.moveCursorRelative({ vertical: -1 });
                     break;
                 case 'E':
                     short = "Next Line (NEL).";
                     long = "This sequence causes the active position to move to the first position on the next line downward. If the active position is at the bottom margin, a scroll up is performed.";
 
-                    this.buffer.moveCursorRelative({vertical: 1});
-                    this.buffer.moveCursorAbsolute({horizontal: 0});
+                    this.buffer.moveCursorRelative({ vertical: 1 });
+                    this.buffer.moveCursorAbsolute({ horizontal: 0 });
                     break;
                 default:
                     status = 'unhandled';
@@ -218,11 +218,11 @@ export default class Parser {
                 if (isSet) {
                     description = "132 Column Mode (DECCOLM).";
 
-                    this.invocation.setDimensions({columns: 132, rows: this.invocation.getDimensions().rows});
+                    this.invocation.setDimensions({ columns: 132, rows: this.invocation.getDimensions().rows });
                 } else {
                     description = "80 Column Mode (DECCOLM).";
 
-                    this.invocation.setDimensions({columns: 80, rows: this.invocation.getDimensions().rows});
+                    this.invocation.setDimensions({ columns: 80, rows: this.invocation.getDimensions().rows });
                 }
                 this.buffer.clear();
                 // TODO
@@ -267,7 +267,7 @@ export default class Parser {
                 if (isSet) {
                     description = "Save cursor as in DECSC and use Alternate Screen Buffer, clearing it first.  (This may be disabled by the titeInhibit resource).  This combines the effects of the 1047  and 1048  modes.  Use this with terminfo-based applications rather than the 47  mode.";
 
-                    this.buffer.activeBuffer = 'alternate';
+                    this.buffer.activeBuffer = e.Buffer.Alternate;
                     // TODO: Add Implementation
                     break;
                 }
@@ -317,7 +317,7 @@ export default class Parser {
                         var next = params.shift();
                         if (next === 5) {
                             var colorIndex = params.shift();
-                            this.buffer.setAttributes({[<string>attributeToSet]: e.ColorIndex[colorIndex]});
+                            this.buffer.setAttributes({ [<string>attributeToSet]: e.ColorIndex[colorIndex] });
                         } else {
                             Utils.error('sgr', sgr, next, params);
                         }
@@ -336,21 +336,21 @@ export default class Parser {
             case 'A':
                 short = 'Cursor Up Ps Times (default = 1) (CUU).';
 
-                this.buffer.moveCursorRelative({vertical: -(param || 1)});
+                this.buffer.moveCursorRelative({ vertical: -(param || 1) });
                 break;
             case 'B':
                 short = 'Cursor Down Ps Times (default = 1) (CUD).';
-                this.buffer.moveCursorRelative({vertical: (param || 1)});
+                this.buffer.moveCursorRelative({ vertical: (param || 1) });
                 break;
             case 'C':
                 short = 'Cursor Forward Ps Times (default = 1) (CUF).';
 
-                this.buffer.moveCursorRelative({horizontal: (param || 1)});
+                this.buffer.moveCursorRelative({ horizontal: (param || 1) });
                 break;
             case 'D':
                 short = 'Cursor Backward Ps Times (default = 1) (CUB).';
 
-                this.buffer.moveCursorRelative({horizontal: -(param || 1)});
+                this.buffer.moveCursorRelative({ horizontal: -(param || 1) });
                 break;
             // CSI Ps E  Cursor Next Line Ps Times (default = 1) (CNL).
             // CSI Ps F  Cursor Preceding Line Ps Times (default = 1) (CPL).
@@ -359,13 +359,13 @@ export default class Parser {
                 short = 'Cursor Position [row;column] (default = [1,1]) (CUP).';
                 url = 'http://www.vt100.net/docs/vt510-rm/CUP';
 
-                this.buffer.moveCursorAbsolute({vertical: or1(params[0]) - 1, horizontal: or1(params[1]) - 1});
+                this.buffer.moveCursorAbsolute({ vertical: or1(params[0]) - 1, horizontal: or1(params[1]) - 1 });
                 break;
             case 'f':
                 short = 'Horizontal and Vertical Position [row;column] (default = [1,1]) (HVP).';
                 url = 'http://www.vt100.net/docs/vt510-rm/HVP';
 
-                this.buffer.moveCursorAbsolute({vertical: or1(params[0]) - 1, horizontal: or1(params[1]) - 1});
+                this.buffer.moveCursorAbsolute({ vertical: or1(params[0]) - 1, horizontal: or1(params[1]) - 1 });
                 break;
             case 'J':
                 url = "http://www.vt100.net/docs/vt510-rm/ED";
@@ -429,8 +429,8 @@ export default class Parser {
                 let bottom = <number>(params[1] ? params[1] - 1 : null);
                 let top = <number>(params[0] ? params[0] - 1 : null);
 
-                this.buffer.setMargins({top: top, bottom: bottom});
-                this.buffer.moveCursorAbsolute({horizontal: 0, vertical: 0});
+                this.buffer.margins = { top: top, bottom: bottom };
+                this.buffer.moveCursorAbsolute({ horizontal: 0, vertical: 0 });
                 break;
             default:
                 status = 'unhandled';

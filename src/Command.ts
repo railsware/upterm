@@ -4,8 +4,8 @@ import * as Path from 'path';
 import Utils from './Utils';
 import Invocation from "./Invocation";
 
-const executors = {
-    cd: (invocation: Invocation, args: Array<string>): void => {
+const executors: _.Dictionary<(i: Invocation, a: string[]) => void> = {
+    cd: (invocation: Invocation, args: string[]): void => {
         var newDirectory: string;
 
         if (!args.length) {
@@ -25,7 +25,7 @@ const executors = {
 
         invocation.terminal.currentDirectory = newDirectory;
     },
-    clear: (invocation: Invocation, args: Array<string>): void => {
+    clear: (invocation: Invocation, args: string[]): void => {
         setTimeout(() => invocation.terminal.clearInvocations(), 0);
     },
     exit: (invocation: Invocation, args: Array<string>): void => {

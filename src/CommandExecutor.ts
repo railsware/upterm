@@ -20,7 +20,7 @@ abstract class CommandExecutionStrategy {
 }
 
 class BuiltInCommandExecutionStrategy extends CommandExecutionStrategy {
-    static async canExecute(command) {
+    static async canExecute(command: string) {
         return Command.isBuiltIn(command);
     }
 
@@ -37,7 +37,7 @@ class BuiltInCommandExecutionStrategy extends CommandExecutionStrategy {
 }
 
 class UnixSystemFileExecutionStrategy extends CommandExecutionStrategy {
-    static async canExecute(command) {
+    static async canExecute(command: string) {
         return _.include(await Utils.getExecutablesInPaths(), command);
     }
 
@@ -45,15 +45,15 @@ class UnixSystemFileExecutionStrategy extends CommandExecutionStrategy {
         return new Promise((resolve, reject) => {
             this.invocation.command = new PTY(
                 this.command, this.args, this.invocation.directory, this.invocation.dimensions,
-                data => this.invocation.parser.parse(data),
-                exitCode => exitCode === 0 ? resolve() : reject()
+                (data: string) => this.invocation.parser.parse(data),
+                (exitCode: number) => exitCode === 0 ? resolve() : reject()
             );
         })
     }
 }
 
 class WindowsSystemFileExecutionStrategy extends CommandExecutionStrategy {
-    static async canExecute(command) {
+    static async canExecute(command: string) {
         return Utils.isWindows;
     }
 
@@ -61,8 +61,8 @@ class WindowsSystemFileExecutionStrategy extends CommandExecutionStrategy {
         return new Promise((resolve) => {
             this.invocation.command = new PTY(
                 this.cmdPath, ['/s', '/c', this.invocation.getPrompt().expanded.join(' ')], this.invocation.directory, this.invocation.dimensions,
-                data => this.invocation.parser.parse(data),
-                exitCode => resolve()
+                (data: string) => this.invocation.parser.parse(data),
+                (exitCode: number) => resolve()
             );
         })
     }
@@ -79,7 +79,7 @@ class WindowsSystemFileExecutionStrategy extends CommandExecutionStrategy {
 }
 
 class NullExecutionStrategy extends CommandExecutionStrategy {
-    static async canExecute(command) {
+    static async canExecute(command: string) {
         return true;
     }
 
@@ -99,10 +99,10 @@ export default class CommandExecutor {
         var command = invocation.getPrompt().commandName;
 
         return Utils.filterWithPromising(
-            this.executors.concat(NullExecutionStrategy), 
+            this.executors.concat(NullExecutionStrategy),
             executor => executor.canExecute(command))
-                .then(applicableExecutors => new applicableExecutors[0](invocation, command).startExecution()
-        );
+            .then(applicableExecutors => new applicableExecutors[0](invocation, command).startExecution()
+            );
     }
 }
 

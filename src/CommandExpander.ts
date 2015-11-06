@@ -226,7 +226,7 @@ export function lex(input: string): string[] {
     var lexemes: string[] = [];
     var lexeme = lexer.lex();
 
-    while(typeof lexeme === 'string') {
+    while (typeof lexeme === 'string') {
         lexemes.push(lexeme);
         lexeme = lexer.lex();
     }
@@ -238,7 +238,7 @@ export function lex(input: string): string[] {
     return lexemes;
 }
 
-export function isCompleteHistoryCommand(lexeme) {
+export function isCompleteHistoryCommand(lexeme: string) {
     return lexeme[0] === '!' && lexeme.length > 1;
 }
 

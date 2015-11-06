@@ -3,18 +3,20 @@ import gulp from "gulp";
 import gulpLoadPlugins from "gulp-load-plugins";
 import runSequence from "run-sequence";
 
-const $ = gulpLoadPlugins();
+var $ = gulpLoadPlugins();
 
-let watching = false;
+var watching = false;
 
-gulp.on("stop", () => {
+gulp.on("stop", function () {
     if (!watching) {
-        process.nextTick(() => process.exit(0));
+        process.nextTick(function () {
+            process.exit(0)
+        });
     }
 });
 
 function onError(err) {
-    return $.notify.onError(() => {
+    return $.notify.onError(function () {
         $.util.beep();
         $.util.log(err.toString());
         if (err.stack) {
@@ -26,29 +28,22 @@ function onError(err) {
 }
 
 function notify(message) {
-    return $.notify({title: "Black Screen Watcher", message, onLast: true});
+    return $.notify({title: "Black Screen Watcher", message: message, onLast: true});
 }
 
-const options = {
-    react: {
-        source: "views/*.js",
-        target: "compiled/views",
-        config: {stage: 0}
-    },
+var options = {
     typeScript: {
         source: "src/**/*",
         target: "compiled/src",
-        babelConfig: { whitelist: ['strict', 'es6.modules', 'es6.spread', 'es6.parameters']},
         config: $.typescript.createProject({
             typescript: require("typescript"),
             target: "ES6",
             module: "commonjs",
-            //noImplicitAny: true, TODO: enable.
+            noImplicitAny: true,
             removeComments: true,
             preserveConstEnums: true,
             experimentalDecorators: true,
             experimentalAsyncFunctions: true,
-            sourceMap: true, // TODO: Not supported anymore. Use gulp-sourcemap.
             jsx: "react"
         })
     },
@@ -68,63 +63,58 @@ const options = {
     }
 };
 
-gulp.task("typescript", () =>
-        gulp.src(options.typeScript.source)
+gulp.task("typescript", function () {
+        return gulp.src(options.typeScript.source)
             .pipe($.typescript(options.typeScript.config).on("error", onError))
-            .pipe($.babel(options.typeScript.babelConfig).on("error", onError))
+            .pipe($.babel().on("error", onError))
             .pipe(gulp.dest(options.typeScript.target))
             .pipe(notify("TypeScript has been compiled."))
+    }
 );
 
-gulp.task("sass", () =>
-        gulp.src(options.sass.source)
+gulp.task("sass", function () {
+        return gulp.src(options.sass.source)
             .pipe($.cached("sass"))
             .pipe($.sass(options.sass.config).on("error", onError))
             .pipe($.concat(options.sass.target.fileName))
             .pipe(gulp.dest(options.sass.target.directory))
-            .pipe($.livereload())
             .pipe(notify("SCSS has been compiled."))
+    }
 );
 
-gulp.task("react", () =>
-        gulp.src(options.react.source)
-            .pipe($.cached("react"))
-            .pipe($.babel(options.react.config).on("error", onError))
-            .pipe($.react().on("error", onError))
-            .pipe(gulp.dest(options.react.target))
-            .pipe(notify("React has been compiled."))
+gulp.task("copy-html", function () {
+        return gulp.src('./src/views/index.html').pipe(gulp.dest('./compiled/src/views'))
+    }
 );
 
-
-gulp.task("clean", () => {
-    require("del").sync([options.typeScript.target + "/**"]);
+gulp.task("clean", function () {
+    return require("del").sync([options.typeScript.target + "/**"]);
 });
 
-gulp.task("build", ["typescript", "sass", "react"]);
+gulp.task("build", ["typescript", "sass", "copy-html"]);
 
-gulp.task("watch", cb => {
+gulp.task("watch", function (cb) {
     watching = true;
-    $.livereload.listen();
     runSequence(
         "clean",
         "build",
-        () => {
+        function () {
             gulp.watch(options.sass.source, ["sass"]);
-            gulp.watch(options.react.source, ["react"]);
             gulp.watch(options.typeScript.source, ["typescript"]);
             cb();
         }
     );
 });
 
-gulp.task("compile-tests", () =>
-        gulp.src(options.test.source)
+gulp.task("compile-tests", function () {
+        return gulp.src(options.test.source)
             .pipe($.typescript(options.typeScript.config))
             .pipe(gulp.dest(options.test.target))
+    }
 );
 
-gulp.task("default", () => {
-    runSequence(
+gulp.task("default", function () {
+    return runSequence(
         "watch",
         $.shell.task("PATH=node_modules/.bin:$PATH electron .")
     );

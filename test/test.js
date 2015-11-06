@@ -20,7 +20,7 @@ xdescribe('Black Screen', function() {
     it('executes commands', function(done) {
         blsk.addValue(selectors.prompt, 'ls\n')
             .waitForText(selectors.output)
-            .getText(selectors.output)
+            .ggetText(selectors.output)
             .then(function(text) {expect(text[0]).to.not.be.empty() })
             .call(done);
     });
@@ -50,7 +50,7 @@ xdescribe('Black Screen', function() {
             blsk.addValue(selectors.prompt, 'git --ver')
                 .waitForText(selectors.autocomplete)
                 .addValue(selectors.prompt, '\t')
-                .getText(selectors.prompt, function(error, text) { expect(text).to.eql('git --version '); })
+                .ggetText(selectors.prompt, function(error, text) { expect(text).to.eql('git --version '); })
                 .call(done);
         });
     });
