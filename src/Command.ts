@@ -3,6 +3,7 @@ import * as fs from 'fs';
 import * as Path from 'path';
 import Utils from './Utils';
 import Invocation from "./Invocation";
+import Application from './Application';
 
 const executors: _.Dictionary<(i: Invocation, a: string[]) => void> = {
     cd: (invocation: Invocation, args: string[]): void => {
@@ -29,8 +30,8 @@ const executors: _.Dictionary<(i: Invocation, a: string[]) => void> = {
         setTimeout(() => invocation.terminal.clearInvocations(), 0);
     },
     exit: (invocation: Invocation, args: Array<string>): void => {
-        var app = require('remote').require('app');
-        app.quit();
+        var application = Application.getInstance();
+        application.removeTerminal(application.activeTerminal);
     }
 };
 
