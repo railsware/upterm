@@ -45,15 +45,6 @@ function isCommandKey(event: KeyboardEvent) {
     return _.contains([16, 17, 18], event.keyCode) || event.ctrlKey || event.altKey || event.metaKey;
 }
 
-export function isMetaKey(event: KeyboardEvent) {
-    return event.metaKey || _.some([event.key, (<any>event).keyIdentifier],
-            key => _.includes(['Shift', 'Alt', 'Ctrl'], key));
-}
-
-function isShellHandledKey(event: KeyboardEvent) {
-    return keys.interrupt(event);
-}
-
 const isDefinedKey = _.memoize((event: React.KeyboardEvent) => _.some(_.values(keys), (matcher: (event: React.KeyboardEvent) => boolean) => matcher(event)),
     (event: React.KeyboardEvent) => [event.ctrlKey, event.keyCode]);
 
@@ -82,7 +73,6 @@ function createEventHandler(): any {
 
 interface Props {
     status: e.Status;
-    invocation: Invocation;
     invocationView: InvocationComponent;
     prompt: PromptModel;
     hasLocusOfAttention: boolean;
@@ -195,7 +185,7 @@ export default class PromptComponent extends React.Component<Props, State> imple
             var decorationToggle = React.createElement(DecorationToggleComponent, { invocation: this.props.invocationView });
         }
 
-        if (this.props.invocation.hasOutput()) {
+        if (this.props.status !== e.Status.NotStarted) {
             var scrollToTop = React.createElement(
                 'a',
                 { href: '#', className: 'scroll-to-top', onClick: this.handleScrollToTop.bind(this) },

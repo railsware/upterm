@@ -53,7 +53,6 @@ export default class InvocationComponent extends React.Component<Props, State> i
                 prompt: this.props.invocation.getPrompt(),
                 status: this.state.status,
                 hasLocusOfAttention: this.props.hasLocusOfAttention,
-                invocation: this.props.invocation,
                 invocationView: this
             }),
             buffer
