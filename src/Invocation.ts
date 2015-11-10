@@ -61,12 +61,12 @@ export default class Invocation extends events.EventEmitter {
     }
 
     // Writes to the process' stdin.
-    write(input: string|React.KeyboardEvent) {
+    write(input: string|KeyboardEvent) {
         if (typeof input === 'string') {
             var text = <string>input
         } else {
-            var event = <React.KeyboardEvent>input;
-            var identifier: string = (<any>event.nativeEvent).keyIdentifier;
+            var event = <KeyboardEvent>input;
+            var identifier: string = (<any>input).nativeEvent.keyIdentifier;
 
             if (identifier.startsWith('U+')) {
                 var code = parseInt(identifier.substring(2), 16);
