@@ -1,5 +1,10 @@
+interface KeyDownReceiver {
+    handleKeyDown(event: KeyboardEvent): void;
+}
+
 interface Window {
     DEBUG: boolean;
+    invocationUnderAttention: KeyDownReceiver;
 }
 
 interface JQuery {
