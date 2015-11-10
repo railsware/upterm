@@ -1,5 +1,5 @@
 import Base from './Base';
-import Job from '../Job';
+import Job from '../../Job';
 import * as fs from 'fs';
 import * as _ from 'lodash';
 

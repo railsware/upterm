@@ -1,4 +1,4 @@
-import Job from '../Job';
+import Job from '../../Job';
 
 abstract class Base {
     constructor(protected job: Job) {

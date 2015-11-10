@@ -1,4 +1,4 @@
-var JSONTree = require('../../../decorators/json');
+var JSONTree = require('../../../../decorators/json');
 import Base from './Base';
 import * as React from 'react';
 
