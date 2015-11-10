@@ -216,11 +216,13 @@ body, pre {
 }
 
 .job {
-  //margin-bottom: $font-size * 2;
-
+  .output.alternate {
+    zoom: 0.1;
+  }
   &.in-progress {
     .output.alternate {
       position: fixed;
+      zoom: 1;
       top: 0;
       bottom: 0;
       left: 0;
