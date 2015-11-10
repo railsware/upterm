@@ -65,7 +65,7 @@
     "gulp-util": "3.0.7",
     "mocha": "2.3.3",
     "node-gyp": "3.0.3",
-    "npm-check-updates": "2.3.4",
+    "npm-check-updates": "2.4.0",
     "react-tools": "0.13.3",
     "run-sequence": "1.1.4",
     "tsd": "0.6.5",
