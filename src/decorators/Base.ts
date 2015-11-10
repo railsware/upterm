@@ -1,7 +1,7 @@
-import Invocation from '../Invocation';
+import Job from '../Job';
 
 abstract class Base {
-    constructor(protected invocation: Invocation) {
+    constructor(protected job: Job) {
     }
 
     abstract isApplicable(): boolean;

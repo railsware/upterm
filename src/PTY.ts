@@ -1,5 +1,5 @@
 import * as ChildProcess from "child_process";
-import * as Invocation from "./Invocation";
+import * as Job from "./Job";
 import * as i from "./Interfaces";
 const ptyInternalPath = require.resolve('./PTYInternal');
 

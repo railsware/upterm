@@ -78,7 +78,7 @@ body, pre {
   margin: 0;
 }
 
-.invocations {
+.jobs {
   margin-bottom: 40px;
 }
 
@@ -215,7 +215,7 @@ body, pre {
   }
 }
 
-.invocation {
+.job {
   //margin-bottom: $font-size * 2;
 
   &.in-progress {
@@ -277,7 +277,7 @@ body, pre {
     opacity: 0.4;
     border: 1px solid map-get($colors, 'white');
 
-    & .invocations {
+    & .jobs {
       pointer-events: none;
     }
   }

@@ -1,10 +1,10 @@
 import * as React from 'react';
 import * as _ from 'lodash';
 import Terminal from '../Terminal';
-import Invocation from '../Invocation';
+import Job from '../Job';
 import {VcsData} from '../Interfaces';
 import StatusLineComponent from './StatusLineComponent';
-import InvocationComponent from './3_InvocationComponent';
+import JobComponent from './3_JobComponent';
 
 interface Props {
     terminal: Terminal;
@@ -14,7 +14,7 @@ interface Props {
 
 interface State {
     vcsData?: VcsData;
-    invocations?: Invocation[];
+    jobs?: Job[];
 }
 
 export default class TerminalComponent extends React.Component<Props, State> {
@@ -23,22 +23,22 @@ export default class TerminalComponent extends React.Component<Props, State> {
 
         this.state = {
             vcsData: { isRepository: false },
-            invocations: this.props.terminal.invocations
+            jobs: this.props.terminal.jobs
         }
     }
 
     componentWillMount() {
         this.props.terminal
-            .on('invocation', () => this.setState({ invocations: this.props.terminal.invocations }))
+            .on('job', () => this.setState({ jobs: this.props.terminal.jobs }))
             .on('vcs-data', (data: VcsData) => this.setState({ vcsData: data }));
     }
 
     render() {
-        var invocations = this.state.invocations.map((invocation: Invocation, index: number) =>
-            React.createElement(InvocationComponent, {
-                key: invocation.id,
-                invocation: invocation,
-                hasLocusOfAttention: this.props.isActive && index === this.state.invocations.length - 1
+        var jobs = this.state.jobs.map((job: Job, index: number) =>
+            React.createElement(JobComponent, {
+                key: job.id,
+                job: job,
+                hasLocusOfAttention: this.props.isActive && index === this.state.jobs.length - 1
             }, [])
         );
 
@@ -50,7 +50,7 @@ export default class TerminalComponent extends React.Component<Props, State> {
                 onClickCapture: this.handleClick.bind(this),
                 onKeyDownCapture: this.handleKeyDown.bind(this)
             },
-            React.createElement('div', { className: 'invocations' }, invocations),
+            React.createElement('div', { className: 'jobs' }, jobs),
             React.createElement(StatusLineComponent, {
                 currentWorkingDirectory: this.props.terminal.currentDirectory,
                 vcsData: this.state.vcsData
@@ -67,7 +67,7 @@ export default class TerminalComponent extends React.Component<Props, State> {
     private handleKeyDown(event: KeyboardEvent) {
         // Ctrl+L.
         if (event.ctrlKey && event.keyCode === 76) {
-            this.props.terminal.clearInvocations();
+            this.props.terminal.clearJobs();
 
             event.stopPropagation();
             return;
@@ -85,6 +85,6 @@ export default class TerminalComponent extends React.Component<Props, State> {
         }
 
         // FIXME: find a better design to propagate events.
-        window.invocationUnderAttention.handleKeyDown(event);
+        window.jobUnderAttention.handleKeyDown(event);
     }
 }

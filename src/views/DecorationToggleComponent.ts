@@ -1,9 +1,9 @@
 import * as React from 'react';
 import {stopBubblingUp} from './ViewUtils';
-import Invocation from './3_InvocationComponent';
+import Job from './3_JobComponent';
 
 interface Props {
-    invocation: Invocation;
+    job: Job;
 }
 
 interface State {
@@ -14,7 +14,7 @@ export default class DecorationToggleComponent extends React.Component<Props, St
     constructor(props: Props) {
         super(props);
 
-        this.state = { enabled: this.props.invocation.state.decorate };
+        this.state = { enabled: this.props.job.state.decorate };
     }
 
     handleClick(event: KeyboardEvent) {
@@ -22,7 +22,7 @@ export default class DecorationToggleComponent extends React.Component<Props, St
 
         const newState = !this.state.enabled;
         this.setState({ enabled: newState });
-        this.props.invocation.setState({ decorate: newState });
+        this.props.job.setState({ decorate: newState });
     }
 
     render() {

@@ -1,4 +1,4 @@
-import Invocation from "./Invocation";
+import Job from "./Job";
 import Command from "./Command";
 import Utils from './Utils';
 import * as _ from 'lodash';
@@ -8,8 +8,8 @@ import * as Path from 'path';
 abstract class CommandExecutionStrategy {
     protected args: string[];
 
-    constructor(protected invocation: Invocation, protected command: string) {
-        this.args = invocation.getPrompt().arguments.filter(argument => argument.length > 0);
+    constructor(protected job: Job, protected command: string) {
+        this.args = job.getPrompt().arguments.filter(argument => argument.length > 0);
     }
 
     static async canExecute(command: string): Promise<boolean> {
@@ -27,7 +27,7 @@ class BuiltInCommandExecutionStrategy extends CommandExecutionStrategy {
     startExecution() {
         return new Promise((resolve, reject) => {
             try {
-                Command.executor(this.command)(this.invocation, this.args);
+                Command.executor(this.command)(this.job, this.args);
                 resolve();
             } catch (error) {
                 reject(error.message);
@@ -43,9 +43,9 @@ class UnixSystemFileExecutionStrategy extends CommandExecutionStrategy {
 
     startExecution() {
         return new Promise((resolve, reject) => {
-            this.invocation.command = new PTY(
-                this.command, this.args, this.invocation.directory, this.invocation.dimensions,
-                (data: string) => this.invocation.parser.parse(data),
+            this.job.command = new PTY(
+                this.command, this.args, this.job.directory, this.job.dimensions,
+                (data: string) => this.job.parser.parse(data),
                 (exitCode: number) => exitCode === 0 ? resolve() : reject()
             );
         })
@@ -59,9 +59,9 @@ class WindowsSystemFileExecutionStrategy extends CommandExecutionStrategy {
 
     startExecution() {
         return new Promise((resolve) => {
-            this.invocation.command = new PTY(
-                this.cmdPath, ['/s', '/c', this.invocation.getPrompt().expanded.join(' ')], this.invocation.directory, this.invocation.dimensions,
-                (data: string) => this.invocation.parser.parse(data),
+            this.job.command = new PTY(
+                this.cmdPath, ['/s', '/c', this.job.getPrompt().expanded.join(' ')], this.job.directory, this.job.dimensions,
+                (data: string) => this.job.parser.parse(data),
                 (exitCode: number) => resolve()
             );
         })
@@ -95,13 +95,13 @@ export default class CommandExecutor {
         UnixSystemFileExecutionStrategy
     ];
 
-    static execute(invocation: Invocation): Promise<CommandExecutionStrategy> {
-        var command = invocation.getPrompt().commandName;
+    static execute(job: Job): Promise<CommandExecutionStrategy> {
+        var command = job.getPrompt().commandName;
 
         return Utils.filterWithPromising(
             this.executors.concat(NullExecutionStrategy),
             executor => executor.canExecute(command))
-            .then(applicableExecutors => new applicableExecutors[0](invocation, command).startExecution()
+            .then(applicableExecutors => new applicableExecutors[0](job, command).startExecution()
             );
     }
 }

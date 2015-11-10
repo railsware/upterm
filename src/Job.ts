@@ -18,7 +18,7 @@ import Utils from './Utils';
 import CommandExecutor from "./CommandExecutor";
 import PTY from "./PTY";
 
-export default class Invocation extends events.EventEmitter {
+export default class Job extends events.EventEmitter {
     public command: PTY;
     public parser: Parser;
     private prompt: Prompt;
@@ -35,7 +35,7 @@ export default class Invocation extends events.EventEmitter {
         this.buffer = new Buffer(this.dimensions);
         this.buffer.on('data', _.throttle(() => this.emit('data'), 1000 / 60));
         this.parser = new Parser(this);
-        this.id = `invocation-${new Date().getTime()}`
+        this.id = `job-${new Date().getTime()}`
     }
 
     execute(): void {

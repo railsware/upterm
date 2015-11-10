@@ -1,5 +1,5 @@
 import Base from './Base';
-import Invocation from '../Invocation';
+import Job from '../Job';
 import * as fs from 'fs';
 import * as _ from 'lodash';
 
@@ -11,7 +11,7 @@ function isJSFile(fileName: string) {
     return _.endsWith(fileName, '.js');
 }
 
-export var list = <(new (invocation: Invocation) => Base)[]>
+export var list = <(new (job: Job) => Base)[]>
     _._(fs.readdirSync(__dirname))
         .filter(isJSFile)
         .filter(isDecorator)

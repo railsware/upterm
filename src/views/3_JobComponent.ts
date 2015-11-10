@@ -1,13 +1,13 @@
 import * as React from 'react';
 import * as e from '../Enums';
 import * as _ from 'lodash';
-import InvocationModel from '../Invocation';
+import JobModel from '../Job';
 import {keys} from './ViewUtils';
 import PromptComponent from './4_PromptComponent';
 import BufferComponent from "./BufferComponent";
 
 interface Props {
-    invocation: InvocationModel;
+    job: JobModel;
     hasLocusOfAttention: boolean;
 }
 
@@ -17,43 +17,43 @@ interface State {
     decorate?: boolean;
 }
 
-export default class InvocationComponent extends React.Component<Props, State> implements KeyDownReceiver {
+export default class JobComponent extends React.Component<Props, State> implements KeyDownReceiver {
     constructor(props: Props) {
         super(props);
 
         this.state = {
-            status: this.props.invocation.status,
+            status: this.props.job.status,
             decorate: false,
             canBeDecorated: false
         };
 
-        this.props.invocation
-            .on('data', () => this.setState({ canBeDecorated: this.props.invocation.canBeDecorated() }))
+        this.props.job
+            .on('data', () => this.setState({ canBeDecorated: this.props.job.canBeDecorated() }))
             .on('status', (status: e.Status) => this.setState({ status: status }));
 
         // FIXME: find a better design to propagate events.
         if (this.props.hasLocusOfAttention) {
-            window.invocationUnderAttention = this;
+            window.jobUnderAttention = this;
         }
     }
 
     render() {
         if (this.state.canBeDecorated && this.state.decorate) {
-            var buffer = this.props.invocation.decorate();
+            var buffer = this.props.job.decorate();
         } else {
-            buffer = React.createElement(BufferComponent, { buffer: this.props.invocation.getBuffer() });
+            buffer = React.createElement(BufferComponent, { buffer: this.props.job.getBuffer() });
         }
 
-        const classNames = 'invocation ' + this.state.status;
+        const classNames = 'job ' + this.state.status;
 
         return React.createElement(
             'div',
             { className: classNames },
             React.createElement(PromptComponent, {
-                prompt: this.props.invocation.getPrompt(),
+                prompt: this.props.job.getPrompt(),
                 status: this.state.status,
                 hasLocusOfAttention: this.props.hasLocusOfAttention,
-                invocationView: this
+                jobView: this
             }),
             buffer
         );
@@ -62,9 +62,9 @@ export default class InvocationComponent extends React.Component<Props, State> i
     handleKeyDown(event: KeyboardEvent): void {
         if (this.state.status === e.Status.InProgress && !isMetaKey(event)) {
             if (keys.interrupt(event)) {
-                this.props.invocation.interrupt()
+                this.props.job.interrupt()
             } else {
-                this.props.invocation.write(event);
+                this.props.job.write(event);
             }
 
             event.stopPropagation();

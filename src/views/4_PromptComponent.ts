@@ -5,9 +5,9 @@ import AutocompleteComponent from './AutocompleteComponent';
 import DecorationToggleComponent from './DecorationToggleComponent';
 import History from '../History';
 import {stopBubblingUp, scrollToBottom} from './ViewUtils';
-import Invocation from "../Invocation";
+import Job from "../Job";
 import {Suggestion} from "../Interfaces";
-import InvocationComponent from "./3_InvocationComponent";
+import JobComponent from "./3_JobComponent";
 import PromptModel from "../Prompt";
 const Rx = require('rx');
 const ReactDOM = require("react-dom");
@@ -73,7 +73,7 @@ function createEventHandler(): any {
 
 interface Props {
     status: e.Status;
-    invocationView: InvocationComponent;
+    jobView: JobComponent;
     prompt: PromptModel;
     hasLocusOfAttention: boolean;
 }
@@ -181,8 +181,8 @@ export default class PromptComponent extends React.Component<Props, State> imple
             });
         }
 
-        if (this.props.invocationView.state.canBeDecorated) {
-            var decorationToggle = React.createElement(DecorationToggleComponent, { invocation: this.props.invocationView });
+        if (this.props.jobView.state.canBeDecorated) {
+            var decorationToggle = React.createElement(DecorationToggleComponent, { job: this.props.jobView });
         }
 
         if (this.props.status !== e.Status.NotStarted) {
@@ -323,7 +323,7 @@ export default class PromptComponent extends React.Component<Props, State> imple
     private handleScrollToTop(event: Event) {
         stopBubblingUp(event);
 
-        const offset = $(ReactDOM.findDOMNode(this.props.invocationView)).offset().top - 10;
+        const offset = $(ReactDOM.findDOMNode(this.props.jobView)).offset().top - 10;
         $('html, body').animate({ scrollTop: offset }, 300);
     }
 

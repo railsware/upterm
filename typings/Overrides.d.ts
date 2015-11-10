@@ -4,7 +4,7 @@ interface KeyDownReceiver {
 
 interface Window {
     DEBUG: boolean;
-    invocationUnderAttention: KeyDownReceiver;
+    jobUnderAttention: KeyDownReceiver;
     promptUnderAttention: KeyDownReceiver
 }
 

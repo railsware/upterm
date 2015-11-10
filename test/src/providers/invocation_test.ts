@@ -3,7 +3,7 @@
 /// <reference path="../../../src/references.ts" />
 
 import chai = require('chai');
-import Invocation = require('../../../src/Invocation');
+import Invocation = require('../../../src/Job');
 var expect = chai.expect;
 
 chai.use(require('chai-things'));

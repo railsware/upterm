@@ -17,6 +17,6 @@ export default class Json extends Base {
     }
 
     private stringifiedOutputBuffer(): string {
-        return this.invocation.getBuffer().toString();
+        return this.job.getBuffer().toString();
     }
 }

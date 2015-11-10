@@ -45,7 +45,7 @@ var descriptions: {[indexer: string]: string} = {
     du: 'Estimate file space usage',
     echo: 'Write arguments to standard output',
     ed: 'The standard text editor',
-    env: 'Set the environment for command invocation',
+    env: 'Set the environment for command job',
     ex: 'Text editor',
     expand: 'Convert tabs to spaces',
     expr: 'Evaluate arguments as an expression',

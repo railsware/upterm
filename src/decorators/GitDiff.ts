@@ -4,7 +4,7 @@ import * as React from 'react';
 
 export default class GitDiff extends Base {
     decorate(): any {
-        var rows = this.invocation.getBuffer().toLines().map((row: string) => {
+        var rows = this.job.getBuffer().toLines().map((row: string) => {
             if (/^\s*\+/.test(row)) {
                 return React.createElement('div', { className: 'git-diff-new' }, null, row.replace(/^\++/, ''));
             } else if (/^\s*-/.test(row)) {
@@ -17,6 +17,6 @@ export default class GitDiff extends Base {
     }
 
     isApplicable(): boolean {
-        return this.invocation.hasOutput() && _.isEqual(this.invocation.getPrompt().expanded, ['git', 'diff']);
+        return this.job.hasOutput() && _.isEqual(this.job.getPrompt().expanded, ['git', 'diff']);
     }
 }

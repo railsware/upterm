@@ -3,7 +3,7 @@ import * as _ from 'lodash';
 import * as i from './Interfaces';
 import * as events from 'events';
 import * as Path from 'path';
-import Invocation from './Invocation';
+import Job from './Job';
 import Aliases from './Aliases';
 import History from './History';
 import Utils from './Utils';
@@ -13,7 +13,7 @@ var remote = require('remote');
 var app = remote.require('app');
 
 export default class Terminal extends events.EventEmitter {
-    invocations: Array<Invocation> = [];
+    jobs: Array<Job> = [];
     private _currentDirectory: string;
     history: typeof History;
     gitBranchWatcher: fs.FSWatcher;
@@ -35,23 +35,23 @@ export default class Terminal extends events.EventEmitter {
         this.deserialize();
         this.history = History;
 
-        this.on('invocation', this.serialize.bind(this));
+        this.on('job', this.serialize.bind(this));
 
-        this.clearInvocations();
+        this.clearJobs();
     }
 
-    createInvocation(): void {
-        var invocation = new Invocation(this);
+    createJob(): void {
+        var job = new Job(this);
 
-        invocation.once('end', () => {
+        job.once('end', () => {
             if (app.dock) {
                 app.dock.bounce('informational');
             }
-            this.createInvocation();
+            this.createJob();
         });
 
-        this.invocations = this.invocations.concat(invocation);
-        this.emit('invocation');
+        this.jobs = this.jobs.concat(job);
+        this.emit('job');
     }
 
     get dimensions(): i.Dimensions {
@@ -60,12 +60,12 @@ export default class Terminal extends events.EventEmitter {
 
     set dimensions(value: i.Dimensions) {
         this._dimensions = value;
-        this.invocations.forEach(invocation => invocation.winch());
+        this.jobs.forEach(job => job.winch());
     }
 
-    clearInvocations(): void {
-        this.invocations = [];
-        this.createInvocation();
+    clearJobs(): void {
+        this.jobs = [];
+        this.createJob();
     }
 
     get currentDirectory(): string {
