@@ -87,9 +87,4 @@ export default class TerminalComponent extends React.Component<Props, State> {
         // FIXME: find a better design to propagate events.
         window.invocationUnderAttention.handleKeyDown(event);
     }
-
-    private focusLastPrompt(terminalNode: HTMLDivElement): void {
-        const lastPrompt = <HTMLDivElement>_.last(terminalNode.getElementsByClassName('prompt'));
-        lastPrompt.focus();
-    }
 }
