@@ -1,5 +1,5 @@
 import Application from '../Application';
-import TerminalComponent from './TerminalComponent';
+import TerminalComponent from './2_TerminalComponent';
 import * as React from 'react';
 import * as i from '../Interfaces';
 import * as _ from 'lodash';

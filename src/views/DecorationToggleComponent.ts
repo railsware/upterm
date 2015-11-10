@@ -1,6 +1,6 @@
 import * as React from 'react';
 import {stopBubblingUp} from './ViewUtils';
-import Invocation from './InvocationComponent';
+import Invocation from './3_InvocationComponent';
 
 interface Props {
     invocation: Invocation;

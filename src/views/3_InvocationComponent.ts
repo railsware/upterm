@@ -3,7 +3,7 @@ import * as e from '../Enums';
 import * as _ from 'lodash';
 import InvocationModel from '../Invocation';
 import {keys} from './ViewUtils';
-import PromptComponent from './PromptComponent';
+import PromptComponent from './4_PromptComponent';
 import BufferComponent from "./BufferComponent";
 
 interface Props {

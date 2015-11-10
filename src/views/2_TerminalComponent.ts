@@ -4,7 +4,7 @@ import Terminal from '../Terminal';
 import Invocation from '../Invocation';
 import {VcsData} from '../Interfaces';
 import StatusLineComponent from './StatusLineComponent';
-import InvocationComponent from './InvocationComponent';
+import InvocationComponent from './3_InvocationComponent';
 
 interface Props {
     terminal: Terminal;

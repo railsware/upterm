@@ -7,7 +7,7 @@ import History from '../History';
 import {stopBubblingUp, scrollToBottom} from './ViewUtils';
 import Invocation from "../Invocation";
 import {Suggestion} from "../Interfaces";
-import InvocationComponent from "./InvocationComponent";
+import InvocationComponent from "./3_InvocationComponent";
 import PromptModel from "../Prompt";
 const Rx = require('rx');
 const ReactDOM = require("react-dom");
