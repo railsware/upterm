@@ -9,7 +9,6 @@ import Invocation from "../Invocation";
 import {Suggestion} from "../Interfaces";
 import InvocationComponent from "./InvocationComponent";
 import PromptModel from "../Prompt";
-import KeyboardEvent = __React.KeyboardEvent;
 const Rx = require('rx');
 const ReactDOM = require("react-dom");
 
@@ -47,7 +46,7 @@ function isCommandKey(event: KeyboardEvent) {
 }
 
 export function isMetaKey(event: KeyboardEvent) {
-    return event.metaKey || _.some([event.key, event.keyIdentifier],
+    return event.metaKey || _.some([event.key, (<any>event).keyIdentifier],
             key => _.includes(['Shift', 'Alt', 'Ctrl'], key));
 }
 
@@ -99,21 +98,21 @@ interface State {
 
 
 // TODO: Make sure we only update the view when the model changes.
-export default class PromptComponent extends React.Component<Props, State> {
+export default class PromptComponent extends React.Component<Props, State> implements KeyDownReceiver {
     private handlers: {
         onKeyDown: Function;
     };
 
     constructor(props: Props) {
         super(props);
-        var keysDownStream = createEventHandler();
-        var [inProgressKeys, promptKeys] = keysDownStream.partition(() => this.props.status === e.Status.InProgress);
 
-        inProgressKeys
-            .filter(_.negate(isMetaKey))
-            .filter(_.negate(isShellHandledKey))
-            .map(stopBubblingUp)
-            .forEach((event: React.KeyboardEvent) => this.props.invocation.write(event));
+        // FIXME: find a better design to propagate events.
+        if (this.props.hasLocusOfAttention) {
+            window.promptUnderAttention = this;
+        }
+
+        var keysDownStream = createEventHandler();
+        var promptKeys = keysDownStream.filter(() => this.props.status !== e.Status.InProgress);
 
         var meaningfulKeysDownStream = promptKeys.filter(isDefinedKey).map(stopBubblingUp);
         var [navigateAutocompleteStream, navigateHistoryStream] = meaningfulKeysDownStream
@@ -131,7 +130,6 @@ export default class PromptComponent extends React.Component<Props, State> {
             .forEach(() => this.selectAutocomplete());
 
         meaningfulKeysDownStream.filter(keys.deleteWord).forEach(() => this.deleteWord());
-        inProgressKeys.filter(keys.interrupt).forEach(() => this.props.invocation.interrupt());
 
         navigateHistoryStream.forEach((event: KeyboardEvent) => this.navigateHistory(event));
         navigateAutocompleteStream.forEach((event: KeyboardEvent) => this.navigateAutocomplete(event));
@@ -148,6 +146,10 @@ export default class PromptComponent extends React.Component<Props, State> {
         this.handlers = {
             onKeyDown: keysDownStream
         };
+    }
+
+    handleKeyDown(event: KeyboardEvent): void {
+        this.commandNode.focus();
     }
 
     componentDidMount() {
@@ -171,8 +173,6 @@ export default class PromptComponent extends React.Component<Props, State> {
         if (prevState.caretPosition !== this.state.caretPosition) {
             this.setState({ caretOffset: $(this.commandNode).caret('offset') });
         }
-
-        scrollToBottom();
 
         if (!prevProps.hasLocusOfAttention && this.props.hasLocusOfAttention) {
             this.commandNode.focus()

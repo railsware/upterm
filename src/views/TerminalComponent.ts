@@ -5,7 +5,6 @@ import Invocation from '../Invocation';
 import {VcsData} from '../Interfaces';
 import StatusLineComponent from './StatusLineComponent';
 import InvocationComponent from './InvocationComponent';
-import DOMElement = __React.DOMElement;
 
 interface Props {
     terminal: Terminal;
@@ -66,15 +65,12 @@ export default class TerminalComponent extends React.Component<Props, State> {
     }
 
     private handleKeyDown(event: KeyboardEvent) {
-        if (!_.contains(document.activeElement.classList, 'prompt')) {
-            this.focusLastPrompt(<HTMLDivElement>event.target);
-        }
-
         // Ctrl+L.
         if (event.ctrlKey && event.keyCode === 76) {
             this.props.terminal.clearInvocations();
 
             event.stopPropagation();
+            return;
         }
 
         // Cmd+D.
@@ -85,7 +81,11 @@ export default class TerminalComponent extends React.Component<Props, State> {
             this.forceUpdate();
 
             console.log(`Debugging mode has been ${window.DEBUG ? 'enabled' : 'disabled'}.`);
+            return;
         }
+
+        // FIXME: find a better design to propagate events.
+        window.invocationUnderAttention.handleKeyDown(event);
     }
 
     private focusLastPrompt(terminalNode: HTMLDivElement): void {

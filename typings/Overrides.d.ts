@@ -5,6 +5,7 @@ interface KeyDownReceiver {
 interface Window {
     DEBUG: boolean;
     invocationUnderAttention: KeyDownReceiver;
+    promptUnderAttention: KeyDownReceiver
 }
 
 interface JQuery {

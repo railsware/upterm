@@ -7,6 +7,7 @@ import Char from "../Char";
 import Cursor from "../Cursor";
 import {groupWhen} from "../Utils";
 import {List} from 'immutable';
+import {scrollToBottom} from './ViewUtils';
 
 interface Props {
     buffer: Buffer
@@ -20,6 +21,12 @@ export default class BufferComponent extends React.Component<Props, {}> {
                 key: index
             }))
         );
+    }
+
+    componentDidUpdate() {
+        if (this.props.buffer.activeBuffer === e.Buffer.Standard) {
+            scrollToBottom();
+        }
     }
 }
 

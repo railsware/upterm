@@ -1,7 +1,8 @@
 import * as React from 'react';
 import * as e from '../Enums';
+import * as _ from 'lodash';
 import InvocationModel from '../Invocation';
-import {scrollToBottom} from './ViewUtils';
+import {keys} from './ViewUtils';
 import PromptComponent from './PromptComponent';
 import BufferComponent from "./BufferComponent";
 
@@ -16,7 +17,7 @@ interface State {
     decorate?: boolean;
 }
 
-export default class InvocationComponent extends React.Component<Props, State> {
+export default class InvocationComponent extends React.Component<Props, State> implements KeyDownReceiver {
     constructor(props: Props) {
         super(props);
 
@@ -29,11 +30,10 @@ export default class InvocationComponent extends React.Component<Props, State> {
         this.props.invocation
             .on('data', () => this.setState({ canBeDecorated: this.props.invocation.canBeDecorated() }))
             .on('status', (status: e.Status) => this.setState({ status: status }));
-    }
 
-    componentDidUpdate() {
-        if (this.props.invocation.getBuffer().activeBuffer === e.Buffer.Standard) {
-            scrollToBottom();
+        // FIXME: find a better design to propagate events.
+        if (this.props.hasLocusOfAttention) {
+            window.invocationUnderAttention = this;
         }
     }
 
@@ -59,4 +59,26 @@ export default class InvocationComponent extends React.Component<Props, State> {
             buffer
         );
     }
+
+    handleKeyDown(event: KeyboardEvent): void {
+        if (this.state.status === e.Status.InProgress && !isMetaKey(event)) {
+            if (keys.interrupt(event)) {
+                this.props.invocation.interrupt()
+            } else {
+                this.props.invocation.write(event);
+            }
+
+            event.stopPropagation();
+            event.preventDefault();
+            return;
+        }
+
+        // FIXME: find a better design to propagate events.
+        window.promptUnderAttention.handleKeyDown(event);
+    }
+}
+
+export function isMetaKey(event: KeyboardEvent) {
+    return event.metaKey || _.some([event.key, (<any>event).keyIdentifier],
+            key => _.includes(['Shift', 'Alt', 'Ctrl'], key));
 }
