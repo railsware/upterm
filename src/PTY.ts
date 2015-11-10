@@ -9,14 +9,14 @@ interface Message {
 }
 
 export default class PTY {
-    private process: NodeJS.Process;
+    private process: ChildProcess.ChildProcess;
 
     // TODO: write proper signatures.
     // TODO: use generators.
     // TODO: terminate. https://github.com/atom/atom/blob/v1.0.15/src/task.coffee#L151
     constructor(command: string, args: string[], cwd: string, dimensions: i.Dimensions, dataHandler: Function, exitHandler: Function) {
-        this.process = (<any>ChildProcess).fork(ptyInternalPath,
-            [command, dimensions.columns, dimensions.rows, ...args],
+        this.process = ChildProcess.fork(ptyInternalPath,
+            [command, dimensions.columns.toString(), dimensions.rows.toString(), ...args],
             { env: process.env, cwd: cwd }
         );
 
