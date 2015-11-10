@@ -3,6 +3,7 @@ import * as i from '../Interfaces';
 import * as _ from 'lodash';
 import Prompt from "../Prompt";
 import {parser} from "../CommandExpander";
+import Autocompletion from "../Autocompletion";
 var filter: any = require('fuzzaldrin').filter;
 
 export default class Command implements i.AutocompletionProvider {
@@ -29,7 +30,7 @@ export default class Command implements i.AutocompletionProvider {
             parser.parse(prompt.expanded.join(' '));
             return [];
         } catch (exception) {
-            return filter(this.suggestions, prompt.lastArgument, { key: 'value', maxResults: 5 });
+            return filter(this.suggestions, prompt.lastArgument, { key: 'value', maxResults: Autocompletion.limit });
         }
     }
 }

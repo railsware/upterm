@@ -3,6 +3,7 @@ import * as i from '../Interfaces';
 import * as _ from 'lodash'
 import * as Path from 'path'
 import Prompt from "../Prompt";
+import Autocompletion from "../Autocompletion";
 var score: (i: string, m: string) => number = require('fuzzaldrin').score;
 
 var descriptions: {[indexer: string]: string} = {
@@ -189,6 +190,6 @@ export default class Executable implements i.AutocompletionProvider {
             };
         });
 
-        return _._(all).sortBy('score').reverse().take(3).value();
+        return _._(all).sortBy('score').reverse().take(Autocompletion.limit).value();
     }
 }

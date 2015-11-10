@@ -3,6 +3,7 @@ import * as _ from 'lodash';
 import Utils from '../Utils';
 import * as Path from 'path';
 import Prompt from "../Prompt";
+import Autocompletion from "../Autocompletion";
 var score: (i: string, m: string) => number = require('fuzzaldrin').score;
 
 export default class File implements i.AutocompletionProvider {
@@ -52,7 +53,7 @@ export default class File implements i.AutocompletionProvider {
             var prepared = _._(all).each(suggestion => suggestion.score = score(suggestion.value, baseName))
                 .sortBy('score').reverse().take(10).value();
         } else {
-            prepared = _._(all).each(suggestion => suggestion.score = 1).take(5).value();
+            prepared = _._(all).each(suggestion => suggestion.score = 1).take(Autocompletion.limit).value();
         }
 
         return prepared;
