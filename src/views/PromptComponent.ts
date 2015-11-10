@@ -219,7 +219,7 @@ export default class PromptComponent extends React.Component<Props, State> imple
                 onKeyPress: this.handleKeyPress.bind(this),
                 type: 'text',
                 ref: 'command',
-                contentEditable: this.props.status === e.Status.NotStarted
+                contentEditable: this.props.status === e.Status.NotStarted || this.props.status === e.Status.InProgress
             }),
             autocomplete,
             React.createElement(
