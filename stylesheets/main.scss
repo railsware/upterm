@@ -85,7 +85,6 @@ body, pre {
 .prompt-wrapper {
   position: relative;
   padding-top: $prompt-padding;
-  width: 100%;
   background-color: map-get($colors, 'bright-black');
 
   $decoration-width: 30px;

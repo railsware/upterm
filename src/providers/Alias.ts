@@ -21,6 +21,6 @@ export default class Alias implements i.AutocompletionProvider {
             }
         });
 
-        return _._(all).sortBy('score').reverse().take(10).value();
+        return _._(all).sortBy('score').reverse().take(3).value();
     }
 }

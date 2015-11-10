@@ -10,7 +10,7 @@ import Prompt from "./Prompt";
 
 export default class Autocompletion implements i.AutocompletionProvider {
     providers = [new Command(), new Alias(), new Executable(), new File(), new History(), new HistoryExpansion()];
-    limit = 30;
+    limit = 9;
 
     getSuggestions(prompt: Prompt) {
         return Promise.all(_.map(this.providers, provider => provider.getSuggestions(prompt))).then(results =>

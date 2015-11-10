@@ -1,7 +1,6 @@
 import * as React from 'react';
 import * as i from '../Interfaces';
 import * as _ from 'lodash';
-const ReactDOM = require("react-dom");
 
 type Offset = {top: number, left: number, bottom: number};
 
@@ -62,11 +61,5 @@ class Suggestion extends React.Component<SuggestionProps, {}> {
             }, this.props.suggestion.score.toFixed(2)),
             React.createElement('span', { className: 'synopsis' }, this.props.suggestion.synopsis)
         );
-    }
-
-    componentDidUpdate() {
-        if (this.props.isHighlighted) {
-            ReactDOM.findDOMNode(this).scrollIntoView(false);
-        }
     }
 }
