@@ -1,6 +1,8 @@
 import * as pty from 'ptyw.js';
 import * as child_process from 'child_process';
 import * as _ from 'lodash';
+import * as i from './Interfaces';
+import * as e from './Enums';
 import * as React from 'react';
 import * as events from 'events';
 import Terminal from "./Terminal";
@@ -9,14 +11,10 @@ import Prompt from './Prompt';
 import Buffer from './Buffer';
 import Command from './Command';
 import History from './History';
-import * as i from './Interfaces';
-import * as e from './Enums';
-//TODO: Make them attributes;
-import {list} from './plugins/decorators/List';
-import DecoratorsBase from './plugins/decorators/Base';
 import Utils from './Utils';
 import CommandExecutor from "./CommandExecutor";
 import PTY from "./PTY";
+import PluginManager from "./PluginManager";
 
 export default class Job extends events.EventEmitter {
     public command: PTY;
@@ -131,27 +129,21 @@ export default class Job extends events.EventEmitter {
     }
 
     canBeDecorated(): boolean {
-        for (var Decorator of list) {
-            var decorator = new Decorator(this);
-
-            if (this.status === e.Status.InProgress && !decorator.shouldDecorateRunningPrograms()) {
-                continue;
-            }
-
-            if (decorator.isApplicable()) {
-                return true;
-            }
-        }
-        return false;
+        return !!this.firstApplicableDecorator;
     }
 
-    decorate(): any {
-        for (var Decorator of list) {
-            var decorator: DecoratorsBase = new Decorator(this);
-            if (decorator.isApplicable()) {
-                return decorator.decorate();
-            }
-        }
+    decorate(): React.ReactElement<any> {
+        return this.firstApplicableDecorator.decorate(this);
+    }
+
+    private get decorators(): i.OutputDecorator[] {
+        return PluginManager.outputDecorators.filter(decorator =>
+            this.status === e.Status.InProgress ? decorator.shouldDecorateRunningPrograms : true
+        )
+    }
+
+    private get firstApplicableDecorator(): i.OutputDecorator {
+        return _.find(this.decorators, decorator => decorator.isApplicable(this))
     }
 
     getBuffer(): Buffer {

@@ -1,10 +1,11 @@
 import * as _ from 'lodash';
-import Base from './Base';
 import * as React from 'react';
+import PluginManager from '../../PluginManager';
+import Job from "../../Job";
 
-export default class GitDiff extends Base {
-    decorate(): any {
-        var rows = this.job.getBuffer().toLines().map((row: string) => {
+PluginManager.registerOutputDecorator({
+    decorate: (job: Job): React.ReactElement<any> => {
+        var rows = job.getBuffer().toLines().map((row: string) => {
             if (/^\s*\+/.test(row)) {
                 return React.createElement('div', { className: 'git-diff-new' }, null, row.replace(/^\++/, ''));
             } else if (/^\s*-/.test(row)) {
@@ -14,9 +15,9 @@ export default class GitDiff extends Base {
         });
 
         return React.createElement('pre', { className: 'output' }, rows, null);
-    }
+    },
 
-    isApplicable(): boolean {
-        return this.job.hasOutput() && _.isEqual(this.job.getPrompt().expanded, ['git', 'diff']);
+    isApplicable: (job: Job): boolean => {
+        return job.hasOutput() && _.isEqual(job.getPrompt().expanded, ['git', 'diff']);
     }
-}
+});

@@ -34,7 +34,7 @@ export default class DecorationToggleComponent extends React.Component<Props, St
 
         return React.createElement(
             'a',
-            { href: '#', className: classes.join(' '), onClick: this.handleClick },
+            { href: '#', className: classes.join(' '), onClick: this.handleClick.bind(this) },
             React.createElement('i', { className: 'fa fa-magic' })
         );
     }

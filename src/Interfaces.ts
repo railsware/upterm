@@ -1,6 +1,8 @@
 import * as e from './Enums';
 import * as fs from 'fs';
+import * as React from 'react';
 import Prompt from "./Prompt";
+import Job from "./Job";
 
 export interface Dimensions {
     columns: number;
@@ -63,4 +65,15 @@ export interface Margins {
     bottom?: number;
     left?: number;
     right?: number;
+}
+
+export interface OutputDecorator {
+    isApplicable: (job: Job) => boolean;
+    decorate: (job: Job) => React.ReactElement<any>;
+
+    /**
+     * @note Setting this property to `true` will result in rendering performance
+     *       decrease because the output will be re-decorated after each data chunk.
+     */
+    shouldDecorateRunningPrograms?: boolean;
 }

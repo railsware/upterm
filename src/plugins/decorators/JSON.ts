@@ -1,22 +1,19 @@
-var JSONTree = require('../../../../decorators/json');
-import Base from './Base';
 import * as React from 'react';
+import Job from "../../Job";
+import PluginManager from "../../PluginManager";
+var JSONTree = require('../../../../decorators/json');
 
-export default class Json extends Base {
-    decorate(): any {
-        return React.createElement(JSONTree, { data: JSON.parse(this.stringifiedOutputBuffer()) });
-    }
+PluginManager.registerOutputDecorator({
+    decorate: (job: Job): React.ReactElement<any> => {
+        return React.createElement(JSONTree, { data: JSON.parse(job.getBuffer().toString()) });
+    },
 
-    isApplicable(): boolean {
+    isApplicable: (job: Job): boolean => {
         try {
-            JSON.parse(this.stringifiedOutputBuffer());
+            JSON.parse(job.getBuffer().toString());
             return true;
         } catch (exception) {
             return false;
         }
     }
-
-    private stringifiedOutputBuffer(): string {
-        return this.job.getBuffer().toString();
-    }
-}
+});
