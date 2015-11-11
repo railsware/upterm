@@ -1,7 +1,6 @@
 import * as fs from 'fs';
 import * as _ from 'lodash';
 import * as i from './Interfaces';
-import * as events from 'events';
 import * as Path from 'path';
 import Job from './Job';
 import Aliases from './Aliases';
@@ -9,10 +8,11 @@ import History from './History';
 import Utils from './Utils';
 import Serializer from "./Serializer";
 import {executeCommand} from "./PTY";
+import EmitterWithUniqueID from "./EmitterWithUniqueID";
 var remote = require('remote');
 var app = remote.require('app');
 
-export default class Terminal extends events.EventEmitter {
+export default class Terminal extends EmitterWithUniqueID {
     jobs: Array<Job> = [];
     private _currentDirectory: string;
     history: typeof History;

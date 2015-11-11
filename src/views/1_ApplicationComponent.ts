@@ -57,9 +57,9 @@ export default class ApplicationComponent extends React.Component<{}, State> {
 
     render() {
         let terminals = this.state.terminals.map(
-            (terminal, index) => React.createElement(TerminalComponent, {
+            terminal => React.createElement(TerminalComponent, {
                 terminal: terminal,
-                key: index,
+                key: terminal.id,
                 isActive: terminal === this.application.activeTerminal,
                 activateTerminal: (terminal: Terminal) => {
                     this.application.activateTerminal(terminal);

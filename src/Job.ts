@@ -4,7 +4,6 @@ import * as _ from 'lodash';
 import * as i from './Interfaces';
 import * as e from './Enums';
 import * as React from 'react';
-import * as events from 'events';
 import Terminal from "./Terminal";
 import Parser from './Parser';
 import Prompt from './Prompt';
@@ -15,13 +14,13 @@ import Utils from './Utils';
 import CommandExecutor from "./CommandExecutor";
 import PTY from "./PTY";
 import PluginManager from "./PluginManager";
+import EmitterWithUniqueID from "./EmitterWithUniqueID";
 
-export default class Job extends events.EventEmitter {
+export default class Job extends EmitterWithUniqueID {
     public command: PTY;
     public parser: Parser;
     private prompt: Prompt;
     private buffer: Buffer;
-    public id: string;
     public status: e.Status = e.Status.NotStarted;
 
     constructor(private _terminal: Terminal) {
@@ -33,7 +32,6 @@ export default class Job extends events.EventEmitter {
         this.buffer = new Buffer(this.dimensions);
         this.buffer.on('data', _.throttle(() => this.emit('data'), 1000 / 60));
         this.parser = new Parser(this);
-        this.id = `job-${new Date().getTime()}`
     }
 
     execute(): void {
