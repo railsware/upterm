@@ -30,7 +30,9 @@ export default class JobComponent extends React.Component<Props, State> implemen
         this.props.job
             .on('data', () => this.setState({ canBeDecorated: this.props.job.canBeDecorated() }))
             .on('status', (status: e.Status) => this.setState({ status: status }));
+    }
 
+    componentDidUpdate() {
         // FIXME: find a better design to propagate events.
         if (this.props.hasLocusOfAttention) {
             window.jobUnderAttention = this;

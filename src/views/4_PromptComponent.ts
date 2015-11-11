@@ -96,11 +96,6 @@ export default class PromptComponent extends React.Component<Props, State> imple
     constructor(props: Props) {
         super(props);
 
-        // FIXME: find a better design to propagate events.
-        if (this.props.hasLocusOfAttention) {
-            window.promptUnderAttention = this;
-        }
-
         var keysDownStream = createEventHandler();
         var promptKeys = keysDownStream.filter(() => this.props.status !== e.Status.InProgress);
 
@@ -166,6 +161,11 @@ export default class PromptComponent extends React.Component<Props, State> imple
 
         if (!prevProps.hasLocusOfAttention && this.props.hasLocusOfAttention) {
             this.commandNode.focus()
+        }
+
+        // FIXME: find a better design to propagate events.
+        if (this.props.hasLocusOfAttention) {
+            window.promptUnderAttention = this;
         }
     }
 
