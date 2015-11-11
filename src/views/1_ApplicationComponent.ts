@@ -53,6 +53,28 @@ export default class ApplicationComponent extends React.Component<{}, State> {
 
             event.stopPropagation();
         }
+
+        // Cmd+J.
+        if (event.metaKey && event.keyCode === 74) {
+            let activeTerminalIndex = this.application.terminals.indexOf(this.application.activeTerminal);
+            if (activeTerminalIndex !== this.application.terminals.length - 1) {
+                this.application.activateTerminal(this.application.terminals[activeTerminalIndex + 1]);
+                this.setState({ terminals: this.application.terminals });
+
+                event.stopPropagation();
+            }
+        }
+
+        // Cmd+K.
+        if (event.metaKey && event.keyCode === 75) {
+            let activeTerminalIndex = this.application.terminals.indexOf(this.application.activeTerminal);
+            if (activeTerminalIndex) {
+                this.application.activateTerminal(this.application.terminals[activeTerminalIndex - 1]);
+                this.setState({ terminals: this.application.terminals });
+
+                event.stopPropagation();
+            }
+        }
     }
 
     render() {
