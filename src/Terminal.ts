@@ -9,6 +9,7 @@ import Utils from './Utils';
 import Serializer from "./Serializer";
 import {executeCommand} from "./PTY";
 import EmitterWithUniqueID from "./EmitterWithUniqueID";
+import PluginManager from "./PluginManager";
 var remote = require('remote');
 var app = remote.require('app');
 
@@ -73,7 +74,13 @@ export default class Terminal extends EmitterWithUniqueID {
     }
 
     set currentDirectory(value: string) {
-        this._currentDirectory = Utils.normalizeDir(value);
+        let normalizedDirectory =  Utils.normalizeDir(value);
+        if (normalizedDirectory === this._currentDirectory) {
+            return;
+        }
+
+        this._currentDirectory = normalizedDirectory;
+        PluginManager.environmentObservers.forEach(observer => observer.currentWorkingDirectoryDidChange(this));
         this.watchVCS(value);
 
         remote.getCurrentWindow().setRepresentedFilename(value);

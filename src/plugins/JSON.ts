@@ -1,7 +1,7 @@
 import * as React from 'react';
-import Job from "../../Job";
-import PluginManager from "../../PluginManager";
-var JSONTree = require('../../../../decorators/json');
+import Job from "../Job";
+import PluginManager from "../PluginManager";
+var JSONTree = require('../../../decorators/json');
 
 PluginManager.registerOutputDecorator({
     decorate: (job: Job): React.ReactElement<any> => {

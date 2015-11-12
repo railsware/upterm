@@ -3,6 +3,7 @@ import * as fs from 'fs';
 import * as React from 'react';
 import Prompt from "./Prompt";
 import Job from "./Job";
+import Terminal from "./Terminal";
 
 export interface Dimensions {
     columns: number;
@@ -76,4 +77,9 @@ export interface OutputDecorator {
      *       decrease because the output will be re-decorated after each data chunk.
      */
     shouldDecorateRunningPrograms?: boolean;
+}
+
+export interface EnvironmentObserverPlugin {
+    currentWorkingDirectoryWillChange: (terminal: Terminal) => void
+    currentWorkingDirectoryDidChange: (terminal: Terminal) => void
 }

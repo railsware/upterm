@@ -131,6 +131,11 @@ export default class PromptComponent extends React.Component<Props, State> imple
         this.handlers = {
             onKeyDown: keysDownStream
         };
+
+        // FIXME: find a better design to propagate events.
+        if (this.props.hasLocusOfAttention) {
+            window.promptUnderAttention = this;
+        }
     }
 
     handleKeyDown(event: KeyboardEvent): void {
