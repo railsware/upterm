@@ -15,17 +15,7 @@ gulp.on("stop", function () {
     }
 });
 
-function onError(err) {
-    return $.notify.onError(function () {
-        $.util.beep();
-        $.util.log(err.toString());
-        if (err.stack) {
-            $.util.log("Stack trace", err.stack.toString());
-        }
-        this.emit("end");
-        return "Error: <%= error.message %>";
-    })(err);
-}
+var onError = $.notify.onError("An error occurred");
 
 function notify(message) {
     return $.notify({title: "Black Screen Watcher", message: message, onLast: true});

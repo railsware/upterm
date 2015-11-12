@@ -74,7 +74,7 @@ class CharGroupComponent extends React.Component<CharGroupProps, {}> {
 
     private getHTMLAttributes(attributes: i.Attributes): Object {
         var htmlAttributes: _.Dictionary<any> = {};
-        _.each(attributes, (value, key) => {
+        _.each(<_.Dictionary<any>>attributes, (value, key) => {
             htmlAttributes[`data-${key}`] = value;
         });
 
