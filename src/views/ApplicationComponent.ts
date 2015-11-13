@@ -16,7 +16,7 @@ export default class ApplicationComponent extends React.Component<{}, State> {
     constructor(props: {}) {
         super(props);
 
-        this.application = Application.getInstance();
+        this.application = Application.instance;
         this.application.charSize = this.charSize;
         this.application.contentSize = this.contentSize;
         this.application.addTerminal();

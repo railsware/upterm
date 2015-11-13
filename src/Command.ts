@@ -30,7 +30,7 @@ const executors: _.Dictionary<(i: Invocation, a: string[]) => void> = {
         setTimeout(() => invocation.terminal.clearInvocations(), 0);
     },
     exit: (invocation: Invocation, args: Array<string>): void => {
-        var application = Application.getInstance();
+        var application = Application.instance;
         application.removeTerminal(application.activeTerminal);
     }
 };

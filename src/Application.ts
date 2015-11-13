@@ -12,11 +12,11 @@ export default class Application {
 
     constructor() {
         if (Application._instance) {
-            throw new Error('Use Application.getInstance() instead.');
+            throw new Error('Use Application.instance instead.');
         }
     }
 
-    static getInstance(): Application {
+    static get instance(): Application {
         if (!Application._instance) {
             Application._instance = new Application();
         }
