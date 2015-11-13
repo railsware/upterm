@@ -31,7 +31,9 @@ const executors: _.Dictionary<(i: Invocation, a: string[]) => void> = {
     },
     exit: (invocation: Invocation, args: Array<string>): void => {
         var application = Application.instance;
-        application.removeTerminal(application.activeTerminal);
+        application
+            .removeTerminal(application.activeTerminal)
+            .activateTerminal(_.last(application.terminals));
     }
 };
 
