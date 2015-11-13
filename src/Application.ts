@@ -1,9 +1,10 @@
 import Terminal from "./Terminal";
 import * as i from "./Interfaces";
 import * as _ from 'lodash';
+import * as events from 'events';
 const IPC = require('ipc');
 
-export default class Application {
+export default class Application extends events.EventEmitter {
     private static _instance: Application;
     private _terminals: Terminal[] = [];
     private _contentSize: i.Size;
@@ -11,6 +12,8 @@ export default class Application {
     private _activeTerminalIndex: number;
 
     constructor() {
+        super();
+
         if (Application._instance) {
             throw new Error('Use Application.instance instead.');
         }
@@ -34,12 +37,14 @@ export default class Application {
     addTerminal(): Terminal {
         let terminal = new Terminal(this.contentDimensions);
         this.terminals.push(terminal);
+        this.emit('terminal');
 
         return terminal;
     }
 
     removeTerminal(terminal: Terminal): Application {
         _.pull(this.terminals, terminal);
+        this.emit('terminal');
 
         if (_.isEmpty(this.terminals)) {
             IPC.send('quit');
@@ -50,6 +55,7 @@ export default class Application {
 
     activateTerminal(terminal: Terminal): void {
         this._activeTerminalIndex = this.terminals.indexOf(terminal);
+        this.emit('terminal');
     }
 
     set contentSize(newSize) {

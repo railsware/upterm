@@ -23,6 +23,7 @@ export default class ApplicationComponent extends React.Component<{}, State> {
         this.application.activateTerminal(this.application.terminals[0]);
 
         this.state = { terminals: this.application.terminals };
+        this.application.on('terminal', () => this.setState({ terminals: this.application.terminals }));
 
         $(window).resize(() => this.application.contentSize = this.contentSize);
         IPC.on('change-working-directory', (directory: string) =>
@@ -34,7 +35,6 @@ export default class ApplicationComponent extends React.Component<{}, State> {
         // Cmd+_.
         if (event.metaKey && event.keyCode === 189) {
             this.application.activateTerminal(this.application.addTerminal());
-            this.setState({ terminals: this.application.terminals });
 
             event.stopPropagation();
         }
@@ -51,8 +51,6 @@ export default class ApplicationComponent extends React.Component<{}, State> {
             this.application
                 .removeTerminal(this.application.activeTerminal)
                 .activateTerminal(_.last(this.application.terminals));
-
-            this.setState({ terminals: this.application.terminals });
 
             event.stopPropagation();
         }
