@@ -22,7 +22,7 @@
     "shell",
     "console"
   ],
-  "electronVersion": "0.34.3",
+  "electronVersion": "0.35.0",
   "dependencies": {
     "fixed-sticky": "^0.1.6",
     "font-awesome": "4.4.0",
@@ -50,7 +50,7 @@
     "chai-things": "0.2.0",
     "del": "2.0.2",
     "electron-packager": "5.1.1",
-    "electron-prebuilt": "0.34.3",
+    "electron-prebuilt": "0.35.0",
     "electron-rebuild": "1.0.2",
     "gulp": "3.9.0",
     "gulp-babel": "6.1.0",

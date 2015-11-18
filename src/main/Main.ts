@@ -1,6 +1,6 @@
 const app = require('app');
 const BrowserWindow = require('browser-window');
-const IPC = require('ipc');
+const IPC = require('electron').ipcMain;
 let menu = require('./Menu');
 
 let browserWindow: any = null;
@@ -31,7 +31,7 @@ function getMainWindow() {
             show: false
         });
 
-        browserWindow.loadUrl('file://' + __dirname + '/../views/index.html');
+        browserWindow.loadURL('file://' + __dirname + '/../views/index.html');
         menu.setMenu(app, browserWindow);
 
         browserWindow.on('closed', (): void => browserWindow = null);
