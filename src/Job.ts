@@ -95,7 +95,7 @@ export default class Job extends EmitterWithUniqueID {
         return this.terminal.currentDirectory;
     }
 
-    get dimensions(): i.Dimensions {
+    get dimensions(): Dimensions {
         return this.terminal.dimensions;
     }
 
@@ -103,11 +103,11 @@ export default class Job extends EmitterWithUniqueID {
         return !this.buffer.isEmpty();
     }
 
-    getDimensions(): i.Dimensions {
+    getDimensions(): Dimensions {
         return this.terminal.dimensions;
     }
 
-    setDimensions(dimensions: i.Dimensions) {
+    setDimensions(dimensions: Dimensions) {
         this.terminal.dimensions = dimensions;
         this.winch();
     }

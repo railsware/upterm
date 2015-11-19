@@ -7,7 +7,7 @@ import Autocompletion from "../Autocompletion";
 var filter: any = require('fuzzaldrin').filter;
 
 export default class Command implements i.AutocompletionProvider {
-    suggestions: i.Suggestion[] = [];
+    suggestions: Suggestion[] = [];
 
     async getSuggestions(prompt: Prompt) {
         try {

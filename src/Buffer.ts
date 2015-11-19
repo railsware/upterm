@@ -14,9 +14,9 @@ export default class Buffer extends events.EventEmitter {
     public activeBuffer = e.Buffer.Standard;
     private attributes: i.Attributes = { color: e.Color.White, weight: e.Weight.Normal };
     private isOriginModeSet = false;
-    private _margins: i.Margins = {};
+    private _margins: Margins = {};
 
-    constructor(private _dimensions: i.Dimensions) {
+    constructor(private _dimensions: Dimensions) {
         super();
     }
 
@@ -122,14 +122,14 @@ export default class Buffer extends events.EventEmitter {
         this.emit('data');
     }
 
-    moveCursorRelative(position: i.Advancement): Buffer {
+    moveCursorRelative(position: Advancement): Buffer {
         this.cursor.moveRelative(position);
         this.emit('data');
 
         return this;
     }
 
-    moveCursorAbsolute(position: i.Advancement): Buffer {
+    moveCursorAbsolute(position: Advancement): Buffer {
         this.cursor.moveAbsolute(position, this.homePosition);
         this.emit('data');
 
@@ -182,7 +182,7 @@ export default class Buffer extends events.EventEmitter {
         this.emit('data');
     }
 
-    get cursorPosition(): i.Position {
+    get cursorPosition(): RowColumn {
         return this.cursor.getPosition();
     }
 
@@ -190,7 +190,7 @@ export default class Buffer extends events.EventEmitter {
         return this.storage.size === 0;
     }
 
-    set dimensions(dimensions: i.Dimensions) {
+    set dimensions(dimensions: Dimensions) {
         this._dimensions = dimensions;
     }
 
@@ -198,15 +198,15 @@ export default class Buffer extends events.EventEmitter {
         this.isOriginModeSet = mode;
     }
 
-    set margins(margins: i.Margins) {
+    set margins(margins: Margins) {
         this._margins = margins;
     }
 
-    at(position: i.Position): Char {
+    at(position: RowColumn): Char {
         return this.storage.getIn([position.row, position.column]);
     }
 
-    private get homePosition(): i.Position {
+    private get homePosition(): RowColumn {
         if (this.isOriginModeSet) {
             return { row: this._margins.top || 0, column: this._margins.left || 0 };
         } else {
@@ -214,7 +214,7 @@ export default class Buffer extends events.EventEmitter {
         }
     }
 
-    private set(position: i.Position, char: Char): void {
+    private set(position: RowColumn, char: Char): void {
         if (!this.storage.get(position.row)) {
             this.storage = this.storage.set(position.row, List<Char>());
         }

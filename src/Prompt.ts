@@ -4,7 +4,6 @@ import Buffer from './Buffer';
 import Aliases from './Aliases';
 import {History, HistoryEntry} from './History';
 import * as _ from 'lodash';
-import * as i from './Interfaces';
 import {expandAliases, expandHistory, lex} from './CommandExpander';
 
 export default class Prompt extends events.EventEmitter {
@@ -54,7 +53,7 @@ export default class Prompt extends events.EventEmitter {
         return _.last(this.lexemes) || '';
     }
 
-    getSuggestions(): Promise<i.Suggestion[]> {
+    getSuggestions(): Promise<Suggestion[]> {
         return this.autocompletion.getSuggestions(this)
     }
 
@@ -63,7 +62,7 @@ export default class Prompt extends events.EventEmitter {
     }
 
     // TODO: Now it's last lexeme instead of current.
-    replaceCurrentLexeme(suggestion: i.Suggestion): void {
+    replaceCurrentLexeme(suggestion: Suggestion): void {
         var lexemes = _.clone(this._lexemes);
         lexemes[lexemes.length - 1] = `${suggestion.prefix || ""}${suggestion.value}`;
 

@@ -1,15 +1,14 @@
 import Terminal from "./Terminal";
-import * as i from "./Interfaces";
 import * as _ from 'lodash';
 const IPC = require('ipc');
 
 export default class Application {
     private _terminals: Terminal[] = [];
-    private _contentSize: i.Size;
-    private _charSize: i.Size;
+    private _contentSize: Size;
+    private _charSize: Size;
     private _activeTerminalIndex: number;
 
-    constructor(charSize: i.Size, windowSize: i.Size) {
+    constructor(charSize: Size, windowSize: Size) {
         this._charSize = charSize;
         this.contentSize = windowSize;
 
@@ -51,7 +50,7 @@ export default class Application {
         this.terminals.forEach((terminal: Terminal) => terminal.dimensions = this.contentDimensions)
     }
 
-    get contentSize(): i.Size {
+    get contentSize(): Size {
         return this._contentSize;
     }
 
@@ -59,7 +58,7 @@ export default class Application {
         return this._charSize
     }
 
-    get contentDimensions(): i.Dimensions {
+    get contentDimensions(): Dimensions {
         return {
             columns: Math.floor(this.contentSize.width / this.charSize.width),
             rows: Math.floor(this.contentSize.height / this.charSize.height),

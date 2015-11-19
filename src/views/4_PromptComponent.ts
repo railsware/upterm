@@ -6,7 +6,6 @@ import DecorationToggleComponent from './DecorationToggleComponent';
 import History from '../History';
 import {stopBubblingUp, scrollToBottom} from './ViewUtils';
 import Job from "../Job";
-import {Suggestion} from "../Interfaces";
 import JobComponent from "./3_JobComponent";
 import PromptModel from "../Prompt";
 const Rx = require('rx');

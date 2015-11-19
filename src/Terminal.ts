@@ -1,6 +1,5 @@
 import * as fs from 'fs';
 import * as _ from 'lodash';
-import * as i from './Interfaces';
 import * as Path from 'path';
 import Job from './Job';
 import Aliases from './Aliases';
@@ -28,7 +27,7 @@ export default class Terminal extends EmitterWithUniqueID {
         history: `History:[]`
     };
 
-    constructor(private _dimensions: i.Dimensions) {
+    constructor(private _dimensions: Dimensions) {
         super();
 
         // TODO: We want to deserialize properties only for the first instance
@@ -55,11 +54,11 @@ export default class Terminal extends EmitterWithUniqueID {
         this.emit('job');
     }
 
-    get dimensions(): i.Dimensions {
+    get dimensions(): Dimensions {
         return this._dimensions;
     }
 
-    set dimensions(value: i.Dimensions) {
+    set dimensions(value: Dimensions) {
         this._dimensions = value;
         this.jobs.forEach(job => job.winch());
     }
@@ -114,7 +113,7 @@ export default class Terminal extends EmitterWithUniqueID {
             executeCommand('git', ['status', '--porcelain'], this.currentDirectory).then(changes => {
                 var status = changes.length ? 'dirty' : 'clean';
 
-                var data: i.VcsData = {
+                var data: VcsData = {
                     isRepository: true,
                     branch: /ref: refs\/heads\/(.*)/.exec(buffer.toString())[1],
                     status: status

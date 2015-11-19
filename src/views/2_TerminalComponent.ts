@@ -2,7 +2,6 @@ import * as React from 'react';
 import * as _ from 'lodash';
 import Terminal from '../Terminal';
 import Job from '../Job';
-import {VcsData} from '../Interfaces';
 import StatusLineComponent from './StatusLineComponent';
 import JobComponent from './3_JobComponent';
 

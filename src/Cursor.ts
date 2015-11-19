@@ -1,14 +1,12 @@
-import * as i from './Interfaces';
-
 export default class Cursor {
     private show = false;
     private blink = false;
 
-    constructor(private position: i.Position = { row: 0, column: 0 }) {
+    constructor(private position: RowColumn = { row: 0, column: 0 }) {
     }
 
-    // TODO: Use Position instead of Advancement.
-    moveAbsolute(advancement: i.Advancement, homePosition: i.Position): Cursor {
+    // TODO: Use RowColumn instead of Advancement.
+    moveAbsolute(advancement: Advancement, homePosition: RowColumn): Cursor {
         if (typeof advancement.horizontal === 'number') {
             this.position.column = homePosition.column + advancement.horizontal;
         }
@@ -20,7 +18,7 @@ export default class Cursor {
         return this;
     }
 
-    moveRelative(advancement: i.Advancement): Cursor {
+    moveRelative(advancement: Advancement): Cursor {
         var vertical = Math.max(0, this.row() + (advancement.vertical || 0));
         var horizontal = Math.max(0, this.column() + (advancement.horizontal || 0));
 
@@ -29,7 +27,7 @@ export default class Cursor {
         return this;
     }
 
-    getPosition(): i.Position {
+    getPosition(): RowColumn {
         return this.position;
     }
 
