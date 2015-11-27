@@ -24,7 +24,7 @@ Warning: Black Screen is still in its beta phase and isn't completely ready for 
 ###### Download
 
 ```bash
-git clone https://github.com/black-screen/black-screen; cd black-screen
+git clone https://github.com/black-screen/black-screen.git && cd black-screen
 ```
 
 ###### Install Dependencies & Run
