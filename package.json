@@ -41,7 +41,7 @@
   },
   "devDependencies": {
     "babel": "6.1.18",
-    "babel-core": "6.2.0",
+    "babel-core": "6.2.1",
     "babel-plugin-transform-es2015-destructuring": "6.1.18",
     "babel-plugin-transform-es2015-modules-commonjs": "6.2.0",
     "babel-plugin-transform-es2015-parameters": "6.1.18",
@@ -53,7 +53,7 @@
     "electron-prebuilt": "0.35.0",
     "electron-rebuild": "1.0.2",
     "gulp": "3.9.0",
-    "gulp-babel": "6.1.0",
+    "gulp-babel": "6.1.1",
     "gulp-cached": "1.1.0",
     "gulp-concat": "2.6.0",
     "gulp-livereload": "3.8.1",
@@ -64,13 +64,13 @@
     "gulp-typescript": "2.9.2",
     "gulp-util": "3.0.7",
     "mocha": "2.3.4",
-    "node-gyp": "3.1.0",
+    "node-gyp": "3.2.0",
     "npm-check-updates": "2.5.1",
     "react-tools": "0.13.3",
-    "run-sequence": "1.1.4",
+    "run-sequence": "1.1.5",
     "tsd": "0.6.5",
     "typescript": "1.6.2",
-    "webdriverio": "3.2.6"
+    "webdriverio": "3.3.0"
   },
   "scripts": {
     "preinstall": "npm prune",
