@@ -10,9 +10,15 @@ export default class Command implements i.AutocompletionProvider {
     suggestions: Suggestion[] = [];
 
     async getSuggestions(prompt: Prompt) {
+        if (prompt.expanded.length < 2) {
+            return [];
+        }
+
         try {
             parser.yy.parseError = (err: any, hash: any) => {
-                var filtered = _._(hash.expected).filter((value: string) => _.include(value, hash.token))
+                const token = hash.token === 'EOF' ? "'" : `'${hash.token}`;
+
+                var filtered = _._(hash.expected).filter((value: string) => _.startsWith(value, token))
                     .map((value: string) => /^'(.*)'$/.exec(value)[1])
                     .value();
 

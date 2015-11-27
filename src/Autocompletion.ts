@@ -1,5 +1,5 @@
 import Executable from './providers/Executable';
-import Command from './providers/Command';
+import Arguments from './providers/Arguments';
 import File from './providers/File';
 import Alias from './providers/Alias';
 import History from './providers/History';
@@ -9,7 +9,7 @@ import * as i from './Interfaces';
 import Prompt from "./Prompt";
 
 export default class Autocompletion implements i.AutocompletionProvider {
-    static providers = [new Command(), new Alias(), new Executable(), new File(), new History(), new HistoryExpansion()];
+    static providers = [new Arguments(), new Alias(), new Executable(), new File(), new History(), new HistoryExpansion()];
     static limit = 9;
 
     getSuggestions(prompt: Prompt) {
