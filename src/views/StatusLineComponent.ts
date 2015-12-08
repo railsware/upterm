@@ -1,16 +1,15 @@
 import * as React from 'react';
-import * as i from '../Interfaces';
 
 interface StatusLineProps {
     currentWorkingDirectory: string;
-    vcsData: i.VcsData;
+    vcsData: VcsData;
 }
 
 export default class StatusLine extends React.Component<StatusLineProps, {}> {
     render() {
         return React.createElement('div', { className: 'status-line' },
             React.createElement(CurrentDirectory, { currentWorkingDirectory: this.props.currentWorkingDirectory }),
-            React.createElement(VcsData, { data: this.props.vcsData })
+            React.createElement(VcsDataComponent, { data: this.props.vcsData })
         );
     }
 }
@@ -28,10 +27,10 @@ class CurrentDirectory extends React.Component<CurrentDirectoryProps, {}> {
 
 
 interface VcsDataProps {
-    data: i.VcsData;
+    data: VcsData;
 }
 
-class VcsData extends React.Component<VcsDataProps, {}> {
+class VcsDataComponent extends React.Component<VcsDataProps, {}> {
     render() {
         if (!this.props.data.isRepository) {
             return null;

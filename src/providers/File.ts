@@ -24,7 +24,7 @@ export default class File implements i.AutocompletionProvider {
 
         let fileInfos = await Utils.stats(searchDirectory);
 
-        var all = _.map(fileInfos.filter(File.filter(prompt.commandName)), (fileInfo: i.FileInfo): i.Suggestion => {
+        var all = _.map(fileInfos.filter(File.filter(prompt.commandName)), (fileInfo: i.FileInfo): Suggestion => {
             var description = `Mode: ${'0' + (fileInfo.stat.mode & 511).toString(8)}`;
             if (fileInfo.stat.isDirectory()) {
                 var name: string = Utils.normalizeDir(fileInfo.name);
@@ -33,7 +33,7 @@ export default class File implements i.AutocompletionProvider {
                 description += `; Size: ${Utils.humanFileSize(fileInfo.stat.size, true)}`;
             }
 
-            var suggestion: i.Suggestion = {
+            var suggestion: Suggestion = {
                 value: name,
                 score: 0,
                 synopsis: '',

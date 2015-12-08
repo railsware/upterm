@@ -5,11 +5,6 @@ import Prompt from "./Prompt";
 import Job from "./Job";
 import Terminal from "./Terminal";
 
-export interface Dimensions {
-    columns: number;
-    rows: number;
-}
-
 export interface Attributes {
     color?: e.Color;
     'background-color'?: e.Color;
@@ -20,52 +15,13 @@ export interface Attributes {
     cursor?: boolean;
 }
 
-export interface Size {
-    height: number;
-    width: number;
-}
-
-export interface Advancement {
-    vertical?: number;
-    horizontal?: number;
-}
-
-export interface Position {
-    column: number;
-    row: number;
-}
-
 export interface AutocompletionProvider {
     getSuggestions(prompt: Prompt): Promise<Suggestion[]>;
-}
-
-export interface Suggestion {
-    value: string;
-    score: number;
-    synopsis: string;
-    description: string;
-    type: string;
-    partial?: boolean;
-    replaceAll?: boolean;
-    prefix?: string;
-}
-
-export interface VcsData {
-    isRepository: boolean;
-    branch?: string;
-    status?: string;
 }
 
 export interface FileInfo {
     name: string;
     stat: fs.Stats;
-}
-
-export interface Margins {
-    top?: number;
-    bottom?: number;
-    left?: number;
-    right?: number;
 }
 
 export interface OutputDecorator {

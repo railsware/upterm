@@ -1,19 +1,18 @@
 import * as React from 'react';
-import * as i from '../Interfaces';
 import * as _ from 'lodash';
 
 type Offset = {top: number, left: number, bottom: number};
 
 interface AutocompleteProps {
     caretOffset: Offset;
-    suggestions: i.Suggestion[];
+    suggestions: Suggestion[];
     highlightedIndex: number;
 }
 
 export default class AutocompleteComponent extends React.Component<AutocompleteProps, {}> {
     render() {
         const suggestionViews = this.props.suggestions.map((suggestion, index) => {
-            return React.createElement(Suggestion, {
+            return React.createElement(SuggestionCompoonent, {
                 suggestion: suggestion,
                 key: index,
                 isHighlighted: index === this.props.highlightedIndex
@@ -38,12 +37,12 @@ export default class AutocompleteComponent extends React.Component<AutocompleteP
 }
 
 interface SuggestionProps {
-    suggestion: i.Suggestion;
+    suggestion: Suggestion;
     key: number;
     isHighlighted: boolean;
 }
 
-class Suggestion extends React.Component<SuggestionProps, {}> {
+class SuggestionCompoonent extends React.Component<SuggestionProps, {}> {
     render() {
         const scoreStyle = window.DEBUG ? {} : { display: 'none' };
         let classes = [this.props.suggestion.type];

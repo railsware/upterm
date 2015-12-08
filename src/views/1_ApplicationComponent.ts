@@ -1,7 +1,6 @@
 import Application from '../Application';
 import TerminalComponent from './2_TerminalComponent';
 import * as React from 'react';
-import * as i from '../Interfaces';
 import * as _ from 'lodash';
 import Terminal from "../Terminal";
 const IPC = require('ipc');
@@ -96,14 +95,14 @@ export default class ApplicationComponent extends React.Component<{}, State> {
         }, terminals)
     }
 
-    private get contentSize(): i.Size {
+    private get contentSize(): Size {
         return {
             width: window.innerWidth,
             height: window.innerHeight,
         }
     }
 
-    private get charSize(): i.Size {
+    private get charSize(): Size {
         var letter = document.getElementById('sizes-calculation');
 
         return {
