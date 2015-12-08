@@ -1,21 +1,26 @@
-$base-colors: (
-        'black': #292C33,
-        'red': #BF6E7C,
-        'white': #95A2BB,
-        'green': #88B379,
-        'yellow': #D9BD86,
-        'blue': #66A5DF,
-        'magenta': #C699C5,
-        'cyan': #6EC6C6,
+@import "default_colors";
 
-        'bright-black': #2D323A,
-        'bright-red': #dd8494,
-        'bright-white': #adbcd7,
-        'bright-green': #9dcc8c,
-        'bright-yellow': #e9cc92,
-        'bright-blue': #6cb2f0,
-        'bright-magenta': #e8b6e7,
-        'bright-cyan': #7adada
+// Any theme from iterm2-colors can be imported here
+//@import "../node_modules/iterm2-colors/functional/sass/Duotone Dark";
+
+$base-colors: (
+        'black': $black-normal,
+        'red': $red-normal,
+        'white': $white-normal,
+        'green': $green-normal,
+        'yellow': $yellow-normal,
+        'blue': $blue-normal,
+        'magenta': $magenta-normal,
+        'cyan': $cyan-normal,
+
+        'bright-black': $black-bright,
+        'bright-red': $red-bright,
+        'bright-white': $white-bright,
+        'bright-green': $green-bright,
+        'bright-yellow': $yellow-bright,
+        'bright-blue': $blue-bright,
+        'bright-magenta': $magenta-bright,
+        'bright-cyan': $cyan-bright
 );
 
 @function to-rgb($color) {
