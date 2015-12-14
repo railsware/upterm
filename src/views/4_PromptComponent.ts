@@ -271,6 +271,10 @@ export default class PromptComponent extends React.Component<Props, State> imple
             this.replaceText(History.getNext());
         }
     }
+    
+    private selectSuggestion(i: number): void {
+        this.setState({highlightedSuggestionIndex: i});
+    }
 
     private navigateAutocomplete(event: KeyboardEvent): void {
         if (keys.goUp(event)) {
@@ -279,7 +283,7 @@ export default class PromptComponent extends React.Component<Props, State> imple
             index = Math.min(this.state.suggestions.length - 1, this.state.highlightedSuggestionIndex + 1)
         }
 
-        this.setState({ highlightedSuggestionIndex: index });
+        this.selectSuggestion(index)
     }
 
     private selectAutocomplete(): void {
