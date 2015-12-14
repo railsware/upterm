@@ -12,7 +12,7 @@ interface AutocompleteProps {
 export default class AutocompleteComponent extends React.Component<AutocompleteProps, {}> {
     render() {
         const suggestionViews = this.props.suggestions.map((suggestion, index) => {
-            return React.createElement(SuggestionCompoonent, {
+            return React.createElement(SuggestionComponent, {
                 suggestion: suggestion,
                 key: index,
                 isHighlighted: index === this.props.highlightedIndex
@@ -42,7 +42,7 @@ interface SuggestionProps {
     isHighlighted: boolean;
 }
 
-class SuggestionCompoonent extends React.Component<SuggestionProps, {}> {
+class SuggestionComponent extends React.Component<SuggestionProps, {}> {
     render() {
         const scoreStyle = window.DEBUG ? {} : { display: 'none' };
         let classes = [this.props.suggestion.type];
