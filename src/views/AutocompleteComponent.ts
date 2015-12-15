@@ -7,6 +7,7 @@ interface AutocompleteProps {
     caretOffset: Offset;
     suggestions: Suggestion[];
     onSelectedSuggestion: Function;
+    onClickedSuggestion: Function;
     highlightedIndex: number;
 }
 
@@ -16,6 +17,7 @@ export default class AutocompleteComponent extends React.Component<AutocompleteP
             return React.createElement(SuggestionCompoonent, {
                 suggestion: suggestion,
                 onSelectedSuggestion: this.props.onSelectedSuggestion.bind(this, index),
+                onClickedSuggestion: this.props.onClickedSuggestion,
                 key: index,
                 isHighlighted: index === this.props.highlightedIndex
             });
@@ -42,6 +44,7 @@ interface SuggestionProps {
     suggestion: Suggestion;
     key: number;
     onSelectedSuggestion: Function;
+    onClickedSuggestion: Function
     isHighlighted: boolean;
 }
 
@@ -54,7 +57,7 @@ class SuggestionCompoonent extends React.Component<SuggestionProps, {}> {
             classes.push('highlighted');
         }
 
-        return React.createElement('li', { className: classes.join(' '), onMouseOver: this.props.onSelectedSuggestion},
+        return React.createElement('li', { className: classes.join(' '), onMouseOver: this.props.onSelectedSuggestion, onClick: this.props.onClickedSuggestion},
             React.createElement('i', { className: 'icon' }),
             React.createElement('span', { className: 'value' }, this.props.suggestion.value),
             React.createElement('span', {
