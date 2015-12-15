@@ -282,6 +282,10 @@ export default class PromptComponent extends React.Component<Props, State> imple
         this.setState({ highlightedSuggestionIndex: index });
     }
 
+    private resetSuggestions(): void {
+        this.setState({ suggestions: [] });
+    }
+    
     private selectAutocomplete(): void {
         var state = this.state;
         const suggestion = state.suggestions[state.highlightedSuggestionIndex];
@@ -296,10 +300,8 @@ export default class PromptComponent extends React.Component<Props, State> imple
 
             this.setState({ caretPosition: this.text.length });
         }
-
-        this.props.prompt.getSuggestions().then(suggestions =>
-            this.setState({ suggestions: suggestions, highlightedSuggestionIndex: 0 })
-        );
+        
+        this.resetSuggestions();
     }
 
     private showAutocomplete(): boolean {
