@@ -51,13 +51,15 @@ interface SuggestionProps {
 class SuggestionCompoonent extends React.Component<SuggestionProps, {}> {
     render() {
         const scoreStyle = window.DEBUG ? {} : { display: 'none' };
+        const suggestionStyle = { cursor: "pointer" }
+        
         let classes = [this.props.suggestion.type];
 
         if (this.props.isHighlighted) {
             classes.push('highlighted');
         }
 
-        return React.createElement('li', { className: classes.join(' '), onMouseOver: this.props.onSelectedSuggestion, onClick: this.props.onClickedSuggestion},
+        return React.createElement('li', { className: classes.join(' '), style: suggestionStyle, onMouseOver: this.props.onSelectedSuggestion, onClick: this.props.onClickedSuggestion},
             React.createElement('i', { className: 'icon' }),
             React.createElement('span', { className: 'value' }, this.props.suggestion.value),
             React.createElement('span', {
