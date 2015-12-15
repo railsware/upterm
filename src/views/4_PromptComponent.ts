@@ -180,8 +180,8 @@ export default class PromptComponent extends React.Component<Props, State> imple
             var autocomplete = React.createElement(AutocompleteComponent, {
                 suggestions: this.state.suggestions,
                 caretOffset: this.state.caretOffset,
-                onSelectedSuggestion: this.selectSuggestion.bind(this),
-                onClickedSuggestion: this.selectAutocomplete.bind(this),
+                onHoverSuggestion: this.selectSuggestion.bind(this),
+                onClickSuggestion: this.selectAutocomplete.bind(this),
                 highlightedIndex: this.state.highlightedSuggestionIndex,
                 ref: 'autocomplete'
             });
