@@ -6,14 +6,16 @@ type Offset = {top: number, left: number, bottom: number};
 interface AutocompleteProps {
     caretOffset: Offset;
     suggestions: Suggestion[];
+    onSelectedSuggestion: Function;
     highlightedIndex: number;
 }
 
-export default class AutocompleteComponent extends React.Component<AutocompleteProps, {}> {
+export default class AutocompleteComponent extends React.Component<AutocompleteProps, {}> { 
     render() {
         const suggestionViews = this.props.suggestions.map((suggestion, index) => {
             return React.createElement(SuggestionCompoonent, {
                 suggestion: suggestion,
+                onSelectedSuggestion: this.props.onSelectedSuggestion.bind(this, index),
                 key: index,
                 isHighlighted: index === this.props.highlightedIndex
             });
@@ -39,6 +41,7 @@ export default class AutocompleteComponent extends React.Component<AutocompleteP
 interface SuggestionProps {
     suggestion: Suggestion;
     key: number;
+    onSelectedSuggestion: Function;
     isHighlighted: boolean;
 }
 
@@ -51,7 +54,7 @@ class SuggestionCompoonent extends React.Component<SuggestionProps, {}> {
             classes.push('highlighted');
         }
 
-        return React.createElement('li', { className: classes.join(' ') },
+        return React.createElement('li', { className: classes.join(' '), onMouseOver: this.props.onSelectedSuggestion},
             React.createElement('i', { className: 'icon' }),
             React.createElement('span', { className: 'value' }, this.props.suggestion.value),
             React.createElement('span', {

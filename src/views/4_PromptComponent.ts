@@ -180,6 +180,7 @@ export default class PromptComponent extends React.Component<Props, State> imple
             var autocomplete = React.createElement(AutocompleteComponent, {
                 suggestions: this.state.suggestions,
                 caretOffset: this.state.caretOffset,
+                onSelectedSuggestion: this.selectSuggestion.bind(this),
                 highlightedIndex: this.state.highlightedSuggestionIndex,
                 ref: 'autocomplete'
             });
@@ -274,6 +275,7 @@ export default class PromptComponent extends React.Component<Props, State> imple
     
     private selectSuggestion(i: number): void {
         this.setState({highlightedSuggestionIndex: i});
+
     }
 
     private navigateAutocomplete(event: KeyboardEvent): void {
