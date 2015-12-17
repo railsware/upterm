@@ -28,7 +28,6 @@ var options = {
         config: $.typescript.createProject({
             typescript: require("typescript"),
             target: "ES6",
-            module: "commonjs",
             noImplicitAny: true,
             removeComments: true,
             preserveConstEnums: true,
