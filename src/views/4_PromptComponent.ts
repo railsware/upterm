@@ -111,7 +111,7 @@ export default class PromptComponent extends React.Component<Props, State> imple
 
         meaningfulKeysDownStream.filter(() => this.isAutocompleteShown())
             .filter(keys.tab)
-            .forEach(() => this.selectAutocomplete());
+            .forEach(() => this.applySuggestion());
 
         meaningfulKeysDownStream.filter(keys.deleteWord).forEach(() => this.deleteWord());
 
@@ -180,8 +180,8 @@ export default class PromptComponent extends React.Component<Props, State> imple
             var autocomplete = React.createElement(AutocompleteComponent, {
                 suggestions: this.state.suggestions,
                 caretOffset: this.state.caretOffset,
-                onHoverSuggestion: this.selectSuggestion.bind(this),
-                onClickSuggestion: this.selectAutocomplete.bind(this),
+                onSuggestionHover: this.highlightSuggestion.bind(this),
+                onSuggestionClick: this.applySuggestion.bind(this),
                 highlightedIndex: this.state.highlightedSuggestionIndex,
                 ref: 'autocomplete'
             });
@@ -274,8 +274,8 @@ export default class PromptComponent extends React.Component<Props, State> imple
         }
     }
     
-    private selectSuggestion(i: number): void {
-        this.setState({highlightedSuggestionIndex: i});
+    private highlightSuggestion(index: number): void {
+        this.setState({highlightedSuggestionIndex: index});
     }
 
     private navigateAutocomplete(event: KeyboardEvent): void {
@@ -285,10 +285,10 @@ export default class PromptComponent extends React.Component<Props, State> imple
             index = Math.min(this.state.suggestions.length - 1, this.state.highlightedSuggestionIndex + 1)
         }
 
-        this.selectSuggestion(index)
+        this.highlightSuggestion(index)
     }
 
-    private selectAutocomplete(): void {
+    private applySuggestion(): void {
         var state = this.state;
         const suggestion = state.suggestions[state.highlightedSuggestionIndex];
 
