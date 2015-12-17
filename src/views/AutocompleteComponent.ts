@@ -6,14 +6,18 @@ type Offset = {top: number, left: number, bottom: number};
 interface AutocompleteProps {
     caretOffset: Offset;
     suggestions: Suggestion[];
+    onHoverSuggestion: Function;
+    onClickSuggestion: Function;
     highlightedIndex: number;
 }
 
-export default class AutocompleteComponent extends React.Component<AutocompleteProps, {}> {
+export default class AutocompleteComponent extends React.Component<AutocompleteProps, {}> { 
     render() {
         const suggestionViews = this.props.suggestions.map((suggestion, index) => {
             return React.createElement(SuggestionCompoonent, {
                 suggestion: suggestion,
+                onHoverSuggestion: this.props.onHoverSuggestion.bind(this, index),
+                onClickSuggestion: this.props.onClickSuggestion,
                 key: index,
                 isHighlighted: index === this.props.highlightedIndex
             });
@@ -39,19 +43,23 @@ export default class AutocompleteComponent extends React.Component<AutocompleteP
 interface SuggestionProps {
     suggestion: Suggestion;
     key: number;
+    onHoverSuggestion: Function;
+    onClickSuggestion: Function
     isHighlighted: boolean;
 }
 
 class SuggestionCompoonent extends React.Component<SuggestionProps, {}> {
     render() {
         const scoreStyle = window.DEBUG ? {} : { display: 'none' };
+        const suggestionStyle = { cursor: "pointer" }
+        
         let classes = [this.props.suggestion.type];
 
         if (this.props.isHighlighted) {
             classes.push('highlighted');
         }
 
-        return React.createElement('li', { className: classes.join(' ') },
+        return React.createElement('li', { className: classes.join(' '), style: suggestionStyle, onMouseOver: this.props.onHoverSuggestion, onClick: this.props.onClickSuggestion},
             React.createElement('i', { className: 'icon' }),
             React.createElement('span', { className: 'value' }, this.props.suggestion.value),
             React.createElement('span', {
