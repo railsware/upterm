@@ -1,18 +1,28 @@
 import Terminal from "./Terminal";
 import * as _ from 'lodash';
+import * as events from 'events';
 const IPC = require('ipc');
 
-export default class Application {
+export default class Application extends events.EventEmitter {
+    private static _instance: Application;
     private _terminals: Terminal[] = [];
     private _contentSize: Size;
     private _charSize: Size;
     private _activeTerminalIndex: number;
 
-    constructor(charSize: Size, windowSize: Size) {
-        this._charSize = charSize;
-        this.contentSize = windowSize;
+    constructor() {
+        super();
 
-        this.addTerminal();
+        if (Application._instance) {
+            throw new Error('Use Application.instance instead.');
+        }
+    }
+
+    static get instance(): Application {
+        if (!Application._instance) {
+            Application._instance = new Application();
+        }
+        return Application._instance;
     }
 
     get terminals() {
@@ -26,12 +36,14 @@ export default class Application {
     addTerminal(): Terminal {
         let terminal = new Terminal(this.contentDimensions);
         this.terminals.push(terminal);
+        this.emit('terminal');
 
         return terminal;
     }
 
     removeTerminal(terminal: Terminal): Application {
         _.pull(this.terminals, terminal);
+        this.emit('terminal');
 
         if (_.isEmpty(this.terminals)) {
             IPC.send('quit');
@@ -42,6 +54,7 @@ export default class Application {
 
     activateTerminal(terminal: Terminal): void {
         this._activeTerminalIndex = this.terminals.indexOf(terminal);
+        this.emit('terminal');
     }
 
     set contentSize(newSize) {
@@ -54,8 +67,12 @@ export default class Application {
         return this._contentSize;
     }
 
-    private get charSize() {
+    get charSize() {
         return this._charSize
+    }
+
+    set charSize(size: Size) {
+        this._charSize = size;
     }
 
     get contentDimensions(): Dimensions {
