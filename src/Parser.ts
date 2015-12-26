@@ -1,4 +1,4 @@
-import Invocation from "./Invocation";
+import Job from "./Job";
 import Char from "./Char";
 var ANSIParser: AnsiParserConstructor = require('node-ansiparser');
 
@@ -52,8 +52,8 @@ export default class Parser {
     private parser: AnsiParser;
     private buffer: Buffer;
 
-    constructor(private invocation: Invocation) {
-        this.buffer = this.invocation.getBuffer();
+    constructor(private job: Job) {
+        this.buffer = this.job.getBuffer();
         this.parser = this.initializeAnsiParser();
     }
 
@@ -76,7 +76,7 @@ export default class Parser {
                 Utils.error('osc', s);
             },
             inst_x: (flag: string) => {
-                var char = Char.flyweight(flag, this.invocation.getBuffer().getAttributes());
+                var char = Char.flyweight(flag, this.job.getBuffer().getAttributes());
                 var name = e.CharCode[char.getCharCode()];
 
                 Utils.print((name ? e.LogLevel.Log : e.LogLevel.Error), flag.split('').map((_, index) => flag.charCodeAt(index)));
@@ -144,7 +144,7 @@ export default class Parser {
                 short = 'DEC Screen Alignment Test (DECALN).';
                 url = "http://www.vt100.net/docs/vt510-rm/DECALN";
 
-                var dimensions = this.invocation.getDimensions();
+                var dimensions = this.job.getDimensions();
 
                 for (var i = 0; i !== dimensions.rows; ++i) {
                     this.buffer.moveCursorAbsolute({ vertical: i, horizontal: 0 });
@@ -218,11 +218,11 @@ export default class Parser {
                 if (isSet) {
                     description = "132 Column Mode (DECCOLM).";
 
-                    this.invocation.setDimensions({ columns: 132, rows: this.invocation.getDimensions().rows });
+                    this.job.setDimensions({ columns: 132, rows: this.job.getDimensions().rows });
                 } else {
                     description = "80 Column Mode (DECCOLM).";
 
-                    this.invocation.setDimensions({ columns: 80, rows: this.invocation.getDimensions().rows });
+                    this.job.setDimensions({ columns: 80, rows: this.job.getDimensions().rows });
                 }
                 this.buffer.clear();
                 // TODO
@@ -236,7 +236,7 @@ export default class Parser {
                 description = "Origin Mode (DECOM).";
                 url = "http://www.vt100.net/docs/vt510-rm/DECOM";
 
-                this.invocation.getBuffer().originMode = isSet;
+                this.job.getBuffer().originMode = isSet;
                 break;
             case 12:
                 if (isSet) {
@@ -389,7 +389,7 @@ export default class Parser {
                 }
                 break;
             case 'c':
-                this.invocation.write('\x1b>1;2;');
+                this.job.write('\x1b>1;2;');
                 break;
             case 'K':
                 url = "http://www.vt100.net/docs/vt510-rm/DECSEL";

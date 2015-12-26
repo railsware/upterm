@@ -1,7 +1,6 @@
 import Application from '../Application';
-import TerminalComponent from './TerminalComponent';
+import TerminalComponent from './2_TerminalComponent';
 import * as React from 'react';
-import * as i from '../Interfaces';
 import * as _ from 'lodash';
 import Terminal from "../Terminal";
 const IPC = require('ipc');
@@ -54,13 +53,35 @@ export default class ApplicationComponent extends React.Component<{}, State> {
 
             event.stopPropagation();
         }
+
+        // Cmd+J.
+        if (event.metaKey && event.keyCode === 74) {
+            let activeTerminalIndex = this.application.terminals.indexOf(this.application.activeTerminal);
+            if (activeTerminalIndex !== this.application.terminals.length - 1) {
+                this.application.activateTerminal(this.application.terminals[activeTerminalIndex + 1]);
+                this.setState({ terminals: this.application.terminals });
+
+                event.stopPropagation();
+            }
+        }
+
+        // Cmd+K.
+        if (event.metaKey && event.keyCode === 75) {
+            let activeTerminalIndex = this.application.terminals.indexOf(this.application.activeTerminal);
+            if (activeTerminalIndex) {
+                this.application.activateTerminal(this.application.terminals[activeTerminalIndex - 1]);
+                this.setState({ terminals: this.application.terminals });
+
+                event.stopPropagation();
+            }
+        }
     }
 
     render() {
         let terminals = this.state.terminals.map(
-            (terminal, index) => React.createElement(TerminalComponent, {
+            terminal => React.createElement(TerminalComponent, {
                 terminal: terminal,
-                key: index,
+                key: terminal.id,
                 isActive: terminal === this.application.activeTerminal,
                 activateTerminal: (terminal: Terminal) => {
                     this.application.activateTerminal(terminal);
@@ -75,14 +96,14 @@ export default class ApplicationComponent extends React.Component<{}, State> {
         }, terminals)
     }
 
-    private get contentSize(): i.Size {
+    private get contentSize(): Size {
         return {
             width: window.innerWidth,
             height: window.innerHeight,
         }
     }
 
-    private get charSize(): i.Size {
+    private get charSize(): Size {
         var letter = document.getElementById('sizes-calculation');
 
         return {

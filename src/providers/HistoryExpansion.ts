@@ -7,7 +7,7 @@ import History from '../History';
 import {isCompleteHistoryCommand, historyReplacement} from '../CommandExpander';
 
 export default class HistoryExpansion implements i.AutocompletionProvider {
-    suggestions: i.Suggestion[] = [];
+    suggestions: Suggestion[] = [];
 
     private static descriptions: _.Dictionary<string> = {
         '!!': 'The previous command',

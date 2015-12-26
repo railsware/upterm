@@ -1,21 +1,23 @@
 import * as React from 'react';
-import * as i from '../Interfaces';
 import * as _ from 'lodash';
-const ReactDOM = require("react-dom");
 
 type Offset = {top: number, left: number, bottom: number};
 
 interface AutocompleteProps {
     caretOffset: Offset;
-    suggestions: i.Suggestion[];
+    suggestions: Suggestion[];
+    onSuggestionHover: (index: number) => void;
+    onSuggestionClick: () => void;
     highlightedIndex: number;
 }
 
-export default class AutocompleteComponent extends React.Component<AutocompleteProps, {}> {
+export default class AutocompleteComponent extends React.Component<AutocompleteProps, {}> { 
     render() {
         const suggestionViews = this.props.suggestions.map((suggestion, index) => {
-            return React.createElement(Suggestion, {
+            return React.createElement(SuggestionComponent, {
                 suggestion: suggestion,
+                onHover: this.props.onSuggestionHover.bind(this, index),
+                onClick: this.props.onSuggestionClick,
                 key: index,
                 isHighlighted: index === this.props.highlightedIndex
             });
@@ -39,34 +41,29 @@ export default class AutocompleteComponent extends React.Component<AutocompleteP
 }
 
 interface SuggestionProps {
-    suggestion: i.Suggestion;
+    suggestion: Suggestion;
     key: number;
+    onHover: (index: number) => void;
+    onClick: () => void;
     isHighlighted: boolean;
 }
 
-class Suggestion extends React.Component<SuggestionProps, {}> {
+class SuggestionComponent extends React.Component<SuggestionProps, {}> {
     render() {
-        const scoreStyle = window.DEBUG ? {} : { display: 'none' };
         let classes = [this.props.suggestion.type];
 
         if (this.props.isHighlighted) {
             classes.push('highlighted');
         }
 
-        return React.createElement('li', { className: classes.join(' ') },
+        return React.createElement('li', { className: classes.join(' '), style: { cursor: "pointer" }, onMouseOver: this.props.onHover, onClick: this.props.onClick},
             React.createElement('i', { className: 'icon' }),
             React.createElement('span', { className: 'value' }, this.props.suggestion.value),
             React.createElement('span', {
-                style: scoreStyle,
+                style: window.DEBUG ? {} : { display: 'none' },
                 className: 'score'
             }, this.props.suggestion.score.toFixed(2)),
             React.createElement('span', { className: 'synopsis' }, this.props.suggestion.synopsis)
         );
-    }
-
-    componentDidUpdate() {
-        if (this.props.isHighlighted) {
-            ReactDOM.findDOMNode(this).scrollIntoView(false);
-        }
     }
 }

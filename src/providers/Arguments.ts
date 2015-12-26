@@ -3,15 +3,22 @@ import * as i from '../Interfaces';
 import * as _ from 'lodash';
 import Prompt from "../Prompt";
 import {parser} from "../CommandExpander";
+import Autocompletion from "../Autocompletion";
 var filter: any = require('fuzzaldrin').filter;
 
 export default class Command implements i.AutocompletionProvider {
-    suggestions: i.Suggestion[] = [];
+    suggestions: Suggestion[] = [];
 
     async getSuggestions(prompt: Prompt) {
+        if (prompt.expanded.length < 2) {
+            return [];
+        }
+
         try {
             parser.yy.parseError = (err: any, hash: any) => {
-                var filtered = _._(hash.expected).filter((value: string) => _.include(value, hash.token))
+                const token = hash.token === 'EOF' ? "'" : `'${hash.token}`;
+
+                var filtered = _._(hash.expected).filter((value: string) => _.startsWith(value, token))
                     .map((value: string) => /^'(.*)'$/.exec(value)[1])
                     .value();
 
@@ -29,7 +36,7 @@ export default class Command implements i.AutocompletionProvider {
             parser.parse(prompt.expanded.join(' '));
             return [];
         } catch (exception) {
-            return filter(this.suggestions, prompt.lastArgument, { key: 'value', maxResults: 30 });
+            return filter(this.suggestions, prompt.lastArgument, { key: 'value', maxResults: Autocompletion.limit });
         }
     }
 }

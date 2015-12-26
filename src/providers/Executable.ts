@@ -3,6 +3,7 @@ import * as i from '../Interfaces';
 import * as _ from 'lodash'
 import * as Path from 'path'
 import Prompt from "../Prompt";
+import Autocompletion from "../Autocompletion";
 var score: (i: string, m: string) => number = require('fuzzaldrin').score;
 
 var descriptions: {[indexer: string]: string} = {
@@ -44,7 +45,7 @@ var descriptions: {[indexer: string]: string} = {
     du: 'Estimate file space usage',
     echo: 'Write arguments to standard output',
     ed: 'The standard text editor',
-    env: 'Set the environment for command invocation',
+    env: 'Set the environment for command job',
     ex: 'Text editor',
     expand: 'Convert tabs to spaces',
     expr: 'Evaluate arguments as an expression',
@@ -189,6 +190,6 @@ export default class Executable implements i.AutocompletionProvider {
             };
         });
 
-        return _._(all).sortBy('score').reverse().take(10).value();
+        return _._(all).sortBy('score').reverse().take(Autocompletion.limit).value();
     }
 }

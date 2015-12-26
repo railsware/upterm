@@ -1,5 +1,4 @@
 import Terminal from "./Terminal";
-import * as i from "./Interfaces";
 import * as _ from 'lodash';
 import * as events from 'events';
 const IPC = require('ipc');
@@ -7,8 +6,8 @@ const IPC = require('ipc');
 export default class Application extends events.EventEmitter {
     private static _instance: Application;
     private _terminals: Terminal[] = [];
-    private _contentSize: i.Size;
-    private _charSize: i.Size;
+    private _contentSize: Size;
+    private _charSize: Size;
     private _activeTerminalIndex: number;
 
     constructor() {
@@ -64,7 +63,7 @@ export default class Application extends events.EventEmitter {
         this.terminals.forEach((terminal: Terminal) => terminal.dimensions = this.contentDimensions)
     }
 
-    get contentSize(): i.Size {
+    get contentSize(): Size {
         return this._contentSize;
     }
 
@@ -72,11 +71,11 @@ export default class Application extends events.EventEmitter {
         return this._charSize
     }
 
-    set charSize(size: i.Size) {
+    set charSize(size: Size) {
         this._charSize = size;
     }
 
-    get contentDimensions(): i.Dimensions {
+    get contentDimensions(): Dimensions {
         return {
             columns: Math.floor(this.contentSize.width / this.charSize.width),
             rows: Math.floor(this.contentSize.height / this.charSize.height),

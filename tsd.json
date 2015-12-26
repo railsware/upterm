@@ -9,13 +9,13 @@
       "commit": "62eedc3121a5e28c50473d2e4a9cefbcb9c3957f"
     },
     "node/node.d.ts": {
-      "commit": "62eedc3121a5e28c50473d2e4a9cefbcb9c3957f"
+      "commit": "c2c22c3b953fe9730d4802022d5e0d18d083909e"
     },
     "jquery/jquery.d.ts": {
-      "commit": "62eedc3121a5e28c50473d2e4a9cefbcb9c3957f"
+      "commit": "c2c22c3b953fe9730d4802022d5e0d18d083909e"
     },
     "lodash/lodash.d.ts": {
-      "commit": "62eedc3121a5e28c50473d2e4a9cefbcb9c3957f"
+      "commit": "c2c22c3b953fe9730d4802022d5e0d18d083909e"
     }
   }
 }

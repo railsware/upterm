@@ -7,6 +7,7 @@ import Char from "../Char";
 import Cursor from "../Cursor";
 import {groupWhen} from "../Utils";
 import {List} from 'immutable';
+import {scrollToBottom} from './ViewUtils';
 
 interface Props {
     buffer: Buffer
@@ -20,6 +21,12 @@ export default class BufferComponent extends React.Component<Props, {}> {
                 key: index
             }))
         );
+    }
+
+    componentDidUpdate() {
+        if (this.props.buffer.activeBuffer === e.Buffer.Standard) {
+            scrollToBottom();
+        }
     }
 }
 
@@ -67,7 +74,7 @@ class CharGroupComponent extends React.Component<CharGroupProps, {}> {
 
     private getHTMLAttributes(attributes: i.Attributes): Object {
         var htmlAttributes: _.Dictionary<any> = {};
-        _.each(attributes, (value, key) => {
+        _.each(<_.Dictionary<any>>attributes, (value, key) => {
             htmlAttributes[`data-${key}`] = value;
         });
 

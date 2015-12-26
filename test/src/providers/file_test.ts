@@ -6,7 +6,7 @@ import chai = require('chai');
 import File = require('../../../src/providers/File');
 import ParsableString = require('../../../src/CommandExpander');
 import {Suggestion} from "../../../src/Interfaces";
-import Invocation = require("../../../src/Invocation");
+import Invocation = require("../../../src/Job");
 var expect = chai.expect;
 
 chai.use(require('chai-things'));

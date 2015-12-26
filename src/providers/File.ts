@@ -3,6 +3,7 @@ import * as _ from 'lodash';
 import Utils from '../Utils';
 import * as Path from 'path';
 import Prompt from "../Prompt";
+import Autocompletion from "../Autocompletion";
 var score: (i: string, m: string) => number = require('fuzzaldrin').score;
 
 export default class File implements i.AutocompletionProvider {
@@ -23,21 +24,20 @@ export default class File implements i.AutocompletionProvider {
 
         let fileInfos = await Utils.stats(searchDirectory);
 
-        var all = _.map(fileInfos.filter(File.filter(prompt.commandName)), (fileInfo: i.FileInfo): i.Suggestion => {
-
+        var all = _.map(fileInfos.filter(File.filter(prompt.commandName)), (fileInfo: i.FileInfo): Suggestion => {
+            var description = `Mode: ${'0' + (fileInfo.stat.mode & 511).toString(8)}`;
             if (fileInfo.stat.isDirectory()) {
                 var name: string = Utils.normalizeDir(fileInfo.name);
-                var synopsis = '';
             } else {
                 name = fileInfo.name;
-                synopsis = Utils.humanFileSize(fileInfo.stat.size, true);
+                description += `; Size: ${Utils.humanFileSize(fileInfo.stat.size, true)}`;
             }
 
-            var suggestion: i.Suggestion = {
+            var suggestion: Suggestion = {
                 value: name,
                 score: 0,
-                synopsis: synopsis,
-                description: '',
+                synopsis: '',
+                description: description,
                 type: 'file',
                 partial: fileInfo.stat.isDirectory()
             };
@@ -53,7 +53,7 @@ export default class File implements i.AutocompletionProvider {
             var prepared = _._(all).each(suggestion => suggestion.score = score(suggestion.value, baseName))
                 .sortBy('score').reverse().take(10).value();
         } else {
-            prepared = _._(all).each(suggestion => suggestion.score = 1).take(30).value();
+            prepared = _._(all).each(suggestion => suggestion.score = 1).take(Autocompletion.limit).value();
         }
 
         return prepared;

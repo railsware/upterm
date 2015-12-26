@@ -1,29 +1,26 @@
 import * as pty from 'ptyw.js';
 import * as child_process from 'child_process';
 import * as _ from 'lodash';
+import * as i from './Interfaces';
+import * as e from './Enums';
 import * as React from 'react';
-import * as events from 'events';
 import Terminal from "./Terminal";
 import Parser from './Parser';
 import Prompt from './Prompt';
 import Buffer from './Buffer';
 import Command from './Command';
 import History from './History';
-import * as i from './Interfaces';
-import * as e from './Enums';
-//TODO: Make them attributes;
-import {list} from './decorators/List';
-import DecoratorsBase from './decorators/Base';
 import Utils from './Utils';
 import CommandExecutor from "./CommandExecutor";
 import PTY from "./PTY";
+import PluginManager from "./PluginManager";
+import EmitterWithUniqueID from "./EmitterWithUniqueID";
 
-export default class Invocation extends events.EventEmitter {
+export default class Job extends EmitterWithUniqueID {
     public command: PTY;
     public parser: Parser;
     private prompt: Prompt;
     private buffer: Buffer;
-    public id: string;
     public status: e.Status = e.Status.NotStarted;
 
     constructor(private _terminal: Terminal) {
@@ -35,7 +32,6 @@ export default class Invocation extends events.EventEmitter {
         this.buffer = new Buffer(this.dimensions);
         this.buffer.on('data', _.throttle(() => this.emit('data'), 1000 / 60));
         this.parser = new Parser(this);
-        this.id = `invocation-${new Date().getTime()}`
     }
 
     execute(): void {
@@ -61,12 +57,12 @@ export default class Invocation extends events.EventEmitter {
     }
 
     // Writes to the process' stdin.
-    write(input: string|React.KeyboardEvent) {
+    write(input: string|KeyboardEvent) {
         if (typeof input === 'string') {
             var text = <string>input
         } else {
-            var event = <React.KeyboardEvent>input;
-            var identifier: string = (<any>event.nativeEvent).keyIdentifier;
+            var event = <KeyboardEvent>input;
+            var identifier: string = (<any>input).nativeEvent.keyIdentifier;
 
             if (identifier.startsWith('U+')) {
                 var code = parseInt(identifier.substring(2), 16);
@@ -99,7 +95,7 @@ export default class Invocation extends events.EventEmitter {
         return this.terminal.currentDirectory;
     }
 
-    get dimensions(): i.Dimensions {
+    get dimensions(): Dimensions {
         return this.terminal.dimensions;
     }
 
@@ -107,11 +103,11 @@ export default class Invocation extends events.EventEmitter {
         return !this.buffer.isEmpty();
     }
 
-    getDimensions(): i.Dimensions {
+    getDimensions(): Dimensions {
         return this.terminal.dimensions;
     }
 
-    setDimensions(dimensions: i.Dimensions) {
+    setDimensions(dimensions: Dimensions) {
         this.terminal.dimensions = dimensions;
         this.winch();
     }
@@ -131,27 +127,21 @@ export default class Invocation extends events.EventEmitter {
     }
 
     canBeDecorated(): boolean {
-        for (var Decorator of list) {
-            var decorator = new Decorator(this);
-
-            if (this.status === e.Status.InProgress && !decorator.shouldDecorateRunningPrograms()) {
-                continue;
-            }
-
-            if (decorator.isApplicable()) {
-                return true;
-            }
-        }
-        return false;
+        return !!this.firstApplicableDecorator;
     }
 
-    decorate(): any {
-        for (var Decorator of list) {
-            var decorator: DecoratorsBase = new Decorator(this);
-            if (decorator.isApplicable()) {
-                return decorator.decorate();
-            }
-        }
+    decorate(): React.ReactElement<any> {
+        return this.firstApplicableDecorator.decorate(this);
+    }
+
+    private get decorators(): i.OutputDecorator[] {
+        return PluginManager.outputDecorators.filter(decorator =>
+            this.status === e.Status.InProgress ? decorator.shouldDecorateRunningPrograms : true
+        )
+    }
+
+    private get firstApplicableDecorator(): i.OutputDecorator {
+        return _.find(this.decorators, decorator => decorator.isApplicable(this))
     }
 
     getBuffer(): Buffer {

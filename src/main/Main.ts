@@ -1,9 +1,13 @@
 const app = require('app');
 const BrowserWindow = require('browser-window');
-const IPC = require('ipc');
+const IPC = require('electron').ipcMain;
 let menu = require('./Menu');
+let fixPath = require('fix-path');
 
 let browserWindow: any = null;
+
+// Fix the $PATH on OS X
+fixPath();
 
 app.on('open-file', (event: Event, file: string) => getMainWindow().webContents.send('change-working-directory', file))
     .on('ready', getMainWindow)
@@ -31,7 +35,7 @@ function getMainWindow() {
             show: false
         });
 
-        browserWindow.loadUrl('file://' + __dirname + '/../views/index.html');
+        browserWindow.loadURL('file://' + __dirname + '/../views/index.html');
         menu.setMenu(app, browserWindow);
 
         browserWindow.on('closed', (): void => browserWindow = null);

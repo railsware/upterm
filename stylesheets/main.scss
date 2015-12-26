@@ -78,14 +78,13 @@ body, pre {
   margin: 0;
 }
 
-.invocations {
+.jobs {
   margin-bottom: 40px;
 }
 
 .prompt-wrapper {
   position: relative;
   padding-top: $prompt-padding;
-  width: 100%;
   background-color: map-get($colors, 'bright-black');
 
   $decoration-width: 30px;
@@ -216,12 +215,14 @@ body, pre {
   }
 }
 
-.invocation {
-  //margin-bottom: $font-size * 2;
-
+.job {
+  .output.alternate {
+    zoom: 0.1;
+  }
   &.in-progress {
     .output.alternate {
       position: fixed;
+      zoom: 1;
       top: 0;
       bottom: 0;
       left: 0;
@@ -278,7 +279,7 @@ body, pre {
     opacity: 0.4;
     border: 1px solid map-get($colors, 'white');
 
-    & .invocations {
+    & .jobs {
       pointer-events: none;
     }
   }

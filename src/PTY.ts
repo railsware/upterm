@@ -1,6 +1,5 @@
 import * as ChildProcess from "child_process";
-import * as Invocation from "./Invocation";
-import * as i from "./Interfaces";
+import * as Job from "./Job";
 const ptyInternalPath = require.resolve('./PTYInternal');
 
 interface Message {
@@ -9,14 +8,14 @@ interface Message {
 }
 
 export default class PTY {
-    private process: NodeJS.Process;
+    private process: ChildProcess.ChildProcess;
 
     // TODO: write proper signatures.
     // TODO: use generators.
     // TODO: terminate. https://github.com/atom/atom/blob/v1.0.15/src/task.coffee#L151
-    constructor(command: string, args: string[], cwd: string, dimensions: i.Dimensions, dataHandler: Function, exitHandler: Function) {
-        this.process = (<any>ChildProcess).fork(ptyInternalPath,
-            [command, dimensions.columns, dimensions.rows, ...args],
+    constructor(command: string, args: string[], cwd: string, dimensions: Dimensions, dataHandler: Function, exitHandler: Function) {
+        this.process = ChildProcess.fork(ptyInternalPath,
+            [command, dimensions.columns.toString(), dimensions.rows.toString(), ...args],
             { env: process.env, cwd: cwd }
         );
 
@@ -35,7 +34,7 @@ export default class PTY {
         this.process.send({ input: data });
     }
 
-    set dimensions(dimensions: i.Dimensions) {
+    set dimensions(dimensions: Dimensions) {
         this.process.send({ resize: [dimensions.columns, dimensions.rows] });
     }
 

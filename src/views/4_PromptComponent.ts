@@ -5,11 +5,9 @@ import AutocompleteComponent from './AutocompleteComponent';
 import DecorationToggleComponent from './DecorationToggleComponent';
 import History from '../History';
 import {stopBubblingUp, scrollToBottom} from './ViewUtils';
-import Invocation from "../Invocation";
-import {Suggestion} from "../Interfaces";
-import InvocationComponent from "./InvocationComponent";
+import Job from "../Job";
+import JobComponent from "./3_JobComponent";
 import PromptModel from "../Prompt";
-import KeyboardEvent = __React.KeyboardEvent;
 const Rx = require('rx');
 const ReactDOM = require("react-dom");
 
@@ -46,15 +44,6 @@ function isCommandKey(event: KeyboardEvent) {
     return _.contains([16, 17, 18], event.keyCode) || event.ctrlKey || event.altKey || event.metaKey;
 }
 
-export function isMetaKey(event: KeyboardEvent) {
-    return event.metaKey || _.some([event.key, event.keyIdentifier],
-            key => _.includes(['Shift', 'Alt', 'Ctrl'], key));
-}
-
-function isShellHandledKey(event: KeyboardEvent) {
-    return keys.interrupt(event);
-}
-
 const isDefinedKey = _.memoize((event: React.KeyboardEvent) => _.some(_.values(keys), (matcher: (event: React.KeyboardEvent) => boolean) => matcher(event)),
     (event: React.KeyboardEvent) => [event.ctrlKey, event.keyCode]);
 
@@ -83,8 +72,7 @@ function createEventHandler(): any {
 
 interface Props {
     status: e.Status;
-    invocation: Invocation;
-    invocationView: InvocationComponent;
+    jobView: JobComponent;
     prompt: PromptModel;
     hasLocusOfAttention: boolean;
 }
@@ -99,21 +87,16 @@ interface State {
 
 
 // TODO: Make sure we only update the view when the model changes.
-export default class PromptComponent extends React.Component<Props, State> {
+export default class PromptComponent extends React.Component<Props, State> implements KeyDownReceiver {
     private handlers: {
         onKeyDown: Function;
     };
 
     constructor(props: Props) {
         super(props);
-        var keysDownStream = createEventHandler();
-        var [inProgressKeys, promptKeys] = keysDownStream.partition(() => this.props.status === e.Status.InProgress);
 
-        inProgressKeys
-            .filter(_.negate(isMetaKey))
-            .filter(_.negate(isShellHandledKey))
-            .map(stopBubblingUp)
-            .forEach((event: React.KeyboardEvent) => this.props.invocation.write(event));
+        var keysDownStream = createEventHandler();
+        var promptKeys = keysDownStream.filter(() => this.props.status !== e.Status.InProgress);
 
         var meaningfulKeysDownStream = promptKeys.filter(isDefinedKey).map(stopBubblingUp);
         var [navigateAutocompleteStream, navigateHistoryStream] = meaningfulKeysDownStream
@@ -128,10 +111,9 @@ export default class PromptComponent extends React.Component<Props, State> {
 
         meaningfulKeysDownStream.filter(() => this.isAutocompleteShown())
             .filter(keys.tab)
-            .forEach(() => this.selectAutocomplete());
+            .forEach(() => this.applySuggestion());
 
         meaningfulKeysDownStream.filter(keys.deleteWord).forEach(() => this.deleteWord());
-        inProgressKeys.filter(keys.interrupt).forEach(() => this.props.invocation.interrupt());
 
         navigateHistoryStream.forEach((event: KeyboardEvent) => this.navigateHistory(event));
         navigateAutocompleteStream.forEach((event: KeyboardEvent) => this.navigateAutocomplete(event));
@@ -148,6 +130,15 @@ export default class PromptComponent extends React.Component<Props, State> {
         this.handlers = {
             onKeyDown: keysDownStream
         };
+
+        // FIXME: find a better design to propagate events.
+        if (this.props.hasLocusOfAttention) {
+            window.promptUnderAttention = this;
+        }
+    }
+
+    handleKeyDown(event: KeyboardEvent): void {
+        this.commandNode.focus();
     }
 
     componentDidMount() {
@@ -172,10 +163,13 @@ export default class PromptComponent extends React.Component<Props, State> {
             this.setState({ caretOffset: $(this.commandNode).caret('offset') });
         }
 
-        scrollToBottom();
-
         if (!prevProps.hasLocusOfAttention && this.props.hasLocusOfAttention) {
             this.commandNode.focus()
+        }
+
+        // FIXME: find a better design to propagate events.
+        if (this.props.hasLocusOfAttention) {
+            window.promptUnderAttention = this;
         }
     }
 
@@ -186,16 +180,18 @@ export default class PromptComponent extends React.Component<Props, State> {
             var autocomplete = React.createElement(AutocompleteComponent, {
                 suggestions: this.state.suggestions,
                 caretOffset: this.state.caretOffset,
+                onSuggestionHover: this.highlightSuggestion.bind(this),
+                onSuggestionClick: this.applySuggestion.bind(this),
                 highlightedIndex: this.state.highlightedSuggestionIndex,
                 ref: 'autocomplete'
             });
         }
 
-        if (this.props.invocationView.state.canBeDecorated) {
-            var decorationToggle = React.createElement(DecorationToggleComponent, { invocation: this.props.invocationView });
+        if (this.props.jobView.state.canBeDecorated) {
+            var decorationToggle = React.createElement(DecorationToggleComponent, { job: this.props.jobView });
         }
 
-        if (this.props.invocation.hasOutput()) {
+        if (this.props.status !== e.Status.NotStarted) {
             var scrollToTop = React.createElement(
                 'a',
                 { href: '#', className: 'scroll-to-top', onClick: this.handleScrollToTop.bind(this) },
@@ -219,7 +215,7 @@ export default class PromptComponent extends React.Component<Props, State> {
                 onKeyPress: this.handleKeyPress.bind(this),
                 type: 'text',
                 ref: 'command',
-                contentEditable: this.props.status === e.Status.NotStarted
+                contentEditable: this.props.status === e.Status.NotStarted || this.props.status === e.Status.InProgress
             }),
             autocomplete,
             React.createElement(
@@ -277,6 +273,10 @@ export default class PromptComponent extends React.Component<Props, State> {
             this.replaceText(History.getNext());
         }
     }
+    
+    private highlightSuggestion(index: number): void {
+        this.setState({highlightedSuggestionIndex: index});
+    }
 
     private navigateAutocomplete(event: KeyboardEvent): void {
         if (keys.goUp(event)) {
@@ -285,10 +285,10 @@ export default class PromptComponent extends React.Component<Props, State> {
             index = Math.min(this.state.suggestions.length - 1, this.state.highlightedSuggestionIndex + 1)
         }
 
-        this.setState({ highlightedSuggestionIndex: index });
+        this.highlightSuggestion(index)
     }
 
-    private selectAutocomplete(): void {
+    private applySuggestion(): void {
         var state = this.state;
         const suggestion = state.suggestions[state.highlightedSuggestionIndex];
 
@@ -333,7 +333,7 @@ export default class PromptComponent extends React.Component<Props, State> {
     private handleScrollToTop(event: Event) {
         stopBubblingUp(event);
 
-        const offset = $(ReactDOM.findDOMNode(this.props.invocationView)).offset().top - 10;
+        const offset = $(ReactDOM.findDOMNode(this.props.jobView)).offset().top - 10;
         $('html, body').animate({ scrollTop: offset }, 300);
     }
 
