@@ -11,6 +11,9 @@ import {executeCommand} from "../PTY";
 const GIT_WATCHER_EVENT_NAME = 'git-data-changed';
 
 class GitWatcher extends events.EventEmitter {
+    GIT_HEAD_FILE_NAME = Path.join('.git', 'HEAD');
+    GIT_HEADS_DIRECTORY_NAME = Path.join('.git', 'refs', 'heads');
+
     gitBranchWatcher: fs.FSWatcher;
     gitLocked: boolean = false;
     gitDirectory: string;
@@ -27,21 +30,19 @@ class GitWatcher extends events.EventEmitter {
     }
 
     watch() {
-        const gitHeadFileName = Path.join('.git', 'HEAD');
-        const gitHeadsDirectoryName = Path.join('.git', 'refs', 'heads');
-
         Utils.ifExists(this.gitDirectory,
             () => {
                 this.updateGitData();
                 this.gitBranchWatcher = fs.watch(this.directory, { recursive: true },
                     (type, fileName) => {
-                        if (!this.gitLocked && (!fileName.startsWith('.git') || fileName == gitHeadFileName || fileName.startsWith(gitHeadsDirectoryName))) {
+                        if (!this.gitLocked && (!fileName.startsWith('.git') || fileName == this.GIT_HEAD_FILE_NAME || fileName.startsWith(this.GIT_HEADS_DIRECTORY_NAME))) {
                             this.updateGitData()
                         }
                     }
                 )
             },
-            () => this.emit(GIT_WATCHER_EVENT_NAME, { isRepository: false }));
+            () => this.emit(GIT_WATCHER_EVENT_NAME, { isRepository: false })
+        );
     }
 
     private updateGitData() {
@@ -69,7 +70,7 @@ interface WatchesValue {
     watcher: GitWatcher;
 }
 
-class Manager implements EnvironmentObserverPlugin {
+class WatchManager implements EnvironmentObserverPlugin {
     directoryToDetails: Map<string, WatchesValue> = new Map();
 
     currentWorkingDirectoryWillChange(terminal: Terminal, directory: string) {
@@ -109,4 +110,4 @@ class Manager implements EnvironmentObserverPlugin {
     }
 }
 
-PluginManager.registerEnvironmentObserver(new Manager());
+PluginManager.registerEnvironmentObserver(new WatchManager());
