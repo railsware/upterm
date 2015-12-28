@@ -36,6 +36,6 @@ export interface OutputDecorator {
 }
 
 export interface EnvironmentObserverPlugin {
-    currentWorkingDirectoryWillChange: (terminal: Terminal) => void
-    currentWorkingDirectoryDidChange: (terminal: Terminal) => void
+    currentWorkingDirectoryWillChange: (terminal: Terminal, directory: string) => void
+    currentWorkingDirectoryDidChange: (terminal: Terminal, directory: string) => void
 }

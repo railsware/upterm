@@ -79,11 +79,13 @@ export default class Terminal extends EmitterWithUniqueID {
         }
 
         this._currentDirectory = normalizedDirectory;
-        PluginManager.environmentObservers.forEach(observer => observer.currentWorkingDirectoryDidChange(this));
+
+        PluginManager.environmentObservers.forEach(observer =>
+            observer.currentWorkingDirectoryDidChange(this, normalizedDirectory)
+        );
+
         this.watchVCS(value);
 
-        remote.getCurrentWindow().setRepresentedFilename(value);
-        app.addRecentDocument(value);
     }
 
     private watchVCS(directory: string) {
