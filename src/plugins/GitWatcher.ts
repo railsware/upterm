@@ -70,11 +70,7 @@ interface WatchesValue {
 }
 
 class Manager implements EnvironmentObserverPlugin {
-    directoryToDetails: Map<string, WatchesValue>;
-
-    constructor() {
-        this.directoryToDetails = new Map();
-    }
+    directoryToDetails: Map<string, WatchesValue> = new Map();
 
     currentWorkingDirectoryWillChange(terminal: Terminal, directory: string) {
         if (!this.directoryToDetails.has(directory)) {
@@ -94,7 +90,7 @@ class Manager implements EnvironmentObserverPlugin {
         if (this.directoryToDetails.has(directory)) {
             this.directoryToDetails.get(directory).terminals.add(terminal);
         } else {
-            let watcher = new GitWatcher(directory) ;
+            const watcher = new GitWatcher(directory) ;
 
             this.directoryToDetails.set(directory, {
                 terminals: new Set([terminal]),
