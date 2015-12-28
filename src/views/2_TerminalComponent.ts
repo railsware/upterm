@@ -17,6 +17,8 @@ interface State {
 }
 
 export default class TerminalComponent extends React.Component<Props, State> {
+    RENDER_JOBS_COUNT = 25;
+
     constructor(props: Props) {
         super(props);
 
@@ -33,7 +35,7 @@ export default class TerminalComponent extends React.Component<Props, State> {
     }
 
     render() {
-        var jobs = this.state.jobs.map((job: Job, index: number) =>
+        var jobs = _.takeRight(this.state.jobs, this.RENDER_JOBS_COUNT).map((job: Job, index: number) =>
             React.createElement(JobComponent, {
                 key: job.id,
                 job: job,
