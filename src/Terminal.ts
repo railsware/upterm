@@ -1,12 +1,10 @@
 import * as fs from 'fs';
 import * as _ from 'lodash';
-import * as Path from 'path';
 import Job from './Job';
 import Aliases from './Aliases';
 import History from './History';
 import Utils from './Utils';
 import Serializer from "./Serializer";
-import {executeCommand} from "./PTY";
 import EmitterWithUniqueID from "./EmitterWithUniqueID";
 import PluginManager from "./PluginManager";
 var remote = require('remote');
@@ -14,13 +12,9 @@ var app = remote.require('app');
 
 export default class Terminal extends EmitterWithUniqueID {
     jobs: Array<Job> = [];
-    private _currentDirectory: string;
     history: typeof History;
-    gitBranchWatcher: fs.FSWatcher;
-    gitLocked: boolean = false;
-
+    private _currentDirectory: string;
     private stateFileName = `${Utils.homeDirectory}/.black-screen-state`;
-
     // The value of the dictionary is the default value used if there is no serialized data.
     private serializableProperties: _.Dictionary<any> = {
         currentDirectory: `String:${Utils.homeDirectory}`,
@@ -83,48 +77,6 @@ export default class Terminal extends EmitterWithUniqueID {
         PluginManager.environmentObservers.forEach(observer =>
             observer.currentWorkingDirectoryDidChange(this, normalizedDirectory)
         );
-
-        this.watchVCS(value);
-
-    }
-
-    private watchVCS(directory: string) {
-        if (this.gitBranchWatcher) {
-            this.gitBranchWatcher.close();
-        }
-        var gitDirectory = Path.join(directory, '.git');
-        const gitHeadFileName = Path.join('.git', 'HEAD');
-        const gitHeadsDirectoryName = Path.join('.git', 'refs', 'heads');
-
-        Utils.ifExists(gitDirectory, () => {
-            this.updateGitData(gitDirectory);
-            this.gitBranchWatcher = fs.watch(this.currentDirectory, { recursive: true },
-                (type, fileName) => {
-                    if (!this.gitLocked && (!fileName.startsWith('.git') || fileName == gitHeadFileName || fileName.startsWith(gitHeadsDirectoryName))) {
-                        this.updateGitData(gitDirectory)
-                    }
-                }
-            )
-        }, () => this.emit('vcs-data', { isRepository: false }));
-    }
-
-    private updateGitData(gitDirectory: string) {
-        this.gitLocked = true;
-
-        fs.readFile(`${gitDirectory}/HEAD`, (error, buffer) => {
-            executeCommand('git', ['status', '--porcelain'], this.currentDirectory).then(changes => {
-                var status = changes.length ? 'dirty' : 'clean';
-
-                var data: VcsData = {
-                    isRepository: true,
-                    branch: /ref: refs\/heads\/(.*)/.exec(buffer.toString())[1],
-                    status: status
-                };
-
-                this.emit('vcs-data', data);
-                this.gitLocked = false
-            });
-        });
     }
 
     private serialize(): void {
