@@ -72,6 +72,10 @@ export default class Terminal extends EmitterWithUniqueID {
             return;
         }
 
+        PluginManager.environmentObservers.forEach(observer =>
+            observer.currentWorkingDirectoryWillChange(this, normalizedDirectory)
+        );
+
         this._currentDirectory = normalizedDirectory;
 
         PluginManager.environmentObservers.forEach(observer =>
