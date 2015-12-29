@@ -15,7 +15,6 @@ class GitWatcher extends events.EventEmitter {
     GIT_HEADS_DIRECTORY_NAME = Path.join('.git', 'refs', 'heads');
 
     gitBranchWatcher: fs.FSWatcher;
-    gitLocked: boolean = false;
     gitDirectory: string;
 
     constructor(private directory: string) {
@@ -35,7 +34,7 @@ class GitWatcher extends events.EventEmitter {
                 this.updateGitData();
                 this.gitBranchWatcher = fs.watch(this.directory, { recursive: true },
                     (type, fileName) => {
-                        if (!this.gitLocked && (!fileName.startsWith('.git') || fileName == this.GIT_HEAD_FILE_NAME || fileName.startsWith(this.GIT_HEADS_DIRECTORY_NAME))) {
+                        if (!fileName.startsWith('.git') || fileName == this.GIT_HEAD_FILE_NAME || fileName.startsWith(this.GIT_HEADS_DIRECTORY_NAME)) {
                             this.updateGitData()
                         }
                     }
@@ -46,8 +45,6 @@ class GitWatcher extends events.EventEmitter {
     }
 
     private updateGitData() {
-        this.gitLocked = true;
-
         fs.readFile(`${this.gitDirectory}/HEAD`, (error, buffer) => {
             executeCommand('git', ['status', '--porcelain'], this.directory).then(changes => {
                 var status = changes.length ? 'dirty' : 'clean';
@@ -59,7 +56,6 @@ class GitWatcher extends events.EventEmitter {
                 };
 
                 this.emit(GIT_WATCHER_EVENT_NAME, data);
-                this.gitLocked = false
             });
         });
     }
