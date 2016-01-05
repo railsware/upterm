@@ -423,12 +423,16 @@ pre {
         color: map-get($colors, 'blue');
       }
 
-      &.command .icon:before {
-        content: 'C';
+      &.command .icon {
+        @extend .fa;
+        @extend .fa-terminal;
+        color: map-get($colors, 'green');
       }
 
-      &.option .icon:before {
-        content: 'O';
+      &.option .icon {
+        @extend .fa;
+        @extend .fa-flag-o;
+        color: map-get($colors, 'green');
       }
 
       &.highlighted {

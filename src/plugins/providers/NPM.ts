@@ -68,7 +68,7 @@ function toSuggestion(value: string, lastWord: string, synopsis = ''): Suggestio
         score: 2 + score(value, lastWord),
         synopsis: synopsis,
         description: '',
-        type: 'option'
+        type: 'command'
     }
 }
 
