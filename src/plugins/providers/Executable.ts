@@ -177,7 +177,7 @@ class Executable implements i.AutocompletionProvider {
             return [];
         }
 
-        var executables = await Utils.getExecutablesInPaths();
+        var executables = await Utils.executablesInPaths();
 
         var lastArgument = prompt.lastArgument;
 

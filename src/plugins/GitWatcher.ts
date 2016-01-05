@@ -29,20 +29,19 @@ class GitWatcher extends events.EventEmitter {
         }
     }
 
-    watch() {
-        Utils.ifExists(this.gitDirectory,
-            () => {
-                this.updateGitData();
-                this.gitBranchWatcher = fs.watch(this.directory, { recursive: true },
-                    (type, fileName) => {
-                        if (!fileName.startsWith('.git') || fileName == this.GIT_HEAD_FILE_NAME || fileName.startsWith(this.GIT_HEADS_DIRECTORY_NAME)) {
-                            this.updateGitData()
-                        }
+    async watch() {
+        if (await Utils.exists(this.gitDirectory)) {
+            this.updateGitData();
+            this.gitBranchWatcher = fs.watch(this.directory, { recursive: true },
+                (type, fileName) => {
+                    if (!fileName.startsWith('.git') || fileName == this.GIT_HEAD_FILE_NAME || fileName.startsWith(this.GIT_HEADS_DIRECTORY_NAME)) {
+                        this.updateGitData()
                     }
-                )
-            },
-            () => this.emit(GIT_WATCHER_EVENT_NAME, { isRepository: false })
-        );
+                }
+            )
+        } else {
+            this.emit(GIT_WATCHER_EVENT_NAME, { isRepository: false })
+        }
     }
 
     @debounce(1000/60)

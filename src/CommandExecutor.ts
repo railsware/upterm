@@ -38,7 +38,7 @@ class BuiltInCommandExecutionStrategy extends CommandExecutionStrategy {
 
 class UnixSystemFileExecutionStrategy extends CommandExecutionStrategy {
     static async canExecute(command: string) {
-        return _.include(await Utils.getExecutablesInPaths(), command);
+        return _.include(await Utils.executablesInPaths(), command);
     }
 
     startExecution() {
@@ -95,10 +95,10 @@ export default class CommandExecutor {
         UnixSystemFileExecutionStrategy
     ];
 
-    static execute(job: Job): Promise<CommandExecutionStrategy> {
+    static execute(job: Job): Promise<{}> {
         var command = job.getPrompt().commandName;
 
-        return Utils.filterWithPromising(
+        return Utils.filterAsync(
             this.executors.concat(NullExecutionStrategy),
             executor => executor.canExecute(command))
             .then(applicableExecutors => new applicableExecutors[0](job, command).startExecution()

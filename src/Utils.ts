@@ -69,6 +69,16 @@ export default class Utils {
         });
     }
 
+    static recursiveFilesIn(directoryPath: string): Promise<string[]> {
+        let files: string[] = [];
+
+        return new Promise(resolve =>
+            fse.walk(directoryPath)
+                .on('data', (file: FSExtraWalkObject) => file.stats.isFile() && files.push(file.path))
+                .on('end', () => resolve(files))
+        )
+    }
+
     static stats(directory: string): Promise<i.FileInfo[]> {
         return Utils.filesIn(directory).then(files =>
             Promise.all(files.map(fileName =>
@@ -121,16 +131,6 @@ export default class Utils {
         })
     }
 
-    static filePathsRecursively(directoryPath: string): Promise<string[]> {
-        let files: string[] = [];
-
-        return new Promise(resolve =>
-            fse.walk(directoryPath)
-                .on('data', (file: FSExtraWalkObject) => file.stats.isFile() && files.push(file.path))
-                .on('end', () => resolve(files))
-        )
-    }
-
     static normalizeDir(path: string): string {
         return Path.normalize(path + Path.sep);
     }
@@ -147,32 +147,33 @@ export default class Utils {
         }
     }
 
-    static humanFileSize(bytes: number, si: boolean): string {
-        var thresh = si ? 1000 : 1024;
-        if (Math.abs(bytes) < thresh) {
+    static humanFileSize(bytes: number): string {
+        const threshold = 1024;
+        const units = ['KiB', 'MiB', 'GiB', 'TiB', 'PiB', 'EiB', 'ZiB', 'YiB'];
+
+        if (Math.abs(bytes) < threshold) {
             return bytes + 'B';
         }
-        var units = si
-            ? ['kB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB']
-            : ['KiB', 'MiB', 'GiB', 'TiB', 'PiB', 'EiB', 'ZiB', 'YiB'];
-        var u = -1;
+
+        var unitIndex = -1;
+
         do {
-            bytes /= thresh;
-            ++u;
-        } while (Math.abs(bytes) >= thresh && u < units.length - 1);
-        return bytes.toFixed(1) + '' + units[u];
+            bytes /= threshold;
+            ++unitIndex;
+        } while (Math.abs(bytes) >= threshold && unitIndex < units.length - 1);
+
+        return bytes.toFixed(1) + '' + units[unitIndex];
     }
 
-    static getExecutablesInPaths(): Promise<string[]> {
-        return new Promise((resolve) => {
-            if (this.executables.length) {
-                resolve(this.executables);
-            } else {
-                return this.filterWithPromising(this.paths, this.isDirectory).then(paths =>
-                    Promise.all(paths.map(this.filesIn)).then((allFiles: string[][]) => resolve(_.uniq(allFiles.reduce((acc, files) => acc.concat(files)))))
-                )
-            }
-        });
+    static async executablesInPaths(): Promise<string[]> {
+        if (this.executables.length) {
+            return this.executables;
+        }
+
+        const validPaths = await this.filterAsync(this.paths, this.isDirectory);
+        const allFiles: string[][] = await Promise.all(validPaths.map(this.filesIn));
+
+        return _.uniq(_.flatten(allFiles));
     }
 
     static get isWindows(): boolean {
@@ -183,7 +184,7 @@ export default class Utils {
         return process.env[(Utils.isWindows) ? 'USERPROFILE' : 'HOME'];
     }
 
-    static filterWithPromising<T>(values: T[], filter: (t: T) => Promise<boolean>): Promise<T[]> {
+    static filterAsync<T>(values: T[], filter: (t: T) => Promise<boolean>): Promise<T[]> {
         return new Promise((resolve) => {
             Promise
                 .all(values.map(value => new Promise((rs) => filter(value).then(rs, () => rs(false)))))

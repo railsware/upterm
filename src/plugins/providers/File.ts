@@ -31,7 +31,7 @@ class File implements i.AutocompletionProvider {
                 var name: string = Utils.normalizeDir(fileInfo.name);
             } else {
                 name = fileInfo.name;
-                description += `; Size: ${Utils.humanFileSize(fileInfo.stat.size, true)}`;
+                description += `; Size: ${Utils.humanFileSize(fileInfo.stat.size)}`;
             }
 
             var suggestion: Suggestion = {
