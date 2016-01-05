@@ -14,3 +14,11 @@ export function memoize(resolver: Function = null) {
         return descriptor;
     }
 }
+
+export function debounce(wait: number = 0) {
+    return (target: any, name: string, descriptor: PropertyDescriptor) => {
+        descriptor.value = _.debounce(descriptor.value, wait);
+
+        return descriptor;
+    }
+}

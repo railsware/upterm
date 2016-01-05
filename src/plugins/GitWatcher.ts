@@ -7,6 +7,7 @@ import * as fs from 'fs';
 import * as Path from 'path';
 import * as events from 'events';
 import {executeCommand} from "../PTY";
+import {debounce} from "../Decorators";
 
 const GIT_WATCHER_EVENT_NAME = 'git-data-changed';
 
@@ -44,6 +45,7 @@ class GitWatcher extends events.EventEmitter {
         );
     }
 
+    @debounce(1000/60)
     private updateGitData() {
         fs.readFile(`${this.gitDirectory}/HEAD`, (error, buffer) => {
             executeCommand('git', ['status', '--porcelain'], this.directory).then(changes => {
