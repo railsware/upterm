@@ -72,8 +72,8 @@ function toSuggestion(value: string, lastWord: string, synopsis = ''): Suggestio
     }
 }
 
-class NPM implements i.AutocompletionProvider {
-    async getSuggestions(prompt: Prompt): Promise<Suggestion[]> {
+PluginManager.registerAutocompletionProvider({
+    getSuggestions: async function (prompt: Prompt): Promise<Suggestion[]> {
         const words = prompt.expanded;
 
         if (words[0] !== 'npm') {
@@ -91,11 +91,9 @@ class NPM implements i.AutocompletionProvider {
 
         if (words.length === 3 && words[1] === 'run' && await Utils.exists(packageFilePath)) {
             suggestions = Object.keys(JSON.parse(await Utils.readFile(packageFilePath)).scripts || {})
-                                .map(key => toSuggestion(key, lastWord));
+                .map(key => toSuggestion(key, lastWord));
         }
 
         return _._(suggestions).sortBy('score').reverse().value();
     }
-}
-
-PluginManager.registerAutocompletionProvider(new NPM());
+});
