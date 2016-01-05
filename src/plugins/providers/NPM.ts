@@ -81,26 +81,20 @@ class NPM implements i.AutocompletionProvider {
         }
 
         const lastWord = _.last(words);
+        var suggestions: Suggestion[] = [];
 
         if (words.length === 2) {
-            var suggestions = _.map(commands, (value, key) => toSuggestion(key, lastWord, value));
-            return _._(suggestions).sortBy('score').reverse().value();
+            suggestions = _.map(commands, (value, key) => toSuggestion(key, lastWord, value));
         }
 
-        if (words.length === 3 && words[1] === 'run') {
-            const packageFilePath = Path.join(prompt.getCWD(), 'package.json');
+        const packageFilePath = Path.join(prompt.getCWD(), 'package.json');
 
-            if (!(await Utils.exists(packageFilePath))) {
-                return [];
-            }
-
-            const content = await Utils.readFile(packageFilePath);
-            var suggestions = Object.keys(JSON.parse(content).scripts || {}).map(key => toSuggestion(key, lastWord));
-
-            return _._(suggestions).sortBy('score').reverse().value();
+        if (words.length === 3 && words[1] === 'run' && await Utils.exists(packageFilePath)) {
+            suggestions = Object.keys(JSON.parse(await Utils.readFile(packageFilePath)).scripts || {})
+                                .map(key => toSuggestion(key, lastWord));
         }
 
-        return [];
+        return _._(suggestions).sortBy('score').reverse().value();
     }
 }
 
