@@ -1,11 +1,12 @@
-import Utils from '../Utils';
-import * as i from '../Interfaces';
+import Utils from '../../Utils';
+import * as i from '../../Interfaces';
 import * as _ from 'lodash';
-import Prompt from "../Prompt";
-import History from '../History';
-import {isCompleteHistoryCommand, historyReplacement} from '../CommandExpander';
+import Prompt from "../../Prompt";
+import History from '../../History';
+import {isCompleteHistoryCommand, historyReplacement} from '../../CommandExpander';
+import PluginManager from "../../PluginManager";
 
-export default class HistoryExpansion implements i.AutocompletionProvider {
+class HistoryExpansion implements i.AutocompletionProvider {
     suggestions: Suggestion[] = [];
 
     private static descriptions: _.Dictionary<string> = {
@@ -39,3 +40,5 @@ export default class HistoryExpansion implements i.AutocompletionProvider {
         }
     }
 }
+
+PluginManager.registerAutocompletionProvider(new HistoryExpansion());

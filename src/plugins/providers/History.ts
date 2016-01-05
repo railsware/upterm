@@ -1,12 +1,13 @@
-import * as i from '../Interfaces';
+import * as i from '../../Interfaces';
 import * as _ from 'lodash';
-import Aliases from '../Aliases';
-import ExecutionHistory from '../History';
-import Prompt from "../Prompt";
-import Autocompletion from "../Autocompletion";
+import Aliases from '../../Aliases';
+import ExecutionHistory from '../../History';
+import Prompt from "../../Prompt";
+import Autocompletion from "../../Autocompletion";
+import PluginManager from "../../PluginManager";
 var score: (i: string, m: string) => number = require('fuzzaldrin').score;
 
-export default class History implements i.AutocompletionProvider {
+class History implements i.AutocompletionProvider {
     async getSuggestions(prompt: Prompt) {
         var lastArgument = prompt.lastArgument;
 
@@ -24,3 +25,5 @@ export default class History implements i.AutocompletionProvider {
         return _._(all).sortBy('score').reverse().take(Autocompletion.limit).value();
     }
 }
+
+PluginManager.registerAutocompletionProvider(new History());

@@ -27,6 +27,7 @@
     "fix-path": "1.1.0",
     "fixed-sticky": "^0.1.6",
     "font-awesome": "4.5.0",
+    "fs-extra": "0.26.3",
     "fuzzaldrin": "2.1.0",
     "immutable": "3.7.6",
     "jison": "0.4.15",

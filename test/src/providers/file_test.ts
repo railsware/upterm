@@ -3,7 +3,7 @@
 /// <reference path="../../../src/references.ts" />
 
 import chai = require('chai');
-import File = require('../../../src/providers/File');
+import File = require('../../../src/plugins/providers/File');
 import ParsableString = require('../../../src/CommandExpander');
 import {Suggestion} from "../../../src/Interfaces";
 import Invocation = require("../../../src/Job");

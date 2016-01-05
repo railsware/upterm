@@ -1,11 +1,12 @@
-import * as i from '../Interfaces';
+import * as i from '../../Interfaces';
 import * as _ from 'lodash';
-import Aliases from '../Aliases';
-import Prompt from "../Prompt";
-import Autocompletion from "../Autocompletion";
+import Aliases from '../../Aliases';
+import Prompt from "../../Prompt";
+import Autocompletion from "../../Autocompletion";
+import PluginManager from "../../PluginManager"
 var score: (i: string, m: string) => number = require('fuzzaldrin').score;
 
-export default class Alias implements i.AutocompletionProvider {
+class Alias implements i.AutocompletionProvider {
     async getSuggestions(prompt: Prompt) {
         if (prompt.lexemes.length > 1) {
             return [];
@@ -25,3 +26,5 @@ export default class Alias implements i.AutocompletionProvider {
         return _._(all).sortBy('score').reverse().take(Autocompletion.limit).value();
     }
 }
+
+PluginManager.registerAutocompletionProvider(new Alias());

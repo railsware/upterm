@@ -37,6 +37,10 @@ declare module "fs" {
     export function watch(filename: string, options: { persistent?: boolean; recursive?: boolean }, listener?: (event: string, filename: string) => any): FSWatcher;
 }
 
+declare module "fs-extra" {
+    export function walk(dirPath: string): NodeJS.ReadableStream;
+}
+
 declare namespace __React {
     interface KeyboardEvent {
         keyIdentifier: number;

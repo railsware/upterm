@@ -1,9 +1,10 @@
-import Utils from '../Utils';
-import * as i from '../Interfaces';
+import Utils from '../../Utils';
+import * as i from '../../Interfaces';
 import * as _ from 'lodash'
 import * as Path from 'path'
-import Prompt from "../Prompt";
-import Autocompletion from "../Autocompletion";
+import Prompt from "../../Prompt";
+import Autocompletion from "../../Autocompletion";
+import PluginManager from "../../PluginManager";
 var score: (i: string, m: string) => number = require('fuzzaldrin').score;
 
 var descriptions: {[indexer: string]: string} = {
@@ -169,7 +170,7 @@ var descriptions: {[indexer: string]: string} = {
     zcat: 'Expand and concatenate data'
 };
 
-export default class Executable implements i.AutocompletionProvider {
+class Executable implements i.AutocompletionProvider {
 
     async getSuggestions(prompt: Prompt) {
         if (prompt.expanded.length > 1) {
@@ -193,3 +194,5 @@ export default class Executable implements i.AutocompletionProvider {
         return _._(all).sortBy('score').reverse().take(Autocompletion.limit).value();
     }
 }
+
+PluginManager.registerAutocompletionProvider(new Executable());

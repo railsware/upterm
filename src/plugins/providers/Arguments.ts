@@ -1,12 +1,13 @@
-import Utils from '../Utils';
-import * as i from '../Interfaces';
+import Utils from '../../Utils';
+import * as i from '../../Interfaces';
 import * as _ from 'lodash';
-import Prompt from "../Prompt";
-import {parser} from "../CommandExpander";
-import Autocompletion from "../Autocompletion";
+import Prompt from "../../Prompt";
+import {parser} from "../../CommandExpander";
+import Autocompletion from "../../Autocompletion";
+import PluginManager from "../../PluginManager";
 var filter: any = require('fuzzaldrin').filter;
 
-export default class Command implements i.AutocompletionProvider {
+class Command implements i.AutocompletionProvider {
     suggestions: Suggestion[] = [];
 
     async getSuggestions(prompt: Prompt) {
@@ -40,3 +41,5 @@ export default class Command implements i.AutocompletionProvider {
         }
     }
 }
+
+PluginManager.registerAutocompletionProvider(new Command());

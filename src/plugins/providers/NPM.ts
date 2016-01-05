@@ -1,12 +1,13 @@
-import Utils from '../Utils';
-import Prompt from "../Prompt";
-import * as i from '../Interfaces';
+import Utils from '../../Utils';
+import Prompt from "../../Prompt";
+import * as i from '../../Interfaces';
 import * as _ from 'lodash';
 import * as fs from 'fs';
 import * as Path from 'path';
+import PluginManager from "../../PluginManager";
 var score: (i: string, m: string) => number = require('fuzzaldrin').score;
 
-export default class NPM implements i.AutocompletionProvider {
+class NPM implements i.AutocompletionProvider {
     async getSuggestions(prompt: Prompt): Promise<Suggestion[]> {
         const words = prompt.expanded;
 
@@ -37,3 +38,5 @@ export default class NPM implements i.AutocompletionProvider {
         return _._(suggestions).sortBy('score').reverse().value();
     }
 }
+
+PluginManager.registerAutocompletionProvider(new NPM());
