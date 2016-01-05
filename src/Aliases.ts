@@ -28,5 +28,3 @@ export default class Aliases {
         }, <_.Dictionary<string>>{});
     }
 }
-
-Aliases.load();
