@@ -8,7 +8,7 @@ export function stopBubblingUp(event: Event): Event {
 }
 
 export function scrollToBottom(): void {
-    $('html body').animate({ scrollTop: $(document).height() }, 0);
+    window.scroll(0, document.body.scrollHeight);
 }
 
 export var keys = {

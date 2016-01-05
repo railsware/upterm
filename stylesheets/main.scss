@@ -102,6 +102,11 @@ body, pre {
     }
   }
 
+  &.fixedsticky-on {
+    width: 100%;
+    box-shadow: $default-shadow;
+  }
+
   .prompt-decoration {
     display: inline-block;
     height: 17px;
