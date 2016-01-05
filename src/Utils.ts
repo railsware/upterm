@@ -88,6 +88,10 @@ export default class Utils {
         });
     }
 
+    static exists(filePath: string): Promise<boolean> {
+        return new Promise(resolve => fs.exists(filePath, resolve));
+    }
+
     static isDirectory(directoryName: string): Promise<boolean> {
         return new Promise((resolve) => {
             Utils.ifExists(directoryName, () => {
@@ -96,6 +100,18 @@ export default class Utils {
                 });
             }, () => resolve(false));
         });
+    }
+
+    static readFile(filePath: string): Promise<string> {
+        return new Promise((resolve, reject) => {
+            fs.readFile(filePath, (error, buffer) => {
+                if (error) {
+                    reject(error);
+                } else {
+                    resolve(buffer.toString());
+                }
+            });
+        })
     }
 
     static normalizeDir(path: string): string {

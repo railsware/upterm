@@ -14,26 +14,26 @@ export default class NPM implements i.AutocompletionProvider {
             return [];
         }
 
-        const lastWord = _.last(words);
         const packageFilePath = Path.join(prompt.getCWD(), 'package.json');
 
-        return new Promise((resolve: (suggestions: Suggestion[]) => Promise<Suggestion[]>) => {
-            Utils.ifExists(packageFilePath, () => {
-                fs.readFile(packageFilePath, (error, buffer) => {
-                    const suggestions = Object.keys(JSON.parse(buffer.toString()).scripts || {}).map(key => {
-                            return {
-                                value: key,
-                                score: 2 + score(key, lastWord),
-                                synopsis: '',
-                                description: '',
-                                type: 'option'
-                            }
-                        }
-                    );
+        if (!(await Utils.exists(packageFilePath))) {
+            return [];
+        }
 
-                    resolve(_._(suggestions).sortBy('score').reverse().value());
-                });
-            })
-        });
+        const lastWord = _.last(words);
+        const content = await Utils.readFile(packageFilePath);
+
+        const suggestions = Object.keys(JSON.parse(content).scripts || {}).map(key => {
+                return {
+                    value: key,
+                    score: 2 + score(key, lastWord),
+                    synopsis: '',
+                    description: '',
+                    type: 'option'
+                }
+            }
+        );
+
+        return _._(suggestions).sortBy('score').reverse().value();
     }
 }
