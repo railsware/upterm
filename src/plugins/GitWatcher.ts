@@ -97,7 +97,6 @@ class WatchManager implements EnvironmentObserverPlugin {
             watcher.watch();
 
             watcher.on(GIT_WATCHER_EVENT_NAME, (event: any) => {
-                //console.log(`Emitted for directory ${directory}: ${JSON.stringify(event)}`);
                 this.directoryToDetails.get(directory).terminals.forEach(terminal =>
                     terminal.emit('vcs-data', event)
                 );

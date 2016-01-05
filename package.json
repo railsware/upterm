@@ -36,8 +36,8 @@
     "node-ansiparser": "2.1.0",
     "octicons": "3.3.0",
     "ptyw.js": "0.3.4",
-    "react": "0.14.3",
-    "react-dom": "0.14.3",
+    "react": "0.14.5",
+    "react-dom": "0.14.5",
     "rx": "4.0.7"
   },
   "devDependencies": {
@@ -66,7 +66,7 @@
     "gulp-util": "3.0.7",
     "mocha": "2.3.4",
     "node-gyp": "3.2.1",
-    "npm-check-updates": "2.5.5",
+    "npm-check-updates": "2.5.6",
     "react-tools": "0.13.3",
     "run-sequence": "1.1.5",
     "tsd": "0.6.5",
