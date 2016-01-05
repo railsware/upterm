@@ -88,7 +88,7 @@ module.exports = {
                             label: 'Reload',
                             accelerator: 'Command+R',
                             click: function () {
-                                browserWindow.restart();
+                                browserWindow.reload();
                             }
                         },
                         {
@@ -153,7 +153,7 @@ module.exports = {
                             label: '&Reload',
                             accelerator: 'Ctrl+R',
                             click: function () {
-                                browserWindow.restart();
+                                browserWindow.reload();
                             }
                         },
                         {
