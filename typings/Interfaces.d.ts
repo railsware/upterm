@@ -24,7 +24,7 @@ interface Suggestion {
     synopsis: string;
     description: string;
     type: string;
-    partial?: boolean;
+    partial?: boolean; // Whether to put a space after it.
     replaceAll?: boolean;
     prefix?: string;
 }

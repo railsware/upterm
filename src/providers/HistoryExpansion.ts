@@ -2,7 +2,6 @@ import Utils from '../Utils';
 import * as i from '../Interfaces';
 import * as _ from 'lodash';
 import Prompt from "../Prompt";
-var filter: any = require('fuzzaldrin').filter;
 import History from '../History';
 import {isCompleteHistoryCommand, historyReplacement} from '../CommandExpander';
 
@@ -16,7 +15,7 @@ export default class HistoryExpansion implements i.AutocompletionProvider {
         '!*': 'All arguments of the previous command',
     };
 
-    async getSuggestions(prompt: Prompt) {
+    async getSuggestions(prompt: Prompt): Promise<Suggestion[]> {
         const lexeme = prompt.lastLexeme;
 
         return _.map(this.commands(lexeme), (description, command) => {
