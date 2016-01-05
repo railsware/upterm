@@ -59,7 +59,7 @@
     "gulp-cached": "1.1.0",
     "gulp-concat": "2.6.0",
     "gulp-livereload": "3.8.1",
-    "gulp-load-plugins": "1.1.0",
+    "gulp-load-plugins": "1.2.0",
     "gulp-notify": "2.2.0",
     "gulp-sass": "2.1.1",
     "gulp-shell": "0.5.1",
