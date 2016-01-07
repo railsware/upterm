@@ -1,12 +1,10 @@
-import Utils from './Utils';
-var React = require('react');
-import * as i from './Interfaces';
-import * as e from './Enums';
-import * as _ from 'lodash';
+import * as i from "./Interfaces";
+import * as e from "./Enums";
+import * as _ from "lodash";
 import {memoize} from "./Decorators";
 
 export default class Char {
-    static empty = Char.flyweight(' ', {});
+    static empty = Char.flyweight(" ", {});
 
     @memoize()
     static flyweight(char: string, attributes: i.Attributes) {
@@ -34,7 +32,7 @@ export default class Char {
 
     isSpecial(): boolean {
         // http://www.asciitable.com/index/asciifull.gif
-        var charCode = this.char.charCodeAt(0);
+        const charCode = this.char.charCodeAt(0);
         return charCode < 32;
     }
 }

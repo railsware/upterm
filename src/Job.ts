@@ -1,16 +1,11 @@
-import * as pty from 'ptyw.js';
-import * as child_process from 'child_process';
-import * as _ from 'lodash';
-import * as i from './Interfaces';
-import * as e from './Enums';
-import * as React from 'react';
+import * as _ from "lodash";
+import * as i from "./Interfaces";
+import * as e from "./Enums";
+import * as React from "react";
 import Terminal from "./Terminal";
-import Parser from './Parser';
-import Prompt from './Prompt';
-import Buffer from './Buffer';
-import Command from './Command';
-import History from './History';
-import Utils from './Utils';
+import Parser from "./Parser";
+import Prompt from "./Prompt";
+import Buffer from "./Buffer";
 import CommandExecutor from "./CommandExecutor";
 import PTY from "./PTY";
 import PluginManager from "./PluginManager";
@@ -19,18 +14,18 @@ import EmitterWithUniqueID from "./EmitterWithUniqueID";
 export default class Job extends EmitterWithUniqueID {
     public command: PTY;
     public parser: Parser;
+    public status: e.Status = e.Status.NotStarted;
     private _prompt: Prompt;
     private buffer: Buffer;
-    public status: e.Status = e.Status.NotStarted;
 
     constructor(private _terminal: Terminal) {
         super();
 
         this._prompt = new Prompt(this);
-        this._prompt.on('send', () => this.execute());
+        this._prompt.on("send", () => this.execute());
 
         this.buffer = new Buffer(this.dimensions);
-        this.buffer.on('data', _.throttle(() => this.emit('data'), 1000 / 60));
+        this.buffer.on("data", _.throttle(() => this.emit("data"), 1000 / 60));
         this.parser = new Parser(this);
     }
 
@@ -44,12 +39,12 @@ export default class Job extends EmitterWithUniqueID {
             errorMessage => this.handleError(errorMessage)
         ).then(
             () => {
-                // Need to check the status here because it's
+                // Need to check the status here because it"s
                 // executed even after the process was killed.
                 if (this.status === e.Status.InProgress) {
                     this.setStatus(e.Status.Success);
                 }
-                this.emit('end');
+                this.emit("end");
             },
             errorMessage => this.handleError(errorMessage)
         );
@@ -60,19 +55,21 @@ export default class Job extends EmitterWithUniqueID {
         if (message) {
             this.buffer.writeString(message, { color: e.Color.Red });
         }
-        this.emit('end');
+        this.emit("end");
     }
 
-    // Writes to the process' stdin.
+    // Writes to the process" stdin.
     write(input: string|KeyboardEvent) {
-        if (typeof input === 'string') {
-            var text = <string>input
-        } else {
-            var event = <KeyboardEvent>input;
-            var identifier: string = (<any>input).nativeEvent.keyIdentifier;
+        let text: string;
 
-            if (identifier.startsWith('U+')) {
-                var code = parseInt(identifier.substring(2), 16);
+        if (typeof input === "string") {
+            text = <string>input;
+        } else {
+            const event = <KeyboardEvent>input;
+            const identifier: string = (<any>input).nativeEvent.keyIdentifier;
+
+            if (identifier.startsWith("U+")) {
+                let code = parseInt(identifier.substring(2), 16);
 
                 /**
                  * In VT-100 emulation mode backspace should be translated to delete.
@@ -84,7 +81,7 @@ export default class Job extends EmitterWithUniqueID {
 
                 text = String.fromCharCode(code);
                 if (!event.shiftKey && code >= 65 && code <= 90) {
-                    text = text.toLowerCase()
+                    text = text.toLowerCase();
                 }
             } else {
                 text = String.fromCharCode(event.keyCode);
@@ -121,7 +118,7 @@ export default class Job extends EmitterWithUniqueID {
 
     interrupt(): void {
         if (this.command && this.status === e.Status.InProgress) {
-            this.command.kill('SIGINT');
+            this.command.kill("SIGINT");
             this.setStatus(e.Status.Interrupted);
         }
     }
@@ -144,11 +141,11 @@ export default class Job extends EmitterWithUniqueID {
     private get decorators(): i.OutputDecorator[] {
         return PluginManager.outputDecorators.filter(decorator =>
             this.status === e.Status.InProgress ? decorator.shouldDecorateRunningPrograms : true
-        )
+        );
     }
 
     private get firstApplicableDecorator(): i.OutputDecorator {
-        return _.find(this.decorators, decorator => decorator.isApplicable(this))
+        return _.find(this.decorators, decorator => decorator.isApplicable(this));
     }
 
     getBuffer(): Buffer {
@@ -161,6 +158,6 @@ export default class Job extends EmitterWithUniqueID {
 
     setStatus(status: e.Status): void {
         this.status = status;
-        this.emit('status', status);
+        this.emit("status", status);
     }
 }

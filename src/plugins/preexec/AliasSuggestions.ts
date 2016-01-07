@@ -1,7 +1,7 @@
 import PluginManager from "../../PluginManager";
 import Job from "../../Job";
 import Aliases from "../../Aliases";
-import * as _ from 'lodash';
+import * as _ from "lodash";
 
 PluginManager.registerPreexecPlugin(async function(job: Job): Promise<void> {
     const input = job.prompt.value;

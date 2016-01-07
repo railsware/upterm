@@ -1,5 +1,5 @@
-import * as React from 'react';
-import * as _ from 'lodash';
+import * as React from "react";
+import * as _ from "lodash";
 
 type Offset = {top: number, left: number, bottom: number};
 
@@ -25,16 +25,16 @@ export default class AutocompleteComponent extends React.Component<AutocompleteP
 
         const suggestionDescription = this.props.suggestions[this.props.highlightedIndex].description;
         if (suggestionDescription) {
-            var descriptionElement = React.createElement('div', { className: 'description' }, suggestionDescription);
+            var descriptionElement = React.createElement("div", { className: "description" }, suggestionDescription);
         }
 
-        let offset = <Offset>_.pick(this.props.caretOffset, 'left');
+        let offset = <Offset>_.pick(this.props.caretOffset, "left");
         if (this.props.caretOffset.top + 300 > window.innerHeight) {
             offset.bottom = 28 + (suggestionDescription ? 28 : 0);
         }
 
-        return React.createElement('div', { className: 'autocomplete', style: offset },
-            React.createElement('ul', null, suggestionViews),
+        return React.createElement("div", { className: "autocomplete", style: offset },
+            React.createElement("ul", null, suggestionViews),
             descriptionElement
         );
     }
@@ -53,17 +53,17 @@ class SuggestionComponent extends React.Component<SuggestionProps, {}> {
         let classes = [this.props.suggestion.type];
 
         if (this.props.isHighlighted) {
-            classes.push('highlighted');
+            classes.push("highlighted");
         }
 
-        return React.createElement('li', { className: classes.join(' '), style: { cursor: "pointer" }, onMouseOver: this.props.onHover, onClick: this.props.onClick},
-            React.createElement('i', { className: 'icon' }),
-            React.createElement('span', { className: 'value' }, this.props.suggestion.value),
-            React.createElement('span', {
-                style: window.DEBUG ? {} : { display: 'none' },
-                className: 'score'
+        return React.createElement("li", { className: classes.join(" "), style: { cursor: "pointer" }, onMouseOver: this.props.onHover, onClick: this.props.onClick},
+            React.createElement("i", { className: "icon" }),
+            React.createElement("span", { className: "value" }, this.props.suggestion.value),
+            React.createElement("span", {
+                style: window.DEBUG ? {} : { display: "none" },
+                className: "score"
             }, this.props.suggestion.score.toFixed(2)),
-            React.createElement('span', { className: 'synopsis' }, this.props.suggestion.synopsis)
+            React.createElement("span", { className: "synopsis" }, this.props.suggestion.synopsis)
         );
     }
 }

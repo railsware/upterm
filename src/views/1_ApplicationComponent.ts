@@ -1,9 +1,9 @@
-import Application from '../Application';
-import TerminalComponent from './2_TerminalComponent';
-import * as React from 'react';
-import * as _ from 'lodash';
+import Application from "../Application";
+import TerminalComponent from "./2_TerminalComponent";
+import * as React from "react";
+import * as _ from "lodash";
 import Terminal from "../Terminal";
-const IPC = require('ipc');
+const IPC = require("ipc");
 
 interface State {
     terminals: Terminal[];
@@ -22,10 +22,10 @@ export default class ApplicationComponent extends React.Component<{}, State> {
         this.application.activateTerminal(this.application.terminals[0]);
 
         this.state = { terminals: this.application.terminals };
-        this.application.on('terminal', () => this.setState({ terminals: this.application.terminals }));
+        this.application.on("terminal", () => this.setState({ terminals: this.application.terminals }));
 
         $(window).resize(() => this.application.contentSize = this.contentSize);
-        IPC.on('change-working-directory', (directory: string) =>
+        IPC.on("change-working-directory", (directory: string) =>
             this.application.activeTerminal.currentDirectory = directory
         );
     }
@@ -40,7 +40,7 @@ export default class ApplicationComponent extends React.Component<{}, State> {
 
         // Cmd+|.
         if (event.metaKey && event.keyCode === 220) {
-            console.log('Split vertically.');
+            console.log("Split vertically.");
 
             event.stopPropagation();
         }
@@ -104,7 +104,7 @@ export default class ApplicationComponent extends React.Component<{}, State> {
     }
 
     private get charSize(): Size {
-        var letter = document.getElementById('sizes-calculation');
+        var letter = document.getElementById("sizes-calculation");
 
         return {
             width: letter.clientWidth + 0.5,

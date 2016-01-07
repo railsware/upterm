@@ -6,11 +6,11 @@ export default class Cursor {
     }
 
     moveAbsolute(position: RowColumn, homePosition: RowColumn): Cursor {
-        if (typeof position.column === 'number') {
+        if (typeof position.column === "number") {
             this.position.column = position.column + homePosition.column;
         }
 
-        if (typeof position.row === 'number') {
+        if (typeof position.row === "number") {
             this.position.row = position.row + homePosition.row;
         }
 

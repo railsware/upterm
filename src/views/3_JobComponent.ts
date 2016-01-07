@@ -1,9 +1,9 @@
-import * as React from 'react';
-import * as e from '../Enums';
-import * as _ from 'lodash';
-import JobModel from '../Job';
-import {keys} from './ViewUtils';
-import PromptComponent from './4_PromptComponent';
+import * as React from "react";
+import * as e from "../Enums";
+import * as _ from "lodash";
+import JobModel from "../Job";
+import {keys} from "./ViewUtils";
+import PromptComponent from "./4_PromptComponent";
 import BufferComponent from "./BufferComponent";
 
 interface Props {
@@ -28,8 +28,8 @@ export default class JobComponent extends React.Component<Props, State> implemen
         };
 
         this.props.job
-            .on('data', () => this.setState({ canBeDecorated: this.props.job.canBeDecorated() }))
-            .on('status', (status: e.Status) => this.setState({ status: status }));
+            .on("data", () => this.setState({ canBeDecorated: this.props.job.canBeDecorated() }))
+            .on("status", (status: e.Status) => this.setState({ status: status }));
 
         // FIXME: find a better design to propagate events.
         if (this.props.hasLocusOfAttention) {
@@ -51,10 +51,10 @@ export default class JobComponent extends React.Component<Props, State> implemen
             buffer = React.createElement(BufferComponent, { buffer: this.props.job.getBuffer() });
         }
 
-        const classNames = 'job ' + this.state.status;
+        const classNames = "job " + this.state.status;
 
         return React.createElement(
-            'div',
+            "div",
             { className: classNames },
             React.createElement(PromptComponent, {
                 prompt: this.props.job.prompt,
@@ -86,5 +86,5 @@ export default class JobComponent extends React.Component<Props, State> implemen
 
 export function isMetaKey(event: KeyboardEvent) {
     return event.metaKey || _.some([event.key, (<any>event).keyIdentifier],
-            key => _.includes(['Shift', 'Alt', 'Ctrl'], key));
+            key => _.includes(["Shift", "Alt", "Ctrl"], key));
 }

@@ -1,11 +1,11 @@
-import * as i from '../../Interfaces';
-import * as _ from 'lodash';
-import Aliases from '../../Aliases';
-import ExecutionHistory from '../../History';
+import * as i from "../../Interfaces";
+import * as _ from "lodash";
+import Aliases from "../../Aliases";
+import ExecutionHistory from "../../History";
 import Job from "../../Job";
 import Autocompletion from "../../Autocompletion";
 import PluginManager from "../../PluginManager";
-var score: (i: string, m: string) => number = require('fuzzaldrin').score;
+var score: (i: string, m: string) => number = require("fuzzaldrin").score;
 
 class History implements i.AutocompletionProvider {
     async getSuggestions(job: Job) {
@@ -18,11 +18,11 @@ class History implements i.AutocompletionProvider {
                 synopsis: '',
                 description: '',
                 replaceAll: true,
-                type: 'history'
+                type: "history"
             };
         });
 
-        return _._(all).sortBy('score').reverse().take(Autocompletion.limit).value();
+        return _._(all).sortBy("score").reverse().take(Autocompletion.limit).value();
     }
 }
 

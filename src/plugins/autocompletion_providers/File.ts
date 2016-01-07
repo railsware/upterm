@@ -1,11 +1,11 @@
-import * as i from '../../Interfaces';
-import * as _ from 'lodash';
-import Utils from '../../Utils';
-import * as Path from 'path';
+import * as i from "../../Interfaces";
+import * as _ from "lodash";
+import Utils from "../../Utils";
+import * as Path from "path";
 import Job from "../../Job";
 import Autocompletion from "../../Autocompletion";
 import PluginManager from "../../PluginManager";
-var score: (i: string, m: string) => number = require('fuzzaldrin').score;
+var score: (i: string, m: string) => number = require("fuzzaldrin").score;
 
 class File implements i.AutocompletionProvider {
     async getSuggestions(job: Job) {
@@ -28,7 +28,7 @@ class File implements i.AutocompletionProvider {
         let fileInfos = await Utils.stats(searchDirectory);
 
         var all = _.map(fileInfos.filter(File.filter(prompt.commandName)), (fileInfo: i.FileInfo): Suggestion => {
-            var description = `Mode: ${'0' + (fileInfo.stat.mode & 511).toString(8)}`;
+            var description = `Mode: ${"0" + (fileInfo.stat.mode & 511).toString(8)}`;
             if (fileInfo.stat.isDirectory()) {
                 var name: string = Utils.normalizeDir(fileInfo.name);
             } else {
@@ -41,7 +41,7 @@ class File implements i.AutocompletionProvider {
                 score: 0,
                 synopsis: '',
                 description: description,
-                type: 'file',
+                type: "file",
                 partial: fileInfo.stat.isDirectory()
             };
 
@@ -54,7 +54,7 @@ class File implements i.AutocompletionProvider {
 
         if (baseName) {
             var prepared = _._(all).each(suggestion => suggestion.score = score(suggestion.value, baseName))
-                .sortBy('score').reverse().take(10).value();
+                .sortBy("score").reverse().take(10).value();
         } else {
             prepared = _._(all).each(suggestion => suggestion.score = 1).take(Autocompletion.limit).value();
         }
@@ -64,7 +64,7 @@ class File implements i.AutocompletionProvider {
 
     static filter(command: string): (value: i.FileInfo, index: number, array: i.FileInfo[]) => boolean {
         switch (command) {
-            case 'cd':
+            case "cd":
                 return (fileInfo: i.FileInfo) => fileInfo.stat.isDirectory();
             default:
                 return (fileInfo: i.FileInfo) => true;

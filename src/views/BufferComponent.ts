@@ -1,13 +1,13 @@
-import * as React from 'react';
-import * as i from '../Interfaces';
-import * as e from '../Enums';
-import * as _ from 'lodash';
+import * as React from "react";
+import * as i from "../Interfaces";
+import * as e from "../Enums";
+import * as _ from "lodash";
 import Buffer from "../Buffer";
 import Char from "../Char";
 import Cursor from "../Cursor";
 import {groupWhen} from "../Utils";
-import {List} from 'immutable';
-import {scrollToBottom} from './ViewUtils';
+import {List} from "immutable";
+import {scrollToBottom} from "./ViewUtils";
 
 interface Props {
     buffer: Buffer
@@ -15,7 +15,7 @@ interface Props {
 
 export default class BufferComponent extends React.Component<Props, {}> {
     render() {
-        return React.createElement('pre', { className: `output ${this.props.buffer.activeBuffer}` },
+        return React.createElement("pre", { className: `output ${this.props.buffer.activeBuffer}` },
             this.props.buffer.toArray().map((row, index) => React.createElement(RowComponent, {
                 row: row || List<Char>(),
                 key: index
@@ -46,8 +46,8 @@ class RowComponent extends React.Component<RowProps, {}> {
         let rowWithoutHoles = this.props.row.toArray().map(char => char || Char.empty);
         let charGroups: Char[][] = groupWhen(charGrouper, rowWithoutHoles);
 
-        return React.createElement('div',
-            { className: 'row' },
+        return React.createElement("div",
+            { className: "row" },
             charGroups.map((charGroup: Char[], index: number) => React.createElement(CharGroupComponent, {
                 text: charGroup.map(char => char.toString()).join(''),
                 attributes: charGroup[0].getAttributes(),
@@ -69,7 +69,7 @@ class CharGroupComponent extends React.Component<CharGroupProps, {}> {
     }
 
     render() {
-        return React.createElement('span', this.getHTMLAttributes(this.props.attributes), this.props.text);
+        return React.createElement("span", this.getHTMLAttributes(this.props.attributes), this.props.text);
     }
 
     private getHTMLAttributes(attributes: i.Attributes): Object {

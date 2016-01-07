@@ -1,12 +1,12 @@
-import * as e from './Enums';
-import * as fs from 'fs';
-import * as React from 'react';
+import * as e from "./Enums";
+import * as fs from "fs";
+import * as React from "react";
 import Job from "./Job";
 import Terminal from "./Terminal";
 
 export interface Attributes {
     color?: e.Color;
-    'background-color'?: e.Color;
+    "background-color"?: e.Color;
     weight?: e.Weight;
     underline?: boolean;
     crossedOut?: boolean;
@@ -35,10 +35,10 @@ export interface OutputDecorator {
 }
 
 export interface EnvironmentObserverPlugin {
-    currentWorkingDirectoryWillChange: (terminal: Terminal, directory: string) => void
-    currentWorkingDirectoryDidChange: (terminal: Terminal, directory: string) => void
+    currentWorkingDirectoryWillChange: (terminal: Terminal, directory: string) => void;
+    currentWorkingDirectoryDidChange: (terminal: Terminal, directory: string) => void;
 }
 
 export interface PreexecPlugin {
-    (job: Job): Promise<void>
+    (job: Job): Promise<void>;
 }

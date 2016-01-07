@@ -1,4 +1,4 @@
-import * as _ from 'lodash';
+import * as _ from "lodash";
 
 export enum CharCode {
     Bell = 7,
@@ -9,55 +9,55 @@ export enum CharCode {
     Delete = 127
 }
 
-export var ColorIndex: any[] = [
-    'black', 'red', 'green', 'yellow', 'blue', 'magenta', 'cyan', 'white',
+export var colorIndex: any[] = [
+    "black", "red", "green", "yellow", "blue", "magenta", "cyan", "white",
 
-    'bright-black', 'bright-red', 'bright-green', 'bright-yellow',
-    'bright-blue', 'bright-magenta', 'bright-cyan', 'bright-white',
+    "bright-black", "bright-red", "bright-green", "bright-yellow",
+    "bright-blue", "bright-magenta", "bright-cyan", "bright-white",
 ].concat(<Array<any>>_.range(16, 256));
 
 export enum Color {
-    Black = <Color>ColorIndex[0],
-    Red = <Color>ColorIndex[1],
-    Green = <Color>ColorIndex[2],
-    Yellow = <Color>ColorIndex[3],
-    Blue = <Color>ColorIndex[4],
-    Magenta = <Color>ColorIndex[5],
-    Cyan = <Color>ColorIndex[6],
-    White = <Color>ColorIndex[7],
+    Black = <Color>colorIndex[0],
+    Red = <Color>colorIndex[1],
+    Green = <Color>colorIndex[2],
+    Yellow = <Color>colorIndex[3],
+    Blue = <Color>colorIndex[4],
+    Magenta = <Color>colorIndex[5],
+    Cyan = <Color>colorIndex[6],
+    White = <Color>colorIndex[7],
 
-    BrightBlack = <Color>ColorIndex[8],
-    BrightRed = <Color>ColorIndex[9],
-    BrightGreen = <Color>ColorIndex[10],
-    BrightYellow = <Color>ColorIndex[11],
-    BrightBlue = <Color>ColorIndex[12],
-    BrightMagenta = <Color>ColorIndex[13],
-    BrightCyan = <Color>ColorIndex[14],
-    BrightWhite = <Color>ColorIndex[15],
+    BrightBlack = <Color>colorIndex[8],
+    BrightRed = <Color>colorIndex[9],
+    BrightGreen = <Color>colorIndex[10],
+    BrightYellow = <Color>colorIndex[11],
+    BrightBlue = <Color>colorIndex[12],
+    BrightMagenta = <Color>colorIndex[13],
+    BrightCyan = <Color>colorIndex[14],
+    BrightWhite = <Color>colorIndex[15],
 }
 
 export enum Status {
-    NotStarted = <Status><any>'not-started',
-    InProgress = <Status><any>'in-progress',
-    Failure = <Status><any>'failure',
-    Interrupted = <Status><any>'interrupted',
-    Success = <Status><any>'success',
+    NotStarted = <Status><any>"not-started",
+    InProgress = <Status><any>"in-progress",
+    Failure = <Status><any>"failure",
+    Interrupted = <Status><any>"interrupted",
+    Success = <Status><any>"success",
 }
 
 export enum Buffer {
-    Standard = <Buffer><any>'standard',
-    Alternate = <Buffer><any>'alternate'
+    Standard = <Buffer><any>"standard",
+    Alternate = <Buffer><any>"alternate"
 }
 
 export enum Weight {
-    Normal = <Weight><any>'normal',
-    Bold = <Weight><any>'bold',
-    Faint = <Weight><any>'faint'
+    Normal = <Weight><any>"normal",
+    Bold = <Weight><any>"bold",
+    Faint = <Weight><any>"faint"
 }
 
 export enum LogLevel {
-    Info = <LogLevel><any>'info',
-    Debug = <LogLevel><any>'debug',
-    Log = <LogLevel><any>'log',
-    Error = <LogLevel><any>'error',
+    Info = <LogLevel><any>"info",
+    Debug = <LogLevel><any>"debug",
+    Log = <LogLevel><any>"log",
+    Error = <LogLevel><any>"error",
 }

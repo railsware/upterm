@@ -1,4 +1,4 @@
-import * as _ from 'lodash';
+import * as _ from "lodash";
 
 export class HistoryEntry {
     constructor(private _raw: string, private _historyExpanded: string[]) {
@@ -21,7 +21,7 @@ export class History {
     static pointer: number = 0;
     private static maxEntriesCount: number = 100;
     private static storage: HistoryEntry[] = [];
-    private static defaultEntry: HistoryEntry = new HistoryEntry('', []);
+    private static defaultEntry: HistoryEntry = new HistoryEntry("", []);
 
     static get all(): HistoryEntry[] {
         return this.storage;

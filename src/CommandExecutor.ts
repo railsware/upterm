@@ -1,9 +1,9 @@
 import Job from "./Job";
 import Command from "./Command";
-import Utils from './Utils';
-import * as _ from 'lodash';
+import Utils from "./Utils";
+import * as _ from "lodash";
 import PTY from "./PTY";
-import * as Path from 'path';
+import * as Path from "path";
 
 abstract class CommandExecutionStrategy {
     protected args: string[];
@@ -32,7 +32,7 @@ class BuiltInCommandExecutionStrategy extends CommandExecutionStrategy {
             } catch (error) {
                 reject(error.message);
             }
-        })
+        });
     }
 }
 
@@ -48,7 +48,7 @@ class UnixSystemFileExecutionStrategy extends CommandExecutionStrategy {
                 (data: string) => this.job.parser.parse(data),
                 (exitCode: number) => exitCode === 0 ? resolve() : reject()
             );
-        })
+        });
     }
 }
 
@@ -60,21 +60,21 @@ class WindowsSystemFileExecutionStrategy extends CommandExecutionStrategy {
     startExecution() {
         return new Promise((resolve) => {
             this.job.command = new PTY(
-                this.cmdPath, ['/s', '/c', this.job.prompt.expanded.join(' ')], this.job.directory, this.job.dimensions,
+                this.cmdPath, ["/s", "/c", this.job.prompt.expanded.join(" ")], this.job.directory, this.job.dimensions,
                 (data: string) => this.job.parser.parse(data),
                 (exitCode: number) => resolve()
             );
-        })
+        });
     }
 
     private get cmdPath(): string {
         if (process.env.comspec) {
             return process.env.comspec;
+        } else if (process.env.SystemRoot) {
+            return Path.join(process.env.SystemRoot, "System32", "cmd.exe");
+        } else {
+            return "cmd.exe";
         }
-        else if (process.env.SystemRoot) {
-            return Path.join(process.env.SystemRoot, 'System32', 'cmd.exe');
-        }
-        else return 'cmd.exe';
     }
 }
 
@@ -82,7 +82,7 @@ export default class CommandExecutor {
     private static executors = [
         BuiltInCommandExecutionStrategy,
         WindowsSystemFileExecutionStrategy,
-        UnixSystemFileExecutionStrategy
+        UnixSystemFileExecutionStrategy,
     ];
 
     static async execute(job: Job): Promise<{}> {
@@ -90,9 +90,9 @@ export default class CommandExecutor {
         const applicableExecutors = await Utils.filterAsync(this.executors, executor => executor.canExecute(command));
 
         if (applicableExecutors.length) {
-            return new applicableExecutors[0](job, command).startExecution()
+            return new applicableExecutors[0](job, command).startExecution();
         } else {
-            throw `Black Screen: command "${command}" not found.`
+            throw `Black Screen: command "${command}" not found.`;
         }
     }
 }

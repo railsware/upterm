@@ -1,6 +1,6 @@
-import * as React from 'react';
-import {stopBubblingUp} from './ViewUtils';
-import Job from './3_JobComponent';
+import * as React from "react";
+import {stopBubblingUp} from "./ViewUtils";
+import Job from "./3_JobComponent";
 
 interface Props {
     job: Job;
@@ -26,16 +26,16 @@ export default class DecorationToggleComponent extends React.Component<Props, St
     }
 
     render() {
-        var classes = ['decoration-toggle'];
+        var classes = ["decoration-toggle"];
 
         if (!this.state.enabled) {
-            classes.push('disabled');
+            classes.push("disabled");
         }
 
         return React.createElement(
-            'a',
-            { href: '#', className: classes.join(' '), onClick: this.handleClick.bind(this) },
-            React.createElement('i', { className: 'fa fa-magic' })
+            "a",
+            { href: "#", className: classes.join(" "), onClick: this.handleClick.bind(this) },
+            React.createElement("i", { className: "fa fa-magic" })
         );
     }
 }

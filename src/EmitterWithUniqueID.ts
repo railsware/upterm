@@ -1,4 +1,4 @@
-import * as events from 'events';
+import * as events from "events";
 
 export default class EmitterWithUniqueID extends events.EventEmitter {
     public id: number;

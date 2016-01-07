@@ -1,9 +1,9 @@
-import Utils from '../../Utils';
+import Utils from "../../Utils";
 import Job from "../../Job";
-import * as _ from 'lodash';
-import * as Path from 'path';
+import * as _ from "lodash";
+import * as Path from "path";
 import PluginManager from "../../PluginManager";
-var score: (i: string, m: string) => number = require('fuzzaldrin').score;
+var score: (i: string, m: string) => number = require("fuzzaldrin").score;
 
 const commands: _.Dictionary<string> = {
     "access": "Set access level on published packages",
@@ -66,7 +66,7 @@ function toSuggestion(value: string, lastWord: string, synopsis = ''): Suggestio
         score: 2 + score(value, lastWord),
         synopsis: synopsis,
         description: '',
-        type: 'command'
+        type: "command"
     }
 }
 
@@ -75,7 +75,7 @@ PluginManager.registerAutocompletionProvider({
         const prompt = job.prompt;
         const words = prompt.expanded;
 
-        if (prompt.commandName !== 'npm') {
+        if (prompt.commandName !== "npm") {
             return [];
         }
 
@@ -86,13 +86,13 @@ PluginManager.registerAutocompletionProvider({
             suggestions = _.map(commands, (value, key) => toSuggestion(key, lastArgument, value));
         }
 
-        const packageFilePath = Path.join(job.directory, 'package.json');
+        const packageFilePath = Path.join(job.directory, "package.json");
 
-        if (words.length === 3 && words[1] === 'run' && await Utils.exists(packageFilePath)) {
+        if (words.length === 3 && words[1] === "run" && await Utils.exists(packageFilePath)) {
             suggestions = Object.keys(JSON.parse(await Utils.readFile(packageFilePath)).scripts || {})
                 .map(key => toSuggestion(key, lastArgument));
         }
 
-        return _._(suggestions).sortBy('score').reverse().value();
+        return _._(suggestions).sortBy("score").reverse().value();
     }
 });

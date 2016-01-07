@@ -1,17 +1,16 @@
-import * as events from 'events';
-import Char from './Char';
-import Cursor from './Cursor';
-import * as React from 'react';
-import * as i from './Interfaces';
-import * as e from './Enums';
-import * as _ from 'lodash';
-import Utils from './Utils';
-import {List} from 'immutable';
+import * as events from "events";
+import Char from "./Char";
+import Cursor from "./Cursor";
+import * as i from "./Interfaces";
+import * as e from "./Enums";
+import * as _ from "lodash";
+import Utils from "./Utils";
+import {List} from "immutable";
 
 export default class Buffer extends events.EventEmitter {
-    private storage = List<List<Char>>();
     public cursor: Cursor = new Cursor();
     public activeBuffer = e.Buffer.Standard;
+    private storage = List<List<Char>>();
     private attributes: i.Attributes = { color: e.Color.White, weight: e.Weight.Normal };
     private isOriginModeSet = false;
     private _margins: Margins = {};
@@ -20,19 +19,14 @@ export default class Buffer extends events.EventEmitter {
         super();
     }
 
-    writeString(string: string, attributes = this.attributes): void {
-        for (var i = 0; i !== string.length; ++i) {
-            this.write(string.charAt(i), attributes);
+    writeString(value: string, attributes = this.attributes): void {
+        for (let i = 0; i !== value.length; ++i) {
+            this.write(value.charAt(i), attributes);
         }
     }
 
-    setTo(string: string, attributes = this.attributes): void {
-        this.clear();
-        this.writeString(string, attributes)
-    }
-
     write(char: string, attributes = this.attributes): void {
-        var charObject = Char.flyweight(char, this.getAttributes());
+        const charObject = Char.flyweight(char, this.getAttributes());
 
         if (charObject.isSpecial()) {
             switch (charObject.getCharCode()) {
@@ -41,7 +35,7 @@ export default class Buffer extends events.EventEmitter {
                         Utils.playBell();
                     }
 
-                    Utils.log('bell');
+                    Utils.log("bell");
                     break;
                 case e.CharCode.Backspace:
                     this.moveCursorRelative({ horizontal: -1 });
@@ -61,14 +55,14 @@ export default class Buffer extends events.EventEmitter {
                     this.moveCursorAbsolute({ column: 0 });
                     break;
                 default:
-                    Utils.error(`Couldn't write a special char '${charObject}' with char code ${charObject.toString().charCodeAt(0)}.`);
+                    Utils.error(`Couldn"t write a special char "${charObject}" with char code ${charObject.toString().charCodeAt(0)}.`);
             }
         } else {
             this.set(this.cursorPosition, charObject);
             this.moveCursorRelative({ horizontal: 1 });
         }
 
-        this.emit('data');
+        this.emit("data");
     }
 
     scrollUp(count: number, addAtLine: number) {
@@ -98,47 +92,50 @@ export default class Buffer extends events.EventEmitter {
             }
 
             let char = this.storage.getIn([this.cursorPosition.row, this.cursorPosition.column]) || Char.empty;
-            storage = storage.setIn([this.cursorPosition.row, this.cursorPosition.column], Char.flyweight(char.toString(), _.merge(char.getAttributes(), { cursor: true })));
+            storage = storage.setIn(
+                [this.cursorPosition.row, this.cursorPosition.column],
+                Char.flyweight(char.toString(), _.merge(char.getAttributes(), { cursor: true }))
+            );
         }
 
         return storage.toArray();
     }
 
     toLines(): string[] {
-        return this.storage.map(row => row.map(char => char.toString()).join('')).toArray();
+        return this.storage.map(row => row.map(char => char.toString()).join("")).toArray();
     }
 
     toString(): string {
-        return this.toLines().join('\n');
+        return this.toLines().join("\n");
     }
 
     showCursor(state: boolean): void {
         this.cursor.setShow(state);
-        this.emit('data');
+        this.emit("data");
     }
 
     blinkCursor(state: boolean): void {
         this.cursor.setBlink(state);
-        this.emit('data');
+        this.emit("data");
     }
 
     moveCursorRelative(position: Advancement): Buffer {
         this.cursor.moveRelative(position);
-        this.emit('data');
+        this.emit("data");
 
         return this;
     }
 
     moveCursorAbsolute(position: RowColumn): Buffer {
         this.cursor.moveAbsolute(position, this.homePosition);
-        this.emit('data');
+        this.emit("data");
 
         return this;
     }
 
     clearRow() {
         this.storage = this.storage.set(this.cursorPosition.row, List<Char>());
-        this.emit('data');
+        this.emit("data");
     }
 
     clearRowToEnd() {
@@ -147,7 +144,7 @@ export default class Buffer extends events.EventEmitter {
             List<Char>(),
             (row: List<Char>) => row.take(this.cursorPosition.column).toList()
         );
-        this.emit('data');
+        this.emit("data");
     }
 
     clearRowToBeginning() {
@@ -156,7 +153,7 @@ export default class Buffer extends events.EventEmitter {
             this.cursorPosition.row,
             row => row.splice(0, this.cursorPosition.column + 1, replacement).toList())
         ;
-        this.emit('data');
+        this.emit("data");
     }
 
     clear() {
@@ -173,13 +170,13 @@ export default class Buffer extends events.EventEmitter {
             new Array(this.cursorPosition.row).fill(List<Char>())
         ).toList();
 
-        this.emit('data');
+        this.emit("data");
     }
 
     clearToEnd() {
         this.clearRowToEnd();
         this.storage.splice(this.cursorPosition.row + 1, Number.MAX_VALUE);
-        this.emit('data');
+        this.emit("data");
     }
 
     get cursorPosition(): RowColumn {

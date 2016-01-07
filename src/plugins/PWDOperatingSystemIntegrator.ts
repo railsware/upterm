@@ -1,7 +1,7 @@
 import Terminal from "../Terminal";
 import PluginManager from "../PluginManager";
-var remote = require('remote');
-var app = remote.require('app');
+var remote = require("remote");
+var app = remote.require("app");
 
 PluginManager.registerEnvironmentObserver({
     currentWorkingDirectoryWillChange: () => {},

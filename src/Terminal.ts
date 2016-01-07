@@ -1,14 +1,13 @@
-import * as fs from 'fs';
-import * as _ from 'lodash';
-import Job from './Job';
-import Aliases from './Aliases';
-import History from './History';
-import Utils from './Utils';
+import * as fs from "fs";
+import * as _ from "lodash";
+import Job from "./Job";
+import History from "./History";
+import Utils from "./Utils";
 import Serializer from "./Serializer";
 import EmitterWithUniqueID from "./EmitterWithUniqueID";
 import PluginManager from "./PluginManager";
-var remote = require('remote');
-var app = remote.require('app');
+const remote = require("remote");
+const app = remote.require("app");
 
 export default class Terminal extends EmitterWithUniqueID {
     jobs: Array<Job> = [];
@@ -18,7 +17,7 @@ export default class Terminal extends EmitterWithUniqueID {
     // The value of the dictionary is the default value used if there is no serialized data.
     private serializableProperties: _.Dictionary<any> = {
         currentDirectory: `String:${Utils.homeDirectory}`,
-        history: `History:[]`
+        history: `History:[]`,
     };
 
     constructor(private _dimensions: Dimensions) {
@@ -29,23 +28,23 @@ export default class Terminal extends EmitterWithUniqueID {
         this.deserialize();
         this.history = History;
 
-        this.on('job', this.serialize.bind(this));
+        this.on("job", this.serialize.bind(this));
 
         this.clearJobs();
     }
 
     createJob(): void {
-        var job = new Job(this);
+        const job = new Job(this);
 
-        job.once('end', () => {
+        job.once("end", () => {
             if (app.dock) {
-                app.dock.bounce('informational');
+                app.dock.bounce("informational");
             }
             this.createJob();
         });
 
         this.jobs = this.jobs.concat(job);
-        this.emit('job');
+        this.emit("job");
     }
 
     get dimensions(): Dimensions {
@@ -84,28 +83,22 @@ export default class Terminal extends EmitterWithUniqueID {
     }
 
     private serialize(): void {
-        var values: _.Dictionary<string> = {};
+        let values: _.Dictionary<string> = {};
 
         _.each(this.serializableProperties, (value: string, key: string) =>
             values[key] = Serializer.serialize((<any>this)[key])
         );
 
         fs.writeFile(this.stateFileName, JSON.stringify(values), (error: any) => {
-            if (error) debugger;
-        })
+            if (error) throw error;
+        });
     }
 
     private deserialize(): void {
-        try {
-            var state = JSON.parse(fs.readFileSync(this.stateFileName).toString());
-        } catch (error) {
-            state = this.serializableProperties;
-        }
-
-        _.each(state, (value: string, key: string) => {
-            var setterName = `set${_.capitalize(key)}`;
-            var that = (<any>this);
-            var deserializedValue = Serializer.deserialize(value);
+        _.each(this.readSerialized(), (value: string, key: string) => {
+            const setterName = `set${_.capitalize(key)}`;
+            const that = (<any>this);
+            const deserializedValue = Serializer.deserialize(value);
 
             if (that[setterName]) {
                 that[setterName](deserializedValue);
@@ -114,4 +107,12 @@ export default class Terminal extends EmitterWithUniqueID {
             }
         });
     }
+
+    private readSerialized(): _.Dictionary<any> {
+        try {
+            return JSON.parse(fs.readFileSync(this.stateFileName).toString());
+        } catch (error) {
+            return this.serializableProperties;
+        }
+    };
 }

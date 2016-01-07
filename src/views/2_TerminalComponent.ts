@@ -1,9 +1,9 @@
-import * as React from 'react';
-import * as _ from 'lodash';
-import Terminal from '../Terminal';
-import Job from '../Job';
-import StatusLineComponent from './StatusLineComponent';
-import JobComponent from './3_JobComponent';
+import * as React from "react";
+import * as _ from "lodash";
+import Terminal from "../Terminal";
+import Job from "../Job";
+import StatusLineComponent from "./StatusLineComponent";
+import JobComponent from "./3_JobComponent";
 
 interface Props {
     terminal: Terminal;
@@ -30,8 +30,8 @@ export default class TerminalComponent extends React.Component<Props, State> {
 
     componentWillMount() {
         this.props.terminal
-            .on('job', () => this.setState({ jobs: this.props.terminal.jobs }))
-            .on('vcs-data', (data: VcsData) => this.setState({ vcsData: data }));
+            .on("job", () => this.setState({ jobs: this.props.terminal.jobs }))
+            .on("vcs-data", (data: VcsData) => this.setState({ vcsData: data }));
     }
 
     render() {
@@ -43,15 +43,15 @@ export default class TerminalComponent extends React.Component<Props, State> {
             }, [])
         );
 
-        let activenessClass = this.props.isActive ? 'active' : 'inactive';
+        let activenessClass = this.props.isActive ? "active" : "inactive";
 
-        return React.createElement('div', {
+        return React.createElement("div", {
                 className: `terminal ${activenessClass}`,
                 tabIndex: 0,
                 onClickCapture: this.handleClick.bind(this),
                 onKeyDownCapture: this.handleKeyDown.bind(this)
             },
-            React.createElement('div', { className: 'jobs' }, jobs),
+            React.createElement("div", { className: "jobs" }, jobs),
             React.createElement(StatusLineComponent, {
                 currentWorkingDirectory: this.props.terminal.currentDirectory,
                 vcsData: this.state.vcsData
@@ -81,7 +81,7 @@ export default class TerminalComponent extends React.Component<Props, State> {
             event.stopPropagation();
             this.forceUpdate();
 
-            console.log(`Debugging mode has been ${window.DEBUG ? 'enabled' : 'disabled'}.`);
+            console.log(`Debugging mode has been ${window.DEBUG ? "enabled" : "disabled"}.`);
             return;
         }
 

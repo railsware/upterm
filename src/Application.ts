@@ -1,7 +1,7 @@
 import Terminal from "./Terminal";
-import * as _ from 'lodash';
-import * as events from 'events';
-const IPC = require('ipc');
+import * as _ from "lodash";
+import * as events from "events";
+const IPC = require("ipc");
 
 export default class Application extends events.EventEmitter {
     private static _instance: Application;
@@ -14,7 +14,7 @@ export default class Application extends events.EventEmitter {
         super();
 
         if (Application._instance) {
-            throw new Error('Use Application.instance instead.');
+            throw new Error("Use Application.instance instead.");
         }
     }
 
@@ -36,17 +36,17 @@ export default class Application extends events.EventEmitter {
     addTerminal(): Terminal {
         let terminal = new Terminal(this.contentDimensions);
         this.terminals.push(terminal);
-        this.emit('terminal');
+        this.emit("terminal");
 
         return terminal;
     }
 
     removeTerminal(terminal: Terminal): Application {
         _.pull(this.terminals, terminal);
-        this.emit('terminal');
+        this.emit("terminal");
 
         if (_.isEmpty(this.terminals)) {
-            IPC.send('quit');
+            IPC.send("quit");
         }
 
         return this;
@@ -54,13 +54,13 @@ export default class Application extends events.EventEmitter {
 
     activateTerminal(terminal: Terminal): void {
         this._activeTerminalIndex = this.terminals.indexOf(terminal);
-        this.emit('terminal');
+        this.emit("terminal");
     }
 
     set contentSize(newSize) {
         this._contentSize = newSize;
 
-        this.terminals.forEach((terminal: Terminal) => terminal.dimensions = this.contentDimensions)
+        this.terminals.forEach((terminal: Terminal) => terminal.dimensions = this.contentDimensions);
     }
 
     get contentSize(): Size {
@@ -68,7 +68,7 @@ export default class Application extends events.EventEmitter {
     }
 
     get charSize() {
-        return this._charSize
+        return this._charSize;
     }
 
     set charSize(size: Size) {

@@ -1,7 +1,6 @@
-import Job from './Job';
 import {OutputDecorator, EnvironmentObserverPlugin, AutocompletionProvider, PreexecPlugin} from "./Interfaces";
-import * as Path from 'path';
-import * as _ from 'lodash';
+import * as Path from "path";
+import * as _ from "lodash";
 import Utils from "./Utils";
 
 export default class PluginManager {
@@ -45,8 +44,8 @@ export default class PluginManager {
 
 
 export async function loadAllPlugins(): Promise<void> {
-    const pluginsDirectory = Path.join(__dirname, 'plugins');
+    const pluginsDirectory = Path.join(__dirname, "plugins");
     const filePaths = await Utils.recursiveFilesIn(pluginsDirectory);
 
-    _._(filePaths).map(require).pluck('default').value();
+    _._(filePaths).map(require).pluck("default").value();
 }

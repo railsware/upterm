@@ -1,14 +1,14 @@
-import * as _ from 'lodash';
-import * as e from '../Enums';
-import * as React from 'react';
-import AutocompleteComponent from './AutocompleteComponent';
-import DecorationToggleComponent from './DecorationToggleComponent';
-import History from '../History';
-import {stopBubblingUp, scrollToBottom} from './ViewUtils';
+import * as _ from "lodash";
+import * as e from "../Enums";
+import * as React from "react";
+import AutocompleteComponent from "./AutocompleteComponent";
+import DecorationToggleComponent from "./DecorationToggleComponent";
+import History from "../History";
+import {stopBubblingUp, scrollToBottom} from "./ViewUtils";
 import Job from "../Job";
 import JobComponent from "./3_JobComponent";
 import PromptModel from "../Prompt";
-const Rx = require('rx');
+const Rx = require("rx");
 const ReactDOM = require("react-dom");
 
 
@@ -143,7 +143,7 @@ export default class PromptComponent extends React.Component<Props, State> imple
 
     componentDidMount() {
         $(ReactDOM.findDOMNode(this)).fixedsticky();
-        $('.fixedsticky-dummy').remove();
+        $(".fixedsticky-dummy").remove();
 
         this.commandNode.focus();
     }
@@ -160,7 +160,7 @@ export default class PromptComponent extends React.Component<Props, State> imple
         }
 
         if (prevState.caretPosition !== this.state.caretPosition) {
-            this.setState({ caretOffset: $(this.commandNode).caret('offset') });
+            this.setState({ caretOffset: $(this.commandNode).caret("offset") });
         }
 
         if (!prevProps.hasLocusOfAttention && this.props.hasLocusOfAttention) {
@@ -174,7 +174,7 @@ export default class PromptComponent extends React.Component<Props, State> imple
     }
 
     render() {
-        var classes = ['prompt-wrapper', 'fixedsticky', this.props.status].join(' ');
+        var classes = ["prompt-wrapper", "fixedsticky", this.props.status].join(" ");
 
         if (this.showAutocomplete()) {
             var autocomplete = React.createElement(AutocompleteComponent, {
@@ -183,7 +183,7 @@ export default class PromptComponent extends React.Component<Props, State> imple
                 onSuggestionHover: this.highlightSuggestion.bind(this),
                 onSuggestionClick: this.applySuggestion.bind(this),
                 highlightedIndex: this.state.highlightedSuggestionIndex,
-                ref: 'autocomplete'
+                ref: "autocomplete"
             });
         }
 
@@ -193,34 +193,34 @@ export default class PromptComponent extends React.Component<Props, State> imple
 
         if (this.props.status !== e.Status.NotStarted) {
             var scrollToTop = React.createElement(
-                'a',
-                { href: '#', className: 'scroll-to-top', onClick: this.handleScrollToTop.bind(this) },
-                React.createElement('i', { className: 'fa fa-long-arrow-up' })
+                "a",
+                { href: "#", className: "scroll-to-top", onClick: this.handleScrollToTop.bind(this) },
+                React.createElement("i", { className: "fa fa-long-arrow-up" })
             );
         }
 
         return React.createElement(
-            'div',
+            "div",
             { className: classes },
             React.createElement(
-                'div',
-                { className: 'prompt-decoration' },
-                React.createElement('div', { className: 'arrow' })
+                "div",
+                { className: "prompt-decoration" },
+                React.createElement("div", { className: "arrow" })
             ),
-            React.createElement('div', { className: 'prompt-info', title: this.props.status }),
-            React.createElement('div', {
-                className: 'prompt',
+            React.createElement("div", { className: "prompt-info", title: this.props.status }),
+            React.createElement("div", {
+                className: "prompt",
                 onKeyDown: this.handlers.onKeyDown.bind(this),
                 onInput: this.handleInput.bind(this),
                 onKeyPress: this.handleKeyPress.bind(this),
-                type: 'text',
-                ref: 'command',
+                type: "text",
+                ref: "command",
                 contentEditable: this.props.status === e.Status.NotStarted || this.props.status === e.Status.InProgress// Without the InProgress part the alternate buffer loses focus.
             }),
             autocomplete,
             React.createElement(
-                'div',
-                { className: 'actions' },
+                "div",
+                { className: "actions" },
                 decorationToggle,
                 scrollToTop
             )
@@ -235,7 +235,7 @@ export default class PromptComponent extends React.Component<Props, State> imple
     }
 
     private get commandNode(): HTMLInputElement {
-        return <any>this.refs['command'];
+        return <any>this.refs["command"];
     }
 
     private get text(): string {
@@ -253,10 +253,10 @@ export default class PromptComponent extends React.Component<Props, State> imple
 
     private deleteWord(): void {
         // TODO: Remove the word under the caret instead of the last one.
-        var newCommand = this.props.prompt.expanded.slice(0, -1).join(' ');
+        var newCommand = this.props.prompt.expanded.slice(0, -1).join(" ");
 
         if (newCommand.length) {
-            newCommand += ' ';
+            newCommand += " ";
         }
 
         this.replaceText(newCommand);
@@ -297,7 +297,7 @@ export default class PromptComponent extends React.Component<Props, State> imple
         } else {
             this.props.prompt.replaceCurrentLexeme(suggestion);
             if (!suggestion.partial) {
-                this.props.prompt.value += ' ';
+                this.props.prompt.value += " ";
             }
 
             this.setState({ caretPosition: this.text.length });
@@ -317,7 +317,7 @@ export default class PromptComponent extends React.Component<Props, State> imple
     }
 
     private isAutocompleteShown(): boolean {
-        return !!this.refs['autocomplete'];
+        return !!this.refs["autocomplete"];
     }
 
     private handleInput(event: React.SyntheticEvent) {
@@ -334,7 +334,7 @@ export default class PromptComponent extends React.Component<Props, State> imple
         stopBubblingUp(event);
 
         const offset = $(ReactDOM.findDOMNode(this.props.jobView)).offset().top - 10;
-        $('html, body').animate({ scrollTop: offset }, 300);
+        $("html, body").animate({ scrollTop: offset }, 300);
     }
 
     private handleKeyPress(event: Event) {

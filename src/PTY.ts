@@ -1,6 +1,5 @@
 import * as ChildProcess from "child_process";
-import * as Job from "./Job";
-const ptyInternalPath = require.resolve('./PTYInternal');
+const ptyInternalPath = require.resolve("./PTYInternal");
 
 interface Message {
     data?: string;
@@ -14,15 +13,16 @@ export default class PTY {
     // TODO: use generators.
     // TODO: terminate. https://github.com/atom/atom/blob/v1.0.15/src/task.coffee#L151
     constructor(command: string, args: string[], cwd: string, dimensions: Dimensions, dataHandler: Function, exitHandler: Function) {
-        this.process = ChildProcess.fork(ptyInternalPath,
+        this.process = ChildProcess.fork(
+            ptyInternalPath,
             [command, dimensions.columns.toString(), dimensions.rows.toString(), ...args],
             { env: process.env, cwd: cwd }
         );
 
-        this.process.on('message', (message: Message) => {
-            if (message.hasOwnProperty('data')) {
+        this.process.on("message", (message: Message) => {
+            if (message.hasOwnProperty("data")) {
                 dataHandler(message.data);
-            } else if (message.hasOwnProperty('exit')) {
+            } else if (message.hasOwnProperty("exit")) {
                 exitHandler(message.exit);
             } else {
                 throw `Unhandled message: ${JSON.stringify(message)}`;
@@ -45,9 +45,12 @@ export default class PTY {
 
 export function executeCommand(command: string, args: string[] = [], directory: string = process.env.HOME): Promise<string> {
     return new Promise((resolve, reject) => {
-        let output = '';
+        let output = "";
         new PTY(
-            command, args, directory, { columns: 80, rows: 20 },
+            command,
+            args,
+            directory,
+            { columns: 80, rows: 20 },
             (text: string) => output += text,
             (exitCode: number) => exitCode === 0 ? resolve(output) : reject(exitCode)
         );

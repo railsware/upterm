@@ -1,21 +1,28 @@
 import Job from "./Job";
 import Char from "./Char";
-var ANSIParser: AnsiParserConstructor = require('node-ansiparser');
+const ansiParserConstructor: AnsiParserConstructor = require("node-ansiparser");
 
-import * as e from './Enums';
-import * as i from './Interfaces';
-import Utils from './Utils';
-import Buffer from './Buffer';
+import * as e from "./Enums";
+import * as i from "./Interfaces";
+import Utils from "./Utils";
+import Buffer from "./Buffer";
 
 import Color = e.Color;
 import Weight = e.Weight;
 
-var SGR: { [indexer: string]: i.Attributes|string } = {
-    0: { color: Color.White, weight: e.Weight.Normal, underline: false, 'background-color': Color.Black },
+interface HandlerResult {
+    status: string;
+    description: string;
+    longDescription?: string;
+    url: string;
+}
+
+const SGR: { [indexer: string]: i.Attributes|string } = {
+    0: { color: Color.White, weight: e.Weight.Normal, underline: false, "background-color": Color.Black },
     1: { weight: Weight.Bold },
     2: { weight: Weight.Faint },
     4: { underline: true },
-    7: 'negative',
+    7: "negative",
     30: { color: Color.Black },
     31: { color: Color.Red },
     32: { color: Color.Green },
@@ -24,28 +31,28 @@ var SGR: { [indexer: string]: i.Attributes|string } = {
     35: { color: Color.Magenta },
     36: { color: Color.Cyan },
     37: { color: Color.White },
-    38: 'color',
-    40: { 'background-color': Color.Black },
-    41: { 'background-color': Color.Red },
-    42: { 'background-color': Color.Green },
-    43: { 'background-color': Color.Yellow },
-    44: { 'background-color': Color.Blue },
-    45: { 'background-color': Color.Magenta },
-    46: { 'background-color': Color.Cyan },
-    47: { 'background-color': Color.White },
-    48: 'background-color'
+    38: "color",
+    40: { "background-color": Color.Black },
+    41: { "background-color": Color.Red },
+    42: { "background-color": Color.Green },
+    43: { "background-color": Color.Yellow },
+    44: { "background-color": Color.Blue },
+    45: { "background-color": Color.Magenta },
+    46: { "background-color": Color.Cyan },
+    47: { "background-color": Color.White },
+    48: "background-color",
 };
 
 function isSetColorExtended(sgrValue: any) {
-    return sgrValue === 'color' || sgrValue === 'background-color';
+    return sgrValue === "color" || sgrValue === "background-color";
 }
 
-var CSI = {
+const CSI = {
     erase: {
         toEnd: 0,
         toBeginning: 1,
         entire: 2,
-    }
+    },
 };
 
 export default class Parser {
@@ -64,22 +71,22 @@ export default class Parser {
     private initializeAnsiParser(): AnsiParser {
         // TODO: The parser is a mess, but I tried to make it
         // TODO: an easy to clean up mess.
-        return new ANSIParser({
+        return new ansiParserConstructor({
             inst_p: (text: string) => {
-                Utils.info('text', text, text.split('').map(letter => letter.charCodeAt(0)));
+                Utils.info("text", text, text.split("").map(letter => letter.charCodeAt(0)));
 
                 this.buffer.writeString(text);
 
                 logPosition(this.buffer);
             },
             inst_o: function (s: any) {
-                Utils.error('osc', s);
+                Utils.error("osc", s);
             },
             inst_x: (flag: string) => {
-                var char = Char.flyweight(flag, this.job.getBuffer().getAttributes());
-                var name = e.CharCode[char.getCharCode()];
+                const char = Char.flyweight(flag, this.job.getBuffer().getAttributes());
+                const name = e.CharCode[char.getCharCode()];
 
-                Utils.print((name ? e.LogLevel.Log : e.LogLevel.Error), flag.split('').map((_, index) => flag.charCodeAt(index)));
+                Utils.print((name ? e.LogLevel.Log : e.LogLevel.Error), flag.split("").map((_, index) => flag.charCodeAt(index)));
 
                 this.buffer.write(flag);
 
@@ -89,17 +96,18 @@ export default class Parser {
              * CSI handler.
              */
             inst_c: (collected: any, params: Array<number>, flag: string) => {
-                if (collected === '?') {
+                let handlerResult: HandlerResult;
+                if (collected === "?") {
                     if (params.length !== 1) {
                         return Utils.error(`CSI private mode has ${params.length} parameters: ${params}`);
                     }
-                    if (flag !== 'h' && flag !== 'l') {
+                    if (flag !== "h" && flag !== "l") {
                         return Utils.error(`CSI private mode has an incorrect flag: ${flag}`);
                     }
-                    var mode = params[0];
-                    var handlerResult = this.decPrivateModeHandler(mode, flag);
+                    const mode = params[0];
+                    handlerResult = this.decPrivateModeHandler(mode, flag);
 
-                    if (handlerResult.status === 'handled') {
+                    if (handlerResult.status === "handled") {
                         Utils.info(`%cCSI ? ${mode} ${flag}`, "color: blue", handlerResult.description, handlerResult.url);
                     } else {
                         Utils.error(`%cCSI ? ${mode} ${flag}`, "color: blue", handlerResult.description, handlerResult.url);
@@ -107,7 +115,7 @@ export default class Parser {
                 } else {
                     handlerResult = this.csiHandler(collected, params, flag);
 
-                    if (handlerResult.status === 'handled') {
+                    if (handlerResult.status === "handled") {
                         Utils.info(`%cCSI ${params} ${flag}`, "color: blue", handlerResult.description, handlerResult.url);
                     } else {
                         Utils.error(`%cCSI ${params} ${flag}`, "color: blue", handlerResult.description, handlerResult.url);
@@ -120,71 +128,71 @@ export default class Parser {
              * ESC handler.
              */
             inst_e: (collected: any, flag: string) => {
-                var handlerResult = this.escapeHandler(collected, flag);
+                const handlerResult = this.escapeHandler(collected, flag);
 
-                if (handlerResult.status === 'handled') {
+                if (handlerResult.status === "handled") {
                     Utils.info(`%cESC ${collected} ${flag}`, "color: blue", handlerResult.description, handlerResult.url);
                 } else {
                     Utils.error(`%cESC ${collected} ${flag}`, "color: blue", handlerResult.description, handlerResult.url);
                 }
 
                 logPosition(this.buffer);
-            }
+            },
         });
     }
 
     private escapeHandler(collected: any, flag: string) {
-        var short = '';
-        var long = '';
-        var url = '';
-        var status = 'handled';
+        let short = "";
+        let long = "";
+        let url = "";
+        let status = "handled";
 
         if (collected) {
-            if (collected === '#' && flag === '8') {
-                short = 'DEC Screen Alignment Test (DECALN).';
+            if (collected === "#" && flag === "8") {
+                short = "DEC Screen Alignment Test (DECALN).";
                 url = "http://www.vt100.net/docs/vt510-rm/DECALN";
 
-                var dimensions = this.job.getDimensions();
+                const dimensions = this.job.getDimensions();
 
-                for (var i = 0; i !== dimensions.rows; ++i) {
+                for (let i = 0; i !== dimensions.rows; ++i) {
                     this.buffer.moveCursorAbsolute({ row: i, column: 0 });
                     this.buffer.writeString(Array(dimensions.columns).join("E"));
                 }
 
                 this.buffer.moveCursorAbsolute({ row: 0, column: 0 });
             } else {
-                status = 'unhandled';
+                status = "unhandled";
             }
         } else {
             switch (flag) {
-                case 'A':
+                case "A":
                     short = "Cursor up.";
 
                     this.buffer.moveCursorRelative({ vertical: -1 });
                     break;
-                case 'B':
+                case "B":
                     short = "Cursor down.";
 
                     this.buffer.moveCursorRelative({ vertical: 1 });
                     break;
-                case 'C':
+                case "C":
                     short = "Cursor right.";
 
                     this.buffer.moveCursorRelative({ horizontal: 1 });
                     break;
-                case 'D':
+                case "D":
                     short = "Index (IND).";
                     url = "http://www.vt100.net/docs/vt510-rm/IND";
 
                     this.buffer.moveCursorRelative({ vertical: 1 });
                     break;
-                case 'M':
+                case "M":
                     short = "Reverse Index (RI).";
                     long = "Move the active position to the same horizontal position on the preceding line. If the active position is at the top margin, a scroll down is performed.";
 
                     this.buffer.moveCursorRelative({ vertical: -1 });
                     break;
-                case 'E':
+                case "E":
                     short = "Next Line (NEL).";
                     long = "This sequence causes the active position to move to the first position on the next line downward. If the active position is at the bottom margin, a scroll up is performed.";
 
@@ -192,7 +200,7 @@ export default class Parser {
                     this.buffer.moveCursorAbsolute({ column: 0 });
                     break;
                 default:
-                    status = 'unhandled';
+                    status = "unhandled";
             }
         }
 
@@ -200,17 +208,17 @@ export default class Parser {
             status: status,
             description: short,
             longDescription: long,
-            url: url
+            url: url,
         };
     }
 
-    private decPrivateModeHandler(ps: number, flag: string) {
-        var description = '';
-        var url = '';
-        var status = 'handled';
-        var isSet = flag === 'h';
+    private decPrivateModeHandler(ps: number, flag: string): HandlerResult {
+        let description = "";
+        let url = "";
+        let status = "handled";
+        let isSet = flag === "h";
 
-        //noinspection FallThroughInSwitchStatementJS
+        // noinspection FallThroughInSwitchStatementJS
         switch (ps) {
             case 3:
                 url = "http://www.vt100.net/docs/vt510-rm/DECCOLM";
@@ -278,96 +286,96 @@ export default class Parser {
                     break;
                 }
             default:
-                status = 'unhandled';
+                status = "unhandled";
         }
 
         return {
             status: status,
             description: description,
-            url: url
+            url: url,
         };
     }
 
-    private csiHandler(collected: any, params: Array<number>, flag: string) {
-        var short = '';
-        var long = '';
-        var url = '';
-        var status = 'handled';
+    private csiHandler(collected: any, params: Array<number>, flag: string): HandlerResult {
+        let short = "";
+        let long = "";
+        let url = "";
+        let status = "handled";
 
-        var param = <number>(Array.isArray(params) ? params[0] : params);
+        const param = <number>(Array.isArray(params) ? params[0] : params);
 
         switch (flag) {
-            case 'm':
-                short = 'Some SGR stuff';
+            case "m":
+                short = "Some SGR stuff";
 
                 if (params.length === 0) {
-                    short = 'Reset SGR';
+                    short = "Reset SGR";
                     this.buffer.setAttributes(SGR[0]);
                     break;
                 }
 
                 while (params.length) {
-                    var sgr = params.shift();
+                    const sgr = params.shift();
 
-                    var attributeToSet = SGR[sgr];
+                    const attributeToSet = SGR[sgr];
 
                     if (!attributeToSet) {
-                        Utils.error('sgr', sgr, params);
+                        Utils.error("sgr", sgr, params);
                     } else if (isSetColorExtended(attributeToSet)) {
-                        var next = params.shift();
+                        const next = params.shift();
                         if (next === 5) {
-                            var colorIndex = params.shift();
-                            this.buffer.setAttributes({ [<string>attributeToSet]: e.ColorIndex[colorIndex] });
+                            const colorIndex = params.shift();
+                            this.buffer.setAttributes({ [<string>attributeToSet]: e.colorIndex[colorIndex] });
                         } else {
-                            Utils.error('sgr', sgr, next, params);
+                            Utils.error("sgr", sgr, next, params);
                         }
-                    } else if (attributeToSet === 'negative') {
-                        var attributes = this.buffer.getAttributes();
+                    } else if (attributeToSet === "negative") {
+                        const attributes = this.buffer.getAttributes();
 
                         this.buffer.setAttributes({
-                            'background-color': attributes.color,
-                            'color': attributes['background-color']
+                            "background-color": attributes.color,
+                            "color": attributes["background-color"],
                         });
                     } else {
                         this.buffer.setAttributes(attributeToSet);
                     }
                 }
                 break;
-            case 'A':
-                short = 'Cursor Up Ps Times (default = 1) (CUU).';
+            case "A":
+                short = "Cursor Up Ps Times (default = 1) (CUU).";
 
                 this.buffer.moveCursorRelative({ vertical: -(param || 1) });
                 break;
-            case 'B':
-                short = 'Cursor Down Ps Times (default = 1) (CUD).';
+            case "B":
+                short = "Cursor Down Ps Times (default = 1) (CUD).";
                 this.buffer.moveCursorRelative({ vertical: (param || 1) });
                 break;
-            case 'C':
-                short = 'Cursor Forward Ps Times (default = 1) (CUF).';
+            case "C":
+                short = "Cursor Forward Ps Times (default = 1) (CUF).";
 
                 this.buffer.moveCursorRelative({ horizontal: (param || 1) });
                 break;
-            case 'D':
-                short = 'Cursor Backward Ps Times (default = 1) (CUB).';
+            case "D":
+                short = "Cursor Backward Ps Times (default = 1) (CUB).";
 
                 this.buffer.moveCursorRelative({ horizontal: -(param || 1) });
                 break;
             // CSI Ps E  Cursor Next Line Ps Times (default = 1) (CNL).
             // CSI Ps F  Cursor Preceding Line Ps Times (default = 1) (CPL).
             // CSI Ps G  Cursor Character Absolute  [column] (default = [row,1]) (CHA).
-            case 'H':
-                short = 'Cursor Position [row;column] (default = [1,1]) (CUP).';
-                url = 'http://www.vt100.net/docs/vt510-rm/CUP';
+            case "H":
+                short = "Cursor Position [row;column] (default = [1,1]) (CUP).";
+                url = "http://www.vt100.net/docs/vt510-rm/CUP";
 
                 this.buffer.moveCursorAbsolute({ row: or1(params[0]) - 1, column: or1(params[1]) - 1 });
                 break;
-            case 'f':
-                short = 'Horizontal and Vertical Position [row;column] (default = [1,1]) (HVP).';
-                url = 'http://www.vt100.net/docs/vt510-rm/HVP';
+            case "f":
+                short = "Horizontal and Vertical Position [row;column] (default = [1,1]) (HVP).";
+                url = "http://www.vt100.net/docs/vt510-rm/HVP";
 
                 this.buffer.moveCursorAbsolute({ row: or1(params[0]) - 1, column: or1(params[1]) - 1 });
                 break;
-            case 'J':
+            case "J":
                 url = "http://www.vt100.net/docs/vt510-rm/ED";
                 switch (param) {
                     case CSI.erase.entire:
@@ -388,10 +396,10 @@ export default class Parser {
                         break;
                 }
                 break;
-            case 'c':
-                this.job.write('\x1b>1;2;');
+            case "c":
+                this.job.write("\x1b>1;2;");
                 break;
-            case 'K':
+            case "K":
                 url = "http://www.vt100.net/docs/vt510-rm/DECSEL";
                 switch (param) {
                     case CSI.erase.entire:
@@ -410,52 +418,52 @@ export default class Parser {
                         break;
                 }
                 break;
-            case 'L':
+            case "L":
                 url = "http://www.vt100.net/docs/vt510-rm/IL";
                 short = "Inserts one or more blank lines, starting at the cursor. (DL)";
 
                 this.buffer.scrollUp(param || 1, this.buffer.cursor.row());
                 break;
-            case 'M':
+            case "M":
                 url = "http://www.vt100.net/docs/vt510-rm/DL";
                 short = "Deletes one or more lines in the scrolling region, starting with the line that has the cursor. (DL)";
 
                 this.buffer.scrollDown(param || 1, this.buffer.cursor.row());
                 break;
-            case 'r':
+            case "r":
                 url = "http://www.vt100.net/docs/vt510-rm/DECSTBM";
                 short = "Set Scrolling Region [top;bottom] (default = full size of window) (DECSTBM).";
 
-                let bottom = <number>(params[1] ? params[1] - 1 : null);
-                let top = <number>(params[0] ? params[0] - 1 : null);
+                let bottom = <number>(params[1] ? params[1] - 1 : undefined);
+                let top = <number>(params[0] ? params[0] - 1 : undefined);
 
                 this.buffer.margins = { top: top, bottom: bottom };
                 this.buffer.moveCursorAbsolute({ row: 0, column: 0 });
                 break;
             default:
-                status = 'unhandled';
+                status = "unhandled";
         }
 
         return {
             status: status,
             description: short,
             longDescription: long,
-            url: url
+            url: url,
         };
     }
 }
 
-function or1(number: number) {
-    if (number === null) {
+function or1(value: number) {
+    if (value === undefined) {
         return 1;
     } else {
-        return number;
+        return value;
     }
 }
 
 
 // TODO: Move to Utils.
 function logPosition(buffer: Buffer) {
-    var position = buffer.cursor.getPosition();
+    const position = buffer.cursor.getPosition();
     Utils.debug(`%crow: ${position.row}\tcolumn: ${position.column}\t value: ${buffer.at(position)}`, "color: green");
 }

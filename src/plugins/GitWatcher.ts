@@ -3,24 +3,24 @@ import PluginManager from "../PluginManager";
 import {EnvironmentObserverPlugin} from "../Interfaces"
 import EventEmitter = NodeJS.EventEmitter;
 import Utils from "../Utils";
-import * as fs from 'fs';
-import * as Path from 'path';
-import * as events from 'events';
+import * as fs from "fs";
+import * as Path from "path";
+import * as events from "events";
 import {executeCommand} from "../PTY";
 import {debounce} from "../Decorators";
 
-const GIT_WATCHER_EVENT_NAME = 'git-data-changed';
+const GIT_WATCHER_EVENT_NAME = "git-data-changed";
 
 class GitWatcher extends events.EventEmitter {
-    GIT_HEAD_FILE_NAME = Path.join('.git', 'HEAD');
-    GIT_HEADS_DIRECTORY_NAME = Path.join('.git', 'refs', 'heads');
+    GIT_HEAD_FILE_NAME = Path.join(".git", "HEAD");
+    GIT_HEADS_DIRECTORY_NAME = Path.join(".git", "refs", "heads");
 
     gitBranchWatcher: fs.FSWatcher;
     gitDirectory: string;
 
     constructor(private directory: string) {
         super();
-        this.gitDirectory = Path.join(this.directory, '.git');
+        this.gitDirectory = Path.join(this.directory, ".git");
     }
 
     destructor() {
@@ -34,7 +34,7 @@ class GitWatcher extends events.EventEmitter {
             this.updateGitData();
             this.gitBranchWatcher = fs.watch(this.directory, { recursive: true },
                 (type, fileName) => {
-                    if (!fileName.startsWith('.git') || fileName == this.GIT_HEAD_FILE_NAME || fileName.startsWith(this.GIT_HEADS_DIRECTORY_NAME)) {
+                    if (!fileName.startsWith(".git") || fileName == this.GIT_HEAD_FILE_NAME || fileName.startsWith(this.GIT_HEADS_DIRECTORY_NAME)) {
                         this.updateGitData()
                     }
                 }
@@ -47,8 +47,8 @@ class GitWatcher extends events.EventEmitter {
     @debounce(1000/60)
     private updateGitData() {
         fs.readFile(`${this.gitDirectory}/HEAD`, (error, buffer) => {
-            executeCommand('git', ['status', '--porcelain'], this.directory).then(changes => {
-                var status = changes.length ? 'dirty' : 'clean';
+            executeCommand("git", ["status", "--porcelain"], this.directory).then(changes => {
+                var status = changes.length ? "dirty" : "clean";
 
                 var data: VcsData = {
                     isRepository: true,
@@ -99,7 +99,7 @@ class WatchManager implements EnvironmentObserverPlugin {
 
             watcher.on(GIT_WATCHER_EVENT_NAME, (event: any) => {
                 this.directoryToDetails.get(directory).terminals.forEach(terminal =>
-                    terminal.emit('vcs-data', event)
+                    terminal.emit("vcs-data", event)
                 );
             })
         }
