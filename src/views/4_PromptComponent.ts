@@ -79,10 +79,10 @@ interface Props {
 
 interface State {
     caretPosition?: number;
-    caretOffset?: number;
+    caretOffset?: Offset;
     highlightedSuggestionIndex?: number;
     latestKeyCode?: number;
-    suggestions?: Suggestion[]
+    suggestions?: Suggestion[];
 }
 
 
@@ -123,7 +123,7 @@ export default class PromptComponent extends React.Component<Props, State> imple
             highlightedSuggestionIndex: 0,
             latestKeyCode: null,
             caretPosition: 0,
-            caretOffset: 0
+            caretOffset: {top: 0, left: 0, bottom: 0},
         };
 
 
@@ -155,7 +155,7 @@ export default class PromptComponent extends React.Component<Props, State> imple
 
         this.commandNode.innerText = this.text;
 
-        if (this.state.caretPosition !== getCaretPosition() || prevState.caretOffset !== this.state.caretOffset) {
+        if (this.state.caretPosition !== getCaretPosition() || !_.eq(prevState.caretOffset, this.state.caretOffset)) {
             setCaretPosition(this.commandNode, this.state.caretPosition);
         }
 
@@ -183,7 +183,7 @@ export default class PromptComponent extends React.Component<Props, State> imple
                 onSuggestionHover: this.highlightSuggestion.bind(this),
                 onSuggestionClick: this.applySuggestion.bind(this),
                 highlightedIndex: this.state.highlightedSuggestionIndex,
-                ref: "autocomplete"
+                ref: "autocomplete",
             });
         }
 

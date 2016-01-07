@@ -9,6 +9,7 @@ import BufferComponent from "./BufferComponent";
 interface Props {
     job: JobModel;
     hasLocusOfAttention: boolean;
+    key: number;
 }
 
 interface State {

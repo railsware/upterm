@@ -6,6 +6,7 @@
 /// <reference path="../node/node.d.ts" />
 
 declare module 'ptyw.js' {
+    import EventEmitter = NodeJS.EventEmitter;
     /** Options that can be used when creating a new pseudo-terminal. */
     interface TerminalOptions {
         name?: string;
@@ -85,8 +86,10 @@ declare module 'ptyw.js' {
         removeListener(event: string, listener: Function): NodeJS.EventEmitter;
         removeAllListeners(event?: string): NodeJS.EventEmitter;
         // NOTE: this method is not actually defined in pty.js
-        setMaxListeners(n: number): void;
+        getMaxListeners(): number;
+        setMaxListeners(n: number): EventEmitter;
         listeners(event: string): Function[];
+        listenerCount(type: string): number;
         emit(event: string, ...args: any[]): boolean;
     }
 

@@ -18,7 +18,7 @@ export default class BufferComponent extends React.Component<Props, {}> {
         return React.createElement("pre", { className: `output ${this.props.buffer.activeBuffer}` },
             this.props.buffer.toArray().map((row, index) => React.createElement(RowComponent, {
                 row: row || List<Char>(),
-                key: index
+                key: index,
             }))
         );
     }
@@ -32,6 +32,7 @@ export default class BufferComponent extends React.Component<Props, {}> {
 
 interface RowProps {
     row: Immutable.List<Char>;
+    key: number;
 }
 
 const charGrouper = (a: any, b: any) => JSON.stringify(a.getAttributes()) === JSON.stringify(b.getAttributes());
@@ -61,6 +62,7 @@ class RowComponent extends React.Component<RowProps, {}> {
 interface CharGroupProps {
     text: string;
     attributes: i.Attributes;
+    key: number;
 }
 
 class CharGroupComponent extends React.Component<CharGroupProps, {}> {

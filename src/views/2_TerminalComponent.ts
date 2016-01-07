@@ -9,6 +9,7 @@ interface Props {
     terminal: Terminal;
     isActive: boolean;
     activateTerminal: (t: Terminal) => void;
+    key: number;
 }
 
 interface State {

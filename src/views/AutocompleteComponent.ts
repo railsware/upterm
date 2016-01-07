@@ -1,14 +1,13 @@
 import * as React from "react";
 import * as _ from "lodash";
 
-type Offset = {top: number, left: number, bottom: number};
-
 interface AutocompleteProps {
     caretOffset: Offset;
     suggestions: Suggestion[];
     onSuggestionHover: (index: number) => void;
     onSuggestionClick: () => void;
     highlightedIndex: number;
+    ref: string;
 }
 
 export default class AutocompleteComponent extends React.Component<AutocompleteProps, {}> { 

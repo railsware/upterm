@@ -13,9 +13,11 @@ interface Window {
     Notification: NotificationConstructor
 }
 
+declare type Offset = {top: number, left: number, bottom: number};
+
 interface JQuery {
     fixedsticky: Function;
-    caret: (v: string|number) => number;
+    caret: (v: string|number) => Offset;
 }
 
 interface ObjectChange {
