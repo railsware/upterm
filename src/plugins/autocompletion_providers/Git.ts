@@ -18,20 +18,20 @@ function toSuggestion(branch: string, lastWord: string): Suggestion {
 
 PluginManager.registerAutocompletionProvider({
     getSuggestions: async function (job: Job): Promise<Suggestion[]> {
-        const words = job.getPrompt().expanded;
+        const prompt = job.getPrompt();
 
-        if (words[0] !== 'git' || words[1] !== 'checkout') {
+        if (prompt.commandName !== 'git' || prompt.arguments[0] !== 'checkout') {
             return [];
         }
 
-        const lastWord = _.last(words);
+        const lastArgument = prompt.lastArgument;
         var suggestions: Suggestion[] = [];
 
         const headsPath = Path.join(job.directory, '.git', 'refs', 'heads');
 
-        if (words.length === 3 && await Utils.exists(headsPath)) {
+        if (prompt.arguments.length === 2 && await Utils.exists(headsPath)) {
             const files = await Utils.filesIn(headsPath);
-            suggestions = files.map(branch => toSuggestion(branch, lastWord));
+            suggestions = files.map(branch => toSuggestion(branch, lastArgument));
         }
 
         return _._(suggestions).sortBy('score').reverse().value();
