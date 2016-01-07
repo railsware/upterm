@@ -20,7 +20,7 @@ export default class Aliases {
                 let split = aliasLine.split("=");
 
                 let name = /(alias )?(.*)/.exec(split[0])[2];
-                let value = /"?([^"]*)"?/.exec(split[1])[1];
+                let value = /'?([^']*)'?/.exec(split[1])[1];
 
                 accumulator[name] = value;
                 return accumulator;
