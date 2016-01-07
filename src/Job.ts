@@ -37,7 +37,12 @@ export default class Job extends EmitterWithUniqueID {
     execute(): void {
         this.setStatus(e.Status.InProgress);
 
-        CommandExecutor.execute(this).then(
+        Promise.all(
+            PluginManager.preexecPlugins.map(plugin => plugin(this))
+        ).then(
+            () => CommandExecutor.execute(this),
+            errorMessage => this.handleError(errorMessage)
+        ).then(
             () => {
                 // Need to check the status here because it's
                 // executed even after the process was killed.
@@ -46,14 +51,16 @@ export default class Job extends EmitterWithUniqueID {
                 }
                 this.emit('end');
             },
-            (errorMessage) => {
-                this.setStatus(e.Status.Failure);
-                if (errorMessage) {
-                    this.buffer.writeString(errorMessage, { color: e.Color.Red });
-                }
-                this.emit('end');
-            }
+            errorMessage => this.handleError(errorMessage)
         );
+    }
+
+    handleError(message: string): void {
+        this.setStatus(e.Status.Failure);
+        if (message) {
+            this.buffer.writeString(message, { color: e.Color.Red });
+        }
+        this.emit('end');
     }
 
     // Writes to the process' stdin.

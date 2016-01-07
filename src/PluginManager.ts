@@ -1,5 +1,5 @@
 import Job from './Job';
-import {OutputDecorator, EnvironmentObserverPlugin, AutocompletionProvider} from "./Interfaces";
+import {OutputDecorator, EnvironmentObserverPlugin, AutocompletionProvider, PreexecPlugin} from "./Interfaces";
 import * as Path from 'path';
 import * as _ from 'lodash';
 import Utils from "./Utils";
@@ -8,6 +8,7 @@ export default class PluginManager {
     private static _outputDecorators: OutputDecorator[] = [];
     private static _environmentObservers: EnvironmentObserverPlugin[] = [];
     private static _autocompletionProviders: AutocompletionProvider[] = [];
+    private static _preexecPlugins: PreexecPlugin[] = [];
 
     static registerOutputDecorator(decorator: OutputDecorator): void {
         this._outputDecorators.push(decorator);
@@ -31,6 +32,14 @@ export default class PluginManager {
 
     static get autocompletionProviders(): AutocompletionProvider[] {
         return this._autocompletionProviders;
+    }
+
+    static registerPreexecPlugin(plugin: PreexecPlugin): void {
+        this._preexecPlugins.push(plugin);
+    }
+
+    static get preexecPlugins(): PreexecPlugin[] {
+        return this._preexecPlugins;
     }
 }
 

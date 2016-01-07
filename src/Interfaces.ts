@@ -39,3 +39,7 @@ export interface EnvironmentObserverPlugin {
     currentWorkingDirectoryWillChange: (terminal: Terminal, directory: string) => void
     currentWorkingDirectoryDidChange: (terminal: Terminal, directory: string) => void
 }
+
+export interface PreexecPlugin {
+    (job: Job): Promise<void>
+}

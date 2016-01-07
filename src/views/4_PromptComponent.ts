@@ -239,7 +239,7 @@ export default class PromptComponent extends React.Component<Props, State> imple
     }
 
     private get text(): string {
-        return this.props.prompt.buffer.toString();
+        return this.props.prompt.rawInput;
     }
 
     private setText(text: string, position = getCaretPosition()): void {

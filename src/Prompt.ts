@@ -18,15 +18,19 @@ export default class Prompt extends events.EventEmitter {
 
         this.buffer = new Buffer({ columns: 99999, rows: 99999 });
         this.buffer.on('data', () => {
-            this._lexemes = lex(this.buffer.toString());
+            this._lexemes = lex(this.rawInput);
             this.historyExpanded = expandHistory(this._lexemes);
             this._expanded = expandAliases(this.historyExpanded);
         });
     }
 
     execute(): void {
-        History.add(new HistoryEntry(this.buffer.toString(), this.historyExpanded));
+        History.add(new HistoryEntry(this.rawInput, this.historyExpanded));
         this.emit('send');
+    }
+
+    get rawInput(): string {
+        return this.buffer.toString() ;
     }
 
     get commandName(): string {

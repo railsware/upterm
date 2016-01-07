@@ -2,10 +2,15 @@ interface KeyDownReceiver {
     handleKeyDown(event: KeyboardEvent): void;
 }
 
+interface NotificationConstructor {
+    new(str: string): void;
+}
+
 interface Window {
     DEBUG: boolean;
     jobUnderAttention: KeyDownReceiver;
     promptUnderAttention: KeyDownReceiver
+    Notification: NotificationConstructor
 }
 
 interface JQuery {
