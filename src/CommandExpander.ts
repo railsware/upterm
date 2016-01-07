@@ -242,7 +242,6 @@ export function isCompleteHistoryCommand(lexeme: string) {
     return lexeme[0] === '!' && lexeme.length > 1;
 }
 
-// FIXME: figure out why this function is called three times for a command with three letters.
 // FIXME: add recursive replacement, so that two !! in a row would work.
 export function historyReplacement(lexeme: string): string[] {
     if (!isCompleteHistoryCommand(lexeme)) {
