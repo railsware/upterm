@@ -1,8 +1,6 @@
 import Utils from '../../Utils';
 import Prompt from "../../Prompt";
-import * as i from '../../Interfaces';
 import * as _ from 'lodash';
-import * as fs from 'fs';
 import * as Path from 'path';
 import PluginManager from "../../PluginManager";
 var score: (i: string, m: string) => number = require('fuzzaldrin').score;

@@ -441,6 +441,11 @@ pre {
         color: map-get($colors, 'green');
       }
 
+      &.branch .icon {
+        @extend .octicon;
+        @extend .octicon-git-branch;
+      }
+
       &.highlighted {
         background-color: #383E4A;
       }
