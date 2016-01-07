@@ -15,7 +15,7 @@ class HistoryExpansion implements i.AutocompletionProvider {
     };
 
     async getSuggestions(job: Job): Promise<Suggestion[]> {
-        const lexeme = job.getPrompt().lastLexeme;
+        const lexeme = job.prompt.lastLexeme;
 
         return _.map(this.commands(lexeme), (description, command) => {
             return {

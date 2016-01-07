@@ -18,6 +18,6 @@ PluginManager.registerOutputDecorator({
     },
 
     isApplicable: (job: Job): boolean => {
-        return job.hasOutput() && _.isEqual(job.getPrompt().expanded, ['git', 'diff']);
+        return job.hasOutput() && _.isEqual(job.prompt.expanded, ['git', 'diff']);
     }
 });

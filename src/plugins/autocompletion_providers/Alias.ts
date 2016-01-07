@@ -8,7 +8,7 @@ var score: (i: string, m: string) => number = require('fuzzaldrin').score;
 
 class Alias implements i.AutocompletionProvider {
     async getSuggestions(job: Job) {
-        const prompt = job.getPrompt();
+        const prompt = job.prompt;
 
         if (prompt.lexemes.length > 1) {
             return [];

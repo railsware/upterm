@@ -72,24 +72,25 @@ function toSuggestion(value: string, lastWord: string, synopsis = ''): Suggestio
 
 PluginManager.registerAutocompletionProvider({
     getSuggestions: async function (job: Job): Promise<Suggestion[]> {
-        const words = job.getPrompt().expanded;
+        const prompt = job.prompt;
+        const words = prompt.expanded;
 
-        if (words[0] !== 'npm') {
+        if (prompt.commandName !== 'npm') {
             return [];
         }
 
-        const lastWord = _.last(words);
+        const lastArgument = prompt.lastArgument;
         var suggestions: Suggestion[] = [];
 
         if (words.length === 2) {
-            suggestions = _.map(commands, (value, key) => toSuggestion(key, lastWord, value));
+            suggestions = _.map(commands, (value, key) => toSuggestion(key, lastArgument, value));
         }
 
         const packageFilePath = Path.join(job.directory, 'package.json');
 
         if (words.length === 3 && words[1] === 'run' && await Utils.exists(packageFilePath)) {
             suggestions = Object.keys(JSON.parse(await Utils.readFile(packageFilePath)).scripts || {})
-                .map(key => toSuggestion(key, lastWord));
+                .map(key => toSuggestion(key, lastArgument));
         }
 
         return _._(suggestions).sortBy('score').reverse().value();

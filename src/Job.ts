@@ -19,15 +19,15 @@ import EmitterWithUniqueID from "./EmitterWithUniqueID";
 export default class Job extends EmitterWithUniqueID {
     public command: PTY;
     public parser: Parser;
-    private prompt: Prompt;
+    private _prompt: Prompt;
     private buffer: Buffer;
     public status: e.Status = e.Status.NotStarted;
 
     constructor(private _terminal: Terminal) {
         super();
 
-        this.prompt = new Prompt(this);
-        this.prompt.on('send', () => this.execute());
+        this._prompt = new Prompt(this);
+        this._prompt.on('send', () => this.execute());
 
         this.buffer = new Buffer(this.dimensions);
         this.buffer.on('data', _.throttle(() => this.emit('data'), 1000 / 60));
@@ -155,8 +155,8 @@ export default class Job extends EmitterWithUniqueID {
         return this.buffer;
     }
 
-    getPrompt(): Prompt {
-        return this.prompt;
+    get prompt(): Prompt {
+        return this._prompt;
     }
 
     setStatus(status: e.Status): void {

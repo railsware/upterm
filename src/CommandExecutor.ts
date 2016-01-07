@@ -9,7 +9,7 @@ abstract class CommandExecutionStrategy {
     protected args: string[];
 
     constructor(protected job: Job, protected command: string) {
-        this.args = job.getPrompt().arguments.filter(argument => argument.length > 0);
+        this.args = job.prompt.arguments.filter(argument => argument.length > 0);
     }
 
     static async canExecute(command: string): Promise<boolean> {
@@ -60,7 +60,7 @@ class WindowsSystemFileExecutionStrategy extends CommandExecutionStrategy {
     startExecution() {
         return new Promise((resolve) => {
             this.job.command = new PTY(
-                this.cmdPath, ['/s', '/c', this.job.getPrompt().expanded.join(' ')], this.job.directory, this.job.dimensions,
+                this.cmdPath, ['/s', '/c', this.job.prompt.expanded.join(' ')], this.job.directory, this.job.dimensions,
                 (data: string) => this.job.parser.parse(data),
                 (exitCode: number) => resolve()
             );
@@ -86,7 +86,7 @@ export default class CommandExecutor {
     ];
 
     static async execute(job: Job): Promise<{}> {
-        const command = job.getPrompt().commandName;
+        const command = job.prompt.commandName;
         const applicableExecutors = await Utils.filterAsync(this.executors, executor => executor.canExecute(command));
 
         if (applicableExecutors.length) {

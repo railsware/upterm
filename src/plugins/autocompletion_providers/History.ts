@@ -9,7 +9,7 @@ var score: (i: string, m: string) => number = require('fuzzaldrin').score;
 
 class History implements i.AutocompletionProvider {
     async getSuggestions(job: Job) {
-        var lastArgument = job.getPrompt().lastArgument;
+        var lastArgument = job.prompt.lastArgument;
 
         var all = ExecutionHistory.all.filter(entry => entry.raw.length > 3).map(entry => {
             return {

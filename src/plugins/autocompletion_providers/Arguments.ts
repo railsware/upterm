@@ -11,7 +11,7 @@ class Command implements i.AutocompletionProvider {
     suggestions: Suggestion[] = [];
 
     async getSuggestions(job: Job) {
-        const prompt = job.getPrompt();
+        const prompt = job.prompt;
 
         if (prompt.expanded.length < 2) {
             return [];

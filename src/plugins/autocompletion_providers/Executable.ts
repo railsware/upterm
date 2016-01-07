@@ -173,7 +173,7 @@ var descriptions: {[indexer: string]: string} = {
 class Executable implements i.AutocompletionProvider {
 
     async getSuggestions(job: Job) {
-        const prompt = job.getPrompt();
+        const prompt = job.prompt;
 
         if (prompt.expanded.length > 1) {
             return [];

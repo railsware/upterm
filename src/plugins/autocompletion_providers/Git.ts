@@ -18,7 +18,7 @@ function toSuggestion(branch: string, lastWord: string): Suggestion {
 
 PluginManager.registerAutocompletionProvider({
     getSuggestions: async function (job: Job): Promise<Suggestion[]> {
-        const prompt = job.getPrompt();
+        const prompt = job.prompt;
 
         if (prompt.commandName !== 'git' || prompt.arguments[0] !== 'checkout') {
             return [];
