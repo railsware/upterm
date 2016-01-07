@@ -1,11 +1,11 @@
 import * as React from "react";
 import Job from "../Job";
 import PluginManager from "../PluginManager";
-var JSONTree = require("../../../decorators/json");
+const jsonTree = require("../../../decorators/json");
 
 PluginManager.registerOutputDecorator({
     decorate: (job: Job): React.ReactElement<any> => {
-        return React.createElement(JSONTree, { data: JSON.parse(job.getBuffer().toString()) });
+        return React.createElement(jsonTree, { data: JSON.parse(job.getBuffer().toString()) });
     },
 
     isApplicable: (job: Job): boolean => {
@@ -15,5 +15,5 @@ PluginManager.registerOutputDecorator({
         } catch (exception) {
             return false;
         }
-    }
+    },
 });

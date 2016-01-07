@@ -25,7 +25,7 @@ export default class JobComponent extends React.Component<Props, State> implemen
         this.state = {
             status: this.props.job.status,
             decorate: false,
-            canBeDecorated: false
+            canBeDecorated: false,
         };
 
         this.props.job
@@ -46,8 +46,9 @@ export default class JobComponent extends React.Component<Props, State> implemen
     }
 
     render() {
+        let buffer: React.ReactElement<any>;
         if (this.state.canBeDecorated && this.state.decorate) {
-            var buffer = this.props.job.decorate();
+            buffer = this.props.job.decorate();
         } else {
             buffer = React.createElement(BufferComponent, { buffer: this.props.job.getBuffer() });
         }
@@ -61,7 +62,7 @@ export default class JobComponent extends React.Component<Props, State> implemen
                 prompt: this.props.job.prompt,
                 status: this.state.status,
                 hasLocusOfAttention: this.props.hasLocusOfAttention,
-                jobView: this
+                jobView: this,
             }),
             buffer
         );
@@ -70,7 +71,7 @@ export default class JobComponent extends React.Component<Props, State> implemen
     handleKeyDown(event: KeyboardEvent): void {
         if (this.state.status === e.Status.InProgress && !isMetaKey(event)) {
             if (keys.interrupt(event)) {
-                this.props.job.interrupt()
+                this.props.job.interrupt();
             } else {
                 this.props.job.write(event);
             }
@@ -87,5 +88,5 @@ export default class JobComponent extends React.Component<Props, State> implemen
 
 export function isMetaKey(event: KeyboardEvent) {
     return event.metaKey || _.some([event.key, (<any>event).keyIdentifier],
-            key => _.includes(["Shift", "Alt", "Ctrl"], key));
+                                   key => _.includes(["Shift", "Alt", "Ctrl"], key));
 }

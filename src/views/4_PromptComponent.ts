@@ -4,27 +4,26 @@ import * as React from "react";
 import AutocompleteComponent from "./AutocompleteComponent";
 import DecorationToggleComponent from "./DecorationToggleComponent";
 import History from "../History";
-import {stopBubblingUp, scrollToBottom} from "./ViewUtils";
-import Job from "../Job";
+import {stopBubblingUp} from "./ViewUtils";
 import JobComponent from "./3_JobComponent";
 import PromptModel from "../Prompt";
-const Rx = require("rx");
-const ReactDOM = require("react-dom");
+const rx = require("rx");
+const reactDOM = require("react-dom");
 
 
-var keys = {
+const keys = {
     goUp: (event: KeyboardEvent) => (event.ctrlKey && event.keyCode === 80) || event.keyCode === 38,
     goDown: (event: KeyboardEvent) => (event.ctrlKey && event.keyCode === 78) || event.keyCode === 40,
     enter: (event: KeyboardEvent) => event.keyCode === 13,
     tab: (event: KeyboardEvent) => event.keyCode === 9,
     deleteWord: (event: KeyboardEvent) => event.ctrlKey && event.keyCode === 87,
-    interrupt: (event: KeyboardEvent) => event.ctrlKey && event.keyCode === 67
+    interrupt: (event: KeyboardEvent) => event.ctrlKey && event.keyCode === 67,
 };
 
 
 function setCaretPosition(node: Node, position: number) {
-    var selection = window.getSelection();
-    var range = document.createRange();
+    const selection = window.getSelection();
+    const range = document.createRange();
 
     if (node.childNodes.length) {
         range.setStart(node.childNodes[0], position);
@@ -44,28 +43,32 @@ function isCommandKey(event: KeyboardEvent) {
     return _.contains([16, 17, 18], event.keyCode) || event.ctrlKey || event.altKey || event.metaKey;
 }
 
-const isDefinedKey = _.memoize((event: React.KeyboardEvent) => _.some(_.values(keys), (matcher: (event: React.KeyboardEvent) => boolean) => matcher(event)),
-    (event: React.KeyboardEvent) => [event.ctrlKey, event.keyCode]);
+const isDefinedKey = _.memoize(
+    (event: React.KeyboardEvent) => _.some(_.values(keys),
+                                           (matcher: (event: React.KeyboardEvent) => boolean) => matcher(event)),
+    (event: React.KeyboardEvent) => [event.ctrlKey, event.keyCode]
+);
 
 // TODO: Figure out how it works.
 function createEventHandler(): any {
-    var subject: any = function () {
+    const subject: any = function () {
         subject.onNext.apply(subject, arguments);
     };
 
     function getEnumerablePropertyNames(target: _.Dictionary<any>) {
-        var result: string[] = [];
-        for (var key in target) {
+        const result: string[] = [];
+        /* tslint:disable:forin */
+        for (let key in target) {
             result.push(key);
         }
         return result;
     }
 
-    getEnumerablePropertyNames(Rx.Subject.prototype)
+    getEnumerablePropertyNames(rx.Subject.prototype)
         .forEach(function (property) {
-            subject[property] = Rx.Subject.prototype[property];
+            subject[property] = rx.Subject.prototype[property];
         });
-    Rx.Subject.call(subject);
+    rx.Subject.call(subject);
 
     return subject;
 }
@@ -95,11 +98,11 @@ export default class PromptComponent extends React.Component<Props, State> imple
     constructor(props: Props) {
         super(props);
 
-        var keysDownStream = createEventHandler();
-        var promptKeys = keysDownStream.filter(() => this.props.status !== e.Status.InProgress);
+        const keysDownStream = createEventHandler();
+        const promptKeys = keysDownStream.filter(() => this.props.status !== e.Status.InProgress);
 
-        var meaningfulKeysDownStream = promptKeys.filter(isDefinedKey).map(stopBubblingUp);
-        var [navigateAutocompleteStream, navigateHistoryStream] = meaningfulKeysDownStream
+        const meaningfulKeysDownStream = promptKeys.filter(isDefinedKey).map(stopBubblingUp);
+        const [navigateAutocompleteStream, navigateHistoryStream] = meaningfulKeysDownStream
             .filter((event: KeyboardEvent) => keys.goDown(event) || keys.goUp(event))
             .partition(() => this.isAutocompleteShown());
 
@@ -121,7 +124,7 @@ export default class PromptComponent extends React.Component<Props, State> imple
         this.state = {
             suggestions: [],
             highlightedSuggestionIndex: 0,
-            latestKeyCode: null,
+            latestKeyCode: undefined,
             caretPosition: 0,
             caretOffset: {top: 0, left: 0, bottom: 0},
         };
@@ -142,7 +145,7 @@ export default class PromptComponent extends React.Component<Props, State> imple
     }
 
     componentDidMount() {
-        $(ReactDOM.findDOMNode(this)).fixedsticky();
+        $(reactDOM.findDOMNode(this)).fixedsticky();
         $(".fixedsticky-dummy").remove();
 
         this.commandNode.focus();
@@ -164,7 +167,7 @@ export default class PromptComponent extends React.Component<Props, State> imple
         }
 
         if (!prevProps.hasLocusOfAttention && this.props.hasLocusOfAttention) {
-            this.commandNode.focus()
+            this.commandNode.focus();
         }
 
         // FIXME: find a better design to propagate events.
@@ -174,7 +177,7 @@ export default class PromptComponent extends React.Component<Props, State> imple
     }
 
     render() {
-        var classes = ["prompt-wrapper", "fixedsticky", this.props.status].join(" ");
+        const classes = ["prompt-wrapper", "fixedsticky", this.props.status].join(" ");
 
         if (this.showAutocomplete()) {
             var autocomplete = React.createElement(AutocompleteComponent, {
@@ -215,7 +218,7 @@ export default class PromptComponent extends React.Component<Props, State> imple
                 onKeyPress: this.handleKeyPress.bind(this),
                 type: "text",
                 ref: "command",
-                contentEditable: this.props.status === e.Status.NotStarted || this.props.status === e.Status.InProgress// Without the InProgress part the alternate buffer loses focus.
+                contentEditable: this.props.status === e.Status.NotStarted || this.props.status === e.Status.InProgress, // Without the InProgress part the alternate buffer loses focus.
             }),
             autocomplete,
             React.createElement(
@@ -253,7 +256,7 @@ export default class PromptComponent extends React.Component<Props, State> imple
 
     private deleteWord(): void {
         // TODO: Remove the word under the caret instead of the last one.
-        var newCommand = this.props.prompt.expanded.slice(0, -1).join(" ");
+        let newCommand = this.props.prompt.expanded.slice(0, -1).join(" ");
 
         if (newCommand.length) {
             newCommand += " ";
@@ -280,12 +283,12 @@ export default class PromptComponent extends React.Component<Props, State> imple
 
     private navigateAutocomplete(event: KeyboardEvent): void {
         if (keys.goUp(event)) {
-            var index = Math.max(0, this.state.highlightedSuggestionIndex - 1)
+            var index = Math.max(0, this.state.highlightedSuggestionIndex - 1);
         } else {
-            index = Math.min(this.state.suggestions.length - 1, this.state.highlightedSuggestionIndex + 1)
+            index = Math.min(this.state.suggestions.length - 1, this.state.highlightedSuggestionIndex + 1);
         }
 
-        this.highlightSuggestion(index)
+        this.highlightSuggestion(index);
     }
 
     private applySuggestion(): void {
@@ -309,7 +312,7 @@ export default class PromptComponent extends React.Component<Props, State> imple
     }
 
     private showAutocomplete(): boolean {
-        //TODO: use streams.
+        // TODO: use streams.
         return this.props.hasLocusOfAttention &&
             this.state.suggestions.length &&
             this.commandNode && !this.isEmpty() &&
@@ -323,8 +326,8 @@ export default class PromptComponent extends React.Component<Props, State> imple
     private handleInput(event: React.SyntheticEvent) {
         this.setText((<HTMLElement>event.target).innerText);
 
-        //TODO: remove repetition.
-        //TODO: make it a stream.
+        // TODO: remove repetition.
+        // TODO: make it a stream.
         this.props.prompt.getSuggestions().then(suggestions =>
             this.setState({ suggestions: suggestions, highlightedSuggestionIndex: 0 })
         );
@@ -333,7 +336,7 @@ export default class PromptComponent extends React.Component<Props, State> imple
     private handleScrollToTop(event: Event) {
         stopBubblingUp(event);
 
-        const offset = $(ReactDOM.findDOMNode(this.props.jobView)).offset().top - 10;
+        const offset = $(reactDOM.findDOMNode(this.props.jobView)).offset().top - 10;
         $("html, body").animate({ scrollTop: offset }, 300);
     }
 

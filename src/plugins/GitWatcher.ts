@@ -1,7 +1,6 @@
 import Terminal from "../Terminal";
 import PluginManager from "../PluginManager";
-import {EnvironmentObserverPlugin} from "../Interfaces"
-import EventEmitter = NodeJS.EventEmitter;
+import {EnvironmentObserverPlugin} from "../Interfaces";
 import Utils from "../Utils";
 import * as fs from "fs";
 import * as Path from "path";
@@ -32,28 +31,32 @@ class GitWatcher extends events.EventEmitter {
     async watch() {
         if (await Utils.exists(this.gitDirectory)) {
             this.updateGitData();
-            this.gitBranchWatcher = fs.watch(this.directory, { recursive: true },
+            this.gitBranchWatcher = fs.watch(
+                this.directory,
+                { recursive: true },
                 (type, fileName) => {
-                    if (!fileName.startsWith(".git") || fileName == this.GIT_HEAD_FILE_NAME || fileName.startsWith(this.GIT_HEADS_DIRECTORY_NAME)) {
-                        this.updateGitData()
+                    if (!fileName.startsWith(".git") ||
+                            fileName === this.GIT_HEAD_FILE_NAME ||
+                            fileName.startsWith(this.GIT_HEADS_DIRECTORY_NAME)) {
+                        this.updateGitData();
                     }
                 }
-            )
+            );
         } else {
-            this.emit(GIT_WATCHER_EVENT_NAME, { isRepository: false })
+            this.emit(GIT_WATCHER_EVENT_NAME, { isRepository: false });
         }
     }
 
-    @debounce(1000/60)
+    @debounce(1000 / 60)
     private updateGitData() {
         fs.readFile(`${this.gitDirectory}/HEAD`, (error, buffer) => {
             executeCommand("git", ["status", "--porcelain"], this.directory).then(changes => {
-                var status = changes.length ? "dirty" : "clean";
+                const status = changes.length ? "dirty" : "clean";
 
-                var data: VcsData = {
+                const data: VcsData = {
                     isRepository: true,
                     branch: /ref: refs\/heads\/(.*)/.exec(buffer.toString())[1],
-                    status: status
+                    status: status,
                 };
 
                 this.emit(GIT_WATCHER_EVENT_NAME, data);
@@ -88,20 +91,20 @@ class WatchManager implements EnvironmentObserverPlugin {
         if (this.directoryToDetails.has(directory)) {
             this.directoryToDetails.get(directory).terminals.add(terminal);
         } else {
-            const watcher = new GitWatcher(directory) ;
+            const watcher = new GitWatcher(directory);
 
             this.directoryToDetails.set(directory, {
                 terminals: new Set([terminal]),
-                watcher: watcher
+                watcher: watcher,
             });
 
             watcher.watch();
 
             watcher.on(GIT_WATCHER_EVENT_NAME, (event: any) => {
-                this.directoryToDetails.get(directory).terminals.forEach(terminal =>
-                    terminal.emit("vcs-data", event)
+                this.directoryToDetails.get(directory).terminals.forEach(watchedTerminal =>
+                    watchedTerminal.emit("vcs-data", event)
                 );
-            })
+            });
         }
     }
 }

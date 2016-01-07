@@ -25,8 +25,8 @@ export default class TerminalComponent extends React.Component<Props, State> {
 
         this.state = {
             vcsData: { isRepository: false },
-            jobs: this.props.terminal.jobs
-        }
+            jobs: this.props.terminal.jobs,
+        };
     }
 
     componentWillMount() {
@@ -36,27 +36,34 @@ export default class TerminalComponent extends React.Component<Props, State> {
     }
 
     render() {
-        var jobs = _.takeRight(this.state.jobs, this.RENDER_JOBS_COUNT).map((job: Job, index: number) =>
-            React.createElement(JobComponent, {
-                key: job.id,
-                job: job,
-                hasLocusOfAttention: this.props.isActive && index === this.state.jobs.length - 1
-            }, [])
+        const jobs = _.takeRight(this.state.jobs, this.RENDER_JOBS_COUNT).map((job: Job, index: number) =>
+            React.createElement(
+                JobComponent,
+                {
+                    key: job.id,
+                    job: job,
+                    hasLocusOfAttention: this.props.isActive && index === this.state.jobs.length - 1,
+                },
+                []
+            )
         );
 
         let activenessClass = this.props.isActive ? "active" : "inactive";
 
-        return React.createElement("div", {
+        return React.createElement(
+            "div",
+            {
                 className: `terminal ${activenessClass}`,
                 tabIndex: 0,
                 onClickCapture: this.handleClick.bind(this),
-                onKeyDownCapture: this.handleKeyDown.bind(this)
+                onKeyDownCapture: this.handleKeyDown.bind(this),
             },
             React.createElement("div", { className: "jobs" }, jobs),
             React.createElement(StatusLineComponent, {
-                currentWorkingDirectory: this.props.terminal.currentDirectory,
-                vcsData: this.state.vcsData
-            })
+                    currentWorkingDirectory: this.props.terminal.currentDirectory,
+                    vcsData: this.state.vcsData,
+                }
+            )
         );
     }
 

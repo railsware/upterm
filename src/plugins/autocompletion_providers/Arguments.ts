@@ -1,11 +1,10 @@
-import Utils from "../../Utils";
 import * as i from "../../Interfaces";
 import * as _ from "lodash";
 import Job from "../../Job";
 import {parser} from "../../CommandExpander";
 import Autocompletion from "../../Autocompletion";
 import PluginManager from "../../PluginManager";
-var filter: any = require("fuzzaldrin").filter;
+const filter: any = require("fuzzaldrin").filter;
 
 class Command implements i.AutocompletionProvider {
     suggestions: Suggestion[] = [];
@@ -21,7 +20,7 @@ class Command implements i.AutocompletionProvider {
             parser.yy.parseError = (err: any, hash: any) => {
                 const token = hash.token === "EOF" ? "\"" : `"${hash.token}`;
 
-                var filtered = _._(hash.expected).filter((value: string) => _.startsWith(value, token))
+                const filtered = _._(hash.expected).filter((value: string) => _.startsWith(value, token))
                     .map((value: string) => /^"(.*)"$/.exec(value)[1])
                     .value();
 
@@ -29,9 +28,9 @@ class Command implements i.AutocompletionProvider {
                     return {
                         value: value,
                         score: 10,
-                        synopsis: '',
-                        description: '',
-                        type: value.startsWith("-") ? "option" : "command"
+                        synopsis: "",
+                        description: "",
+                        type: value.startsWith("-") ? "option" : "command",
                     };
                 });
             };

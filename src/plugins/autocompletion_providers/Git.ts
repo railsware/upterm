@@ -3,17 +3,17 @@ import Job from "../../Job";
 import * as _ from "lodash";
 import * as Path from "path";
 import PluginManager from "../../PluginManager";
-var score: (i: string, m: string) => number = require("fuzzaldrin").score;
+const score: (i: string, m: string) => number = require("fuzzaldrin").score;
 
 
 function toSuggestion(branch: string, lastWord: string): Suggestion {
     return {
         value: branch,
         score: 2 + score(branch, lastWord),
-        synopsis: '',
-        description: '',
-        type: "branch"
-    }
+        synopsis: "",
+        description: "",
+        type: "branch",
+    };
 }
 
 PluginManager.registerAutocompletionProvider({
@@ -25,7 +25,7 @@ PluginManager.registerAutocompletionProvider({
         }
 
         const lastArgument = prompt.lastArgument;
-        var suggestions: Suggestion[] = [];
+        let suggestions: Suggestion[] = [];
 
         const headsPath = Path.join(job.directory, ".git", "refs", "heads");
 
@@ -35,5 +35,5 @@ PluginManager.registerAutocompletionProvider({
         }
 
         return _._(suggestions).sortBy("score").reverse().value();
-    }
+    },
 });

@@ -7,7 +7,9 @@ interface StatusLineProps {
 
 export default class StatusLine extends React.Component<StatusLineProps, {}> {
     render() {
-        return React.createElement("div", { className: "status-line" },
+        return React.createElement(
+            "div",
+            { className: "status-line" },
             React.createElement(CurrentDirectory, { currentWorkingDirectory: this.props.currentWorkingDirectory }),
             React.createElement(VcsDataComponent, { data: this.props.vcsData })
         );
@@ -36,7 +38,9 @@ class VcsDataComponent extends React.Component<VcsDataProps, {}> {
             return null;
         }
 
-        return React.createElement("div", { className: "vcs-data" },
+        return React.createElement(
+            "div",
+            { className: "vcs-data" },
             React.createElement("div", { className: `status ${this.props.data.status}` }, this.props.data.branch)
         );
     }

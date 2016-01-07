@@ -32,8 +32,10 @@ export default class AutocompleteComponent extends React.Component<AutocompleteP
             offset.bottom = 28 + (suggestionDescription ? 28 : 0);
         }
 
-        return React.createElement("div", { className: "autocomplete", style: offset },
-            React.createElement("ul", null, suggestionViews),
+        return React.createElement(
+            "div",
+            { className: "autocomplete", style: offset },
+            React.createElement("ul", undefined, suggestionViews),
             descriptionElement
         );
     }
@@ -55,13 +57,23 @@ class SuggestionComponent extends React.Component<SuggestionProps, {}> {
             classes.push("highlighted");
         }
 
-        return React.createElement("li", { className: classes.join(" "), style: { cursor: "pointer" }, onMouseOver: this.props.onHover, onClick: this.props.onClick},
+        return React.createElement(
+            "li",
+            {
+                className: classes.join(" "),
+                style: { cursor: "pointer" },
+                onMouseOver: this.props.onHover,
+                onClick: this.props.onClick,
+            },
             React.createElement("i", { className: "icon" }),
             React.createElement("span", { className: "value" }, this.props.suggestion.value),
-            React.createElement("span", {
-                style: window.DEBUG ? {} : { display: "none" },
-                className: "score"
-            }, this.props.suggestion.score.toFixed(2)),
+            React.createElement(
+                "span",
+                {
+                    style: window.DEBUG ? {} : { display: "none" },
+                    className: "score",
+                },
+                this.props.suggestion.score.toFixed(2)),
             React.createElement("span", { className: "synopsis" }, this.props.suggestion.synopsis)
         );
     }

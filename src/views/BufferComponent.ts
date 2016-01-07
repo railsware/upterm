@@ -4,22 +4,26 @@ import * as e from "../Enums";
 import * as _ from "lodash";
 import Buffer from "../Buffer";
 import Char from "../Char";
-import Cursor from "../Cursor";
 import {groupWhen} from "../Utils";
 import {List} from "immutable";
 import {scrollToBottom} from "./ViewUtils";
 
 interface Props {
-    buffer: Buffer
+    buffer: Buffer;
 }
 
 export default class BufferComponent extends React.Component<Props, {}> {
     render() {
-        return React.createElement("pre", { className: `output ${this.props.buffer.activeBuffer}` },
-            this.props.buffer.toArray().map((row, index) => React.createElement(RowComponent, {
-                row: row || List<Char>(),
-                key: index,
-            }))
+        return React.createElement(
+            "pre",
+            { className: `output ${this.props.buffer.activeBuffer}` },
+            this.props.buffer.toArray().map((row, index) => React.createElement(
+                RowComponent,
+                {
+                    row: row || List<Char>(),
+                    key: index,
+                }
+            ))
         );
     }
 
@@ -47,10 +51,11 @@ class RowComponent extends React.Component<RowProps, {}> {
         let rowWithoutHoles = this.props.row.toArray().map(char => char || Char.empty);
         let charGroups: Char[][] = groupWhen(charGrouper, rowWithoutHoles);
 
-        return React.createElement("div",
+        return React.createElement(
+            "div",
             { className: "row" },
             charGroups.map((charGroup: Char[], index: number) => React.createElement(CharGroupComponent, {
-                text: charGroup.map(char => char.toString()).join(''),
+                text: charGroup.map(char => char.toString()).join(""),
                 attributes: charGroup[0].getAttributes(),
                 key: index,
             }))
@@ -75,7 +80,7 @@ class CharGroupComponent extends React.Component<CharGroupProps, {}> {
     }
 
     private getHTMLAttributes(attributes: i.Attributes): Object {
-        var htmlAttributes: _.Dictionary<any> = {};
+        let htmlAttributes: _.Dictionary<any> = {};
         _.each(<_.Dictionary<any>>attributes, (value, key) => {
             htmlAttributes[`data-${key}`] = value;
         });

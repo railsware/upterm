@@ -1,10 +1,10 @@
 import Terminal from "../Terminal";
 import PluginManager from "../PluginManager";
-var remote = require("remote");
-var app = remote.require("app");
+const remote = require("remote");
+const app = remote.require("app");
 
 PluginManager.registerEnvironmentObserver({
-    currentWorkingDirectoryWillChange: () => {},
+    currentWorkingDirectoryWillChange: () => { /* do nothing */ },
 
     currentWorkingDirectoryDidChange: (terminal: Terminal, directory: string) => {
         app.addRecentDocument(directory);

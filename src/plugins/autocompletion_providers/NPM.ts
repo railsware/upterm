@@ -3,7 +3,7 @@ import Job from "../../Job";
 import * as _ from "lodash";
 import * as Path from "path";
 import PluginManager from "../../PluginManager";
-var score: (i: string, m: string) => number = require("fuzzaldrin").score;
+const score: (i: string, m: string) => number = require("fuzzaldrin").score;
 
 const commands: _.Dictionary<string> = {
     "access": "Set access level on published packages",
@@ -56,18 +56,18 @@ const commands: _.Dictionary<string> = {
     "update": "Update a package",
     "version": "Bump a package version",
     "view": "View registry info",
-    "whoami": "Display npm username"
+    "whoami": "Display npm username",
 };
 
 
-function toSuggestion(value: string, lastWord: string, synopsis = ''): Suggestion {
+function toSuggestion(value: string, lastWord: string, synopsis = ""): Suggestion {
     return {
         value: value,
         score: 2 + score(value, lastWord),
         synopsis: synopsis,
-        description: '',
-        type: "command"
-    }
+        description: "",
+        type: "command",
+    };
 }
 
 PluginManager.registerAutocompletionProvider({
@@ -80,7 +80,7 @@ PluginManager.registerAutocompletionProvider({
         }
 
         const lastArgument = prompt.lastArgument;
-        var suggestions: Suggestion[] = [];
+        let suggestions: Suggestion[] = [];
 
         if (words.length === 2) {
             suggestions = _.map(commands, (value, key) => toSuggestion(key, lastArgument, value));
@@ -94,5 +94,5 @@ PluginManager.registerAutocompletionProvider({
         }
 
         return _._(suggestions).sortBy("score").reverse().value();
-    }
+    },
 });

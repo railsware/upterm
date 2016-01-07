@@ -1,8 +1,6 @@
-import Utils from "../../Utils";
 import * as i from "../../Interfaces";
 import * as _ from "lodash";
 import Job from "../../Job";
-import History from "../../History";
 import {isCompleteHistoryCommand, historyReplacement} from "../../CommandExpander";
 import PluginManager from "../../PluginManager";
 
@@ -24,8 +22,8 @@ class HistoryExpansion implements i.AutocompletionProvider {
                 synopsis: historyReplacement(command).join(" "),
                 description: description,
                 type: "history-expansion",
-            }
-        })
+            };
+        });
     }
 
     private commands(lexeme: string): _.Dictionary<string> {

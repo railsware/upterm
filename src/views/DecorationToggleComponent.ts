@@ -26,7 +26,7 @@ export default class DecorationToggleComponent extends React.Component<Props, St
     }
 
     render() {
-        var classes = ["decoration-toggle"];
+        let classes = ["decoration-toggle"];
 
         if (!this.state.enabled) {
             classes.push("disabled");

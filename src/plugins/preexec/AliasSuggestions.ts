@@ -8,6 +8,7 @@ PluginManager.registerPreexecPlugin(async function(job: Job): Promise<void> {
     const key = _.findKey(Aliases.all, value => value === input);
 
     if (key) {
-        new window.Notification(`You have an alias "${key}" for "${input}".`)
+        /* tslint:disable:no-unused-expression */
+        new window.Notification(`You have an alias "${key}" for "${input}".`);
     }
 });

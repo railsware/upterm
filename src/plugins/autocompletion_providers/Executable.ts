@@ -1,13 +1,12 @@
 import Utils from "../../Utils";
 import * as i from "../../Interfaces";
-import * as _ from "lodash"
-import * as Path from "path"
+import * as _ from "lodash";
 import Job from "../../Job";
 import Autocompletion from "../../Autocompletion";
 import PluginManager from "../../PluginManager";
-var score: (i: string, m: string) => number = require("fuzzaldrin").score;
+const score: (i: string, m: string) => number = require("fuzzaldrin").score;
 
-var descriptions: {[indexer: string]: string} = {
+const descriptions: {[indexer: string]: string} = {
     admin: "Create and administer SCCS files",
     alias: "Define or display aliases",
     ar: "Create and maintain library archives",
@@ -167,7 +166,7 @@ var descriptions: {[indexer: string]: string} = {
     write: "Write to another user\"s terminal",
     xargs: "Construct argument lists and invoke utility",
     yacc: "Yet another compiler compiler",
-    zcat: "Expand and concatenate data"
+    zcat: "Expand and concatenate data",
 };
 
 class Executable implements i.AutocompletionProvider {
@@ -179,17 +178,17 @@ class Executable implements i.AutocompletionProvider {
             return [];
         }
 
-        var executables = await Utils.executablesInPaths();
+        const executables = await Utils.executablesInPaths();
 
-        var lastArgument = prompt.lastArgument;
+        const lastArgument = prompt.lastArgument;
 
-        var all = _.map(executables, (executable: string) => {
+        const all = _.map(executables, (executable: string) => {
             return {
                 value: executable,
                 score: 1.5 * score(executable, lastArgument),
-                synopsis: '',
+                synopsis: "",
                 description: descriptions[executable],
-                type: "executable"
+                type: "executable",
             };
         });
 

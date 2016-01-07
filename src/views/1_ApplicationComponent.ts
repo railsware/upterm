@@ -83,28 +83,32 @@ export default class ApplicationComponent extends React.Component<{}, State> {
                 terminal: terminal,
                 key: terminal.id,
                 isActive: terminal === this.application.activeTerminal,
-                activateTerminal: (terminal: Terminal) => {
-                    this.application.activateTerminal(terminal);
+                activateTerminal: (newActiveTerminal: Terminal) => {
+                    this.application.activateTerminal(newActiveTerminal);
                     this.forceUpdate();
-                }
+                },
             })
         );
 
-        return React.createElement("div", {
-            className: "application",
-            onKeyDownCapture: this.handleKeyDown.bind(this)
-        }, terminals)
+        return React.createElement(
+            "div",
+            {
+                className: "application",
+                onKeyDownCapture: this.handleKeyDown.bind(this),
+            },
+            terminals
+        );
     }
 
     private get contentSize(): Size {
         return {
             width: window.innerWidth,
             height: window.innerHeight,
-        }
+        };
     }
 
     private get charSize(): Size {
-        var letter = document.getElementById("sizes-calculation");
+        const letter = document.getElementById("sizes-calculation");
 
         return {
             width: letter.clientWidth + 0.5,

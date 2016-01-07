@@ -1,10 +1,10 @@
 const app = require("app");
-const BrowserWindow = require("browser-window");
+const browserWindowConstructor = require("browser-window");
 const IPC = require("electron").ipcMain;
 let menu = require("./Menu");
 let fixPath = require("fix-path");
 
-let browserWindow: any = null;
+let browserWindow: any = undefined;
 
 // Fix the $PATH on OS X
 fixPath();
@@ -20,25 +20,25 @@ function getMainWindow() {
     const workAreaSize = require("screen").getPrimaryDisplay().workAreaSize;
 
     if (!browserWindow) {
-        browserWindow = new BrowserWindow({
+        browserWindow = new browserWindowConstructor({
             "web-preferences": {
                 "experimental-features": true,
                 "experimental-canvas-features": true,
                 "subpixel-font-scaling": true,
-                "overlay-scrollbars": true
+                "overlay-scrollbars": true,
             },
             resizable: true,
             "min-width": 500,
             "min-height": 300,
             width: workAreaSize.width,
             height: workAreaSize.height,
-            show: false
+            show: false,
         });
 
         browserWindow.loadURL("file://" + __dirname + "/../views/index.html");
         menu.setMenu(app, browserWindow);
 
-        browserWindow.on("closed", (): void => browserWindow = null);
+        browserWindow.on("closed", (): void => browserWindow = undefined);
 
         browserWindow.webContents.on("did-finish-load", () => {
             browserWindow.show();

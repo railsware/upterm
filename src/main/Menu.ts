@@ -1,15 +1,15 @@
-const Menu = require("menu");
+const menuConstructor = require("menu");
 
 module.exports = {
     setMenu: (app: any, browserWindow: any) => {
         if (process.platform === "darwin") {
-            var template = [
+            const template = [
                 {
                     label: "Black Screen",
                     submenu: [
                         {
                             label: "About Black Screen",
-                            selector: "orderFrontStandardAboutPanel:"
+                            selector: "orderFrontStandardAboutPanel:",
                         },
                         {
                             type: "separator"
@@ -20,16 +20,16 @@ module.exports = {
                         {
                             label: "Hide Black Screen",
                             accelerator: "Command+H",
-                            selector: "hide:"
+                            selector: "hide:",
                         },
                         {
                             label: "Hide Others",
                             accelerator: "Command+Shift+H",
-                            selector: "hideOtherApplications:"
+                            selector: "hideOtherApplications:",
                         },
                         {
                             label: "Show All",
-                            selector: "unhideAllApplications:"
+                            selector: "unhideAllApplications:",
                         },
                         {
                             type: "separator"
@@ -39,9 +39,9 @@ module.exports = {
                             accelerator: "Command+Q",
                             click: function () {
                                 app.quit();
-                            }
-                        }
-                    ]
+                            },
+                        },
+                    ],
                 },
                 {
                     label: "Edit",
@@ -49,12 +49,12 @@ module.exports = {
                         {
                             label: "Undo",
                             accelerator: "Command+Z",
-                            selector: "undo:"
+                            selector: "undo:",
                         },
                         {
                             label: "Redo",
                             accelerator: "Shift+Command+Z",
-                            selector: "redo:"
+                            selector: "redo:",
                         },
                         {
                             type: "separator"
@@ -62,24 +62,24 @@ module.exports = {
                         {
                             label: "Cut",
                             accelerator: "Command+X",
-                            selector: "cut:"
+                            selector: "cut:",
                         },
                         {
                             label: "Copy",
                             accelerator: "Command+C",
-                            selector: "copy:"
+                            selector: "copy:",
                         },
                         {
                             label: "Paste",
                             accelerator: "Command+V",
-                            selector: "paste:"
+                            selector: "paste:",
                         },
                         {
                             label: "Select All",
                             accelerator: "Command+A",
-                            selector: "selectAll:"
-                        }
-                    ]
+                            selector: "selectAll:",
+                        },
+                    ],
                 },
                 {
                     label: "View",
@@ -89,23 +89,23 @@ module.exports = {
                             accelerator: "Command+R",
                             click: function () {
                                 browserWindow.reload();
-                            }
+                            },
                         },
                         {
                             label: "Toggle Full Screen",
                             accelerator: "Ctrl+Command+F",
                             click: function () {
                                 browserWindow.setFullScreen(!browserWindow.isFullScreen());
-                            }
+                            },
                         },
                         {
                             label: "Toggle Developer Tools",
                             accelerator: "Alt+Command+I",
                             click: function () {
                                 browserWindow.toggleDevTools();
-                            }
-                        }
-                    ]
+                            },
+                        },
+                    ],
                 },
                 {
                     label: "Window",
@@ -113,21 +113,21 @@ module.exports = {
                         {
                             label: "Minimize",
                             accelerator: "Command+M",
-                            selector: "performMiniaturize:"
+                            selector: "performMiniaturize:",
                         },
                         {
                             label: "Close",
                             accelerator: "Command+W",
-                            selector: "performClose:"
+                            selector: "performClose:",
                         },
                         {
                             type: "separator"
                         },
                         {
                             label: "Bring All to Front",
-                            selector: "arrangeInFront:"
-                        }
-                    ]
+                            selector: "arrangeInFront:",
+                        },
+                    ],
                 },
                 {
                     label: "Help",
@@ -135,17 +135,18 @@ module.exports = {
                         {
                             label: "GitHub Repository",
                             click: function () {
-                                require("shell").openExternal("https://github.com/shockone/black-screen")
-                            }
-                        }
-                    ]
-                }
+                                /* tslint:disable:no-unused-expression */
+                                require("shell").openExternal("https://github.com/shockone/black-screen");
+                            },
+                        },
+                    ],
+                },
             ];
 
-            let menu = Menu.buildFromTemplate(template);
-            Menu.setApplicationMenu(menu);
+            let menu = menuConstructor.buildFromTemplate(template);
+            menuConstructor.setApplicationMenu(menu);
         } else {
-            template = [
+            const template = [
                 {
                     label: "&View",
                     submenu: [
@@ -154,23 +155,23 @@ module.exports = {
                             accelerator: "Ctrl+R",
                             click: function () {
                                 browserWindow.reload();
-                            }
+                            },
                         },
                         {
                             label: "Toggle &Full Screen",
                             accelerator: "F11",
                             click: function () {
                                 browserWindow.setFullScreen(!browserWindow.isFullScreen());
-                            }
+                            },
                         },
                         {
                             label: "Toggle &Developer Tools",
                             accelerator: "Alt+Ctrl+I",
                             click: function () {
                                 browserWindow.toggleDevTools();
-                            }
-                        }
-                    ]
+                            },
+                        },
+                    ],
                 },
                 {
                     label: "Help",
@@ -178,15 +179,15 @@ module.exports = {
                         {
                             label: "GitHub Repository",
                             click: function () {
-                                require("shell").openExternal("https://github.com/shockone/black-screen")
-                            }
-                        }
-                    ]
-                }
+                                require("shell").openExternal("https://github.com/shockone/black-screen");
+                            },
+                        },
+                    ],
+                },
             ];
 
-            let menu = Menu.buildFromTemplate(template);
+            let menu = menuConstructor.buildFromTemplate(template);
             browserWindow.setMenu(menu);
         }
-    }
+    },
 };
