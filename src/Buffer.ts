@@ -47,18 +47,18 @@ export default class Buffer extends events.EventEmitter {
                     this.moveCursorRelative({ horizontal: -1 });
                     break;
                 case e.CharCode.Tab:
-                    this.moveCursorAbsolute({ horizontal: Math.floor((this.cursor.column() + 8) / 8) * 8 });
+                    this.moveCursorAbsolute({ column: Math.floor((this.cursor.column() + 8) / 8) * 8 });
                     break;
                 case e.CharCode.NewLine:
                     if (this.cursor.row() === this._margins.bottom) {
                         this.scrollDown(1);
                     } else {
-                        this.moveCursorRelative({ vertical: 1 }).moveCursorAbsolute({ horizontal: 0 });
+                        this.moveCursorRelative({ vertical: 1 }).moveCursorAbsolute({ column: 0 });
                     }
 
                     break;
                 case e.CharCode.CarriageReturn:
-                    this.moveCursorAbsolute({ horizontal: 0 });
+                    this.moveCursorAbsolute({ column: 0 });
                     break;
                 default:
                     Utils.error(`Couldn't write a special char '${charObject}' with char code ${charObject.toString().charCodeAt(0)}.`);
@@ -129,7 +129,7 @@ export default class Buffer extends events.EventEmitter {
         return this;
     }
 
-    moveCursorAbsolute(position: Advancement): Buffer {
+    moveCursorAbsolute(position: RowColumn): Buffer {
         this.cursor.moveAbsolute(position, this.homePosition);
         this.emit('data');
 
@@ -161,7 +161,7 @@ export default class Buffer extends events.EventEmitter {
 
     clear() {
         this.storage = List<List<Char>>();
-        this.moveCursorAbsolute({ horizontal: 0, vertical: 0 });
+        this.moveCursorAbsolute({ row: 0, column: 0 });
     }
 
     clearToBeginning() {

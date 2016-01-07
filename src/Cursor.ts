@@ -5,24 +5,23 @@ export default class Cursor {
     constructor(private position: RowColumn = { row: 0, column: 0 }) {
     }
 
-    // TODO: Use RowColumn instead of Advancement.
-    moveAbsolute(advancement: Advancement, homePosition: RowColumn): Cursor {
-        if (typeof advancement.horizontal === 'number') {
-            this.position.column = homePosition.column + advancement.horizontal;
+    moveAbsolute(position: RowColumn, homePosition: RowColumn): Cursor {
+        if (typeof position.column === 'number') {
+            this.position.column = position.column + homePosition.column;
         }
 
-        if (typeof advancement.vertical === 'number') {
-            this.position.row = homePosition.row + advancement.vertical;
+        if (typeof position.row === 'number') {
+            this.position.row = position.row + homePosition.row;
         }
 
         return this;
     }
 
     moveRelative(advancement: Advancement): Cursor {
-        var vertical = Math.max(0, this.row() + (advancement.vertical || 0));
-        var horizontal = Math.max(0, this.column() + (advancement.horizontal || 0));
+        const row = Math.max(0, this.row() + (advancement.vertical || 0));
+        const column = Math.max(0, this.column() + (advancement.horizontal || 0));
 
-        this.moveAbsolute({ vertical: vertical, horizontal: horizontal }, { column: 0, row: 0 });
+        this.moveAbsolute({ row: row, column: column }, { column: 0, row: 0 });
 
         return this;
     }

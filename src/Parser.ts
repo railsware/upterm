@@ -147,11 +147,11 @@ export default class Parser {
                 var dimensions = this.job.getDimensions();
 
                 for (var i = 0; i !== dimensions.rows; ++i) {
-                    this.buffer.moveCursorAbsolute({ vertical: i, horizontal: 0 });
+                    this.buffer.moveCursorAbsolute({ row: i, column: 0 });
                     this.buffer.writeString(Array(dimensions.columns).join("E"));
                 }
 
-                this.buffer.moveCursorAbsolute({ vertical: 0, horizontal: 0 });
+                this.buffer.moveCursorAbsolute({ row: 0, column: 0 });
             } else {
                 status = 'unhandled';
             }
@@ -189,7 +189,7 @@ export default class Parser {
                     long = "This sequence causes the active position to move to the first position on the next line downward. If the active position is at the bottom margin, a scroll up is performed.";
 
                     this.buffer.moveCursorRelative({ vertical: 1 });
-                    this.buffer.moveCursorAbsolute({ horizontal: 0 });
+                    this.buffer.moveCursorAbsolute({ column: 0 });
                     break;
                 default:
                     status = 'unhandled';
@@ -359,13 +359,13 @@ export default class Parser {
                 short = 'Cursor Position [row;column] (default = [1,1]) (CUP).';
                 url = 'http://www.vt100.net/docs/vt510-rm/CUP';
 
-                this.buffer.moveCursorAbsolute({ vertical: or1(params[0]) - 1, horizontal: or1(params[1]) - 1 });
+                this.buffer.moveCursorAbsolute({ row: or1(params[0]) - 1, column: or1(params[1]) - 1 });
                 break;
             case 'f':
                 short = 'Horizontal and Vertical Position [row;column] (default = [1,1]) (HVP).';
                 url = 'http://www.vt100.net/docs/vt510-rm/HVP';
 
-                this.buffer.moveCursorAbsolute({ vertical: or1(params[0]) - 1, horizontal: or1(params[1]) - 1 });
+                this.buffer.moveCursorAbsolute({ row: or1(params[0]) - 1, column: or1(params[1]) - 1 });
                 break;
             case 'J':
                 url = "http://www.vt100.net/docs/vt510-rm/ED";
@@ -430,7 +430,7 @@ export default class Parser {
                 let top = <number>(params[0] ? params[0] - 1 : null);
 
                 this.buffer.margins = { top: top, bottom: bottom };
-                this.buffer.moveCursorAbsolute({ horizontal: 0, vertical: 0 });
+                this.buffer.moveCursorAbsolute({ row: 0, column: 0 });
                 break;
             default:
                 status = 'unhandled';

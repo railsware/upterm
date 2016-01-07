@@ -14,8 +14,8 @@ interface Advancement {
 }
 
 interface RowColumn {
-    column: number;
-    row: number;
+    column?: number;
+    row?: number;
 }
 
 interface Suggestion {
