@@ -78,16 +78,6 @@ class WindowsSystemFileExecutionStrategy extends CommandExecutionStrategy {
     }
 }
 
-class NullExecutionStrategy extends CommandExecutionStrategy {
-    static async canExecute(command: string) {
-        return true;
-    }
-
-    startExecution() {
-        return new Promise((resolve, reject) => reject(`Black Screen: command "${this.command}" not found.`));
-    }
-}
-
 export default class CommandExecutor {
     private static executors = [
         BuiltInCommandExecutionStrategy,
@@ -95,14 +85,15 @@ export default class CommandExecutor {
         UnixSystemFileExecutionStrategy
     ];
 
-    static execute(job: Job): Promise<{}> {
-        var command = job.getPrompt().commandName;
+    static async execute(job: Job): Promise<{}> {
+        const command = job.getPrompt().commandName;
+        const applicableExecutors = await Utils.filterAsync(this.executors, executor => executor.canExecute(command));
 
-        return Utils.filterAsync(
-            this.executors.concat(NullExecutionStrategy),
-            executor => executor.canExecute(command))
-            .then(applicableExecutors => new applicableExecutors[0](job, command).startExecution()
-            );
+        if (applicableExecutors.length) {
+            return new applicableExecutors[0](job, command).startExecution()
+        } else {
+            throw `Black Screen: command "${command}" not found.`
+        }
     }
 }
 
