@@ -46,6 +46,7 @@ export default class PTY {
 export function executeCommand(command: string, args: string[] = [], directory: string = process.env.HOME): Promise<string> {
     return new Promise((resolve, reject) => {
         let output = "";
+        /* tslint:disable:no-unused-expression */
         new PTY(
             command,
             args,

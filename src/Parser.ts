@@ -188,12 +188,14 @@ export default class Parser {
                     break;
                 case "M":
                     short = "Reverse Index (RI).";
+                    /* tslint:disable:max-line-length */
                     long = "Move the active position to the same horizontal position on the preceding line. If the active position is at the top margin, a scroll down is performed.";
 
                     this.buffer.moveCursorRelative({ vertical: -1 });
                     break;
                 case "E":
                     short = "Next Line (NEL).";
+                    /* tslint:disable:max-line-length */
                     long = "This sequence causes the active position to move to the first position on the next line downward. If the active position is at the bottom margin, a scroll up is performed.";
 
                     this.buffer.moveCursorRelative({ vertical: 1 });
@@ -273,18 +275,23 @@ export default class Parser {
                 break;
             case 1049:
                 if (isSet) {
+                    /* tslint:disable:max-line-length */
                     description = "Save cursor as in DECSC and use Alternate Screen Buffer, clearing it first.  (This may be disabled by the titeInhibit resource).  This combines the effects of the 1047  and 1048  modes.  Use this with terminfo-based applications rather than the 47  mode.";
 
                     this.buffer.activeBuffer = e.Buffer.Alternate;
+                } else {
                     // TODO: Add Implementation
-                    break;
+                    status = "unhandled";
                 }
+                break;
             case 2004:
                 if (isSet) {
                     description = "Set bracketed paste mode.";
+                } else {
                     // TODO: Add Implementation
-                    break;
+                    status = "unhandled";
                 }
+                break;
             default:
                 status = "unhandled";
         }
@@ -394,6 +401,8 @@ export default class Parser {
 
                         this.buffer.clearToBeginning();
                         break;
+                    default:
+                        throw `Unknown CSI erase: "${param}".`;
                 }
                 break;
             case "c":
@@ -416,6 +425,8 @@ export default class Parser {
                         short = "Erase Line to Left (DECSEL).";
                         this.buffer.clearRowToBeginning();
                         break;
+                    default:
+                        throw `Unknown CSI erase: "${param}".`;
                 }
                 break;
             case "L":
