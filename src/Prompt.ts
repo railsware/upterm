@@ -8,7 +8,7 @@ import {expandAliases, expandHistory, lex} from './CommandExpander';
 import Job from "./Job";
 
 export default class Prompt extends events.EventEmitter {
-    private _rawInput = '';
+    private _value = '';
     private _autocompletion = new Autocompletion();
     private _expanded: string[];
     private _lexemes: string[];
@@ -19,18 +19,18 @@ export default class Prompt extends events.EventEmitter {
     }
 
     execute(): void {
-        History.add(new HistoryEntry(this.rawInput, this._historyExpanded));
+        History.add(new HistoryEntry(this.value, this._historyExpanded));
         this.emit('send');
     }
 
-    get rawInput(): string {
-        return this._rawInput;
+    get value(): string {
+        return this._value;
     }
 
-    set rawInput(value: string) {
-        this._rawInput = value;
+    set value(value: string) {
+        this._value = value;
 
-        this._lexemes = lex(this.rawInput);
+        this._lexemes = lex(this.value);
         this._historyExpanded = expandHistory(this._lexemes);
         this._expanded = expandAliases(this._historyExpanded);
     }
@@ -68,6 +68,6 @@ export default class Prompt extends events.EventEmitter {
         var lexemes = _.clone(this._lexemes);
         lexemes[lexemes.length - 1] = `${suggestion.prefix || ""}${suggestion.value}`;
 
-        this.rawInput = lexemes.join(' ');
+        this.value = lexemes.join(' ');
     }
 }
