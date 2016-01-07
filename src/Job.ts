@@ -26,7 +26,7 @@ export default class Job extends EmitterWithUniqueID {
     constructor(private _terminal: Terminal) {
         super();
 
-        this.prompt = new Prompt(this.directory);
+        this.prompt = new Prompt(this);
         this.prompt.on('send', () => this.execute());
 
         this.buffer = new Buffer(this.dimensions);

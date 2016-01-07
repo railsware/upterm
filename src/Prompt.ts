@@ -5,6 +5,7 @@ import Aliases from './Aliases';
 import {History, HistoryEntry} from './History';
 import * as _ from 'lodash';
 import {expandAliases, expandHistory, lex} from './CommandExpander';
+import Job from "./Job";
 
 export default class Prompt extends events.EventEmitter {
     buffer: Buffer;
@@ -13,7 +14,7 @@ export default class Prompt extends events.EventEmitter {
     private _lexemes: string[];
     private historyExpanded: string[];
 
-    constructor(private directory: string) {
+    constructor(private job: Job) {
         super();
 
         this.buffer = new Buffer({ columns: 99999, rows: 99999 });
@@ -58,11 +59,7 @@ export default class Prompt extends events.EventEmitter {
     }
 
     getSuggestions(): Promise<Suggestion[]> {
-        return this.autocompletion.getSuggestions(this)
-    }
-
-    getCWD(): string {
-        return this.directory;
+        return this.autocompletion.getSuggestions(this.job)
     }
 
     // TODO: Now it's last lexeme instead of current.

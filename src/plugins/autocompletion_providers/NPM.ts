@@ -1,5 +1,5 @@
 import Utils from '../../Utils';
-import Prompt from "../../Prompt";
+import Job from "../../Job";
 import * as _ from 'lodash';
 import * as Path from 'path';
 import PluginManager from "../../PluginManager";
@@ -71,8 +71,8 @@ function toSuggestion(value: string, lastWord: string, synopsis = ''): Suggestio
 }
 
 PluginManager.registerAutocompletionProvider({
-    getSuggestions: async function (prompt: Prompt): Promise<Suggestion[]> {
-        const words = prompt.expanded;
+    getSuggestions: async function (job: Job): Promise<Suggestion[]> {
+        const words = job.getPrompt().expanded;
 
         if (words[0] !== 'npm') {
             return [];
@@ -85,7 +85,7 @@ PluginManager.registerAutocompletionProvider({
             suggestions = _.map(commands, (value, key) => toSuggestion(key, lastWord, value));
         }
 
-        const packageFilePath = Path.join(prompt.getCWD(), 'package.json');
+        const packageFilePath = Path.join(job.directory, 'package.json');
 
         if (words.length === 3 && words[1] === 'run' && await Utils.exists(packageFilePath)) {
             suggestions = Object.keys(JSON.parse(await Utils.readFile(packageFilePath)).scripts || {})

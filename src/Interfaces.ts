@@ -1,7 +1,6 @@
 import * as e from './Enums';
 import * as fs from 'fs';
 import * as React from 'react';
-import Prompt from "./Prompt";
 import Job from "./Job";
 import Terminal from "./Terminal";
 
@@ -16,7 +15,7 @@ export interface Attributes {
 }
 
 export interface AutocompletionProvider {
-    getSuggestions(prompt: Prompt): Promise<Suggestion[]>;
+    getSuggestions(job: Job): Promise<Suggestion[]>;
 }
 
 export interface FileInfo {

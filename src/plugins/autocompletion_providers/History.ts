@@ -2,14 +2,14 @@ import * as i from '../../Interfaces';
 import * as _ from 'lodash';
 import Aliases from '../../Aliases';
 import ExecutionHistory from '../../History';
-import Prompt from "../../Prompt";
+import Job from "../../Job";
 import Autocompletion from "../../Autocompletion";
 import PluginManager from "../../PluginManager";
 var score: (i: string, m: string) => number = require('fuzzaldrin').score;
 
 class History implements i.AutocompletionProvider {
-    async getSuggestions(prompt: Prompt) {
-        var lastArgument = prompt.lastArgument;
+    async getSuggestions(job: Job) {
+        var lastArgument = job.getPrompt().lastArgument;
 
         var all = ExecutionHistory.all.filter(entry => entry.raw.length > 3).map(entry => {
             return {

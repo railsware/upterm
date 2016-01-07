@@ -1,5 +1,5 @@
 import Utils from '../../Utils';
-import Prompt from "../../Prompt";
+import Job from "../../Job";
 import * as _ from 'lodash';
 import * as Path from 'path';
 import PluginManager from "../../PluginManager";
@@ -17,8 +17,8 @@ function toSuggestion(branch: string, lastWord: string): Suggestion {
 }
 
 PluginManager.registerAutocompletionProvider({
-    getSuggestions: async function (prompt: Prompt): Promise<Suggestion[]> {
-        const words = prompt.expanded;
+    getSuggestions: async function (job: Job): Promise<Suggestion[]> {
+        const words = job.getPrompt().expanded;
 
         if (words[0] !== 'git' || words[1] !== 'checkout') {
             return [];
@@ -27,7 +27,7 @@ PluginManager.registerAutocompletionProvider({
         const lastWord = _.last(words);
         var suggestions: Suggestion[] = [];
 
-        const headsPath = Path.join(prompt.getCWD(), '.git', 'refs', 'heads');
+        const headsPath = Path.join(job.directory, '.git', 'refs', 'heads');
 
         if (words.length === 3 && await Utils.exists(headsPath)) {
             const files = await Utils.filesIn(headsPath);

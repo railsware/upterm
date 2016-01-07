@@ -1,7 +1,7 @@
 import Utils from '../../Utils';
 import * as i from '../../Interfaces';
 import * as _ from 'lodash';
-import Prompt from "../../Prompt";
+import Job from "../../Job";
 import {parser} from "../../CommandExpander";
 import Autocompletion from "../../Autocompletion";
 import PluginManager from "../../PluginManager";
@@ -10,7 +10,9 @@ var filter: any = require('fuzzaldrin').filter;
 class Command implements i.AutocompletionProvider {
     suggestions: Suggestion[] = [];
 
-    async getSuggestions(prompt: Prompt) {
+    async getSuggestions(job: Job) {
+        const prompt = job.getPrompt();
+
         if (prompt.expanded.length < 2) {
             return [];
         }

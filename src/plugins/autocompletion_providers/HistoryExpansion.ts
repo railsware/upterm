@@ -1,14 +1,12 @@
 import Utils from '../../Utils';
 import * as i from '../../Interfaces';
 import * as _ from 'lodash';
-import Prompt from "../../Prompt";
+import Job from "../../Job";
 import History from '../../History';
 import {isCompleteHistoryCommand, historyReplacement} from '../../CommandExpander';
 import PluginManager from "../../PluginManager";
 
 class HistoryExpansion implements i.AutocompletionProvider {
-    suggestions: Suggestion[] = [];
-
     private static descriptions: _.Dictionary<string> = {
         '!!': 'The previous command',
         '!^': 'The first argument of the previous command',
@@ -16,8 +14,8 @@ class HistoryExpansion implements i.AutocompletionProvider {
         '!*': 'All arguments of the previous command',
     };
 
-    async getSuggestions(prompt: Prompt): Promise<Suggestion[]> {
-        const lexeme = prompt.lastLexeme;
+    async getSuggestions(job: Job): Promise<Suggestion[]> {
+        const lexeme = job.getPrompt().lastLexeme;
 
         return _.map(this.commands(lexeme), (description, command) => {
             return {

@@ -2,7 +2,7 @@ import Utils from '../../Utils';
 import * as i from '../../Interfaces';
 import * as _ from 'lodash'
 import * as Path from 'path'
-import Prompt from "../../Prompt";
+import Job from "../../Job";
 import Autocompletion from "../../Autocompletion";
 import PluginManager from "../../PluginManager";
 var score: (i: string, m: string) => number = require('fuzzaldrin').score;
@@ -172,7 +172,9 @@ var descriptions: {[indexer: string]: string} = {
 
 class Executable implements i.AutocompletionProvider {
 
-    async getSuggestions(prompt: Prompt) {
+    async getSuggestions(job: Job) {
+        const prompt = job.getPrompt();
+
         if (prompt.expanded.length > 1) {
             return [];
         }

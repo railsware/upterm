@@ -2,13 +2,15 @@ import * as i from '../../Interfaces';
 import * as _ from 'lodash';
 import Utils from '../../Utils';
 import * as Path from 'path';
-import Prompt from "../../Prompt";
+import Job from "../../Job";
 import Autocompletion from "../../Autocompletion";
 import PluginManager from "../../PluginManager";
 var score: (i: string, m: string) => number = require('fuzzaldrin').score;
 
 class File implements i.AutocompletionProvider {
-    async getSuggestions(prompt: Prompt) {
+    async getSuggestions(job: Job) {
+        const prompt = job.getPrompt();
+
         if (prompt.expanded.length < 2) {
             return [];
         }
@@ -20,7 +22,7 @@ class File implements i.AutocompletionProvider {
         if (Path.isAbsolute(lastArgument)) {
             var searchDirectory = dirName;
         } else {
-            searchDirectory = Path.join(prompt.getCWD(), dirName);
+            searchDirectory = Path.join(job.directory, dirName);
         }
 
         let fileInfos = await Utils.stats(searchDirectory);
@@ -43,7 +45,7 @@ class File implements i.AutocompletionProvider {
                 partial: fileInfo.stat.isDirectory()
             };
 
-            if (searchDirectory !== prompt.getCWD()) {
+            if (searchDirectory !== job.directory) {
                 suggestion.prefix = dirName;
             }
 
