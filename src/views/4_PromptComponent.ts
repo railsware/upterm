@@ -243,7 +243,7 @@ export default class PromptComponent extends React.Component<Props, State> imple
     }
 
     private setText(text: string, position = getCaretPosition()): void {
-        this.props.prompt.buffer.setTo(text);
+        this.props.prompt.rawInput = text;
         this.setState({ caretPosition: position });
     }
 
@@ -297,7 +297,7 @@ export default class PromptComponent extends React.Component<Props, State> imple
         } else {
             this.props.prompt.replaceCurrentLexeme(suggestion);
             if (!suggestion.partial) {
-                this.props.prompt.buffer.write(' ');
+                this.props.prompt.rawInput += ' ';
             }
 
             this.setState({ caretPosition: this.text.length });

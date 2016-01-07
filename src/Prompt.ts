@@ -8,30 +8,31 @@ import {expandAliases, expandHistory, lex} from './CommandExpander';
 import Job from "./Job";
 
 export default class Prompt extends events.EventEmitter {
-    buffer: Buffer;
-    private autocompletion = new Autocompletion();
+    private _rawInput = '';
+    private _autocompletion = new Autocompletion();
     private _expanded: string[];
     private _lexemes: string[];
-    private historyExpanded: string[];
+    private _historyExpanded: string[];
 
     constructor(private job: Job) {
         super();
-
-        this.buffer = new Buffer({ columns: 99999, rows: 99999 });
-        this.buffer.on('data', () => {
-            this._lexemes = lex(this.rawInput);
-            this.historyExpanded = expandHistory(this._lexemes);
-            this._expanded = expandAliases(this.historyExpanded);
-        });
     }
 
     execute(): void {
-        History.add(new HistoryEntry(this.rawInput, this.historyExpanded));
+        History.add(new HistoryEntry(this.rawInput, this._historyExpanded));
         this.emit('send');
     }
 
     get rawInput(): string {
-        return this.buffer.toString() ;
+        return this._rawInput;
+    }
+
+    set rawInput(value: string) {
+        this._rawInput = value;
+
+        this._lexemes = lex(this.rawInput);
+        this._historyExpanded = expandHistory(this._lexemes);
+        this._expanded = expandAliases(this._historyExpanded);
     }
 
     get commandName(): string {
@@ -59,7 +60,7 @@ export default class Prompt extends events.EventEmitter {
     }
 
     getSuggestions(): Promise<Suggestion[]> {
-        return this.autocompletion.getSuggestions(this.job)
+        return this._autocompletion.getSuggestions(this.job)
     }
 
     // TODO: Now it's last lexeme instead of current.
@@ -67,6 +68,6 @@ export default class Prompt extends events.EventEmitter {
         var lexemes = _.clone(this._lexemes);
         lexemes[lexemes.length - 1] = `${suggestion.prefix || ""}${suggestion.value}`;
 
-        this.buffer.setTo(lexemes.join(' '));
+        this.rawInput = lexemes.join(' ');
     }
 }
