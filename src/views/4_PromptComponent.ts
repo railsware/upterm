@@ -43,7 +43,7 @@ function isCommandKey(event: KeyboardEvent) {
     return _.contains([16, 17, 18], event.keyCode) || event.ctrlKey || event.altKey || event.metaKey;
 }
 
-const isDefinedKey = _.memoize(
+const isSpecialKey = _.memoize(
     (event: React.KeyboardEvent) => _.some(_.values(keys),
                                            (matcher: (event: React.KeyboardEvent) => boolean) => matcher(event)),
     (event: React.KeyboardEvent) => [event.ctrlKey, event.keyCode]
@@ -98,29 +98,6 @@ export default class PromptComponent extends React.Component<Props, State> imple
     constructor(props: Props) {
         super(props);
 
-        const keysDownStream = createEventHandler();
-        const promptKeys = keysDownStream.filter(() => this.props.status !== e.Status.InProgress);
-
-        const meaningfulKeysDownStream = promptKeys.filter(isDefinedKey).map(stopBubblingUp);
-        const [navigateAutocompleteStream, navigateHistoryStream] = meaningfulKeysDownStream
-            .filter((event: KeyboardEvent) => keys.goDown(event) || keys.goUp(event))
-            .partition(() => this.isAutocompleteShown());
-
-        keysDownStream.filter(_.negate(isCommandKey))
-            .forEach((event: KeyboardEvent) => this.setState({ latestKeyCode: event.keyCode }));
-
-        promptKeys.filter(keys.enter).forEach(() => this.execute());
-        promptKeys.filter(keys.interrupt).forEach(() => this.setText(""));
-
-        meaningfulKeysDownStream.filter(() => this.isAutocompleteShown())
-            .filter(keys.tab)
-            .forEach(() => this.applySuggestion());
-
-        meaningfulKeysDownStream.filter(keys.deleteWord).forEach(() => this.deleteWord());
-
-        navigateHistoryStream.forEach((event: KeyboardEvent) => this.navigateHistory(event));
-        navigateAutocompleteStream.forEach((event: KeyboardEvent) => this.navigateAutocomplete(event));
-
         this.state = {
             suggestions: [],
             highlightedSuggestionIndex: 0,
@@ -129,9 +106,37 @@ export default class PromptComponent extends React.Component<Props, State> imple
             caretOffset: {top: 0, left: 0, bottom: 0},
         };
 
+        const allKeys = createEventHandler();
+        allKeys
+            .filter(_.negate(isCommandKey))
+            .forEach((event: KeyboardEvent) => this.setState({ latestKeyCode: event.keyCode }));
+
+
+        const promptKeys = allKeys.filter(() => this.props.status !== e.Status.InProgress)
+                                  .filter(isSpecialKey)
+                                  .map(stopBubblingUp);
+        promptKeys
+            .filter(() => this.isAutocompleteShown())
+            .filter(keys.tab)
+            .forEach(() => this.applySuggestion());
+        // TODO: Multiple consequent deletions don't work.
+        promptKeys
+            .filter(keys.deleteWord).forEach(() => this.deleteWord());
+        promptKeys
+            .filter(keys.enter).forEach(() => this.execute());
+        promptKeys
+            .filter(keys.interrupt).forEach(() => this.setText(""));
+        promptKeys
+            .filter((event: KeyboardEvent) => keys.goDown(event) || keys.goUp(event))
+            .filter(() => this.isAutocompleteShown())
+            .forEach((event: KeyboardEvent) => this.navigateAutocomplete(event));
+        promptKeys
+            .filter((event: KeyboardEvent) => keys.goDown(event) || keys.goUp(event))
+            .filter(() => !this.isAutocompleteShown())
+            .forEach((event: KeyboardEvent) => this.navigateHistory(event));
 
         this.handlers = {
-            onKeyDown: keysDownStream
+            onKeyDown: allKeys
         };
 
         // FIXME: find a better design to propagate events.
