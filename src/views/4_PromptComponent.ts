@@ -266,7 +266,7 @@ export default class PromptComponent extends React.Component<Props, State> imple
     }
 
     private isEmpty(): boolean {
-        return this.text.replace(/\s/g, '').length === 0;
+        return this.text.replace(/\s/g, "").length === 0;
     }
 
     private navigateHistory(event: KeyboardEvent): void {
@@ -276,7 +276,7 @@ export default class PromptComponent extends React.Component<Props, State> imple
             this.replaceText(History.getNext());
         }
     }
-    
+
     private highlightSuggestion(index: number): void {
         this.setState({highlightedSuggestionIndex: index});
     }
@@ -295,8 +295,8 @@ export default class PromptComponent extends React.Component<Props, State> imple
         var state = this.state;
         const suggestion = state.suggestions[state.highlightedSuggestionIndex];
 
-        if (suggestion.replaceAll) {
-            this.replaceText(suggestion.value)
+        if (suggestion.replaceEverything) {
+            this.replaceText(suggestion.value);
         } else {
             this.props.prompt.replaceCurrentLexeme(suggestion);
             if (!suggestion.partial) {

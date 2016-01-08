@@ -25,7 +25,7 @@ interface Suggestion {
     description: string;
     type: string;
     partial?: boolean; // Whether to put a space after it.
-    replaceAll?: boolean;
+    replaceEverything?: boolean;
     prefix?: string;
 }
 

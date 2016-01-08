@@ -16,7 +16,7 @@ class History implements i.AutocompletionProvider {
                 score: 0.1 * score(entry.raw, lastArgument),
                 synopsis: "",
                 description: "",
-                replaceAll: true,
+                replaceEverything: true,
                 type: "history",
             };
         });
