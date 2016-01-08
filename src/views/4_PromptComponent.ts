@@ -119,7 +119,6 @@ export default class PromptComponent extends React.Component<Props, State> imple
             .filter(() => this.isAutocompleteShown())
             .filter(keys.tab)
             .forEach(() => this.applySuggestion());
-        // TODO: Multiple consequent deletions don't work.
         promptKeys
             .filter(keys.deleteWord).forEach(() => this.deleteWord());
         promptKeys
@@ -259,15 +258,25 @@ export default class PromptComponent extends React.Component<Props, State> imple
         this.setText(text, text.length);
     }
 
-    private deleteWord(): void {
-        // TODO: Remove the word under the caret instead of the last one.
-        let newCommand = this.props.prompt.expanded.slice(0, -1).join(" ");
-
-        if (newCommand.length) {
-            newCommand += " ";
+    private deleteWord(current = this.props.prompt.value, position = getCaretPosition()): void {
+        if (!current.length) {
+            return;
         }
 
-        this.replaceText(newCommand);
+        const lastIndex = current.substring(0, position).lastIndexOf(" ");
+        const endsWithASpace =  lastIndex === current.length - 1;
+
+        current = current.substring(0, lastIndex);
+
+        if (endsWithASpace) {
+            this.deleteWord(current, position);
+        } else {
+            if (current.length) {
+                current += " ";
+            }
+
+            this.replaceText(current + this.props.prompt.value.substring(getCaretPosition()));
+        }
     }
 
     private isEmpty(): boolean {
