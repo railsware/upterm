@@ -179,6 +179,10 @@ export default class Buffer extends events.EventEmitter {
         this.emit("data");
     }
 
+    get size(): number {
+        return this.storage.size;
+    }
+
     get cursorPosition(): RowColumn {
         return this.cursor.getPosition();
     }

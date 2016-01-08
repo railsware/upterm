@@ -11,12 +11,20 @@ import PTY from "./PTY";
 import PluginManager from "./PluginManager";
 import EmitterWithUniqueID from "./EmitterWithUniqueID";
 
+const thresholdToStartEmittingSlowly = 200; // lines in the output buffer.
+
+function makeThrottledDataEmitter(timesPerSecond: number, subject: EmitterWithUniqueID) {
+    return _.throttle(() => subject.emit("data"), 1000 / timesPerSecond);
+}
+
 export default class Job extends EmitterWithUniqueID {
     public command: PTY;
     public parser: Parser;
     public status: e.Status = e.Status.NotStarted;
     private _prompt: Prompt;
     private buffer: Buffer;
+    private rareDataEmitter: Function;
+    private frequentDataEmitter: Function;
 
     constructor(private _terminal: Terminal) {
         super();
@@ -24,8 +32,11 @@ export default class Job extends EmitterWithUniqueID {
         this._prompt = new Prompt(this);
         this._prompt.on("send", () => this.execute());
 
+        this.rareDataEmitter = makeThrottledDataEmitter(1, this);
+        this.frequentDataEmitter = makeThrottledDataEmitter(60, this);
+
         this.buffer = new Buffer(this.dimensions);
-        this.buffer.on("data", _.throttle(() => this.emit("data"), 1000 / 60));
+        this.buffer.on("data", this.throttledDataEmitter.bind(this));
         this.parser = new Parser(this);
     }
 
@@ -159,5 +170,9 @@ export default class Job extends EmitterWithUniqueID {
     setStatus(status: e.Status): void {
         this.status = status;
         this.emit("status", status);
+    }
+
+    private throttledDataEmitter() {
+        this.buffer.size < thresholdToStartEmittingSlowly ? this.frequentDataEmitter() : this.rareDataEmitter();
     }
 }
