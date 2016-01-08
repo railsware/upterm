@@ -56,7 +56,7 @@ a {
   padding: 8px 0 6px 0.6em;
   min-height: 2em;
   line-height: 1.3;
-  background-color: #23252B;
+  background-color: $panel-color;
 }
 
 * {
@@ -72,7 +72,7 @@ html {
 }
 
 body, pre {
-  background-color: map-get($colors, 'black');
+  background-color: $background-color;
   color: map-get($colors, 'white');
   font-family: 'Hack', 'Meslo LG S for Powerline', 'Menlo', monospace !important;
   font-size: $font-size;
@@ -242,11 +242,46 @@ body, pre {
 }
 
 .output {
-  margin: 10px;
+  $output-margin: 10px;
+  margin: $output-margin 0;
 
+  .output-cut {
+    $height: $font-size * 2.6;
+    @mixin jagged-border($darken-percent) {
+      background: -webkit-linear-gradient(darken($panel-color, $darken-percent) 0%, transparent 0%),
+                  -webkit-linear-gradient(135deg, $background-color 33.33%, transparent 33.33%) 0 0,
+                  $background-color -webkit-linear-gradient(45deg, $background-color 33.33%,
+                  darken($panel-color, $darken-percent) 33.33%) 0 0;
+      background-repeat: repeat-x;
+      background-size: 0 100%, 15px 50px, 15px 50px;
+    }
+
+    &:before {
+      margin-right: 10px;
+    }
+    @extend .octicon;
+    @extend .octicon-unfold;
+
+    position: relative;
+    top: -10px;
+    width: 100%;
+    height: $height;
+    text-align: center;
+    padding-top: ($height - $font-size) / 3;
+    color: lighten($background-color, 30%);
+
+    @include jagged-border(0%);
+
+    &:hover {
+      @include jagged-border(2%);
+      color: lighten($background-color, 35%);
+      cursor: pointer;
+    }
+  }
   // To display even empty rows. The height might need tweaking.
   // TODO: Remove if we always have a fixed buffer width.
   .row {
+    margin: 0 $output-margin;
     min-height: $row-height;
   }
 }

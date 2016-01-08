@@ -53,3 +53,6 @@ $gray-scale-colors: ();
 }
 
 $colors: map-merge($base-colors, map-merge($gray-scale-colors, $extra-colors));
+
+$background-color: map-get($colors, 'black');
+$panel-color: darken($background-color, 3%);

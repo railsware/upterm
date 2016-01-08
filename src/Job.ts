@@ -11,8 +11,6 @@ import PTY from "./PTY";
 import PluginManager from "./PluginManager";
 import EmitterWithUniqueID from "./EmitterWithUniqueID";
 
-const thresholdToStartEmittingSlowly = 200; // lines in the output buffer.
-
 function makeThrottledDataEmitter(timesPerSecond: number, subject: EmitterWithUniqueID) {
     return _.throttle(() => subject.emit("data"), 1000 / timesPerSecond);
 }
@@ -173,6 +171,6 @@ export default class Job extends EmitterWithUniqueID {
     }
 
     private throttledDataEmitter() {
-        this.buffer.size < thresholdToStartEmittingSlowly ? this.frequentDataEmitter() : this.rareDataEmitter();
+        this.buffer.size < Buffer.hugeOutputThreshold ? this.frequentDataEmitter() : this.rareDataEmitter();
     }
 }

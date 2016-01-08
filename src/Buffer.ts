@@ -8,6 +8,7 @@ import Utils from "./Utils";
 import {List} from "immutable";
 
 export default class Buffer extends events.EventEmitter {
+    public static hugeOutputThreshold = 500;
     public cursor: Cursor = new Cursor();
     public activeBuffer = e.Buffer.Standard;
     private storage = List<List<Char>>();
@@ -83,8 +84,8 @@ export default class Buffer extends events.EventEmitter {
         this.attributes = _.merge(this.attributes, attributes);
     }
 
-    toArray(): Array<List<Char>> {
-        let storage = this.storage;
+    toRenderable(fromStorage = this.storage): List<List<Char>> {
+        let storage = fromStorage;
 
         if (this.cursor.getShow() || this.cursor.getBlink()) {
             if (!storage.has(this.cursorPosition.row)) {
@@ -98,7 +99,11 @@ export default class Buffer extends events.EventEmitter {
             );
         }
 
-        return storage.toArray();
+        return storage;
+    }
+
+    toCutRenderable(): List<List<Char>> {
+        return this.toRenderable(<List<List<Char>>>(this.storage.takeLast(Buffer.hugeOutputThreshold)));
     }
 
     toLines(): string[] {

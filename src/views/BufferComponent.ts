@@ -12,12 +12,22 @@ interface Props {
     buffer: Buffer;
 }
 
-export default class BufferComponent extends React.Component<Props, {}> {
+interface State {
+    expandButtonPressed: boolean;
+}
+
+export default class BufferComponent extends React.Component<Props, State> {
+    constructor(props: Props) {
+        super(props);
+        this.state = { expandButtonPressed: false };
+    }
+
     render() {
         return React.createElement(
             "pre",
             { className: `output ${this.props.buffer.activeBuffer}` },
-            this.props.buffer.toArray().map((row, index) => React.createElement(
+            this.shouldCutOutput ? this.cutChild : undefined,
+            this.renderableRows.map((row, index) => React.createElement(
                 RowComponent,
                 {
                     row: row || List<Char>(),
@@ -31,6 +41,24 @@ export default class BufferComponent extends React.Component<Props, {}> {
         if (this.props.buffer.activeBuffer === e.Buffer.Standard) {
             scrollToBottom();
         }
+    }
+
+    private get shouldCutOutput(): boolean {
+        return this.props.buffer.size > Buffer.hugeOutputThreshold && !this.state.expandButtonPressed;
+    };
+
+    private get renderableRows(): List<List<Char>> {
+        return this.shouldCutOutput ? this.props.buffer.toCutRenderable() : this.props.buffer.toRenderable();
+    }
+
+    private get cutChild(): React.ReactElement<CutProps> {
+        return React.createElement(
+            Cut,
+            {
+                numberOfRows: this.props.buffer.size,
+                clickHandler: () => this.setState({ expandButtonPressed: true }),
+            }
+        );
     }
 }
 
@@ -86,5 +114,24 @@ class CharGroupComponent extends React.Component<CharGroupProps, {}> {
         });
 
         return htmlAttributes;
+    }
+}
+
+interface CutProps {
+    numberOfRows: number;
+    clickHandler: Function;
+}
+
+class Cut extends React.Component<CutProps, {}> {
+    shouldComponentUpdate(nextProps: CutProps) {
+        return this.props.numberOfRows !== nextProps.numberOfRows;
+    }
+
+    render() {
+        return React.createElement(
+            "div",
+            { className: "output-cut", onClick: this.props.clickHandler },
+            `Show all ${this.props.numberOfRows} rows.`
+        );
     }
 }
