@@ -22,7 +22,7 @@
     "shell",
     "console"
   ],
-  "electronVersion": "0.36.2",
+  "electronVersion": "0.36.3",
   "dependencies": {
     "fix-path": "1.1.0",
     "fixed-sticky": "^0.1.6",
@@ -31,7 +31,7 @@
     "fuzzaldrin": "2.1.0",
     "immutable": "3.7.6",
     "jison": "0.4.15",
-    "jquery": "2.1.4",
+    "jquery": "2.2.0",
     "jquery.caret": "^0.2.1",
     "lodash": "3.10.1",
     "node-ansiparser": "2.1.0",
@@ -52,7 +52,7 @@
     "chai-things": "0.2.0",
     "del": "2.2.0",
     "electron-packager": "5.2.0",
-    "electron-prebuilt": "0.36.2",
+    "electron-prebuilt": "0.36.3",
     "electron-rebuild": "1.0.2",
     "gulp": "3.9.0",
     "gulp-babel": "6.1.1",
