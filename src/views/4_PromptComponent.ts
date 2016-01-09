@@ -81,8 +81,6 @@ interface Props {
 }
 
 interface State {
-    caretPosition?: number;
-    caretOffset?: Offset;
     highlightedSuggestionIndex?: number;
     latestKeyCode?: number;
     suggestions?: Suggestion[];
@@ -102,8 +100,6 @@ export default class PromptComponent extends React.Component<Props, State> imple
             suggestions: [],
             highlightedSuggestionIndex: 0,
             latestKeyCode: undefined,
-            caretPosition: 0,
-            caretOffset: {top: 0, left: 0, bottom: 0},
         };
 
         const allKeys = createEventHandler();
@@ -124,7 +120,10 @@ export default class PromptComponent extends React.Component<Props, State> imple
         promptKeys
             .filter(keys.enter).forEach(() => this.execute());
         promptKeys
-            .filter(keys.interrupt).forEach(() => this.setText(""));
+            .filter(keys.interrupt).forEach(() => {
+                this.props.prompt.value = "";
+                this.setDOMValueProgrammatically("");
+            });
         promptKeys
             .filter((event: KeyboardEvent) => keys.goDown(event) || keys.goUp(event))
             .filter(() => this.isAutocompleteShown())
@@ -160,16 +159,6 @@ export default class PromptComponent extends React.Component<Props, State> imple
             return;
         }
 
-        this.commandNode.innerText = this.text;
-
-        if (this.state.caretPosition !== getCaretPosition() || !_.eq(prevState.caretOffset, this.state.caretOffset)) {
-            setCaretPosition(this.commandNode, this.state.caretPosition);
-        }
-
-        if (prevState.caretPosition !== this.state.caretPosition) {
-            this.setState({ caretOffset: $(this.commandNode).caret("offset") });
-        }
-
         if (!prevProps.hasLocusOfAttention && this.props.hasLocusOfAttention) {
             this.commandNode.focus();
         }
@@ -186,7 +175,7 @@ export default class PromptComponent extends React.Component<Props, State> imple
         if (this.showAutocomplete()) {
             var autocomplete = React.createElement(AutocompleteComponent, {
                 suggestions: this.state.suggestions,
-                caretOffset: this.state.caretOffset,
+                caretOffset: $(this.commandNode).caret("offset"),
                 onSuggestionHover: this.highlightSuggestion.bind(this),
                 onSuggestionClick: this.applySuggestion.bind(this),
                 highlightedIndex: this.state.highlightedSuggestionIndex,
@@ -222,7 +211,8 @@ export default class PromptComponent extends React.Component<Props, State> imple
                 onKeyPress: this.handleKeyPress.bind(this),
                 type: "text",
                 ref: "command",
-                contentEditable: this.props.status === e.Status.NotStarted || this.props.status === e.Status.InProgress, // Without the InProgress part the alternate buffer loses focus.
+                                                                           // Without the InProgress part the alternate buffer loses focus.
+                contentEditable: this.props.status === e.Status.NotStarted || this.props.status === e.Status.InProgress,
             }),
             autocomplete,
             React.createElement(
@@ -245,17 +235,11 @@ export default class PromptComponent extends React.Component<Props, State> imple
         return <any>this.refs["command"];
     }
 
-    private get text(): string {
-        return this.props.prompt.value;
-    }
+    private setDOMValueProgrammatically(text: string): void {
+        this.commandNode.innerText = text;
+        setCaretPosition(this.commandNode, text.length);
 
-    private setText(text: string, position = getCaretPosition()): void {
-        this.props.prompt.value = text;
-        this.setState({ caretPosition: position });
-    }
-
-    private replaceText(text: string): void {
-        this.setText(text, text.length);
+        this.forceUpdate();
     }
 
     private deleteWord(current = this.props.prompt.value, position = getCaretPosition()): void {
@@ -275,19 +259,20 @@ export default class PromptComponent extends React.Component<Props, State> imple
                 current += " ";
             }
 
-            this.replaceText(current + this.props.prompt.value.substring(getCaretPosition()));
+            this.props.prompt.value = current + this.props.prompt.value.substring(getCaretPosition());
+            this.setDOMValueProgrammatically(this.props.prompt.value);
         }
     }
 
     private isEmpty(): boolean {
-        return this.text.replace(/\s/g, "").length === 0;
+        return this.props.prompt.value.replace(/\s/g, "").length === 0;
     }
 
     private navigateHistory(event: KeyboardEvent): void {
         if (keys.goUp(event)) {
-            this.replaceText(History.getPrevious());
+            this.setDOMValueProgrammatically(History.getPrevious());
         } else {
-            this.replaceText(History.getNext());
+            this.setDOMValueProgrammatically(History.getNext());
         }
     }
 
@@ -310,14 +295,15 @@ export default class PromptComponent extends React.Component<Props, State> imple
         const suggestion = state.suggestions[state.highlightedSuggestionIndex];
 
         if (suggestion.replaceEverything) {
-            this.replaceText(suggestion.value);
+            this.props.prompt.value = suggestion.value;
+            this.setDOMValueProgrammatically(suggestion.value);
         } else {
             this.props.prompt.replaceCurrentLexeme(suggestion);
             if (!suggestion.partial) {
                 this.props.prompt.value += " ";
             }
 
-            this.setState({ caretPosition: this.text.length });
+            this.setDOMValueProgrammatically(this.props.prompt.value);
         }
 
         this.props.prompt.getSuggestions().then(suggestions =>
@@ -338,7 +324,7 @@ export default class PromptComponent extends React.Component<Props, State> imple
     }
 
     private handleInput(event: React.SyntheticEvent) {
-        this.setText((<HTMLElement>event.target).innerText);
+        this.props.prompt.value = (<HTMLElement>event.target).innerText;
 
         // TODO: remove repetition.
         // TODO: make it a stream.
