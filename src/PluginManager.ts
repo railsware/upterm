@@ -3,6 +3,7 @@ import * as Path from "path";
 import * as _ from "lodash";
 import Utils from "./Utils";
 
+// Technical debt: register all the plugin types via single method.
 export default class PluginManager {
     private static _outputDecorators: OutputDecorator[] = [];
     private static _environmentObservers: EnvironmentObserverPlugin[] = [];
