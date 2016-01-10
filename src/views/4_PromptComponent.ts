@@ -270,9 +270,13 @@ export default class PromptComponent extends React.Component<Props, State> imple
 
     private navigateHistory(event: KeyboardEvent): void {
         if (keys.goUp(event)) {
-            this.setDOMValueProgrammatically(History.getPrevious());
+            let previous = History.getPrevious();
+            this.props.prompt.value = previous;
+            this.setDOMValueProgrammatically(previous);
         } else {
-            this.setDOMValueProgrammatically(History.getNext());
+            let next = History.getNext()
+            this.props.prompt.value = next;
+            this.setDOMValueProgrammatically(next);
         }
     }
 
