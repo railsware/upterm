@@ -6,7 +6,8 @@ export function stopBubblingUp(event: Event): Event {
 }
 
 export function scrollToBottom(): void {
-    window.scroll(0, document.body.scrollHeight);
+    let terminal = $(".terminal.active");
+    terminal.scrollTop(terminal[0].scrollHeight);
 }
 
 export const keys = {
