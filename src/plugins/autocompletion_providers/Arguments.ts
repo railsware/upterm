@@ -18,10 +18,10 @@ class Command implements i.AutocompletionProvider {
 
         try {
             parser.yy.parseError = (err: any, hash: any) => {
-                const token = hash.token === "EOF" ? "\"" : `"${hash.token}`;
+                const token = hash.token === "EOF" ? "'" : `'${hash.token}`;
 
                 const filtered = _._(hash.expected).filter((value: string) => _.startsWith(value, token))
-                    .map((value: string) => /^"(.*)"$/.exec(value)[1])
+                    .map((value: string) => /^'(.*)'$/.exec(value)[1])
                     .value();
 
                 this.suggestions = _.map(filtered, (value: string) => {
