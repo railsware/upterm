@@ -1,0 +1,3 @@
+test:
+  override:
+    - "node_modules/.bin/tslint `find src -name '*.ts'`"
