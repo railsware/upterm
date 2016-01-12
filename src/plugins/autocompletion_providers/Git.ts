@@ -72,8 +72,11 @@ async function gitSuggestions(job: Job): Promise<i.Suggestion[]> {
     }
 
     if (subcommand === "checkout" && args.length === 1) {
-        const files = await Utils.filesIn(headsPath);
-        suggestions = files.map(branch => toBranchSuggestion(branch, lastArgument));
+        let output = await executeCommand("git", ["branch"], job.directory);
+        suggestions = output
+            .split(OS.EOL)
+            .filter(path => path.length > 0 && path[0] !== "*")
+            .map(branch => toBranchSuggestion(branch, lastArgument));
     }
 
     return _._(suggestions).sortBy("score").reverse().value();
