@@ -1,12 +1,37 @@
 import Utils from "../../Utils";
 import Job from "../../Job";
 import * as _ from "lodash";
+import * as i from "../../Interfaces";
+import * as e from "../../Enums";
 import * as Path from "path";
+import * as OS from "os";
 import PluginManager from "../../PluginManager";
+import {executeCommand} from "../../PTY";
 const score: (i: string, m: string) => number = require("fuzzaldrin").score;
 
+interface GitStatusFile {
+    path: string;
+    color: e.Color;
+}
 
-function toSuggestion(branch: string, lastWord: string): Suggestion {
+const statusesToColors: _.Dictionary<e.Color> = {
+    "?": e.Color.Green,
+    "M": e.Color.Blue,
+    "D": e.Color.Red,
+};
+
+function toFileSuggestion(file: GitStatusFile, lastWord: string): i.Suggestion {
+    return {
+        value: file.path,
+        score: 2 + score(file.path, lastWord),
+        synopsis: "",
+        description: "",
+        type: "file",
+        color: file.color,
+    };
+}
+
+function toBranchSuggestion(branch: string, lastWord: string): i.Suggestion {
     return {
         value: branch,
         score: 2 + score(branch, lastWord),
@@ -16,24 +41,47 @@ function toSuggestion(branch: string, lastWord: string): Suggestion {
     };
 }
 
-PluginManager.registerAutocompletionProvider({
-    getSuggestions: async function (job: Job): Promise<Suggestion[]> {
-        const prompt = job.prompt;
+function toGitStatusFile(line: string): GitStatusFile {
+    return {
+        path: line.substring(3).trim(),
+        color: statusesToColors[line[1]],
+    };
+}
 
-        if (prompt.commandName !== "git" || prompt.arguments[0] !== "checkout") {
-            return [];
-        }
+async function gitSuggestions(job: Job): Promise<i.Suggestion[]> {
+    const prompt = job.prompt;
 
-        const lastArgument = prompt.lastArgument;
-        let suggestions: Suggestion[] = [];
+    const headsPath = Path.join(job.directory, ".git", "refs", "heads");
+    if (!(await Utils.exists(headsPath))) {
+        return [];
+    }
 
-        const headsPath = Path.join(job.directory, ".git", "refs", "heads");
+    let suggestions: i.Suggestion[] = [];
+    const lastArgument = prompt.lastArgument;
+    const subcommand = prompt.arguments[0];
+    const args = _.drop(prompt.arguments, 1);
 
-        if (prompt.arguments.length === 2 && await Utils.exists(headsPath)) {
-            const files = await Utils.filesIn(headsPath);
-            suggestions = files.map(branch => toSuggestion(branch, lastArgument));
-        }
+    if (subcommand === "add" && args.length > 0) {
+        let changes = await executeCommand("git", ["status", "--porcelain"], job.directory);
+        suggestions = changes
+            .split(OS.EOL)
+            .filter(path => path.length > 0)
+            .map(toGitStatusFile)
+            .filter(file => !_.include(args, file.path))
+            .map(file => toFileSuggestion(file, lastArgument));
+    }
 
-        return _._(suggestions).sortBy("score").reverse().value();
-    },
-});
+    if (subcommand === "checkout" && args.length === 1) {
+        const files = await Utils.filesIn(headsPath);
+        suggestions = files.map(branch => toBranchSuggestion(branch, lastArgument));
+    }
+
+    return _._(suggestions).sortBy("score").reverse().value();
+}
+
+["add", "checkout"].forEach(subcommand =>
+    PluginManager.registerAutocompletionProvider({
+        forCommand: `git ${subcommand}`,
+        getSuggestions: gitSuggestions,
+    })
+);

@@ -15,7 +15,20 @@ export interface Attributes {
 }
 
 export interface AutocompletionProvider {
+    forCommand?: string;
     getSuggestions(job: Job): Promise<Suggestion[]>;
+}
+
+export interface Suggestion {
+    value: string;
+    score: number;
+    synopsis: string;
+    description: string;
+    type: string;
+    color?: e.Color;
+    partial?: boolean; // Whether to put a space after it.
+    replaceEverything?: boolean;
+    prefix?: string;
 }
 
 export interface FileInfo {

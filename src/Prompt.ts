@@ -2,6 +2,7 @@ import * as events from "events";
 import Autocompletion from "./Autocompletion";
 import {History, HistoryEntry} from "./History";
 import * as _ from "lodash";
+import * as i from "./Interfaces";
 import {expandAliases, expandHistory, lex} from "./CommandExpander";
 import Job from "./Job";
 
@@ -57,12 +58,12 @@ export default class Prompt extends events.EventEmitter {
         return _.last(this.lexemes) || "";
     }
 
-    getSuggestions(): Promise<Suggestion[]> {
+    getSuggestions(): Promise<i.Suggestion[]> {
         return this._autocompletion.getSuggestions(this.job);
     }
 
     // TODO: Now it"s last lexeme instead of current.
-    replaceCurrentLexeme(suggestion: Suggestion): void {
+    replaceCurrentLexeme(suggestion: i.Suggestion): void {
         const lexemes = _.clone(this._lexemes);
         lexemes[lexemes.length - 1] = `${suggestion.prefix || ""}${suggestion.value}`;
 

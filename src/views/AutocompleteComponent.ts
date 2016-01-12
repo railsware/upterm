@@ -1,9 +1,10 @@
 import * as React from "react";
 import * as _ from "lodash";
+import * as i from "../Interfaces";
 
 interface AutocompleteProps {
     caretOffset: Offset;
-    suggestions: Suggestion[];
+    suggestions: i.Suggestion[];
     onSuggestionHover: (index: number) => void;
     onSuggestionClick: () => void;
     highlightedIndex: number;
@@ -42,7 +43,7 @@ export default class AutocompleteComponent extends React.Component<AutocompleteP
 }
 
 interface SuggestionProps {
-    suggestion: Suggestion;
+    suggestion: i.Suggestion;
     key: number;
     onHover: (index: number) => void;
     onClick: () => void;
@@ -65,7 +66,7 @@ class SuggestionComponent extends React.Component<SuggestionProps, {}> {
                 onMouseOver: this.props.onHover,
                 onClick: this.props.onClick,
             },
-            React.createElement("i", { className: "icon" }),
+            React.createElement("i", { className: "icon", "data-color": this.props.suggestion.color }),
             React.createElement("span", { className: "value" }, this.props.suggestion.value),
             React.createElement(
                 "span",

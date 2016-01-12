@@ -2,6 +2,7 @@ import Utils from "../../Utils";
 import Job from "../../Job";
 import * as _ from "lodash";
 import * as Path from "path";
+import * as i from "../../Interfaces";
 import PluginManager from "../../PluginManager";
 const score: (i: string, m: string) => number = require("fuzzaldrin").score;
 
@@ -60,7 +61,7 @@ const commands: _.Dictionary<string> = {
 };
 
 
-function toSuggestion(value: string, lastWord: string, synopsis = ""): Suggestion {
+function toSuggestion(value: string, lastWord: string, synopsis = ""): i.Suggestion {
     return {
         value: value,
         score: 2 + score(value, lastWord),
@@ -71,7 +72,7 @@ function toSuggestion(value: string, lastWord: string, synopsis = ""): Suggestio
 }
 
 PluginManager.registerAutocompletionProvider({
-    getSuggestions: async function (job: Job): Promise<Suggestion[]> {
+    getSuggestions: async function (job: Job): Promise<i.Suggestion[]> {
         const prompt = job.prompt;
         const words = prompt.expanded;
 
@@ -80,7 +81,7 @@ PluginManager.registerAutocompletionProvider({
         }
 
         const lastArgument = prompt.lastArgument;
-        let suggestions: Suggestion[] = [];
+        let suggestions: i.Suggestion[] = [];
 
         if (words.length === 2) {
             suggestions = _.map(commands, (value, key) => toSuggestion(key, lastArgument, value));

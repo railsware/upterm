@@ -7,7 +7,7 @@ import PluginManager from "../../PluginManager";
 const filter: any = require("fuzzaldrin").filter;
 
 class Command implements i.AutocompletionProvider {
-    suggestions: Suggestion[] = [];
+    suggestions: i.Suggestion[] = [];
 
     async getSuggestions(job: Job) {
         const prompt = job.prompt;

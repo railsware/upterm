@@ -37,7 +37,7 @@ class File implements i.AutocompletionProvider {
 
         let fileInfos = await Utils.stats(searchDirectory);
 
-        const all = _.map(fileInfos.filter(File.filter(prompt.commandName)), (fileInfo: i.FileInfo): Suggestion => {
+        const all = _.map(fileInfos.filter(File.filter(prompt.commandName)), (fileInfo: i.FileInfo): i.Suggestion => {
             /* tslint:disable:no-bitwise */
             let description = `Mode: ${"0" + (fileInfo.stat.mode & 511).toString(8)}`;
             let name: string;
@@ -49,7 +49,7 @@ class File implements i.AutocompletionProvider {
                 description += `; Size: ${Utils.humanFileSize(fileInfo.stat.size)}`;
             }
 
-            const suggestion: Suggestion = {
+            const suggestion: i.Suggestion = {
                 value: name,
                 score: 0,
                 synopsis: "",
@@ -65,7 +65,7 @@ class File implements i.AutocompletionProvider {
             return suggestion;
         });
 
-        let prepared: Suggestion[];
+        let prepared: i.Suggestion[];
         if (baseName) {
             prepared = _._(all).each(suggestion => suggestion.score = score(suggestion.value, baseName))
                 .sortBy("score").reverse().take(10).value();

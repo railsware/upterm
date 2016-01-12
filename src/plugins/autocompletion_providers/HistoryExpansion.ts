@@ -12,7 +12,7 @@ class HistoryExpansion implements i.AutocompletionProvider {
         "!*": "All arguments of the previous command",
     };
 
-    async getSuggestions(job: Job): Promise<Suggestion[]> {
+    async getSuggestions(job: Job): Promise<i.Suggestion[]> {
         const lexeme = job.prompt.lastLexeme;
 
         return _.map(this.commands(lexeme), (description, command) => {

@@ -7,7 +7,8 @@ import Utils from "./Utils";
 export default class PluginManager {
     private static _outputDecorators: OutputDecorator[] = [];
     private static _environmentObservers: EnvironmentObserverPlugin[] = [];
-    private static _autocompletionProviders: AutocompletionProvider[] = [];
+    private static _genericAutocompletionProviders: AutocompletionProvider[] = [];
+    private static _specializedAutocompletionProviders: _.Dictionary<AutocompletionProvider[]> = {};
     private static _preexecPlugins: PreexecPlugin[] = [];
 
     static registerOutputDecorator(decorator: OutputDecorator): void {
@@ -27,11 +28,31 @@ export default class PluginManager {
     }
 
     static registerAutocompletionProvider(plugin: AutocompletionProvider): void {
-        this._autocompletionProviders.push(plugin);
+        if (plugin.forCommand) {
+            if (!this._specializedAutocompletionProviders[plugin.forCommand]) {
+                this._specializedAutocompletionProviders[plugin.forCommand] = [];
+            }
+            this._specializedAutocompletionProviders[plugin.forCommand].push(plugin);
+        } else {
+            this._genericAutocompletionProviders.push(plugin);
+        }
     }
 
-    static get autocompletionProviders(): AutocompletionProvider[] {
-        return this._autocompletionProviders;
+    static get genericAutocompletionProviders(): AutocompletionProvider[] {
+        return this._genericAutocompletionProviders;
+    }
+
+    static specializedAutocompletionProvider(words: string[]): AutocompletionProvider[] {
+        for (let length = words.length; length !== 0; --length) {
+            let subcommand = _.take(words, length).join(" ");
+            let providers = this._specializedAutocompletionProviders[subcommand];
+
+            if (providers) {
+                return providers;
+            }
+        }
+
+        return [];
     }
 
     static registerPreexecPlugin(plugin: PreexecPlugin): void {

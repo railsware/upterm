@@ -1,5 +1,6 @@
 import * as _ from "lodash";
 import * as e from "../Enums";
+import * as i from "../Interfaces";
 import * as React from "react";
 import AutocompleteComponent from "./AutocompleteComponent";
 import DecorationToggleComponent from "./DecorationToggleComponent";
@@ -83,7 +84,7 @@ interface Props {
 interface State {
     highlightedSuggestionIndex?: number;
     latestKeyCode?: number;
-    suggestions?: Suggestion[];
+    suggestions?: i.Suggestion[];
 }
 
 

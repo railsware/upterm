@@ -18,17 +18,6 @@ interface RowColumn {
     row?: number;
 }
 
-interface Suggestion {
-    value: string;
-    score: number;
-    synopsis: string;
-    description: string;
-    type: string;
-    partial?: boolean; // Whether to put a space after it.
-    replaceEverything?: boolean;
-    prefix?: string;
-}
-
 interface VcsData {
     isRepository: boolean;
     branch?: string;
