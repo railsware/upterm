@@ -35,6 +35,7 @@ interface VcsDataProps {
 class VcsDataComponent extends React.Component<VcsDataProps, {}> {
     render() {
         if (!this.props.data.isRepository) {
+            /* tslint:disable:no-null-keyword */
             return null;
         }
 
