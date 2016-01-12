@@ -72,10 +72,11 @@ async function gitSuggestions(job: Job): Promise<i.Suggestion[]> {
     }
 
     if (subcommand === "checkout" && args.length === 1) {
-        let output = await executeCommand("git", ["branch"], job.directory);
+        let output = await executeCommand("git", ["branch", "--no-color"], job.directory);
         suggestions = output
             .split(OS.EOL)
             .filter(path => path.length > 0 && path[0] !== "*")
+            .map(branch => branch.trim())
             .map(branch => toBranchSuggestion(branch, lastArgument));
     }
 
