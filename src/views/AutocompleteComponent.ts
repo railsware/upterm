@@ -11,7 +11,7 @@ interface AutocompleteProps {
     ref: string;
 }
 
-export default class AutocompleteComponent extends React.Component<AutocompleteProps, {}> { 
+export default class AutocompleteComponent extends React.Component<AutocompleteProps, {}> {
     render() {
         const suggestionViews = this.props.suggestions.map((suggestion, index) => {
             return React.createElement(SuggestionComponent, {
@@ -19,13 +19,14 @@ export default class AutocompleteComponent extends React.Component<AutocompleteP
                 onHover: this.props.onSuggestionHover.bind(this, index),
                 onClick: this.props.onSuggestionClick,
                 key: index,
-                isHighlighted: index === this.props.highlightedIndex
+                isHighlighted: index === this.props.highlightedIndex,
             });
         });
 
         const suggestionDescription = this.props.suggestions[this.props.highlightedIndex].description;
+        let descriptionElement: React.ReactElement<any>;
         if (suggestionDescription) {
-            var descriptionElement = React.createElement("div", { className: "description" }, suggestionDescription);
+            descriptionElement = React.createElement("div", { className: "description" }, suggestionDescription);
         }
 
         let offset = <Offset>_.pick(this.props.caretOffset, "left");

@@ -35,7 +35,7 @@ interface VcsDataProps {
 class VcsDataComponent extends React.Component<VcsDataProps, {}> {
     render() {
         if (!this.props.data.isRepository) {
-            return null;
+            return undefined;
         }
 
         return React.createElement(

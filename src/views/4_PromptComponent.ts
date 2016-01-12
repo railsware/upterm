@@ -172,9 +172,12 @@ export default class PromptComponent extends React.Component<Props, State> imple
 
     render() {
         const classes = ["prompt-wrapper", "fixedsticky", this.props.status].join(" ");
+        let autocomplete: React.ReactElement<any>;
+        let decorationToggle: React.ReactElement<any>;
+        let scrollToTop: React.ReactElement<any>;
 
         if (this.showAutocomplete()) {
-            var autocomplete = React.createElement(AutocompleteComponent, {
+            autocomplete = React.createElement(AutocompleteComponent, {
                 suggestions: this.state.suggestions,
                 caretOffset: $(this.commandNode).caret("offset"),
                 onSuggestionHover: this.highlightSuggestion.bind(this),
@@ -185,11 +188,11 @@ export default class PromptComponent extends React.Component<Props, State> imple
         }
 
         if (this.props.jobView.state.canBeDecorated) {
-            var decorationToggle = React.createElement(DecorationToggleComponent, { job: this.props.jobView });
+            decorationToggle = React.createElement(DecorationToggleComponent, { job: this.props.jobView });
         }
 
         if (this.props.status !== e.Status.NotStarted) {
-            var scrollToTop = React.createElement(
+            scrollToTop = React.createElement(
                 "a",
                 { href: "#", className: "scroll-to-top", onClick: this.handleScrollToTop.bind(this) },
                 React.createElement("i", { className: "fa fa-long-arrow-up" })
@@ -233,7 +236,8 @@ export default class PromptComponent extends React.Component<Props, State> imple
     }
 
     private get commandNode(): HTMLInputElement {
-        return <any>this.refs["command"];
+        /* tslint:disable:no-string-literal */
+        return <HTMLInputElement>this.refs["command"];
     }
 
     private setDOMValueProgrammatically(text: string): void {
@@ -275,7 +279,7 @@ export default class PromptComponent extends React.Component<Props, State> imple
             this.props.prompt.value = previous;
             this.setDOMValueProgrammatically(previous);
         } else {
-            let next = History.getNext()
+            let next = History.getNext();
             this.props.prompt.value = next;
             this.setDOMValueProgrammatically(next);
         }
@@ -286,8 +290,9 @@ export default class PromptComponent extends React.Component<Props, State> imple
     }
 
     private navigateAutocomplete(event: KeyboardEvent): void {
+        let index: number;
         if (keys.goUp(event)) {
-            var index = Math.max(0, this.state.highlightedSuggestionIndex - 1);
+            index = Math.max(0, this.state.highlightedSuggestionIndex - 1);
         } else {
             index = Math.min(this.state.suggestions.length - 1, this.state.highlightedSuggestionIndex + 1);
         }
@@ -296,7 +301,7 @@ export default class PromptComponent extends React.Component<Props, State> imple
     }
 
     private applySuggestion(): void {
-        var state = this.state;
+        let state = this.state;
         const suggestion = state.suggestions[state.highlightedSuggestionIndex];
 
         if (suggestion.replaceEverything) {
@@ -325,6 +330,7 @@ export default class PromptComponent extends React.Component<Props, State> imple
     }
 
     private isAutocompleteShown(): boolean {
+        /* tslint:disable:no-string-literal */
         return !!this.refs["autocomplete"];
     }
 
