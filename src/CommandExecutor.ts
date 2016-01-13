@@ -1,7 +1,6 @@
 import Job from "./Job";
 import Command from "./Command";
 import Utils from "./Utils";
-import * as _ from "lodash";
 import PTY from "./PTY";
 import * as Path from "path";
 
