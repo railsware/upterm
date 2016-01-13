@@ -1,6 +1,6 @@
 [![Join the chat at https://gitter.im/shockone/black-screen](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/shockone/black-screen?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
-What is it?
+What Is It?
 -----------
 
 Black Screen is both a terminal emulator and an *interactive* shell based on [Electron](http://electron.atom.io/).
@@ -11,7 +11,7 @@ Unlike most of the emulators, it exploits capabilities of contemporary interface
 <img align="right" src="README/autocompletion.gif">
 Black Screen shows the autocompletion box as you type and tries to be smart about what to suggest.
 Often you can find useful additional information to the right of the autocomplete, e.g. expanded alias value, 
-history substitutions for `!!` and friends, command description etc. And you can [write your own autocompletion providers](src/plugins/autocompletion_providers) too!
+history substitutions for `!!` and friends, command descriptions, etc. And you can [write your own autocompletion providers](src/plugins/autocompletion_providers) too!
 
 ###### Compatibility
 
@@ -21,7 +21,7 @@ Installation
 ------------
 
 ```bash
-git clone https://github.com/black-screen/black-screen.git && cd black-screen
+git clone https://github.com/shockone/black-screen.git && cd black-screen
 npm i
 npm start
 ```
