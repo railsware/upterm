@@ -238,7 +238,7 @@ export function lex(input: string): string[] {
 }
 
 export function isCompleteHistoryCommand(lexeme: string) {
-    return lexeme[0] === "!" && lexeme.length > 1;
+    return ["!!", "!^", "!$", "!*"].includes(lexeme);
 }
 
 // FIXME: add recursive replacement, so that two !! in a row would work.
@@ -262,7 +262,7 @@ export function historyReplacement(lexeme: string): string[] {
             return lastCommand.historyExpanded.slice(0, 1);
         case "!$":
             return [_.last(lastCommand.historyExpanded)];
-        case "$*":
+        case "!*":
             return lastCommand.historyExpanded.slice(1);
         default:
             throw [History.lastWithPrefix(matcher).raw];
