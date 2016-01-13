@@ -5,7 +5,11 @@
 Black Screen is both a terminal emulator and an *interactive* shell based on [Electron](http://electron.atom.io/).
 Unlike most of the emulators, it exploits capabilities of contemporary interfaces.
 
-![](https://dl.dropboxusercontent.com/spa/dlqheu39w0arg9q/ucvbthot.png)
+###### Autocompletion
+<img align="right" src="README/autocompletion.gif">
+Black Screen shows the autocompletion box as you type and tries to be smart about what to suggest.
+Often you can find useful additional information to the right of the autocomplete, e.g. expanded alias value, 
+history substitutions for `!!` and friends, command description etc.
 
 ### Technologies
 
