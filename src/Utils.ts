@@ -191,12 +191,9 @@ export default class Utils {
         return process.env[(Utils.isWindows) ? "USERPROFILE" : "HOME"];
     }
 
-    static filterAsync<T>(values: T[], filter: (t: T) => Promise<boolean>): Promise<T[]> {
-        return new Promise((resolve) => {
-            Promise
-                .all(values.map(value => new Promise((rs) => filter(value).then(rs, () => rs(false)))))
-                .then(filterResults => resolve(_._(values).zip(filterResults).filter(z => z[1]).map(z => z[0]).value()));
-        });
+    static async filterAsync<T>(values: T[], asyncPredicate: (t: T) => Promise<boolean>): Promise<T[]> {
+        const filtered = await Promise.all(values.map(asyncPredicate));
+        return values.filter((value: T, index: number) => filtered[index]);
     }
 }
 

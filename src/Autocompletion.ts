@@ -13,7 +13,7 @@ export default class Autocompletion implements i.AutocompletionProvider {
         return Promise.all(_.map(providers, provider => provider.getSuggestions(job))).then(results =>
             _._(results)
                 .flatten()
-                .select((suggestion: i.Suggestion) => suggestion.score > 0)
+                .filter((suggestion: i.Suggestion) => suggestion.score > 0)
                 .sortBy((suggestion: i.Suggestion) => -suggestion.score)
                 .uniq("value")
                 .take(Autocompletion.limit)

@@ -45,6 +45,6 @@ export default class Command {
     }
 
     static isBuiltIn(command: string): any {
-        return _.include(["cd", "clear", "exit"], command);
+        return ["cd", "clear", "exit"].includes(command);
     }
 }

@@ -69,5 +69,5 @@ export async function loadAllPlugins(): Promise<void> {
     const pluginsDirectory = Path.join(__dirname, "plugins");
     const filePaths = await Utils.recursiveFilesIn(pluginsDirectory);
 
-    _._(filePaths).map(require).pluck("default").value();
+    _._(filePaths).map(require).map("default").value();
 }

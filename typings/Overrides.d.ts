@@ -53,3 +53,7 @@ declare namespace __React {
         keyIdentifier: number;
     }
 }
+
+interface Array<T> {
+    includes(value: T): boolean;
+}

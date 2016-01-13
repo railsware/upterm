@@ -88,5 +88,5 @@ export default class JobComponent extends React.Component<Props, State> implemen
 
 export function isMetaKey(event: KeyboardEvent) {
     return event.metaKey || _.some([event.key, (<any>event).keyIdentifier],
-                                   key => _.includes(["Shift", "Alt", "Ctrl"], key));
+                                   key => ["Shift", "Alt", "Ctrl"].includes(key));
 }

@@ -38,7 +38,7 @@ class BuiltInCommandExecutionStrategy extends CommandExecutionStrategy {
 
 class UnixSystemFileExecutionStrategy extends CommandExecutionStrategy {
     static async canExecute(command: string) {
-        return _.include(await Utils.executablesInPaths(), command);
+        return (await Utils.executablesInPaths()).includes(command);
     }
 
     startExecution() {

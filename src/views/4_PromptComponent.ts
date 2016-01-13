@@ -41,7 +41,7 @@ function getCaretPosition(): number {
 }
 
 function isCommandKey(event: KeyboardEvent) {
-    return _.contains([16, 17, 18], event.keyCode) || event.ctrlKey || event.altKey || event.metaKey;
+    return [16, 17, 18].includes(event.keyCode) || event.ctrlKey || event.altKey || event.metaKey;
 }
 
 const isSpecialKey = _.memoize(
@@ -326,7 +326,7 @@ export default class PromptComponent extends React.Component<Props, State> imple
         return this.props.hasLocusOfAttention &&
             this.state.suggestions.length &&
             this.commandNode && !this.isEmpty() &&
-            this.props.status === e.Status.NotStarted && !_.contains([13, 27], this.state.latestKeyCode);
+            this.props.status === e.Status.NotStarted && ![13, 27].includes(this.state.latestKeyCode);
     }
 
     private isAutocompleteShown(): boolean {

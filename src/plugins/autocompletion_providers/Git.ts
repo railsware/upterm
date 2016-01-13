@@ -67,7 +67,7 @@ async function gitSuggestions(job: Job): Promise<i.Suggestion[]> {
             .split(OS.EOL)
             .filter(path => path.length > 0)
             .map(toGitStatusFile)
-            .filter(file => !_.include(args, file.path))
+            .filter(file => !args.includes(file.path))
             .map(file => toFileSuggestion(file, lastArgument));
     }
 
