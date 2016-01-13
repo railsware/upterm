@@ -6,7 +6,7 @@ import * as i from "../../Interfaces";
 import PluginManager from "../../PluginManager";
 const score: (i: string, m: string) => number = require("fuzzaldrin").score;
 
-const commands: _.Dictionary<string> = {
+const subcommands: _.Dictionary<string> = {
     "access": "Set access level on published packages",
     "adduser": "Add a registry user account",
     "bin": "Display npm bin folder",
@@ -42,6 +42,7 @@ const commands: _.Dictionary<string> = {
     "repo": "Open package repository page in the browser",
     "restart": "Restart a package",
     "root": "Display npm root",
+    "run": "Run arbitrary package scripts",
     "run-script": "Run arbitrary package scripts",
     "search": "Search for packages",
     "shrinkwrap": "Lock down dependency versions",
@@ -72,28 +73,28 @@ function toSuggestion(value: string, lastWord: string, synopsis = ""): i.Suggest
 }
 
 PluginManager.registerAutocompletionProvider({
+    forCommand: "npm",
     getSuggestions: async function (job: Job): Promise<i.Suggestion[]> {
-        const prompt = job.prompt;
-        const words = prompt.expanded;
-
-        if (prompt.commandName !== "npm") {
+        if (job.prompt.expanded.length !== 2) {
             return [];
         }
 
-        const lastArgument = prompt.lastArgument;
-        let suggestions: i.Suggestion[] = [];
+        const suggestions = _.map(subcommands, (value, key) => toSuggestion(key, job.prompt.lastArgument, value));
+        return _._(suggestions).sortBy("score").reverse().value();
+    },
+});
 
-        if (words.length === 2) {
-            suggestions = _.map(commands, (value, key) => toSuggestion(key, lastArgument, value));
-        }
-
+PluginManager.registerAutocompletionProvider({
+    forCommand: "npm run",
+    getSuggestions: async function (job: Job): Promise<i.Suggestion[]> {
         const packageFilePath = Path.join(job.directory, "package.json");
 
-        if (words.length === 3 && words[1] === "run" && await Utils.exists(packageFilePath)) {
-            suggestions = Object.keys(JSON.parse(await Utils.readFile(packageFilePath)).scripts || {})
-                .map(key => toSuggestion(key, lastArgument));
+        if (job.prompt.expanded.length === 3 && await Utils.exists(packageFilePath)) {
+            const parsed = JSON.parse(await Utils.readFile(packageFilePath)).scripts || {};
+            const suggestions = Object.keys(parsed).map(key => toSuggestion(key, job.prompt.lastArgument));
+            return _._(suggestions).sortBy("score").reverse().value();
         }
 
-        return _._(suggestions).sortBy("score").reverse().value();
+        return [];
     },
 });
