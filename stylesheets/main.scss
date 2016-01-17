@@ -10,7 +10,7 @@ $default-shadow: 0 2px 8px 1px rgba(0, 0, 0, 0.3);
 @import '../node_modules/octicons/octicons/sprockets-octicons';
 
 // Fix the issue when icons aren't displayed.
-// https://github.com/black-screen/black-screen/issues/95
+// https://github.com/shockone/black-screen/issues/95
 .fa {
   transform: translate(0, 0);
 }
