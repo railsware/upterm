@@ -32,6 +32,7 @@ const SGR: { [indexer: string]: i.Attributes|string } = {
     36: { color: Color.Cyan },
     37: { color: Color.White },
     38: "color",
+    39: { color: Color.White },
     40: { "background-color": Color.Black },
     41: { "background-color": Color.Red },
     42: { "background-color": Color.Green },
@@ -41,6 +42,7 @@ const SGR: { [indexer: string]: i.Attributes|string } = {
     46: { "background-color": Color.Cyan },
     47: { "background-color": Color.White },
     48: "background-color",
+    49: { "background-color": Color.Black },
 };
 
 function isSetColorExtended(sgrValue: any) {
