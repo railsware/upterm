@@ -41,7 +41,7 @@ Technologies
 TODO
 ----
 
-You can find the list of items currently being worked on in this issue: [TODO](issues/58)
+You can find the list of items currently being worked on in this issue: [TODO](https://github.com/shockone/black-screen/issues/58)
 
 Contributing
 ------------
