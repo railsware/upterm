@@ -314,6 +314,110 @@ export default class Parser {
         const param = <number>(Array.isArray(params) ? params[0] : params);
 
         switch (flag) {
+            case "A":
+                short = "Cursor Up Ps Times (default = 1) (CUU).";
+
+                this.buffer.moveCursorRelative({ vertical: -(param || 1) });
+                break;
+            case "B":
+                short = "Cursor Down Ps Times (default = 1) (CUD).";
+                this.buffer.moveCursorRelative({ vertical: (param || 1) });
+                break;
+            case "C":
+                short = "Cursor Forward Ps Times (default = 1) (CUF).";
+
+                this.buffer.moveCursorRelative({ horizontal: (param || 1) });
+                break;
+            case "D":
+                short = "Cursor Backward Ps Times (default = 1) (CUB).";
+
+                this.buffer.moveCursorRelative({ horizontal: -(param || 1) });
+                break;
+            // CSI Ps E  Cursor Next Line Ps Times (default = 1) (CNL).
+            // CSI Ps F  Cursor Preceding Line Ps Times (default = 1) (CPL).
+            case "G":
+                short = "Cursor Character Absolute [column] (default = [row,1]) (CHA)";
+                url = "http://www.vt100.net/docs/vt510-rm/CHA";
+
+                this.buffer.moveCursorAbsolute({ column: or1(params[1]) - 1 });
+                break;
+            case "H":
+                short = "Cursor Position [row;column] (default = [1,1]) (CUP).";
+                url = "http://www.vt100.net/docs/vt510-rm/CUP";
+
+                this.buffer.moveCursorAbsolute({ row: or1(params[0]) - 1, column: or1(params[1]) - 1 });
+                break;
+            case "J":
+                url = "http://www.vt100.net/docs/vt510-rm/ED";
+                switch (param) {
+                    case CSI.erase.entire:
+                        short = "Erase Entire Display (ED).";
+
+                        this.buffer.clear();
+                        break;
+                    case CSI.erase.toEnd:
+                    case undefined:
+                        short = "Erase Display Below (ED).";
+
+                        this.buffer.clearToEnd();
+                        break;
+                    case CSI.erase.toBeginning:
+                        short = "Erase Display Above (ED).";
+
+                        this.buffer.clearToBeginning();
+                        break;
+                    default:
+                        throw `Unknown CSI erase: "${param}".`;
+                }
+                break;
+            case "K":
+                url = "http://www.vt100.net/docs/vt510-rm/DECSEL";
+                switch (param) {
+                    case CSI.erase.entire:
+                        short = "Erase the Line (DECSEL).";
+
+                        this.buffer.clearRow();
+                        break;
+                    case CSI.erase.toEnd:
+                    case undefined:
+                        short = "Erase Line to Right (DECSEL).";
+                        this.buffer.clearRowToEnd();
+                        break;
+                    case CSI.erase.toBeginning:
+                        short = "Erase Line to Left (DECSEL).";
+                        this.buffer.clearRowToBeginning();
+                        break;
+                    default:
+                        throw `Unknown CSI erase: "${param}".`;
+                }
+                break;
+            case "L":
+                url = "http://www.vt100.net/docs/vt510-rm/IL";
+                short = "Inserts one or more blank lines, starting at the cursor. (DL)";
+
+                this.buffer.scrollUp(param || 1, this.buffer.cursor.row());
+                break;
+            case "M":
+                url = "http://www.vt100.net/docs/vt510-rm/DL";
+                short = "Deletes one or more lines in the scrolling region, starting with the line that has the cursor. (DL)";
+
+                this.buffer.scrollDown(param || 1, this.buffer.cursor.row());
+                break;
+            case "c":
+                this.job.write("\x1b>1;2;");
+                break;
+            case "d":
+                short = "Line Position Absolute [row] (default = [1,column]) (VPA).";
+                url = "http://www.vt100.net/docs/vt510-rm/VPA";
+
+                this.buffer.moveCursorAbsolute({ row: or1(params[1]) - 1 });
+                break;
+            case "f":
+                short = "Horizontal and Vertical Position [row;column] (default = [1,1]) (HVP).";
+                url = "http://www.vt100.net/docs/vt510-rm/HVP";
+
+                this.buffer.moveCursorAbsolute({ row: or1(params[0]) - 1, column: or1(params[1]) - 1 });
+                break;
             case "m":
                 short = "Some SGR stuff";
 
@@ -349,99 +453,6 @@ export default class Parser {
                         this.buffer.setAttributes(attributeToSet);
                     }
                 }
-                break;
-            case "A":
-                short = "Cursor Up Ps Times (default = 1) (CUU).";
-
-                this.buffer.moveCursorRelative({ vertical: -(param || 1) });
-                break;
-            case "B":
-                short = "Cursor Down Ps Times (default = 1) (CUD).";
-                this.buffer.moveCursorRelative({ vertical: (param || 1) });
-                break;
-            case "C":
-                short = "Cursor Forward Ps Times (default = 1) (CUF).";
-
-                this.buffer.moveCursorRelative({ horizontal: (param || 1) });
-                break;
-            case "D":
-                short = "Cursor Backward Ps Times (default = 1) (CUB).";
-
-                this.buffer.moveCursorRelative({ horizontal: -(param || 1) });
-                break;
-            // CSI Ps E  Cursor Next Line Ps Times (default = 1) (CNL).
-            // CSI Ps F  Cursor Preceding Line Ps Times (default = 1) (CPL).
-            // CSI Ps G  Cursor Character Absolute  [column] (default = [row,1]) (CHA).
-            case "H":
-                short = "Cursor Position [row;column] (default = [1,1]) (CUP).";
-                url = "http://www.vt100.net/docs/vt510-rm/CUP";
-
-                this.buffer.moveCursorAbsolute({ row: or1(params[0]) - 1, column: or1(params[1]) - 1 });
-                break;
-            case "f":
-                short = "Horizontal and Vertical Position [row;column] (default = [1,1]) (HVP).";
-                url = "http://www.vt100.net/docs/vt510-rm/HVP";
-
-                this.buffer.moveCursorAbsolute({ row: or1(params[0]) - 1, column: or1(params[1]) - 1 });
-                break;
-            case "J":
-                url = "http://www.vt100.net/docs/vt510-rm/ED";
-                switch (param) {
-                    case CSI.erase.entire:
-                        short = "Erase Entire Display (ED).";
-
-                        this.buffer.clear();
-                        break;
-                    case CSI.erase.toEnd:
-                    case undefined:
-                        short = "Erase Display Below (ED).";
-
-                        this.buffer.clearToEnd();
-                        break;
-                    case CSI.erase.toBeginning:
-                        short = "Erase Display Above (ED).";
-
-                        this.buffer.clearToBeginning();
-                        break;
-                    default:
-                        throw `Unknown CSI erase: "${param}".`;
-                }
-                break;
-            case "c":
-                this.job.write("\x1b>1;2;");
-                break;
-            case "K":
-                url = "http://www.vt100.net/docs/vt510-rm/DECSEL";
-                switch (param) {
-                    case CSI.erase.entire:
-                        short = "Erase the Line (DECSEL).";
-
-                        this.buffer.clearRow();
-                        break;
-                    case CSI.erase.toEnd:
-                    case undefined:
-                        short = "Erase Line to Right (DECSEL).";
-                        this.buffer.clearRowToEnd();
-                        break;
-                    case CSI.erase.toBeginning:
-                        short = "Erase Line to Left (DECSEL).";
-                        this.buffer.clearRowToBeginning();
-                        break;
-                    default:
-                        throw `Unknown CSI erase: "${param}".`;
-                }
-                break;
-            case "L":
-                url = "http://www.vt100.net/docs/vt510-rm/IL";
-                short = "Inserts one or more blank lines, starting at the cursor. (DL)";
-
-                this.buffer.scrollUp(param || 1, this.buffer.cursor.row());
-                break;
-            case "M":
-                url = "http://www.vt100.net/docs/vt510-rm/DL";
-                short = "Deletes one or more lines in the scrolling region, starting with the line that has the cursor. (DL)";
-
-                this.buffer.scrollDown(param || 1, this.buffer.cursor.row());
                 break;
             case "r":
                 url = "http://www.vt100.net/docs/vt510-rm/DECSTBM";
