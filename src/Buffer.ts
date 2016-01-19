@@ -68,11 +68,11 @@ export default class Buffer extends events.EventEmitter {
 
     scrollUp(count: number, addAtLine: number) {
         this.storage = this.storage.splice(this._margins.bottom - count + 1, count).toList();
-        Utils.times(count, () => this.storage = this.storage.splice(addAtLine, 0, List<Char>()).toList());
+        Utils.times(count, () => this.storage = this.storage.splice(addAtLine, 0, undefined).toList());
     }
 
     scrollDown(count: number, deletedLine = this._margins.top) {
-        Utils.times(count, () => this.storage = this.storage.splice(this._margins.bottom + 1, 0, List<Char>()).toList());
+        Utils.times(count, () => this.storage = this.storage.splice(this._margins.bottom + 1, 0, undefined).toList());
         this.storage = this.storage.splice(deletedLine, count).toList();
     }
 
@@ -175,11 +175,10 @@ export default class Buffer extends events.EventEmitter {
 
     clearRowToBeginning() {
         if (this.storage.get(this.cursorPosition.row)) {
-            let replacement = new Array(this.cursorPosition.column).fill(Char.empty);
+            const replacement = Array(this.cursorPosition.column).fill(Char.empty);
             this.storage = this.storage.update(
                 this.cursorPosition.row,
-                row => row.splice(0, this.cursorPosition.column + 1, replacement).toList())
-            ;
+                row => row.splice(0, this.cursorPosition.column + 1, ...replacement).toList());
         }
         this.emit("data");
     }
@@ -191,13 +190,9 @@ export default class Buffer extends events.EventEmitter {
 
     clearToBeginning() {
         this.clearRowToBeginning();
+        const replacement = Array(this.cursorPosition.row);
 
-        this.storage = this.storage.splice(
-            0,
-            this.cursorPosition.row,
-            new Array(this.cursorPosition.row).fill(List<Char>())
-        ).toList();
-
+        this.storage = this.storage.splice(0, this.cursorPosition.row, ...replacement).toList();
         this.emit("data");
     }
 
