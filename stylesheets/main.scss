@@ -253,6 +253,10 @@ body, pre {
 
       margin: 0;
       padding: 5px 0 0 0;
+
+      .row {
+        margin: 0;
+      }
     }
   }
 }
@@ -299,6 +303,11 @@ body, pre {
   .row {
     margin: 0 $output-margin;
     min-height: $row-height;
+
+    span {
+      display: inline-block;
+      height: $row-height;
+    }
   }
 }
 
