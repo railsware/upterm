@@ -41,6 +41,19 @@ Technologies
 * [TypeScript](http://www.typescriptlang.org/)
 * [ReactJS](https://facebook.github.io/react/)
 
+
+More Screenshots
+----------------
+
+![](README/npm_autocompletion.png)
+![](README/history_autocompletion.png)
+![](README/top_autocompletion.png)
+![](README/json_decorator.png)
+![](README/vim.png)
+![](README/emacs.png)
+![](README/htop.png)
+![](README/cd.png)
+
 TODO
 ----
 
