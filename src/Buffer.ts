@@ -149,7 +149,9 @@ export default class Buffer extends events.EventEmitter {
             this.storage = this.storage.update(
                 this.cursorPosition.row,
                 List<Char>(),
-                (row: List<Char>) => row.take(this.cursorPosition.column).concat(Array(n).fill(Char.empty), row.skip(this.cursorPosition.column + n)).toList()
+                (row: List<Char>) => row.take(this.cursorPosition.column)
+                                         .concat(Array(n).fill(Char.empty), row.skip(this.cursorPosition.column + n))
+                                         .toList()
             );
         }
         this.emit("data");
