@@ -4,8 +4,11 @@
 What Is It?
 -----------
 
-Black Screen is both a terminal emulator and an *interactive* shell based on [Electron](http://electron.atom.io/).
-Unlike most of the emulators, it exploits capabilities of contemporary interfaces.
+Black Screen is an IDE in the world of terminals. Strictly speaking, it's both a
+terminal emulator and an *interactive* shell based on [Electron](http://electron.atom.io/).
+Also, unlike most of the emulators you can meet nowadays it uses HTML and CSS for its UI (exactly as Atom does), 
+which means we can [stop misusing unicode characters](https://github.com/vim-airline/vim-airline) 
+and make a better looking terminal with appropriate tools.
 
 ###### Autocompletion
 
