@@ -88,13 +88,19 @@ export default class Buffer extends events.EventEmitter {
         let storage = fromStorage;
 
         if (this.cursor.getShow() || this.cursor.getBlink()) {
-            if (!storage.has(this.cursorPosition.row)) {
-                storage = storage.set(this.cursorPosition.row, List<Char>());
+            const coordinates = [this.cursorPosition.row, this.cursorPosition.column];
+
+            if (!storage.get(this.cursorPosition.row)) {
+                storage = storage.set(this.cursorPosition.row, List<Char>(Array(this.cursorPosition.column).fill(Char.empty)));
             }
 
-            let char = this.storage.getIn([this.cursorPosition.row, this.cursorPosition.column]) || Char.empty;
+            if (!storage.getIn(coordinates)) {
+                storage = storage.setIn(coordinates, Char.empty);
+            }
+
+            let char = storage.getIn(coordinates);
             storage = storage.setIn(
-                [this.cursorPosition.row, this.cursorPosition.column],
+                coordinates,
                 Char.flyweight(char.toString(), _.merge(char.getAttributes(), { cursor: true }))
             );
         }
