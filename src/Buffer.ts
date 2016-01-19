@@ -145,13 +145,13 @@ export default class Buffer extends events.EventEmitter {
     }
 
     eraseRight(n: number) {
-        this.storage = this.storage.update(
-            this.cursorPosition.row,
-            List<Char>(),
-            (row: List<Char>) => row.take(this.cursorPosition.column).
-                                     concat(Array(n).fill(Char.empty), row.skip(this.cursorPosition.column + n)).
-                                     toList()
-        );
+        if (this.storage.get(this.cursorPosition.row)) {
+            this.storage = this.storage.update(
+                this.cursorPosition.row,
+                List<Char>(),
+                (row: List<Char>) => row.take(this.cursorPosition.column).concat(Array(n).fill(Char.empty), row.skip(this.cursorPosition.column + n)).toList()
+            );
+        }
         this.emit("data");
     }
 
@@ -161,20 +161,24 @@ export default class Buffer extends events.EventEmitter {
     }
 
     clearRowToEnd() {
-        this.storage = this.storage.update(
-            this.cursorPosition.row,
-            List<Char>(),
-            (row: List<Char>) => row.take(this.cursorPosition.column).toList()
-        );
+        if (this.storage.get(this.cursorPosition.row)) {
+            this.storage = this.storage.update(
+                this.cursorPosition.row,
+                List<Char>(),
+                (row: List<Char>) => row.take(this.cursorPosition.column).toList()
+            );
+        }
         this.emit("data");
     }
 
     clearRowToBeginning() {
-        let replacement = new Array(this.cursorPosition.column).fill(Char.empty);
-        this.storage = this.storage.update(
-            this.cursorPosition.row,
-            row => row.splice(0, this.cursorPosition.column + 1, replacement).toList())
-        ;
+        if (this.storage.get(this.cursorPosition.row)) {
+            let replacement = new Array(this.cursorPosition.column).fill(Char.empty);
+            this.storage = this.storage.update(
+                this.cursorPosition.row,
+                row => row.splice(0, this.cursorPosition.column + 1, replacement).toList())
+            ;
+        }
         this.emit("data");
     }
 
