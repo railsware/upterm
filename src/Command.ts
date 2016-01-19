@@ -12,8 +12,7 @@ const executors: _.Dictionary<(i: Job, a: string[]) => void> = {
         if (!args.length) {
             newDirectory = Utils.homeDirectory;
         } else {
-            const path = args[0].replace(/^~/, Utils.homeDirectory);
-            newDirectory = Path.resolve(job.directory, path);
+            newDirectory = Utils.resolveDirectory(job.directory, args[0]);
 
             if (!fs.existsSync(newDirectory)) {
                 throw new Error(`The directory ${newDirectory} doesn"t exist.`);

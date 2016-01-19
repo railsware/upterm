@@ -191,6 +191,10 @@ export default class Utils {
         return process.env[(Utils.isWindows) ? "USERPROFILE" : "HOME"];
     }
 
+    static resolveDirectory(pwd: string, directory: string): string {
+        return Path.resolve(pwd, directory.replace(/^~/, Utils.homeDirectory));
+    }
+
     static async filterAsync<T>(values: T[], asyncPredicate: (t: T) => Promise<boolean>): Promise<T[]> {
         const filtered = await Promise.all(values.map(asyncPredicate));
         return values.filter((value: T, index: number) => filtered[index]);

@@ -27,15 +27,8 @@ class File implements i.AutocompletionProvider {
         const lastArgument = prompt.lastArgument;
         const baseName = Utils.baseName(lastArgument);
         const dirName = Utils.dirName(lastArgument);
-        let searchDirectory: string;
-
-        if (Path.isAbsolute(lastArgument)) {
-            searchDirectory = dirName;
-        } else {
-            searchDirectory = Path.join(job.directory, dirName);
-        }
-
-        let fileInfos = await Utils.stats(searchDirectory);
+        const searchDirectory = Utils.resolveDirectory(job.directory, dirName);
+        const fileInfos = await Utils.stats(searchDirectory);
 
         const all = _.map(fileInfos.filter(File.filter(prompt.commandName)), (fileInfo: i.FileInfo): i.Suggestion => {
             /* tslint:disable:no-bitwise */
