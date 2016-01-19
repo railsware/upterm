@@ -340,7 +340,7 @@ export default class Parser {
                 short = "Cursor Character Absolute [column] (default = [row,1]) (CHA)";
                 url = "http://www.vt100.net/docs/vt510-rm/CHA";
 
-                this.buffer.moveCursorAbsolute({ column: or1(param) - 1 });
+                this.buffer.moveCursorAbsolute({ column: or1(param || 1) - 1 });
                 break;
             case "H":
                 short = "Cursor Position [row;column] (default = [1,1]) (CUP).";
@@ -417,7 +417,7 @@ export default class Parser {
                 short = "Line Position Absolute [row] (default = [1,column]) (VPA).";
                 url = "http://www.vt100.net/docs/vt510-rm/VPA";
 
-                this.buffer.moveCursorAbsolute({ row: or1(param) - 1 });
+                this.buffer.moveCursorAbsolute({ row: or1(param || 1) - 1 });
                 break;
             case "f":
                 short = "Horizontal and Vertical Position [row;column] (default = [1,1]) (HVP).";
