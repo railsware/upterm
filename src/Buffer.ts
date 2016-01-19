@@ -138,6 +138,17 @@ export default class Buffer extends events.EventEmitter {
         return this;
     }
 
+    eraseRight(n: number) {
+        this.storage = this.storage.update(
+            this.cursorPosition.row,
+            List<Char>(),
+            (row: List<Char>) => row.take(this.cursorPosition.column).
+                                     concat(Array(n).fill(Char.empty), row.skip(this.cursorPosition.column + n)).
+                                     toList()
+        );
+        this.emit("data");
+    }
+
     clearRow() {
         this.storage = this.storage.set(this.cursorPosition.row, List<Char>());
         this.emit("data");

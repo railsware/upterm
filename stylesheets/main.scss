@@ -3,8 +3,8 @@
 $fa-font-path: "../node_modules/font-awesome/fonts";
 $font-size: 14px;
 $row-height: $font-size + 4px;
-$prompt-padding: 5px;
 $default-shadow: 0 2px 8px 1px rgba(0, 0, 0, 0.3);
+$prompt-background-color: lighten(map-get($colors, 'black'), 5%);
 
 @import '../node_modules/font-awesome/scss/font-awesome';
 @import '../node_modules/octicons/octicons/sprockets-octicons';
@@ -27,6 +27,16 @@ $default-shadow: 0 2px 8px 1px rgba(0, 0, 0, 0.3);
 
 a {
   color: map-get($colors, 'blue');
+}
+
+@each $color, $value in $base-colors {
+  [data-color='#{$color}'][data-brightness='bright'] {
+    color: map_get($bright-colors, 'bright-#{$color}');
+  }
+
+  //[data-background-color='#{$color}'][data-brightness='bright'] {
+  //  background-color: map_get($bright-colors, 'bright-#{$color}');
+  //}
 }
 
 @each $color, $value in $colors {
@@ -84,14 +94,15 @@ body, pre {
 }
 
 .prompt-wrapper {
-  position: relative;
-  padding-top: $prompt-padding;
-  background-color: map-get($colors, 'bright-black');
-
   $decoration-width: 30px;
-  $height: 17px;
+  $padding: 5px;
+  $height: 12px + (2 * $padding);
   $arrow-z-index: 2;
   $progress-bar-stripes-size: 30px;
+
+  position: relative;
+  padding-top: $padding;
+  background-color: $prompt-background-color;
 
   @keyframes progress-bar-stripes {
     from {
@@ -109,13 +120,13 @@ body, pre {
 
   .prompt-decoration {
     display: inline-block;
-    height: 17px;
+    height: $height;
   }
 
   .arrow {
     position: relative;
     width: $decoration-width;
-    height: $height;
+    height: $height - $padding;
     margin: 0 auto;
     overflow: hidden;
     z-index: $arrow-z-index;
@@ -127,7 +138,7 @@ body, pre {
       height: 200%;
       top: -11px;
       right: -8px;
-      background-color: lighten(map-get($colors, 'bright-black'), 10% );
+      background-color: lighten($prompt-background-color, 10% );
       transform-origin: 54% 0;
       transform: rotate(45deg);
       z-index: $arrow-z-index - 1;
@@ -164,7 +175,7 @@ body, pre {
     .arrow:after {
       transition: background 0.1s step-end 0.3s;
       animation: progress-bar-stripes 0.5s linear infinite;
-      background-image: linear-gradient(45deg, map-get($colors, 'bright-black') 25%, transparent 25%, transparent 50%, map-get($colors, 'bright-black') 50%, map-get($colors, 'bright-black') 75%, transparent 75%, transparent);
+      background-image: linear-gradient(45deg, map-get($colors, 'black') 25%, transparent 25%, transparent 50%, map-get($colors, 'black') 50%, map-get($colors, 'black') 75%, transparent 75%, transparent);
       background-size: $progress-bar-stripes-size $progress-bar-stripes-size;
     }
   }
@@ -176,7 +187,7 @@ body, pre {
     padding: 0 20px;
     height: $height;
     color: map-get($colors, 'white');
-    background-color: map-get($colors, 'bright-black');
+    background-color: $prompt-background-color;
     font-size: $font-size;
 
     @mixin common {

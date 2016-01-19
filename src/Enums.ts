@@ -52,7 +52,12 @@ export enum Buffer {
 export enum Weight {
     Normal = <Weight><any>"normal",
     Bold = <Weight><any>"bold",
-    Faint = <Weight><any>"faint"
+    Faint = <Weight><any>"faint",
+}
+
+export enum Brightness {
+    Normal = <Brightness><any>"normal",
+    Bright = <Brightness><any>"bright",
 }
 
 export enum LogLevel {

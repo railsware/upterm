@@ -9,6 +9,7 @@ import Buffer from "./Buffer";
 
 import Color = e.Color;
 import Weight = e.Weight;
+import Brightness = e.Brightness;
 
 interface HandlerResult {
     status: string;
@@ -19,7 +20,7 @@ interface HandlerResult {
 
 const SGR: { [indexer: string]: i.Attributes|string } = {
     0: { color: Color.White, weight: e.Weight.Normal, underline: false, "background-color": Color.Black },
-    1: { weight: Weight.Bold },
+    1: { brightness: Brightness.Bright },
     2: { weight: Weight.Faint },
     4: { underline: true },
     7: "negative",
@@ -403,6 +404,12 @@ export default class Parser {
 
                 this.buffer.scrollDown(param || 1, this.buffer.cursor.row());
                 break;
+            case "X":
+                short = "Erase P s Character(s) (default = 1) (ECH)";
+                url = "http://www.vt100.net/docs/vt510-rm/ECH";
+
+                this.buffer.eraseRight(param || 1);
+                break;
             case "c":
                 this.job.write("\x1b>1;2;");
                 break;
@@ -419,7 +426,7 @@ export default class Parser {
                 this.buffer.moveCursorAbsolute({ row: or1(params[0]) - 1, column: or1(params[1]) - 1 });
                 break;
             case "m":
-                short = "Some SGR stuff";
+                short = `SGR: ${params}`;
 
                 if (params.length === 0) {
                     short = "Reset SGR";

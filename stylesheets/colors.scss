@@ -7,8 +7,10 @@ $base-colors: (
         'blue': #66A5DF,
         'magenta': #C699C5,
         'cyan': #6EC6C6,
+);
 
-        'bright-black': #2D323A,
+$bright-colors: (
+        'bright-black': #484c54,
         'bright-red': #dd8494,
         'bright-white': #adbcd7,
         'bright-green': #9dcc8c,
@@ -28,7 +30,7 @@ $base-colors: (
 }
 
 $extra-colors: (
-        'selection-color': rgba(lighten(map-get($base-colors, 'bright-black'), 10%), 0.7)
+        'selection-color': rgba(lighten(map-get($base-colors, 'black'), 20%), 0.7)
 );
 
 @for $index from 0 through 215 {
@@ -52,7 +54,7 @@ $gray-scale-colors: ();
   $gray-scale-colors: map-merge($gray-scale-colors, ($key: $value));
 }
 
-$colors: map-merge($base-colors, map-merge($gray-scale-colors, $extra-colors));
+$colors: map-merge($base-colors, map-merge($bright-colors, map-merge($gray-scale-colors, $extra-colors)));
 
 $background-color: map-get($colors, 'black');
 $panel-color: darken($background-color, 3%);
