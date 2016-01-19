@@ -233,13 +233,18 @@ body, pre {
 }
 
 .job {
-  .output.alternate {
-    zoom: 0.1;
+  &.failure, &.interrupted, &.success {
+    .output.alternate {
+      zoom: 0.1;
+
+      .row {
+        height: 70px;
+      }
+    }
   }
   &.in-progress {
     .output.alternate {
       position: fixed;
-      zoom: 1;
       top: 0;
       bottom: 0;
       left: 0;
