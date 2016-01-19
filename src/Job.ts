@@ -89,7 +89,10 @@ export default class Job extends EmitterWithUniqueID {
                 }
 
                 text = String.fromCharCode(code);
-                if (!event.shiftKey && code >= 65 && code <= 90) {
+
+                if (event.ctrlKey) {
+                    text = String.fromCharCode(code - 64);
+                } else if (!event.shiftKey && code >= 65 && code <= 90) {
                     text = text.toLowerCase();
                 }
             } else {
