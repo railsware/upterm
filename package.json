@@ -51,7 +51,7 @@
     "chai": "3.4.1",
     "chai-things": "0.2.0",
     "del": "2.2.0",
-    "electron-packager": "5.2.0",
+    "electron-packager": "5.2.1",
     "electron-prebuilt": "0.36.4",
     "electron-rebuild": "1.1.1",
     "gulp": "3.9.0",
@@ -71,7 +71,7 @@
     "react-tools": "0.13.3",
     "run-sequence": "1.1.5",
     "tsd": "0.6.5",
-    "tslint": "3.2.1",
+    "tslint": "3.2.2",
     "typescript": "1.7.5",
     "webdriverio": "3.4.0"
   },
