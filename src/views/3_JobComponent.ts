@@ -69,6 +69,11 @@ export default class JobComponent extends React.Component<Props, State> implemen
     }
 
     handleKeyDown(event: KeyboardEvent): void {
+        if (event.metaKey) {
+            event.stopPropagation();
+            return;
+        }
+
         if (this.state.status === e.Status.InProgress && !isMetaKey(event)) {
             if (keys.interrupt(event)) {
                 this.props.job.interrupt();
