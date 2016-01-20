@@ -1,7 +1,6 @@
 import * as i from "../../Interfaces";
 import * as _ from "lodash";
 import Utils from "../../Utils";
-import * as Path from "path";
 import Job from "../../Job";
 import Autocompletion from "../../Autocompletion";
 import PluginManager from "../../PluginManager";

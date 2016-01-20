@@ -1,6 +1,5 @@
 import * as _ from "lodash";
 import * as fs from "fs";
-import * as Path from "path";
 import Utils from "./Utils";
 import Job from "./Job";
 import Application from "./Application";
