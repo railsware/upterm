@@ -343,11 +343,16 @@ body, pre {
 
   &.inactive {
     opacity: 0.4;
-    border: 1px solid map-get($colors, 'white');
+    box-shadow: 0 0 0 1px map-get($colors, 'white');
+    margin: 0 0 1px 1px;
 
     & .jobs {
       pointer-events: none;
     }
+  }
+  &.active {
+    outline: none;
+    flex: 6;
   }
 }
 
