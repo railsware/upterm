@@ -173,9 +173,10 @@ body, pre {
 
   &.in-progress {
     .arrow:after {
+      $color: lighten(map-get($colors, 'black'), 3%);
       transition: background 0.1s step-end 0.3s;
       animation: progress-bar-stripes 0.5s linear infinite;
-      background-image: linear-gradient(45deg, map-get($colors, 'black') 25%, transparent 25%, transparent 50%, map-get($colors, 'black') 50%, map-get($colors, 'black') 75%, transparent 75%, transparent);
+      background-image: linear-gradient(45deg, $color 25%, transparent 25%, transparent 50%, $color 50%, $color 75%, transparent 75%, transparent);
       background-size: $progress-bar-stripes-size $progress-bar-stripes-size;
     }
   }
