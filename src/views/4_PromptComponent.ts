@@ -152,7 +152,15 @@ export default class PromptComponent extends React.Component<Props, State> imple
         $(reactDOM.findDOMNode(this)).fixedsticky();
         $(".fixedsticky-dummy").remove();
 
-        this.commandNode.focus();
+        const node = this.commandNode;
+        node.focus();
+        node.addEventListener("paste", (event: ClipboardEvent) => {
+            event.preventDefault();
+
+            const text = event.clipboardData.getData("text/plain");
+
+            document.execCommand("insertHTML", false, text);
+        });
     }
 
     componentDidUpdate(prevProps: Props, prevState: State) {

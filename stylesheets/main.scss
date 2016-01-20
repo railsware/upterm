@@ -183,10 +183,10 @@ body, pre {
 
   .prompt {
     position: absolute;
-    left: $decoration-width - 10px;
+    left: 0;
     right: 0;
-    padding: 0 20px;
-    height: $height;
+    padding: 0 10px 3px ($decoration-width + 10px);
+    min-height: $height;
     color: map-get($colors, 'white');
     background-color: $prompt-background-color;
     font-size: $font-size;
