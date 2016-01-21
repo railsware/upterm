@@ -51,8 +51,8 @@ function toGitStatusFile(line: string): GitStatusFile {
 async function gitSuggestions(job: Job): Promise<i.Suggestion[]> {
     const prompt = job.prompt;
 
-    const headsPath = Path.join(job.directory, ".git", "refs", "heads");
-    if (!(await Utils.exists(headsPath))) {
+    const gitDirectoryPath = Path.join(job.directory, ".git");
+    if (!(await Utils.exists(gitDirectoryPath))) {
         return [];
     }
 
