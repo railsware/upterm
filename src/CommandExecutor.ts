@@ -7,11 +7,11 @@ import * as Path from "path";
 abstract class CommandExecutionStrategy {
     protected args: string[];
 
-    constructor(protected job: Job, protected command: string) {
+    constructor(protected job: Job) {
         this.args = job.prompt.arguments.filter(argument => argument.length > 0);
     }
 
-    static async canExecute(command: string): Promise<boolean> {
+    static async canExecute(job: Job): Promise<boolean> {
         return false;
     }
 
@@ -19,14 +19,14 @@ abstract class CommandExecutionStrategy {
 }
 
 class BuiltInCommandExecutionStrategy extends CommandExecutionStrategy {
-    static async canExecute(command: string) {
-        return Command.isBuiltIn(command);
+    static async canExecute(job: Job) {
+        return Command.isBuiltIn(job.prompt.commandName);
     }
 
     startExecution() {
         return new Promise((resolve, reject) => {
             try {
-                Command.executor(this.command)(this.job, this.args);
+                Command.executor(this.job.prompt.commandName)(this.job, this.args);
                 resolve();
             } catch (error) {
                 reject(error.message);
@@ -36,14 +36,15 @@ class BuiltInCommandExecutionStrategy extends CommandExecutionStrategy {
 }
 
 class UnixSystemFileExecutionStrategy extends CommandExecutionStrategy {
-    static async canExecute(command: string) {
-        return (await Utils.executablesInPaths()).includes(command);
+    static async canExecute(job: Job) {
+        return (await Utils.executablesInPaths()).includes(job.prompt.commandName) ||
+            await Utils.exists(Utils.resolveFile(job.directory, job.prompt.commandName));
     }
 
     startExecution() {
         return new Promise((resolve, reject) => {
             this.job.command = new PTY(
-                this.command, this.args, this.job.directory, this.job.dimensions,
+                this.job.prompt.commandName, this.args, this.job.directory, this.job.dimensions,
                 (data: string) => this.job.parser.parse(data),
                 (exitCode: number) => exitCode === 0 ? resolve() : reject()
             );
@@ -52,7 +53,7 @@ class UnixSystemFileExecutionStrategy extends CommandExecutionStrategy {
 }
 
 class WindowsSystemFileExecutionStrategy extends CommandExecutionStrategy {
-    static async canExecute(command: string) {
+    static async canExecute(job: Job) {
         return Utils.isWindows;
     }
 
@@ -85,13 +86,12 @@ export default class CommandExecutor {
     ];
 
     static async execute(job: Job): Promise<{}> {
-        const command = job.prompt.commandName;
-        const applicableExecutors = await Utils.filterAsync(this.executors, executor => executor.canExecute(command));
+        const applicableExecutors = await Utils.filterAsync(this.executors, executor => executor.canExecute(job));
 
         if (applicableExecutors.length) {
-            return new applicableExecutors[0](job, command).startExecution();
+            return new applicableExecutors[0](job).startExecution();
         } else {
-            throw `Black Screen: command "${command}" not found.`;
+            throw `Black Screen: command "${job.prompt.commandName}" not found.`;
         }
     }
 }
