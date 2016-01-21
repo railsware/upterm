@@ -192,7 +192,7 @@ export default class Utils {
     }
 
     static resolveDirectory(pwd: string, directory: string): string {
-        return Path.resolve(pwd, directory.replace(/^~/, Utils.homeDirectory));
+        return Utils.normalizeDir(Path.resolve(pwd, directory.replace(/^~/, Utils.homeDirectory)));
     }
 
     static async filterAsync<T>(values: T[], asyncPredicate: (t: T) => Promise<boolean>): Promise<T[]> {
