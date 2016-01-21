@@ -203,6 +203,10 @@ export default class Utils {
         const filtered = await Promise.all(values.map(asyncPredicate));
         return values.filter((value: T, index: number) => filtered[index]);
     }
+
+    static pluralize(word: string, count = 2) {
+        return count === 1 ? word : word + "s";
+    }
 }
 
 /**

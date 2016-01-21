@@ -62,12 +62,24 @@ async function gitSuggestions(job: Job): Promise<i.Suggestion[]> {
 
     if (subcommand === "add" && args.length > 0) {
         let changes = await executeCommand("git", ["status", "--porcelain"], job.directory);
-        return changes
+        let suggestions = changes
             .split(OS.EOL)
             .filter(path => path.length > 0)
             .map(toGitStatusFile)
             .filter((file: GitStatusFile) => !args.includes(file.path) && !_.isEmpty(file.color))
             .map(file => toFileSuggestion(file, lastArgument));
+
+        if (args[0] === "") {
+            suggestions.push({
+                value: ".", // FIXME: Calclulate the common prefix of all suggested paths.
+                score: _.max(suggestions.map(suggestion => suggestion.score)) + 1,
+                synopsis: `${suggestions.length} ${Utils.pluralize("file", suggestions.length)}`,
+                description: "",
+                type: "file",
+            });
+        }
+
+        return suggestions;
     }
 
     if (subcommand === "checkout" && args.length === 1) {
