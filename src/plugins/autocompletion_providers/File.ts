@@ -1,7 +1,6 @@
 import * as i from "../../Interfaces";
 import * as _ from "lodash";
 import Utils from "../../Utils";
-import Autocompletion from "../../Autocompletion";
 import PluginManager from "../../PluginManager";
 const score: (i: string, m: string) => number = require("fuzzaldrin").score;
 
@@ -60,14 +59,12 @@ PluginManager.registerAutocompletionProvider({
             return suggestion;
         });
 
-        let prepared: i.Suggestion[];
         if (baseName) {
-            prepared = _._(all).each(suggestion => suggestion.score = score(suggestion.value, baseName))
-                .sortBy("score").reverse().take(10).value();
+            all.forEach(suggestion => suggestion.score = score(suggestion.value, baseName));
         } else {
-            prepared = _._(all).each(suggestion => suggestion.score = 1).take(Autocompletion.limit).value();
+            all.forEach(suggestion => suggestion.score = 1);
         }
 
-        return prepared;
+        return all;
     },
 });

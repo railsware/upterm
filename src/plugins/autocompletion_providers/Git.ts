@@ -56,31 +56,30 @@ async function gitSuggestions(job: Job): Promise<i.Suggestion[]> {
         return [];
     }
 
-    let suggestions: i.Suggestion[] = [];
     const lastArgument = prompt.lastArgument;
     const subcommand = prompt.arguments[0];
     const args = _.drop(prompt.arguments, 1);
 
     if (subcommand === "add" && args.length > 0) {
         let changes = await executeCommand("git", ["status", "--porcelain"], job.directory);
-        suggestions = changes
+        return changes
             .split(OS.EOL)
             .filter(path => path.length > 0)
             .map(toGitStatusFile)
-            .filter(file => !args.includes(file.path))
+            .filter((file: GitStatusFile) => !args.includes(file.path) && !_.isEmpty(file.color))
             .map(file => toFileSuggestion(file, lastArgument));
     }
 
     if (subcommand === "checkout" && args.length === 1) {
         let output = await executeCommand("git", ["branch", "--no-color"], job.directory);
-        suggestions = output
+        return output
             .split(OS.EOL)
             .filter(path => path.length > 0 && path[0] !== "*")
             .map(branch => branch.trim())
             .map(branch => toBranchSuggestion(branch, lastArgument));
     }
 
-    return _._(suggestions).sortBy("score").reverse().value();
+    return [];
 }
 
 ["add", "checkout"].forEach(subcommand =>

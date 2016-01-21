@@ -115,7 +115,7 @@ PluginManager.registerAutocompletionProvider({
         const prompt = job.prompt;
 
         if (prompt.arguments.length) {
-            const suggestions = _.map(options, (descriptions, option) => {
+            return _.map(options, (descriptions, option) => {
                 const dashed = "-" + option;
                 return {
                     value: dashed,
@@ -125,7 +125,6 @@ PluginManager.registerAutocompletionProvider({
                     type: "option",
                 };
             });
-            return _._(suggestions).sortBy("score").reverse().value();
         }
 
         return [];

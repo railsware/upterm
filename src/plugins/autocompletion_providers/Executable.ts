@@ -2,7 +2,6 @@ import Utils from "../../Utils";
 import * as i from "../../Interfaces";
 import * as _ from "lodash";
 import Job from "../../Job";
-import Autocompletion from "../../Autocompletion";
 import PluginManager from "../../PluginManager";
 const score: (i: string, m: string) => number = require("fuzzaldrin").score;
 
@@ -182,7 +181,7 @@ class Executable implements i.AutocompletionProvider {
 
         const lastArgument = prompt.lastArgument;
 
-        const all = _.map(executables, (executable: string) => {
+        return _.map(executables, (executable: string) => {
             return {
                 value: executable,
                 score: 1.5 * score(executable, lastArgument),
@@ -191,8 +190,6 @@ class Executable implements i.AutocompletionProvider {
                 type: "executable",
             };
         });
-
-        return _._(all).sortBy("score").reverse().take(Autocompletion.limit).value();
     }
 }
 

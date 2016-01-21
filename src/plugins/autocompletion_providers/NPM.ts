@@ -91,8 +91,7 @@ PluginManager.registerAutocompletionProvider({
 
         if (job.prompt.expanded.length === 3 && await Utils.exists(packageFilePath)) {
             const parsed = JSON.parse(await Utils.readFile(packageFilePath)).scripts || {};
-            const suggestions = Object.keys(parsed).map(key => toSuggestion(key, job.prompt.lastArgument));
-            return _._(suggestions).sortBy("score").reverse().value();
+            return Object.keys(parsed).map(key => toSuggestion(key, job.prompt.lastArgument));
         }
 
         return [];

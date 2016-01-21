@@ -34,7 +34,6 @@ PluginManager.registerAutocompletionProvider({
             return [];
         }
 
-        const suggestions = _.map(subcommands, (value, key) => toSuggestion(key, job.prompt.lastArgument, value));
-        return _._(suggestions).sortBy("score").reverse().value();
+        return _.map(subcommands, (value, key) => toSuggestion(key, job.prompt.lastArgument, value));
     },
 });
