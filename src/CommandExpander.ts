@@ -7,6 +7,7 @@ const grammar = `
 %lex
 %%
 \\s+    {/* skip whitespace */}
+\\"[^\\"]+\\" { return yytext.slice(1, -1); }
 [^\\s]+    {return yytext;}
 <<EOF>> {return 'EOF';}
 
