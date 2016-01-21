@@ -8,6 +8,7 @@ const grammar = `
 %%
 \\s+    {/* skip whitespace */}
 \\"[^\\"]+\\" { return yytext.slice(1, -1); }
+\\'[^\\']+\\' { return yytext.slice(1, -1); }
 [^\\s]+    {return yytext;}
 <<EOF>> {return 'EOF';}
 
