@@ -1,22 +1,25 @@
 import * as i from "../../Interfaces";
 import * as _ from "lodash";
 import Utils from "../../Utils";
-import Job from "../../Job";
 import Autocompletion from "../../Autocompletion";
 import PluginManager from "../../PluginManager";
 const score: (i: string, m: string) => number = require("fuzzaldrin").score;
 
-class File implements i.AutocompletionProvider {
-    private static filter(command: string): (value: i.FileInfo, index: number, array: i.FileInfo[]) => boolean {
-        switch (command) {
-            case "cd":
-                return (fileInfo: i.FileInfo) => fileInfo.stat.isDirectory();
-            default:
-                return (fileInfo: i.FileInfo) => true;
-        }
+function filter(command: string): (value: i.FileInfo, index: number, array: i.FileInfo[]) => boolean {
+    switch (command) {
+        case "cd":
+            return (fileInfo: i.FileInfo) => fileInfo.stat.isDirectory();
+        default:
+            return (fileInfo: i.FileInfo) => true;
     }
+}
 
-    async getSuggestions(job: Job) {
+function escape(path: string): string {
+    return path.replace(/\s/g, "\\ ");
+}
+
+PluginManager.registerAutocompletionProvider({
+    getSuggestions: async (job): Promise<i.Suggestion[]> => {
         const prompt = job.prompt;
 
         if (prompt.expanded.length < 2) {
@@ -29,7 +32,7 @@ class File implements i.AutocompletionProvider {
         const searchDirectory = Utils.resolveDirectory(job.directory, dirName);
         const fileInfos = await Utils.stats(searchDirectory);
 
-        const all = _.map(fileInfos.filter(File.filter(prompt.commandName)), (fileInfo: i.FileInfo): i.Suggestion => {
+        const all = _.map(fileInfos.filter(filter(prompt.commandName)), (fileInfo: i.FileInfo): i.Suggestion => {
             /* tslint:disable:no-bitwise */
             let description = `Mode: ${"0" + (fileInfo.stat.mode & 511).toString(8)}`;
             let name: string;
@@ -42,7 +45,7 @@ class File implements i.AutocompletionProvider {
             }
 
             const suggestion: i.Suggestion = {
-                value: name,
+                value: escape(name),
                 score: 0,
                 synopsis: "",
                 description: description,
@@ -51,7 +54,7 @@ class File implements i.AutocompletionProvider {
             };
 
             if (searchDirectory !== job.directory) {
-                suggestion.prefix = dirName;
+                suggestion.prefix = escape(dirName);
             }
 
             return suggestion;
@@ -66,7 +69,5 @@ class File implements i.AutocompletionProvider {
         }
 
         return prepared;
-    }
-}
-
-PluginManager.registerAutocompletionProvider(new File());
+    },
+});
