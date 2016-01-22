@@ -59,7 +59,7 @@ export default class JobComponent extends React.Component<Props, State> implemen
             "div",
             { className: classNames },
             React.createElement(PromptComponent, {
-                prompt: this.props.job.prompt,
+                job: this.props.job,
                 status: this.state.status,
                 hasLocusOfAttention: this.props.hasLocusOfAttention,
                 jobView: this,

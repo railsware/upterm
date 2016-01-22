@@ -8,6 +8,7 @@ import History from "../History";
 import {stopBubblingUp} from "./ViewUtils";
 import JobComponent from "./3_JobComponent";
 import PromptModel from "../Prompt";
+import JobModel from "../Job";
 const rx = require("rx");
 const reactDOM = require("react-dom");
 
@@ -75,9 +76,9 @@ function createEventHandler(): any {
 }
 
 interface Props {
+    job: JobModel;
     status: e.Status;
     jobView: JobComponent;
-    prompt: PromptModel;
     hasLocusOfAttention: boolean;
 }
 
@@ -90,12 +91,14 @@ interface State {
 
 // TODO: Make sure we only update the view when the model changes.
 export default class PromptComponent extends React.Component<Props, State> implements KeyDownReceiver {
+    private prompt: PromptModel;
     private handlers: {
         onKeyDown: Function;
     };
 
     constructor(props: Props) {
         super(props);
+        this.prompt = this.props.job.prompt;
 
         this.state = {
             suggestions: [],
@@ -122,7 +125,7 @@ export default class PromptComponent extends React.Component<Props, State> imple
             .filter(keys.enter).forEach(() => this.execute());
         promptKeys
             .filter(keys.interrupt).forEach(() => {
-                this.props.prompt.value = "";
+                this.prompt.value = "";
                 this.setDOMValueProgrammatically("");
             });
         promptKeys
@@ -159,7 +162,11 @@ export default class PromptComponent extends React.Component<Props, State> imple
 
             const text = event.clipboardData.getData("text/plain");
 
-            document.execCommand("insertHTML", false, text);
+            if (this.props.status === e.Status.InProgress) {
+                this.props.job.write(text);
+            } else {
+                document.execCommand("insertHTML", false, text);
+            }
         });
     }
 
@@ -239,7 +246,7 @@ export default class PromptComponent extends React.Component<Props, State> imple
     private execute(): void {
         if (!this.isEmpty()) {
             // Timeout prevents two-line input on cd.
-            setTimeout(() => this.props.prompt.execute(), 0);
+            setTimeout(() => this.prompt.execute(), 0);
         }
     }
 
@@ -255,7 +262,7 @@ export default class PromptComponent extends React.Component<Props, State> imple
         this.forceUpdate();
     }
 
-    private deleteWord(current = this.props.prompt.value, position = getCaretPosition()): void {
+    private deleteWord(current = this.prompt.value, position = getCaretPosition()): void {
         if (!current.length) {
             return;
         }
@@ -272,23 +279,23 @@ export default class PromptComponent extends React.Component<Props, State> imple
                 current += " ";
             }
 
-            this.props.prompt.value = current + this.props.prompt.value.substring(getCaretPosition());
-            this.setDOMValueProgrammatically(this.props.prompt.value);
+            this.prompt.value = current + this.prompt.value.substring(getCaretPosition());
+            this.setDOMValueProgrammatically(this.prompt.value);
         }
     }
 
     private isEmpty(): boolean {
-        return this.props.prompt.value.replace(/\s/g, "").length === 0;
+        return this.prompt.value.replace(/\s/g, "").length === 0;
     }
 
     private navigateHistory(event: KeyboardEvent): void {
         if (keys.goUp(event)) {
             let previous = History.getPrevious();
-            this.props.prompt.value = previous;
+            this.prompt.value = previous;
             this.setDOMValueProgrammatically(previous);
         } else {
             let next = History.getNext();
-            this.props.prompt.value = next;
+            this.prompt.value = next;
             this.setDOMValueProgrammatically(next);
         }
     }
@@ -313,18 +320,18 @@ export default class PromptComponent extends React.Component<Props, State> imple
         const suggestion = state.suggestions[state.highlightedSuggestionIndex];
 
         if (suggestion.replaceEverything) {
-            this.props.prompt.value = suggestion.value;
+            this.prompt.value = suggestion.value;
             this.setDOMValueProgrammatically(suggestion.value);
         } else {
-            this.props.prompt.replaceCurrentLexeme(suggestion);
+            this.prompt.replaceCurrentLexeme(suggestion);
             if (!suggestion.partial) {
-                this.props.prompt.value += " ";
+                this.prompt.value += " ";
             }
 
-            this.setDOMValueProgrammatically(this.props.prompt.value);
+            this.setDOMValueProgrammatically(this.prompt.value);
         }
 
-        this.props.prompt.getSuggestions().then(suggestions =>
+        this.prompt.getSuggestions().then(suggestions =>
             this.setState({ suggestions: suggestions, highlightedSuggestionIndex: 0 })
         );
     }
@@ -343,11 +350,11 @@ export default class PromptComponent extends React.Component<Props, State> imple
     }
 
     private handleInput(event: React.SyntheticEvent) {
-        this.props.prompt.value = (<HTMLElement>event.target).innerText;
+        this.prompt.value = (<HTMLElement>event.target).innerText;
 
         // TODO: remove repetition.
         // TODO: make it a stream.
-        this.props.prompt.getSuggestions().then(suggestions =>
+        this.prompt.getSuggestions().then(suggestions =>
             this.setState({ suggestions: suggestions, highlightedSuggestionIndex: 0 })
         );
     }
