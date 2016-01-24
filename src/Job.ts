@@ -20,7 +20,7 @@ export default class Job extends EmitterWithUniqueID {
     public parser: Parser;
     public status: e.Status = e.Status.NotStarted;
     private _prompt: Prompt;
-    private buffer: Buffer;
+    private _buffer: Buffer;
     private rareDataEmitter: Function;
     private frequentDataEmitter: Function;
 
@@ -33,8 +33,8 @@ export default class Job extends EmitterWithUniqueID {
         this.rareDataEmitter = makeThrottledDataEmitter(1, this);
         this.frequentDataEmitter = makeThrottledDataEmitter(60, this);
 
-        this.buffer = new Buffer(this.dimensions);
-        this.buffer.on("data", this.throttledDataEmitter.bind(this));
+        this._buffer = new Buffer(this.dimensions);
+        this._buffer.on("data", this.throttledDataEmitter.bind(this));
         this.parser = new Parser(this);
     }
 
@@ -62,7 +62,7 @@ export default class Job extends EmitterWithUniqueID {
     handleError(message: string): void {
         this.setStatus(e.Status.Failure);
         if (message) {
-            this.buffer.writeString(message);
+            this._buffer.writeString(message);
         }
         this.emit("end");
     }
@@ -116,7 +116,7 @@ export default class Job extends EmitterWithUniqueID {
     }
 
     hasOutput(): boolean {
-        return !this.buffer.isEmpty();
+        return !this._buffer.isEmpty();
     }
 
     getDimensions(): Dimensions {
@@ -137,7 +137,7 @@ export default class Job extends EmitterWithUniqueID {
 
     winch(): void {
         if (this.command && this.status === e.Status.InProgress) {
-            this.buffer.dimensions = this.dimensions;
+            this._buffer.dimensions = this.dimensions;
             this.command.dimensions = this.dimensions;
         }
     }
@@ -160,8 +160,8 @@ export default class Job extends EmitterWithUniqueID {
         return _.find(this.decorators, decorator => decorator.isApplicable(this));
     }
 
-    getBuffer(): Buffer {
-        return this.buffer;
+    get buffer(): Buffer {
+        return this._buffer;
     }
 
     get prompt(): Prompt {
@@ -174,6 +174,6 @@ export default class Job extends EmitterWithUniqueID {
     }
 
     private throttledDataEmitter() {
-        this.buffer.size < Buffer.hugeOutputThreshold ? this.frequentDataEmitter() : this.rareDataEmitter();
+        this._buffer.size < Buffer.hugeOutputThreshold ? this.frequentDataEmitter() : this.rareDataEmitter();
     }
 }

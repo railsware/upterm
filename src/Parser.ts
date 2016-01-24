@@ -63,7 +63,7 @@ export default class Parser {
     private buffer: Buffer;
 
     constructor(private job: Job) {
-        this.buffer = this.job.getBuffer();
+        this.buffer = this.job.buffer;
         this.parser = this.initializeAnsiParser();
     }
 
@@ -86,7 +86,7 @@ export default class Parser {
                 Utils.error("osc", s);
             },
             inst_x: (flag: string) => {
-                const char = Char.flyweight(flag, this.job.getBuffer().attributes);
+                const char = Char.flyweight(flag, this.job.buffer.attributes);
                 const name = e.CharCode[char.getCharCode()];
 
                 Utils.print((name ? e.LogLevel.Log : e.LogLevel.Error), flag.split("").map((_, index) => flag.charCodeAt(index)));
@@ -249,7 +249,7 @@ export default class Parser {
                 description = "Origin Mode (DECOM).";
                 url = "http://www.vt100.net/docs/vt510-rm/DECOM";
 
-                this.job.getBuffer().originMode = isSet;
+                this.job.buffer.originMode = isSet;
                 break;
             case 12:
                 if (isSet) {

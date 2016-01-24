@@ -15,7 +15,7 @@ describe('Invocation', () => {
             invocation.setPromptText('pwd ');
 
             invocation.on('end', () => {
-                expect(invocation.getBuffer().toString()).to.eq(process.cwd());
+                expect(invocation.buffer.toString()).to.eq(process.cwd());
                 done();
             });
 

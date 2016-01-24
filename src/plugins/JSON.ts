@@ -5,12 +5,12 @@ const jsonTree = require("../../../decorators/json");
 
 PluginManager.registerOutputDecorator({
     decorate: (job: Job): React.ReactElement<any> => {
-        return React.createElement(jsonTree, { data: JSON.parse(job.getBuffer().toString()) });
+        return React.createElement(jsonTree, { data: JSON.parse(job.buffer.toString()) });
     },
 
     isApplicable: (job: Job): boolean => {
         try {
-            JSON.parse(job.getBuffer().toString());
+            JSON.parse(job.buffer.toString());
             return true;
         } catch (exception) {
             return false;
