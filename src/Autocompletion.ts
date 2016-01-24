@@ -7,7 +7,7 @@ export default class Autocompletion implements i.AutocompletionProvider {
     static limit = 9;
 
     getSuggestions(job: Job) {
-        let specializedProviders = PluginManager.specializedAutocompletionProvider(job.prompt.expanded);
+        let specializedProviders = PluginManager.specializedAutocompletionProviders(job.prompt.expanded);
         let providers = specializedProviders.length ? specializedProviders : PluginManager.genericAutocompletionProviders;
 
         return Promise.all(_.map(providers, provider => provider.getSuggestions(job))).then(results =>

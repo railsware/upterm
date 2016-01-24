@@ -42,7 +42,7 @@ export default class PluginManager {
         return this._genericAutocompletionProviders;
     }
 
-    static specializedAutocompletionProvider(words: string[]): AutocompletionProvider[] {
+    static specializedAutocompletionProviders(words: string[]): AutocompletionProvider[] {
         for (let length = words.length; length !== 0; --length) {
             let subcommand = _.take(words, length).join(" ");
             let providers = this._specializedAutocompletionProviders[subcommand];
