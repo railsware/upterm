@@ -67,7 +67,7 @@ interface RowProps {
     key: number;
 }
 
-const charGrouper = (a: any, b: any) => JSON.stringify(a.getAttributes()) === JSON.stringify(b.getAttributes());
+const charGrouper = (a: Char, b: Char) => JSON.stringify(a.attributes) === JSON.stringify(b.attributes);
 
 
 class RowComponent extends React.Component<RowProps, {}> {
@@ -84,7 +84,7 @@ class RowComponent extends React.Component<RowProps, {}> {
             { className: "row" },
             charGroups.map((charGroup: Char[], index: number) => React.createElement(CharGroupComponent, {
                 text: charGroup.map(char => char.toString()).join(""),
-                attributes: charGroup[0].getAttributes(),
+                attributes: charGroup[0].attributes,
                 key: index,
             }))
         );

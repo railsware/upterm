@@ -98,10 +98,10 @@ export default class Buffer extends events.EventEmitter {
                 storage = storage.setIn(coordinates, Char.empty);
             }
 
-            let char = storage.getIn(coordinates);
+            let char: Char = storage.getIn(coordinates);
             storage = storage.setIn(
                 coordinates,
-                Char.flyweight(char.toString(), _.merge(char.getAttributes(), { cursor: true }))
+                Char.flyweight(char.toString(), _.merge(_.clone(char.attributes), { cursor: true }))
             );
         }
 

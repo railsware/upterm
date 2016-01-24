@@ -12,7 +12,7 @@ export default class Char {
 
     }
 
-    constructor(private char: string, private attributes: i.Attributes) {
+    constructor(private char: string, private _attributes: i.Attributes) {
         if (char.length !== 1) {
             throw(`Char can be created only from a single character; passed ${char.length}: ${char}`);
         }
@@ -22,8 +22,8 @@ export default class Char {
         return (<any>e.CharCode)[e.CharCode[this.char.charCodeAt(0)]];
     }
 
-    getAttributes(): i.Attributes {
-        return _.clone(this.attributes);
+    get attributes(): i.Attributes {
+        return this._attributes;
     }
 
     toString(): string {
