@@ -15,7 +15,7 @@ export default class Autocompletion implements i.AutocompletionProvider {
                 .flatten()
                 .filter((suggestion: i.Suggestion) => suggestion.score > 0)
                 .sortBy((suggestion: i.Suggestion) => -suggestion.score)
-                .uniq("value")
+                .uniqBy("value")
                 .take(Autocompletion.limit)
                 .value()
         );
