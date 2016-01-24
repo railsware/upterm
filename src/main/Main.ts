@@ -1,10 +1,10 @@
-const app = require("app");
-const browserWindowConstructor = require("browser-window");
-const IPC = require("electron").ipcMain;
+const app: Electron.App = require("app");
+const browserWindowConstructor: typeof Electron.BrowserWindow = require("browser-window");
+import {ipcMain} from "electron";
 let menu = require("./Menu");
 let fixPath = require("fix-path");
 
-let browserWindow: any = undefined;
+let browserWindow: Electron.BrowserWindow = undefined;
 
 // Fix the $PATH on OS X
 fixPath();
@@ -14,26 +14,28 @@ app.on("open-file", (event: Event, file: string) => getMainWindow().webContents.
     .on("activate-with-no-open-windows", getMainWindow)
     .on("mainWindow-all-closed", () => process.platform === "darwin" || app.quit());
 
-IPC.on("quit", app.quit);
+ipcMain.on("quit", app.quit);
 
-function getMainWindow() {
-    const workAreaSize = require("screen").getPrimaryDisplay().workAreaSize;
+function getMainWindow(): Electron.BrowserWindow {
+    const screen: Electron.Screen = require("screen");
+    const workAreaSize = screen.getPrimaryDisplay().workAreaSize;
 
     if (!browserWindow) {
-        browserWindow = new browserWindowConstructor({
-            "web-preferences": {
-                "experimental-features": true,
-                "experimental-canvas-features": true,
-                "subpixel-font-scaling": true,
-                "overlay-scrollbars": true,
+        let options: Electron.BrowserWindowOptions = {
+            webPreferences: {
+                experimentalFeatures: true,
+                experimentalCanvasFeatures: true,
+                overlayScrollbars: true,
             },
+            subpixelFontScaling: true,
             resizable: true,
-            "min-width": 500,
-            "min-height": 300,
+            minWidth: 500,
+            minHeight: 300,
             width: workAreaSize.width,
             height: workAreaSize.height,
             show: false,
-        });
+        };
+        browserWindow = new browserWindowConstructor(options);
 
         browserWindow.loadURL("file://" + __dirname + "/../views/index.html");
         menu.setMenu(app, browserWindow);

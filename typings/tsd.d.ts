@@ -11,3 +11,4 @@
 /// <reference path="ptyw.js/ptyw.js.d.ts" />
 /// <reference path="fs-extra/fs-extra.d.ts" />
 /// <reference path="chokidar/chokidar.d.ts" />
+/// <reference path="github-electron/github-electron.d.ts" />

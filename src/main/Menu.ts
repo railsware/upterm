@@ -1,7 +1,7 @@
-const menuConstructor = require("menu");
+const menuConstructor: typeof Electron.Menu = require("menu");
 
 module.exports = {
-    setMenu: (app: any, browserWindow: any) => {
+    setMenu: (app: Electron.App, browserWindow: Electron.BrowserWindow) => {
         if (process.platform === "darwin") {
             const template = [
                 {
@@ -102,7 +102,7 @@ module.exports = {
                             label: "Toggle Developer Tools",
                             accelerator: "Alt+Command+I",
                             click: function () {
-                                browserWindow.toggleDevTools();
+                                browserWindow.webContents.toggleDevTools();
                             },
                         },
                     ],
@@ -168,7 +168,7 @@ module.exports = {
                             label: "Toggle &Developer Tools",
                             accelerator: "Alt+Ctrl+I",
                             click: function () {
-                                browserWindow.toggleDevTools();
+                                browserWindow.webContents.toggleDevTools();
                             },
                         },
                     ],
