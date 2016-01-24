@@ -22,7 +22,7 @@
     "shell",
     "console"
   ],
-  "electronVersion": "0.36.4",
+  "electronVersion": "0.36.5",
   "dependencies": {
     "chokidar": "1.4.2",
     "fix-path": "1.1.0",
@@ -36,7 +36,7 @@
     "jquery.caret": "^0.2.1",
     "lodash": "4.0.0",
     "node-ansiparser": "2.1.0",
-    "octicons": "3.3.0",
+    "octicons": "3.4.1",
     "ptyw.js": "0.3.4",
     "react": "0.14.6",
     "react-dom": "0.14.6",
@@ -53,7 +53,7 @@
     "chai-things": "0.2.0",
     "del": "2.2.0",
     "electron-packager": "5.2.1",
-    "electron-prebuilt": "0.36.4",
+    "electron-prebuilt": "0.36.5",
     "electron-rebuild": "1.1.1",
     "gulp": "3.9.0",
     "gulp-babel": "6.1.1",
@@ -72,7 +72,7 @@
     "react-tools": "0.13.3",
     "run-sequence": "1.1.5",
     "tsd": "0.6.5",
-    "tslint": "3.2.2",
+    "tslint": "3.3.0",
     "typescript": "1.7.5",
     "webdriverio": "3.4.0"
   },
@@ -84,7 +84,8 @@
     "package": "gulp build && electron-packager . \"$npm_package_productName\" --overwrite --platform=darwin --arch=x64 --version=$npm_package_electronVersion --out='/Applications' --icon='./icon.icns'",
     "test": "gulp typescript; gulp compile-tests; electron run-tests.js",
     "update-typings": "tsd update --save --overwrite",
-    "update-dependencies": "ncu -u"
+    "update-dependencies": "ncu -u",
+    "lint": "tslint `find src -name '*.ts'`"
   },
   "license": "MIT"
 }
