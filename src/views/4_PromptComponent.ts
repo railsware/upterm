@@ -57,7 +57,7 @@ function createEventHandler(): any {
         subject.onNext.apply(subject, arguments);
     };
 
-    function getEnumerablePropertyNames(target: _.Dictionary<any>) {
+    function getEnumerablePropertyNames(target: Dictionary<any>) {
         const result: string[] = [];
         /* tslint:disable:forin */
         for (let key in target) {

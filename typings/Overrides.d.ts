@@ -57,3 +57,8 @@ declare namespace __React {
 interface Array<T> {
     includes(value: T): boolean;
 }
+
+
+interface Dictionary<T> {
+    [index: string]: T;
+}

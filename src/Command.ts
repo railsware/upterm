@@ -4,7 +4,7 @@ import Utils from "./Utils";
 import Job from "./Job";
 import Application from "./Application";
 
-const executors: _.Dictionary<(i: Job, a: string[]) => void> = {
+const executors: Dictionary<(i: Job, a: string[]) => void> = {
     cd: (job: Job, args: string[]): void => {
         let newDirectory: string;
 

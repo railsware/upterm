@@ -8,7 +8,7 @@ export default class PluginManager {
     private static _outputDecorators: OutputDecorator[] = [];
     private static _environmentObservers: EnvironmentObserverPlugin[] = [];
     private static _genericAutocompletionProviders: AutocompletionProvider[] = [];
-    private static _specializedAutocompletionProviders: _.Dictionary<AutocompletionProvider[]> = {};
+    private static _specializedAutocompletionProviders: Dictionary<AutocompletionProvider[]> = {};
     private static _preexecPlugins: PreexecPlugin[] = [];
 
     static registerOutputDecorator(decorator: OutputDecorator): void {

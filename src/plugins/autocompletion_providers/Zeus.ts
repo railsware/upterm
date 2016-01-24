@@ -3,7 +3,7 @@ import * as i from "../../Interfaces";
 import PluginManager from "../../PluginManager";
 const score: (i: string, m: string) => number = require("fuzzaldrin").score;
 
-const subcommands: _.Dictionary<string> = {
+const subcommands: Dictionary<string> = {
     start: "Start a zeus server in the current directory using zeus.json",
     init: " Generate a template zeus.json",
     rake: "Ruby Make",

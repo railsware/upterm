@@ -1,10 +1,9 @@
-import * as _ from "lodash";
 import {executeCommand} from "./PTY";
 
 export default class Aliases {
-    private static aliases: _.Dictionary<string>;
+    private static aliases: Dictionary<string>;
 
-    static get all(): _.Dictionary<string> {
+    static get all(): Dictionary<string> {
         return this.aliases;
     }
 
@@ -16,7 +15,7 @@ export default class Aliases {
         const output = await executeCommand(process.env.SHELL, ["-i", "-c", "alias"]);
 
         this.aliases = output.split("\n").reduce(
-            (accumulator: _.Dictionary<string>, aliasLine: string) => {
+            (accumulator: Dictionary<string>, aliasLine: string) => {
                 let split = aliasLine.split("=");
 
                 let name = /(alias )?(.*)/.exec(split[0])[2];
@@ -25,7 +24,7 @@ export default class Aliases {
                 accumulator[name] = value;
                 return accumulator;
             },
-            <_.Dictionary<string>>{}
+            <Dictionary<string>>{}
         );
     }
 }

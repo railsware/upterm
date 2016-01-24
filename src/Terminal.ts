@@ -15,7 +15,7 @@ export default class Terminal extends EmitterWithUniqueID {
     private _currentDirectory: string;
     private stateFileName = `${Utils.homeDirectory}/.black-screen-state`;
     // The value of the dictionary is the default value used if there is no serialized data.
-    private serializableProperties: _.Dictionary<any> = {
+    private serializableProperties: Dictionary<any> = {
         currentDirectory: `String:${Utils.homeDirectory}`,
         history: `History:[]`,
     };
@@ -83,7 +83,7 @@ export default class Terminal extends EmitterWithUniqueID {
     }
 
     private serialize(): void {
-        let values: _.Dictionary<string> = {};
+        let values: Dictionary<string> = {};
 
         _.each(this.serializableProperties, (value: string, key: string) =>
             values[key] = Serializer.serialize((<any>this)[key])
@@ -108,7 +108,7 @@ export default class Terminal extends EmitterWithUniqueID {
         });
     }
 
-    private readSerialized(): _.Dictionary<any> {
+    private readSerialized(): Dictionary<any> {
         try {
             return JSON.parse(fs.readFileSync(this.stateFileName).toString());
         } catch (error) {

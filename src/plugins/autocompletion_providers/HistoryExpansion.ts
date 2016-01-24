@@ -5,7 +5,7 @@ import {isCompleteHistoryCommand, historyReplacement} from "../../CommandExpande
 import PluginManager from "../../PluginManager";
 
 class HistoryExpansion implements i.AutocompletionProvider {
-    private static descriptions: _.Dictionary<string> = {
+    private static descriptions: Dictionary<string> = {
         "!!": "The previous command",
         "!^": "The first argument of the previous command",
         "!$": "The last argument of the previous command",
@@ -26,7 +26,7 @@ class HistoryExpansion implements i.AutocompletionProvider {
         });
     }
 
-    private commands(lexeme: string): _.Dictionary<string> {
+    private commands(lexeme: string): Dictionary<string> {
         if (isCompleteHistoryCommand(lexeme)) {
             return { [lexeme]: HistoryExpansion.descriptions[lexeme] };
         } else if (lexeme.length === 1 && lexeme.startsWith("!")) {

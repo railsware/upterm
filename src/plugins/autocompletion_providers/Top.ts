@@ -8,7 +8,7 @@ interface Descriptions {
     long: string;
 }
 
-const options: _.Dictionary<Descriptions> = {
+const options: Dictionary<Descriptions> = {
     b: {
         short: "Batch mode operation",
         long: "Starts  top  in  ’Batch  mode’,  which could be useful for sending\

@@ -6,7 +6,7 @@ import * as i from "../../Interfaces";
 import PluginManager from "../../PluginManager";
 const score: (i: string, m: string) => number = require("fuzzaldrin").score;
 
-const subcommands: _.Dictionary<string> = {
+const subcommands: Dictionary<string> = {
     "access": "Set access level on published packages",
     "adduser": "Add a registry user account",
     "bin": "Display npm bin folder",

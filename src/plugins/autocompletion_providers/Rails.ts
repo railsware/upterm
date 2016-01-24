@@ -3,7 +3,7 @@ import * as i from "../../Interfaces";
 import PluginManager from "../../PluginManager";
 const score: (i: string, m: string) => number = require("fuzzaldrin").score;
 
-const subcommands: _.Dictionary<string> = {
+const subcommands: Dictionary<string> = {
     runner: "Run a piece of code in the application environment",
     console: "Start the Rails console",
     server: "Start the Rails server",

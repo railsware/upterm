@@ -14,7 +14,7 @@ interface GitStatusFile {
     color: e.Color;
 }
 
-const statusesToColors: _.Dictionary<e.Color> = {
+const statusesToColors: Dictionary<e.Color> = {
     "?": e.Color.Green,
     "M": e.Color.Blue,
     "D": e.Color.Red,
