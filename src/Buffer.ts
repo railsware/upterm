@@ -8,7 +8,7 @@ import Utils from "./Utils";
 import {List} from "immutable";
 
 export default class Buffer extends events.EventEmitter {
-    public static hugeOutputThreshold = 500;
+    public static hugeOutputThreshold = 300;
     public cursor: Cursor = new Cursor();
     public activeBuffer = e.Buffer.Standard;
     private storage = List<List<Char>>();
