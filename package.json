@@ -24,6 +24,7 @@
   ],
   "electronVersion": "0.36.4",
   "dependencies": {
+    "chokidar": "1.4.2",
     "fix-path": "1.1.0",
     "fixed-sticky": "^0.1.6",
     "font-awesome": "4.5.0",

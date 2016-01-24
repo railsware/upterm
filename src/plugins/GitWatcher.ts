@@ -2,6 +2,7 @@ import Terminal from "../Terminal";
 import PluginManager from "../PluginManager";
 import {EnvironmentObserverPlugin} from "../Interfaces";
 import Utils from "../Utils";
+import * as chokidar from "chokidar";
 import * as fs from "fs";
 import * as Path from "path";
 import * as events from "events";
@@ -14,7 +15,7 @@ class GitWatcher extends events.EventEmitter {
     GIT_HEAD_FILE_NAME = Path.join(".git", "HEAD");
     GIT_HEADS_DIRECTORY_NAME = Path.join(".git", "refs", "heads");
 
-    gitBranchWatcher: fs.FSWatcher;
+    watcher: fs.FSWatcher;
     gitDirectory: string;
 
     constructor(private directory: string) {
@@ -23,21 +24,19 @@ class GitWatcher extends events.EventEmitter {
     }
 
     destructor() {
-        if (this.gitBranchWatcher) {
-            this.gitBranchWatcher.close();
+        if (this.watcher) {
+            this.watcher.close();
         }
     }
 
     async watch() {
         if (await Utils.exists(this.gitDirectory)) {
             this.updateGitData();
-            this.gitBranchWatcher = fs.watch(
-                this.directory,
-                { recursive: true },
-                (type, fileName) => {
+            this.watcher = chokidar.watch(this.directory);
+            this.watcher.on("all", (type: string, fileName: string) => {
                     if (!fileName.startsWith(".git") ||
-                            fileName === this.GIT_HEAD_FILE_NAME ||
-                            fileName.startsWith(this.GIT_HEADS_DIRECTORY_NAME)) {
+                        fileName === this.GIT_HEAD_FILE_NAME ||
+                        fileName.startsWith(this.GIT_HEADS_DIRECTORY_NAME)) {
                         this.updateGitData();
                     }
                 }
@@ -48,19 +47,19 @@ class GitWatcher extends events.EventEmitter {
     }
 
     @debounce(1000 / 60)
-    private updateGitData() {
-        fs.readFile(`${this.gitDirectory}/HEAD`, (error, buffer) => {
-            executeCommand("git", ["status", "--porcelain"], this.directory).then(changes => {
-                const status = changes.length ? "dirty" : "clean";
+    private async updateGitData() {
+        let content = await Utils.readFile(Path.join(this.gitDirectory, "HEAD"));
 
-                const data: VcsData = {
-                    isRepository: true,
-                    branch: /ref: refs\/heads\/(.*)/.exec(buffer.toString())[1],
-                    status: status,
-                };
+        executeCommand("git", ["status", "--porcelain"], this.directory).then(changes => {
+            const status = changes.length ? "dirty" : "clean";
 
-                this.emit(GIT_WATCHER_EVENT_NAME, data);
-            });
+            const data: VcsData = {
+                isRepository: true,
+                branch: /ref: refs\/heads\/(.*)/.exec(content)[1],
+                status: status,
+            };
+
+            this.emit(GIT_WATCHER_EVENT_NAME, data);
         });
     }
 }
