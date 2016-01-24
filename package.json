@@ -43,6 +43,7 @@
     "rx": "4.0.7"
   },
   "devDependencies": {
+    "asar": "0.9.0",
     "babel": "6.3.26",
     "babel-core": "6.4.5",
     "babel-plugin-transform-es2015-destructuring": "6.4.0",
@@ -81,7 +82,7 @@
     "postinstall": "npm run recompile",
     "recompile": "HOME=~/.electron-gyp cd node_modules/ptyw.js; node-gyp rebuild --target=$npm_package_electronVersion --arch=x64 --dist-url=https://atom.io/download/atom-shell",
     "start": "gulp",
-    "package": "gulp build && electron-packager . \"$npm_package_productName\" --overwrite --platform=darwin --arch=x64 --version=$npm_package_electronVersion --out='/Applications' --icon='./icon.icns'",
+    "package": "gulp build && electron-packager . \"$npm_package_productName\" --overwrite --platform=darwin --arch=x64 --version=$npm_package_electronVersion --out='/Applications' --icon='./icon.icns' --asar=true",
     "test": "gulp typescript; gulp compile-tests; electron run-tests.js",
     "update-typings": "tsd update --save --overwrite",
     "update-dependencies": "ncu -u",
