@@ -42,7 +42,7 @@ export default class Command {
         return executors[command];
     }
 
-    static isBuiltIn(command: string): any {
+    static isBuiltIn(command: string): boolean {
         return ["cd", "clear", "exit"].includes(command);
     }
 }
