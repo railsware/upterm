@@ -8,7 +8,7 @@ export default class Char {
 
     @memoize()
     static flyweight(char: string, attributes: i.Attributes) {
-        return new Char(char, attributes);
+        return new Char(char, _.clone(attributes));
 
     }
 

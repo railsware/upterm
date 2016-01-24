@@ -12,7 +12,7 @@ export default class Buffer extends events.EventEmitter {
     public cursor: Cursor = new Cursor();
     public activeBuffer = e.Buffer.Standard;
     private storage = List<List<Char>>();
-    private attributes: i.Attributes = { color: e.Color.White, weight: e.Weight.Normal };
+    private _attributes: i.Attributes = { color: e.Color.White, weight: e.Weight.Normal };
     private isOriginModeSet = false;
     private _margins: Margins = {};
 
@@ -20,14 +20,14 @@ export default class Buffer extends events.EventEmitter {
         super();
     }
 
-    writeString(value: string, attributes = this.attributes): void {
+    writeString(value: string): void {
         for (let i = 0; i !== value.length; ++i) {
-            this.write(value.charAt(i), attributes);
+            this.write(value.charAt(i));
         }
     }
 
-    write(char: string, attributes = this.attributes): void {
-        const charObject = Char.flyweight(char, this.getAttributes());
+    write(char: string): void {
+        const charObject = Char.flyweight(char, this.attributes);
 
         if (charObject.isSpecial()) {
             switch (charObject.getCharCode()) {
@@ -76,12 +76,12 @@ export default class Buffer extends events.EventEmitter {
         this.storage = this.storage.splice(deletedLine, count).toList();
     }
 
-    getAttributes(): i.Attributes {
-        return _.clone(this.attributes);
+    get attributes(): i.Attributes {
+        return this._attributes;
     }
 
     setAttributes(attributes: i.Attributes): void {
-        this.attributes = _.merge(this.attributes, attributes);
+        this._attributes = _.merge(this._attributes, attributes);
     }
 
     toRenderable(fromStorage = this.storage): List<List<Char>> {

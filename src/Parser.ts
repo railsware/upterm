@@ -86,7 +86,7 @@ export default class Parser {
                 Utils.error("osc", s);
             },
             inst_x: (flag: string) => {
-                const char = Char.flyweight(flag, this.job.getBuffer().getAttributes());
+                const char = Char.flyweight(flag, this.job.getBuffer().attributes);
                 const name = e.CharCode[char.getCharCode()];
 
                 Utils.print((name ? e.LogLevel.Log : e.LogLevel.Error), flag.split("").map((_, index) => flag.charCodeAt(index)));
@@ -450,7 +450,7 @@ export default class Parser {
                             Utils.error("sgr", sgr, next, params);
                         }
                     } else if (attributeToSet === "negative") {
-                        const attributes = this.buffer.getAttributes();
+                        const attributes = this.buffer.attributes;
 
                         this.buffer.setAttributes({
                             "background-color": attributes.color,
