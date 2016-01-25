@@ -61,12 +61,4 @@ export default class Prompt extends events.EventEmitter {
     getSuggestions(): Promise<i.Suggestion[]> {
         return this._autocompletion.getSuggestions(this.job);
     }
-
-    // TODO: Now it"s last lexeme instead of current.
-    replaceCurrentLexeme(suggestion: i.Suggestion): void {
-        const lexemes = _.clone(this._lexemes);
-        lexemes[lexemes.length - 1] = `${suggestion.prefix || ""}${suggestion.value}`;
-
-        this.value = lexemes.join(" ");
-    }
 }
