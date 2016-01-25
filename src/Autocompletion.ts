@@ -11,6 +11,7 @@ export default class Autocompletion implements i.AutocompletionProvider {
         let specializedProviders = PluginManager.specializedAutocompletionProviders(job.prompt.expanded);
         let providers = specializedProviders.length ? specializedProviders : PluginManager.genericAutocompletionProviders;
 
+        // FIXME: skip suggestions that have 0 score.
         return Promise.all(providers.map(provider => provider.getSuggestions(job))).then(results =>
             _._(results)
                 .flatten()

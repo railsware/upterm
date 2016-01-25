@@ -33,10 +33,12 @@ export class Suggestion {
         return "";
     }
 
+    // FIXME: return an enum or an icon.
     get type(): string {
         return "";
     }
 
+    // FIXME: remove.
     get color(): e.Color {
         return e.Color.White;
     }
@@ -50,7 +52,7 @@ export class Suggestion {
     }
 
     getPrefix(job: Job): string {
-        return job.prompt.lastArgument;
+        return job.prompt.lastLexeme;
     }
 
     isAlreadyOnPrompt(job: Job): boolean {
