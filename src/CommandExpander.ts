@@ -3,6 +3,7 @@ import * as _ from "lodash";
 import Aliases from "./Aliases";
 import History from "./History";
 
+// FIXME: extract into an autocompletion provider.
 const grammar = `
 %lex
 WORD [\\w/-]+
