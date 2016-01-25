@@ -19,16 +19,43 @@ export interface AutocompletionProvider {
     getSuggestions(job: Job): Promise<Suggestion[]>;
 }
 
-export interface Suggestion {
-    value: string;
-    score: number;
-    synopsis: string;
-    description: string;
-    type: string;
-    color?: e.Color;
-    partial?: boolean; // Whether to put a space after it.
-    replaceEverything?: boolean;
-    prefix?: string;
+// FIXME: move to another file.
+export class Suggestion {
+    get value(): string {
+        return "";
+    }
+
+    get synopsis(): string {
+        return "";
+    }
+
+    get description(): string {
+        return "";
+    }
+
+    get type(): string {
+        return "";
+    }
+
+    get color(): e.Color {
+        return e.Color.White;
+    }
+
+    get partial(): boolean {
+        return false;
+    }
+
+    get displayValue(): string {
+        return this.value;
+    }
+
+    getPrefix(job: Job): string {
+        return job.prompt.lastArgument;
+    }
+
+    isAlreadyOnPrompt(job: Job): boolean {
+        return job.prompt.expanded.includes(this.value);
+    }
 }
 
 export interface FileInfo {

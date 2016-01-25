@@ -319,17 +319,17 @@ export default class PromptComponent extends React.Component<Props, State> imple
         let state = this.state;
         const suggestion = state.suggestions[state.highlightedSuggestionIndex];
 
-        if (suggestion.replaceEverything) {
-            this.prompt.value = suggestion.value;
-            this.setDOMValueProgrammatically(suggestion.value);
-        } else {
-            this.prompt.replaceCurrentLexeme(suggestion);
-            if (!suggestion.partial) {
-                this.prompt.value += " ";
-            }
+        // FIXME: replace the getPrefix value before the caret with value.
+        const lexemes = _.clone(this.prompt.lexemes);
+        lexemes[lexemes.length - 1] = suggestion.value;
 
-            this.setDOMValueProgrammatically(this.prompt.value);
+        let newValue = lexemes.join(" ");
+        if (!suggestion.partial) {
+            newValue += " ";
         }
+
+        this.prompt.value = newValue;
+        this.setDOMValueProgrammatically(this.prompt.value);
 
         this.prompt.getSuggestions().then(suggestions =>
             this.setState({ suggestions: suggestions, highlightedSuggestionIndex: 0 })
