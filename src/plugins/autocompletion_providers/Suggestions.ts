@@ -45,3 +45,25 @@ export class ShortOption extends BaseOption {
         return this._synopsis;
     }
 }
+
+export class Executable extends Suggestion {
+    constructor(protected _name: string, protected _description: string) {
+        super();
+    };
+
+    get value() {
+        return this._name;
+    }
+
+    get displayValue() {
+        return this._name;
+    }
+
+    get description() {
+        return this._description;
+    }
+
+    get type() {
+        return "executable";
+    }
+}

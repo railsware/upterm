@@ -1,9 +1,8 @@
 import Utils from "../../Utils";
-import * as i from "../../Interfaces";
 import * as _ from "lodash";
 import Job from "../../Job";
 import PluginManager from "../../PluginManager";
-const score: (i: string, m: string) => number = require("fuzzaldrin").score;
+import {Executable} from "./Suggestions";
 
 const descriptions: {[indexer: string]: string} = {
     admin: "Create and administer SCCS files",
@@ -168,29 +167,16 @@ const descriptions: {[indexer: string]: string} = {
     zcat: "Expand and concatenate data",
 };
 
-class Executable implements i.AutocompletionProvider {
 
-    async getSuggestions(job: Job) {
+PluginManager.registerAutocompletionProvider({
+
+    getSuggestions: async function(job: Job) {
         const prompt = job.prompt;
 
         if (prompt.expanded.length > 1) {
             return [];
         }
 
-        const executables = await Utils.executablesInPaths();
-
-        const lastArgument = prompt.lastArgument;
-
-        return _.map(executables, (executable: string) => {
-            return {
-                value: executable,
-                score: 1.5 * score(executable, lastArgument),
-                synopsis: "",
-                description: descriptions[executable],
-                type: "executable",
-            };
-        });
-    }
-}
-
-PluginManager.registerAutocompletionProvider(new Executable());
+        return _.map(await Utils.executablesInPaths(), (executable: string) => new Executable(executable, descriptions[executable]));
+    },
+});
