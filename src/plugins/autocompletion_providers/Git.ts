@@ -4,48 +4,59 @@ import * as _ from "lodash";
 import * as i from "../../Interfaces";
 import * as e from "../../Enums";
 import * as Path from "path";
-import * as OS from "os";
 import PluginManager from "../../PluginManager";
-import {executeCommand} from "../../PTY";
-const score: (i: string, m: string) => number = require("fuzzaldrin").score;
+import {linedOutputOf} from "../../PTY";
 
-interface GitStatusFile {
-    path: string;
-    color: e.Color;
-}
+class File extends i.Suggestion {
+    constructor(protected _line: string) {
+        super();
+    }
 
-const statusesToColors: Dictionary<e.Color> = {
-    "?": e.Color.Green,
-    "M": e.Color.Blue,
-    "D": e.Color.Red,
-};
+    get value(): string {
+        return this._line.substring(3).trim();
+    }
 
-function toFileSuggestion(file: GitStatusFile, lastWord: string): i.Suggestion {
-    return {
-        value: file.path,
-        score: 2 + score(file.path, lastWord),
-        synopsis: "",
-        description: "",
-        type: "file",
-        color: file.color,
+    get type(): string {
+        return "file";
+    }
+
+    get color(): e.Color {
+        return this.colorsMap[this.workingTreeStatusCode];
+    }
+
+    get isAbleToAdd(): boolean {
+        return this.workingTreeStatusCode !== " ";
+    }
+
+    get workingTreeStatusCode(): string {
+        return this._line[1];
+    }
+
+    private get colorsMap(): Dictionary<e.Color> {
+        return {
+            "?": e.Color.Green,
+            "M": e.Color.Blue,
+            "D": e.Color.Red,
+        };
     };
 }
 
-function toBranchSuggestion(branch: string, lastWord: string): i.Suggestion {
-    return {
-        value: branch,
-        score: 2 + score(branch, lastWord),
-        synopsis: "",
-        description: "",
-        type: "branch",
-    };
-}
+class Branch extends i.Suggestion {
+    constructor(protected _line: string) {
+        super();
+    }
 
-function toGitStatusFile(line: string): GitStatusFile {
-    return {
-        path: line.substring(3).trim(),
-        color: statusesToColors[line[1]],
-    };
+    get value(): string {
+        return this._line.trim();
+    }
+
+    get type(): string {
+        return "branch";
+    }
+
+    get isCurrent(): boolean {
+        return this._line[0] === "*";
+    }
 }
 
 async function gitSuggestions(job: Job): Promise<i.Suggestion[]> {
@@ -56,39 +67,17 @@ async function gitSuggestions(job: Job): Promise<i.Suggestion[]> {
         return [];
     }
 
-    const lastArgument = prompt.lastArgument;
     const subcommand = prompt.arguments[0];
     const args = _.drop(prompt.arguments, 1);
 
     if (subcommand === "add" && args.length > 0) {
-        let changes = await executeCommand("git", ["status", "--porcelain"], job.directory);
-        let suggestions = changes
-            .split(OS.EOL)
-            .filter(path => path.length > 0)
-            .map(toGitStatusFile)
-            .filter((file: GitStatusFile) => !args.includes(file.path) && !_.isEmpty(file.color))
-            .map(file => toFileSuggestion(file, lastArgument));
-
-        if (args[0] === "") {
-            suggestions.push({
-                value: ".", // FIXME: Calclulate the common prefix of all suggested paths.
-                score: _.max(suggestions.map(suggestion => suggestion.score)) + 1,
-                synopsis: `${suggestions.length} ${Utils.pluralize("file", suggestions.length)}`,
-                description: "",
-                type: "file",
-            });
-        }
-
-        return suggestions;
+        let changes = await linedOutputOf("git", ["status", "--porcelain"], job.directory);
+        return changes.map(line => new File(line)).filter(file => file.isAbleToAdd);
     }
 
     if (subcommand === "checkout" && args.length === 1) {
-        let output = await executeCommand("git", ["branch", "--no-color"], job.directory);
-        return output
-            .split(OS.EOL)
-            .filter(path => path.length > 0 && path[0] !== "*")
-            .map(branch => branch.trim())
-            .map(branch => toBranchSuggestion(branch, lastArgument));
+        let output = await linedOutputOf("git", ["branch", "--no-color"], job.directory);
+        return output.map(branch => new Branch(branch)).filter(branch => !branch.isCurrent);
     }
 
     return [];

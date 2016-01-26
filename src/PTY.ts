@@ -1,5 +1,6 @@
 import * as ChildProcess from "child_process";
 const ptyInternalPath = require.resolve("./PTYInternal");
+import * as OS from "os";
 
 interface Message {
     data?: string;
@@ -56,4 +57,9 @@ export function executeCommand(command: string, args: string[] = [], directory: 
             (exitCode: number) => exitCode === 0 ? resolve(output) : reject(exitCode)
         );
     });
+}
+
+export async function linedOutputOf(command: string, args: string[], directory: string) {
+    let output = await executeCommand(command, args, directory);
+    return output.split(OS.EOL).filter(path => path.length > 0);
 }
