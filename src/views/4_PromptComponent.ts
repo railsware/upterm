@@ -37,8 +37,29 @@ function setCaretPosition(node: Node, position: number) {
     selection.addRange(range);
 }
 
-function getCaretPosition(): number {
-    return window.getSelection().anchorOffset;
+function getCaretPosition(element: any): number {
+    //return window.getSelection().anchorOffset;
+    var caretOffset = 0;
+    var doc = element.ownerDocument || element.document;
+    var win = doc.defaultView || doc.parentWindow;
+    var sel: any;
+    if (typeof win.getSelection != "undefined") {
+        sel = win.getSelection();
+        if (sel.rangeCount > 0) {
+            var range = win.getSelection().getRangeAt(0);
+            var preCaretRange = range.cloneRange();
+            preCaretRange.selectNodeContents(element);
+            preCaretRange.setEnd(range.endContainer, range.endOffset);
+            caretOffset = preCaretRange.toString().length;
+        }
+    } else if ( (sel = doc.selection) && sel.type != "Control") {
+        var textRange = sel.createRange();
+        var preCaretTextRange = doc.body.createTextRange();
+        preCaretTextRange.moveToElementText(element);
+        preCaretTextRange.setEndPoint("EndToEnd", textRange);
+        caretOffset = preCaretTextRange.text.length;
+    }
+    return caretOffset;
 }
 
 function isCommandKey(event: KeyboardEvent) {
@@ -262,7 +283,7 @@ export default class PromptComponent extends React.Component<Props, State> imple
         this.forceUpdate();
     }
 
-    private deleteWord(current = this.prompt.value, position = getCaretPosition()): void {
+    private deleteWord(current = this.prompt.value, position = getCaretPosition(this.commandNode)): void {
         if (!current.length) {
             return;
         }
@@ -279,7 +300,7 @@ export default class PromptComponent extends React.Component<Props, State> imple
                 current += " ";
             }
 
-            this.prompt.value = current + this.prompt.value.substring(getCaretPosition());
+            this.prompt.value = current + this.prompt.value.substring(getCaretPosition(this.commandNode));
             this.setDOMValueProgrammatically(this.prompt.value);
         }
     }
@@ -319,16 +340,20 @@ export default class PromptComponent extends React.Component<Props, State> imple
         let state = this.state;
         const suggestion = state.suggestions[state.highlightedSuggestionIndex];
 
-        // FIXME: replace the getPrefix value before the caret with value.
-        const lexemes = _.clone(this.prompt.lexemes);
-        lexemes[lexemes.length - 1] = suggestion.value;
+        // FIXME: replace the current lexeme prefix.
+        const prefixLength = suggestion.getPrefix(this.props.job).length;
+        const caretPosition = getCaretPosition(this.commandNode);
+        const valueUpToCaret = this.prompt.value.slice(0, caretPosition);
+        const valueFromCaret = this.prompt.value.slice(caretPosition);
+        let valueWithoutPrefix = prefixLength ? valueUpToCaret.slice(0, -prefixLength) : valueUpToCaret;
 
-        let newValue = lexemes.join(" ");
-        if (!suggestion.partial) {
+        let newValue = valueWithoutPrefix + suggestion.value;
+        if (!suggestion.partial && newValue.slice(-1) !== " " && valueFromCaret[0] !== " ") {
             newValue += " ";
         }
 
-        this.prompt.value = newValue;
+
+        this.prompt.value = newValue + valueFromCaret;
         this.setDOMValueProgrammatically(this.prompt.value);
 
         this.prompt.getSuggestions().then(suggestions =>

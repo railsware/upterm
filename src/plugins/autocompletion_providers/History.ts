@@ -1,24 +1,30 @@
-import * as i from "../../Interfaces";
 import ExecutionHistory from "../../History";
 import Job from "../../Job";
 import PluginManager from "../../PluginManager";
-const score: (i: string, m: string) => number = require("fuzzaldrin").score;
+import {Suggestion} from "../../Interfaces";
 
-class History implements i.AutocompletionProvider {
-    async getSuggestions(job: Job) {
-        const lastArgument = job.prompt.lastArgument;
+class History extends Suggestion {
+    constructor(protected _raw: string) {
+        super();
+    }
 
-        return ExecutionHistory.all.filter(entry => entry.raw.length > 3).map(entry => {
-            return {
-                value: entry.raw,
-                score: 0.1 * score(entry.raw, lastArgument),
-                synopsis: "",
-                description: "",
-                replaceEverything: true,
-                type: "history",
-            };
-        });
+    get value(): string {
+        return this._raw;
+    }
+
+    get type(): string {
+        return "history";
+    }
+
+    getPrefix(job: Job): string {
+        return job.prompt.value;
     }
 }
 
-PluginManager.registerAutocompletionProvider(new History());
+PluginManager.registerAutocompletionProvider({
+    getSuggestions: async function(job: Job) {
+        return ExecutionHistory.all.filter(entry => entry.raw.length > 3).map(entry => {
+            return new History(entry.raw);
+        });
+    },
+});
