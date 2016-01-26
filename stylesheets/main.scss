@@ -461,6 +461,29 @@ pre {
         @extend .fa-file;
       }
 
+      &.file.directory .icon {
+        @extend .fa-folder;
+      }
+
+      &.file {
+        &.directory {
+          .icon {
+            @extend .fa-folder;
+          }
+        }
+        &.zip, &.gzip {
+          .icon {
+            @extend .fa-file-archive-o;
+          }
+        }
+
+        &.js, &.ts, &.rb, &.json {
+          .icon {
+            @extend .fa-file-code-o;
+          }
+        }
+      }
+
       &.executable .icon {
         @extend .fa;
         @extend .fa-asterisk;
