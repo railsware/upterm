@@ -221,6 +221,12 @@ export class Subcommand extends Suggestion {
     }
 }
 
+export class SubSubcommand extends Subcommand {
+    shouldIgnore(job: Job): boolean {
+        return job.prompt.expanded.length !== 3;
+    }
+}
+
 export function toSubcommands(dictionary: Dictionary<string>) {
     return _.map(dictionary, (value: string, key: string) => new Subcommand(key, value));
 }

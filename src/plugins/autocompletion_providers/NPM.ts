@@ -2,7 +2,7 @@ import Utils from "../../Utils";
 import Job from "../../Job";
 import * as Path from "path";
 import PluginManager from "../../PluginManager";
-import {Subcommand, toSubcommands, Suggestion} from "./Suggestions";
+import {toSubcommands, Suggestion, SubSubcommand} from "./Suggestions";
 
 const subcommands = toSubcommands({
     "access": "Set access level on published packages",
@@ -71,7 +71,7 @@ PluginManager.registerAutocompletionProvider({
 
         if (job.prompt.expanded.length === 3 && await Utils.exists(packageFilePath)) {
             const parsed = JSON.parse(await Utils.readFile(packageFilePath)).scripts || {};
-            return Object.keys(parsed).map(key => new Subcommand(key, ""));
+            return Object.keys(parsed).map(key => new SubSubcommand(key, ""));
         }
 
         return [];
