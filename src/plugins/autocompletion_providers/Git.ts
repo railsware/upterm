@@ -184,7 +184,7 @@ const message = new OptionWithValue(
     "-m <msg>",
     "Use the given <msg> as the commit message. If multiple -m options are given, their values are concatenated as separate paragraphs."
 );
-const commitOptions = [cleanup, message];
+const commitOptions = [message, cleanup];
 
 
 const children: Map<OptionWithValue, Suggestion[]> = new Map();
