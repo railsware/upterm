@@ -7,7 +7,7 @@ import PluginManager from "../../PluginManager";
 import {linedOutputOf} from "../../PTY";
 import {
     Suggestion, Subcommand, Option, OptionWithValue,
-    LongOption
+    LongOption,
 } from "./Suggestions";
 
 class File extends Suggestion {
