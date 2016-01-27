@@ -138,7 +138,7 @@ body, pre {
       height: 200%;
       top: -11px;
       right: -8px;
-      background-color: lighten($prompt-background-color, 10% );
+      background-color: lighten($prompt-background-color, 10%);
       transform-origin: 54% 0;
       transform: rotate(45deg);
       z-index: $arrow-z-index - 1;
@@ -181,14 +181,13 @@ body, pre {
     }
   }
 
-  .prompt {
+  .prompt, .autocompleted-preview {
     position: absolute;
     left: 0;
     right: 0;
     padding: 0 10px 3px ($decoration-width + 10px);
     min-height: $height;
     color: map-get($colors, 'white');
-    background-color: $prompt-background-color;
     font-size: $font-size;
 
     @mixin common {
@@ -204,6 +203,14 @@ body, pre {
     &:focus {
       @include common;
     }
+  }
+
+  .prompt {
+    background-color: transparent;
+  }
+  .autocompleted-preview {
+    background-color: $prompt-background-color;
+    color: lighten($prompt-background-color, 15%);
   }
 
   .actions {

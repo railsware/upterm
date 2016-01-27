@@ -216,6 +216,7 @@ export default class PromptComponent extends React.Component<Props, State> imple
     render() {
         const classes = ["prompt-wrapper", "fixedsticky", this.props.status].join(" ");
         let autocomplete: React.ReactElement<any>;
+        let autocompletedPreview: React.ReactElement<any>;
         let decorationToggle: React.ReactElement<any>;
         let scrollToTop: React.ReactElement<any>;
 
@@ -228,6 +229,7 @@ export default class PromptComponent extends React.Component<Props, State> imple
                 highlightedIndex: this.state.highlightedSuggestionIndex,
                 ref: "autocomplete",
             });
+            autocompletedPreview = React.createElement("div", { className: "autocompleted-preview" }, this.valueWithCurrentSuggestion);
         }
 
         if (this.props.jobView.state.canBeDecorated) {
@@ -251,6 +253,7 @@ export default class PromptComponent extends React.Component<Props, State> imple
                 React.createElement("div", { className: "arrow" })
             ),
             React.createElement("div", { className: "prompt-info", title: this.props.status }),
+            autocompletedPreview,
             React.createElement("div", {
                 className: "prompt",
                 onKeyDown: this.handlers.onKeyDown.bind(this),
@@ -344,6 +347,15 @@ export default class PromptComponent extends React.Component<Props, State> imple
     }
 
     private applySuggestion(): void {
+        this.prompt.value = this.valueWithCurrentSuggestion;
+        this.setDOMValueProgrammatically(this.prompt.value);
+
+        this.prompt.getSuggestions().then(suggestions =>
+            this.setState({ suggestions: suggestions, highlightedSuggestionIndex: 0 })
+        );
+    }
+
+    private get valueWithCurrentSuggestion(): string {
         let state = this.state;
         const suggestion = state.suggestions[state.highlightedSuggestionIndex];
 
@@ -360,12 +372,7 @@ export default class PromptComponent extends React.Component<Props, State> imple
         }
 
 
-        this.prompt.value = newValue + valueFromCaret;
-        this.setDOMValueProgrammatically(this.prompt.value);
-
-        this.prompt.getSuggestions().then(suggestions =>
-            this.setState({ suggestions: suggestions, highlightedSuggestionIndex: 0 })
-        );
+        return newValue + valueFromCaret;
     }
 
     private showAutocomplete(): boolean {
