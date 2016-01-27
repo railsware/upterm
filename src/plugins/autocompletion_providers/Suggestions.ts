@@ -22,7 +22,7 @@ export class Suggestion {
     }
 
     get synopsis(): string {
-        return this._synopsis;
+        return this._synopsis || this.truncatedDescription;
     }
 
     get description(): string {
@@ -74,6 +74,10 @@ export class Suggestion {
     withChildrenProvider(provider: (job: Job) => SuggestionsPromise): Suggestion {
         this._childrenProvider = provider;
         return this;
+    }
+
+    private get truncatedDescription(): string {
+        return _.truncate(this.description, { length: 50, separator: " " });
     }
 }
 
