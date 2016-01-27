@@ -15,6 +15,7 @@ export interface Attributes {
     cursor?: boolean;
 }
 
+// FIXME: rename to contributor.
 export interface AutocompletionProvider {
     forCommand?: string;
     getSuggestions(job: Job): Promise<Suggestion[]>;

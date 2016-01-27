@@ -5,7 +5,7 @@ import * as e from "../../Enums";
 import * as Path from "path";
 import PluginManager from "../../PluginManager";
 import {linedOutputOf} from "../../PTY";
-import {Suggestion, Subcommand} from "./Suggestions";
+import {Suggestion, Subcommand, OptionWithValue} from "./Suggestions";
 
 class File extends Suggestion {
     constructor(protected _line: string) {
@@ -134,4 +134,69 @@ const porcelainCommands = [
 PluginManager.registerAutocompletionProvider({
     forCommand: `git`,
     getSuggestions: async (job) => porcelainCommands,
+});
+
+export class OptionValueSuggestion extends Suggestion {
+    constructor(protected _name: string, protected _description: string) {
+        super();
+    }
+
+    get value(): string {
+        return `--cleanup=${this._name}`;
+    }
+
+    get displayValue(): string {
+        return this._name;
+    }
+
+    get description(): string {
+        return this._description;
+    }
+
+    get type(): string {
+        return "option-value";
+    }
+}
+
+const cleanupModes = _.map(
+    {
+        strip: "Strip leading and trailing empty lines, trailing whitespace, commentary and collapse consecutive empty lines.",
+        whitespace: "Same as strip except #commentary is not removed.",
+        verbatim: "Do not change the message at all.",
+        scissors: 'Same as whitespace, except that everything from (and including) the line \
+        "#------------------------ >8 ------------------------"\
+        is truncated if the message is to be edited. "#" can be customized with core.commentChar.',
+        default: "Same as strip if the message is to be edited. Otherwise whitespace",
+    },
+    (description: string, mode: string) => new OptionValueSuggestion(mode, description)
+);
+
+const cleanup = new OptionWithValue(
+  "cleanup",
+  "--cleanup=<mode>",
+  "",
+  "This option determines how the supplied commit message should be cleaned up before committing. The <mode> can be strip, whitespace, verbatim, scissors or default."
+);
+
+const message = new OptionWithValue(
+    "message",
+    "--message=<msg>",
+    "-m <msg>",
+    "Use the given <msg> as the commit message. If multiple -m options are given, their values are concatenated as separate paragraphs."
+);
+const commitOptions = [cleanup, message];
+
+
+const children: Map<OptionWithValue, Suggestion[]> = new Map();
+children.set(cleanup, cleanupModes);
+
+PluginManager.registerAutocompletionProvider({
+    forCommand: `git commit`,
+    getSuggestions: async (job) => {
+        const currentOption = _.find(commitOptions, option => option.shouldSuggestChildren(job));
+        if (currentOption) {
+            return children.get(currentOption);
+        }
+        return commitOptions;
+    },
 });

@@ -40,6 +40,10 @@ export class Suggestion {
     shouldIgnore(job: Job): boolean {
         return job.prompt.expanded.includes(this.value);
     }
+
+    shouldSuggestChildren(job: Job): boolean {
+        return false;
+    }
 }
 
 abstract class BaseOption extends Suggestion {
@@ -85,6 +89,40 @@ export class ShortOption extends BaseOption {
 
     get synopsis() {
         return this._synopsis;
+    }
+}
+
+export class OptionWithValue extends BaseOption {
+    constructor(protected _value: string, protected _displayValue: string, protected _synopsis: string, protected _description: string) {
+        super();
+    };
+
+    get value() {
+        return `--${this._value}=`;
+    }
+
+    get displayValue() {
+        return this._displayValue;
+    }
+
+    get partial(): boolean {
+        return true;
+    }
+
+    get synopsis(): string {
+        return this._synopsis;
+    }
+
+    get description() {
+        return this._description;
+    }
+
+    shouldIgnore(job: Job): boolean {
+        return _.some(job.prompt.expanded, word => word.includes(this.value));
+    }
+
+    shouldSuggestChildren(job: Job): boolean {
+        return job.prompt.lastLexeme.includes(this.value);
     }
 }
 

@@ -402,7 +402,7 @@ pre {
 
 .autocomplete {
   position: absolute;
-  min-width: 250px;
+  min-width: 300px;
 
   box-shadow: $default-shadow;
   background-color: map-get($colors, 'black');
@@ -512,6 +512,13 @@ pre {
         @extend .fa;
         @extend .fa-flag-o;
         color: map-get($colors, 'green');
+      }
+
+      &.option-value .icon {
+        &:before {
+          content: "=";
+          color: map-get($colors, 'green');
+        }
       }
 
       &.branch .icon {
