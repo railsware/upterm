@@ -44,6 +44,10 @@ export class Suggestion {
     shouldSuggestChildren(job: Job): boolean {
         return false;
     }
+
+    async getChildren(job: Job): Promise<Suggestion[]> {
+        return [];
+    }
 }
 
 abstract class BaseOption extends Suggestion {
@@ -93,7 +97,11 @@ export class ShortOption extends BaseOption {
 }
 
 export class OptionWithValue extends BaseOption {
-    constructor(protected _value: string, protected _displayValue: string, protected _synopsis: string, protected _description: string) {
+    constructor(protected _value: string,
+                protected _displayValue: string,
+                protected _synopsis: string,
+                protected _description: string,
+                protected _childrenProvider: (job: Job) => Promise<Suggestion[]>) {
         super();
     };
 
@@ -123,6 +131,10 @@ export class OptionWithValue extends BaseOption {
 
     shouldSuggestChildren(job: Job): boolean {
         return job.prompt.lastLexeme.includes(this.value);
+    }
+
+    getChildren(job: Job): Promise<Suggestion[]> {
+        return this._childrenProvider(job);
     }
 }
 

@@ -142,15 +142,16 @@ export class OptionValueSuggestion extends Suggestion {
     }
 
     get value(): string {
-        return `--cleanup=${this._name}`;
-    }
-
-    get displayValue(): string {
         return this._name;
     }
 
     get description(): string {
         return this._description;
+    }
+
+    getPrefix(job: Job): string {
+        const lexeme = job.prompt.lastLexeme;
+        return lexeme.substring(lexeme.lastIndexOf("=") + 1);
     }
 
     get type(): string {
@@ -171,31 +172,29 @@ const cleanupModes = _.map(
     (description: string, mode: string) => new OptionValueSuggestion(mode, description)
 );
 
-const cleanup = new OptionWithValue(
-  "cleanup",
-  "--cleanup=<mode>",
-  "",
-  "This option determines how the supplied commit message should be cleaned up before committing. The <mode> can be strip, whitespace, verbatim, scissors or default."
-);
-
-const message = new OptionWithValue(
-    "message",
-    "--message=<msg>",
-    "-m <msg>",
-    "Use the given <msg> as the commit message. If multiple -m options are given, their values are concatenated as separate paragraphs."
-);
-const commitOptions = [message, cleanup];
-
-
-const children: Map<OptionWithValue, Suggestion[]> = new Map();
-children.set(cleanup, cleanupModes);
+const commitOptions = [
+    new OptionWithValue(
+        "message",
+        "--message=<msg>",
+        "-m <msg>",
+        "Use the given <msg> as the commit message. If multiple -m options are given, their values are concatenated as separate paragraphs.",
+        async () => []
+    ),
+    new OptionWithValue(
+        "cleanup",
+        "--cleanup=<mode>",
+        "",
+        "This option determines how the supplied commit message should be cleaned up before committing. The <mode> can be strip, whitespace, verbatim, scissors or default.",
+        async () => cleanupModes
+    ),
+];
 
 PluginManager.registerAutocompletionProvider({
     forCommand: `git commit`,
-    getSuggestions: async (job) => {
-        const currentOption = _.find(commitOptions, option => option.shouldSuggestChildren(job));
+    getSuggestions: async (job: Job) => {
+        const currentOption: OptionWithValue = _.find(commitOptions, option => option.shouldSuggestChildren(job));
         if (currentOption) {
-            return children.get(currentOption);
+            return await currentOption.getChildren(job);
         }
         return commitOptions;
     },
