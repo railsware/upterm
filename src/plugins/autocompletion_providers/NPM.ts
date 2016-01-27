@@ -1,12 +1,11 @@
 import Utils from "../../Utils";
 import Job from "../../Job";
-import * as _ from "lodash";
 import * as Path from "path";
 import * as i from "../../Interfaces";
 import PluginManager from "../../PluginManager";
-const score: (i: string, m: string) => number = require("fuzzaldrin").score;
+import {Subcommand, toSubcommands} from "./Suggestions";
 
-const subcommands: Dictionary<string> = {
+const subcommands = toSubcommands({
     "access": "Set access level on published packages",
     "adduser": "Add a registry user account",
     "bin": "Display npm bin folder",
@@ -59,18 +58,7 @@ const subcommands: Dictionary<string> = {
     "version": "Bump a package version",
     "view": "View registry info",
     "whoami": "Display npm username",
-};
-
-
-function toSuggestion(value: string, lastWord: string, synopsis = ""): i.Suggestion {
-    return {
-        value: value,
-        score: 2 + score(value, lastWord),
-        synopsis: synopsis,
-        description: "",
-        type: "command",
-    };
-}
+});
 
 PluginManager.registerAutocompletionProvider({
     forCommand: "npm",
@@ -79,8 +67,7 @@ PluginManager.registerAutocompletionProvider({
             return [];
         }
 
-        const suggestions = _.map(subcommands, (value, key) => toSuggestion(key, job.prompt.lastArgument, value));
-        return _._(suggestions).sortBy("score").reverse().value();
+        return subcommands;
     },
 });
 
@@ -91,7 +78,7 @@ PluginManager.registerAutocompletionProvider({
 
         if (job.prompt.expanded.length === 3 && await Utils.exists(packageFilePath)) {
             const parsed = JSON.parse(await Utils.readFile(packageFilePath)).scripts || {};
-            return Object.keys(parsed).map(key => toSuggestion(key, job.prompt.lastArgument));
+            return Object.keys(parsed).map(key => new Subcommand(key, ""));
         }
 
         return [];

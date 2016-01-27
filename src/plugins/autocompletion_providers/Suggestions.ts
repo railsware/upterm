@@ -117,3 +117,25 @@ export class File extends Suggestion {
         }
     }
 }
+
+export class Subcommand extends Suggestion {
+    constructor(protected _name: string, protected _synopsis: string) {
+        super();
+    }
+
+    get value(): string {
+        return this._name;
+    }
+
+    get synopsis(): string {
+        return this._synopsis;
+    }
+
+    get type(): string {
+        return "command";
+    }
+}
+
+export function toSubcommands(dictionary: Dictionary<string>) {
+    return _.map(dictionary, (value: string, key: string) => new Subcommand(key, value));
+}

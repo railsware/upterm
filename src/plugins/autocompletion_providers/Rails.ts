@@ -1,9 +1,8 @@
-import * as _ from "lodash";
 import * as i from "../../Interfaces";
 import PluginManager from "../../PluginManager";
-const score: (i: string, m: string) => number = require("fuzzaldrin").score;
+import {toSubcommands} from "./Suggestions";
 
-const subcommands: Dictionary<string> = {
+const subcommands = toSubcommands({
     runner: "Run a piece of code in the application environment",
     console: "Start the Rails console",
     server: "Start the Rails server",
@@ -12,18 +11,7 @@ const subcommands: Dictionary<string> = {
     dbconsole: "Start a console for the Rails database",
     "new": "Create a new Rails application",
     "plugin new": "Generates skeleton for developing a Rails plugin",
-};
-
-
-function toSuggestion(value: string, lastWord: string, synopsis = ""): i.Suggestion {
-    return {
-        value: value,
-        score: 2 + score(value, lastWord),
-        synopsis: synopsis,
-        description: "",
-        type: "command",
-    };
-}
+});
 
 PluginManager.registerAutocompletionProvider({
     forCommand: "rails",
@@ -32,6 +20,6 @@ PluginManager.registerAutocompletionProvider({
             return [];
         }
 
-        return _.map(subcommands, (value, key) => toSuggestion(key, job.prompt.lastArgument, value));
+        return subcommands;
     },
 });

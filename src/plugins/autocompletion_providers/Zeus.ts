@@ -1,9 +1,8 @@
-import * as _ from "lodash";
 import * as i from "../../Interfaces";
 import PluginManager from "../../PluginManager";
-const score: (i: string, m: string) => number = require("fuzzaldrin").score;
+import {toSubcommands} from "./Suggestions";
 
-const subcommands: Dictionary<string> = {
+const subcommands = toSubcommands({
     start: "Start a zeus server in the current directory using zeus.json",
     init: " Generate a template zeus.json",
     rake: "Ruby Make",
@@ -14,18 +13,7 @@ const subcommands: Dictionary<string> = {
     destroy: 'Undo code generated with "generate"',
     dbconsole: "Start a console for the Rails database",
     rspec: "Run specs",
-};
-
-
-function toSuggestion(value: string, lastWord: string, synopsis = ""): i.Suggestion {
-    return {
-        value: value,
-        score: 2 + score(value, lastWord),
-        synopsis: synopsis,
-        description: "",
-        type: "command",
-    };
-}
+});
 
 PluginManager.registerAutocompletionProvider({
     forCommand: "zeus",
@@ -34,6 +22,6 @@ PluginManager.registerAutocompletionProvider({
             return [];
         }
 
-        return _.map(subcommands, (value, key) => toSuggestion(key, job.prompt.lastArgument, value));
+        return subcommands;
     },
 });
