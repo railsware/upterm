@@ -37,28 +37,34 @@ function setCaretPosition(node: Node, position: number) {
     selection.addRange(range);
 }
 
-// FIXME: clean up.
+/**
+ * @note I have no idea how it works. Copied from StackOverflow.
+ * @link http://stackoverflow.com/questions/4811822/get-a-ranges-start-and-end-offsets-relative-to-its-parent-container/4812022#4812022
+ */
 function getCaretPosition(element: any): number {
-    //return window.getSelection().anchorOffset;
-    var caretOffset = 0;
-    var doc = element.ownerDocument || element.document;
-    var win = doc.defaultView || doc.parentWindow;
-    var sel: any;
-    if (typeof win.getSelection != "undefined") {
-        sel = win.getSelection();
-        if (sel.rangeCount > 0) {
-            var range = win.getSelection().getRangeAt(0);
-            var preCaretRange = range.cloneRange();
+    let caretOffset = 0;
+    let document = element.ownerDocument || element.document;
+    let win = document.defaultView || document.parentWindow;
+    let selection: any;
+
+    if (typeof win.getSelection !== "undefined") {
+        selection = win.getSelection();
+        if (selection.rangeCount > 0) {
+            let range = win.getSelection().getRangeAt(0);
+            let preCaretRange = range.cloneRange();
             preCaretRange.selectNodeContents(element);
             preCaretRange.setEnd(range.endContainer, range.endOffset);
             caretOffset = preCaretRange.toString().length;
         }
-    } else if ( (sel = doc.selection) && sel.type != "Control") {
-        var textRange = sel.createRange();
-        var preCaretTextRange = doc.body.createTextRange();
-        preCaretTextRange.moveToElementText(element);
-        preCaretTextRange.setEndPoint("EndToEnd", textRange);
-        caretOffset = preCaretTextRange.text.length;
+    } else {
+        selection = document.selection;
+        if (selection && selection.type !== "Control") {
+            let textRange = selection.createRange();
+            let preCaretTextRange = document.body.createTextRange();
+            preCaretTextRange.moveToElementText(element);
+            preCaretTextRange.setEndPoint("EndToEnd", textRange);
+            caretOffset = preCaretTextRange.text.length;
+        }
     }
     return caretOffset;
 }
