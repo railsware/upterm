@@ -67,7 +67,7 @@ class SuggestionComponent extends React.Component<SuggestionProps, {}> {
                 onMouseOver: this.props.onHover,
                 onClick: this.props.onClick,
             },
-            React.createElement("i", { className: "icon", "data-color": this.props.suggestion.color }),
+            React.createElement("i", { className: "icon", "data-color": this.props.suggestion.iconColor }),
             React.createElement("span", { className: "value" }, this.props.suggestion.displayValue),
             React.createElement("span", { className: "synopsis" }, this.props.suggestion.synopsis)
         );

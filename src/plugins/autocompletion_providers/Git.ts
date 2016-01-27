@@ -21,7 +21,7 @@ class File extends Suggestion {
         return "file";
     }
 
-    get color(): e.Color {
+    get iconColor(): e.Color {
         return this.colorsMap[this.workingTreeStatusCode];
     }
 

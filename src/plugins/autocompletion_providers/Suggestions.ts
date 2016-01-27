@@ -23,7 +23,7 @@ export class Suggestion {
     }
 
     // FIXME: remove.
-    get color(): Color {
+    get iconColor(): Color {
         return Color.White;
     }
 
