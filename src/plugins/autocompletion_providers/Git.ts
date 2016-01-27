@@ -5,7 +5,7 @@ import * as e from "../../Enums";
 import * as Path from "path";
 import PluginManager from "../../PluginManager";
 import {linedOutputOf} from "../../PTY";
-import {Suggestion, Subcommand, OptionWithValue} from "./Suggestions";
+import {Suggestion, Subcommand, Option, OptionWithValue} from "./Suggestions";
 
 class File extends Suggestion {
     constructor(protected _line: string) {
@@ -59,6 +59,17 @@ class Branch extends Suggestion {
     }
 }
 
+const addOptions = [
+    new Option(
+        "patch",
+        "",
+        'Interactively choose hunks of patch between the index and the work tree and add them to the index. This gives the user a chance to review the\
+         difference before adding modified contents to the index.\
+         This effectively runs add --interactive, but bypasses the initial command menu and directly jumps to the patch subcommand. See "Interactive\
+         mode" for details.'
+    ),
+];
+
 async function gitSuggestions(job: Job): Promise<Suggestion[]> {
     const prompt = job.prompt;
 
@@ -71,8 +82,9 @@ async function gitSuggestions(job: Job): Promise<Suggestion[]> {
     const args = _.drop(prompt.arguments, 1);
 
     if (subcommand === "add" && args.length > 0) {
-        let changes = await linedOutputOf("git", ["status", "--porcelain"], job.directory);
-        return changes.map(line => new File(line)).filter(file => file.isAbleToAdd);
+        const changes = await linedOutputOf("git", ["status", "--porcelain"], job.directory);
+        const files = <Suggestion[]>changes.map(line => new File(line)).filter(file => file.isAbleToAdd);
+        return files.concat(addOptions);
     }
 
     if (subcommand === "checkout" && args.length === 1) {

@@ -50,6 +50,10 @@ export default class Prompt extends events.EventEmitter {
         return this._expanded;
     }
 
+    get expandFinishedLexemes(): string[] {
+        return expandAliases(expandHistory(lex(this.value).slice(0, -1)));
+    }
+
     get lexemes(): string[] {
         return this._lexemes;
     }

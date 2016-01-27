@@ -38,7 +38,7 @@ export class Suggestion {
     }
 
     shouldIgnore(job: Job): boolean {
-        return job.prompt.expanded.includes(this.value);
+        return job.prompt.expandFinishedLexemes.includes(this.value);
     }
 
     shouldSuggestChildren(job: Job): boolean {
@@ -66,7 +66,7 @@ export class Option extends BaseOption {
     }
 
     get displayValue() {
-        return `-${this._name[0]} ${this.value}`;
+        return `${this.alias} ${this.value}`;
     }
 
     get description() {
@@ -75,6 +75,15 @@ export class Option extends BaseOption {
 
     get synopsis() {
         return this._synopsis;
+    }
+
+    shouldIgnore(job: Job): boolean {
+        const finishedWords = job.prompt.expandFinishedLexemes;
+        return finishedWords.includes(this.value) || finishedWords.includes(this.alias);
+    }
+
+    private get alias(): string {
+        return `-${this._name[0]}`;
     }
 }
 
