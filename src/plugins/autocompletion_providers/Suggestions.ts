@@ -131,6 +131,10 @@ export class File extends Suggestion {
         return this._info.stat.isDirectory();
     }
 
+    get info(): FileInfo {
+        return this._info;
+    }
+
     private escape(path: string): string {
         return path.replace(/\s/g, "\\ ");
     }
@@ -181,4 +185,17 @@ export class Subcommand extends Suggestion {
 
 export function toSubcommands(dictionary: Dictionary<string>) {
     return _.map(dictionary, (value: string, key: string) => new Subcommand(key, value));
+}
+
+export async function fileSuggestions(job: Job): Promise<File[]> {
+    const prompt = job.prompt;
+
+    if (!prompt.arguments.length) {
+        return [];
+    }
+
+    const relativeSearchDirectory = Utils.dirName(prompt.lastArgument);
+    const fileInfos = await Utils.stats(Utils.resolveDirectory(job.directory, relativeSearchDirectory));
+
+    return fileInfos.map(fileInfo => new File(fileInfo, relativeSearchDirectory));
 }
