@@ -175,7 +175,7 @@ export class Subcommand extends Suggestion {
     }
 
     shouldIgnore(job: Job): boolean {
-        return super.shouldIgnore(job) || job.prompt.expanded.length !== 2;
+        return job.prompt.expanded.length !== 2;
     }
 }
 
