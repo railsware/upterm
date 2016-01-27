@@ -1,7 +1,6 @@
 import Utils from "../../Utils";
 import Job from "../../Job";
 import * as _ from "lodash";
-import * as i from "../../Interfaces";
 import * as e from "../../Enums";
 import * as Path from "path";
 import PluginManager from "../../PluginManager";
