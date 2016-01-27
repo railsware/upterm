@@ -177,6 +177,6 @@ PluginManager.registerAutocompletionProvider({
             return [];
         }
 
-        return _.map(await Utils.executablesInPaths(), (executable: string) => new Executable(executable, descriptions[executable]));
+        return _.map(await Utils.executablesInPaths(), (executable: string) => new Executable(executable).withDescription(descriptions[executable]));
     },
 });

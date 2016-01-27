@@ -60,14 +60,14 @@ class Branch extends Suggestion {
 }
 
 const addOptions = [
-    new Option(
-        "patch",
-        "",
-        'Interactively choose hunks of patch between the index and the work tree and add them to the index. This gives the user a chance to review the\
-         difference before adding modified contents to the index.\
-         This effectively runs add --interactive, but bypasses the initial command menu and directly jumps to the patch subcommand. See "Interactive\
-         mode" for details.'
-    ),
+    new Option("patch", "").
+        withDescription(
+            'Interactively choose hunks of patch between the index and the work tree and add them to the index. This gives the user a chance to review the\
+             difference before adding modified contents to the index.\
+             This effectively runs add --interactive, but bypasses the initial command menu and directly jumps to the patch subcommand. See "Interactive\
+             mode" for details.'
+        )
+    ,
 ];
 
 async function gitSuggestions(job: Job): Promise<Suggestion[]> {
@@ -149,16 +149,12 @@ PluginManager.registerAutocompletionProvider({
 });
 
 export class OptionValueSuggestion extends Suggestion {
-    constructor(protected _name: string, protected _description: string) {
+    constructor(protected _name: string) {
         super();
     }
 
     get value(): string {
         return this._name;
-    }
-
-    get description(): string {
-        return this._description;
     }
 
     getPrefix(job: Job): string {
@@ -181,22 +177,15 @@ const cleanupModes = _.map(
         is truncated if the message is to be edited. "#" can be customized with core.commentChar.',
         default: "Same as strip if the message is to be edited. Otherwise whitespace",
     },
-    (description: string, mode: string) => new OptionValueSuggestion(mode, description)
+    (description: string, mode: string) => new OptionValueSuggestion(mode).withDescription(description)
 );
 
 const commitOptions = [
-    new OptionWithValue(
-        "message",
-        "--message=<msg>",
-        "-m <msg>",
-        "Use the given <msg> as the commit message. If multiple -m options are given, their values are concatenated as separate paragraphs."
-    ),
-    new OptionWithValue(
-        "cleanup",
-        "--cleanup=<mode>",
-        "",
-        "This option determines how the supplied commit message should be cleaned up before committing. The <mode> can be strip, whitespace, verbatim, scissors or default."
-    ).withChildrenProvider(async () => cleanupModes),
+    new OptionWithValue("message", "--message=<msg>", "-m <msg>").
+        withDescription("Use the given <msg> as the commit message. If multiple -m options are given, their values are concatenated as separate paragraphs."),
+    new OptionWithValue("cleanup", "--cleanup=<mode>", "").
+        withDescription("This option determines how the supplied commit message should be cleaned up before committing. The <mode> can be strip, whitespace, verbatim, scissors or default.").
+        withChildrenProvider(async () => cleanupModes),
 ];
 
 PluginManager.registerAutocompletionProvider({

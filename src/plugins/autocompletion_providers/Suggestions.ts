@@ -7,9 +7,11 @@ import {Color} from "../../Enums";
 type SuggestionsPromise = Promise<Suggestion[]>;
 
 export class Suggestion {
+    private _description: string;
     private _childrenProvider: (job: Job) => SuggestionsPromise;
 
     constructor() {
+        this._description = "";
         this._childrenProvider = async (job) => [];
     }
 
@@ -57,6 +59,11 @@ export class Suggestion {
         return [];
     }
 
+    withDescription(description: string): Suggestion {
+        this._description = description;
+        return this;
+    }
+
     withChildrenProvider(provider: (job: Job) => SuggestionsPromise): Suggestion {
         this._childrenProvider = provider;
         return this;
@@ -70,7 +77,7 @@ abstract class BaseOption extends Suggestion {
 }
 
 export class Option extends BaseOption {
-    constructor(protected _name: string, protected _synopsis: string, protected _description: string) {
+    constructor(protected _name: string, protected _synopsis: string) {
         super();
     };
 
@@ -80,10 +87,6 @@ export class Option extends BaseOption {
 
     get displayValue() {
         return `${this.alias} ${this.value}`;
-    }
-
-    get description() {
-        return this._description;
     }
 
     get synopsis() {
@@ -101,16 +104,12 @@ export class Option extends BaseOption {
 }
 
 export class ShortOption extends BaseOption {
-    constructor(protected _name: string, protected _synopsis: string, protected _description: string) {
+    constructor(protected _name: string, protected _synopsis: string) {
         super();
     };
 
     get value() {
         return `-${this._name}`;
-    }
-
-    get description() {
-        return this._description;
     }
 
     get synopsis() {
@@ -121,8 +120,7 @@ export class ShortOption extends BaseOption {
 export class OptionWithValue extends BaseOption {
     constructor(protected _value: string,
                 protected _displayValue: string,
-                protected _synopsis: string,
-                protected _description: string) {
+                protected _synopsis: string) {
         super();
     };
 
@@ -142,10 +140,6 @@ export class OptionWithValue extends BaseOption {
         return this._synopsis;
     }
 
-    get description() {
-        return this._description;
-    }
-
     shouldIgnore(job: Job): boolean {
         return _.some(job.prompt.expanded, word => word.includes(this.value));
     }
@@ -156,7 +150,7 @@ export class OptionWithValue extends BaseOption {
 }
 
 export class Executable extends Suggestion {
-    constructor(protected _name: string, protected _description: string) {
+    constructor(protected _name: string) {
         super();
     };
 
@@ -166,10 +160,6 @@ export class Executable extends Suggestion {
 
     get displayValue() {
         return this._name;
-    }
-
-    get description() {
-        return this._description;
     }
 
     get type() {
