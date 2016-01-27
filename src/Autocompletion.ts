@@ -16,7 +16,7 @@ export default class Autocompletion implements i.AutocompletionProvider {
         return Promise.all(providers.map(provider => provider.getSuggestions(job))).then(results =>
             _._(results)
                 .flatten()
-                .filter((suggestion: Suggestion) => !suggestion.isAlreadyOnPrompt(job))
+                .filter((suggestion: Suggestion) => !suggestion.shouldIgnore(job))
                 .sortBy((suggestion: Suggestion) => -score(suggestion.value, suggestion.getPrefix(job)))
                 .uniqBy((suggestion: Suggestion) => suggestion.value)
                 .take(Autocompletion.limit)

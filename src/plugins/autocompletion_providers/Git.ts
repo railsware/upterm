@@ -133,11 +133,5 @@ const porcelainCommands = [
 
 PluginManager.registerAutocompletionProvider({
     forCommand: `git`,
-    getSuggestions: async function(job: Job) {
-        if (job.prompt.expanded.length !== 2) {
-            return [];
-        }
-
-        return porcelainCommands;
-    },
+    getSuggestions: async (job) => porcelainCommands,
 });

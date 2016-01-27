@@ -1,5 +1,5 @@
 import PluginManager from "../../PluginManager";
-import {toSubcommands, Suggestion} from "./Suggestions";
+import {toSubcommands} from "./Suggestions";
 
 const subcommands = toSubcommands({
     start: "Start a zeus server in the current directory using zeus.json",
@@ -16,11 +16,5 @@ const subcommands = toSubcommands({
 
 PluginManager.registerAutocompletionProvider({
     forCommand: "zeus",
-    getSuggestions: async function (job): Promise<Suggestion[]> {
-        if (job.prompt.expanded.length !== 2) {
-            return [];
-        }
-
-        return subcommands;
-    },
+    getSuggestions: async (job) => subcommands,
 });

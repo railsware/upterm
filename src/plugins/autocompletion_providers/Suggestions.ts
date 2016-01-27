@@ -17,7 +17,6 @@ export class Suggestion {
         return "";
     }
 
-    // FIXME: return an enum or an icon.
     get type(): string {
         return "";
     }
@@ -38,7 +37,7 @@ export class Suggestion {
         return job.prompt.lastLexeme;
     }
 
-    isAlreadyOnPrompt(job: Job): boolean {
+    shouldIgnore(job: Job): boolean {
         return job.prompt.expanded.includes(this.value);
     }
 }
@@ -173,6 +172,10 @@ export class Subcommand extends Suggestion {
 
     get type(): string {
         return "command";
+    }
+
+    shouldIgnore(job: Job): boolean {
+        return super.shouldIgnore(job) || job.prompt.expanded.length !== 2;
     }
 }
 

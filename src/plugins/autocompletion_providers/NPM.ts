@@ -61,13 +61,7 @@ const subcommands = toSubcommands({
 
 PluginManager.registerAutocompletionProvider({
     forCommand: "npm",
-    getSuggestions: async function (job: Job): Promise<Suggestion[]> {
-        if (job.prompt.expanded.length !== 2) {
-            return [];
-        }
-
-        return subcommands;
-    },
+    getSuggestions: async (job) => subcommands,
 });
 
 PluginManager.registerAutocompletionProvider({
