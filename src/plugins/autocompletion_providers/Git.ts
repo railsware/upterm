@@ -126,7 +126,7 @@ async function gitSuggestions(job: Job): Promise<Suggestion[]> {
         return files.concat(addOptions);
     }
 
-    if (subcommand === "checkout" && args.length === 1) {
+    if ((subcommand === "checkout" || subcommand === "merge") && args.length === 1) {
         let output = await linedOutputOf("git", ["branch", "--no-color"], job.directory);
         return output.map(branch => new Branch(branch)).filter(branch => !branch.isCurrent);
     }
@@ -134,7 +134,7 @@ async function gitSuggestions(job: Job): Promise<Suggestion[]> {
     return [];
 }
 
-["add", "checkout"].forEach(subcommand =>
+["add", "checkout", "merge"].forEach(subcommand =>
     PluginManager.registerAutocompletionProvider({
         forCommand: `git ${subcommand}`,
         getSuggestions: gitSuggestions,
