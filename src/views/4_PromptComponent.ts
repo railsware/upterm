@@ -229,7 +229,10 @@ export default class PromptComponent extends React.Component<Props, State> imple
                 highlightedIndex: this.state.highlightedSuggestionIndex,
                 ref: "autocomplete",
             });
-            autocompletedPreview = React.createElement("div", { className: "autocompleted-preview" }, this.valueWithCurrentSuggestion);
+            const completed = this.valueWithCurrentSuggestion;
+            if (completed.startsWith(this.prompt.value)) {
+                autocompletedPreview = React.createElement("div", { className: "autocompleted-preview" }, completed);
+            }
         }
 
         if (this.props.jobView.state.canBeDecorated) {
