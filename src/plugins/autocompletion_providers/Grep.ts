@@ -6,7 +6,6 @@ const options = [
     new Option("count", "", "Only a count of selected lines is written to standard output.")
 ];
 
-// FIXME: when we have an alias grep='grep --color', suggestions are shown when you have typed grep without a space.
 PluginManager.registerAutocompletionProvider({
     forCommand: "grep",
     getSuggestions: async (job: Job) => {
