@@ -2,7 +2,7 @@ import * as _ from "lodash";
 import Aliases from "../../Aliases";
 import Job from "../../Job";
 import PluginManager from "../../PluginManager";
-import {Suggestion} from "../../Interfaces";
+import {Suggestion} from "./Suggestions";
 
 class Alias extends Suggestion {
     constructor(protected _alias: string, protected _expanded: string) {

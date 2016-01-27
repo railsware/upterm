@@ -2,9 +2,9 @@ import * as events from "events";
 import Autocompletion from "./Autocompletion";
 import {History, HistoryEntry} from "./History";
 import * as _ from "lodash";
-import * as i from "./Interfaces";
 import {expandAliases, expandHistory, lex} from "./CommandExpander";
 import Job from "./Job";
+import {Suggestion} from "./plugins/autocompletion_providers/Suggestions";
 
 export default class Prompt extends events.EventEmitter {
     private _value = "";
@@ -58,7 +58,7 @@ export default class Prompt extends events.EventEmitter {
         return _.last(this.lexemes) || "";
     }
 
-    getSuggestions(): Promise<i.Suggestion[]> {
+    getSuggestions(): Promise<Suggestion[]> {
         return this._autocompletion.getSuggestions(this.job);
     }
 }

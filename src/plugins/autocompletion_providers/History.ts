@@ -1,7 +1,7 @@
 import ExecutionHistory from "../../History";
 import Job from "../../Job";
 import PluginManager from "../../PluginManager";
-import {Suggestion} from "../../Interfaces";
+import {Suggestion} from "./Suggestions";
 
 class History extends Suggestion {
     constructor(protected _raw: string) {

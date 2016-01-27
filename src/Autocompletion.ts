@@ -2,6 +2,7 @@ import * as _ from "lodash";
 import * as i from "./Interfaces";
 import Job from "./Job";
 import PluginManager from "./PluginManager";
+import {Suggestion} from "./plugins/autocompletion_providers/Suggestions";
 const score: (i: string, m: string) => number = require("fuzzaldrin").score;
 
 export default class Autocompletion implements i.AutocompletionProvider {
@@ -15,9 +16,9 @@ export default class Autocompletion implements i.AutocompletionProvider {
         return Promise.all(providers.map(provider => provider.getSuggestions(job))).then(results =>
             _._(results)
                 .flatten()
-                .filter((suggestion: i.Suggestion) => !suggestion.isAlreadyOnPrompt(job))
-                .sortBy((suggestion: i.Suggestion) => -score(suggestion.value, suggestion.getPrefix(job)))
-                .uniqBy((suggestion: i.Suggestion) => suggestion.value)
+                .filter((suggestion: Suggestion) => !suggestion.isAlreadyOnPrompt(job))
+                .sortBy((suggestion: Suggestion) => -score(suggestion.value, suggestion.getPrefix(job)))
+                .uniqBy((suggestion: Suggestion) => suggestion.value)
                 .take(Autocompletion.limit)
                 .value()
         );

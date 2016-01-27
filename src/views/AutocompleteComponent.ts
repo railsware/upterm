@@ -1,10 +1,10 @@
 import * as React from "react";
 import * as _ from "lodash";
-import * as i from "../Interfaces";
+import {Suggestion} from "../plugins/autocompletion_providers/Suggestions";
 
 interface AutocompleteProps {
     caretOffset: Offset;
-    suggestions: i.Suggestion[];
+    suggestions: Suggestion[];
     onSuggestionHover: (index: number) => void;
     onSuggestionClick: () => void;
     highlightedIndex: number;
@@ -44,7 +44,7 @@ export default class AutocompleteComponent extends React.Component<AutocompleteP
 }
 
 interface SuggestionProps {
-    suggestion: i.Suggestion;
+    suggestion: Suggestion;
     key: number;
     onHover: (index: number) => void;
     onClick: () => void;

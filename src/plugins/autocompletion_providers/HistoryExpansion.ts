@@ -2,6 +2,7 @@ import * as i from "../../Interfaces";
 import Job from "../../Job";
 import {isCompleteHistoryCommand, historyReplacement} from "../../CommandExpander";
 import PluginManager from "../../PluginManager";
+import {Suggestion} from "./Suggestions";
 
 const descriptions: Dictionary<string> = {
     "!!": "The previous command",
@@ -10,7 +11,7 @@ const descriptions: Dictionary<string> = {
     "!*": "All arguments of the previous command",
 };
 
-class Expansion extends i.Suggestion {
+class Expansion extends Suggestion {
     constructor(protected _command: string) {
         super();
     }
@@ -34,7 +35,7 @@ class Expansion extends i.Suggestion {
 
 class HistoryExpansion implements i.AutocompletionProvider {
 
-    async getSuggestions(job: Job): Promise<i.Suggestion[]> {
+    async getSuggestions(job: Job): Promise<Suggestion[]> {
         return this.commands(job.prompt.lastLexeme).map(command => new Expansion(command));
     }
 

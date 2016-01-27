@@ -1,7 +1,48 @@
-import {Suggestion, FileInfo} from "../../Interfaces";
+import {FileInfo} from "../../Interfaces";
 import Utils from "../../Utils";
 import Job from "../../Job";
 import * as Path from "path";
+import {Color} from "../../Enums";
+
+export class Suggestion {
+    get value(): string {
+        return "";
+    }
+
+    get synopsis(): string {
+        return "";
+    }
+
+    get description(): string {
+        return "";
+    }
+
+    // FIXME: return an enum or an icon.
+    get type(): string {
+        return "";
+    }
+
+    // FIXME: remove.
+    get color(): Color {
+        return Color.White;
+    }
+
+    get partial(): boolean {
+        return false;
+    }
+
+    get displayValue(): string {
+        return this.value;
+    }
+
+    getPrefix(job: Job): string {
+        return job.prompt.lastLexeme;
+    }
+
+    isAlreadyOnPrompt(job: Job): boolean {
+        return job.prompt.expanded.includes(this.value);
+    }
+}
 
 abstract class BaseOption extends Suggestion {
     get type() {

@@ -6,8 +6,9 @@ import * as e from "../../Enums";
 import * as Path from "path";
 import PluginManager from "../../PluginManager";
 import {linedOutputOf} from "../../PTY";
+import {Suggestion} from "./Suggestions";
 
-class File extends i.Suggestion {
+class File extends Suggestion {
     constructor(protected _line: string) {
         super();
     }
@@ -41,7 +42,7 @@ class File extends i.Suggestion {
     };
 }
 
-class Branch extends i.Suggestion {
+class Branch extends Suggestion {
     constructor(protected _line: string) {
         super();
     }
@@ -59,7 +60,7 @@ class Branch extends i.Suggestion {
     }
 }
 
-async function gitSuggestions(job: Job): Promise<i.Suggestion[]> {
+async function gitSuggestions(job: Job): Promise<Suggestion[]> {
     const prompt = job.prompt;
 
     const gitDirectoryPath = Path.join(job.directory, ".git");

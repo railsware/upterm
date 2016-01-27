@@ -1,9 +1,8 @@
 import Utils from "../../Utils";
 import Job from "../../Job";
 import * as Path from "path";
-import * as i from "../../Interfaces";
 import PluginManager from "../../PluginManager";
-import {Subcommand, toSubcommands} from "./Suggestions";
+import {Subcommand, toSubcommands, Suggestion} from "./Suggestions";
 
 const subcommands = toSubcommands({
     "access": "Set access level on published packages",
@@ -62,7 +61,7 @@ const subcommands = toSubcommands({
 
 PluginManager.registerAutocompletionProvider({
     forCommand: "npm",
-    getSuggestions: async function (job: Job): Promise<i.Suggestion[]> {
+    getSuggestions: async function (job: Job): Promise<Suggestion[]> {
         if (job.prompt.expanded.length !== 2) {
             return [];
         }
@@ -73,7 +72,7 @@ PluginManager.registerAutocompletionProvider({
 
 PluginManager.registerAutocompletionProvider({
     forCommand: "npm run",
-    getSuggestions: async function (job: Job): Promise<i.Suggestion[]> {
+    getSuggestions: async function (job: Job): Promise<Suggestion[]> {
         const packageFilePath = Path.join(job.directory, "package.json");
 
         if (job.prompt.expanded.length === 3 && await Utils.exists(packageFilePath)) {

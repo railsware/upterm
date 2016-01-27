@@ -1,6 +1,5 @@
 import * as _ from "lodash";
 import * as e from "../Enums";
-import * as i from "../Interfaces";
 import * as React from "react";
 import AutocompleteComponent from "./AutocompleteComponent";
 import DecorationToggleComponent from "./DecorationToggleComponent";
@@ -9,6 +8,7 @@ import {stopBubblingUp} from "./ViewUtils";
 import JobComponent from "./3_JobComponent";
 import PromptModel from "../Prompt";
 import JobModel from "../Job";
+import {Suggestion} from "../plugins/autocompletion_providers/Suggestions";
 const rx = require("rx");
 const reactDOM = require("react-dom");
 
@@ -37,6 +37,7 @@ function setCaretPosition(node: Node, position: number) {
     selection.addRange(range);
 }
 
+// FIXME: clean up.
 function getCaretPosition(element: any): number {
     //return window.getSelection().anchorOffset;
     var caretOffset = 0;
@@ -106,7 +107,7 @@ interface Props {
 interface State {
     highlightedSuggestionIndex?: number;
     latestKeyCode?: number;
-    suggestions?: i.Suggestion[];
+    suggestions?: Suggestion[];
 }
 
 

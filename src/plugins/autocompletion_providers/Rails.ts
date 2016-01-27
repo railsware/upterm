@@ -1,6 +1,5 @@
-import * as i from "../../Interfaces";
 import PluginManager from "../../PluginManager";
-import {toSubcommands} from "./Suggestions";
+import {toSubcommands, Suggestion} from "./Suggestions";
 
 const subcommands = toSubcommands({
     runner: "Run a piece of code in the application environment",
@@ -15,7 +14,7 @@ const subcommands = toSubcommands({
 
 PluginManager.registerAutocompletionProvider({
     forCommand: "rails",
-    getSuggestions: async function (job): Promise<i.Suggestion[]> {
+    getSuggestions: async function (job): Promise<Suggestion[]> {
         if (job.prompt.expanded.length !== 2) {
             return [];
         }
