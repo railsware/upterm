@@ -4,7 +4,15 @@ import Job from "../../Job";
 import * as Path from "path";
 import {Color} from "../../Enums";
 
+type SuggestionsPromise = Promise<Suggestion[]>;
+
 export class Suggestion {
+    private _childrenProvider: (job: Job) => SuggestionsPromise;
+
+    constructor() {
+        this._childrenProvider = async (job) => [];
+    }
+
     get value(): string {
         return "";
     }
@@ -47,6 +55,11 @@ export class Suggestion {
 
     async getChildren(job: Job): Promise<Suggestion[]> {
         return [];
+    }
+
+    withChildrenProvider(provider: (job: Job) => SuggestionsPromise): Suggestion {
+        this._childrenProvider = provider;
+        return this;
     }
 }
 
@@ -109,8 +122,7 @@ export class OptionWithValue extends BaseOption {
     constructor(protected _value: string,
                 protected _displayValue: string,
                 protected _synopsis: string,
-                protected _description: string,
-                protected _childrenProvider: (job: Job) => Promise<Suggestion[]>) {
+                protected _description: string) {
         super();
     };
 
@@ -140,10 +152,6 @@ export class OptionWithValue extends BaseOption {
 
     shouldSuggestChildren(job: Job): boolean {
         return job.prompt.lastLexeme.includes(this.value);
-    }
-
-    getChildren(job: Job): Promise<Suggestion[]> {
-        return this._childrenProvider(job);
     }
 }
 

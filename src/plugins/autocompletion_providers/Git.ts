@@ -189,22 +189,20 @@ const commitOptions = [
         "message",
         "--message=<msg>",
         "-m <msg>",
-        "Use the given <msg> as the commit message. If multiple -m options are given, their values are concatenated as separate paragraphs.",
-        async () => []
+        "Use the given <msg> as the commit message. If multiple -m options are given, their values are concatenated as separate paragraphs."
     ),
     new OptionWithValue(
         "cleanup",
         "--cleanup=<mode>",
         "",
-        "This option determines how the supplied commit message should be cleaned up before committing. The <mode> can be strip, whitespace, verbatim, scissors or default.",
-        async () => cleanupModes
-    ),
+        "This option determines how the supplied commit message should be cleaned up before committing. The <mode> can be strip, whitespace, verbatim, scissors or default."
+    ).withChildrenProvider(async () => cleanupModes),
 ];
 
 PluginManager.registerAutocompletionProvider({
     forCommand: `git commit`,
     getSuggestions: async (job: Job) => {
-        const currentOption: OptionWithValue = _.find(commitOptions, option => option.shouldSuggestChildren(job));
+        const currentOption = _.find(commitOptions, option => option.shouldSuggestChildren(job));
         if (currentOption) {
             return await currentOption.getChildren(job);
         }
