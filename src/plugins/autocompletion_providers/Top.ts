@@ -103,7 +103,7 @@ const options = _.map(
             long: "Show library version and the usage prompt, then quit.",
         },
     },
-    (descriptions, option) => new ShortOption(option, descriptions.short).withDescription(descriptions.long)
+    (descriptions, option) => new ShortOption(option).withSynopsis(descriptions.short).withDescription(descriptions.long)
 );
 
 

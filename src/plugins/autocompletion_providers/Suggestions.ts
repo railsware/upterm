@@ -7,10 +7,12 @@ import {Color} from "../../Enums";
 type SuggestionsPromise = Promise<Suggestion[]>;
 
 export class Suggestion {
+    private _synopsis: string;
     private _description: string;
     private _childrenProvider: (job: Job) => SuggestionsPromise;
 
     constructor() {
+        this._synopsis = "";
         this._description = "";
         this._childrenProvider = async (job) => [];
     }
@@ -20,11 +22,11 @@ export class Suggestion {
     }
 
     get synopsis(): string {
-        return "";
+        return this._synopsis;
     }
 
     get description(): string {
-        return "";
+        return this._description;
     }
 
     get type(): string {
@@ -59,6 +61,11 @@ export class Suggestion {
         return [];
     }
 
+    withSynopsis(synopsis: string): Suggestion {
+        this._synopsis = synopsis;
+        return this;
+    }
+
     withDescription(description: string): Suggestion {
         this._description = description;
         return this;
@@ -77,7 +84,7 @@ abstract class BaseOption extends Suggestion {
 }
 
 export class Option extends BaseOption {
-    constructor(protected _name: string, protected _synopsis: string) {
+    constructor(protected _name: string) {
         super();
     };
 
@@ -87,10 +94,6 @@ export class Option extends BaseOption {
 
     get displayValue() {
         return `${this.alias} ${this.value}`;
-    }
-
-    get synopsis() {
-        return this._synopsis;
     }
 
     shouldIgnore(job: Job): boolean {
@@ -104,23 +107,18 @@ export class Option extends BaseOption {
 }
 
 export class ShortOption extends BaseOption {
-    constructor(protected _name: string, protected _synopsis: string) {
+    constructor(protected _name: string) {
         super();
     };
 
     get value() {
         return `-${this._name}`;
     }
-
-    get synopsis() {
-        return this._synopsis;
-    }
 }
 
 export class OptionWithValue extends BaseOption {
     constructor(protected _value: string,
-                protected _displayValue: string,
-                protected _synopsis: string) {
+                protected _displayValue: string) {
         super();
     };
 
@@ -134,10 +132,6 @@ export class OptionWithValue extends BaseOption {
 
     get partial(): boolean {
         return true;
-    }
-
-    get synopsis(): string {
-        return this._synopsis;
     }
 
     shouldIgnore(job: Job): boolean {
@@ -219,16 +213,12 @@ export class File extends Suggestion {
 }
 
 export class Subcommand extends Suggestion {
-    constructor(protected _name: string, protected _synopsis: string) {
+    constructor(protected _name: string) {
         super();
     }
 
     get value(): string {
         return this._name;
-    }
-
-    get synopsis(): string {
-        return this._synopsis;
     }
 
     get type(): string {
@@ -244,10 +234,6 @@ export class SubSubcommand extends Subcommand {
     shouldIgnore(job: Job): boolean {
         return job.prompt.expanded.length !== 3;
     }
-}
-
-export function toSubcommands(dictionary: Dictionary<string>) {
-    return _.map(dictionary, (value: string, key: string) => new Subcommand(key, value));
 }
 
 export async function fileSuggestions(job: Job): Promise<File[]> {
