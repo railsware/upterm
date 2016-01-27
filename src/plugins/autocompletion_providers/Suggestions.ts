@@ -84,6 +84,7 @@ abstract class BaseOption extends Suggestion {
 }
 
 export class Option extends BaseOption {
+    private _alias: string;
     constructor(protected _name: string) {
         super();
     };
@@ -102,7 +103,22 @@ export class Option extends BaseOption {
     }
 
     private get alias(): string {
-        return `-${this._name[0]}`;
+        return `-${this._alias || this._name[0]}`;
+    }
+
+    withAlias(alias: string): Option {
+        this._alias = alias;
+        return this;
+    }
+}
+
+export class LongOption extends BaseOption {
+    constructor(protected _name: string) {
+        super();
+    };
+
+    get value() {
+        return `--${this._name}`;
     }
 }
 
