@@ -1,4 +1,4 @@
-import * as pty from "ptyw.js";
+import * as pty from "pty.js";
 
 let commandName = process.argv[2];
 let args = process.argv.slice(5);
@@ -10,6 +10,7 @@ const fork = pty.fork(process.env.SHELL, ["-c", `${commandName} ${args.join(" ")
     rows: rows,
     cwd: process.cwd(),
     env: process.env,
+    resume: false,
 });
 
 interface IncomingMessage {

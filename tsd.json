@@ -22,6 +22,9 @@
     },
     "github-electron/github-electron.d.ts": {
       "commit": "86dbea8fc37d9473fee465da4f0a21bea4f8cbd9"
+    },
+    "pty.js/pty.js.d.ts": {
+      "commit": "9f00157e1b7e36e90b751c039059a9720a554208"
     }
   }
 }
