@@ -279,8 +279,7 @@ export default class PromptComponent extends React.Component<Props, State> imple
 
     private execute(): void {
         if (!this.isEmpty()) {
-            // Timeout prevents two-line input on cd.
-            setTimeout(() => this.prompt.execute(), 0);
+            this.prompt.execute();
         }
     }
 

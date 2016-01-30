@@ -62,8 +62,7 @@ export default class Buffer extends events.EventEmitter {
             this.set(this.cursorPosition, charObject);
             this.moveCursorRelative({ horizontal: 1 });
         }
-
-        this.emit("data");
+        this.emitData();
     }
 
     scrollUp(count: number, addAtLine: number) {
@@ -122,24 +121,24 @@ export default class Buffer extends events.EventEmitter {
 
     showCursor(state: boolean): void {
         this.cursor.setShow(state);
-        this.emit("data");
+        this.emitData();
     }
 
     blinkCursor(state: boolean): void {
         this.cursor.setBlink(state);
-        this.emit("data");
+        this.emitData();
     }
 
     moveCursorRelative(position: Advancement): Buffer {
         this.cursor.moveRelative(position);
-        this.emit("data");
+        this.emitData();
 
         return this;
     }
 
     moveCursorAbsolute(position: RowColumn): Buffer {
         this.cursor.moveAbsolute(position, this.homePosition);
-        this.emit("data");
+        this.emitData();
 
         return this;
     }
@@ -154,12 +153,12 @@ export default class Buffer extends events.EventEmitter {
                                          .toList()
             );
         }
-        this.emit("data");
+        this.emitData();
     }
 
     clearRow() {
         this.storage = this.storage.set(this.cursorPosition.row, List<Char>());
-        this.emit("data");
+        this.emitData();
     }
 
     clearRowToEnd() {
@@ -170,7 +169,7 @@ export default class Buffer extends events.EventEmitter {
                 (row: List<Char>) => row.take(this.cursorPosition.column).toList()
             );
         }
-        this.emit("data");
+        this.emitData();
     }
 
     clearRowToBeginning() {
@@ -180,7 +179,7 @@ export default class Buffer extends events.EventEmitter {
                 this.cursorPosition.row,
                 row => row.splice(0, this.cursorPosition.column + 1, ...replacement).toList());
         }
-        this.emit("data");
+        this.emitData();
     }
 
     clear() {
@@ -193,13 +192,13 @@ export default class Buffer extends events.EventEmitter {
         const replacement = Array(this.cursorPosition.row);
 
         this.storage = this.storage.splice(0, this.cursorPosition.row, ...replacement).toList();
-        this.emit("data");
+        this.emitData();
     }
 
     clearToEnd() {
         this.clearRowToEnd();
         this.storage.splice(this.cursorPosition.row + 1, Number.MAX_VALUE);
-        this.emit("data");
+        this.emitData();
     }
 
     get size(): number {
@@ -245,4 +244,8 @@ export default class Buffer extends events.EventEmitter {
 
         this.storage = this.storage.setIn([position.row, position.column], char);
     }
+
+    private emitData() {
+        this.emit("data");
+    };
 }

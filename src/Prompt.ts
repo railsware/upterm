@@ -19,7 +19,7 @@ export default class Prompt extends events.EventEmitter {
 
     execute(): void {
         History.add(new HistoryEntry(this.value, this._historyExpanded));
-        this.emit("send");
+        this.job.execute();
     }
 
     get value(): string {
