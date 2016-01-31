@@ -4,6 +4,7 @@ import * as Path from "path";
 import * as i from "./Interfaces";
 import * as e from "./Enums";
 import * as _ from "lodash";
+import Char from "./Char";
 
 interface FSExtraWalkObject {
     path: string;
@@ -202,28 +203,26 @@ export default class Utils {
     }
 }
 
-/**
- * Copied from here: https://ghc.haskell.org/trac/ghc/ticket/1408
- *
- * groupWhen :: (a -> a -> Bool) -> [a] -> [[a]]
- * groupWhen _ []    = []
- * groupWhen _ [a]   = [[a]]
- * groupWhen f (a:l) = if f a (head c) then (a:c):r
- *                                     else [a]:c:r
- *   where (c:r) = groupWhen f l
- *
- * @example groupWhen (<) [1,2,3,2,10,12,10,11] -- Group into strictly increasing sublists
- */
-export function groupWhen<A>(f: (a: A, b: A) => boolean, input: A[]): A[][] {
-    if (input.length === 0) return [];
-    if (input.length === 1) return [input];
+export function groupWhen<T>(grouper: (a: T, b: T) => boolean, row: T[]): T[][] {
+    if (row.length === 0) return [];
+    if (row.length === 1) return [row];
 
-    let [a, ...l] = input;
-    let [c, ...r] = groupWhen(f, l);
+    const result: T[][] = [];
+    const firstValue = row[0];
+    let currentGroup: T[] = [firstValue];
+    let previousValue: T = firstValue;
 
-    if (f(a, c[0])) {
-        return [[a, ...c], ...r];
-    } else {
-        return [[a], c, ...r];
-    }
+    row.slice(1).forEach(currentValue => {
+        if (grouper(currentValue, previousValue)) {
+            currentGroup.push(currentValue);
+        } else {
+            result.push(currentGroup);
+            currentGroup = [currentValue];
+        }
+
+        previousValue = currentValue;
+    });
+    result.push(currentGroup);
+
+    return result;
 }
