@@ -39,7 +39,7 @@ export default class Terminal extends EmitterWithUniqueID {
         const job = new Job(this);
 
         job.once("end", () => {
-            if (app.dock && !_.some(browserWindow.getAllWindows(), window => window.isFocused())) {
+            if (app.dock && !browserWindow.getAllWindows().some(window => window.isFocused())) {
                 app.dock.bounce("informational");
                 const smiley = job.status === Status.Success ? "1" : "✕";
                 app.dock.setBadge(smiley);

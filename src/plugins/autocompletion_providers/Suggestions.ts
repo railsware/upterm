@@ -169,7 +169,7 @@ export class OptionWithValue extends BaseOption {
     }
 
     shouldIgnore(job: Job): boolean {
-        return _.some(job.prompt.expanded, word => word.includes(this.value));
+        return job.prompt.expanded.some(word => word.includes(this.value));
     }
 
     shouldSuggestChildren(job: Job): boolean {

@@ -1,6 +1,5 @@
 import * as React from "react";
 import * as e from "../Enums";
-import * as _ from "lodash";
 import JobModel from "../Job";
 import {keys} from "./ViewUtils";
 import PromptComponent from "./4_PromptComponent";
@@ -92,6 +91,5 @@ export default class JobComponent extends React.Component<Props, State> implemen
 }
 
 export function isMetaKey(event: KeyboardEvent) {
-    return event.metaKey || _.some([event.key, (<any>event).keyIdentifier],
-                                   key => ["Shift", "Alt", "Control"].includes(key));
+    return event.metaKey || [event.key, (<any>event).keyIdentifier].some(["Shift", "Alt", "Control"].includes);
 }

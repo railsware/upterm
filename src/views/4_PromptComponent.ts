@@ -74,8 +74,7 @@ function isCommandKey(event: KeyboardEvent) {
 }
 
 const isSpecialKey = _.memoize(
-    (event: React.KeyboardEvent) => _.some(_.values(keys),
-                                           (matcher: (event: React.KeyboardEvent) => boolean) => matcher(event)),
+    (event: React.KeyboardEvent) => _.values(keys).some((matcher: (event: React.KeyboardEvent) => boolean) => matcher(event)),
     (event: React.KeyboardEvent) => [event.ctrlKey, event.keyCode]
 );
 
