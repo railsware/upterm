@@ -7,18 +7,22 @@ import {Color} from "../../Enums";
 type SuggestionsPromise = Promise<Suggestion[]>;
 
 export class Suggestion {
+    protected _value: string;
     private _synopsis: string;
     private _description: string;
+    private _type: string;
     private _childrenProvider: (job: Job) => SuggestionsPromise;
 
     constructor() {
+        this._value = "";
         this._synopsis = "";
         this._description = "";
+        this._type = "";
         this._childrenProvider = async (job) => [];
     }
 
     get value(): string {
-        return "";
+        return this._value;
     }
 
     get synopsis(): string {
@@ -30,7 +34,7 @@ export class Suggestion {
     }
 
     get type(): string {
-        return "";
+        return this._type;
     }
 
     get iconColor(): Color {
@@ -61,6 +65,11 @@ export class Suggestion {
         return [];
     }
 
+    withValue(value: string): Suggestion {
+        this._value = value;
+        return this;
+    }
+
     withSynopsis(synopsis: string): Suggestion {
         this._synopsis = synopsis;
         return this;
@@ -68,6 +77,11 @@ export class Suggestion {
 
     withDescription(description: string): Suggestion {
         this._description = description;
+        return this;
+    }
+
+    withType(type: string): Suggestion {
+        this._type = type;
         return this;
     }
 
@@ -137,9 +151,9 @@ export class ShortOption extends BaseOption {
 }
 
 export class OptionWithValue extends BaseOption {
-    constructor(protected _value: string,
-                protected _displayValue: string) {
+    constructor(value: string, protected _displayValue: string) {
         super();
+        this.withValue(value);
     };
 
     get value() {

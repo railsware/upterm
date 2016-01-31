@@ -128,18 +128,21 @@ async function gitSuggestions(job: Job): Promise<Suggestion[]> {
 
     if ((subcommand === "checkout" || subcommand === "merge") && args.length === 1) {
         let output = await linedOutputOf("git", ["branch", "--no-color"], job.directory);
-        return output.map(branch => new Branch(branch)).filter(branch => !branch.isCurrent);
+        let branches: Suggestion[] = output.map(branch => new Branch(branch)).filter(branch => !branch.isCurrent);
+
+        const argument = job.prompt.lastArgument;
+        if (doesLookLikeBranchAlias(argument)) {
+            let nameOfAlias = (await linedOutputOf("git", ["name-rev", "--name-only", canonizeBranchAlias(argument)], job.directory))[0];
+            if (nameOfAlias && !nameOfAlias.startsWith("Could not get")) {
+                branches.push(new Suggestion().withValue(argument).withSynopsis(nameOfAlias).withType("branch"));
+            }
+        }
+
+        return branches;
     }
 
     return [];
 }
-
-["add", "checkout", "merge"].forEach(subcommand =>
-    PluginManager.registerAutocompletionProvider({
-        forCommand: `git ${subcommand}`,
-        getSuggestions: gitSuggestions,
-    })
-);
 
 const porcelainCommands = [
     new Subcommand("add").withSynopsis("Add file contents to the index."),
@@ -182,11 +185,6 @@ const porcelainCommands = [
 
 ];
 
-PluginManager.registerAutocompletionProvider({
-    forCommand: `git`,
-    getSuggestions: async (job) => porcelainCommands,
-});
-
 export class OptionValueSuggestion extends Suggestion {
     constructor(protected _name: string) {
         super();
@@ -228,6 +226,20 @@ const commitOptions = [
         withChildrenProvider(async () => cleanupModes),
 ];
 
+function doesLookLikeBranchAlias(word: string) {
+    if (!word) return false;
+    return word.startsWith("-") || word.includes("@") || word.includes("HEAD") || /\d/.test(word);
+}
+
+function canonizeBranchAlias(alias: string) {
+    if (alias[0] === "-") {
+        const steps = parseInt(alias.slice(1), 10) || 1;
+        alias = `@{-${steps}}`;
+    }
+
+    return alias;
+}
+
 PluginManager.registerAutocompletionProvider({
     forCommand: `git commit`,
     getSuggestions: async (job: Job) => {
@@ -238,3 +250,15 @@ PluginManager.registerAutocompletionProvider({
         return commitOptions;
     },
 });
+
+PluginManager.registerAutocompletionProvider({
+    forCommand: `git`,
+    getSuggestions: async (job) => porcelainCommands,
+});
+
+["add", "checkout", "merge"].forEach(subcommand =>
+    PluginManager.registerAutocompletionProvider({
+        forCommand: `git ${subcommand}`,
+        getSuggestions: gitSuggestions,
+    })
+);
