@@ -6,6 +6,7 @@ import * as e from "./Enums";
 import * as _ from "lodash";
 import Utils from "./Utils";
 import {List} from "immutable";
+const shell: Electron.Shell = require("remote").require("electron").shell;
 
 export default class Buffer extends events.EventEmitter {
     public static hugeOutputThreshold = 300;
@@ -32,11 +33,7 @@ export default class Buffer extends events.EventEmitter {
         if (charObject.isSpecial()) {
             switch (charObject.getCharCode()) {
                 case e.CharCode.Bell:
-                    if (window.DEBUG) {
-                        Utils.playBell();
-                    }
-
-                    Utils.log("bell");
+                    shell.beep();
                     break;
                 case e.CharCode.Backspace:
                     this.moveCursorRelative({ horizontal: -1 });
