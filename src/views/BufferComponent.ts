@@ -67,7 +67,7 @@ interface RowProps {
     key: number;
 }
 
-const charGrouper = (a: Char, b: Char) => JSON.stringify(a.attributes) === JSON.stringify(b.attributes);
+const charGrouper = (a: Char, b: Char) => a.attributes === b.attributes;
 
 
 class RowComponent extends React.Component<RowProps, {}> {
