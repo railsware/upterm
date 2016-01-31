@@ -341,15 +341,53 @@ body, pre {
 }
 
 .application {
-  display: flex;
+  .tabs {
+    height: $title-bar-height;
+    display: flex;
+    justify-content: center;
 
-  flex-wrap: nowrap;
-  flex-direction: column;
+    -webkit-margin-before: 0;
+    -webkit-margin-after: 0;
+    -webkit-padding-start: 0;
 
-  position: absolute;
-  width: 100%;
-  top: $title-bar-height;
-  bottom: 2em;
+    .tab {
+      height: $title-bar-height;
+      width: 150px;
+      display: inline-block;
+      text-align: center;
+      padding-top: 2px;
+
+      &.inactive:not(:hover) {
+        opacity: 0.3;
+      }
+
+      span {
+        display: inline-block;
+
+        &.command-sign {
+          font-size: $font-size + 3;
+          vertical-align: middle;
+        }
+      }
+
+      &:hover {
+        background-color: $panel-color;
+        opacity: 1;
+      }
+    }
+  }
+
+  .active-tab-content {
+    display: flex;
+
+    flex-wrap: nowrap;
+    flex-direction: column;
+
+    position: absolute;
+    width: 100%;
+    top: $title-bar-height;
+    bottom: 2em;
+  }
 }
 
 .terminal {

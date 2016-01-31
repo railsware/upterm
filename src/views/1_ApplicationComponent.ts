@@ -1,5 +1,6 @@
 import Application from "../Application";
 import TerminalComponent from "./2_TerminalComponent";
+import TabComponent from "./TabComponent";
 import * as React from "react";
 import * as _ from "lodash";
 import Terminal from "../Terminal";
@@ -90,13 +91,23 @@ export default class ApplicationComponent extends React.Component<{}, State> {
             })
         );
 
+        let tabs = [
+            React.createElement(TabComponent, { isActive: false, position: 1 }),
+            React.createElement(TabComponent, { isActive: true, position: 2 }),
+            React.createElement(TabComponent, { isActive: false, position: 3 }),
+            React.createElement(TabComponent, { isActive: false, position: 4 }),
+        ];
+
         return React.createElement(
             "div",
             {
                 className: "application",
                 onKeyDownCapture: this.handleKeyDown.bind(this),
             },
-            terminals
+            [
+                React.createElement( "ul", { className: "tabs" }, tabs),
+                React.createElement( "div", { className: "active-tab-content" }, terminals),
+            ]
         );
     }
 
