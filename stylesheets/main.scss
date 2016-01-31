@@ -3,6 +3,7 @@
 $fa-font-path: "../node_modules/font-awesome/fonts";
 $font-size: 14px;
 $row-height: $font-size + 4px;
+$title-bar-height: 24px; // If you change it, also change the same variable in ApplicationComponent.
 $default-shadow: 0 2px 8px 1px rgba(0, 0, 0, 0.3);
 $prompt-background-color: lighten(map-get($colors, 'black'), 5%);
 
@@ -261,7 +262,7 @@ body, pre {
   &.in-progress {
     .output.alternate {
       position: fixed;
-      top: 0;
+      top: $title-bar-height;
       bottom: 0;
       left: 0;
       right: 0;
@@ -347,7 +348,7 @@ body, pre {
 
   position: absolute;
   width: 100%;
-  top: 0;
+  top: $title-bar-height;
   bottom: 2em;
 }
 

@@ -101,9 +101,10 @@ export default class ApplicationComponent extends React.Component<{}, State> {
     }
 
     private get contentSize(): Size {
+        const titleBarHeight = 24; // Make sure it's the same as $title-bar-height SCSS variable.
         return {
             width: window.innerWidth,
-            height: window.innerHeight,
+            height: window.innerHeight - titleBarHeight,
         };
     }
 

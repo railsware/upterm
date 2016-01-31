@@ -30,6 +30,7 @@ function getMainWindow(): Electron.BrowserWindow {
                 overlayScrollbars: true,
             },
             subpixelFontScaling: true,
+            titleBarStyle: "hidden",
             resizable: true,
             minWidth: 500,
             minHeight: 300,
