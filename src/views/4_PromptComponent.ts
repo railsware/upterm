@@ -217,6 +217,7 @@ export default class PromptComponent extends React.Component<Props, State> imple
         const classes = ["prompt-wrapper", "fixedsticky", this.props.status].join(" ");
         let autocomplete: React.ReactElement<any>;
         let autocompletedPreview: React.ReactElement<any>;
+        let inlineSynopsis: React.ReactElement<any>;
         let decorationToggle: React.ReactElement<any>;
         let scrollToTop: React.ReactElement<any>;
 
@@ -230,8 +231,13 @@ export default class PromptComponent extends React.Component<Props, State> imple
                 ref: "autocomplete",
             });
             const completed = this.valueWithCurrentSuggestion;
-            if (completed.startsWith(this.prompt.value)) {
+            if (completed.trim() !== this.prompt.value && completed.startsWith(this.prompt.value)) {
                 autocompletedPreview = React.createElement("div", { className: "autocompleted-preview" }, completed);
+            } else {
+                const highlightedSuggestion = this.state.suggestions[this.state.highlightedSuggestionIndex];
+                if (highlightedSuggestion.synopsis) {
+                    inlineSynopsis = React.createElement("div", { className: "inline-synopsis" }, `${this.prompt.value} —— ${highlightedSuggestion.synopsis}`);
+                }
             }
         }
 
@@ -257,6 +263,7 @@ export default class PromptComponent extends React.Component<Props, State> imple
             ),
             React.createElement("div", { className: "prompt-info", title: this.props.status }),
             autocompletedPreview,
+            inlineSynopsis,
             React.createElement("div", {
                 className: "prompt",
                 onKeyDown: this.handlers.onKeyDown.bind(this),

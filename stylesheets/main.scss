@@ -182,7 +182,7 @@ body, pre {
     }
   }
 
-  .prompt, .autocompleted-preview {
+  .prompt, .autocompleted-preview, .inline-synopsis {
     position: absolute;
     left: 0;
     right: 0;
@@ -209,9 +209,16 @@ body, pre {
   .prompt {
     background-color: transparent;
   }
+
   .autocompleted-preview {
     background-color: $prompt-background-color;
     color: lighten($prompt-background-color, 15%);
+  }
+
+  .inline-synopsis {
+    background-color: $prompt-background-color;
+    color: map-get($colors, "yellow");
+    opacity: 0.4;
   }
 
   .actions {
