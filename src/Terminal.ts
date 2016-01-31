@@ -6,8 +6,10 @@ import Utils from "./Utils";
 import Serializer from "./Serializer";
 import EmitterWithUniqueID from "./EmitterWithUniqueID";
 import PluginManager from "./PluginManager";
+import {Status} from "./Enums";
 const remote = require("remote");
 const app = remote.require("app");
+const browserWindow: typeof Electron.BrowserWindow = remote.require("electron").BrowserWindow;
 
 export default class Terminal extends EmitterWithUniqueID {
     jobs: Array<Job> = [];
@@ -37,8 +39,11 @@ export default class Terminal extends EmitterWithUniqueID {
         const job = new Job(this);
 
         job.once("end", () => {
-            if (app.dock) {
+            if (app.dock && !_.some(browserWindow.getAllWindows(), window => window.isFocused())) {
                 app.dock.bounce("informational");
+                // Those two strings are smiling and frowning faces.
+                const smiley = job.status === Status.Success ? "🙂" : "🙁";
+                app.dock.setBadge(smiley);
             }
             this.createJob();
         });

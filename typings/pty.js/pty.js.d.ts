@@ -15,7 +15,6 @@ declare module 'pty.js' {
         env?: any;
         uid?: number;
         gid?: number;
-        resume?: boolean;
     }
 
     import stream = require('stream');

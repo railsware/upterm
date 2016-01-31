@@ -130,6 +130,8 @@ declare module Electron {
 	 * You can also create a window without chrome by using Frameless Window API.
 	 */
 	class BrowserWindow implements NodeJS.EventEmitter {
+		setBadge(badge: string): void;
+		setIcon(image: NativeImage): void;
 		addListener(event: string, listener: Function): WebContents;
 		on(event: string, listener: Function): WebContents;
 		once(event: string, listener: Function): WebContents;

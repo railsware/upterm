@@ -1,6 +1,6 @@
 const app: Electron.App = require("app");
 const browserWindowConstructor: typeof Electron.BrowserWindow = require("browser-window");
-import {ipcMain} from "electron";
+import {ipcMain, nativeImage} from "electron";
 let menu = require("./Menu");
 let fixPath = require("fix-path");
 
@@ -8,6 +8,8 @@ let browserWindow: Electron.BrowserWindow = undefined;
 
 // Fix the $PATH on OS X
 fixPath();
+
+app.dock.setIcon(nativeImage.createFromPath("icon.png"));
 
 app.on("open-file", (event: Event, file: string) => getMainWindow().webContents.send("change-working-directory", file))
     .on("ready", getMainWindow)
@@ -40,7 +42,8 @@ function getMainWindow(): Electron.BrowserWindow {
         browserWindow.loadURL("file://" + __dirname + "/../views/index.html");
         menu.setMenu(app, browserWindow);
 
-        browserWindow.on("closed", (): void => browserWindow = undefined);
+        browserWindow.on("closed", (): void => browserWindow = undefined)
+                     .on("focus", (): void => app.dock.setBadge(""));
 
         browserWindow.webContents.on("did-finish-load", () => {
             browserWindow.show();

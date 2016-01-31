@@ -10,7 +10,6 @@ const fork = pty.fork(process.env.SHELL, ["-c", `${commandName} ${args.join(" ")
     rows: rows,
     cwd: process.cwd(),
     env: process.env,
-    resume: false,
 });
 
 interface IncomingMessage {
