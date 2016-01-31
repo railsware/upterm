@@ -10,6 +10,8 @@ Also, unlike most of the emulators you can meet nowadays it uses HTML and CSS fo
 which means we can [stop misusing unicode characters](https://github.com/vim-airline/vim-airline) 
 and make a better looking terminal with appropriate tools.
 
+![](README/main.png)
+
 ###### Autocompletion
 
 <img align="right" src="README/autocompletion.gif">
