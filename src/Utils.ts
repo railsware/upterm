@@ -4,7 +4,6 @@ import * as Path from "path";
 import * as i from "./Interfaces";
 import * as e from "./Enums";
 import * as _ from "lodash";
-import Char from "./Char";
 
 interface FSExtraWalkObject {
     path: string;
