@@ -14,7 +14,6 @@ and make a better looking terminal with appropriate tools.
 
 ###### Autocompletion
 
-<img align="right" src="README/autocompletion.gif">
 Black Screen shows the autocompletion box as you type and tries to be smart about what to suggest.
 Often you can find useful additional information to the right of the autocomplete, e.g. expanded alias value, 
 history substitutions for `!!` and friends, command descriptions, etc. And you can [write your own autocompletion providers](src/plugins/autocompletion_providers) too!
