@@ -92,10 +92,10 @@ export default class ApplicationComponent extends React.Component<{}, State> {
         );
 
         let tabs = [
-            React.createElement(TabComponent, { isActive: false, position: 1 }),
-            React.createElement(TabComponent, { isActive: true, position: 2 }),
-            React.createElement(TabComponent, { isActive: false, position: 3 }),
-            React.createElement(TabComponent, { isActive: false, position: 4 }),
+            React.createElement(TabComponent, { isActive: false, key: 1 }),
+            React.createElement(TabComponent, { isActive: true, key: 2 }),
+            React.createElement(TabComponent, { isActive: false, key: 3 }),
+            React.createElement(TabComponent, { isActive: false, key: 4 }),
         ];
 
         return React.createElement(
@@ -104,10 +104,8 @@ export default class ApplicationComponent extends React.Component<{}, State> {
                 className: "application",
                 onKeyDownCapture: this.handleKeyDown.bind(this),
             },
-            [
-                React.createElement( "ul", { className: "tabs" }, tabs),
-                React.createElement( "div", { className: "active-tab-content" }, terminals),
-            ]
+            React.createElement( "ul", { className: "tabs" }, tabs),
+            React.createElement( "div", { className: "active-tab-content" }, terminals)
         );
     }
 
