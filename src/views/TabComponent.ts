@@ -2,6 +2,7 @@ import * as React from "react";
 
 interface Props {
     isActive: boolean;
+    position: number;
     key: number;
 }
 
@@ -13,7 +14,7 @@ export default class TabComponent extends React.Component<Props, {}> {
             "li",
             { className: `tab ${activenessClass.get(this.props.isActive)}` },
             React.createElement("span", { className: "command-sign" }, "⌘"),
-            React.createElement("span", { className: "position" }, this.props.key)
+            React.createElement("span", { className: "position" }, this.props.position)
         );
     }
 }

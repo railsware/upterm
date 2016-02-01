@@ -92,10 +92,10 @@ export default class ApplicationComponent extends React.Component<{}, State> {
         );
 
         let tabs = [
-            React.createElement(TabComponent, { isActive: false, key: 1 }),
-            React.createElement(TabComponent, { isActive: true, key: 2 }),
-            React.createElement(TabComponent, { isActive: false, key: 3 }),
-            React.createElement(TabComponent, { isActive: false, key: 4 }),
+            React.createElement(TabComponent, { isActive: false, position: 1, key: 1 }),
+            React.createElement(TabComponent, { isActive: true, position: 2, key: 2 }),
+            React.createElement(TabComponent, { isActive: false, position: 3, key: 3 }),
+            React.createElement(TabComponent, { isActive: false, position: 4, key: 4 }),
         ];
 
         return React.createElement(
