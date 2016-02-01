@@ -1,6 +1,6 @@
 export default class Cursor {
-    private show = false;
-    private blink = false;
+    private _show = false;
+    private _blink = false;
 
     constructor(private position: RowColumn = { row: 0, column: 0 }) {
     }
@@ -38,19 +38,19 @@ export default class Cursor {
         return this.position.row;
     }
 
-    getShow(): boolean {
-        return this.show;
+    get blink(): boolean {
+        return this._blink;
     }
 
-    getBlink(): boolean {
-        return this.blink;
+    set blink(value: boolean) {
+        this._blink = value;
     }
 
-    setShow(state: boolean): void {
-        this.show = state;
+    get show(): boolean {
+        return this._show;
     }
 
-    setBlink(state: boolean): void {
-        this.blink = state;
+    set show(value: boolean) {
+        this._show = value;
     }
 }

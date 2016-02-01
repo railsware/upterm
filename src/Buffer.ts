@@ -83,7 +83,7 @@ export default class Buffer extends events.EventEmitter {
     toRenderable(fromStorage = this.storage): List<List<Char>> {
         let storage = fromStorage;
 
-        if (this.cursor.getShow() || this.cursor.getBlink()) {
+        if (this.cursor.show || this.cursor.blink) {
             const coordinates = [this.cursorPosition.row, this.cursorPosition.column];
 
             if (!storage.get(this.cursorPosition.row)) {
@@ -117,12 +117,12 @@ export default class Buffer extends events.EventEmitter {
     }
 
     showCursor(state: boolean): void {
-        this.cursor.setShow(state);
+        this.cursor.show = state;
         this.emitData();
     }
 
     blinkCursor(state: boolean): void {
-        this.cursor.setBlink(state);
+        this.cursor.blink = state;
         this.emitData();
     }
 
