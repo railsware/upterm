@@ -1,4 +1,3 @@
-import Application from "../Application";
 import TerminalComponent from "./2_TerminalComponent";
 import TabComponent from "./TabComponent";
 import * as React from "react";
@@ -11,30 +10,29 @@ interface State {
 }
 
 export default class ApplicationComponent extends React.Component<{}, State> {
-    private application: Application;
+    private terminals: Terminal[] = [];
+    private activeTerminalIndex: number;
 
     constructor(props: {}) {
         super(props);
 
-        this.application = Application.instance;
-        this.application.charSize = this.charSize;
-        this.application.contentSize = this.contentSize;
-        this.application.addTerminal();
-        this.application.activateTerminal(this.application.terminals[0]);
+        this.addTerminal();
+        this.activateTerminal(this.terminals[0]);
+        this.state = { terminals: this.terminals };
 
-        this.state = { terminals: this.application.terminals };
-        this.application.on("terminal", () => this.setState({ terminals: this.application.terminals }));
+        this.terminals.forEach((terminal: Terminal) => terminal.dimensions = this.contentDimensions);
+        $(window).resize(() => this.terminals.forEach((terminal: Terminal) => terminal.dimensions = this.contentDimensions));
 
-        $(window).resize(() => this.application.contentSize = this.contentSize);
         IPC.on("change-working-directory", (directory: string) =>
-            this.application.activeTerminal.currentDirectory = directory
+            this.activeTerminal.currentDirectory = directory
         );
     }
 
     handleKeyDown(event: JQueryKeyEventObject) {
         // Cmd+_.
         if (event.metaKey && event.keyCode === 189) {
-            this.application.activateTerminal(this.application.addTerminal());
+            this.activateTerminal(this.addTerminal());
+            this.setState({ terminals: this.terminals });
 
             event.stopPropagation();
         }
@@ -48,19 +46,17 @@ export default class ApplicationComponent extends React.Component<{}, State> {
 
         // Ctrl+D.
         if (event.ctrlKey && event.keyCode === 68) {
-            this.application
-                .removeTerminal(this.application.activeTerminal)
-                .activateTerminal(_.last(this.application.terminals));
+            this.removeTerminal(this.activeTerminal).activateTerminal(_.last(this.terminals));
+            this.setState({ terminals: this.terminals });
 
             event.stopPropagation();
         }
 
         // Cmd+J.
         if (event.metaKey && event.keyCode === 74) {
-            let activeTerminalIndex = this.application.terminals.indexOf(this.application.activeTerminal);
-            if (activeTerminalIndex !== this.application.terminals.length - 1) {
-                this.application.activateTerminal(this.application.terminals[activeTerminalIndex + 1]);
-                this.setState({ terminals: this.application.terminals });
+            if (this.activeTerminalIndex !== this.terminals.length - 1) {
+                this.activateTerminal(this.terminals[this.activeTerminalIndex + 1]);
+                this.setState({ terminals: this.terminals });
 
                 event.stopPropagation();
             }
@@ -68,10 +64,9 @@ export default class ApplicationComponent extends React.Component<{}, State> {
 
         // Cmd+K.
         if (event.metaKey && event.keyCode === 75) {
-            let activeTerminalIndex = this.application.terminals.indexOf(this.application.activeTerminal);
-            if (activeTerminalIndex) {
-                this.application.activateTerminal(this.application.terminals[activeTerminalIndex - 1]);
-                this.setState({ terminals: this.application.terminals });
+            if (this.activeTerminalIndex) {
+                this.activateTerminal(this.terminals[this.activeTerminalIndex - 1]);
+                this.setState({ terminals: this.terminals });
 
                 event.stopPropagation();
             }
@@ -83,10 +78,10 @@ export default class ApplicationComponent extends React.Component<{}, State> {
             terminal => React.createElement(TerminalComponent, {
                 terminal: terminal,
                 key: terminal.id,
-                isActive: terminal === this.application.activeTerminal,
+                isActive: terminal === this.activeTerminal,
                 activateTerminal: (newActiveTerminal: Terminal) => {
-                    this.application.activateTerminal(newActiveTerminal);
-                    this.forceUpdate();
+                    this.activateTerminal(newActiveTerminal);
+                    this.setState({ terminals: this.terminals })
                 },
             })
         );
@@ -107,6 +102,38 @@ export default class ApplicationComponent extends React.Component<{}, State> {
             React.createElement( "ul", { className: "tabs" }, tabs),
             React.createElement( "div", { className: "active-tab-content" }, terminals)
         );
+    }
+
+    private addTerminal(): Terminal {
+        let terminal = new Terminal(this.contentDimensions);
+        this.terminals.push(terminal);
+
+        return terminal;
+    }
+
+    private removeTerminal(terminal: Terminal): ApplicationComponent {
+        _.pull(this.terminals, terminal);
+
+        if (_.isEmpty(this.terminals)) {
+            IPC.send("quit");
+        }
+
+        return this;
+    }
+
+    private activateTerminal(terminal: Terminal): void {
+        this.activeTerminalIndex = this.terminals.indexOf(terminal);
+    }
+
+    private get activeTerminal(): Terminal {
+        return this.terminals[this.activeTerminalIndex];
+    }
+
+    private get contentDimensions(): Dimensions {
+        return {
+            columns: Math.floor(this.contentSize.width / this.charSize.width),
+            rows: Math.floor(this.contentSize.height / this.charSize.height),
+        };
     }
 
     private get contentSize(): Size {
