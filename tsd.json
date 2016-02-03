@@ -6,25 +6,25 @@
   "bundle": "typings/tsd.d.ts",
   "installed": {
     "react/react.d.ts": {
-      "commit": "5d0f2126c8dac8fce0ff020218aea06607213b0d"
+      "commit": "e69fe60f2d6377ea4fae539493997b098f52cad1"
     },
     "node/node.d.ts": {
-      "commit": "5d0f2126c8dac8fce0ff020218aea06607213b0d"
+      "commit": "e69fe60f2d6377ea4fae539493997b098f52cad1"
     },
     "jquery/jquery.d.ts": {
-      "commit": "5d0f2126c8dac8fce0ff020218aea06607213b0d"
+      "commit": "e69fe60f2d6377ea4fae539493997b098f52cad1"
     },
     "lodash/lodash.d.ts": {
-      "commit": "5d0f2126c8dac8fce0ff020218aea06607213b0d"
+      "commit": "e69fe60f2d6377ea4fae539493997b098f52cad1"
     },
     "chokidar/chokidar.d.ts": {
-      "commit": "5d0f2126c8dac8fce0ff020218aea06607213b0d"
+      "commit": "e69fe60f2d6377ea4fae539493997b098f52cad1"
     },
     "github-electron/github-electron.d.ts": {
-      "commit": "5d0f2126c8dac8fce0ff020218aea06607213b0d"
+      "commit": "e69fe60f2d6377ea4fae539493997b098f52cad1"
     },
     "pty.js/pty.js.d.ts": {
-      "commit": "5d0f2126c8dac8fce0ff020218aea06607213b0d"
+      "commit": "e69fe60f2d6377ea4fae539493997b098f52cad1"
     }
   }
 }
