@@ -1,8 +1,6 @@
-import * as _ from "lodash";
 import * as fs from "fs";
 import Utils from "./Utils";
 import Job from "./Job";
-import Application from "./Application";
 
 const executors: Dictionary<(i: Job, a: string[]) => void> = {
     cd: (job: Job, args: string[]): void => {
@@ -28,10 +26,7 @@ const executors: Dictionary<(i: Job, a: string[]) => void> = {
         setTimeout(() => job.terminal.clearJobs(), 0);
     },
     exit: (job: Job, args: string[]): void => {
-        const application = Application.instance;
-        application
-            .removeTerminal(application.activeTerminal)
-            .activateTerminal(_.last(application.terminals));
+        // FIXME.
     },
 };
 

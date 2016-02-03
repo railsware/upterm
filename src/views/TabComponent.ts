@@ -1,6 +1,6 @@
 import * as React from "react";
 
-interface Props {
+export interface TabProps {
     isActive: boolean;
     position: number;
     key: number;
@@ -8,7 +8,7 @@ interface Props {
 
 const activenessClass: Map<boolean, string> = new Map([[false, "inactive"], [true, "active"]]);
 
-export default class TabComponent extends React.Component<Props, {}> {
+export class TabComponent extends React.Component<TabProps, {}> {
     render() {
         return React.createElement(
             "li",
