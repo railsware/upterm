@@ -1,6 +1,6 @@
 import Job from "./Job";
 import Char from "./Char";
-const ansiParserConstructor: AnsiParserConstructor = require("node-ansiparser");
+const ansiParserConstructor: typeof AnsiParser = require("node-ansiparser");
 
 import * as e from "./Enums";
 import * as i from "./Interfaces";

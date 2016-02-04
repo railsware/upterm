@@ -31,3 +31,7 @@ interface Margins {
     left?: number;
     right?: number;
 }
+
+interface Dictionary<T> {
+    [index: string]: T;
+}
