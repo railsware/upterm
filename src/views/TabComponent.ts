@@ -3,6 +3,7 @@ import Terminal from "../Terminal";
 
 export interface TabProps {
     isActive: boolean;
+    activate: () => void;
     position: number;
     key: number;
 }
@@ -13,7 +14,10 @@ export class TabComponent extends React.Component<TabProps, {}> {
     render() {
         return React.createElement(
             "li",
-            { className: `tab ${activenessClass.get(this.props.isActive)}` },
+            {
+                className: `tab ${activenessClass.get(this.props.isActive)}`,
+                onClick: this.props.activate,
+            },
             React.createElement("span", { className: "command-sign" }, "⌘"),
             React.createElement("span", { className: "position" }, this.props.position)
         );

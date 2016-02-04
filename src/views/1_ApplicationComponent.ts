@@ -111,6 +111,24 @@ export default class ApplicationComponent extends React.Component<{}, State> {
     }
 
     render() {
+        let tabs: React.ReactElement<TabProps>[];
+
+        if (this.tabs.length > 1) {
+            tabs = this.tabs.map((tab: Tab, index: number) =>
+                React.createElement(
+                    TabComponent,
+                    {
+                        isActive: index === this.activeTabIndex,
+                        position: index + 1,
+                        key: index,
+                        activate: () => {
+                            this.activeTabIndex = index;
+                            this.setState({ terminals: this.activeTab.terminals });
+                        },
+                    })
+            );
+        }
+
         let terminals = this.state.terminals.map(
             terminal => React.createElement(TerminalComponent, {
                 terminal: terminal,
@@ -123,22 +141,14 @@ export default class ApplicationComponent extends React.Component<{}, State> {
             })
         );
 
-        let tabs: React.ReactElement<TabProps>[];
-
-        if (this.tabs.length > 1) {
-            tabs = this.tabs.map((tab: Tab, index: number) =>
-              React.createElement(TabComponent, { isActive: index === this.activeTabIndex, position: index + 1, key: index })
-            );
-        }
-
         return React.createElement(
             "div",
             {
                 className: "application",
                 onKeyDownCapture: this.handleKeyDown.bind(this),
             },
-            React.createElement( "ul", { className: "tabs" }, tabs),
-            React.createElement( "div", { className: "active-tab-content" }, terminals)
+            React.createElement("ul", { className: "tabs" }, tabs),
+            React.createElement("div", { className: "active-tab-content" }, terminals)
         );
     }
 
