@@ -34,7 +34,7 @@
     "jison": "0.4.17",
     "jquery": "2.2.0",
     "jquery.caret": "^0.2.1",
-    "lodash": "4.2.0",
+    "lodash": "4.2.1",
     "node-ansiparser": "2.1.0",
     "octicons": "3.4.1",
     "pty.js": "0.3.0",
@@ -63,7 +63,7 @@
     "gulp-livereload": "3.8.1",
     "gulp-load-plugins": "1.2.0",
     "gulp-notify": "2.2.0",
-    "gulp-sass": "2.1.1",
+    "gulp-sass": "2.2.0",
     "gulp-shell": "0.5.2",
     "gulp-typescript": "2.10.0",
     "gulp-util": "3.0.7",
@@ -75,7 +75,7 @@
     "tsd": "0.6.5",
     "tslint": "3.3.0",
     "typescript": "1.7.5",
-    "webdriverio": "3.4.0"
+    "webdriverio": "4.0.1"
   },
   "scripts": {
     "preinstall": "npm prune",
