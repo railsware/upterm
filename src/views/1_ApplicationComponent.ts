@@ -1,5 +1,5 @@
 import TerminalComponent from "./2_TerminalComponent";
-import {TabComponent, TabProps} from "./TabComponent";
+import {TabComponent, TabProps, Tab} from "./TabComponent";
 import * as React from "react";
 import * as _ from "lodash";
 import Terminal from "../Terminal";
@@ -8,82 +8,6 @@ const shell: Electron.Shell = require("remote").require("electron").shell;
 
 interface State {
     terminals: Terminal[];
-}
-
-class Tab {
-    public terminals: Terminal[] = [];
-    private activeTerminalIndex: number;
-
-    constructor() {
-        this.addTerminal();
-    }
-
-    addTerminal(): void {
-        this.terminals.push(new Terminal(this.contentDimensions));
-        this.activeTerminalIndex = this.terminals.length - 1;
-    }
-
-    removeActiveTerminal(): void {
-        _.pullAt(this.terminals, this.activeTerminalIndex);
-        this.activeTerminalIndex = this.terminals.length - 1;
-
-    }
-
-    activeTerminal(): Terminal {
-        return this.terminals[this.activeTerminalIndex];
-    }
-
-    activateTerminal(terminal: Terminal): void {
-        this.activeTerminalIndex = this.terminals.indexOf(terminal);
-    }
-
-    activatePreviousTerminal(): boolean {
-        const isFirst = this.activeTerminalIndex === 0;
-        if (!isFirst) {
-            this.activateTerminal(this.terminals[this.activeTerminalIndex - 1]);
-        }
-
-        return isFirst;
-    }
-
-    activateNextTerminal(): boolean {
-        const isLast = this.activeTerminalIndex !== this.terminals.length - 1;
-        if (isLast) {
-            this.activateTerminal(this.terminals[this.activeTerminalIndex + 1]);
-        }
-
-        return isLast;
-    }
-
-    updateAllTerminalsDimensions(): void {
-        for (const terminal of this.terminals) {
-            terminal.dimensions = this.contentDimensions;
-        }
-    }
-
-    private get contentDimensions(): Dimensions {
-        return {
-            columns: Math.floor(this.contentSize.width / this.charSize.width),
-            rows: Math.floor(this.contentSize.height / this.charSize.height),
-        };
-    }
-
-    private get contentSize(): Size {
-        const titleBarHeight = 24; // Make sure it's the same as $title-bar-height SCSS variable.
-        return {
-            width: window.innerWidth,
-            height: window.innerHeight - titleBarHeight,
-        };
-    }
-
-    private get charSize(): Size {
-        const letter = document.getElementById("sizes-calculation");
-
-        return {
-            width: letter.clientWidth + 0.5,
-            height: letter.clientHeight,
-        };
-    };
 }
 
 export default class ApplicationComponent extends React.Component<{}, State> {
