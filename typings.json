@@ -1,0 +1,11 @@
+{
+  "ambientDependencies": {
+    "chokidar": "github:DefinitelyTyped/DefinitelyTyped/chokidar/chokidar.d.ts#ae81e340a9e897167cfef3122a5a3aed04293814",
+    "github-electron": "github:DefinitelyTyped/DefinitelyTyped/github-electron/github-electron.d.ts#e5fc6154826b24cc8421298d72d7007c54a9f999",
+    "jquery": "github:DefinitelyTyped/DefinitelyTyped/jquery/jquery.d.ts#cf2a968f0edd7d30773f7d23fe3708fa029d5ab7",
+    "lodash": "github:DefinitelyTyped/DefinitelyTyped/lodash/lodash.d.ts#e69fe60f2d6377ea4fae539493997b098f52cad1",
+    "node": "github:DefinitelyTyped/DefinitelyTyped/node/node.d.ts#1c56e368e17bb28ca57577250624ca5bd561aa81",
+    "pty.js": "github:DefinitelyTyped/DefinitelyTyped/pty.js/pty.js.d.ts#f8b59970de238982359ca96a0f7a548dd94b0c74",
+    "react": "github:DefinitelyTyped/DefinitelyTyped/react/react.d.ts#e3a7583dc379d3b178216fcd444b0ea64aed66e0"
+  }
+}

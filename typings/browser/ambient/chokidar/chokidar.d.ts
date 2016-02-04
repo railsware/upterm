@@ -1,9 +1,10 @@
+// Compiled using typings@0.6.6
+// Source: https://raw.githubusercontent.com/DefinitelyTyped/DefinitelyTyped/ae81e340a9e897167cfef3122a5a3aed04293814/chokidar/chokidar.d.ts
 // Type definitions for chokidar 1.0.0
 // Project: https://github.com/paulmillr/chokidar
 // Definitions by: Stefan Steinhart <https://github.com/reppners/>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
 
-/// <reference path="../node/node.d.ts" />
 
 declare module "fs"
 {

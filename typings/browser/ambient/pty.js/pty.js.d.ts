@@ -1,9 +1,10 @@
-﻿// Type definitions for pty.js 0.2.7-1
+// Compiled using typings@0.6.6
+// Source: https://raw.githubusercontent.com/DefinitelyTyped/DefinitelyTyped/f8b59970de238982359ca96a0f7a548dd94b0c74/pty.js/pty.js.d.ts
+// Type definitions for pty.js 0.2.7-1
 // Project: https://github.com/chjj/pty.js
 // Definitions by: Vadim Macagon <https://github.com/enlight/>
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
 
-/// <reference path="../node/node.d.ts" />
 
 declare module 'pty.js' {
     /** Options that can be used when creating a new pseudo-terminal. */
