@@ -71,7 +71,7 @@ PluginManager.registerAutocompletionProvider({
 
         if (job.prompt.expanded.length === 3 && await Utils.exists(packageFilePath)) {
             const parsed = JSON.parse(await Utils.readFile(packageFilePath)).scripts || {};
-            return Object.keys(parsed).map(key => new SubSubcommand(key));
+            return _.map(parsed, (value: string, key: string) => new SubSubcommand(key).withDescription(value));
         }
 
         return [];
