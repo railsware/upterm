@@ -174,6 +174,10 @@ body, pre {
   }
 
   &.in-progress {
+    .prompt-decoration {
+      cursor: progress;
+    }
+
     .arrow:after {
       $color: lighten(map-get($colors, 'black'), 3%);
       transition: background 0.1s step-end 0.3s;
