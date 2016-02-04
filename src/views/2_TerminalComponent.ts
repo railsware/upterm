@@ -8,7 +8,7 @@ import JobComponent from "./3_JobComponent";
 interface Props {
     terminal: Terminal;
     isActive: boolean;
-    activateTerminal: (t: Terminal) => void;
+    activate: () => void;
     key: number;
 }
 
@@ -69,7 +69,7 @@ export default class TerminalComponent extends React.Component<Props, State> {
 
     private handleClick() {
         if (!this.props.isActive) {
-            this.props.activateTerminal(this.props.terminal);
+            this.props.activate();
         }
     }
 

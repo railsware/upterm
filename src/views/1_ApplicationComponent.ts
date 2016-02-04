@@ -134,8 +134,8 @@ export default class ApplicationComponent extends React.Component<{}, State> {
                 terminal: terminal,
                 key: terminal.id,
                 isActive: terminal === this.activeTab.activeTerminal(),
-                activateTerminal: (newActiveTerminal: Terminal) => {
-                    this.activeTab.activateTerminal(newActiveTerminal);
+                activate: () => {
+                    this.activeTab.activateTerminal(terminal);
                     this.setState({ terminals: this.activeTab.terminals });
                 },
             })
