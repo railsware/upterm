@@ -34,10 +34,10 @@ export function expandHistory(lexemes: string[]): string[] {
     return _.flatten(lexemes.map(lexeme => historyReplacement(lexeme)));
 }
 
-export function expandAliases(lexemes: string[]): string[] {
+export async function expandAliases(lexemes: string[]): Promise<string[]> {
     const commandName = lexemes[0];
     const args = lexemes.slice(1);
-    const alias: string = Aliases.find(commandName);
+    const alias: string = await Aliases.find(commandName);
 
     if (alias) {
         const aliasArgs = lex(alias);
@@ -46,7 +46,7 @@ export function expandAliases(lexemes: string[]): string[] {
         if (isRecursive) {
             return aliasArgs.concat(args);
         } else {
-            return expandAliases(lex(alias)).concat(args);
+            return (await expandAliases(lex(alias))).concat(args);
         }
     } else {
         return [commandName, ...args];

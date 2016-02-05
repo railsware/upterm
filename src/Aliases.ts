@@ -1,20 +1,16 @@
-import {executeCommand} from "./PTY";
+import {linedOutputOf} from "./PTY";
+import {memoize} from "./Decorators";
 
 export default class Aliases {
-    private static aliases: Dictionary<string>;
-
-    static get all(): Dictionary<string> {
-        return this.aliases;
+    static async find(alias: string): Promise<string> {
+        return (await this.all())[alias];
     }
 
-    static find(alias: string): string {
-        return this.aliases[alias];
-    }
+    @memoize()
+    static async all(): Promise<Dictionary<string>> {
+        const lines = await linedOutputOf(process.env.SHELL, ["-i", "-c", "alias"], process.env.HOME);
 
-    static async load() {
-        const output = await executeCommand(process.env.SHELL, ["-i", "-c", "alias"]);
-
-        this.aliases = output.split("\n").reduce(
+        return lines.reduce(
             (accumulator: Dictionary<string>, aliasLine: string) => {
                 let split = aliasLine.split("=");
 

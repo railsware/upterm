@@ -27,13 +27,13 @@ export default class Prompt extends events.EventEmitter {
         return this._value;
     }
 
-    set value(value: string) {
+    async setValue(value: string): Promise<void> {
         this._value = value;
 
         this._lexemes = lex(this.value);
-        this._historyExpanded = expandHistory(this._lexemes);
-        this._expanded = expandAliases(this._historyExpanded);
-        this._expandedFinishedLexemes = expandAliases(expandHistory(lex(this.value).slice(0, -1)));
+        this._historyExpanded = await expandHistory(this._lexemes);
+        this._expanded = await expandAliases(this._historyExpanded);
+        this._expandedFinishedLexemes = await expandAliases(expandHistory(lex(this.value).slice(0, -1)));
     }
 
     get commandName(): string {

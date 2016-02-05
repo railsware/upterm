@@ -5,7 +5,7 @@ import * as _ from "lodash";
 
 PluginManager.registerPreexecPlugin(async function (job: Job): Promise<void> {
     const input = job.prompt.value;
-    const key = _.findKey(Aliases.all, value => value === input);
+    const key = _.findKey(await Aliases.all(), value => value === input);
 
     if (key) {
         /* tslint:disable:no-unused-expression */

@@ -3,6 +3,8 @@ import Aliases from "../../Aliases";
 import Job from "../../Job";
 import PluginManager from "../../PluginManager";
 import {Suggestion} from "./Suggestions";
+import {memoize} from "../../Decorators";
+import {AutocompletionProvider} from "../../Interfaces";
 
 class Alias extends Suggestion {
     constructor(protected _alias: string, protected _expanded: string) {
@@ -30,21 +32,19 @@ class Alias extends Suggestion {
     }
 }
 
-// FIXME: it's mapped inside a function because at the time we read this file there are no aliases. Try to make Aliases.all return a promise.
-let aliases: Suggestion[] = [];
-function allAliases() {
-    if (!aliases.length) {
-        aliases = _.map(Aliases.all, (expanded: string, alias: string) => new Alias(alias, expanded));
-    }
-    return aliases;
-}
-
-PluginManager.registerAutocompletionProvider({
-    getSuggestions: async function(job: Job) {
+class AliasesProvider implements AutocompletionProvider {
+    async getSuggestions(job: Job) {
         if (job.prompt.lexemes.length > 1) {
             return [];
         }
 
-        return allAliases();
-    },
-});
+        return this.aliases();
+    }
+
+    @memoize()
+    private async aliases(): Promise<Alias[]> {
+        return _.map(await Aliases.all(), (expanded, alias) => new Alias(alias, expanded));
+    }
+}
+
+PluginManager.registerAutocompletionProvider(new AliasesProvider());
