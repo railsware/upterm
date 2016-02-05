@@ -5,25 +5,13 @@ export interface TabProps {
     isActive: boolean;
     activate: () => void;
     position: number;
-    key: number;
 }
 
-const activenessClass: Map<boolean, string> = new Map([[false, "inactive"], [true, "active"]]);
-
-export class TabComponent extends React.Component<TabProps, {}> {
-    render() {
-        return React.createElement(
-            "li",
-            {
-                className: `tab ${activenessClass.get(this.props.isActive)}`,
-                onClick: this.props.activate,
-            },
-            React.createElement("span", { className: "command-sign" }, "⌘"),
-            React.createElement("span", { className: "position" }, this.props.position)
-        );
-    }
-}
-
+export const TabComponent = ({ isActive, activate, position }: TabProps) =>
+    <li className={`tab ${isActive ? "active" : "inactive"}`} onClick={activate}>
+        <span className="commandSign">⌘</span>
+        <span className="position">{position}</span>
+    </li>;
 
 export class Tab {
     public terminals: Terminal[] = [];

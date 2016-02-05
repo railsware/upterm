@@ -115,17 +115,11 @@ export default class ApplicationComponent extends React.Component<{}, State> {
 
         if (this.tabs.length > 1) {
             tabs = this.tabs.map((tab: Tab, index: number) =>
-                React.createElement(
-                    TabComponent,
-                    {
-                        isActive: index === this.activeTabIndex,
-                        position: index + 1,
-                        key: index,
-                        activate: () => {
-                            this.activeTabIndex = index;
-                            this.setState({ terminals: this.activeTab.terminals });
-                        },
-                    })
+                <TabComponent isActive={index === this.activeTabIndex}
+                              key={index}
+                              position={index + 1}
+                              activate={() => { this.activeTabIndex = index; this.setState({ terminals: this.activeTab.terminals }); }}>
+                </TabComponent>
             );
         }
 

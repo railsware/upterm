@@ -29,7 +29,7 @@ export default class TerminalComponent extends React.Component<Props, State> {
         };
     }
 
-    componentWillMount() {
+    componentDidMount() {
         this.props.terminal
             .on("job", () => this.setState({ jobs: this.props.terminal.jobs }))
             .on("vcs-data", (data: VcsData) => this.setState({ vcsData: data }));
