@@ -9,7 +9,7 @@ interface SuggestionProps {
 }
 
 const SuggestionComponent = ({suggestion, onHover, onClick, isHighlighted}: SuggestionProps) => {
-    let classes = [this.props.suggestion.type];
+    let classes = [suggestion.type];
 
     if (isHighlighted) {
         classes.push("highlighted");
