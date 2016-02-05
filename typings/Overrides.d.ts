@@ -44,5 +44,6 @@ interface Array<T> {
 declare namespace __React {
     interface DOMAttributes {
         onKeyDownCapture?: KeyboardEventHandler;
+        onClickCapture?: KeyboardEventHandler;
     }
 }

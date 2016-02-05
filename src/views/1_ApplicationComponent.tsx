@@ -137,10 +137,12 @@ export default class ApplicationComponent extends React.Component<{}, State> {
             </TerminalComponent>
         );
 
-        return <div className="application" onKeyDownCapture={this.handleKeyDown.bind(this)}>
-                   <ul className="tabs">{tabs}</ul>
-                   <div className="active-tab-content">{terminals}</div>
-               </div>;
+        return (
+            <div className="application" onKeyDownCapture={this.handleKeyDown.bind(this)}>
+                <ul className="tabs">{tabs}</ul>
+                <div className="active-tab-content">{terminals}</div>
+            </div>
+        );
     }
 
     private get activeTab(): Tab {

@@ -36,33 +36,21 @@ export default class TerminalComponent extends React.Component<Props, State> {
 
     render() {
         const jobs = _.takeRight(this.state.jobs, this.RENDER_JOBS_COUNT).map((job: Job, index: number) =>
-            React.createElement(
-                JobComponent,
-                {
-                    key: job.id,
-                    job: job,
-                    hasLocusOfAttention: this.props.isActive && index === this.state.jobs.length - 1,
-                },
-                []
-            )
+            <JobComponent key={job.id}
+                          job={job}
+                          hasLocusOfAttention={this.props.isActive && index === this.state.jobs.length - 1}/>
         );
 
-        let activenessClass = this.props.isActive ? "active" : "inactive";
+        return (
+            <div className={`terminal ${(this.props.isActive ? "active" : "inactive")}`}
+                 tabIndex={0}
+                 onClickCapture={this.handleClick.bind(this)}
+                 onKeyDownCapture={this.handleKeyDown.bind(this)}>
 
-        return React.createElement(
-            "div",
-            {
-                className: `terminal ${activenessClass}`,
-                tabIndex: 0,
-                onClickCapture: this.handleClick.bind(this),
-                onKeyDownCapture: this.handleKeyDown.bind(this),
-            },
-            React.createElement("div", { className: "jobs" }, jobs),
-            React.createElement(StatusLineComponent, {
-                    currentWorkingDirectory: this.props.terminal.currentDirectory,
-                    vcsData: this.state.vcsData,
-                }
-            )
+                <div className="jobs">{jobs}</div>
+                <StatusLineComponent currentWorkingDirectory={this.props.terminal.currentDirectory}
+                                     vcsData={this.state.vcsData}/>
+            </div>
         );
     }
 
