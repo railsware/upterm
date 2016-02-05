@@ -8,7 +8,6 @@ import BufferComponent from "./BufferComponent";
 interface Props {
     job: JobModel;
     hasLocusOfAttention: boolean;
-    key: number;
 }
 
 interface State {
@@ -49,21 +48,17 @@ export default class JobComponent extends React.Component<Props, State> implemen
         if (this.state.canBeDecorated && this.state.decorate) {
             buffer = this.props.job.decorate();
         } else {
-            buffer = React.createElement(BufferComponent, { buffer: this.props.job.buffer });
+            buffer = <BufferComponent buffer={this.props.job.buffer}/>;
         }
 
-        const classNames = "job " + this.state.status;
-
-        return React.createElement(
-            "div",
-            { className: classNames },
-            React.createElement(PromptComponent, {
-                job: this.props.job,
-                status: this.state.status,
-                hasLocusOfAttention: this.props.hasLocusOfAttention,
-                jobView: this,
-            }),
-            buffer
+        return (
+            <div className={"job " + this.state.status}>
+                <PromptComponent job={this.props.job}
+                                 status={this.state.status}
+                                 hasLocusOfAttention={this.props.hasLocusOfAttention}
+                                 jobView={this}/>
+                {buffer}
+            </div>
         );
     }
 
@@ -91,5 +86,5 @@ export default class JobComponent extends React.Component<Props, State> implemen
 }
 
 export function isMetaKey(event: KeyboardEvent) {
-    return event.metaKey || [event.key, (<any>event).keyIdentifier].some(key => ["Shift", "Alt", "Control"].includes(key));
+    return event.metaKey || [event.key, event.keyIdentifier].some(key => ["Shift", "Alt", "Control"].includes(key));
 }

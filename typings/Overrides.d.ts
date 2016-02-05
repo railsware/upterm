@@ -47,3 +47,7 @@ declare namespace __React {
         onClickCapture?: KeyboardEventHandler;
     }
 }
+
+interface KeyboardEvent extends UIEvent {
+    keyIdentifier: string;
+}
