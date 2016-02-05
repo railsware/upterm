@@ -4,7 +4,7 @@ const CurrentDirectory = ({currentWorkingDirectory}: { currentWorkingDirectory: 
     <div className="current-directory">{currentWorkingDirectory}</div>;
 
 const VcsDataComponent = ({data}: { data: VcsData }) => {
-    if (this.props.data.isRepository) {
+    if (data.isRepository) {
         return (
             <div className="vcs-data">
                 <div className={`status ${data.status}`}>{data.branch}</div>

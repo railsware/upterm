@@ -45,7 +45,6 @@ export default class AutocompleteComponent extends React.Component<AutocompleteP
 
 interface SuggestionProps {
     suggestion: Suggestion;
-    key: number;
     onHover: (index: number) => void;
     onClick: () => void;
     isHighlighted: boolean;

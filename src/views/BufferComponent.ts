@@ -64,7 +64,6 @@ export default class BufferComponent extends React.Component<Props, State> {
 
 interface RowProps {
     row: Immutable.List<Char>;
-    key: number;
 }
 
 const charGrouper = (a: Char, b: Char) => a.attributes === b.attributes;
@@ -95,7 +94,6 @@ class RowComponent extends React.Component<RowProps, {}> {
 interface CharGroupProps {
     text: string;
     attributes: i.Attributes;
-    key: number;
 }
 
 class CharGroupComponent extends React.Component<CharGroupProps, {}> {
