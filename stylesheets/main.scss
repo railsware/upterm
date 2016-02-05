@@ -6,6 +6,8 @@ $row-height: $font-size + 4px;
 $title-bar-height: 24px; // If you change it, also change the same variable in ApplicationComponent.
 $default-shadow: 0 2px 8px 1px rgba(0, 0, 0, 0.3);
 $prompt-background-color: lighten(map-get($colors, 'black'), 5%);
+$prompt-padding: 5px;
+$prompt-height: 12px + (2 * $prompt-padding);
 
 @import '../node_modules/font-awesome/scss/font-awesome';
 @import '../node_modules/octicons/octicons/sprockets-octicons';
@@ -94,25 +96,47 @@ body, pre {
   margin-bottom: 40px;
 }
 
+.job {
+  &.failure, &.interrupted, &.success {
+    .output.alternate {
+      zoom: 0.1;
+
+      .row {
+        height: 70px;
+      }
+    }
+  }
+  &.in-progress {
+    .output.alternate {
+      position: fixed;
+      top: $title-bar-height;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      z-index: 4;
+
+      margin: 0;
+      padding: 5px 0 0 0;
+
+      .row {
+        margin: 0;
+      }
+    }
+  }
+}
+
 .prompt-wrapper {
   $decoration-width: 30px;
-  $padding: 5px;
-  $height: 12px + (2 * $padding);
   $arrow-z-index: 2;
   $progress-bar-stripes-size: 30px;
 
+  padding-top: $prompt-padding;
   position: relative;
-  padding-top: $padding;
+  display: grid;
+  grid-template-areas: "decoration prompt actions";
+  grid-template-rows: $prompt-height;
+  grid-template-columns: $decoration-width 1fr 150px;
   background-color: $prompt-background-color;
-
-  @keyframes progress-bar-stripes {
-    from {
-      background-position: 0 0;
-    }
-    to {
-      background-position: $progress-bar-stripes-size 0;
-    }
-  }
 
   &.fixedsticky-on {
     width: 100%;
@@ -120,14 +144,13 @@ body, pre {
   }
 
   .prompt-decoration {
-    display: inline-block;
-    height: $height;
+    grid-area: decoration;
   }
 
   .arrow {
     position: relative;
     width: $decoration-width;
-    height: $height - $padding;
+    height: $prompt-height - $prompt-padding;
     margin: 0 auto;
     overflow: hidden;
     z-index: $arrow-z-index;
@@ -155,10 +178,8 @@ body, pre {
   }
   .prompt-info {
     cursor: help;
-    position: absolute;
-    left: 6px;
-    top: 6px;
     z-index: 2;
+    grid-area: decoration;
   }
 
   &.interrupted {
@@ -179,6 +200,15 @@ body, pre {
     }
 
     .arrow:after {
+      @keyframes progress-bar-stripes {
+        from {
+          background-position: 0 0;
+        }
+        to {
+          background-position: $progress-bar-stripes-size 0;
+        }
+      }
+
       $color: lighten(map-get($colors, 'black'), 3%);
       transition: background 0.1s step-end 0.3s;
       animation: progress-bar-stripes 0.5s linear infinite;
@@ -188,11 +218,8 @@ body, pre {
   }
 
   .prompt, .autocompleted-preview, .inline-synopsis {
-    position: absolute;
-    left: 0;
-    right: 0;
-    padding: 0 10px 3px ($decoration-width + 10px);
-    min-height: $height;
+    padding: 0 10px 3px 10px; // FIXME: Use grid-column-gap when it's supported.
+    grid-area: prompt;
     color: map-get($colors, 'white');
     font-size: $font-size;
     -webkit-font-feature-settings:"liga", "dlig";
@@ -228,8 +255,9 @@ body, pre {
   }
 
   .actions {
-    float: right;
+    grid-area: actions;
     margin-right: 15px;
+    text-align: right;
 
     @mixin action {
       text-align: center;
@@ -249,35 +277,6 @@ body, pre {
 
       &.disabled {
         color: map-get($colors, 'white');
-      }
-    }
-  }
-}
-
-.job {
-  &.failure, &.interrupted, &.success {
-    .output.alternate {
-      zoom: 0.1;
-
-      .row {
-        height: 70px;
-      }
-    }
-  }
-  &.in-progress {
-    .output.alternate {
-      position: fixed;
-      top: $title-bar-height;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      z-index: 4;
-
-      margin: 0;
-      padding: 5px 0 0 0;
-
-      .row {
-        margin: 0;
       }
     }
   }
@@ -462,6 +461,7 @@ pre {
 
 .autocomplete {
   position: absolute;
+  top: $prompt-height;
   min-width: 300px;
 
   box-shadow: $default-shadow;
