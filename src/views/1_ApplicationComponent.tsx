@@ -18,7 +18,7 @@ export default class ApplicationComponent extends React.Component<{}, State> {
         super(props);
 
         this.createTab();
-        this.state = { terminals: this.activeTab.terminals };
+        this.state = {terminals: this.activeTab.terminals};
 
         $(window).resize(() => {
             for (const tab of this.tabs) {
@@ -35,7 +35,7 @@ export default class ApplicationComponent extends React.Component<{}, State> {
         // Cmd+_.
         if (event.metaKey && event.keyCode === 189) {
             this.activeTab.addTerminal();
-            this.setState({ terminals: this.activeTab.terminals });
+            this.setState({terminals: this.activeTab.terminals});
 
             event.stopPropagation();
         }
@@ -51,7 +51,7 @@ export default class ApplicationComponent extends React.Component<{}, State> {
         if (event.ctrlKey && event.keyCode === 68) {
             this.removeActiveTerminal();
 
-            this.setState({ terminals: this.activeTab.terminals });
+            this.setState({terminals: this.activeTab.terminals});
 
             event.stopPropagation();
         }
@@ -59,7 +59,7 @@ export default class ApplicationComponent extends React.Component<{}, State> {
         // Cmd+J.
         if (event.metaKey && event.keyCode === 74) {
             if (this.activeTab.activateNextTerminal()) {
-                this.setState({ terminals: this.activeTab.terminals });
+                this.setState({terminals: this.activeTab.terminals});
 
                 event.stopPropagation();
             }
@@ -68,7 +68,7 @@ export default class ApplicationComponent extends React.Component<{}, State> {
         // Cmd+K.
         if (event.metaKey && event.keyCode === 75) {
             if (this.activeTab.activatePreviousTerminal()) {
-                this.setState({ terminals: this.activeTab.terminals });
+                this.setState({terminals: this.activeTab.terminals});
 
                 event.stopPropagation();
             }
@@ -78,7 +78,7 @@ export default class ApplicationComponent extends React.Component<{}, State> {
         if (event.metaKey && event.keyCode === 84) {
             if (this.tabs.length < 9) {
                 this.createTab();
-                this.setState({ terminals: this.activeTab.terminals });
+                this.setState({terminals: this.activeTab.terminals});
             } else {
                 shell.beep();
             }
@@ -89,7 +89,7 @@ export default class ApplicationComponent extends React.Component<{}, State> {
         // Cmd+W.
         if (event.metaKey && event.keyCode === 87) {
             this.removeActiveTab();
-            this.setState({ terminals: this.activeTab.terminals });
+            this.setState({terminals: this.activeTab.terminals});
 
             event.stopPropagation();
             event.preventDefault();
@@ -101,7 +101,7 @@ export default class ApplicationComponent extends React.Component<{}, State> {
 
             if (this.tabs.length > newTabIndex) {
                 this.activeTabIndex = newTabIndex;
-                this.setState({ terminals: this.activeTab.terminals });
+                this.setState({terminals: this.activeTab.terminals});
             } else {
                 shell.beep();
             }
