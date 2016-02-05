@@ -7,6 +7,7 @@ import Char from "../Char";
 import {groupWhen} from "../Utils";
 import {List} from "immutable";
 import {scrollToBottom} from "./ViewUtils";
+import preventExtensions = Reflect.preventExtensions;
 
 interface Props {
     buffer: Buffer;
@@ -23,17 +24,11 @@ export default class BufferComponent extends React.Component<Props, State> {
     }
 
     render() {
-        return React.createElement(
-            "pre",
-            { className: `output ${this.props.buffer.activeBuffer}` },
-            this.shouldCutOutput ? this.cutChild : undefined,
-            this.renderableRows.map((row, index) => React.createElement(
-                RowComponent,
-                {
-                    row: row || List<Char>(),
-                    key: index,
-                }
-            ))
+        return (
+            <pre className={`output ${this.props.buffer.activeBuffer}`}>
+                {this.shouldCutOutput ? this.cutChild : undefined}
+                {this.renderableRows.map((row, index) => <RowComponent row={row || List<Char>()} key={index}/>)}
+            </pre>
         );
     }
 
@@ -81,11 +76,11 @@ class RowComponent extends React.Component<RowProps, {}> {
         return React.createElement(
             "div",
             { className: "row" },
-            charGroups.map((charGroup: Char[], index: number) => React.createElement(CharGroupComponent, {
-                text: charGroup.map(char => char.toString()).join(""),
-                attributes: charGroup[0].attributes,
-                key: index,
-            }))
+            charGroups.map((charGroup: Char[], index: number) =>
+                <CharGroupComponent text={charGroup.map(char => char.toString()).join("")}
+                                    attributes={charGroup[0].attributes}
+                                    key={index}/>
+            )
         );
 
     }
@@ -107,7 +102,7 @@ class CharGroupComponent extends React.Component<CharGroupProps, {}> {
 
     private getHTMLAttributes(attributes: i.Attributes): Object {
         let htmlAttributes: Dictionary<any> = {};
-        _.each(<Dictionary<any>>attributes, (value, key) => {
+        _.each(attributes, (value, key) => {
             htmlAttributes[`data-${key}`] = value;
         });
 
