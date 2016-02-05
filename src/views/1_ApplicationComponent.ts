@@ -3,7 +3,7 @@ import {TabComponent, TabProps, Tab} from "./TabComponent";
 import * as React from "react";
 import * as _ from "lodash";
 import Terminal from "../Terminal";
-const IPC = require("ipc");
+import {ipcRenderer} from "electron";
 const shell: Electron.Shell = require("remote").require("electron").shell;
 
 interface State {
@@ -26,7 +26,7 @@ export default class ApplicationComponent extends React.Component<{}, State> {
             }
         });
 
-        IPC.on("change-working-directory", (directory: string) =>
+        ipcRenderer.on("change-working-directory", (directory: string) =>
             this.activeTab.activeTerminal().currentDirectory = directory
         );
     }
