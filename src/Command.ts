@@ -1,6 +1,7 @@
-import * as fs from "fs";
+//import * as fs from "fs";
 import Utils from "./Utils";
 import Job from "./Job";
+import {existsSync, statSync} from "fs";
 
 const executors: Dictionary<(i: Job, a: string[]) => void> = {
     cd: (job: Job, args: string[]): void => {
@@ -11,11 +12,11 @@ const executors: Dictionary<(i: Job, a: string[]) => void> = {
         } else {
             newDirectory = Utils.resolveDirectory(job.directory, args[0]);
 
-            if (!fs.existsSync(newDirectory)) {
+            if (!existsSync(newDirectory)) {
                 throw new Error(`The directory ${newDirectory} doesn"t exist.`);
             }
 
-            if (!fs.statSync(newDirectory).isDirectory()) {
+            if (!statSync(newDirectory).isDirectory()) {
                 throw new Error(`${newDirectory} is not a directory.`);
             }
         }

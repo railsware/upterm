@@ -2,20 +2,20 @@ import Terminal from "../Terminal";
 import PluginManager from "../PluginManager";
 import {EnvironmentObserverPlugin} from "../Interfaces";
 import Utils from "../Utils";
-import * as chokidar from "chokidar";
-import * as fs from "fs";
+import {watch} from "chokidar";
+import {FSWatcher} from "fs";
 import * as Path from "path";
-import * as events from "events";
+import {EventEmitter} from "events";
 import {executeCommand} from "../PTY";
 import {debounce} from "../Decorators";
 
 const GIT_WATCHER_EVENT_NAME = "git-data-changed";
 
-class GitWatcher extends events.EventEmitter {
+class GitWatcher extends EventEmitter {
     GIT_HEAD_FILE_NAME = Path.join(".git", "HEAD");
     GIT_HEADS_DIRECTORY_NAME = Path.join(".git", "refs", "heads");
 
-    watcher: fs.FSWatcher;
+    watcher: FSWatcher;
     gitDirectory: string;
 
     constructor(private directory: string) {
@@ -32,7 +32,7 @@ class GitWatcher extends events.EventEmitter {
     async watch() {
         if (await Utils.exists(this.gitDirectory)) {
             this.updateGitData();
-            this.watcher = chokidar.watch(this.directory);
+            this.watcher = watch(this.directory);
             this.watcher.on("all", (type: string, fileName: string) => {
                     if (!fileName.startsWith(".git") ||
                         fileName === this.GIT_HEAD_FILE_NAME ||

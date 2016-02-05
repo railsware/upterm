@@ -1,13 +1,13 @@
-import * as fs from "fs";
-import * as fse from "fs-extra";
+import {walk} from "fs-extra";
 import * as Path from "path";
 import * as i from "./Interfaces";
 import * as e from "./Enums";
 import * as _ from "lodash";
+import {Stats, readFile, exists, readdir, stat} from "fs";
 
 interface FSExtraWalkObject {
     path: string;
-    stats: fs.Stats;
+    stats: Stats;
 }
 
 export default class Utils {
@@ -45,7 +45,7 @@ export default class Utils {
     static filesIn(directory: string): Promise<string[]> {
         return new Promise((resolve, reject) => {
             Utils.ifExists(directory, () => {
-                fs.stat(directory, (statError: NodeJS.ErrnoException, pathStat: fs.Stats) => {
+                stat(directory, (statError: NodeJS.ErrnoException, pathStat: Stats) => {
                     if (statError) {
                         reject(statError);
                     }
@@ -54,7 +54,7 @@ export default class Utils {
                         reject(`${directory} is not a directory.`);
                     }
 
-                    fs.readdir(directory, (readError: NodeJS.ErrnoException, files: Array<string>) => {
+                    readdir(directory, (readError: NodeJS.ErrnoException, files: Array<string>) => {
                         if (readError) {
                             reject(readError);
                         }
@@ -70,7 +70,7 @@ export default class Utils {
         let files: string[] = [];
 
         return new Promise(resolve =>
-            fse.walk(directoryPath)
+            walk(directoryPath)
                 .on("data", (file: FSExtraWalkObject) => file.stats.isFile() && files.push(file.path))
                 .on("end", () => resolve(files))
         );
@@ -80,7 +80,7 @@ export default class Utils {
         return Utils.filesIn(directory).then(files =>
             Promise.all(files.map(fileName =>
                 new Promise((resolve, reject) =>
-                    fs.stat(Path.join(directory, fileName), (error: NodeJS.ErrnoException, stat: fs.Stats) => {
+                    stat(Path.join(directory, fileName), (error: NodeJS.ErrnoException, stat: Stats) => {
                         if (error) {
                             reject(error);
                         }
@@ -93,7 +93,7 @@ export default class Utils {
     }
 
     static ifExists(fileName: string, callback: Function, elseCallback?: Function) {
-        fs.exists(fileName, (pathExists: boolean) => {
+        exists(fileName, (pathExists: boolean) => {
             if (pathExists) {
                 callback();
             } else if (elseCallback) {
@@ -103,7 +103,7 @@ export default class Utils {
     }
 
     static exists(filePath: string): Promise<boolean> {
-        return new Promise(resolve => fs.exists(filePath, resolve));
+        return new Promise(resolve => exists(filePath, resolve));
     }
 
     static isDirectory(directoryName: string): Promise<boolean> {
@@ -111,7 +111,7 @@ export default class Utils {
             Utils.ifExists(
                 directoryName,
                 () => {
-                    fs.stat(directoryName, (error: NodeJS.ErrnoException, pathStat: fs.Stats) => {
+                    stat(directoryName, (error: NodeJS.ErrnoException, pathStat: Stats) => {
                         resolve(pathStat.isDirectory());
                     });
                 },
@@ -121,7 +121,7 @@ export default class Utils {
 
     static readFile(filePath: string): Promise<string> {
         return new Promise((resolve, reject) => {
-            fs.readFile(filePath, (error, buffer) => {
+            readFile(filePath, (error, buffer) => {
                 if (error) {
                     reject(error);
                 } else {

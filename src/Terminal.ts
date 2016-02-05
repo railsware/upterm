@@ -1,4 +1,4 @@
-import * as fs from "fs";
+import {readFileSync, writeFile} from "fs";
 import * as _ from "lodash";
 import Job from "./Job";
 import History from "./History";
@@ -93,7 +93,7 @@ export default class Terminal extends EmitterWithUniqueID {
             values[key] = Serializer.serialize((<any>this)[key])
         );
 
-        fs.writeFile(this.stateFileName, JSON.stringify(values), (error: any) => {
+        writeFile(this.stateFileName, JSON.stringify(values), (error: any) => {
             if (error) throw error;
         });
     }
@@ -114,7 +114,7 @@ export default class Terminal extends EmitterWithUniqueID {
 
     private readSerialized(): Dictionary<any> {
         try {
-            return JSON.parse(fs.readFileSync(this.stateFileName).toString());
+            return JSON.parse(readFileSync(this.stateFileName).toString());
         } catch (error) {
             return this.serializableProperties;
         }

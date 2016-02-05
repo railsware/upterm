@@ -1,14 +1,14 @@
-import * as e from "./Enums";
-import * as fs from "fs";
-import * as React from "react";
+import {Color, Weight} from "./Enums";
+import {Stats} from "fs";
+import {ReactElement} from "react";
 import Job from "./Job";
 import Terminal from "./Terminal";
 import {Suggestion} from "./plugins/autocompletion_providers/Suggestions";
 
 export interface Attributes {
-    color?: e.Color;
-    "background-color"?: e.Color;
-    weight?: e.Weight;
+    color?: Color;
+    "background-color"?: Color;
+    weight?: Weight;
     underline?: boolean;
     crossedOut?: boolean;
     blinking?: boolean;
@@ -23,12 +23,12 @@ export interface AutocompletionProvider {
 
 export interface FileInfo {
     name: string;
-    stat: fs.Stats;
+    stat: Stats;
 }
 
 export interface OutputDecorator {
     isApplicable: (job: Job) => boolean;
-    decorate: (job: Job) => React.ReactElement<any>;
+    decorate: (job: Job) => ReactElement<any>;
 
     /**
      * @note Setting this property to `true` will result in rendering performance
