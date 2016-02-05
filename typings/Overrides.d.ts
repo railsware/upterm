@@ -40,3 +40,9 @@ declare module "fs-extra" {
 interface Array<T> {
     includes(value: T): boolean;
 }
+
+declare namespace __React {
+    interface DOMAttributes {
+        onKeyDownCapture?: KeyboardEventHandler;
+    }
+}
