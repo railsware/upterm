@@ -7,7 +7,6 @@ import Char from "../Char";
 import {groupWhen} from "../Utils";
 import {List} from "immutable";
 import {scrollToBottom} from "./ViewUtils";
-import preventExtensions = Reflect.preventExtensions;
 
 interface Props {
     buffer: Buffer;

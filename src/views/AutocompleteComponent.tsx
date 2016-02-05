@@ -1,6 +1,33 @@
 import * as React from "react";
 import {Suggestion} from "../plugins/autocompletion_providers/Suggestions";
 
+interface SuggestionProps {
+    suggestion: Suggestion;
+    onHover: () => void;
+    onClick: () => void;
+    isHighlighted: boolean;
+}
+
+const SuggestionComponent = ({suggestion, onHover, onClick, isHighlighted}: SuggestionProps) => {
+    let classes = [this.props.suggestion.type];
+
+    if (isHighlighted) {
+        classes.push("highlighted");
+    }
+
+    return (
+        <li className={classes.join(" ")}
+            style={{cursor: "pointer"}}
+            onMouseOver={onHover}
+            onClick={onClick}>
+
+            <i className="icon" dataColor={suggestion.iconColor}/>
+            <span className="value">{suggestion.displayValue}</span>
+            <span className="synopsis">{suggestion.synopsis}</span>
+        </li>
+    );
+};
+
 interface AutocompleteProps {
     caretOffset: Offset;
     suggestions: Suggestion[];
@@ -35,35 +62,6 @@ export default class AutocompleteComponent extends React.Component<AutocompleteP
                 <ul>{suggestionViews}</ul>
                 {descriptionElement}
             </div>
-        );
-    }
-}
-
-interface SuggestionProps {
-    suggestion: Suggestion;
-    onHover: () => void;
-    onClick: () => void;
-    isHighlighted: boolean;
-}
-
-class SuggestionComponent extends React.Component<SuggestionProps, {}> {
-    render() {
-        let classes = [this.props.suggestion.type];
-
-        if (this.props.isHighlighted) {
-            classes.push("highlighted");
-        }
-
-        return (
-            <li className={classes.join(" ")}
-                style={{cursor: "pointer"}}
-                onMouseOver={this.props.onHover}
-                onClick={this.props.onClick}>
-
-                <i className="icon" dataColor={this.props.suggestion.iconColor}/>
-                <span className="value">{this.props.suggestion.displayValue}</span>
-                <span className="synopsis">{this.props.suggestion.synopsis}</span>
-            </li>
         );
     }
 }

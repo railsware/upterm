@@ -4,13 +4,16 @@ const CurrentDirectory = ({currentWorkingDirectory}: { currentWorkingDirectory: 
     <div className="current-directory">{currentWorkingDirectory}</div>;
 
 const VcsDataComponent = ({data}: { data: VcsData }) => {
-    if (data.isRepository) {
-        return (
-            <div className="vcs-data">
-                <div className={`status ${data.status}`}>{data.branch}</div>
-            </div>
-        );
+    if (!data.isRepository) {
+        /* tslint:disable:no-null-keyword */
+        return null;
     }
+
+    return (
+        <div className="vcs-data">
+            <div className={`status ${data.status}`}>{data.branch}</div>
+        </div>
+    );
 };
 
 const StatusLine = ({currentWorkingDirectory, vcsData}: { currentWorkingDirectory: string; vcsData: VcsData }) =>
