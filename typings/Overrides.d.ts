@@ -4,6 +4,7 @@ interface KeyDownReceiver {
 
 declare class Notification {
     constructor(str: string);
+    constructor(title: string, options: { body: string });
 }
 
 interface Window {
@@ -22,6 +23,7 @@ interface JQuery {
 
 declare class AnsiParser {
     constructor(callbacks: Dictionary<Function>)
+
     parse(data: string): any;
 }
 
