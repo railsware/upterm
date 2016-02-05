@@ -45,6 +45,7 @@ declare namespace __React {
     interface DOMAttributes {
         onKeyDownCapture?: KeyboardEventHandler;
         onClickCapture?: KeyboardEventHandler;
+        dataColor?: any;
     }
 }
 
