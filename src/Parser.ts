@@ -1,15 +1,12 @@
 import Job from "./Job";
 import Char from "./Char";
+import {Color, Weight, Brightness, CharCode, LogLevel, Buffer, colorIndex} from "./Enums";
+import {Attributes} from "./Interfaces";
+import Utils from "./Utils";
+import BufferModel from "./Buffer";
+
 const ansiParserConstructor: typeof AnsiParser = require("node-ansiparser");
 
-import * as e from "./Enums";
-import * as i from "./Interfaces";
-import Utils from "./Utils";
-import Buffer from "./Buffer";
-
-import Color = e.Color;
-import Weight = e.Weight;
-import Brightness = e.Brightness;
 
 interface HandlerResult {
     status: string;
@@ -18,8 +15,8 @@ interface HandlerResult {
     url: string;
 }
 
-const SGR: { [indexer: string]: i.Attributes|string } = {
-    0: { color: Color.White, weight: e.Weight.Normal, underline: false, "background-color": Color.Black },
+const SGR: { [indexer: string]: Attributes|string } = {
+    0: { color: Color.White, weight: Weight.Normal, underline: false, "background-color": Color.Black },
     1: { brightness: Brightness.Bright },
     2: { weight: Weight.Faint },
     4: { underline: true },
@@ -60,7 +57,7 @@ const CSI = {
 
 export default class Parser {
     private parser: AnsiParser;
-    private buffer: Buffer;
+    private buffer: BufferModel;
 
     constructor(private job: Job) {
         this.buffer = this.job.buffer;
@@ -87,9 +84,9 @@ export default class Parser {
             },
             inst_x: (flag: string) => {
                 const char = Char.flyweight(flag, this.job.buffer.attributes);
-                const name = e.CharCode[char.getCharCode()];
+                const name = CharCode[char.getCharCode()];
 
-                Utils.print((name ? e.LogLevel.Log : e.LogLevel.Error), flag.split("").map((_, index) => flag.charCodeAt(index)));
+                Utils.print((name ? LogLevel.Log : LogLevel.Error), flag.split("").map((_, index) => flag.charCodeAt(index)));
 
                 this.buffer.write(flag);
 
@@ -192,7 +189,7 @@ export default class Parser {
                 case "M":
                     short = "Reverse Index (RI).";
                     /* tslint:disable:max-line-length */
-                    long = "Move the active position to the same horizontal position on the preceding line. If the active position is at the top margin, a scroll down is performed.";
+                    long = "Move the active position to the same horizontal position on the preceding lin If the active position is at the top margin, a scroll down is performed.";
 
                     this.buffer.moveCursorRelative({ vertical: -1 });
                     break;
@@ -242,8 +239,8 @@ export default class Parser {
                 // If you change the DECCOLM setting, the terminal:
                 //      Sets the left, right, top and bottom scrolling margins to their default positions.
                 //      Erases all data in page memory.
-                // DECCOLM resets vertical split screen mode (DECLRMM) to unavailable.
-                // DECCOLM clears data from the status line if the status line is set to host-writable.
+                // DECCOLM resets vertical split screen mode (DECLRMM) to unavailabl
+                // DECCOLM clears data from the status line if the status line is set to host-writabl
                 break;
             case 6:
                 description = "Origin Mode (DECOM).";
@@ -279,9 +276,9 @@ export default class Parser {
             case 1049:
                 if (isSet) {
                     /* tslint:disable:max-line-length */
-                    description = "Save cursor as in DECSC and use Alternate Screen Buffer, clearing it first.  (This may be disabled by the titeInhibit resource).  This combines the effects of the 1047  and 1048  modes.  Use this with terminfo-based applications rather than the 47  mode.";
+                    description = "Save cursor as in DECSC and use Alternate Screen Buffer, clearing it first.  (This may be disabled by the titeInhibit resource).  This combines the effects of the 1047  and 1048  modes.  Use this with terminfo-based applications rather than the 47  mod";
 
-                    this.buffer.activeBuffer = e.Buffer.Alternate;
+                    this.buffer.activeBuffer = Buffer.Alternate;
                 } else {
                     // TODO: Add Implementation
                     status = "unhandled";
@@ -289,7 +286,7 @@ export default class Parser {
                 break;
             case 2004:
                 if (isSet) {
-                    description = "Set bracketed paste mode.";
+                    description = "Set bracketed paste mod";
                 } else {
                     // TODO: Add Implementation
                     status = "unhandled";
@@ -444,8 +441,8 @@ export default class Parser {
                     } else if (isSetColorExtended(attributeToSet)) {
                         const next = params.shift();
                         if (next === 5) {
-                            const colorIndex = params.shift();
-                            this.buffer.setAttributes({ [<string>attributeToSet]: e.colorIndex[colorIndex] });
+                            const color = params.shift();
+                            this.buffer.setAttributes({ [<string>attributeToSet]: colorIndex[color] });
                         } else {
                             Utils.error("sgr", sgr, next, params);
                         }
@@ -494,7 +491,7 @@ function or1(value: number) {
 
 
 // TODO: Move to Utils.
-function logPosition(buffer: Buffer) {
+function logPosition(buffer: BufferModel) {
     const position = buffer.cursor.getPosition();
     Utils.debug(`%crow: ${position.row}\tcolumn: ${position.column}\t value: ${buffer.at(position)}`, "color: green");
 }

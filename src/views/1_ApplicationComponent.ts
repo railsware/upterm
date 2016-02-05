@@ -173,7 +173,7 @@ export default class ApplicationComponent extends React.Component<{}, State> {
         _.pullAt(this.tabs, this.activeTabIndex);
 
         if (this.tabs.length === 0) {
-            IPC.send("quit");
+            ipcRenderer.send("quit");
         } else if (this.tabs.length === this.activeTabIndex) {
             this.activeTabIndex -= 1;
         }

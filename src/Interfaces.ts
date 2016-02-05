@@ -1,4 +1,4 @@
-import {Color, Weight} from "./Enums";
+import {Color, Weight, Brightness} from "./Enums";
 import {Stats} from "fs";
 import {ReactElement} from "react";
 import Job from "./Job";
@@ -8,6 +8,7 @@ import {Suggestion} from "./plugins/autocompletion_providers/Suggestions";
 export interface Attributes {
     color?: Color;
     "background-color"?: Color;
+    brightness?: Brightness;
     weight?: Weight;
     underline?: boolean;
     crossedOut?: boolean;

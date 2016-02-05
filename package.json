@@ -71,9 +71,9 @@
     "react-tools": "0.13.3",
     "run-sequence": "1.1.5",
     "tslint": "3.3.0",
-    "typescript": "1.7.5",
+    "typescript": "1.8.0",
     "typings": "0.6.6",
-    "webdriverio": "4.0.1"
+    "webdriverio": "4.0.2"
   },
   "scripts": {
     "preinstall": "npm prune",
