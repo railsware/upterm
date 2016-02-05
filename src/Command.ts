@@ -1,4 +1,3 @@
-//import * as fs from "fs";
 import Utils from "./Utils";
 import Job from "./Job";
 import {existsSync, statSync} from "fs";
