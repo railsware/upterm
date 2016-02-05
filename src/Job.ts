@@ -157,7 +157,7 @@ export default class Job extends EmitterWithUniqueID {
     }
 
     private get firstApplicableDecorator(): i.OutputDecorator {
-        return _.find(this.decorators, decorator => decorator.isApplicable(this));
+        return this.decorators.find(decorator => decorator.isApplicable(this));
     }
 
     get buffer(): Buffer {

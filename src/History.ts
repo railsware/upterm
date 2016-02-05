@@ -1,5 +1,3 @@
-import * as _ from "lodash";
-
 export class HistoryEntry {
     constructor(private _raw: string, private _historyExpanded: string[]) {
     }
@@ -32,7 +30,7 @@ export class History {
     }
 
     static lastWithPrefix(prefix: string): HistoryEntry {
-        return this.find(entry => entry.raw.startsWith(prefix)) || this.defaultEntry;
+        return this.storage.find(entry => entry.raw.startsWith(prefix)) || this.defaultEntry;
     }
 
     static at(position: number): HistoryEntry {
@@ -91,19 +89,11 @@ export class History {
         });
     }
 
-    private static findIndex(entry: HistoryEntry): number {
-        return _.findIndex(this.storage, stackedEntry => stackedEntry.raw === entry.raw);
-    }
-
     private static remove(entry: HistoryEntry): void {
-        const duplicateIndex = this.findIndex(entry);
+        const duplicateIndex = this.storage.findIndex(stackedEntry => stackedEntry.raw === entry.raw);
         if (duplicateIndex !== -1) {
             this.storage.splice(duplicateIndex, 1);
         }
-    }
-
-    private static find(searcher: (he: HistoryEntry) => boolean): HistoryEntry {
-        return _.find(this.storage, searcher);
     }
 }
 

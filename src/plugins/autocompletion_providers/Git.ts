@@ -243,7 +243,7 @@ function canonizeBranchAlias(alias: string) {
 PluginManager.registerAutocompletionProvider({
     forCommand: `git commit`,
     getSuggestions: async (job: Job) => {
-        const currentOption = _.find(commitOptions, option => option.shouldSuggestChildren(job));
+        const currentOption = commitOptions.find(option => option.shouldSuggestChildren(job));
         if (currentOption) {
             return await currentOption.getChildren(job);
         }
