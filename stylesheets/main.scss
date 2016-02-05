@@ -131,7 +131,7 @@ body, pre {
   $progress-bar-stripes-size: 30px;
 
   padding-top: $prompt-padding;
-  position: relative;
+  position: relative; // To position the autocompletion box correctly.
   display: grid;
   grid-template-areas: "decoration prompt actions";
   grid-template-rows: $prompt-height;
@@ -139,15 +139,11 @@ body, pre {
   background-color: $prompt-background-color;
 
   &.fixedsticky-on {
-    width: 100%;
     box-shadow: $default-shadow;
   }
 
-  .prompt-decoration {
-    grid-area: decoration;
-  }
-
   .arrow {
+    grid-area: decoration;
     position: relative;
     width: $decoration-width;
     height: $prompt-height - $prompt-padding;
@@ -195,7 +191,7 @@ body, pre {
   }
 
   &.in-progress {
-    .prompt-decoration {
+    .arrow {
       cursor: progress;
     }
 
@@ -220,15 +216,12 @@ body, pre {
   .prompt, .autocompleted-preview, .inline-synopsis {
     padding: 0 10px 3px 10px; // FIXME: Use grid-column-gap when it's supported.
     grid-area: prompt;
-    color: map-get($colors, 'white');
     font-size: $font-size;
     -webkit-font-feature-settings:"liga", "dlig";
 
     @mixin common {
-      display: inline-block;
       white-space: pre-wrap;
       -webkit-appearance: none;
-      border: none;
       outline: none;
     }
 
@@ -240,16 +233,15 @@ body, pre {
   }
 
   .prompt {
-    background-color: transparent;
+    color: map-get($colors, 'white');
+    z-index: 2;
   }
 
   .autocompleted-preview {
-    background-color: $prompt-background-color;
     color: lighten($prompt-background-color, 15%);
   }
 
   .inline-synopsis {
-    background-color: $prompt-background-color;
     color: map-get($colors, "yellow");
     opacity: 0.4;
   }

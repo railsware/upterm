@@ -255,14 +255,8 @@ export default class PromptComponent extends React.Component<Props, State> imple
         return React.createElement(
             "div",
             { className: classes },
-            React.createElement(
-                "div",
-                { className: "prompt-decoration" },
-                React.createElement("div", { className: "arrow" })
-            ),
+            React.createElement("div", { className: "arrow" }),
             React.createElement("div", { className: "prompt-info", title: this.props.status }),
-            autocompletedPreview,
-            inlineSynopsis,
             React.createElement("div", {
                 className: "prompt",
                 onKeyDown: this.handlers.onKeyDown.bind(this),
@@ -273,6 +267,8 @@ export default class PromptComponent extends React.Component<Props, State> imple
                                                                            // Without the InProgress part the alternate buffer loses focus.
                 contentEditable: this.props.status === e.Status.NotStarted || this.props.status === e.Status.InProgress,
             }),
+            autocompletedPreview,
+            inlineSynopsis,
             autocomplete,
             React.createElement(
                 "div",
