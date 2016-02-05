@@ -9,7 +9,7 @@ export default class Autocompletion implements i.AutocompletionProvider {
     static limit = 9;
 
     getSuggestions(job: Job) {
-        let specializedProviders = PluginManager.specializedAutocompletionProviders(job.prompt.expandFinishedLexemes);
+        let specializedProviders = PluginManager.specializedAutocompletionProviders(job.prompt.expandedFinishedLexemes);
         let providers = specializedProviders.length ? specializedProviders : PluginManager.genericAutocompletionProviders;
 
         // FIXME: skip suggestions that have 0 score.

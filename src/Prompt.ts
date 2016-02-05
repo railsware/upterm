@@ -10,6 +10,7 @@ export default class Prompt extends events.EventEmitter {
     private _value = "";
     private _autocompletion = new Autocompletion();
     private _expanded: string[];
+    private _expandedFinishedLexemes: string[];
     private _lexemes: string[];
     private _historyExpanded: string[];
 
@@ -32,6 +33,7 @@ export default class Prompt extends events.EventEmitter {
         this._lexemes = lex(this.value);
         this._historyExpanded = expandHistory(this._lexemes);
         this._expanded = expandAliases(this._historyExpanded);
+        this._expandedFinishedLexemes = expandAliases(expandHistory(lex(this.value).slice(0, -1)));
     }
 
     get commandName(): string {
@@ -50,8 +52,8 @@ export default class Prompt extends events.EventEmitter {
         return this._expanded;
     }
 
-    get expandFinishedLexemes(): string[] {
-        return expandAliases(expandHistory(lex(this.value).slice(0, -1)));
+    get expandedFinishedLexemes(): string[] {
+        return this._expandedFinishedLexemes;
     }
 
     get lexemes(): string[] {

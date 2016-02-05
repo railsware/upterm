@@ -54,7 +54,7 @@ export class Suggestion {
     }
 
     shouldIgnore(job: Job): boolean {
-        return job.prompt.expandFinishedLexemes.includes(this.value);
+        return job.prompt.expandedFinishedLexemes.includes(this.value);
     }
 
     shouldSuggestChildren(job: Job): boolean {
@@ -116,7 +116,7 @@ export class Option extends BaseOption {
     }
 
     shouldIgnore(job: Job): boolean {
-        const finishedWords = job.prompt.expandFinishedLexemes;
+        const finishedWords = job.prompt.expandedFinishedLexemes;
         return finishedWords.includes(this.value) || finishedWords.includes(this.alias);
     }
 
