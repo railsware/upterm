@@ -118,21 +118,23 @@ export default class ApplicationComponent extends React.Component<{}, State> {
                 <TabComponent isActive={index === this.activeTabIndex}
                               key={index}
                               position={index + 1}
-                              activate={() => { this.activeTabIndex = index; this.setState({ terminals: this.activeTab.terminals }); }}>
+                              activate={() => {
+                                this.activeTabIndex = index;
+                                this.setState({ terminals: this.activeTab.terminals });
+                              }}>
                 </TabComponent>
             );
         }
 
-        let terminals = this.state.terminals.map(
-            terminal => React.createElement(TerminalComponent, {
-                terminal: terminal,
-                key: terminal.id,
-                isActive: terminal === this.activeTab.activeTerminal(),
-                activate: () => {
-                    this.activeTab.activateTerminal(terminal);
-                    this.setState({ terminals: this.activeTab.terminals });
-                },
-            })
+        let terminals = this.state.terminals.map(terminal =>
+            <TerminalComponent terminal={terminal}
+                               key={terminal.id}
+                               isActive={terminal === this.activeTab.activeTerminal()}
+                               activate={() => {
+                                   this.activeTab.activateTerminal(terminal);
+                                   this.setState({ terminals: this.activeTab.terminals });
+                               }}>
+            </TerminalComponent>
         );
 
         return React.createElement(
