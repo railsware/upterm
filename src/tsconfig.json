@@ -8,6 +8,7 @@
     "moduleResolution": "node",
     "experimentalDecorators": true,
     "noEmitOnError": true,
+    "pretty": true,
     "jsx": "react",
     "baseUrl": ".",
     "paths": {
