@@ -7,6 +7,6 @@ import {loadAllPlugins} from "../PluginManager";
 $(() => {
     // FIXME: Remove after switching to Webpack (because all the files will be loaded at start anyway).
     loadAllPlugins()
-        .then(() => reactDOM.render(React.createElement(ApplicationComponent), document.getElementById("black-screen")) )
+        .then(() => reactDOM.render(<ApplicationComponent/>, document.getElementById("black-screen")) )
         .then(() => Aliases.all());
 });

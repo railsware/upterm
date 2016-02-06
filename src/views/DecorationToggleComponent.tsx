@@ -32,10 +32,10 @@ export default class DecorationToggleComponent extends React.Component<Props, St
             classes.push("disabled");
         }
 
-        return React.createElement(
-            "a",
-            { href: "#", className: classes.join(" "), onClick: this.handleClick.bind(this) },
-            React.createElement("i", { className: "fa fa-magic" })
+        return (
+            <a className={classes.join(" ")} onClick={this.handleClick.bind(this)}>
+                <i className="fa fa-magic"></i>
+            </a>
         );
     }
 }
