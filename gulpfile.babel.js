@@ -23,18 +23,9 @@ function notify(message) {
 
 var options = {
     typeScript: {
-        source: "src/**/*",
+        source: "src/**/*.ts*",
         target: "compiled/src",
-        config: $.typescript.createProject({
-            typescript: require("typescript"),
-            target: "ES6",
-            noImplicitAny: true,
-            removeComments: true,
-            preserveConstEnums: true,
-            experimentalDecorators: true,
-            experimentalAsyncFunctions: true,
-            jsx: "react"
-        })
+        config: $.typescript.createProject('src/tsconfig.json', {typescript: require("typescript")})
     },
     test: {
         source: "test/**/*.ts",
@@ -105,6 +96,6 @@ gulp.task("compile-tests", function () {
 gulp.task("default", function () {
     return runSequence(
         "watch",
-        $.shell.task("PATH=node_modules/.bin:$PATH electron .")
+        $.shell.task("npm run electron")
     );
 });

@@ -1,0 +1,20 @@
+{
+  "compilerOptions": {
+    "target": "ES6",
+    "module": "commonjs",
+    "noImplicitAny": true,
+    "removeComments": true,
+    "preserveConstEnums": true,
+    "moduleResolution": "node",
+    "experimentalDecorators": true,
+    "noEmitOnError": true,
+    "jsx": "react",
+    "baseUrl": ".",
+    "paths": {
+      "*": [
+        "*",
+        "views/*"
+      ]
+    }
+  }
+}
