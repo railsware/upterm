@@ -9,7 +9,6 @@ import JobComponent from "./3_JobComponent";
 import PromptModel from "../Prompt";
 import JobModel from "../Job";
 import {Suggestion} from "../plugins/autocompletion_providers/Suggestions";
-import Autocompletion from "../Autocompletion";
 const rx = require("rx");
 const reactDOM = require("react-dom");
 
@@ -155,61 +154,50 @@ export default class PromptComponent extends React.Component<Props, State> imple
         let scrollToTop: any;
 
         if (this.showAutocomplete()) {
-            autocomplete = React.createElement(AutocompleteComponent, {
-                suggestions: this.state.suggestions,
-                caretOffset: $(this.commandNode).caret("offset"),
-                onSuggestionHover: this.highlightSuggestion.bind(this),
-                onSuggestionClick: this.applySuggestion.bind(this),
-                highlightedIndex: this.state.highlightedSuggestionIndex,
-                ref: "autocomplete",
-            });
+            autocomplete = <AutocompleteComponent suggestions={this.state.suggestions}
+                                                  caretOffset={$(this.commandNode).caret("offset")}
+                                                  onSuggestionHover={this.highlightSuggestion.bind(this)}
+                                                  onSuggestionClick={this.applySuggestion.bind(this)}
+                                                  highlightedIndex={this.state.highlightedSuggestionIndex}
+                                                  ref="autocomplete"/>;
             const completed = this.valueWithCurrentSuggestion;
             if (completed.trim() !== this.prompt.value && completed.startsWith(this.prompt.value)) {
-                autocompletedPreview = React.createElement("div", {className: "autocompleted-preview"}, completed);
+                autocompletedPreview = <div className="autocompleted-preview">{completed}</div>;
             } else {
                 const highlightedSuggestion = this.state.suggestions[this.state.highlightedSuggestionIndex];
                 if (highlightedSuggestion.synopsis) {
-                    inlineSynopsis = React.createElement("div", {className: "inline-synopsis"}, `${this.prompt.value} —— ${highlightedSuggestion.synopsis}`);
+                    inlineSynopsis = <div className="inline-synopsis">{this.prompt.value} —— {highlightedSuggestion.synopsis}</div>;
                 }
             }
         }
 
         if (this.props.jobView.state.canBeDecorated) {
-            decorationToggle = React.createElement(DecorationToggleComponent, {job: this.props.jobView});
+            decorationToggle = <DecorationToggleComponent job={this.props.jobView}/>;
         }
 
         if (this.props.status !== e.Status.NotStarted) {
-            scrollToTop = React.createElement(
-                "a",
-                {href: "#", className: "scroll-to-top", onClick: this.handleScrollToTop.bind(this)},
-                React.createElement("i", {className: "fa fa-long-arrow-up"})
-            );
+            scrollToTop = <a className="scroll-to-top" onClick={this.handleScrollToTop.bind(this)}><i className="fa fa-long-arrow-up"/></a>;
         }
 
-        return React.createElement(
-            "div",
-            {className: classes},
-            React.createElement("div", {className: "arrow"}),
-            React.createElement("div", {className: "prompt-info", title: this.props.status}),
-            React.createElement("div", {
-                className: "prompt",
-                onKeyDown: this.handlers.onKeyDown.bind(this),
-                onInput: this.handleInput.bind(this),
-                onKeyPress: this.handleKeyPress.bind(this),
-                type: "text",
-                ref: "command",
-                // Without the InProgress part the alternate buffer loses focus.
-                contentEditable: this.props.status === e.Status.NotStarted || this.props.status === e.Status.InProgress,
-            }),
-            autocompletedPreview,
-            inlineSynopsis,
-            autocomplete,
-            React.createElement(
-                "div",
-                {className: "actions"},
-                decorationToggle,
-                scrollToTop
-            )
+        return (
+            <div className={classes}>
+                <div className="arrow"></div>
+                <div className="prompt-info" title={JSON.stringify(this.props.status)}></div>
+                <div className={"prompt"}
+                     onKeyDown={this.handlers.onKeyDown.bind(this)}
+                     onInput={this.handleInput.bind(this)}
+                     onKeyPress={this.handleKeyPress.bind(this)}
+                     type="text"
+                     ref="command"
+                     contentEditable={this.props.status === e.Status.NotStarted || this.props.status === e.Status.InProgress}></div>
+                {autocompletedPreview}
+                {inlineSynopsis}
+                {autocomplete}
+                <div className="actions">
+                    {decorationToggle}
+                    {scrollToTop}
+                </div>
+            </div>
         );
     }
 
