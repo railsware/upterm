@@ -1,6 +1,6 @@
 const menuConstructor: typeof Electron.Menu = require("menu");
 
-module.exports = {
+export default {
     setMenu: (app: Electron.App, browserWindow: Electron.BrowserWindow) => {
         if (process.platform === "darwin") {
             const template = [

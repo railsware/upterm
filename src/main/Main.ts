@@ -1,7 +1,7 @@
 const app: Electron.App = require("app");
 const browserWindowConstructor: typeof Electron.BrowserWindow = require("browser-window");
 import {ipcMain, nativeImage} from "electron";
-let menu = require("./Menu");
+import menu from "./Menu";
 let fixPath = require("fix-path");
 
 let browserWindow: Electron.BrowserWindow = undefined;
@@ -13,7 +13,7 @@ app.dock.setIcon(nativeImage.createFromPath("icon.png"));
 
 app.on("open-file", (event: Event, file: string) => getMainWindow().webContents.send("change-working-directory", file))
     .on("ready", getMainWindow)
-    .on("activate-with-no-open-windows", getMainWindow)
+    .on("activate", getMainWindow)
     .on("mainWindow-all-closed", () => process.platform === "darwin" || app.quit());
 
 ipcMain.on("quit", app.quit);

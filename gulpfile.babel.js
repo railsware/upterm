@@ -1,11 +1,13 @@
+"use strict";
+
 //TODO: Use gulp 4.
-import gulp from "gulp";
-import gulpLoadPlugins from "gulp-load-plugins";
-import runSequence from "run-sequence";
+const gulp = require("gulp");
+const gulpLoadPlugins = require("gulp-load-plugins");
+const runSequence = require("run-sequence");
 
-var $ = gulpLoadPlugins();
+let $ = gulpLoadPlugins();
 
-var watching = false;
+let watching = false;
 
 gulp.on("stop", function () {
     if (!watching) {
@@ -15,13 +17,13 @@ gulp.on("stop", function () {
     }
 });
 
-var onError = $.notify.onError("An error occurred");
+const onError = $.notify.onError("An error occurred");
 
 function notify(message) {
     return $.notify({title: "Black Screen Watcher", message: message, onLast: true});
 }
 
-var options = {
+const options = {
     typeScript: {
         source: "src/**/*.ts*",
         target: "compiled/src",
