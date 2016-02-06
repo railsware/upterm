@@ -5,16 +5,16 @@ import Job from "../Job";
 
 PluginManager.registerOutputDecorator({
     decorate: (job: Job): React.ReactElement<any> => {
-        const rows = job.buffer.toLines().map((row: string) => {
+        const rows = job.buffer.toLines().map(row => {
             if (/^\s*\+/.test(row)) {
-                return React.createElement("div", { className: "git-diff-new" }, undefined, row.replace(/^\++/, ""));
+                return <div className="git-diff-new">{row.replace(/^\++/, "")}</div>;
             } else if (/^\s*-/.test(row)) {
-                return React.createElement("div", { className: "git-diff-old" }, undefined, row.replace(/^-+/, ""));
+                return <div className="git-diff-old">{row.replace(/^-+/, "")}</div>;
             }
-            return React.createElement("div", {}, undefined, row);
+            return <div>{row}</div>;
         });
 
-        return React.createElement("pre", { className: "output" }, rows, undefined);
+        return <pre className="output">{rows}</pre>;
     },
 
     isApplicable: (job: Job): boolean => {
