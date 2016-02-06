@@ -4,7 +4,7 @@ import * as React from "react";
 import AutocompleteComponent from "./AutocompleteComponent";
 import DecorationToggleComponent from "./DecorationToggleComponent";
 import History from "../History";
-import {stopBubblingUp} from "./ViewUtils";
+import {stopBubblingUp, keys, getCaretPosition, setCaretPosition, isCommandKey, isSpecialKey} from "./ViewUtils";
 import JobComponent from "./3_JobComponent";
 import PromptModel from "../Prompt";
 import JobModel from "../Job";
@@ -12,71 +12,6 @@ import {Suggestion} from "../plugins/autocompletion_providers/Suggestions";
 const rx = require("rx");
 const reactDOM = require("react-dom");
 
-
-const keys = {
-    goUp: (event: KeyboardEvent) => (event.ctrlKey && event.keyCode === 80) || event.keyCode === 38,
-    goDown: (event: KeyboardEvent) => (event.ctrlKey && event.keyCode === 78) || event.keyCode === 40,
-    enter: (event: KeyboardEvent) => event.keyCode === 13,
-    tab: (event: KeyboardEvent) => event.keyCode === 9,
-    deleteWord: (event: KeyboardEvent) => event.ctrlKey && event.keyCode === 87,
-    interrupt: (event: KeyboardEvent) => event.ctrlKey && event.keyCode === 67,
-};
-
-
-function setCaretPosition(node: Node, position: number) {
-    const selection = window.getSelection();
-    const range = document.createRange();
-
-    if (node.childNodes.length) {
-        range.setStart(node.childNodes[0], position);
-    } else {
-        range.setStart(node, 0);
-    }
-    range.collapse(true);
-    selection.removeAllRanges();
-    selection.addRange(range);
-}
-
-/**
- * @note I have no idea how it works. Copied from StackOverflow.
- * @link http://stackoverflow.com/questions/4811822/get-a-ranges-start-and-end-offsets-relative-to-its-parent-container/4812022#4812022
- */
-function getCaretPosition(element: any): number {
-    let caretOffset = 0;
-    let document = element.ownerDocument || element.document;
-    let win = document.defaultView || document.parentWindow;
-    let selection: any;
-
-    if (typeof win.getSelection !== "undefined") {
-        selection = win.getSelection();
-        if (selection.rangeCount > 0) {
-            let range = win.getSelection().getRangeAt(0);
-            let preCaretRange = range.cloneRange();
-            preCaretRange.selectNodeContents(element);
-            preCaretRange.setEnd(range.endContainer, range.endOffset);
-            caretOffset = preCaretRange.toString().length;
-        }
-    } else {
-        selection = document.selection;
-        if (selection && selection.type !== "Control") {
-            let textRange = selection.createRange();
-            let preCaretTextRange = document.body.createTextRange();
-            preCaretTextRange.moveToElementText(element);
-            preCaretTextRange.setEndPoint("EndToEnd", textRange);
-            caretOffset = preCaretTextRange.text.length;
-        }
-    }
-    return caretOffset;
-}
-
-function isCommandKey(event: KeyboardEvent) {
-    return [16, 17, 18].includes(event.keyCode) || event.ctrlKey || event.altKey || event.metaKey;
-}
-
-const isSpecialKey = _.memoize(
-    (event: React.KeyboardEvent) => _.values(keys).some((matcher: (event: React.KeyboardEvent) => boolean) => matcher(event)),
-    (event: React.KeyboardEvent) => [event.ctrlKey, event.keyCode]
-);
 
 // TODO: Figure out how it works.
 function createEventHandler(): any {

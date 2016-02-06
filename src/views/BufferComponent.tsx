@@ -1,19 +1,11 @@
 import * as React from "react";
 import * as e from "../Enums";
-import * as _ from "lodash";
 import Buffer from "../Buffer";
 import Char from "../Char";
 import {groupWhen} from "../Utils";
 import {List} from "immutable";
-import {scrollToBottom} from "./ViewUtils";
+import {scrollToBottom, getHTMLAttributes} from "./ViewUtils";
 import {Attributes} from "../Interfaces";
-
-function getHTMLAttributes(attributes: Attributes): Object {
-    let htmlAttributes: Dictionary<any> = {};
-    _.each(attributes, (value, key) => htmlAttributes[`data-${key}`] = value);
-
-    return htmlAttributes;
-}
 
 const CharGroupComponent = ({text, attributes}: {text: string, attributes: Attributes}) =>
     <span {...getHTMLAttributes(attributes)}>{text}</span>;
