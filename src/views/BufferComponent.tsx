@@ -10,9 +10,7 @@ import {Attributes} from "../Interfaces";
 
 function getHTMLAttributes(attributes: Attributes): Object {
     let htmlAttributes: Dictionary<any> = {};
-    _.each(attributes, (value, key) => {
-        htmlAttributes[`data-${key}`] = value;
-    });
+    _.each(attributes, (value, key) => htmlAttributes[`data-${key}`] = value);
 
     return htmlAttributes;
 }
