@@ -9,6 +9,7 @@ import JobComponent from "./3_JobComponent";
 import PromptModel from "../Prompt";
 import JobModel from "../Job";
 import {Suggestion} from "../plugins/autocompletion_providers/Suggestions";
+import Autocompletion from "../Autocompletion";
 const rx = require("rx");
 const reactDOM = require("react-dom");
 
@@ -146,11 +147,12 @@ export default class PromptComponent extends React.Component<Props, State> imple
 
     render() {
         const classes = ["prompt-wrapper", "fixedsticky", this.props.status].join(" ");
-        let autocomplete: React.ReactElement<any>;
-        let autocompletedPreview: React.ReactElement<any>;
-        let inlineSynopsis: React.ReactElement<any>;
-        let decorationToggle: React.ReactElement<any>;
-        let scrollToTop: React.ReactElement<any>;
+        // FIXME: write better types.
+        let autocomplete: any;
+        let autocompletedPreview: any;
+        let inlineSynopsis: any;
+        let decorationToggle: any;
+        let scrollToTop: any;
 
         if (this.showAutocomplete()) {
             autocomplete = React.createElement(AutocompleteComponent, {
@@ -219,7 +221,7 @@ export default class PromptComponent extends React.Component<Props, State> imple
 
     private get commandNode(): HTMLInputElement {
         /* tslint:disable:no-string-literal */
-        return <HTMLInputElement>this.refs["command"];
+        return this.refs["command"] as HTMLInputElement;
     }
 
     private setDOMValueProgrammatically(text: string): void {
@@ -320,7 +322,7 @@ export default class PromptComponent extends React.Component<Props, State> imple
     }
 
     private async handleInput(event: React.SyntheticEvent): Promise<void> {
-        await this.prompt.setValue((<HTMLElement>event.target).innerText);
+        await this.prompt.setValue((event.target as HTMLElement).innerText);
 
         // TODO: remove repetition.
         // TODO: make it a stream.
