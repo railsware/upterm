@@ -85,7 +85,7 @@
     "test": "gulp typescript; gulp compile-tests; electron run-tests.js",
     "update-typings": "typings install --browser",
     "update-dependencies": "ncu -u",
-    "lint": "tslint `find src -name '*.ts'`"
+    "lint": "tslint `find src -name '*.tsx*'`"
   },
   "license": "MIT"
 }

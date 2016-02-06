@@ -1,5 +1,6 @@
 import Aliases from "../Aliases";
 const reactDOM = require("react-dom");
+/* tslint:disable:no-unused-variable */
 import * as React from "react";
 import ApplicationComponent from "./1_ApplicationComponent";
 import {loadAllPlugins} from "../PluginManager";
