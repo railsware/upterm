@@ -9,6 +9,7 @@ import JobComponent from "./3_JobComponent";
 import PromptModel from "../Prompt";
 import JobModel from "../Job";
 import {Suggestion} from "../plugins/autocompletion_providers/Suggestions";
+import {CharCode} from "../Enums";
 const rx = require("rx");
 const reactDOM = require("react-dom");
 
@@ -301,7 +302,7 @@ export default class PromptComponent extends React.Component<Props, State> imple
         return this.props.hasLocusOfAttention &&
             this.state.suggestions.length &&
             this.commandNode && !this.isEmpty() &&
-            this.props.status === e.Status.NotStarted && ![13, 27].includes(this.state.latestKeyCode);
+            this.props.status === e.Status.NotStarted && ![CharCode.CarriageReturn, CharCode.Escape].includes(this.state.latestKeyCode);
     }
 
     private isAutocompleteShown(): boolean {

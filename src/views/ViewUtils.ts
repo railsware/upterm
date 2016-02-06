@@ -1,5 +1,6 @@
 import {Attributes} from "../Interfaces";
 import * as React from "react";
+import {CharCode} from "../Enums";
 
 export function stopBubblingUp(event: Event): Event {
     event.stopPropagation();
@@ -14,17 +15,17 @@ export function scrollToBottom(): void {
 }
 
 export const keys = {
-    goUp: (event: KeyboardEvent) => (event.ctrlKey && event.keyCode === 80) || event.keyCode === 38,
-    goDown: (event: KeyboardEvent) => (event.ctrlKey && event.keyCode === 78) || event.keyCode === 40,
-    enter: (event: KeyboardEvent) => event.keyCode === 13,
-    tab: (event: KeyboardEvent) => event.keyCode === 9,
-    deleteWord: (event: KeyboardEvent) => event.ctrlKey && event.keyCode === 87,
-    interrupt: (event: KeyboardEvent) => event.ctrlKey && event.keyCode === 67,
+    goUp: (event: KeyboardEvent) => (event.ctrlKey && event.keyCode === CharCode.P) || event.keyCode === CharCode.Up,
+    goDown: (event: KeyboardEvent) => (event.ctrlKey && event.keyCode === CharCode.N) || event.keyCode === CharCode.Down,
+    enter: (event: KeyboardEvent) => event.keyCode === CharCode.CarriageReturn,
+    tab: (event: KeyboardEvent) => event.keyCode === CharCode.Tab,
+    deleteWord: (event: KeyboardEvent) => event.ctrlKey && event.keyCode === CharCode.W,
+    interrupt: (event: KeyboardEvent) => event.ctrlKey && event.keyCode === CharCode.C,
 };
 
 
 export function isCommandKey(event: KeyboardEvent) {
-    return [16, 17, 18].includes(event.keyCode) || event.ctrlKey || event.altKey || event.metaKey;
+    return [CharCode.Shift, CharCode.Ctrl, CharCode.Alt].includes(event.keyCode) || event.ctrlKey || event.altKey || event.metaKey;
 }
 
 export const isSpecialKey = _.memoize(

@@ -4,6 +4,7 @@ import Terminal from "../Terminal";
 import Job from "../Job";
 import StatusLineComponent from "./StatusLineComponent";
 import JobComponent from "./3_JobComponent";
+import {CharCode} from "../Enums";
 
 interface Props {
     terminal: Terminal;
@@ -61,8 +62,7 @@ export default class TerminalComponent extends React.Component<Props, State> {
     }
 
     private handleKeyDown(event: KeyboardEvent) {
-        // Ctrl+L.
-        if (event.ctrlKey && event.keyCode === 76) {
+        if (event.ctrlKey && event.keyCode === CharCode.L) {
             this.props.terminal.clearJobs();
 
             event.stopPropagation();
@@ -70,7 +70,7 @@ export default class TerminalComponent extends React.Component<Props, State> {
         }
 
         // Cmd+D.
-        if (event.metaKey && event.keyCode === 68) {
+        if (event.metaKey && event.keyCode === CharCode.D) {
             window.DEBUG = !window.DEBUG;
 
             event.stopPropagation();

@@ -4,6 +4,7 @@ import * as React from "react";
 import * as _ from "lodash";
 import Terminal from "../Terminal";
 import {ipcRenderer} from "electron";
+import {CharCode} from "../Enums";
 const shell: Electron.Shell = require("remote").require("electron").shell;
 
 interface State {
@@ -32,23 +33,20 @@ export default class ApplicationComponent extends React.Component<{}, State> {
     }
 
     handleKeyDown(event: JQueryKeyEventObject) {
-        // Cmd+_.
-        if (event.metaKey && event.keyCode === 189) {
+        if (event.metaKey && event.keyCode === CharCode.Underscore) {
             this.activeTab.addTerminal();
             this.setState({terminals: this.activeTab.terminals});
 
             event.stopPropagation();
         }
 
-        // Cmd+|.
-        if (event.metaKey && event.keyCode === 220) {
+        if (event.metaKey && event.keyCode === CharCode.VerticalBar) {
             console.log("Split vertically.");
 
             event.stopPropagation();
         }
 
-        // Ctrl+D.
-        if (event.ctrlKey && event.keyCode === 68) {
+        if (event.ctrlKey && event.keyCode === CharCode.D) {
             this.removeActiveTerminal();
 
             this.setState({terminals: this.activeTab.terminals});
@@ -56,8 +54,7 @@ export default class ApplicationComponent extends React.Component<{}, State> {
             event.stopPropagation();
         }
 
-        // Cmd+J.
-        if (event.metaKey && event.keyCode === 74) {
+        if (event.metaKey && event.keyCode === CharCode.J) {
             if (this.activeTab.activateNextTerminal()) {
                 this.setState({terminals: this.activeTab.terminals});
 
@@ -65,8 +62,7 @@ export default class ApplicationComponent extends React.Component<{}, State> {
             }
         }
 
-        // Cmd+K.
-        if (event.metaKey && event.keyCode === 75) {
+        if (event.metaKey && event.keyCode === CharCode.K) {
             if (this.activeTab.activatePreviousTerminal()) {
                 this.setState({terminals: this.activeTab.terminals});
 
@@ -74,8 +70,7 @@ export default class ApplicationComponent extends React.Component<{}, State> {
             }
         }
 
-        // Cmd+T.
-        if (event.metaKey && event.keyCode === 84) {
+        if (event.metaKey && event.keyCode === CharCode.T) {
             if (this.tabs.length < 9) {
                 this.createTab();
                 this.setState({terminals: this.activeTab.terminals});
@@ -86,8 +81,7 @@ export default class ApplicationComponent extends React.Component<{}, State> {
             event.stopPropagation();
         }
 
-        // Cmd+W.
-        if (event.metaKey && event.keyCode === 87) {
+        if (event.metaKey && event.keyCode === CharCode.W) {
             this.removeActiveTab();
             this.setState({terminals: this.activeTab.terminals});
 
@@ -95,8 +89,7 @@ export default class ApplicationComponent extends React.Component<{}, State> {
             event.preventDefault();
         }
 
-        // Cmd+[1-9].
-        if (event.metaKey && event.keyCode >= 49 && event.keyCode <= 57) {
+        if (event.metaKey && event.keyCode >= CharCode.One && event.keyCode <= CharCode.Nine) {
             const newTabIndex = parseInt(event.key, 10) - 1;
 
             if (this.tabs.length > newTabIndex) {
