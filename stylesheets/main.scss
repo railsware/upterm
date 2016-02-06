@@ -134,9 +134,10 @@ body, pre {
   position: relative; // To position the autocompletion box correctly.
   display: grid;
   grid-template-areas: "decoration prompt actions";
-  grid-template-rows: $prompt-height;
+  grid-template-rows: auto;
   grid-template-columns: $decoration-width 1fr 150px;
   background-color: $prompt-background-color;
+  min-height: $prompt-height + $prompt-padding;
 
   &.fixedsticky-on {
     box-shadow: $default-shadow;
