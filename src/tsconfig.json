@@ -9,13 +9,6 @@
     "experimentalDecorators": true,
     "noEmitOnError": true,
     "pretty": true,
-    "jsx": "react",
-    "baseUrl": ".",
-    "paths": {
-      "*": [
-        "*",
-        "views/*"
-      ]
-    }
+    "jsx": "react"
   }
 }
