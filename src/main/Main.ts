@@ -9,7 +9,9 @@ let browserWindow: Electron.BrowserWindow = undefined;
 // Fix the $PATH on OS X
 fixPath();
 
-app.dock.setIcon(nativeImage.createFromPath("icon.png"));
+if (app.dock) {
+    app.dock.setIcon(nativeImage.createFromPath("icon.png"));
+}
 
 app.on("open-file", (event: Event, file: string) => getMainWindow().webContents.send("change-working-directory", file))
     .on("ready", getMainWindow)
@@ -44,7 +46,7 @@ function getMainWindow(): Electron.BrowserWindow {
         menu.setMenu(app, browserWindow);
 
         browserWindow.on("closed", (): void => browserWindow = undefined)
-                     .on("focus", (): void => app.dock.setBadge(""));
+                     .on("focus", (): void => app.dock && app.dock.setBadge(""));
 
         browserWindow.webContents.on("did-finish-load", () => {
             browserWindow.show();
