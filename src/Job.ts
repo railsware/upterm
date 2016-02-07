@@ -2,7 +2,7 @@ import * as _ from "lodash";
 import * as i from "./Interfaces";
 import * as e from "./Enums";
 import * as React from "react";
-import Terminal from "./Terminal";
+import Session from "./Session";
 import Parser from "./Parser";
 import Prompt from "./Prompt";
 import Buffer from "./Buffer";
@@ -24,7 +24,7 @@ export default class Job extends EmitterWithUniqueID {
     private rareDataEmitter: Function;
     private frequentDataEmitter: Function;
 
-    constructor(private _terminal: Terminal) {
+    constructor(private _session: Session) {
         super();
 
         this._prompt = new Prompt(this);
@@ -103,16 +103,16 @@ export default class Job extends EmitterWithUniqueID {
         this.command.write(text);
     }
 
-    get terminal(): Terminal {
-        return this._terminal;
+    get session(): Session {
+        return this._session;
     }
 
     get directory(): string {
-        return this.terminal.currentDirectory;
+        return this.session.currentDirectory;
     }
 
     get dimensions(): Dimensions {
-        return this.terminal.dimensions;
+        return this.session.dimensions;
     }
 
     hasOutput(): boolean {
@@ -120,11 +120,11 @@ export default class Job extends EmitterWithUniqueID {
     }
 
     getDimensions(): Dimensions {
-        return this.terminal.dimensions;
+        return this.session.dimensions;
     }
 
     setDimensions(dimensions: Dimensions) {
-        this.terminal.dimensions = dimensions;
+        this.session.dimensions = dimensions;
         this.winch();
     }
 

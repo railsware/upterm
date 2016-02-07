@@ -1,4 +1,4 @@
-import Terminal from "../Terminal";
+import Session from "../Session";
 import PluginManager from "../PluginManager";
 import {EnvironmentObserverPlugin} from "../Interfaces";
 import Utils from "../Utils";
@@ -65,43 +65,43 @@ class GitWatcher extends EventEmitter {
 }
 
 interface WatchesValue {
-    terminals: Set<Terminal>;
+    sessions: Set<Session>;
     watcher: GitWatcher;
 }
 
 class WatchManager implements EnvironmentObserverPlugin {
     directoryToDetails: Map<string, WatchesValue> = new Map();
 
-    currentWorkingDirectoryWillChange(terminal: Terminal, directory: string) {
+    currentWorkingDirectoryWillChange(session: Session, directory: string) {
         if (!this.directoryToDetails.has(directory)) {
             return;
         }
 
         const details = this.directoryToDetails.get(directory);
-        details.terminals.delete(terminal);
+        details.sessions.delete(session);
 
-        if (details.terminals.size === 0) {
+        if (details.sessions.size === 0) {
             details.watcher.destructor();
             this.directoryToDetails.delete(directory);
         }
     }
 
-    currentWorkingDirectoryDidChange(terminal: Terminal, directory: string) {
+    currentWorkingDirectoryDidChange(session: Session, directory: string) {
         if (this.directoryToDetails.has(directory)) {
-            this.directoryToDetails.get(directory).terminals.add(terminal);
+            this.directoryToDetails.get(directory).sessions.add(session);
         } else {
             const watcher = new GitWatcher(directory);
 
             this.directoryToDetails.set(directory, {
-                terminals: new Set([terminal]),
+                sessions: new Set([session]),
                 watcher: watcher,
             });
 
             watcher.watch();
 
             watcher.on(GIT_WATCHER_EVENT_NAME, (event: string) => {
-                this.directoryToDetails.get(directory).terminals.forEach(watchedTerminal =>
-                    watchedTerminal.emit("vcs-data", event)
+                this.directoryToDetails.get(directory).sessions.forEach(watchedSession =>
+                    watchedSession.emit("vcs-data", event)
                 );
             });
         }

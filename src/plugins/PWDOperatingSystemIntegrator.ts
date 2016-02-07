@@ -1,4 +1,4 @@
-import Terminal from "../Terminal";
+import Session from "../Session";
 import PluginManager from "../PluginManager";
 const remote = require("remote");
 const app = remote.require("app");
@@ -6,7 +6,7 @@ const app = remote.require("app");
 PluginManager.registerEnvironmentObserver({
     currentWorkingDirectoryWillChange: () => { /* do nothing */ },
 
-    currentWorkingDirectoryDidChange: (terminal: Terminal, directory: string) => {
+    currentWorkingDirectoryDidChange: (session: Session, directory: string) => {
         app.addRecentDocument(directory);
         remote.getCurrentWindow().setRepresentedFilename(directory);
     },

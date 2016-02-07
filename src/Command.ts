@@ -20,13 +20,13 @@ const executors: Dictionary<(i: Job, a: string[]) => void> = {
             }
         }
 
-        job.terminal.currentDirectory = newDirectory;
+        job.session.currentDirectory = newDirectory;
     },
     clear: (job: Job, args: string[]): void => {
-        setTimeout(() => job.terminal.clearJobs(), 0);
+        setTimeout(() => job.session.clearJobs(), 0);
     },
     exit: (job: Job, args: string[]): void => {
-        job.terminal.remove();
+        job.session.remove();
     },
 };
 

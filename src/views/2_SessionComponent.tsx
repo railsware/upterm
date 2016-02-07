@@ -1,13 +1,13 @@
 import * as React from "react";
 import * as _ from "lodash";
-import Terminal from "../Terminal";
+import Session from "../Session";
 import Job from "../Job";
 import StatusLineComponent from "./StatusLineComponent";
 import JobComponent from "./3_JobComponent";
 import {CharCode} from "../Enums";
 
 interface Props {
-    terminal: Terminal;
+    session: Session;
     isActive: boolean;
     activate: () => void;
 }
@@ -17,7 +17,7 @@ interface State {
     jobs?: Job[];
 }
 
-export default class TerminalComponent extends React.Component<Props, State> {
+export default class SessionComponent extends React.Component<Props, State> {
     RENDER_JOBS_COUNT = 25;
 
     constructor(props: Props) {
@@ -25,13 +25,13 @@ export default class TerminalComponent extends React.Component<Props, State> {
 
         this.state = {
             vcsData: {isRepository: false},
-            jobs: this.props.terminal.jobs,
+            jobs: this.props.session.jobs,
         };
     }
 
     componentDidMount() {
-        this.props.terminal
-            .on("job", () => this.setState({jobs: this.props.terminal.jobs}))
+        this.props.session
+            .on("job", () => this.setState({jobs: this.props.session.jobs}))
             .on("vcs-data", (data: VcsData) => this.setState({vcsData: data}));
     }
 
@@ -43,13 +43,13 @@ export default class TerminalComponent extends React.Component<Props, State> {
         );
 
         return (
-            <div className={`terminal ${(this.props.isActive ? "active" : "inactive")}`}
+            <div className={`session ${(this.props.isActive ? "active" : "inactive")}`}
                  tabIndex={0}
                  onClickCapture={this.handleClick.bind(this)}
                  onKeyDownCapture={this.handleKeyDown.bind(this)}>
 
                 <div className="jobs">{jobs}</div>
-                <StatusLineComponent currentWorkingDirectory={this.props.terminal.currentDirectory}
+                <StatusLineComponent currentWorkingDirectory={this.props.session.currentDirectory}
                                      vcsData={this.state.vcsData}/>
             </div>
         );
@@ -63,7 +63,7 @@ export default class TerminalComponent extends React.Component<Props, State> {
 
     private handleKeyDown(event: KeyboardEvent) {
         if (event.ctrlKey && event.keyCode === CharCode.L) {
-            this.props.terminal.clearJobs();
+            this.props.session.clearJobs();
 
             event.stopPropagation();
             return;

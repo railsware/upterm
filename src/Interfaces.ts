@@ -2,7 +2,7 @@ import {Color, Weight, Brightness} from "./Enums";
 import {Stats} from "fs";
 import {ReactElement} from "react";
 import Job from "./Job";
-import Terminal from "./Terminal";
+import Session from "./Session";
 import {Suggestion} from "./plugins/autocompletion_providers/Suggestions";
 
 export interface Attributes {
@@ -39,8 +39,8 @@ export interface OutputDecorator {
 }
 
 export interface EnvironmentObserverPlugin {
-    currentWorkingDirectoryWillChange: (terminal: Terminal, directory: string) => void;
-    currentWorkingDirectoryDidChange: (terminal: Terminal, directory: string) => void;
+    currentWorkingDirectoryWillChange: (session: Session, directory: string) => void;
+    currentWorkingDirectoryDidChange: (session: Session, directory: string) => void;
 }
 
 export interface PreexecPlugin {

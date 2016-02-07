@@ -1,14 +1,14 @@
-import TerminalComponent from "./2_TerminalComponent";
+import SessionComponent from "./2_SessionComponent";
 import {TabComponent, TabProps, Tab} from "./TabComponent";
 import * as React from "react";
 import * as _ from "lodash";
-import Terminal from "../Terminal";
+import Session from "../Session";
 import {ipcRenderer} from "electron";
 import {CharCode} from "../Enums";
 const shell: Electron.Shell = require("remote").require("electron").shell;
 
 interface State {
-    terminals: Terminal[];
+    sessions: Session[];
 }
 
 export default class ApplicationComponent extends React.Component<{}, State> {
@@ -19,23 +19,23 @@ export default class ApplicationComponent extends React.Component<{}, State> {
         super(props);
 
         this.createTab();
-        this.state = {terminals: this.activeTab.terminals};
+        this.state = {sessions: this.activeTab.sessions};
 
         $(window).resize(() => {
             for (const tab of this.tabs) {
-                tab.updateAllTerminalsDimensions();
+                tab.updateAllSessionsDimensions();
             }
         });
 
         ipcRenderer.on("change-working-directory", (directory: string) =>
-            this.activeTab.activeTerminal().currentDirectory = directory
+            this.activeTab.activeSession().currentDirectory = directory
         );
     }
 
     handleKeyDown(event: JQueryKeyEventObject) {
         if (event.metaKey && event.keyCode === CharCode.Underscore) {
-            this.activeTab.addTerminal();
-            this.setState({terminals: this.activeTab.terminals});
+            this.activeTab.addSession();
+            this.setState({sessions: this.activeTab.sessions});
 
             event.stopPropagation();
         }
@@ -47,24 +47,24 @@ export default class ApplicationComponent extends React.Component<{}, State> {
         }
 
         if (event.ctrlKey && event.keyCode === CharCode.D) {
-            this.removeTerminal(this.activeTab.activeTerminal());
+            this.removeSession(this.activeTab.activeSession());
 
-            this.setState({terminals: this.activeTab.terminals});
+            this.setState({sessions: this.activeTab.sessions});
 
             event.stopPropagation();
         }
 
         if (event.metaKey && event.keyCode === CharCode.J) {
-            if (this.activeTab.activateNextTerminal()) {
-                this.setState({terminals: this.activeTab.terminals});
+            if (this.activeTab.activateNextSession()) {
+                this.setState({sessions: this.activeTab.sessions});
 
                 event.stopPropagation();
             }
         }
 
         if (event.metaKey && event.keyCode === CharCode.K) {
-            if (this.activeTab.activatePreviousTerminal()) {
-                this.setState({terminals: this.activeTab.terminals});
+            if (this.activeTab.activatePreviousSession()) {
+                this.setState({sessions: this.activeTab.sessions});
 
                 event.stopPropagation();
             }
@@ -73,7 +73,7 @@ export default class ApplicationComponent extends React.Component<{}, State> {
         if (event.metaKey && event.keyCode === CharCode.T) {
             if (this.tabs.length < 9) {
                 this.createTab();
-                this.setState({terminals: this.activeTab.terminals});
+                this.setState({sessions: this.activeTab.sessions});
             } else {
                 shell.beep();
             }
@@ -83,7 +83,7 @@ export default class ApplicationComponent extends React.Component<{}, State> {
 
         if (event.metaKey && event.keyCode === CharCode.W) {
             this.removeTab(this.activeTab);
-            this.setState({terminals: this.activeTab.terminals});
+            this.setState({sessions: this.activeTab.sessions});
 
             event.stopPropagation();
             event.preventDefault();
@@ -94,7 +94,7 @@ export default class ApplicationComponent extends React.Component<{}, State> {
 
             if (this.tabs.length > newTabIndex) {
                 this.activeTabIndex = newTabIndex;
-                this.setState({terminals: this.activeTab.terminals});
+                this.setState({sessions: this.activeTab.sessions});
             } else {
                 shell.beep();
             }
@@ -113,49 +113,49 @@ export default class ApplicationComponent extends React.Component<{}, State> {
                               position={index + 1}
                               activate={() => {
                                 this.activeTabIndex = index;
-                                this.setState({ terminals: this.activeTab.terminals });
+                                this.setState({ sessions: this.activeTab.sessions });
                               }}>
                 </TabComponent>
             );
         }
 
-        let terminals = this.state.terminals.map(terminal =>
-            <TerminalComponent terminal={terminal}
-                               key={terminal.id}
-                               isActive={terminal === this.activeTab.activeTerminal()}
+        let sessions = this.state.sessions.map(session =>
+            <SessionComponent session={session}
+                               key={session.id}
+                               isActive={session === this.activeTab.activeSession()}
                                activate={() => {
-                                   this.activeTab.activateTerminal(terminal);
-                                   this.setState({ terminals: this.activeTab.terminals });
+                                   this.activeTab.activateSession(session);
+                                   this.setState({ sessions: this.activeTab.sessions });
                                }}>
-            </TerminalComponent>
+            </SessionComponent>
         );
 
         return (
             <div className="application" onKeyDownCapture={this.handleKeyDown.bind(this)}>
                 <ul className="tabs">{tabs}</ul>
-                <div className="active-tab-content">{terminals}</div>
+                <div className="active-tab-content">{sessions}</div>
             </div>
         );
     }
 
-    public removeTerminal(terminalToRemove: Terminal) {
+    public removeSession(sessionToRemove: Session) {
         for (const tab of this.tabs) {
-            for (const terminal of tab.terminals) {
-                if (terminal === terminalToRemove) {
-                    tab.removeTerminal(terminal);
+            for (const session of tab.sessions) {
+                if (session === sessionToRemove) {
+                    tab.removeSession(session);
 
-                    if (tab.terminals.length === 0) {
+                    if (tab.sessions.length === 0) {
                         this.removeTab(tab);
                     }
 
-                    this.setState({terminals: this.activeTab.terminals});
+                    this.setState({sessions: this.activeTab.sessions});
 
                     return;
                 }
             }
         }
 
-        throw "Couldn't find the terminal you asked me to remove.";
+        throw "Couldn't find the session you asked me to remove.";
     }
 
     private get activeTab(): Tab {

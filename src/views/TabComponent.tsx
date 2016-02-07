@@ -1,6 +1,6 @@
 /* tslint:disable:no-unused-variable */
 import * as React from "react";
-import Terminal from "../Terminal";
+import Session from "../Session";
 import ApplicationComponent from "./1_ApplicationComponent";
 
 export interface TabProps {
@@ -16,59 +16,59 @@ export const TabComponent = ({ isActive, activate, position }: TabProps) =>
     </li>;
 
 export class Tab {
-    public terminals: Terminal[] = [];
-    private activeTerminalIndex: number;
+    public sessions: Session[] = [];
+    private activeSessionIndex: number;
 
     constructor(private application: ApplicationComponent) {
-        this.addTerminal();
+        this.addSession();
     }
 
-    addTerminal(): void {
-        this.terminals.push(new Terminal(this.application, this.contentDimensions));
-        this.activeTerminalIndex = this.terminals.length - 1;
+    addSession(): void {
+        this.sessions.push(new Session(this.application, this.contentDimensions));
+        this.activeSessionIndex = this.sessions.length - 1;
     }
 
-    removeTerminal(terminal: Terminal): void {
-        terminal.jobs.forEach(job => job.removeAllListeners());
-        terminal.removeAllListeners();
+    removeSession(session: Session): void {
+        session.jobs.forEach(job => job.removeAllListeners());
+        session.removeAllListeners();
 
-        _.pull(this.terminals, terminal);
+        _.pull(this.sessions, session);
 
-        if (this.activeTerminalIndex >= this.terminals.length) {
-            this.activeTerminalIndex = this.terminals.length - 1;
+        if (this.activeSessionIndex >= this.sessions.length) {
+            this.activeSessionIndex = this.sessions.length - 1;
         }
 
     }
 
-    activeTerminal(): Terminal {
-        return this.terminals[this.activeTerminalIndex];
+    activeSession(): Session {
+        return this.sessions[this.activeSessionIndex];
     }
 
-    activateTerminal(terminal: Terminal): void {
-        this.activeTerminalIndex = this.terminals.indexOf(terminal);
+    activateSession(session: Session): void {
+        this.activeSessionIndex = this.sessions.indexOf(session);
     }
 
-    activatePreviousTerminal(): boolean {
-        const isFirst = this.activeTerminalIndex === 0;
+    activatePreviousSession(): boolean {
+        const isFirst = this.activeSessionIndex === 0;
         if (!isFirst) {
-            this.activateTerminal(this.terminals[this.activeTerminalIndex - 1]);
+            this.activateSession(this.sessions[this.activeSessionIndex - 1]);
         }
 
         return isFirst;
     }
 
-    activateNextTerminal(): boolean {
-        const isLast = this.activeTerminalIndex !== this.terminals.length - 1;
+    activateNextSession(): boolean {
+        const isLast = this.activeSessionIndex !== this.sessions.length - 1;
         if (isLast) {
-            this.activateTerminal(this.terminals[this.activeTerminalIndex + 1]);
+            this.activateSession(this.sessions[this.activeSessionIndex + 1]);
         }
 
         return isLast;
     }
 
-    updateAllTerminalsDimensions(): void {
-        for (const terminal of this.terminals) {
-            terminal.dimensions = this.contentDimensions;
+    updateAllSessionsDimensions(): void {
+        for (const session of this.sessions) {
+            session.dimensions = this.contentDimensions;
         }
     }
 

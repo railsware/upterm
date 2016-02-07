@@ -12,7 +12,7 @@ const remote = require("remote");
 const app = remote.require("app");
 const browserWindow: typeof Electron.BrowserWindow = remote.require("electron").BrowserWindow;
 
-export default class Terminal extends EmitterWithUniqueID {
+export default class Session extends EmitterWithUniqueID {
     jobs: Array<Job> = [];
     history: typeof History;
     private _currentDirectory: string;
@@ -27,7 +27,7 @@ export default class Terminal extends EmitterWithUniqueID {
         super();
 
         // TODO: We want to deserialize properties only for the first instance
-        // TODO: of Terminal for the application.
+        // TODO: of Session for the application.
         this.deserialize();
         this.history = History;
 
@@ -67,7 +67,7 @@ export default class Terminal extends EmitterWithUniqueID {
     }
 
     remove(): void {
-        this.application.removeTerminal(this);
+        this.application.removeSession(this);
     }
 
     get currentDirectory(): string {

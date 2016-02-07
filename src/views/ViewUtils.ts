@@ -10,8 +10,8 @@ export function stopBubblingUp(event: Event): Event {
 }
 
 export function scrollToBottom(): void {
-    let terminal = $(".terminal.active");
-    terminal.scrollTop(terminal[0].scrollHeight);
+    let session = $(".session.active");
+    session.scrollTop(session[0].scrollHeight);
 }
 
 export const keys = {
