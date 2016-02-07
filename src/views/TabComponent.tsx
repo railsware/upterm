@@ -33,7 +33,10 @@ export class Tab {
         terminal.removeAllListeners();
 
         _.pull(this.terminals, terminal);
-        this.activeTerminalIndex = this.terminals.length - 1;
+
+        if (this.activeTerminalIndex >= this.terminals.length) {
+            this.activeTerminalIndex = this.terminals.length - 1;
+        }
 
     }
 
