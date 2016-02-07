@@ -47,7 +47,7 @@ export default class ApplicationComponent extends React.Component<{}, State> {
         }
 
         if (event.ctrlKey && event.keyCode === CharCode.D) {
-            this.removeActiveTerminal();
+            this.removeTerminal(this.activeTab.activeTerminal());
 
             this.setState({terminals: this.activeTab.terminals});
 
@@ -82,7 +82,7 @@ export default class ApplicationComponent extends React.Component<{}, State> {
         }
 
         if (event.metaKey && event.keyCode === CharCode.W) {
-            this.removeActiveTab();
+            this.removeTab(this.activeTab);
             this.setState({terminals: this.activeTab.terminals});
 
             event.stopPropagation();
@@ -138,25 +138,37 @@ export default class ApplicationComponent extends React.Component<{}, State> {
         );
     }
 
+    public removeTerminal(terminalToRemove: Terminal) {
+        for (const tab of this.tabs) {
+            for (const terminal of tab.terminals) {
+                if (terminal === terminalToRemove) {
+                    tab.removeTerminal(terminal);
+
+                    if (tab.terminals.length === 0) {
+                        this.removeTab(tab);
+                    }
+
+                    this.setState({terminals: this.activeTab.terminals});
+
+                    return;
+                }
+            }
+        }
+
+        throw "Couldn't find the terminal you asked me to remove.";
+    }
+
     private get activeTab(): Tab {
         return this.tabs[this.activeTabIndex];
     }
 
     private createTab(): void {
-        this.tabs.push(new Tab());
+        this.tabs.push(new Tab(this));
         this.activeTabIndex = this.tabs.length - 1;
     }
 
-    private removeActiveTerminal(): void {
-        this.activeTab.removeActiveTerminal();
-
-        if (this.activeTab.terminals.length === 0) {
-            this.removeActiveTab();
-        }
-    }
-
-    private removeActiveTab(): void {
-        _.pullAt(this.tabs, this.activeTabIndex);
+    private removeTab(tab: Tab): void {
+        _.pull(this.tabs, tab);
 
         if (this.tabs.length === 0) {
             ipcRenderer.send("quit");

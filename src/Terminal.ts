@@ -7,6 +7,7 @@ import Serializer from "./Serializer";
 import EmitterWithUniqueID from "./EmitterWithUniqueID";
 import PluginManager from "./PluginManager";
 import {Status} from "./Enums";
+import ApplicationComponent from "./views/1_ApplicationComponent";
 const remote = require("remote");
 const app = remote.require("app");
 const browserWindow: typeof Electron.BrowserWindow = remote.require("electron").BrowserWindow;
@@ -22,7 +23,7 @@ export default class Terminal extends EmitterWithUniqueID {
         history: `History:[]`,
     };
 
-    constructor(private _dimensions: Dimensions) {
+    constructor(private application: ApplicationComponent, private _dimensions: Dimensions) {
         super();
 
         // TODO: We want to deserialize properties only for the first instance
@@ -63,6 +64,10 @@ export default class Terminal extends EmitterWithUniqueID {
     clearJobs(): void {
         this.jobs = [];
         this.createJob();
+    }
+
+    remove(): void {
+        this.application.removeTerminal(this);
     }
 
     get currentDirectory(): string {

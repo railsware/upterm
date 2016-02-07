@@ -26,7 +26,7 @@ const executors: Dictionary<(i: Job, a: string[]) => void> = {
         setTimeout(() => job.terminal.clearJobs(), 0);
     },
     exit: (job: Job, args: string[]): void => {
-        // FIXME.
+        job.terminal.remove();
     },
 };
 

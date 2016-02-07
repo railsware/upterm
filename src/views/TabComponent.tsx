@@ -1,6 +1,7 @@
 /* tslint:disable:no-unused-variable */
 import * as React from "react";
 import Terminal from "../Terminal";
+import ApplicationComponent from "./1_ApplicationComponent";
 
 export interface TabProps {
     isActive: boolean;
@@ -18,17 +19,20 @@ export class Tab {
     public terminals: Terminal[] = [];
     private activeTerminalIndex: number;
 
-    constructor() {
+    constructor(private application: ApplicationComponent) {
         this.addTerminal();
     }
 
     addTerminal(): void {
-        this.terminals.push(new Terminal(this.contentDimensions));
+        this.terminals.push(new Terminal(this.application, this.contentDimensions));
         this.activeTerminalIndex = this.terminals.length - 1;
     }
 
-    removeActiveTerminal(): void {
-        _.pullAt(this.terminals, this.activeTerminalIndex);
+    removeTerminal(terminal: Terminal): void {
+        terminal.jobs.forEach(job => job.removeAllListeners());
+        terminal.removeAllListeners();
+
+        _.pull(this.terminals, terminal);
         this.activeTerminalIndex = this.terminals.length - 1;
 
     }
