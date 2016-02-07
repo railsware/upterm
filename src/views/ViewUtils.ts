@@ -30,7 +30,7 @@ export function isCommandKey(event: KeyboardEvent) {
 
 export const isSpecialKey = _.memoize(
     (event: React.KeyboardEvent) => _.values(keys).some((matcher: (event: React.KeyboardEvent) => boolean) => matcher(event)),
-    (event: React.KeyboardEvent) => [event.ctrlKey, event.keyCode]
+    (event: React.KeyboardEvent) => JSON.stringify([event.ctrlKey, event.keyCode])
 );
 
 export function getHTMLAttributes(attributes: Attributes): Object {
