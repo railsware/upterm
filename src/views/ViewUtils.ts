@@ -37,9 +37,10 @@ export const isSpecialKey = _.memoize(
     (event: React.KeyboardEvent) => JSON.stringify([event.ctrlKey, event.keyCode])
 );
 
-export function getHTMLAttributes(attributes: Attributes): Object {
+export function getHTMLAttributes(object: Dictionary<any>): Object {
     let htmlAttributes: Dictionary<any> = {};
-    _.each(attributes, (value, key) => htmlAttributes[`data-${key}`] = value);
+
+    Object.keys(object).forEach((key: string) => htmlAttributes[`data-${key}`] = object[key]);
 
     return htmlAttributes;
 }
