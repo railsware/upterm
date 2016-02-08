@@ -24,8 +24,12 @@ export const keys = {
 };
 
 
-export function isCommandKey(event: KeyboardEvent) {
-    return [CharCode.Shift, CharCode.Ctrl, CharCode.Alt].includes(event.keyCode) || event.ctrlKey || event.altKey || event.metaKey;
+export function isModifierKey(event: KeyboardEvent) {
+    return [CharCode.Shift, CharCode.Ctrl, CharCode.Alt].includes(event.keyCode);
+}
+
+export function withModifierKey(event: KeyboardEvent) {
+    return isModifierKey(event) || event.ctrlKey || event.altKey || event.metaKey;
 }
 
 export const isSpecialKey = _.memoize(

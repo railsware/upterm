@@ -1,6 +1,5 @@
 import * as _ from "lodash";
 import * as i from "./Interfaces";
-import * as e from "./Enums";
 import * as React from "react";
 import Session from "./Session";
 import Parser from "./Parser";
@@ -10,15 +9,27 @@ import CommandExecutor from "./CommandExecutor";
 import PTY from "./PTY";
 import PluginManager from "./PluginManager";
 import EmitterWithUniqueID from "./EmitterWithUniqueID";
+import {CharCode, Status} from "./Enums";
 
 function makeThrottledDataEmitter(timesPerSecond: number, subject: EmitterWithUniqueID) {
     return _.throttle(() => subject.emit("data"), 1000 / timesPerSecond);
 }
 
+/**
+ * @link https://lists.w3.org/Archives/Public/www-dom/2010JulSep/att-0182/keyCode-spec.html
+ */
+const fixedVirtualKeyCodes = new Map<number, string>([
+    [8, String.fromCharCode(127)], // Backspace.
+    [37, "\x1b[D"], // Left.
+    [38, "\x1b[A"], // Up.
+    [39, "\x1b[C"], // Right.
+    [40, "\x1b[B"], // Down.
+]);
+
 export default class Job extends EmitterWithUniqueID {
     public command: PTY;
     public parser: Parser;
-    public status: e.Status = e.Status.NotStarted;
+    public status: Status = Status.NotStarted;
     private _prompt: Prompt;
     private _buffer: Buffer;
     private rareDataEmitter: Function;
@@ -39,7 +50,7 @@ export default class Job extends EmitterWithUniqueID {
     }
 
     execute(): void {
-        this.setStatus(e.Status.InProgress);
+        this.setStatus(Status.InProgress);
 
         Promise.all(
             PluginManager.preexecPlugins.map(plugin => plugin(this))
@@ -50,8 +61,8 @@ export default class Job extends EmitterWithUniqueID {
             () => {
                 // Need to check the status here because it"s
                 // executed even after the process was killed.
-                if (this.status === e.Status.InProgress) {
-                    this.setStatus(e.Status.Success);
+                if (this.status === Status.InProgress) {
+                    this.setStatus(Status.Success);
                 }
                 this.emit("end");
             },
@@ -60,7 +71,7 @@ export default class Job extends EmitterWithUniqueID {
     }
 
     handleError(message: string): void {
-        this.setStatus(e.Status.Failure);
+        this.setStatus(Status.Failure);
         if (message) {
             this._buffer.writeString(message);
         }
@@ -72,31 +83,23 @@ export default class Job extends EmitterWithUniqueID {
         let text: string;
 
         if (typeof input === "string") {
-            text = <string>input;
+            text = input;
         } else {
-            const event = <KeyboardEvent>input;
-            const identifier: string = (<any>input).nativeEvent.keyIdentifier;
+            const event = <KeyboardEvent>(<any>input).nativeEvent;
+            let code = event.keyIdentifier.startsWith("U+") ? parseInt(event.keyIdentifier.substring(2), 16) : event.keyCode;
 
-            if (identifier.startsWith("U+")) {
-                let code = parseInt(identifier.substring(2), 16);
+            if (event.ctrlKey) {
+                code -= 64;
+            }
 
-                /**
-                 * In VT-100 emulation mode backspace should be translated to delete.
-                 * http://www.braun-home.net/michael/mbedit/info/misc/VT100_commands.htm
-                 */
-                if (code === e.CharCode.Backspace) {
-                    code = e.CharCode.Delete;
-                }
-
-                text = String.fromCharCode(code);
-
-                if (event.ctrlKey) {
-                    text = String.fromCharCode(code - 64);
-                } else if (!event.shiftKey && code >= 65 && code <= 90) {
-                    text = text.toLowerCase();
-                }
+            if (fixedVirtualKeyCodes.has(code)) {
+                text = fixedVirtualKeyCodes.get(code);
             } else {
-                text = String.fromCharCode(event.keyCode);
+                text = String.fromCharCode(code);
+            }
+
+            if (!event.shiftKey && code >= CharCode.A && code <= CharCode.Z) {
+                text = text.toLowerCase();
             }
         }
 
@@ -129,14 +132,14 @@ export default class Job extends EmitterWithUniqueID {
     }
 
     interrupt(): void {
-        if (this.command && this.status === e.Status.InProgress) {
+        if (this.command && this.status === Status.InProgress) {
             this.command.kill("SIGINT");
-            this.setStatus(e.Status.Interrupted);
+            this.setStatus(Status.Interrupted);
         }
     }
 
     winch(): void {
-        if (this.command && this.status === e.Status.InProgress) {
+        if (this.command && this.status === Status.InProgress) {
             this._buffer.dimensions = this.dimensions;
             this.command.dimensions = this.dimensions;
         }
@@ -152,7 +155,7 @@ export default class Job extends EmitterWithUniqueID {
 
     private get decorators(): i.OutputDecorator[] {
         return PluginManager.outputDecorators.filter(decorator =>
-            this.status === e.Status.InProgress ? decorator.shouldDecorateRunningPrograms : true
+            this.status === Status.InProgress ? decorator.shouldDecorateRunningPrograms : true
         );
     }
 
@@ -168,7 +171,7 @@ export default class Job extends EmitterWithUniqueID {
         return this._prompt;
     }
 
-    setStatus(status: e.Status): void {
+    setStatus(status: Status): void {
         this.status = status;
         this.emit("status", status);
     }
