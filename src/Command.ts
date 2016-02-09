@@ -9,14 +9,30 @@ const executors: Dictionary<(i: Job, a: string[]) => void> = {
         if (!args.length) {
             newDirectory = Utils.homeDirectory;
         } else {
-            newDirectory = Utils.resolveDirectory(job.session.currentDirectory, args[0]);
+            let directory = args[0];
 
-            if (!existsSync(newDirectory)) {
-                throw new Error(`The directory ${newDirectory} doesn"t exist.`);
-            }
+            if (/^-\d*$/.test(directory)) {
+                if (directory === "-") {
+                    directory = "-1";
+                }
+                const stack = job.session.historicalCurrentDirectoriesStack;
+                const index = stack.length - 1 + parseInt(directory, 10);
 
-            if (!statSync(newDirectory).isDirectory()) {
-                throw new Error(`${newDirectory} is not a directory.`);
+                if (index < 0) {
+                    throw new Error(`You only have ${stack.length} ${Utils.pluralize("directory", stack.length)} in the stack.`);
+                } else {
+                    newDirectory = stack[index];
+                }
+            } else {
+                newDirectory = Utils.resolveDirectory(job.session.currentDirectory, directory);
+
+                if (!existsSync(newDirectory)) {
+                    throw new Error(`The directory ${newDirectory} doesn"t exist.`);
+                }
+
+                if (!statSync(newDirectory).isDirectory()) {
+                    throw new Error(`${newDirectory} is not a directory.`);
+                }
             }
         }
 

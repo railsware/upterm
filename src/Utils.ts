@@ -198,7 +198,15 @@ export default class Utils {
     }
 
     static pluralize(word: string, count = 2) {
-        return count === 1 ? word : word + "s";
+        return count === 1 ? word : this.pluralFormOf(word);
+    }
+
+    private static pluralFormOf(word: string) {
+        if (word.endsWith("y")) {
+            return word.substring(0, word.length - 1) + "ies";
+        } else {
+            return word + "s";
+        }
     }
 }
 
