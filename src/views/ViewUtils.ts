@@ -1,4 +1,3 @@
-import {Attributes} from "../Interfaces";
 import * as React from "react";
 import {CharCode} from "../Enums";
 
