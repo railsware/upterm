@@ -11,18 +11,8 @@ const executors: Dictionary<(i: Job, a: string[]) => void> = {
         } else {
             let directory = args[0];
 
-            if (/^-\d*$/.test(directory)) {
-                if (directory === "-") {
-                    directory = "-1";
-                }
-                const stack = job.session.historicalCurrentDirectoriesStack;
-                const index = stack.length - 1 + parseInt(directory, 10);
-
-                if (index < 0) {
-                    throw new Error(`You only have ${stack.length} ${Utils.pluralize("directory", stack.length)} in the stack.`);
-                } else {
-                    newDirectory = stack[index];
-                }
+            if (isHistoricalDirectory(directory)) {
+                newDirectory = expandHistoricalDirectory(directory, job);
             } else {
                 newDirectory = Utils.resolveDirectory(job.session.currentDirectory, directory);
 
@@ -56,4 +46,22 @@ export default class Command {
     static isBuiltIn(command: string): boolean {
         return ["cd", "clear", "exit"].includes(command);
     }
+}
+
+export function expandHistoricalDirectory(alias: string, job: Job): string {
+    if (alias === "-") {
+        alias = "-1";
+    }
+    const stack = job.session.historicalCurrentDirectoriesStack;
+    const index = stack.length - 1 + parseInt(alias, 10);
+
+    if (index < 0) {
+        throw new Error(`Error: you only have ${stack.length} ${Utils.pluralize("directory", stack.length)} in the stack.`);
+    } else {
+        return stack[index];
+    }
+}
+
+export function isHistoricalDirectory(directory: string): boolean {
+    return /^-\d*$/.test(directory);
 }
