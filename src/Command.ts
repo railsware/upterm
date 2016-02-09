@@ -9,7 +9,7 @@ const executors: Dictionary<(i: Job, a: string[]) => void> = {
         if (!args.length) {
             newDirectory = Utils.homeDirectory;
         } else {
-            newDirectory = Utils.resolveDirectory(job.directory, args[0]);
+            newDirectory = Utils.resolveDirectory(job.session.currentDirectory, args[0]);
 
             if (!existsSync(newDirectory)) {
                 throw new Error(`The directory ${newDirectory} doesn"t exist.`);

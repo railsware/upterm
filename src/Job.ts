@@ -110,10 +110,6 @@ export default class Job extends EmitterWithUniqueID {
         return this._session;
     }
 
-    get directory(): string {
-        return this.session.currentDirectory;
-    }
-
     get dimensions(): Dimensions {
         return this.session.dimensions;
     }
