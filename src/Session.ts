@@ -15,6 +15,7 @@ const browserWindow: typeof Electron.BrowserWindow = remote.require("electron").
 export default class Session extends EmitterWithUniqueID {
     jobs: Array<Job> = [];
     history: typeof History;
+    public historicalCurrentDirectoriesStack: string[] = [];
     private _currentDirectory: string;
     private stateFileName = `${Utils.homeDirectory}/.black-screen-state`;
     // The value of the dictionary is the default value used if there is no serialized data.
@@ -85,6 +86,7 @@ export default class Session extends EmitterWithUniqueID {
         );
 
         this._currentDirectory = normalizedDirectory;
+        this.historicalCurrentDirectoriesStack.push(this._currentDirectory);
 
         PluginManager.environmentObservers.forEach(observer =>
             observer.currentWorkingDirectoryDidChange(this, normalizedDirectory)

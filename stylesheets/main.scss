@@ -501,6 +501,11 @@ pre {
 
         background-color: rgba(0, 0, 0, 0.15);
       }
+      &.error .icon {
+        @extend .fa;
+        @extend .fa-exclamation-triangle;
+        color: map-get($colors, 'red');
+      }
 
       &.alias .icon {
         @extend .fa;

@@ -27,7 +27,7 @@ export default class ApplicationComponent extends React.Component<{}, State> {
             }
         });
 
-        ipcRenderer.on("change-working-directory", (directory: string) =>
+        ipcRenderer.on("change-working-directory", (event: Event, directory: string) =>
             this.activeTab.activeSession().currentDirectory = directory
         );
     }

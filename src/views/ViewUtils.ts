@@ -1,4 +1,3 @@
-import {Attributes} from "../Interfaces";
 import * as React from "react";
 import {CharCode} from "../Enums";
 
@@ -24,8 +23,12 @@ export const keys = {
 };
 
 
-export function isCommandKey(event: KeyboardEvent) {
-    return [CharCode.Shift, CharCode.Ctrl, CharCode.Alt].includes(event.keyCode) || event.ctrlKey || event.altKey || event.metaKey;
+export function isModifierKey(event: KeyboardEvent) {
+    return [CharCode.Shift, CharCode.Ctrl, CharCode.Alt].includes(event.keyCode);
+}
+
+export function withModifierKey(event: KeyboardEvent) {
+    return isModifierKey(event) || event.ctrlKey || event.altKey || event.metaKey;
 }
 
 export const isSpecialKey = _.memoize(
@@ -33,9 +36,10 @@ export const isSpecialKey = _.memoize(
     (event: React.KeyboardEvent) => JSON.stringify([event.ctrlKey, event.keyCode])
 );
 
-export function getHTMLAttributes(attributes: Attributes): Object {
+export function getHTMLAttributes(object: Dictionary<any>): Object {
     let htmlAttributes: Dictionary<any> = {};
-    _.each(attributes, (value, key) => htmlAttributes[`data-${key}`] = value);
+
+    Object.keys(object).forEach((key: string) => htmlAttributes[`data-${key}`] = object[key]);
 
     return htmlAttributes;
 }

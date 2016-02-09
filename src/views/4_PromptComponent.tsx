@@ -4,7 +4,7 @@ import * as React from "react";
 import AutocompleteComponent from "./AutocompleteComponent";
 import DecorationToggleComponent from "./DecorationToggleComponent";
 import History from "../History";
-import {stopBubblingUp, keys, getCaretPosition, setCaretPosition, isCommandKey, isSpecialKey} from "./ViewUtils";
+import {stopBubblingUp, keys, getCaretPosition, setCaretPosition, withModifierKey, isSpecialKey} from "./ViewUtils";
 import JobComponent from "./3_JobComponent";
 import PromptModel from "../Prompt";
 import JobModel from "../Job";
@@ -71,7 +71,7 @@ export default class PromptComponent extends React.Component<Props, State> imple
 
         const allKeys = createEventHandler();
         allKeys
-            .filter(_.negate(isCommandKey))
+            .filter(_.negate(withModifierKey))
             .forEach((event: KeyboardEvent) => this.setState({latestKeyCode: event.keyCode}));
 
 

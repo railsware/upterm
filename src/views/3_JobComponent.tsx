@@ -1,7 +1,7 @@
 import * as React from "react";
 import * as e from "../Enums";
 import JobModel from "../Job";
-import {keys} from "./ViewUtils";
+import {keys, isModifierKey} from "./ViewUtils";
 import PromptComponent from "./4_PromptComponent";
 import BufferComponent from "./BufferComponent";
 
@@ -70,7 +70,7 @@ export default class JobComponent extends React.Component<Props, State> implemen
             return;
         }
 
-        if (this.state.status === e.Status.InProgress && !isMetaKey(event)) {
+        if (this.state.status === e.Status.InProgress && !event.metaKey && !isModifierKey(event)) {
             if (keys.interrupt(event)) {
                 this.props.job.interrupt();
             } else {
@@ -85,8 +85,4 @@ export default class JobComponent extends React.Component<Props, State> implemen
         // FIXME: find a better design to propagate events.
         window.promptUnderAttention.handleKeyDown(event);
     }
-}
-
-export function isMetaKey(event: KeyboardEvent) {
-    return event.metaKey || [event.key, event.keyIdentifier].some(key => ["Shift", "Alt", "Control"].includes(key));
 }

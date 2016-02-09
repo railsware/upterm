@@ -38,13 +38,13 @@ class BuiltInCommandExecutionStrategy extends CommandExecutionStrategy {
 class UnixSystemFileExecutionStrategy extends CommandExecutionStrategy {
     static async canExecute(job: Job) {
         return (await Utils.executablesInPaths()).includes(job.prompt.commandName) ||
-            await Utils.exists(Utils.resolveFile(job.directory, job.prompt.commandName));
+            await Utils.exists(Utils.resolveFile(job.session.currentDirectory, job.prompt.commandName));
     }
 
     startExecution() {
         return new Promise((resolve, reject) => {
             this.job.command = new PTY(
-                this.job.prompt.commandName, this.args, this.job.directory, this.job.dimensions,
+                this.job.prompt.commandName, this.args, this.job.session.currentDirectory, this.job.dimensions,
                 (data: string) => this.job.parser.parse(data),
                 (exitCode: number) => exitCode === 0 ? resolve() : reject()
             );
@@ -60,7 +60,7 @@ class WindowsSystemFileExecutionStrategy extends CommandExecutionStrategy {
     startExecution() {
         return new Promise((resolve) => {
             this.job.command = new PTY(
-                this.cmdPath, ["/s", "/c", this.job.prompt.expanded.join(" ")], this.job.directory, this.job.dimensions,
+                this.cmdPath, ["/s", "/c", this.job.prompt.expanded.join(" ")], this.job.session.currentDirectory, this.job.dimensions,
                 (data: string) => this.job.parser.parse(data),
                 (exitCode: number) => resolve()
             );
