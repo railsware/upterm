@@ -32,16 +32,16 @@ export default class Buffer extends events.EventEmitter {
 
         if (charObject.isSpecial()) {
             switch (charObject.getCharCode()) {
-                case e.CharCode.Bell:
+                case e.KeyCode.Bell:
                     shell.beep();
                     break;
-                case e.CharCode.Backspace:
+                case e.KeyCode.Backspace:
                     this.moveCursorRelative({ horizontal: -1 });
                     break;
-                case e.CharCode.Tab:
+                case e.KeyCode.Tab:
                     this.moveCursorAbsolute({ column: Math.floor((this.cursor.column() + 8) / 8) * 8 });
                     break;
-                case e.CharCode.NewLine:
+                case e.KeyCode.NewLine:
                     if (this.cursor.row() === this._margins.bottom) {
                         this.scrollDown(1);
                     } else {
@@ -49,7 +49,7 @@ export default class Buffer extends events.EventEmitter {
                     }
 
                     break;
-                case e.CharCode.CarriageReturn:
+                case e.KeyCode.CarriageReturn:
                     this.moveCursorAbsolute({ column: 0 });
                     break;
                 default:

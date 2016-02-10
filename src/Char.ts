@@ -27,8 +27,8 @@ export default class Char {
         }
     }
 
-    getCharCode(): e.CharCode {
-        return (<any>e.CharCode)[e.CharCode[this.char.charCodeAt(0)]];
+    getCharCode(): e.KeyCode {
+        return (<any>e.KeyCode)[e.KeyCode[this.char.charCodeAt(0)]];
     }
 
     get attributes(): Attributes {

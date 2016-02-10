@@ -3,7 +3,7 @@ import * as _ from "lodash";
 /**
  * @link https://css-tricks.com/snippets/javascript/javascript-keycodes/
  */
-export enum CharCode {
+export enum KeyCode {
     Bell = 7,
     Backspace = 8,
     Tab = 9,

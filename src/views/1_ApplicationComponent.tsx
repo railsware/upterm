@@ -4,7 +4,7 @@ import * as React from "react";
 import * as _ from "lodash";
 import Session from "../Session";
 import {ipcRenderer} from "electron";
-import {CharCode} from "../Enums";
+import {KeyCode} from "../Enums";
 const shell: Electron.Shell = require("remote").require("electron").shell;
 
 interface State {
@@ -33,20 +33,20 @@ export default class ApplicationComponent extends React.Component<{}, State> {
     }
 
     handleKeyDown(event: JQueryKeyEventObject) {
-        if (event.metaKey && event.keyCode === CharCode.Underscore) {
+        if (event.metaKey && event.keyCode === KeyCode.Underscore) {
             this.activeTab.addSession();
             this.setState({sessions: this.activeTab.sessions});
 
             event.stopPropagation();
         }
 
-        if (event.metaKey && event.keyCode === CharCode.VerticalBar) {
+        if (event.metaKey && event.keyCode === KeyCode.VerticalBar) {
             console.log("Split vertically.");
 
             event.stopPropagation();
         }
 
-        if (event.ctrlKey && event.keyCode === CharCode.D) {
+        if (event.ctrlKey && event.keyCode === KeyCode.D) {
             this.removeSession(this.activeTab.activeSession());
 
             this.setState({sessions: this.activeTab.sessions});
@@ -54,7 +54,7 @@ export default class ApplicationComponent extends React.Component<{}, State> {
             event.stopPropagation();
         }
 
-        if (event.metaKey && event.keyCode === CharCode.J) {
+        if (event.metaKey && event.keyCode === KeyCode.J) {
             if (this.activeTab.activateNextSession()) {
                 this.setState({sessions: this.activeTab.sessions});
 
@@ -62,7 +62,7 @@ export default class ApplicationComponent extends React.Component<{}, State> {
             }
         }
 
-        if (event.metaKey && event.keyCode === CharCode.K) {
+        if (event.metaKey && event.keyCode === KeyCode.K) {
             if (this.activeTab.activatePreviousSession()) {
                 this.setState({sessions: this.activeTab.sessions});
 
@@ -70,7 +70,7 @@ export default class ApplicationComponent extends React.Component<{}, State> {
             }
         }
 
-        if (event.metaKey && event.keyCode === CharCode.T) {
+        if (event.metaKey && event.keyCode === KeyCode.T) {
             if (this.tabs.length < 9) {
                 this.createTab();
                 this.setState({sessions: this.activeTab.sessions});
@@ -81,7 +81,7 @@ export default class ApplicationComponent extends React.Component<{}, State> {
             event.stopPropagation();
         }
 
-        if (event.metaKey && event.keyCode === CharCode.W) {
+        if (event.metaKey && event.keyCode === KeyCode.W) {
             this.removeTab(this.activeTab);
             this.setState({sessions: this.activeTab.sessions});
 
@@ -89,7 +89,7 @@ export default class ApplicationComponent extends React.Component<{}, State> {
             event.preventDefault();
         }
 
-        if (event.metaKey && event.keyCode >= CharCode.One && event.keyCode <= CharCode.Nine) {
+        if (event.metaKey && event.keyCode >= KeyCode.One && event.keyCode <= KeyCode.Nine) {
             const newTabIndex = parseInt(event.key, 10) - 1;
 
             if (this.tabs.length > newTabIndex) {

@@ -9,7 +9,7 @@ import CommandExecutor from "./CommandExecutor";
 import PTY from "./PTY";
 import PluginManager from "./PluginManager";
 import EmitterWithUniqueID from "./EmitterWithUniqueID";
-import {CharCode, Status} from "./Enums";
+import {KeyCode, Status} from "./Enums";
 
 function makeThrottledDataEmitter(timesPerSecond: number, subject: EmitterWithUniqueID) {
     return _.throttle(() => subject.emit("data"), 1000 / timesPerSecond);
@@ -98,7 +98,7 @@ export default class Job extends EmitterWithUniqueID {
                 text = String.fromCharCode(code);
             }
 
-            if (!event.shiftKey && code >= CharCode.A && code <= CharCode.Z) {
+            if (!event.shiftKey && code >= KeyCode.A && code <= KeyCode.Z) {
                 text = text.toLowerCase();
             }
         }

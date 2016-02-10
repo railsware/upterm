@@ -1,6 +1,6 @@
 import Job from "./Job";
 import Char from "./Char";
-import {Color, Weight, Brightness, CharCode, LogLevel, Buffer, colorIndex} from "./Enums";
+import {Color, Weight, Brightness, KeyCode, LogLevel, Buffer, colorIndex} from "./Enums";
 import {Attributes} from "./Interfaces";
 import Utils from "./Utils";
 import BufferModel from "./Buffer";
@@ -84,7 +84,7 @@ export default class Parser {
             },
             inst_x: (flag: string) => {
                 const char = Char.flyweight(flag, this.job.buffer.attributes);
-                const name = CharCode[char.getCharCode()];
+                const name = KeyCode[char.getCharCode()];
 
                 Utils.print((name ? LogLevel.Log : LogLevel.Error), flag.split("").map((_, index) => flag.charCodeAt(index)));
 

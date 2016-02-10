@@ -1,5 +1,5 @@
 import * as React from "react";
-import {CharCode} from "../Enums";
+import {KeyCode} from "../Enums";
 
 export function stopBubblingUp(event: Event): Event {
     event.stopPropagation();
@@ -14,17 +14,17 @@ export function scrollToBottom(): void {
 }
 
 export const keys = {
-    goUp: (event: KeyboardEvent) => (event.ctrlKey && event.keyCode === CharCode.P) || event.keyCode === CharCode.Up,
-    goDown: (event: KeyboardEvent) => (event.ctrlKey && event.keyCode === CharCode.N) || event.keyCode === CharCode.Down,
-    enter: (event: KeyboardEvent) => event.keyCode === CharCode.CarriageReturn,
-    tab: (event: KeyboardEvent) => event.keyCode === CharCode.Tab,
-    deleteWord: (event: KeyboardEvent) => event.ctrlKey && event.keyCode === CharCode.W,
-    interrupt: (event: KeyboardEvent) => event.ctrlKey && event.keyCode === CharCode.C,
+    goUp: (event: KeyboardEvent) => (event.ctrlKey && event.keyCode === KeyCode.P) || event.keyCode === KeyCode.Up,
+    goDown: (event: KeyboardEvent) => (event.ctrlKey && event.keyCode === KeyCode.N) || event.keyCode === KeyCode.Down,
+    enter: (event: KeyboardEvent) => event.keyCode === KeyCode.CarriageReturn,
+    tab: (event: KeyboardEvent) => event.keyCode === KeyCode.Tab,
+    deleteWord: (event: KeyboardEvent) => event.ctrlKey && event.keyCode === KeyCode.W,
+    interrupt: (event: KeyboardEvent) => event.ctrlKey && event.keyCode === KeyCode.C,
 };
 
 
 export function isModifierKey(event: KeyboardEvent) {
-    return [CharCode.Shift, CharCode.Ctrl, CharCode.Alt].includes(event.keyCode);
+    return [KeyCode.Shift, KeyCode.Ctrl, KeyCode.Alt].includes(event.keyCode);
 }
 
 export function withModifierKey(event: KeyboardEvent) {
