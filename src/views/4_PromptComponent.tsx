@@ -70,6 +70,10 @@ export default class PromptComponent extends React.Component<Props, State> imple
         };
 
         const allKeys = createEventHandler();
+
+        allKeys // Should be before setting latestKeyCode.
+            .filter((event: KeyboardEvent) => event.keyCode === KeyCode.Period && (event.altKey || this.state.latestKeyCode === KeyCode.Escape))
+            .forEach(this.appendLastLexemeOfPreviousJob.bind(this));
         allKeys
             .filter(_.negate(withModifierKey))
             .forEach((event: KeyboardEvent) => this.setState({latestKeyCode: event.keyCode}));
@@ -251,6 +255,15 @@ export default class PromptComponent extends React.Component<Props, State> imple
 
         await this.prompt.setValue(newValue);
         this.setDOMValueProgrammatically(newValue);
+    }
+
+    private async appendLastLexemeOfPreviousJob(event: KeyboardEvent): Promise<void> {
+        event.stopPropagation();
+        event.preventDefault();
+
+        const value = this.prompt.value + History.lastEntry.lastLexeme;
+        await this.prompt.setValue(value);
+        this.setDOMValueProgrammatically(value);
     }
 
     private highlightSuggestion(index: number): void {

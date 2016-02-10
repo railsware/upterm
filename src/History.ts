@@ -1,3 +1,5 @@
+import {lex} from "./CommandExpander";
+
 export class HistoryEntry {
     constructor(private _raw: string, private _historyExpanded: string[]) {
     }
@@ -8,6 +10,10 @@ export class HistoryEntry {
 
     get historyExpanded(): string[] {
         return this._historyExpanded;
+    }
+
+    get lastLexeme(): string {
+        return _.last(lex(this.raw));
     }
 
     toArray(): any[] {
@@ -25,7 +31,7 @@ export class History {
         return this.storage;
     }
 
-    static get last(): HistoryEntry {
+    static get lastEntry(): HistoryEntry {
         return this.at(-1);
     }
 

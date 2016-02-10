@@ -88,7 +88,7 @@ export function historyReplacement(lexeme: string): string[] {
         return [History.at(position).raw];
     }
 
-    const lastCommand = History.last;
+    const lastCommand = History.lastEntry;
     switch (lexeme) {
         case "!!":
             return lastCommand.historyExpanded;

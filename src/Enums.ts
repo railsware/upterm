@@ -2,6 +2,7 @@ import * as _ from "lodash";
 
 /**
  * @link https://css-tricks.com/snippets/javascript/javascript-keycodes/
+ * @link https://lists.w3.org/Archives/Public/www-dom/2010JulSep/att-0182/keyCode-spec.html
  */
 export enum KeyCode {
     Bell = 7,
@@ -48,6 +49,7 @@ export enum KeyCode {
     Z = 90,
     Delete = 127,
     Underscore = 189,
+    Period = 190,
     VerticalBar = 220,
 }
 
