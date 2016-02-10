@@ -17,7 +17,7 @@ const executors: Dictionary<(i: Job, a: string[]) => void> = {
                 newDirectory = Utils.resolveDirectory(job.session.currentDirectory, directory);
 
                 if (!existsSync(newDirectory)) {
-                    throw new Error(`The directory ${newDirectory} doesn"t exist.`);
+                    throw new Error(`The directory ${newDirectory} doesn't exist.`);
                 }
 
                 if (!statSync(newDirectory).isDirectory()) {
