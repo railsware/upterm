@@ -70,8 +70,8 @@ a {
 }
 
 [data-cursor='true'] {
-  background-color: map-get($colors, 'white');
-  color: map-get($colors, 'black');
+  background-color: map-get($colors, 'white') !important;
+  color: map-get($colors, 'black') !important;
 }
 
 [data-weight='bold'] {
