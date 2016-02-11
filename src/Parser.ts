@@ -16,11 +16,12 @@ interface HandlerResult {
 }
 
 const SGR: { [indexer: string]: Attributes|string } = {
-    0: { color: Color.White, weight: Weight.Normal, underline: false, "background-color": Color.Black },
+    0: { color: Color.White, weight: Weight.Normal, underline: false, "background-color": Color.Black, inverse: false },
     1: { brightness: Brightness.Bright },
     2: { weight: Weight.Faint },
     4: { underline: true },
-    7: "negative",
+    7: { inverse: true },
+    27: { inverse: false },
     30: { color: Color.Black },
     31: { color: Color.Red },
     32: { color: Color.Green },
@@ -446,13 +447,6 @@ export default class Parser {
                         } else {
                             Utils.error("sgr", sgr, next, params);
                         }
-                    } else if (attributeToSet === "negative") {
-                        const attributes = this.buffer.attributes;
-
-                        this.buffer.setAttributes({
-                            "background-color": attributes.color,
-                            "color": attributes["background-color"],
-                        });
                     } else {
                         this.buffer.setAttributes(attributeToSet);
                     }

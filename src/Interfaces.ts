@@ -6,6 +6,7 @@ import Session from "./Session";
 import {Suggestion} from "./plugins/autocompletion_providers/Suggestions";
 
 export interface Attributes {
+    inverse?: boolean;
     color?: Color;
     "background-color"?: Color;
     brightness?: Brightness;

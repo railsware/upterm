@@ -34,21 +34,38 @@ a {
 
 @each $color, $value in $base-colors {
   [data-color='#{$color}'][data-brightness='bright'] {
-    color: map_get($bright-colors, 'bright-#{$color}');
+    color: map-get($bright-colors, 'bright-#{$color}');
   }
-
-  //[data-background-color='#{$color}'][data-brightness='bright'] {
-  //  background-color: map_get($bright-colors, 'bright-#{$color}');
-  //}
 }
 
 @each $color, $value in $colors {
   [data-color='#{$color}'] {
-    color: $value;
+    &:not([data-inverse='true']) {
+      color: $value;
+    }
+    &[data-inverse='true'] {
+      background-color: $value;
+    }
   }
 
   [data-background-color='#{$color}'] {
-    background-color: $value;
+    &:not([data-inverse='true']) {
+      background-color: $value;
+    }
+
+    &[data-inverse='true'] {
+      color: $value;
+    }
+  }
+}
+
+[data-inverse='true'] {
+  &:not([data-background-color]) {
+    color: map-get($colors, 'black');
+  }
+
+  &:not([data-color]) {
+    background-color: map-get($colors, 'white');
   }
 }
 
