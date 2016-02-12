@@ -1,0 +1,14 @@
+{
+  "files": [
+    "src/**/*.ts"
+  ],
+
+  "tests": [
+    "test/**/*.ts"
+  ],
+  "testFramework": "jasmine",
+
+  "env": {
+    "type": "node"
+  }
+}

@@ -27,7 +27,7 @@ const options = {
     typeScript: {
         source: "src/**/*.ts*",
         target: "compiled/src",
-        config: $.typescript.createProject('src/tsconfig.json', {typescript: require("typescript")})
+        config: $.typescript.createProject('tsconfig.json', {typescript: require("typescript")})
     },
     test: {
         source: "test/**/*.ts",
@@ -87,13 +87,6 @@ gulp.task("watch", function (cb) {
         }
     );
 });
-
-gulp.task("compile-tests", function () {
-        return gulp.src(options.test.source)
-            .pipe($.typescript(options.typeScript.config))
-            .pipe(gulp.dest(options.test.target))
-    }
-);
 
 gulp.task("default", function () {
     return runSequence(
