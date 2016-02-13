@@ -4,7 +4,7 @@ import {memoize} from "./Decorators";
 import {Attributes} from "./Interfaces";
 
 export const attributesFlyweight = _.memoize(
-    (attributes: Attributes): Attributes => _.clone(attributes),
+    (attributes: Attributes): Attributes => Object.assign({}, attributes),
     (attributes: Dictionary<any>) => {
         const ordered: Dictionary<any> = {};
         Object.keys(attributes).sort().forEach(key => ordered[key] = attributes[key]);
