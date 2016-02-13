@@ -3,7 +3,7 @@ import * as _ from "lodash";
 import {memoize} from "./Decorators";
 import {Attributes} from "./Interfaces";
 
-const attributesFlyweight = _.memoize(
+export const attributesFlyweight = _.memoize(
     (attributes: Attributes): Attributes => _.clone(attributes),
     (attributes: Dictionary<any>) => {
         const ordered: Dictionary<any> = {};

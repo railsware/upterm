@@ -6,6 +6,7 @@ import * as e from "./Enums";
 import * as _ from "lodash";
 import Utils from "./Utils";
 import {List} from "immutable";
+import {attributesFlyweight} from "./Char";
 const shell: Electron.Shell = require("remote").require("electron").shell;
 
 export default class Buffer extends events.EventEmitter {
@@ -77,7 +78,7 @@ export default class Buffer extends events.EventEmitter {
     }
 
     setAttributes(attributes: i.Attributes): void {
-        this._attributes = _.merge(this._attributes, attributes);
+        this._attributes = attributesFlyweight(Object.assign({}, this._attributes, attributes));
     }
 
     toRenderable(fromStorage = this.storage): List<List<Char>> {
