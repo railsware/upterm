@@ -1,10 +1,10 @@
-import * as e from "./Enums";
 import * as _ from "lodash";
 import {memoize} from "./Decorators";
 import {Attributes} from "./Interfaces";
+import {KeyCode} from "./Enums";
 
 export const attributesFlyweight = _.memoize(
-    (attributes: Attributes): Attributes => Object.assign({}, attributes),
+    (attributes: Attributes): Attributes => Object.freeze(Object.assign({}, attributes)),
     (attributes: Dictionary<any>) => {
         const ordered: Dictionary<any> = {};
         Object.keys(attributes).sort().forEach(key => ordered[key] = attributes[key]);
@@ -27,8 +27,8 @@ export default class Char {
         }
     }
 
-    getCharCode(): e.KeyCode {
-        return (<any>e.KeyCode)[e.KeyCode[this.char.charCodeAt(0)]];
+    get keyCode(): KeyCode {
+        return (<any>KeyCode)[KeyCode[this.char.charCodeAt(0)]];
     }
 
     get attributes(): Attributes {

@@ -32,7 +32,7 @@ export default class Buffer extends events.EventEmitter {
         const charObject = Char.flyweight(char, this.attributes);
 
         if (charObject.isSpecial()) {
-            switch (charObject.getCharCode()) {
+            switch (charObject.keyCode) {
                 case e.KeyCode.Bell:
                     shell.beep();
                     break;

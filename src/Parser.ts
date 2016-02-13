@@ -85,7 +85,7 @@ export default class Parser {
             },
             inst_x: (flag: string) => {
                 const char = Char.flyweight(flag, this.job.buffer.attributes);
-                const name = KeyCode[char.getCharCode()];
+                const name = KeyCode[char.keyCode];
 
                 Utils.print((name ? LogLevel.Log : LogLevel.Error), flag.split("").map((_, index) => flag.charCodeAt(index)));
 
