@@ -32,7 +32,7 @@ export default class ApplicationComponent extends React.Component<{}, State> {
         );
     }
 
-    handleKeyDown(event: JQueryKeyEventObject) {
+    handleKeyDown(event: KeyboardEvent) {
         if (event.metaKey && event.keyCode === KeyCode.Underscore) {
             this.activeTab.addSession();
             this.setState({sessions: this.activeTab.sessions});
