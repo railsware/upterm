@@ -97,7 +97,7 @@ export default class Buffer extends events.EventEmitter {
             let char: Char = storage.getIn(coordinates);
             storage = storage.setIn(
                 coordinates,
-                Char.flyweight(char.toString(), _.merge(_.clone(char.attributes), { cursor: true }))
+                Char.flyweight(char.toString(), Object.assign({}, char.attributes, { cursor: true }))
             );
         }
 
