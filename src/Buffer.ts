@@ -3,7 +3,6 @@ import Char from "./Char";
 import Cursor from "./Cursor";
 import * as i from "./Interfaces";
 import * as e from "./Enums";
-import * as _ from "lodash";
 import Utils from "./Utils";
 import {List} from "immutable";
 import {attributesFlyweight} from "./Char";
