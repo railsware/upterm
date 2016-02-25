@@ -1,4 +1,4 @@
-// Compiled using typings@0.6.6
+// Compiled using typings@0.6.8
 // Source: https://raw.githubusercontent.com/DefinitelyTyped/DefinitelyTyped/e3a7583dc379d3b178216fcd444b0ea64aed66e0/react/react.d.ts
 // Type definitions for React v0.14
 // Project: http://facebook.github.io/react/
