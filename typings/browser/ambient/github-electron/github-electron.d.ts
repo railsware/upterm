@@ -1,4 +1,4 @@
-// Compiled using typings@0.6.8
+// Compiled using typings@0.6.10
 // Source: https://raw.githubusercontent.com/DefinitelyTyped/DefinitelyTyped/e5fc6154826b24cc8421298d72d7007c54a9f999/github-electron/github-electron.d.ts
 // Type definitions for Electron v0.35.0
 // Project: http://electron.atom.io/
