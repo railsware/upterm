@@ -2,8 +2,8 @@ import Job from "./Job";
 import Char from "./Char";
 import {Color, Weight, Brightness, KeyCode, LogLevel, Buffer, colorIndex} from "./Enums";
 import {Attributes} from "./Interfaces";
-import Utils from "./Utils";
 import BufferModel from "./Buffer";
+import {print, error, info, debug} from "./Utils";
 
 const ansiParserConstructor: typeof AnsiParser = require("node-ansiparser");
 
@@ -16,32 +16,32 @@ interface HandlerResult {
 }
 
 const SGR: { [indexer: string]: Attributes|string } = {
-    0: { color: Color.White, weight: Weight.Normal, underline: false, "background-color": Color.Black, inverse: false },
-    1: { brightness: Brightness.Bright },
-    2: { weight: Weight.Faint },
-    4: { underline: true },
-    7: { inverse: true },
-    27: { inverse: false },
-    30: { color: Color.Black },
-    31: { color: Color.Red },
-    32: { color: Color.Green },
-    33: { color: Color.Yellow },
-    34: { color: Color.Blue },
-    35: { color: Color.Magenta },
-    36: { color: Color.Cyan },
-    37: { color: Color.White },
+    0: {color: Color.White, weight: Weight.Normal, underline: false, "background-color": Color.Black, inverse: false},
+    1: {brightness: Brightness.Bright},
+    2: {weight: Weight.Faint},
+    4: {underline: true},
+    7: {inverse: true},
+    27: {inverse: false},
+    30: {color: Color.Black},
+    31: {color: Color.Red},
+    32: {color: Color.Green},
+    33: {color: Color.Yellow},
+    34: {color: Color.Blue},
+    35: {color: Color.Magenta},
+    36: {color: Color.Cyan},
+    37: {color: Color.White},
     38: "color",
-    39: { color: Color.White },
-    40: { "background-color": Color.Black },
-    41: { "background-color": Color.Red },
-    42: { "background-color": Color.Green },
-    43: { "background-color": Color.Yellow },
-    44: { "background-color": Color.Blue },
-    45: { "background-color": Color.Magenta },
-    46: { "background-color": Color.Cyan },
-    47: { "background-color": Color.White },
+    39: {color: Color.White},
+    40: {"background-color": Color.Black},
+    41: {"background-color": Color.Red},
+    42: {"background-color": Color.Green},
+    43: {"background-color": Color.Yellow},
+    44: {"background-color": Color.Blue},
+    45: {"background-color": Color.Magenta},
+    46: {"background-color": Color.Cyan},
+    47: {"background-color": Color.White},
     48: "background-color",
-    49: { "background-color": Color.Black },
+    49: {"background-color": Color.Black},
 };
 
 function isSetColorExtended(sgrValue: any) {
@@ -74,20 +74,20 @@ export default class Parser {
         // TODO: an easy to clean up mess.
         return new ansiParserConstructor({
             inst_p: (text: string) => {
-                Utils.info("text", text, text.split("").map(letter => letter.charCodeAt(0)));
+                info("text", text, text.split("").map(letter => letter.charCodeAt(0)));
 
                 this.buffer.writeMany(text);
 
                 logPosition(this.buffer);
             },
             inst_o: function (s: any) {
-                Utils.error("osc", s);
+                error("osc", s);
             },
             inst_x: (flag: string) => {
                 const char = Char.flyweight(flag, this.job.buffer.attributes);
                 const name = KeyCode[char.keyCode];
 
-                Utils.print((name ? LogLevel.Log : LogLevel.Error), flag.split("").map((_, index) => flag.charCodeAt(index)));
+                print((name ? LogLevel.Log : LogLevel.Error), flag.split("").map((_, index) => flag.charCodeAt(index)));
 
                 this.buffer.writeOne(flag);
 
@@ -100,26 +100,26 @@ export default class Parser {
                 let handlerResult: HandlerResult;
                 if (collected === "?") {
                     if (params.length !== 1) {
-                        return Utils.error(`CSI private mode has ${params.length} parameters: ${params}`);
+                        return error(`CSI private mode has ${params.length} parameters: ${params}`);
                     }
                     if (flag !== "h" && flag !== "l") {
-                        return Utils.error(`CSI private mode has an incorrect flag: ${flag}`);
+                        return error(`CSI private mode has an incorrect flag: ${flag}`);
                     }
                     const mode = params[0];
                     handlerResult = this.decPrivateModeHandler(mode, flag);
 
                     if (handlerResult.status === "handled") {
-                        Utils.info(`%cCSI ? ${mode} ${flag}`, "color: blue", handlerResult.description, handlerResult.url);
+                        info(`%cCSI ? ${mode} ${flag}`, "color: blue", handlerResult.description, handlerResult.url);
                     } else {
-                        Utils.error(`%cCSI ? ${mode} ${flag}`, "color: blue", handlerResult.description, handlerResult.url);
+                        error(`%cCSI ? ${mode} ${flag}`, "color: blue", handlerResult.description, handlerResult.url);
                     }
                 } else {
                     handlerResult = this.csiHandler(collected, params, flag);
 
                     if (handlerResult.status === "handled") {
-                        Utils.info(`%cCSI ${params} ${flag}`, "color: blue", handlerResult.description, handlerResult.url);
+                        info(`%cCSI ${params} ${flag}`, "color: blue", handlerResult.description, handlerResult.url);
                     } else {
-                        Utils.error(`%cCSI ${params} ${flag}`, "color: blue", handlerResult.description, handlerResult.url);
+                        error(`%cCSI ${params} ${flag}`, "color: blue", handlerResult.description, handlerResult.url);
                     }
                 }
 
@@ -132,9 +132,9 @@ export default class Parser {
                 const handlerResult = this.escapeHandler(collected, flag);
 
                 if (handlerResult.status === "handled") {
-                    Utils.info(`%cESC ${collected} ${flag}`, "color: blue", handlerResult.description, handlerResult.url);
+                    info(`%cESC ${collected} ${flag}`, "color: blue", handlerResult.description, handlerResult.url);
                 } else {
-                    Utils.error(`%cESC ${collected} ${flag}`, "color: blue", handlerResult.description, handlerResult.url);
+                    error(`%cESC ${collected} ${flag}`, "color: blue", handlerResult.description, handlerResult.url);
                 }
 
                 logPosition(this.buffer);
@@ -156,11 +156,11 @@ export default class Parser {
                 const dimensions = this.job.getDimensions();
 
                 for (let i = 0; i !== dimensions.rows; ++i) {
-                    this.buffer.moveCursorAbsolute({ row: i, column: 0 });
+                    this.buffer.moveCursorAbsolute({row: i, column: 0});
                     this.buffer.writeMany(Array(dimensions.columns).join("E"));
                 }
 
-                this.buffer.moveCursorAbsolute({ row: 0, column: 0 });
+                this.buffer.moveCursorAbsolute({row: 0, column: 0});
             } else {
                 status = "unhandled";
             }
@@ -169,38 +169,38 @@ export default class Parser {
                 case "A":
                     short = "Cursor up.";
 
-                    this.buffer.moveCursorRelative({ vertical: -1 });
+                    this.buffer.moveCursorRelative({vertical: -1});
                     break;
                 case "B":
                     short = "Cursor down.";
 
-                    this.buffer.moveCursorRelative({ vertical: 1 });
+                    this.buffer.moveCursorRelative({vertical: 1});
                     break;
                 case "C":
                     short = "Cursor right.";
 
-                    this.buffer.moveCursorRelative({ horizontal: 1 });
+                    this.buffer.moveCursorRelative({horizontal: 1});
                     break;
                 case "D":
                     short = "Index (IND).";
                     url = "http://www.vt100.net/docs/vt510-rm/IND";
 
-                    this.buffer.moveCursorRelative({ vertical: 1 });
+                    this.buffer.moveCursorRelative({vertical: 1});
                     break;
                 case "M":
                     short = "Reverse Index (RI).";
                     /* tslint:disable:max-line-length */
                     long = "Move the active position to the same horizontal position on the preceding lin If the active position is at the top margin, a scroll down is performed.";
 
-                    this.buffer.moveCursorRelative({ vertical: -1 });
+                    this.buffer.moveCursorRelative({vertical: -1});
                     break;
                 case "E":
                     short = "Next Line (NEL).";
                     /* tslint:disable:max-line-length */
                     long = "This sequence causes the active position to move to the first position on the next line downward. If the active position is at the bottom margin, a scroll up is performed.";
 
-                    this.buffer.moveCursorRelative({ vertical: 1 });
-                    this.buffer.moveCursorAbsolute({ column: 0 });
+                    this.buffer.moveCursorRelative({vertical: 1});
+                    this.buffer.moveCursorAbsolute({column: 0});
                     break;
                 default:
                     status = "unhandled";
@@ -229,11 +229,11 @@ export default class Parser {
                 if (isSet) {
                     description = "132 Column Mode (DECCOLM).";
 
-                    this.job.setDimensions({ columns: 132, rows: this.job.getDimensions().rows });
+                    this.job.setDimensions({columns: 132, rows: this.job.getDimensions().rows});
                 } else {
                     description = "80 Column Mode (DECCOLM).";
 
-                    this.job.setDimensions({ columns: 80, rows: this.job.getDimensions().rows });
+                    this.job.setDimensions({columns: 80, rows: this.job.getDimensions().rows});
                 }
                 this.buffer.clear();
                 // TODO
@@ -316,21 +316,21 @@ export default class Parser {
             case "A":
                 short = "Cursor Up Ps Times (default = 1) (CUU).";
 
-                this.buffer.moveCursorRelative({ vertical: -(param || 1) });
+                this.buffer.moveCursorRelative({vertical: -(param || 1)});
                 break;
             case "B":
                 short = "Cursor Down Ps Times (default = 1) (CUD).";
-                this.buffer.moveCursorRelative({ vertical: (param || 1) });
+                this.buffer.moveCursorRelative({vertical: (param || 1)});
                 break;
             case "C":
                 short = "Cursor Forward Ps Times (default = 1) (CUF).";
 
-                this.buffer.moveCursorRelative({ horizontal: (param || 1) });
+                this.buffer.moveCursorRelative({horizontal: (param || 1)});
                 break;
             case "D":
                 short = "Cursor Backward Ps Times (default = 1) (CUB).";
 
-                this.buffer.moveCursorRelative({ horizontal: -(param || 1) });
+                this.buffer.moveCursorRelative({horizontal: -(param || 1)});
                 break;
             // CSI Ps E  Cursor Next Line Ps Times (default = 1) (CNL).
             // CSI Ps F  Cursor Preceding Line Ps Times (default = 1) (CPL).
@@ -338,13 +338,13 @@ export default class Parser {
                 short = "Cursor Character Absolute [column] (default = [row,1]) (CHA)";
                 url = "http://www.vt100.net/docs/vt510-rm/CHA";
 
-                this.buffer.moveCursorAbsolute({ column: or1(param || 1) - 1 });
+                this.buffer.moveCursorAbsolute({column: or1(param || 1) - 1});
                 break;
             case "H":
                 short = "Cursor Position [row;column] (default = [1,1]) (CUP).";
                 url = "http://www.vt100.net/docs/vt510-rm/CUP";
 
-                this.buffer.moveCursorAbsolute({ row: or1(params[0]) - 1, column: or1(params[1]) - 1 });
+                this.buffer.moveCursorAbsolute({row: or1(params[0]) - 1, column: or1(params[1]) - 1});
                 break;
             case "J":
                 url = "http://www.vt100.net/docs/vt510-rm/ED";
@@ -415,13 +415,13 @@ export default class Parser {
                 short = "Line Position Absolute [row] (default = [1,column]) (VPA).";
                 url = "http://www.vt100.net/docs/vt510-rm/VPA";
 
-                this.buffer.moveCursorAbsolute({ row: or1(param || 1) - 1 });
+                this.buffer.moveCursorAbsolute({row: or1(param || 1) - 1});
                 break;
             case "f":
                 short = "Horizontal and Vertical Position [row;column] (default = [1,1]) (HVP).";
                 url = "http://www.vt100.net/docs/vt510-rm/HVP";
 
-                this.buffer.moveCursorAbsolute({ row: or1(params[0]) - 1, column: or1(params[1]) - 1 });
+                this.buffer.moveCursorAbsolute({row: or1(params[0]) - 1, column: or1(params[1]) - 1});
                 break;
             case "m":
                 short = `SGR: ${params}`;
@@ -438,14 +438,14 @@ export default class Parser {
                     const attributeToSet = SGR[sgr];
 
                     if (!attributeToSet) {
-                        Utils.error("sgr", sgr, params);
+                        error("sgr", sgr, params);
                     } else if (isSetColorExtended(attributeToSet)) {
                         const next = params.shift();
                         if (next === 5) {
                             const color = params.shift();
-                            this.buffer.setAttributes({ [<string>attributeToSet]: colorIndex[color] });
+                            this.buffer.setAttributes({[<string>attributeToSet]: colorIndex[color]});
                         } else {
-                            Utils.error("sgr", sgr, next, params);
+                            error("sgr", sgr, next, params);
                         }
                     } else {
                         this.buffer.setAttributes(attributeToSet);
@@ -459,8 +459,8 @@ export default class Parser {
                 let bottom = <number>(params[1] ? params[1] - 1 : undefined);
                 let top = <number>(params[0] ? params[0] - 1 : undefined);
 
-                this.buffer.margins = { top: top, bottom: bottom };
-                this.buffer.moveCursorAbsolute({ row: 0, column: 0 });
+                this.buffer.margins = {top: top, bottom: bottom};
+                this.buffer.moveCursorAbsolute({row: 0, column: 0});
                 break;
             default:
                 status = "unhandled";
@@ -484,8 +484,8 @@ function or1(value: number) {
 }
 
 
-// TODO: Move to Utils.
+// TODO: Move to
 function logPosition(buffer: BufferModel) {
     const position = buffer.cursor.getPosition();
-    Utils.debug(`%crow: ${position.row}\tcolumn: ${position.column}\t value: ${buffer.at(position)}`, "color: green");
+    debug(`%crow: ${position.row}\tcolumn: ${position.column}\t value: ${buffer.at(position)}`, "color: green");
 }

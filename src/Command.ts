@@ -1,20 +1,20 @@
-import Utils from "./Utils";
 import Job from "./Job";
 import {existsSync, statSync} from "fs";
+import {homeDirectory, pluralize, resolveDirectory} from "./Utils";
 
 const executors: Dictionary<(i: Job, a: string[]) => void> = {
     cd: (job: Job, args: string[]): void => {
         let newDirectory: string;
 
         if (!args.length) {
-            newDirectory = Utils.homeDirectory;
+            newDirectory = homeDirectory();
         } else {
             let directory = args[0];
 
             if (isHistoricalDirectory(directory)) {
                 newDirectory = expandHistoricalDirectory(directory, job);
             } else {
-                newDirectory = Utils.resolveDirectory(job.session.directory, directory);
+                newDirectory = resolveDirectory(job.session.directory, directory);
 
                 if (!existsSync(newDirectory)) {
                     throw new Error(`The directory ${newDirectory} doesn't exist.`);
@@ -68,7 +68,7 @@ export function expandHistoricalDirectory(alias: string, job: Job): string {
     const index = stack.length - 1 + parseInt(alias, 10);
 
     if (index < 0) {
-        throw new Error(`Error: you only have ${stack.length} ${Utils.pluralize("directory", stack.length)} in the stack.`);
+        throw new Error(`Error: you only have ${stack.length} ${pluralize("directory", stack.length)} in the stack.`);
     } else {
         return stack[index];
     }

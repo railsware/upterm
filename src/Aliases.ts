@@ -1,6 +1,6 @@
 import {linedOutputOf} from "./PTY";
 import {memoize} from "./Decorators";
-import Utils from "./Utils";
+import {baseName, resolveFile, exists, filterAsync} from "./Utils";
 
 export default class Aliases {
     static async find(alias: string): Promise<string> {
@@ -10,7 +10,7 @@ export default class Aliases {
     @memoize()
     static async all(): Promise<Dictionary<string>> {
         const shellPath: string = process.env.SHELL;
-        const shellName = Utils.baseName(shellPath);
+        const shellName = baseName(shellPath);
         const sourceCommands = (await existingConfigFiles(shellName)).map(fileName => `source ${fileName}`);
         const lines = await linedOutputOf(shellPath, ["-c", `'${[...sourceCommands, "alias"].join("; ")}'`], process.env.HOME);
 
@@ -30,8 +30,8 @@ export default class Aliases {
 }
 
 async function existingConfigFiles(shellName: string): Promise<string[]> {
-    const resolvedConfigFiles = configFiles(shellName).map(fileName => Utils.resolveFile(process.env.HOME, fileName));
-    return await Utils.filterAsync(resolvedConfigFiles, Utils.exists);
+    const resolvedConfigFiles = configFiles(shellName).map(fileName => resolveFile(process.env.HOME, fileName));
+    return await filterAsync(resolvedConfigFiles, exists);
 }
 
 function configFiles(shellName: string): string[] {

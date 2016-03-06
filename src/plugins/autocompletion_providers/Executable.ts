@@ -1,8 +1,8 @@
-import Utils from "../../Utils";
 import * as _ from "lodash";
 import Job from "../../Job";
 import PluginManager from "../../PluginManager";
 import {Executable} from "./Suggestions";
+import {executablesInPaths} from "../../Utils";
 
 const descriptions: {[indexer: string]: string} = {
     admin: "Create and administer SCCS files",
@@ -170,13 +170,13 @@ const descriptions: {[indexer: string]: string} = {
 
 PluginManager.registerAutocompletionProvider({
 
-    getSuggestions: async function(job: Job) {
+    getSuggestions: async function (job: Job) {
         const prompt = job.prompt;
 
         if (prompt.expanded.length > 1) {
             return [];
         }
 
-        return _.map(await Utils.executablesInPaths(job.environment.path), (executable: string) => new Executable(executable).withDescription(descriptions[executable]));
+        return _.map(await executablesInPaths(job.environment.path), (executable: string) => new Executable(executable).withDescription(descriptions[executable]));
     },
 });

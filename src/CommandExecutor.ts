@@ -1,8 +1,9 @@
 import Job from "./Job";
 import Command from "./Command";
-import Utils from "./Utils";
 import PTY from "./PTY";
 import * as Path from "path";
+import {executablesInPaths, resolveFile, isWindows, filterAsync} from "./Utils";
+import {exists} from "fs";
 
 abstract class CommandExecutionStrategy {
     protected args: string[];
@@ -37,8 +38,7 @@ class BuiltInCommandExecutionStrategy extends CommandExecutionStrategy {
 
 class UnixSystemFileExecutionStrategy extends CommandExecutionStrategy {
     static async canExecute(job: Job) {
-        return (await Utils.executablesInPaths(job.environment.path)).includes(job.prompt.commandName) ||
-            await Utils.exists(Utils.resolveFile(job.session.directory, job.prompt.commandName));
+        return (await executablesInPaths(job.environment.path)).includes(job.prompt.commandName) || await exists(resolveFile(job.session.directory, job.prompt.commandName));
     }
 
     startExecution() {
@@ -54,7 +54,7 @@ class UnixSystemFileExecutionStrategy extends CommandExecutionStrategy {
 
 class WindowsSystemFileExecutionStrategy extends CommandExecutionStrategy {
     static async canExecute(job: Job) {
-        return Utils.isWindows;
+        return isWindows();
     }
 
     startExecution() {
@@ -86,7 +86,7 @@ export default class CommandExecutor {
     ];
 
     static async execute(job: Job): Promise<{}> {
-        const applicableExecutors = await Utils.filterAsync(this.executors, executor => executor.canExecute(job));
+        const applicableExecutors = await filterAsync(this.executors, executor => executor.canExecute(job));
 
         if (applicableExecutors.length) {
             return new applicableExecutors[0](job).startExecution();

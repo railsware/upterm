@@ -1,14 +1,14 @@
 import Session from "../Session";
 import PluginManager from "../PluginManager";
-import Utils from "../Utils";
 import * as Path from "path";
+import {homeDirectory, exists, readFile} from "../Utils";
 
-const rvmDirectory = Path.join(Utils.homeDirectory, ".rvm");
+const rvmDirectory = Path.join(homeDirectory(), ".rvm");
 const rubyVersionFileName = ".ruby-version";
 const gemSetNameFileName = ".ruby-gemset";
 
 async function isUnderRVM(directory: string): Promise<boolean> {
-    return await Utils.exists(Path.join(directory, rubyVersionFileName));
+    return await exists(Path.join(directory, rubyVersionFileName));
 }
 
 /**
@@ -19,8 +19,8 @@ async function gemSetPaths(directory: string, rubyVersion: string): Promise<stri
 
     const paths = [Path.join(rvmDirectory, "gems", `ruby-${rubyVersion}@global`)];
 
-    if (await Utils.exists(gemSetNameFilePath)) {
-        const gemSetName = (await Utils.readFile(gemSetNameFilePath)).trim();
+    if (await exists(gemSetNameFilePath)) {
+        const gemSetName = (await readFile(gemSetNameFilePath)).trim();
         paths.unshift(Path.join(rvmDirectory, "gems", `ruby-${rubyVersion}@${gemSetName}`));
     }
 
@@ -43,9 +43,9 @@ PluginManager.registerEnvironmentObserver({
             session.environment.set("GEM_PATH", "");
         }
     },
-    currentWorkingDirectoryDidChange: async (session: Session) => {
+    currentWorkingDirectoryDidChange: async(session: Session) => {
         if (await isUnderRVM(session.directory)) {
-            const rubyVersion = (await Utils.readFile(Path.join(session.directory, rubyVersionFileName))).trim();
+            const rubyVersion = (await readFile(Path.join(session.directory, rubyVersionFileName))).trim();
 
             const paths = await gemSetPaths(session.directory, rubyVersion);
             session.environment.set("PATH", await binPaths(session.directory, rubyVersion) + Path.delimiter + session.environment.path);

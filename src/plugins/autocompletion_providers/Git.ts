@@ -1,14 +1,11 @@
-import Utils from "../../Utils";
 import Job from "../../Job";
 import * as _ from "lodash";
 import * as e from "../../Enums";
 import * as Path from "path";
 import PluginManager from "../../PluginManager";
 import {linedOutputOf} from "../../PTY";
-import {
-    Suggestion, Subcommand, Option, OptionWithValue,
-    LongOption,
-} from "./Suggestions";
+import {Suggestion, Subcommand, Option, OptionWithValue, LongOption} from "./Suggestions";
+import {exists} from "../../Utils";
 
 class File extends Suggestion {
     constructor(protected _line: string) {
@@ -107,13 +104,13 @@ const addOptions = [
     new LongOption("ignore-missing").withDescription(`
         This option can only be used together with --dry-run. By using this option the user can check if any of the given files would be ignored, no
         matter if they are already present in the work tree or not.`),
-    ];
+];
 
 async function gitSuggestions(job: Job): Promise<Suggestion[]> {
     const prompt = job.prompt;
 
     const gitDirectoryPath = Path.join(job.session.directory, ".git");
-    if (!(await Utils.exists(gitDirectoryPath))) {
+    if (!(await exists(gitDirectoryPath))) {
         return [];
     }
 
@@ -218,12 +215,8 @@ const cleanupModes = _.map(
 );
 
 const commitOptions = [
-    new OptionWithValue("message", "--message=<msg>").
-        withSynopsis("-m <msg>").
-        withDescription("Use the given <msg> as the commit message. If multiple -m options are given, their values are concatenated as separate paragraphs."),
-    new OptionWithValue("cleanup", "--cleanup=<mode>").
-        withDescription("This option determines how the supplied commit message should be cleaned up before committing. The <mode> can be strip, whitespace, verbatim, scissors or default.").
-        withChildrenProvider(async () => cleanupModes),
+    new OptionWithValue("message", "--message=<msg>").withSynopsis("-m <msg>").withDescription("Use the given <msg> as the commit message. If multiple -m options are given, their values are concatenated as separate paragraphs."),
+    new OptionWithValue("cleanup", "--cleanup=<mode>").withDescription("This option determines how the supplied commit message should be cleaned up before committing. The <mode> can be strip, whitespace, verbatim, scissors or default.").withChildrenProvider(async() => cleanupModes),
 ];
 
 function doesLookLikeBranchAlias(word: string) {
@@ -242,7 +235,7 @@ function canonizeBranchAlias(alias: string) {
 
 PluginManager.registerAutocompletionProvider({
     forCommand: `git commit`,
-    getSuggestions: async (job: Job) => {
+    getSuggestions: async(job: Job) => {
         const currentOption = commitOptions.find(option => option.shouldSuggestChildren(job));
         if (currentOption) {
             return await currentOption.getChildren(job);
@@ -253,7 +246,7 @@ PluginManager.registerAutocompletionProvider({
 
 PluginManager.registerAutocompletionProvider({
     forCommand: `git`,
-    getSuggestions: async (job) => porcelainCommands,
+    getSuggestions: async(job) => porcelainCommands,
 });
 
 ["add", "checkout", "merge"].forEach(subcommand =>
