@@ -32,7 +32,7 @@ class GitWatcher extends EventEmitter {
     async watch() {
         if (await exists(this.gitDirectory)) {
             this.updateGitData();
-            this.watcher = watch(this.directory);
+            this.watcher = watch(this.directory, {ignoreInitial: true, followSymlinks: false});
             this.watcher.on("all", (type: string, fileName: string) => {
                     if (!fileName.startsWith(".git") ||
                         fileName === this.GIT_HEAD_FILE_NAME ||
