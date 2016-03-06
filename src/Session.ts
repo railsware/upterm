@@ -72,13 +72,13 @@ export default class Session extends EmitterWithUniqueID {
         this.application.removeSession(this);
     }
 
-    get currentDirectory(): string {
+    get directory(): string {
         return this.environment.get("PWD");
     }
 
-    set currentDirectory(value: string) {
+    set directory(value: string) {
         let normalizedDirectory =  Utils.normalizeDir(value);
-        if (normalizedDirectory === this.currentDirectory) {
+        if (normalizedDirectory === this.directory) {
             return;
         }
 

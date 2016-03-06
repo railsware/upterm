@@ -6,14 +6,14 @@ const bbPath = "/Users/me/.rvm/gems/ruby-2.1.2@brightbytes/bin:/Users/me/.rvm/ge
 
 PluginManager.registerEnvironmentObserver({
     currentWorkingDirectoryWillChange: (session: Session) => {
-        if (session.currentDirectory === "/Users/me/dev/brightbytes/") {
+        if (session.directory === "/Users/me/dev/brightbytes/") {
             process.env.PATH = process.env.PATH.replace(bbPath, "");
             process.env.GEM_HOME = "";
             process.env.GEM_PATH = "";
         }
     },
     currentWorkingDirectoryDidChange: (session: Session) => {
-        if (session.currentDirectory === "/Users/me/dev/brightbytes/") {
+        if (session.directory === "/Users/me/dev/brightbytes/") {
             process.env.PATH = bbPath + process.env.PATH;
             process.env.GEM_HOME = "/Users/me/.rvm/gems/ruby-2.1.2@brightbytes";
             process.env.GEM_PATH = "/Users/me/.rvm/gems/ruby-2.1.2@brightbytes:/Users/me/.rvm/gems/ruby-2.1.2@global";

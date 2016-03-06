@@ -278,7 +278,7 @@ export async function fileSuggestions(job: Job): Promise<File[]> {
     }
 
     const relativeSearchDirectory = Utils.dirName(prompt.lastArgument);
-    const fileInfos = await Utils.stats(Utils.resolveDirectory(job.session.currentDirectory, relativeSearchDirectory));
+    const fileInfos = await Utils.stats(Utils.resolveDirectory(job.session.directory, relativeSearchDirectory));
 
     return fileInfos.map(fileInfo => new File(fileInfo, relativeSearchDirectory));
 }

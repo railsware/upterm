@@ -14,7 +14,7 @@ const executors: Dictionary<(i: Job, a: string[]) => void> = {
             if (isHistoricalDirectory(directory)) {
                 newDirectory = expandHistoricalDirectory(directory, job);
             } else {
-                newDirectory = Utils.resolveDirectory(job.session.currentDirectory, directory);
+                newDirectory = Utils.resolveDirectory(job.session.directory, directory);
 
                 if (!existsSync(newDirectory)) {
                     throw new Error(`The directory ${newDirectory} doesn't exist.`);
@@ -26,7 +26,7 @@ const executors: Dictionary<(i: Job, a: string[]) => void> = {
             }
         }
 
-        job.session.currentDirectory = newDirectory;
+        job.session.directory = newDirectory;
     },
     clear: (job: Job, args: string[]): void => {
         setTimeout(() => job.session.clearJobs(), 0);

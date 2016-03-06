@@ -49,7 +49,7 @@ export default class SessionComponent extends React.Component<Props, State> {
                  onKeyDownCapture={this.handleKeyDown.bind(this)}>
 
                 <div className="jobs">{jobs}</div>
-                <StatusLineComponent currentWorkingDirectory={this.props.session.currentDirectory}
+                <StatusLineComponent currentWorkingDirectory={this.props.session.directory}
                                      vcsData={this.state.vcsData}/>
             </div>
         );

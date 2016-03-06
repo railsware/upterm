@@ -67,7 +67,7 @@ PluginManager.registerAutocompletionProvider({
 PluginManager.registerAutocompletionProvider({
     forCommand: "npm run",
     getSuggestions: async function (job: Job): Promise<Suggestion[]> {
-        const packageFilePath = Path.join(job.session.currentDirectory, "package.json");
+        const packageFilePath = Path.join(job.session.directory, "package.json");
 
         if (job.prompt.expanded.length === 3 && await Utils.exists(packageFilePath)) {
             const parsed = JSON.parse(await Utils.readFile(packageFilePath)).scripts || {};

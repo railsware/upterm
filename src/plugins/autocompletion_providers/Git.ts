@@ -112,7 +112,7 @@ const addOptions = [
 async function gitSuggestions(job: Job): Promise<Suggestion[]> {
     const prompt = job.prompt;
 
-    const gitDirectoryPath = Path.join(job.session.currentDirectory, ".git");
+    const gitDirectoryPath = Path.join(job.session.directory, ".git");
     if (!(await Utils.exists(gitDirectoryPath))) {
         return [];
     }
@@ -121,18 +121,18 @@ async function gitSuggestions(job: Job): Promise<Suggestion[]> {
     const args = _.drop(prompt.arguments, 1);
 
     if (subcommand === "add" && args.length > 0) {
-        const changes = await linedOutputOf("git", ["status", "--porcelain"], job.session.currentDirectory);
+        const changes = await linedOutputOf("git", ["status", "--porcelain"], job.session.directory);
         const files = <Suggestion[]>changes.map(line => new File(line)).filter(file => file.isAbleToAdd);
         return files.concat(addOptions);
     }
 
     if ((subcommand === "checkout" || subcommand === "merge") && args.length === 1) {
-        let output = await linedOutputOf("git", ["branch", "--no-color"], job.session.currentDirectory);
+        let output = await linedOutputOf("git", ["branch", "--no-color"], job.session.directory);
         let branches: Suggestion[] = output.map(branch => new Branch(branch)).filter(branch => !branch.isCurrent);
 
         const argument = job.prompt.lastArgument;
         if (doesLookLikeBranchAlias(argument)) {
-            let nameOfAlias = (await linedOutputOf("git", ["name-rev", "--name-only", canonizeBranchAlias(argument)], job.session.currentDirectory))[0];
+            let nameOfAlias = (await linedOutputOf("git", ["name-rev", "--name-only", canonizeBranchAlias(argument)], job.session.directory))[0];
             if (nameOfAlias && !nameOfAlias.startsWith("Could not get")) {
                 branches.push(new Suggestion().withValue(argument).withSynopsis(nameOfAlias).withType("branch"));
             }
