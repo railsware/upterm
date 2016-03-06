@@ -5,6 +5,12 @@ export default class Environment {
         this.storage[key] = value;
     }
 
+    setMany(pairs: Dictionary<string>): void {
+        for (const key of Object.keys(pairs)) {
+            this.set(key, pairs[key]);
+        }
+    }
+
     toObject(): ProcessEnvironment {
         return <ProcessEnvironment>this.storage;
     }

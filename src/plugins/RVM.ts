@@ -11,46 +11,53 @@ async function isUnderRVM(directory: string): Promise<boolean> {
     return await exists(Path.join(directory, rubyVersionFileName));
 }
 
+async function getRubyVersion(directory: string): Promise<string> {
+    return (await readFile(Path.join(directory, rubyVersionFileName))).trim();
+}
+
+async function getGemSetName(directory: string): Promise<string> {
+    const gemSetNameFilePath = Path.join(directory, gemSetNameFileName);
+
+    if (await exists(gemSetNameFilePath)) {
+        return (await readFile(gemSetNameFilePath)).trim();
+    } else {
+        return "global";
+    }
+}
+
 /**
  * Contract: the non-global path should be first.
  */
-async function gemSetPaths(directory: string, rubyVersion: string): Promise<string[]> {
-    const gemSetNameFilePath = Path.join(directory, gemSetNameFileName);
-
-    const paths = [Path.join(rvmDirectory, "gems", `ruby-${rubyVersion}@global`)];
-
-    if (await exists(gemSetNameFilePath)) {
-        const gemSetName = (await readFile(gemSetNameFilePath)).trim();
-        paths.unshift(Path.join(rvmDirectory, "gems", `ruby-${rubyVersion}@${gemSetName}`));
-    }
-
-    return paths;
+function getGemSetPaths(rubyVersion: string, gemSetName: string): string[] {
+    const names = gemSetName === "global" ? ["global"] : [gemSetName, "global"];
+    return names.map(name => Path.join(rvmDirectory, "gems", `ruby-${rubyVersion}@${name}`));
 }
 
-async function binPaths(directory: string, rubyVersion: string): Promise<string> {
+function binPaths(rubyVersion: string, gemSetName: string): string {
     return [
         Path.join(rvmDirectory, "bin"),
         Path.join(rvmDirectory, "rubies", `ruby-${rubyVersion}`, "bin"),
-        ...(await gemSetPaths(directory, rubyVersion)).map(path => Path.join(path, "bin")),
+        ...getGemSetPaths(rubyVersion, gemSetName).map(path => Path.join(path, "bin")),
     ].join(Path.delimiter);
 }
 
 PluginManager.registerEnvironmentObserver({
-    currentWorkingDirectoryWillChange: async(session: Session) => {
-        if (await isUnderRVM(session.directory)) {
-            session.environment.set("PATH", session.environment.path.split(Path.delimiter).filter(path => !path.includes(".rvm")).join(Path.delimiter));
-            session.environment.set("GEM_HOME", "");
-            session.environment.set("GEM_PATH", "");
-        }
-    },
+    currentWorkingDirectoryWillChange: () => void 0,
     currentWorkingDirectoryDidChange: async(session: Session) => {
         if (await isUnderRVM(session.directory)) {
-            const rubyVersion = (await readFile(Path.join(session.directory, rubyVersionFileName))).trim();
+            const rubyVersion = await getRubyVersion(session.directory);
+            const gemSetName = await getGemSetName(session.directory);
+            const gemPaths = getGemSetPaths(rubyVersion, gemSetName);
+            const path = binPaths(rubyVersion, gemSetName) + Path.delimiter + session.environment.path;
 
-            const paths = await gemSetPaths(session.directory, rubyVersion);
-            session.environment.set("PATH", await binPaths(session.directory, rubyVersion) + Path.delimiter + session.environment.path);
-            session.environment.set("GEM_PATH", paths.join(Path.delimiter));
-            session.environment.set("GEM_HOME", paths[0]);
+            session.environment.setMany({
+                PATH: path,
+                GEM_PATH: gemPaths.join(Path.delimiter),
+                GEM_HOME: gemPaths[0],
+            });
+        } else {
+            const path = session.environment.path.split(Path.delimiter).filter(path => !path.includes(".rvm")).join(Path.delimiter);
+            session.environment.setMany({PATH: path, GEM_HOME: "", GEM_PATH: ""});
         }
     },
 });
