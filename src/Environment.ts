@@ -26,4 +26,8 @@ export default class Environment {
     has(key: string): boolean {
         return key in this.storage;
     }
+
+    get path(): string {
+        return this.get("PATH");
+    }
 }

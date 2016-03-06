@@ -37,7 +37,7 @@ class BuiltInCommandExecutionStrategy extends CommandExecutionStrategy {
 
 class UnixSystemFileExecutionStrategy extends CommandExecutionStrategy {
     static async canExecute(job: Job) {
-        return (await Utils.executablesInPaths(job.environment.get("PATH"))).includes(job.prompt.commandName) ||
+        return (await Utils.executablesInPaths(job.environment.path)).includes(job.prompt.commandName) ||
             await Utils.exists(Utils.resolveFile(job.session.directory, job.prompt.commandName));
     }
 
