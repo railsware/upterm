@@ -104,7 +104,7 @@ html {
 body, pre {
   background-color: $background-color;
   color: map-get($colors, 'white');
-  font-family: 'Fira Code', 'Hack', 'Meslo LG S for Powerline', 'Menlo', monospace !important;
+  font-family: 'Hack', 'Fira Code', 'Meslo LG S for Powerline', 'Menlo', monospace !important;
   font-size: $font-size;
   margin: 0;
 }
