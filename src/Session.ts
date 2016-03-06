@@ -21,7 +21,7 @@ export default class Session extends EmitterWithUniqueID {
     private stateFileName = `${Utils.homeDirectory}/.black-screen-state`;
     // The value of the dictionary is the default value used if there is no serialized data.
     private serializableProperties: Dictionary<any> = {
-        currentDirectory: `String:${Utils.homeDirectory}`,
+        directory: `String:${Utils.homeDirectory}`,
         history: `History:[]`,
     };
 
