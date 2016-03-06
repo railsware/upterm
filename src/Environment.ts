@@ -18,4 +18,8 @@ export default class Environment {
 
         return result;
     }
+
+    get(key: string): string {
+        return this.storage[key];
+    }
 }

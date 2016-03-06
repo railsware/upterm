@@ -18,7 +18,6 @@ export default class Session extends EmitterWithUniqueID {
     environment = new Environment();
     history: typeof History;
     historicalCurrentDirectoriesStack: string[] = [];
-    private _currentDirectory: string;
     private stateFileName = `${Utils.homeDirectory}/.black-screen-state`;
     // The value of the dictionary is the default value used if there is no serialized data.
     private serializableProperties: Dictionary<any> = {
@@ -74,12 +73,12 @@ export default class Session extends EmitterWithUniqueID {
     }
 
     get currentDirectory(): string {
-        return this._currentDirectory;
+        return this.environment.get("PWD");
     }
 
     set currentDirectory(value: string) {
         let normalizedDirectory =  Utils.normalizeDir(value);
-        if (normalizedDirectory === this._currentDirectory) {
+        if (normalizedDirectory === this.currentDirectory) {
             return;
         }
 
@@ -87,8 +86,8 @@ export default class Session extends EmitterWithUniqueID {
             observer.currentWorkingDirectoryWillChange(this, normalizedDirectory)
         );
 
-        this._currentDirectory = normalizedDirectory;
-        this.historicalCurrentDirectoriesStack.push(this._currentDirectory);
+        this.environment.set("PWD", normalizedDirectory);
+        this.historicalCurrentDirectoriesStack.push(normalizedDirectory);
 
         PluginManager.environmentObservers.forEach(observer =>
             observer.currentWorkingDirectoryDidChange(this, normalizedDirectory)
