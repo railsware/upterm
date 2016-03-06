@@ -34,17 +34,29 @@ const executors: Dictionary<(i: Job, a: string[]) => void> = {
     exit: (job: Job, args: string[]): void => {
         job.session.remove();
     },
+    export: (job: Job, args: string[]): void => {
+        if (args.length === 0) {
+            job.buffer.writeString(job.session.environment.map((key, value) => `${key}=${value}`).join("\n"));
+            return;
+        }
+
+        args.forEach(argument => {
+            const [key, value] = argument.split("=");
+            job.session.environment.set(key, value);
+        });
+    },
 };
 
 // A class representing built in commands
 export default class Command {
+    static allCommandNames = Object.keys(executors);
 
     static executor(command: string): (i: Job, args: string[]) => void {
         return executors[command];
     }
 
     static isBuiltIn(command: string): boolean {
-        return ["cd", "clear", "exit"].includes(command);
+        return this.allCommandNames.includes(command);
     }
 }
 

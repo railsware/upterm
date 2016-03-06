@@ -8,14 +8,16 @@ import EmitterWithUniqueID from "./EmitterWithUniqueID";
 import PluginManager from "./PluginManager";
 import {Status} from "./Enums";
 import ApplicationComponent from "./views/1_ApplicationComponent";
+import Environment from "./Environment";
 const remote = require("remote");
 const app = remote.require("app");
 const browserWindow: typeof Electron.BrowserWindow = remote.require("electron").BrowserWindow;
 
 export default class Session extends EmitterWithUniqueID {
     jobs: Array<Job> = [];
+    environment = new Environment();
     history: typeof History;
-    public historicalCurrentDirectoriesStack: string[] = [];
+    historicalCurrentDirectoriesStack: string[] = [];
     private _currentDirectory: string;
     private stateFileName = `${Utils.homeDirectory}/.black-screen-state`;
     // The value of the dictionary is the default value used if there is no serialized data.
