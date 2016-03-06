@@ -44,7 +44,7 @@ class UnixSystemFileExecutionStrategy extends CommandExecutionStrategy {
     startExecution() {
         return new Promise((resolve, reject) => {
             this.job.command = new PTY(
-                this.job.prompt.commandName, this.args, this.job.session.environment.toObject(), this.job.dimensions,
+                this.job.prompt.commandName, this.args, this.job.environment.toObject(), this.job.dimensions,
                 (data: string) => this.job.parser.parse(data),
                 (exitCode: number) => exitCode === 0 ? resolve() : reject()
             );
@@ -60,7 +60,7 @@ class WindowsSystemFileExecutionStrategy extends CommandExecutionStrategy {
     startExecution() {
         return new Promise((resolve) => {
             this.job.command = new PTY(
-                this.cmdPath, ["/s", "/c", this.job.prompt.expanded.join(" ")], this.job.session.environment.toObject(), this.job.dimensions,
+                this.cmdPath, ["/s", "/c", this.job.prompt.expanded.join(" ")], this.job.environment.toObject(), this.job.dimensions,
                 (data: string) => this.job.parser.parse(data),
                 (exitCode: number) => resolve()
             );
@@ -68,10 +68,10 @@ class WindowsSystemFileExecutionStrategy extends CommandExecutionStrategy {
     }
 
     private get cmdPath(): string {
-        if (process.env.comspec) {
-            return process.env.comspec;
-        } else if (process.env.SystemRoot) {
-            return Path.join(process.env.SystemRoot, "System32", "cmd.exe");
+        if (this.job.environment.has("comspec")) {
+            return this.job.environment.get("comspec");
+        } else if (this.job.environment.has("SystemRoot")) {
+            return Path.join(this.job.environment.get("SystemRoot"), "System32", "cmd.exe");
         } else {
             return "cmd.exe";
         }

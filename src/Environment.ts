@@ -22,4 +22,8 @@ export default class Environment {
     get(key: string): string {
         return this.storage[key];
     }
+
+    has(key: string): boolean {
+        return key in this.storage;
+    }
 }

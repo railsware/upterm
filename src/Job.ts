@@ -10,6 +10,7 @@ import PTY from "./PTY";
 import PluginManager from "./PluginManager";
 import EmitterWithUniqueID from "./EmitterWithUniqueID";
 import {KeyCode, Status} from "./Enums";
+import Environment from "./Environment";
 
 function makeThrottledDataEmitter(timesPerSecond: number, subject: EmitterWithUniqueID) {
     return _.throttle(() => subject.emit("data"), 1000 / timesPerSecond);
@@ -147,6 +148,11 @@ export default class Job extends EmitterWithUniqueID {
 
     decorate(): React.ReactElement<any> {
         return this.firstApplicableDecorator.decorate(this);
+    }
+
+    get environment(): Environment {
+        // TODO: implement inline environment variable setting.
+        return this.session.environment;
     }
 
     private get decorators(): i.OutputDecorator[] {

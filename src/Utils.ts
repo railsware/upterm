@@ -11,6 +11,7 @@ interface FSExtraWalkObject {
 }
 
 export default class Utils {
+    // TODO: use session.environment.
     public static paths: Array<string> = process.env.PATH.split(Path.delimiter);
     public static executables: Array<string> = [];
 
