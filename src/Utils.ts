@@ -11,8 +11,6 @@ interface FSExtraWalkObject {
 }
 
 export default class Utils {
-    // TODO: use session.environment.
-    public static paths: Array<string> = process.env.PATH.split(Path.delimiter);
     public static executables: Array<string> = [];
 
     static info(...args: any[]): void {
@@ -166,12 +164,12 @@ export default class Utils {
         return bytes.toFixed(1) + "" + units[unitIndex];
     }
 
-    static async executablesInPaths(): Promise<string[]> {
+    static async executablesInPaths(paths: string): Promise<string[]> {
         if (this.executables.length) {
             return this.executables;
         }
 
-        const validPaths = await this.filterAsync(this.paths, this.isDirectory);
+        const validPaths = await this.filterAsync(paths.split(Path.delimiter), this.isDirectory);
         const allFiles: string[][] = await Promise.all(validPaths.map(this.filesIn));
 
         return _.uniq(_.flatten(allFiles));
