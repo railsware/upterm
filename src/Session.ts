@@ -77,7 +77,7 @@ export default class Session extends EmitterWithUniqueID {
     }
 
     set directory(value: string) {
-        let normalizedDirectory =  Utils.normalizeDir(value);
+        let normalizedDirectory =  Utils.normalizeDirectory(value);
         if (normalizedDirectory === this.directory) {
             return;
         }

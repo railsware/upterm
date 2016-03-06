@@ -226,7 +226,7 @@ export class File extends Suggestion {
 
     private get unescapedFileName(): string {
         if (this._info.stat.isDirectory()) {
-            return Utils.normalizeDir(this._info.name);
+            return Utils.normalizeDirectory(this._info.name);
         } else {
             return this._info.name;
         }
@@ -277,7 +277,7 @@ export async function fileSuggestions(job: Job): Promise<File[]> {
         return [];
     }
 
-    const relativeSearchDirectory = Utils.dirName(prompt.lastArgument);
+    const relativeSearchDirectory = Utils.directoryName(prompt.lastArgument);
     const fileInfos = await Utils.stats(Utils.resolveDirectory(job.session.directory, relativeSearchDirectory));
 
     return fileInfos.map(fileInfo => new File(fileInfo, relativeSearchDirectory));

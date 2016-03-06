@@ -41,28 +41,12 @@ export default class Utils {
         }
     }
 
-    static filesIn(directory: string): Promise<string[]> {
-        return new Promise((resolve, reject) => {
-            Utils.ifExists(directory, () => {
-                stat(directory, (statError: NodeJS.ErrnoException, pathStat: Stats) => {
-                    if (statError) {
-                        reject(statError);
-                    }
-
-                    if (!pathStat.isDirectory()) {
-                        reject(`${directory} is not a directory.`);
-                    }
-
-                    readdir(directory, (readError: NodeJS.ErrnoException, files: Array<string>) => {
-                        if (readError) {
-                            reject(readError);
-                        }
-
-                        resolve(files);
-                    });
-                });
-            });
-        });
+    static async filesIn(directoryPath: string): Promise<string[]> {
+        if (await Utils.exists(directoryPath) && await Utils.isDirectory(directoryPath)) {
+            return await Utils.readDirectory(directoryPath);
+        } else {
+            return [];
+        }
     }
 
     static recursiveFilesIn(directoryPath: string): Promise<string[]> {
@@ -75,47 +59,44 @@ export default class Utils {
         );
     }
 
-    static stats(directory: string): Promise<i.FileInfo[]> {
-        return Utils.filesIn(directory).then(files =>
+    static stat(filePath: string): Promise<Stats> {
+        return new Promise((resolve, reject) => {
+            stat(filePath, (error: NodeJS.ErrnoException, pathStat: Stats) => {
+                if (error) {
+                    reject(error);
+                } else {
+                    resolve(pathStat);
+                }
+            });
+        });
+    }
+
+    static stats(directoryPath: string): Promise<i.FileInfo[]> {
+        return Utils.filesIn(directoryPath).then(files =>
             Promise.all(files.map(fileName =>
                 new Promise((resolve, reject) =>
-                    stat(Path.join(directory, fileName), (error: NodeJS.ErrnoException, stat: Stats) => {
+                    stat(Path.join(directoryPath, fileName), (error: NodeJS.ErrnoException, stat: Stats) => {
                         if (error) {
                             reject(error);
                         }
 
-                        resolve({ name: fileName, stat: stat });
+                        resolve({name: fileName, stat: stat});
                     })
                 )
             ))
         );
     }
 
-    static ifExists(fileName: string, callback: Function, elseCallback?: Function) {
-        exists(fileName, (pathExists: boolean) => {
-            if (pathExists) {
-                callback();
-            } else if (elseCallback) {
-                elseCallback();
-            }
-        });
-    }
-
     static exists(filePath: string): Promise<boolean> {
         return new Promise(resolve => exists(filePath, resolve));
     }
 
-    static isDirectory(directoryName: string): Promise<boolean> {
-        return new Promise((resolve) => {
-            Utils.ifExists(
-                directoryName,
-                () => {
-                    stat(directoryName, (error: NodeJS.ErrnoException, pathStat: Stats) => {
-                        resolve(pathStat.isDirectory());
-                    });
-                },
-                () => resolve(false));
-        });
+    static async isDirectory(directoryPath: string): Promise<boolean> {
+        if (await Utils.exists(directoryPath)) {
+            return (await Utils.stat(directoryPath)).isDirectory();
+        } else {
+            return false;
+        }
     }
 
     static readFile(filePath: string): Promise<string> {
@@ -130,38 +111,32 @@ export default class Utils {
         });
     }
 
-    static normalizeDir(path: string): string {
-        return Path.normalize(path + Path.sep);
+    static readDirectory(directoryPath: string): Promise<string[]> {
+        return new Promise((resolve, reject) => {
+            readdir(directoryPath, (readError: NodeJS.ErrnoException, files: Array<string>) => {
+                if (readError) {
+                    reject(readError);
+                }
+
+                resolve(files);
+            });
+        });
     }
 
-    static dirName(path: string): string {
-        return this.normalizeDir(path.endsWith(Path.sep) ? path : Path.dirname(path));
+    static normalizeDirectory(directoryPath: string): string {
+        return Path.normalize(directoryPath + Path.sep);
+    }
+
+    static directoryName(path: string): string {
+        return this.normalizeDirectory(path.endsWith(Path.sep) ? path : Path.dirname(path));
     }
 
     static baseName(path: string): string {
         if (path.split(Path.sep).length === 1) {
             return path;
         } else {
-            return path.substring(this.dirName(path).length);
+            return path.substring(this.directoryName(path).length);
         }
-    }
-
-    static humanFileSize(bytes: number): string {
-        const threshold = 1024;
-        const units = ["KiB", "MiB", "GiB", "TiB", "PiB", "EiB", "ZiB", "YiB"];
-
-        if (Math.abs(bytes) < threshold) {
-            return bytes + "B";
-        }
-
-        let unitIndex = -1;
-
-        do {
-            bytes /= threshold;
-            ++unitIndex;
-        } while (Math.abs(bytes) >= threshold && unitIndex < units.length - 1);
-
-        return bytes.toFixed(1) + "" + units[unitIndex];
     }
 
     static async executablesInPaths(paths: string): Promise<string[]> {
@@ -184,7 +159,7 @@ export default class Utils {
     }
 
     static resolveDirectory(pwd: string, directory: string): string {
-        return Utils.normalizeDir(Utils.resolveFile(pwd, directory));
+        return Utils.normalizeDirectory(Utils.resolveFile(pwd, directory));
     }
 
     static resolveFile(pwd: string, file: string): string {
