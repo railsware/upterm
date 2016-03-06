@@ -12,10 +12,10 @@ export default {
                             selector: "orderFrontStandardAboutPanel:",
                         },
                         {
-                            type: "separator"
+                            type: "separator",
                         },
                         {
-                            type: "separator"
+                            type: "separator",
                         },
                         {
                             label: "Hide Black Screen",
@@ -32,7 +32,7 @@ export default {
                             selector: "unhideAllApplications:",
                         },
                         {
-                            type: "separator"
+                            type: "separator",
                         },
                         {
                             label: "Quit",
@@ -57,7 +57,7 @@ export default {
                             selector: "redo:",
                         },
                         {
-                            type: "separator"
+                            type: "separator",
                         },
                         {
                             label: "Cut",
@@ -121,7 +121,7 @@ export default {
                             selector: "performClose:",
                         },
                         {
-                            type: "separator"
+                            type: "separator",
                         },
                         {
                             label: "Bring All to Front",

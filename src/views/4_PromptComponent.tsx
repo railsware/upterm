@@ -102,7 +102,7 @@ export default class PromptComponent extends React.Component<Props, State> imple
             .forEach((event: KeyboardEvent) => this.navigateHistory(event));
 
         this.handlers = {
-            onKeyDown: allKeys
+            onKeyDown: allKeys,
         };
 
         // FIXME: find a better design to propagate events.

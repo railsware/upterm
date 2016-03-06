@@ -35,3 +35,7 @@ interface Margins {
 interface Dictionary<T> {
     [index: string]: T;
 }
+
+interface ProcessEnvironment extends Dictionary<string> {
+    PWD: string;
+}

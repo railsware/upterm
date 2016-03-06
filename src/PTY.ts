@@ -13,11 +13,11 @@ export default class PTY {
     // TODO: write proper signatures.
     // TODO: use generators.
     // TODO: terminate. https://github.com/atom/atom/blob/v1.0.15/src/task.coffee#L151
-    constructor(command: string, args: string[], env: Dictionary<string>, dimensions: Dimensions, dataHandler: Function, exitHandler: Function) {
+    constructor(command: string, args: string[], env: ProcessEnvironment, dimensions: Dimensions, dataHandler: Function, exitHandler: Function) {
         this.process = ChildProcess.fork(
             ptyInternalPath,
             [command, dimensions.columns.toString(), dimensions.rows.toString(), ...args],
-            {env: env, cwd: env["PWD"]}
+            {env: env, cwd: env.PWD}
         );
 
         this.process.on("message", (message: Message) => {
@@ -51,7 +51,7 @@ export function executeCommand(command: string, args: string[] = [], directory: 
         new PTY(
             command,
             args,
-            <Dictionary<string>>_.extend({PWD: directory}, process.env),
+            <ProcessEnvironment>_.extend({PWD: directory}, process.env),
             {columns: 80, rows: 20},
             (text: string) => output += text,
             (exitCode: number) => exitCode === 0 ? resolve(output) : reject(exitCode)

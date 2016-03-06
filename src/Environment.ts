@@ -5,8 +5,8 @@ export default class Environment {
         this.storage[key] = value;
     }
 
-    toObject(): Dictionary<string> {
-        return this.storage;
+    toObject(): ProcessEnvironment {
+        return <ProcessEnvironment>this.storage;
     }
 
     map<R>(mapper: (key: string, value: string) => R): Array<R> {
