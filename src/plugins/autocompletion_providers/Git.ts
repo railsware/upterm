@@ -215,8 +215,12 @@ const cleanupModes = _.map(
 );
 
 const commitOptions = [
-    new OptionWithValue("message", "--message=<msg>").withSynopsis("-m <msg>").withDescription("Use the given <msg> as the commit message. If multiple -m options are given, their values are concatenated as separate paragraphs."),
-    new OptionWithValue("cleanup", "--cleanup=<mode>").withDescription("This option determines how the supplied commit message should be cleaned up before committing. The <mode> can be strip, whitespace, verbatim, scissors or default.").withChildrenProvider(async() => cleanupModes),
+    new OptionWithValue("message", "--message=<msg>")
+        .withSynopsis("-m <msg>")
+        .withDescription("Use the given <msg> as the commit message. If multiple -m options are given, their values are concatenated as separate paragraphs."),
+    new OptionWithValue("cleanup", "--cleanup=<mode>")
+        .withDescription("This option determines how the supplied commit message should be cleaned up before committing. The <mode> can be strip, whitespace, verbatim, scissors or default.")
+        .withChildrenProvider(async() => cleanupModes),
 ];
 
 function doesLookLikeBranchAlias(word: string) {
