@@ -21,13 +21,13 @@ export default class Buffer extends events.EventEmitter {
         super();
     }
 
-    writeString(value: string): void {
+    writeMany(value: string): void {
         for (let i = 0; i !== value.length; ++i) {
-            this.write(value.charAt(i));
+            this.writeOne(value.charAt(i));
         }
     }
 
-    write(char: string): void {
+    writeOne(char: string): void {
         const charObject = Char.flyweight(char, this.attributes);
 
         if (charObject.isSpecial()) {

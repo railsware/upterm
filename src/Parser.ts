@@ -76,7 +76,7 @@ export default class Parser {
             inst_p: (text: string) => {
                 Utils.info("text", text, text.split("").map(letter => letter.charCodeAt(0)));
 
-                this.buffer.writeString(text);
+                this.buffer.writeMany(text);
 
                 logPosition(this.buffer);
             },
@@ -89,7 +89,7 @@ export default class Parser {
 
                 Utils.print((name ? LogLevel.Log : LogLevel.Error), flag.split("").map((_, index) => flag.charCodeAt(index)));
 
-                this.buffer.write(flag);
+                this.buffer.writeOne(flag);
 
                 logPosition(this.buffer);
             },
@@ -157,7 +157,7 @@ export default class Parser {
 
                 for (let i = 0; i !== dimensions.rows; ++i) {
                     this.buffer.moveCursorAbsolute({ row: i, column: 0 });
-                    this.buffer.writeString(Array(dimensions.columns).join("E"));
+                    this.buffer.writeMany(Array(dimensions.columns).join("E"));
                 }
 
                 this.buffer.moveCursorAbsolute({ row: 0, column: 0 });

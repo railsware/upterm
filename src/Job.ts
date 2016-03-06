@@ -73,7 +73,7 @@ export default class Job extends EmitterWithUniqueID {
     handleError(message: string): void {
         this.setStatus(Status.Failure);
         if (message) {
-            this._buffer.writeString(message);
+            this._buffer.writeMany(message);
         }
         this.emit("end");
     }
