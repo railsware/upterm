@@ -1,5 +1,5 @@
 export default class Cursor {
-    private _show = true;
+    private _show = false;
     private _blink = false;
 
     constructor(private position: RowColumn = { row: 0, column: 0 }) {

@@ -50,6 +50,7 @@ export default class Job extends EmitterWithUniqueID {
             errorMessage => this.handleError(errorMessage)
         ).then(
             () => {
+                this.buffer.cursor.show = false;
                 // Need to check the status here because it"s
                 // executed even after the process was killed.
                 if (this.status === Status.InProgress) {
@@ -57,7 +58,10 @@ export default class Job extends EmitterWithUniqueID {
                 }
                 this.emit("end");
             },
-            errorMessage => this.handleError(errorMessage)
+            errorMessage => {
+                this.buffer.cursor.show = false;
+                this.handleError(errorMessage);
+            }
         );
     }
 
