@@ -219,14 +219,14 @@ export default class Parser {
         let description = "";
         let url = "";
         let status = "handled";
-        let isSet = flag === "h";
+        let shouldSet = flag === "h";
 
         // noinspection FallThroughInSwitchStatementJS
         switch (ps) {
             case 3:
                 url = "http://www.vt100.net/docs/vt510-rm/DECCOLM";
 
-                if (isSet) {
+                if (shouldSet) {
                     description = "132 Column Mode (DECCOLM).";
 
                     this.job.setDimensions({columns: 132, rows: this.job.getDimensions().rows});
@@ -247,10 +247,10 @@ export default class Parser {
                 description = "Origin Mode (DECOM).";
                 url = "http://www.vt100.net/docs/vt510-rm/DECOM";
 
-                this.job.buffer.originMode = isSet;
+                this.job.buffer.originMode = shouldSet;
                 break;
             case 12:
-                if (isSet) {
+                if (shouldSet) {
                     description = "Start Blinking Cursor (att610).";
 
                     this.buffer.blinkCursor(true);
@@ -264,7 +264,7 @@ export default class Parser {
             case 25:
                 url = "http://www.vt100.net/docs/vt510-rm/DECTCEM";
 
-                if (isSet) {
+                if (shouldSet) {
                     description = "Show Cursor (DECTCEM).";
 
                     this.buffer.showCursor(true);
@@ -275,7 +275,7 @@ export default class Parser {
                 }
                 break;
             case 1049:
-                if (isSet) {
+                if (shouldSet) {
                     /* tslint:disable:max-line-length */
                     description = "Save cursor as in DECSC and use Alternate Screen Buffer, clearing it first.  (This may be disabled by the titeInhibit resource).  This combines the effects of the 1047  and 1048  modes.  Use this with terminfo-based applications rather than the 47  mod";
 
@@ -286,7 +286,7 @@ export default class Parser {
                 }
                 break;
             case 2004:
-                if (isSet) {
+                if (shouldSet) {
                     description = "Set bracketed paste mod";
                 } else {
                     // TODO: Add Implementation
