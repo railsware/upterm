@@ -218,11 +218,16 @@ export default class Parser {
     private decPrivateModeHandler(ps: number, flag: string): HandlerResult {
         let description = "";
         let url = "";
-        let status = "handled";
+        let status: "handled" | "unhandled" = "handled";
         let shouldSet = flag === "h";
 
         // noinspection FallThroughInSwitchStatementJS
         switch (ps) {
+            case 1:
+                description = "Cursor Keys Mode.";
+                url = "http://www.vt100.net/docs/vt510-rm/DECCKM";
+                status = "unhandled";
+                break;
             case 3:
                 url = "http://www.vt100.net/docs/vt510-rm/DECCOLM";
 
