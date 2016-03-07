@@ -2,7 +2,7 @@ import {FileInfo} from "../../Interfaces";
 import Job from "../../Job";
 import * as Path from "path";
 import {Color} from "../../Enums";
-import {resolveDirectory, statsIn, directoryName, normalizeDirectory} from "../../Utils";
+import {resolveDirectory, statsIn, directoryName, normalizeDirectory, isDirectory} from "../../Utils";
 
 type SuggestionsPromise = Promise<Suggestion[]>;
 
@@ -271,15 +271,13 @@ export class SubSubcommand extends Subcommand {
     }
 }
 
-export async function fileSuggestions(job: Job): Promise<File[]> {
-    const prompt = job.prompt;
+export async function fileSuggestions(searchDirectory: string, alreadyEnteredPath: string): Promise<File[]> {
+    const directoryOfAlreadyEnteredPath = directoryName(alreadyEnteredPath);
+    const fullSearchDirectory = resolveDirectory(searchDirectory, directoryOfAlreadyEnteredPath);
 
-    if (!prompt.arguments.length) {
+    if (await isDirectory(fullSearchDirectory)) {
+        return (await statsIn(fullSearchDirectory)).map(stat => new File(stat, directoryOfAlreadyEnteredPath));
+    } else {
         return [];
     }
-
-    const relativeSearchDirectory = directoryName(prompt.lastArgument);
-    const fileInfos = await statsIn(resolveDirectory(job.session.directory, relativeSearchDirectory));
-
-    return fileInfos.map(fileInfo => new File(fileInfo, relativeSearchDirectory));
 }
