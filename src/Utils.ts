@@ -152,6 +152,10 @@ export function resolveFile(pwd: string, file: string): string {
     return Path.resolve(pwd, file.replace(/^~/, homeDirectory()));
 }
 
+export function userFriendlyPath(path: string): string {
+    return path.replace(homeDirectory(), "~");
+}
+
 export async function filterAsync<T>(values: T[], asyncPredicate: (t: T) => Promise<boolean>): Promise<T[]> {
     const filtered = await Promise.all(values.map(asyncPredicate));
     return values.filter((value: T, index: number) => filtered[index]);

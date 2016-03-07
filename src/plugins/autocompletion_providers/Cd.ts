@@ -3,6 +3,7 @@ import {Suggestion, fileSuggestions} from "./Suggestions";
 import * as _ from "lodash";
 import * as Path from "path";
 import {expandHistoricalDirectory, isHistoricalDirectory} from "../../Command";
+import {userFriendlyPath} from "../../Utils";
 
 PluginManager.registerAutocompletionProvider({
     forCommand: "cd",
@@ -32,8 +33,18 @@ PluginManager.registerAutocompletionProvider({
             return suggestions;
         }
 
-        const cdPath = job.environment.get("CDPATH").split(Path.delimiter).map(path => path || job.session.directory);
-        const suggestions = await Promise.all(cdPath.map(directory => fileSuggestions(directory, job.prompt.lastArgument)));
-        return _.flatten(suggestions).filter(file => file.info.stat.isDirectory());
+        const suggestionPromises = job.environment.get("CDPATH")
+            .split(Path.delimiter)
+            .map(path => path || job.session.directory)
+            .map(async (directory) => {
+                let suggestions: Suggestion[] = (await fileSuggestions(directory, job.prompt.lastArgument)).filter(suggestion => suggestion.info.stat.isDirectory());
+
+                if (directory !== job.session.directory) {
+                    suggestions = suggestions.map(suggestion => suggestion.withSynopsis(`In CDPATH ${userFriendlyPath(directory)}`));
+                }
+
+                return suggestions;
+            });
+        return _.flatten(await Promise.all(suggestionPromises));
     },
 });
