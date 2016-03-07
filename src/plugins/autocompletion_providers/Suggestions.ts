@@ -2,7 +2,7 @@ import {FileInfo} from "../../Interfaces";
 import Job from "../../Job";
 import * as Path from "path";
 import {Color} from "../../Enums";
-import {resolveDirectory, stats, directoryName, normalizeDirectory} from "../../Utils";
+import {resolveDirectory, statsIn, directoryName, normalizeDirectory} from "../../Utils";
 
 type SuggestionsPromise = Promise<Suggestion[]>;
 
@@ -279,7 +279,7 @@ export async function fileSuggestions(job: Job): Promise<File[]> {
     }
 
     const relativeSearchDirectory = directoryName(prompt.lastArgument);
-    const fileInfos = await stats(resolveDirectory(job.session.directory, relativeSearchDirectory));
+    const fileInfos = await statsIn(resolveDirectory(job.session.directory, relativeSearchDirectory));
 
     return fileInfos.map(fileInfo => new File(fileInfo, relativeSearchDirectory));
 }

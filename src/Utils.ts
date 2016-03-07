@@ -38,7 +38,7 @@ export function times(n: number, action: Function): void {
     }
 }
 
-export async function filesIn(directoryPath: string): Promise<string[]> {
+async function filesIn(directoryPath: string): Promise<string[]> {
     if (await exists(directoryPath) && await isDirectory(directoryPath)) {
         return await readDirectory(directoryPath);
     } else {
@@ -68,20 +68,10 @@ export function stat(filePath: string): Promise<fs.Stats> {
     });
 }
 
-export function stats(directoryPath: string): Promise<i.FileInfo[]> {
-    return filesIn(directoryPath).then(files =>
-        Promise.all(files.map(fileName =>
-            new Promise((resolve, reject) =>
-                fs.stat(Path.join(directoryPath, fileName), (error: NodeJS.ErrnoException, stat: fs.Stats) => {
-                    if (error) {
-                        reject(error);
-                    }
-
-                    resolve({name: fileName, stat: stat});
-                })
-            )
-        ))
-    );
+export async function statsIn(directoryPath: string): Promise<i.FileInfo[]> {
+    return Promise.all((await filesIn(directoryPath)).map(async (fileName) => {
+        return {name: fileName, stat: await stat(Path.join(directoryPath, fileName))};
+    }));
 }
 
 export function exists(filePath: string): Promise<boolean> {
