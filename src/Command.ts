@@ -1,32 +1,34 @@
 import Job from "./Job";
+import * as Path from "path";
 import {existsSync, statSync} from "fs";
 import {homeDirectory, pluralize, resolveDirectory} from "./Utils";
 
 const executors: Dictionary<(i: Job, a: string[]) => void> = {
     cd: (job: Job, args: string[]): void => {
-        let newDirectory: string;
+        let fullPath: string;
 
         if (!args.length) {
-            newDirectory = homeDirectory();
+            fullPath = homeDirectory();
         } else {
-            let directory = args[0];
+            let enteredPath = args[0];
 
-            if (isHistoricalDirectory(directory)) {
-                newDirectory = expandHistoricalDirectory(directory, job);
+            if (isHistoricalDirectory(enteredPath)) {
+                fullPath = expandHistoricalDirectory(enteredPath, job);
             } else {
-                newDirectory = resolveDirectory(job.session.directory, directory);
+                fullPath = job.environment.get("CDPATH")
+                    .split(Path.delimiter)
+                    .map(path => path || job.session.directory)
+                    .map(path => resolveDirectory(path, enteredPath))
+                    .filter(resolved => existsSync(resolved))
+                    .filter(resolved => statSync(resolved).isDirectory())[0];
 
-                if (!existsSync(newDirectory)) {
-                    throw new Error(`The directory ${newDirectory} doesn't exist.`);
-                }
-
-                if (!statSync(newDirectory).isDirectory()) {
-                    throw new Error(`${newDirectory} is not a directory.`);
+                if (!fullPath) {
+                    throw new Error(`The directory "${enteredPath}" doesn't exist.`);
                 }
             }
         }
 
-        job.session.directory = newDirectory;
+        job.session.directory = fullPath;
     },
     clear: (job: Job, args: string[]): void => {
         setTimeout(() => job.session.clearJobs(), 0);
