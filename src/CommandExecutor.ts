@@ -89,7 +89,7 @@ export default class CommandExecutor {
         const applicableExecutors = await filterAsync(this.executors, executor => executor.canExecute(job));
 
         if (applicableExecutors.length) {
-            job.buffer.cursor.show = true;
+            job.buffer.showCursor(true);
             return new applicableExecutors[0](job).startExecution();
         } else {
             throw `Black Screen: command "${job.prompt.commandName}" not found.`;

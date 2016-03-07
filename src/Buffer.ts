@@ -116,11 +116,13 @@ export default class Buffer extends events.EventEmitter {
     }
 
     showCursor(state: boolean): void {
+        this.ensureRowExists(this.cursor.row());
         this.cursor.show = state;
         this.emitData();
     }
 
     blinkCursor(state: boolean): void {
+        this.ensureRowExists(this.cursor.row());
         this.cursor.blink = state;
         this.emitData();
     }
@@ -234,11 +236,14 @@ export default class Buffer extends events.EventEmitter {
     }
 
     private set(position: RowColumn, char: Char): void {
-        if (!this.storage.get(position.row)) {
-            this.storage = this.storage.set(position.row, List<Char>());
-        }
-
+        this.ensureRowExists(position.row);
         this.storage = this.storage.setIn([position.row, position.column], char);
+    }
+
+    private ensureRowExists(rowNumber: number): void {
+        if (!this.storage.get(rowNumber)) {
+            this.storage = this.storage.set(rowNumber, List<Char>());
+        }
     }
 
     private emitData() {
