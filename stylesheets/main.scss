@@ -9,6 +9,10 @@ $prompt-background-color: lighten(map-get($colors, 'black'), 5%);
 $prompt-padding: 5px;
 $prompt-height: 12px + (2 * $prompt-padding);
 
+@function failurize-color($color){
+  @return saturate(adjust-hue($color, 140deg), 20%);
+}
+
 @import '../node_modules/font-awesome/scss/font-awesome';
 @import '../node_modules/octicons/octicons/sprockets-octicons';
 
@@ -44,13 +48,17 @@ a {
       color: $value;
     }
     &[data-inverse='true'] {
-      background-color: $value;
+      @if $color != 'black' {
+        background-color: $value;
+      }
     }
   }
 
   [data-background-color='#{$color}'] {
     &:not([data-inverse='true']) {
-      background-color: $value;
+      @if $color != 'black' {
+        background-color: $value;
+      }
     }
 
     &[data-inverse='true'] {
@@ -140,12 +148,19 @@ body, pre {
       }
     }
   }
+
+  &.failure {
+    .output {
+      background-color: failurize-color($background-color);
+    }
+  }
 }
 
 .prompt-wrapper {
   $decoration-width: 30px;
   $arrow-z-index: 2;
   $progress-bar-stripes-size: 30px;
+  $arrow-color: lighten($prompt-background-color, 10%);
 
   padding-top: $prompt-padding;
   position: relative; // To position the autocompletion box correctly.
@@ -176,7 +191,7 @@ body, pre {
       height: 200%;
       top: -11px;
       right: -8px;
-      background-color: lighten($prompt-background-color, 10%);
+      background-color: $arrow-color;
       transform-origin: 54% 0;
       transform: rotate(45deg);
       z-index: $arrow-z-index - 1;
@@ -186,8 +201,10 @@ body, pre {
   }
 
   &.failure {
+    background-color: failurize-color($prompt-background-color);
+
     .arrow:after {
-      background-color: map-get($colors, 'red');
+      background-color: failurize-color($arrow-color);
     }
   }
   .prompt-info {
@@ -293,8 +310,8 @@ body, pre {
 }
 
 .output {
-  $output-margin: 10px;
-  margin: $output-margin 0;
+  $output-padding: 10px;
+  padding: $output-padding 0;
 
   .output-cut {
     $height: $font-size * 2.6;
@@ -332,7 +349,7 @@ body, pre {
   // To display even empty rows. The height might need tweaking.
   // TODO: Remove if we always have a fixed buffer width.
   .row {
-    margin: 0 $output-margin;
+    margin: 0 $output-padding;
     min-height: $row-height;
 
     span {
