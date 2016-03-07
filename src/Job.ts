@@ -9,23 +9,13 @@ import CommandExecutor from "./CommandExecutor";
 import PTY from "./PTY";
 import PluginManager from "./PluginManager";
 import EmitterWithUniqueID from "./EmitterWithUniqueID";
-import {KeyCode, Status} from "./Enums";
+import {Status} from "./Enums";
 import Environment from "./Environment";
+import {convertKeyCode} from "./Utils";
 
 function makeThrottledDataEmitter(timesPerSecond: number, subject: EmitterWithUniqueID) {
     return _.throttle(() => subject.emit("data"), 1000 / timesPerSecond);
 }
-
-/**
- * @link https://lists.w3.org/Archives/Public/www-dom/2010JulSep/att-0182/keyCode-spec.html
- */
-const fixedVirtualKeyCodes = new Map<number, string>([
-    [8, String.fromCharCode(127)], // Backspace.
-    [37, "\x1b[D"], // Left.
-    [38, "\x1b[A"], // Up.
-    [39, "\x1b[C"], // Right.
-    [40, "\x1b[B"], // Down.
-]);
 
 export default class Job extends EmitterWithUniqueID {
     public command: PTY;
@@ -79,7 +69,7 @@ export default class Job extends EmitterWithUniqueID {
         this.emit("end");
     }
 
-    // Writes to the process" stdin.
+    // Writes to the process' STDIN.
     write(input: string|KeyboardEvent) {
         let text: string;
 
@@ -87,21 +77,13 @@ export default class Job extends EmitterWithUniqueID {
             text = input;
         } else {
             const event = <KeyboardEvent>(<any>input).nativeEvent;
-            let code = event.keyIdentifier.startsWith("U+") ? parseInt(event.keyIdentifier.substring(2), 16) : event.keyCode;
+            let code = event.keyCode;
 
             if (event.ctrlKey) {
                 code -= 64;
             }
 
-            if (fixedVirtualKeyCodes.has(code)) {
-                text = fixedVirtualKeyCodes.get(code);
-            } else {
-                text = String.fromCharCode(code);
-            }
-
-            if (!event.shiftKey && code >= KeyCode.A && code <= KeyCode.Z) {
-                text = text.toLowerCase();
-            }
+            text = convertKeyCode(code, event.shiftKey);
         }
 
         this.command.write(text);
