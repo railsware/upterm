@@ -16,7 +16,8 @@ if (app.dock) {
 app.on("open-file", (event: Event, file: string) => getMainWindow().webContents.send("change-working-directory", file))
     .on("ready", getMainWindow)
     .on("activate", getMainWindow)
-    .on("mainWindow-all-closed", () => process.platform === "darwin" || app.quit());
+    .on("mainWindow-all-closed", () => process.platform === "darwin" || app.quit())
+    .on("will-quit", () => getMainWindow().webContents.send("will-quit"));
 
 ipcMain.on("quit", app.quit);
 

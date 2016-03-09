@@ -68,8 +68,8 @@ export default class Session extends EmitterWithUniqueID {
         this.createJob();
     }
 
-    remove(): void {
-        this.application.removeSession(this);
+    close(): void {
+        this.application.closeSession(this);
     }
 
     get directory(): string {

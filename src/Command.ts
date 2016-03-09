@@ -31,7 +31,7 @@ const executors: Dictionary<(i: Job, a: string[]) => void> = {
         setTimeout(() => job.session.clearJobs(), 0);
     },
     exit: (job: Job, args: string[]): void => {
-        job.session.remove();
+        job.session.close();
     },
     export: (job: Job, args: string[]): void => {
         if (args.length === 0) {
