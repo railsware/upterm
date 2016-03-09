@@ -25,6 +25,7 @@ export default class PTY {
                 dataHandler(message.data);
             } else if (message.hasOwnProperty("exit")) {
                 exitHandler(message.exit);
+                this.process.disconnect();
             } else {
                 throw `Unhandled message: ${JSON.stringify(message)}`;
             }
