@@ -149,7 +149,7 @@ body, pre {
     }
   }
 
-  &.failure {
+  &.failure, &.interrupted {
     .output {
       background-color: failurize-color($background-color);
     }
@@ -200,13 +200,14 @@ body, pre {
     }
   }
 
-  &.failure {
+  &.failure, &.interrupted {
     background-color: failurize-color($prompt-background-color);
 
     .arrow:after {
       background-color: failurize-color($arrow-color);
     }
   }
+
   .prompt-info {
     cursor: help;
     z-index: 2;
@@ -214,11 +215,10 @@ body, pre {
   }
 
   &.interrupted {
-    .arrow:after {
-      background-color: map-get($colors, 'red');
-    }
-
     .prompt-info {
+      position: relative;
+      left: 6px;
+      top: 1px;
       @extend .fa;
       @extend .fa-close;
       color: map-get($colors, 'black');
