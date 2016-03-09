@@ -84,10 +84,10 @@ export default class Job extends EmitterWithUniqueID {
             let code = event.keyCode;
 
             if (event.ctrlKey) {
-                code -= 64;
+                text = String.fromCharCode(code - 64);
+            } else {
+                text = convertKeyCode(code, event.shiftKey);
             }
-
-            text = convertKeyCode(code, event.shiftKey);
         }
 
         this.command.write(text);

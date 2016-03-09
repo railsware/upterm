@@ -1,7 +1,6 @@
 import PluginManager from "../../PluginManager";
 import {Suggestion, fileSuggestions} from "./Suggestions";
 import * as _ from "lodash";
-import * as Path from "path";
 import {expandHistoricalDirectory, isHistoricalDirectory} from "../../Command";
 import {userFriendlyPath} from "../../Utils";
 
