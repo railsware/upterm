@@ -311,7 +311,7 @@ body, pre {
 
 .output {
   $output-padding: 10px;
-  padding: $output-padding 0;
+  padding-top: $output-padding;
 
   .output-cut {
     $height: $font-size * 2.6;
@@ -349,7 +349,7 @@ body, pre {
   // To display even empty rows. The height might need tweaking.
   // TODO: Remove if we always have a fixed buffer width.
   .row {
-    margin: 0 $output-padding;
+    padding: 0 $output-padding;
     min-height: $row-height;
 
     span {
