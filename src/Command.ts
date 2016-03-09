@@ -1,5 +1,4 @@
 import Job from "./Job";
-import * as Path from "path";
 import {existsSync, statSync} from "fs";
 import {homeDirectory, pluralize, resolveDirectory} from "./Utils";
 
