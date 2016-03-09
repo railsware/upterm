@@ -27,9 +27,11 @@ export default class ApplicationComponent extends React.Component<{}, State> {
             }
         });
 
-        ipcRenderer
-            .on("change-working-directory", (event: Event, directory: string) => this.activeTab.activeSession().directory = directory)
-            .on("will-quit", () => this.close());
+        ipcRenderer.on("change-working-directory", (event: Event, directory: string) =>
+            this.activeTab.activeSession().directory = directory
+        );
+
+        window.onbeforeunload = () => this.closeAllTabs();
     }
 
     handleKeyDown(event: KeyboardEvent) {
@@ -167,21 +169,21 @@ export default class ApplicationComponent extends React.Component<{}, State> {
         this.activeTabIndex = this.tabs.length - 1;
     }
 
-    private close(): void {
+    private closeAllTabs(): void {
         // Can't use forEach here because closeTab changes the array being iterated.
         while (this.tabs.length) {
-            this.closeTab(this.tabs[0]);
+            this.closeTab(this.tabs[0], false);
         }
     }
 
-    private closeTab(tab: Tab): void {
+    private closeTab(tab: Tab, quit = true): void {
         // Can't use forEach here because closeSession changes the array being iterated.
         while (tab.sessions.length) {
             tab.closeSession(tab.sessions[0]);
         }
         _.pull(this.tabs, tab);
 
-        if (this.tabs.length === 0) {
+        if (this.tabs.length === 0 && quit) {
             ipcRenderer.send("quit");
         } else if (this.tabs.length === this.activeTabIndex) {
             this.activeTabIndex -= 1;
