@@ -33,9 +33,7 @@ PluginManager.registerAutocompletionProvider({
             return suggestions;
         }
 
-        const suggestionPromises = job.environment.get("CDPATH")
-            .split(Path.delimiter)
-            .map(path => path || job.session.directory)
+        const suggestionPromises = job.environment.cdpath(job.session.directory)
             .map(async (directory) => {
                 let suggestions: Suggestion[] = (await fileSuggestions(directory, job.prompt.lastArgument)).filter(suggestion => suggestion.info.stat.isDirectory());
 

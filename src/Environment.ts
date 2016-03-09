@@ -1,3 +1,5 @@
+import {delimiter} from "path";
+
 export default class Environment {
     private storage: Dictionary<string> = process.env;
 
@@ -35,5 +37,9 @@ export default class Environment {
 
     get path(): string {
         return this.get("PATH");
+    }
+
+    cdpath(pwd: string): string[] {
+        return (this.get("CDPATH") || "").split(delimiter).map(path => path || pwd);
     }
 }
