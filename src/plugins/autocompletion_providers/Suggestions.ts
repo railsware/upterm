@@ -62,7 +62,7 @@ export class Suggestion {
     }
 
     async getChildren(job: Job): Promise<Suggestion[]> {
-        return [];
+        return await this._childrenProvider(job);
     }
 
     withValue(value: string): Suggestion {
