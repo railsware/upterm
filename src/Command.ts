@@ -1,6 +1,8 @@
 import Job from "./Job";
 import {existsSync, statSync} from "fs";
-import {homeDirectory, pluralize, resolveDirectory} from "./Utils";
+import {homeDirectory, pluralize, resolveDirectory, resolveFile} from "./Utils";
+import {readFileSync} from "fs";
+import {EOL} from "os";
 
 const executors: Dictionary<(i: Job, a: string[]) => void> = {
     cd: (job: Job, args: string[]): void => {
@@ -9,7 +11,7 @@ const executors: Dictionary<(i: Job, a: string[]) => void> = {
         if (!args.length) {
             fullPath = homeDirectory();
         } else {
-            let enteredPath = args[0];
+            const enteredPath = args[0];
 
             if (isHistoricalDirectory(enteredPath)) {
                 fullPath = expandHistoricalDirectory(enteredPath, job);
@@ -42,6 +44,17 @@ const executors: Dictionary<(i: Job, a: string[]) => void> = {
         args.forEach(argument => {
             const [key, value] = argument.split("=");
             job.session.environment.set(key, value);
+        });
+    },
+    // FIXME: make the implementation more reliable.
+    source: (job: Job, args: string[]): void => {
+        const content = readFileSync(resolveFile(job.session.directory, args[0])).toString();
+
+        content.split(EOL).forEach(line => {
+            if (line.startsWith("export ")) {
+                const [key, value] = line.split(" ")[1].split("=");
+                job.session.environment.set(key, value);
+            }
         });
     },
 };
