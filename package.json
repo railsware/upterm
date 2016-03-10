@@ -39,14 +39,14 @@
     "pty.js": "0.3.0",
     "react": "0.14.7",
     "react-dom": "0.14.7",
-    "rx": "4.0.8"
+    "rx": "4.1.0"
   },
   "devDependencies": {
     "asar": "0.10.0",
     "babel": "6.5.2",
-    "babel-core": "6.6.5",
+    "babel-core": "6.7.0",
     "babel-plugin-transform-es2015-destructuring": "6.6.5",
-    "babel-plugin-transform-es2015-parameters": "6.6.5",
+    "babel-plugin-transform-es2015-parameters": "6.7.0",
     "chai": "3.5.0",
     "chai-things": "0.2.0",
     "del": "2.2.0",
@@ -71,7 +71,7 @@
     "run-sequence": "1.1.5",
     "tslint": "3.5.0",
     "typescript": "1.8.7",
-    "typings": "0.6.10",
+    "typings": "0.7.7",
     "webdriverio": "4.0.3"
   },
   "scripts": {
