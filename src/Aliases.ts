@@ -1,6 +1,5 @@
-import {linedOutputOf} from "./PTY";
+import {executeCommandWithShellConfig} from "./PTY";
 import {memoize} from "./Decorators";
-import {baseName, resolveFile, exists, filterAsync} from "./Utils";
 
 export default class Aliases {
     static async find(alias: string): Promise<string> {
@@ -9,10 +8,7 @@ export default class Aliases {
 
     @memoize()
     static async all(): Promise<Dictionary<string>> {
-        const shellPath: string = process.env.SHELL;
-        const shellName = baseName(shellPath);
-        const sourceCommands = (await existingConfigFiles(shellName)).map(fileName => `source ${fileName}`);
-        const lines = await linedOutputOf(shellPath, ["-c", `'${[...sourceCommands, "alias"].join("; ")}'`], process.env.HOME);
+        const lines = await executeCommandWithShellConfig("alias");
 
         return lines.reduce(
             (accumulator: Dictionary<string>, aliasLine: string) => {
@@ -26,21 +22,5 @@ export default class Aliases {
             },
             <Dictionary<string>>{}
         );
-    }
-}
-
-async function existingConfigFiles(shellName: string): Promise<string[]> {
-    const resolvedConfigFiles = configFiles(shellName).map(fileName => resolveFile(process.env.HOME, fileName));
-    return await filterAsync(resolvedConfigFiles, exists);
-}
-
-function configFiles(shellName: string): string[] {
-    switch (shellName) {
-        case "zsh":
-            return ["~/.zshrc", "~/.zsh_profile"];
-        case "bash":
-            return ["~/.bashrc", "~/.bash_profile"];
-        default:
-            return [];
     }
 }

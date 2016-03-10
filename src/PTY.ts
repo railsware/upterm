@@ -1,5 +1,6 @@
 import * as ChildProcess from "child_process";
 import * as OS from "os";
+import {baseName, resolveFile, exists, filterAsync} from "./Utils";
 const ptyInternalPath = require.resolve("./PTYInternal");
 
 interface Message {
@@ -60,7 +61,31 @@ export function executeCommand(command: string, args: string[] = [], directory: 
     });
 }
 
-export async function linedOutputOf(command: string, args: string[], directory: string) {
+export async function linedOutputOf(command: string, args: string[], directory: string): Promise<string[]> {
     let output = await executeCommand(command, args, directory);
     return output.split(OS.EOL).filter(path => path.length > 0);
+}
+
+export async function executeCommandWithShellConfig(command: string): Promise<string[]> {
+    const shellPath: string = process.env.SHELL;
+    const shellName = baseName(shellPath);
+    const sourceCommands = (await existingConfigFiles(shellName)).map(fileName => `source ${fileName}`);
+
+    return await linedOutputOf(shellPath, ["-c", `'${[...sourceCommands, command].join("; ")}'`], process.env.HOME);
+}
+
+async function existingConfigFiles(shellName: string): Promise<string[]> {
+    const resolvedConfigFiles = configFiles(shellName).map(fileName => resolveFile(process.env.HOME, fileName));
+    return await filterAsync(resolvedConfigFiles, exists);
+}
+
+function configFiles(shellName: string): string[] {
+    switch (shellName) {
+        case "zsh":
+            return ["~/.zshrc", "~/.zsh_profile"];
+        case "bash":
+            return ["~/.bashrc", "~/.bash_profile"];
+        default:
+            return [];
+    }
 }

@@ -1,7 +1,19 @@
 import {delimiter} from "path";
+import {executeCommandWithShellConfig} from "./PTY";
+import {clone} from "lodash";
+
+const env: Dictionary<string> = {};
+export async function loadEnvironment(): Promise<void> {
+    const lines = await executeCommandWithShellConfig("env");
+
+    lines.forEach(line => {
+        let [key, value] = line.trim().split("=");
+        env[key] = value;
+    });
+}
 
 export default class Environment {
-    private storage: Dictionary<string> = process.env;
+    private storage: Dictionary<string> = clone(env);
 
     set(key: string, value: string): void {
         this.storage[key] = value;

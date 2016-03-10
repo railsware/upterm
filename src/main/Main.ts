@@ -2,12 +2,8 @@ const app: Electron.App = require("app");
 const browserWindowConstructor: typeof Electron.BrowserWindow = require("browser-window");
 import {ipcMain, nativeImage} from "electron";
 import menu from "./Menu";
-let fixPath = require("fix-path");
 
 let browserWindow: Electron.BrowserWindow = undefined;
-
-// Fix the $PATH on OS X
-fixPath();
 
 if (app.dock) {
     app.dock.setIcon(nativeImage.createFromPath("icon.png"));
