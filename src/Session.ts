@@ -44,8 +44,9 @@ export default class Session extends EmitterWithUniqueID {
         job.once("end", () => {
             if (app.dock && !browserWindow.getAllWindows().some(window => window.isFocused())) {
                 app.dock.bounce("informational");
-                const smiley = job.status === Status.Success ? "1" : "✕";
-                app.dock.setBadge(smiley);
+                app.dock.setBadge(job.status === Status.Success ? "1" : "✕");
+                /* tslint:disable:no-unused-expression */
+                new Notification("Command has been completed", { body: job.prompt.value });
             }
             this.createJob();
         });
