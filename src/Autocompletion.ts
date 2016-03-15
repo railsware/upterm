@@ -12,11 +12,12 @@ export default class Autocompletion implements i.AutocompletionProvider {
         let specializedProviders = PluginManager.specializedAutocompletionProviders(job.prompt.expandedFinishedLexemes);
         let providers = specializedProviders.length ? specializedProviders : PluginManager.genericAutocompletionProviders;
 
-        // FIXME: skip suggestions that have 0 score.
         return Promise.all(providers.map(provider => provider.getSuggestions(job))).then(results =>
             _._(results)
                 .flatten()
-                .filter((suggestion: Suggestion) => !suggestion.shouldIgnore(job))
+                .filter((suggestion: Suggestion) =>
+                    !suggestion.shouldIgnore(job) &&
+                    score(suggestion.value, suggestion.getPrefix(job)) > 0)
                 .sortBy((suggestion: Suggestion) => -score(suggestion.value, suggestion.getPrefix(job)))
                 .uniqBy((suggestion: Suggestion) => suggestion.value)
                 .take(Autocompletion.limit)
