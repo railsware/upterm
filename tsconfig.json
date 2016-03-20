@@ -2,13 +2,14 @@
   "compilerOptions": {
     "target": "ES6",
     "module": "commonjs",
-    "noImplicitAny": true,
     "removeComments": true,
     "preserveConstEnums": true,
     "moduleResolution": "node",
     "experimentalDecorators": true,
+    "noImplicitAny": true,
     "noEmitOnError": true,
     "pretty": true,
-    "jsx": "react"
+    "jsx": "react",
+    "outDir": "compiled"
   }
 }

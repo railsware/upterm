@@ -7,5 +7,9 @@
     "node": "github:DefinitelyTyped/DefinitelyTyped/node/node.d.ts#1c56e368e17bb28ca57577250624ca5bd561aa81",
     "pty.js": "github:DefinitelyTyped/DefinitelyTyped/pty.js/pty.js.d.ts#f8b59970de238982359ca96a0f7a548dd94b0c74",
     "react": "github:DefinitelyTyped/DefinitelyTyped/react/react.d.ts#e3a7583dc379d3b178216fcd444b0ea64aed66e0"
+  },
+  "ambientDevDependencies": {
+    "chai": "registry:dt/chai#3.4.0+20160317120654",
+    "mocha": "registry:dt/mocha#2.2.5+20160317120654"
   }
 }

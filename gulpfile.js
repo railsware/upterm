@@ -26,8 +26,7 @@ function notify(message) {
 const options = {
     typeScript: {
         source: "src/**/*.ts*",
-        target: "compiled/src",
-        config: $.typescript.createProject('src/tsconfig.json', {typescript: require("typescript")})
+        target: "compiled/src"
     },
     sass: {
         source: ["stylesheets/*.scss", "decorators/*.scss"],
@@ -41,13 +40,7 @@ const options = {
     }
 };
 
-gulp.task("typescript", function () {
-        return gulp.src(options.typeScript.source)
-            .pipe($.typescript(options.typeScript.config).on("error", onError))
-            .pipe(gulp.dest(options.typeScript.target))
-            .pipe(notify("TypeScript has been compiled."))
-    }
-);
+gulp.task("typescript", $.shell.task("tsc", {cwd: "/Users/me/dev/black-screen"}));
 
 gulp.task("sass", function () {
         return gulp.src(options.sass.source)

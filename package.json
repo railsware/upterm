@@ -43,6 +43,7 @@
   },
   "devDependencies": {
     "asar": "0.10.0",
+    "chai": "3.5.0",
     "del": "2.2.0",
     "electron-packager": "5.2.1",
     "electron-prebuilt": "0.37.2",
@@ -55,13 +56,13 @@
     "gulp-notify": "2.2.0",
     "gulp-sass": "2.2.0",
     "gulp-shell": "0.5.2",
-    "gulp-typescript": "2.12.1",
     "gulp-util": "3.0.7",
     "mocha": "2.4.5",
     "node-gyp": "3.3.1",
     "npm-check-updates": "2.5.8",
     "react-tools": "0.13.3",
     "run-sequence": "1.1.5",
+    "ts-node": "0.7.0",
     "tslint": "3.6.0",
     "typescript": "1.8.7",
     "typings": "0.7.9"
@@ -73,7 +74,7 @@
     "electron": "electron .",
     "start": "gulp",
     "package": "gulp build && electron-packager . \"$npm_package_productName\" --overwrite --platform=darwin --arch=x64 --version=$npm_package_electronVersion --out='/Applications' --icon='./icon.icns' --asar=true",
-    "test": "",
+    "test": "mocha --require ts-node/register test/**",
     "update-typings": "typings install --browser",
     "update-dependencies": "ncu -u",
     "lint": "tslint `find src -name '*.ts*'`"
