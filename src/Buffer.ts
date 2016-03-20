@@ -129,6 +129,7 @@ export default class Buffer extends events.EventEmitter {
 
     moveCursorRelative(position: Advancement): Buffer {
         this.cursor.moveRelative(position);
+        this.ensureRowExists(this.cursor.row());
         this.emitData();
 
         return this;
@@ -136,6 +137,7 @@ export default class Buffer extends events.EventEmitter {
 
     moveCursorAbsolute(position: RowColumn): Buffer {
         this.cursor.moveAbsolute(position, this.homePosition);
+        this.ensureRowExists(this.cursor.row());
         this.emitData();
 
         return this;

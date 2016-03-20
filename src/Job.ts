@@ -59,13 +59,13 @@ export default class Job extends EmitterWithUniqueID {
                 this.emit("end");
             },
             errorMessage => {
-                this.buffer.showCursor(false);
                 this.handleError(errorMessage);
             }
         );
     }
 
     handleError(message: string): void {
+        this.buffer.showCursor(false);
         this.setStatus(Status.Failure);
         if (message) {
             this._buffer.writeMany(message);
