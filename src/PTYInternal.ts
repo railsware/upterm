@@ -1,5 +1,5 @@
 import * as pty from "pty.js";
-import {baseName} from "./Utils";
+import {baseName, shell} from "./Utils";
 
 let commandName = process.argv[2];
 let args = process.argv.slice(5);
@@ -11,7 +11,7 @@ const noConfigSwitches: Dictionary<string[]> = {
     bash: ["--noprofile", "--norc"],
 };
 
-const fork = pty.fork(process.env.SHELL, [...noConfigSwitches[baseName(process.env.SHELL)], "-c", `${commandName} ${args.join(" ")}`], {
+const fork = pty.fork(shell(), [...noConfigSwitches[baseName(shell())], "-c", `${commandName} ${args.join(" ")}`], {
     cols: columns,
     rows: rows,
     cwd: process.cwd(),

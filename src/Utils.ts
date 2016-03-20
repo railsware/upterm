@@ -140,6 +140,22 @@ export async function executablesInPaths(paths: string): Promise<string[]> {
     return _.uniq(_.flatten(allFiles));
 }
 
+let shellPath: string;
+const supportedShells = { bash: true, zsh: true };
+export function shell(): string {
+    if (!shellPath) {
+        const shellName = baseName(process.env.SHELL);
+        if (shellName in supportedShells) {
+            shellPath = process.env.SHELL;
+        } else {
+            shellPath = "/bin/bash";
+            console.error(`${shellName} is not supported; defaulting to ${shellPath}`);
+        }
+    }
+
+    return shellPath;
+}
+
 export function homeDirectory(): string {
     return process.env[(isWindows()) ? "USERPROFILE" : "HOME"];
 }

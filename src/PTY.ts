@@ -1,6 +1,6 @@
 import * as ChildProcess from "child_process";
 import * as OS from "os";
-import {baseName, resolveFile, exists, filterAsync} from "./Utils";
+import {baseName, resolveFile, exists, filterAsync, shell} from "./Utils";
 const ptyInternalPath = require.resolve("./PTYInternal");
 
 interface Message {
@@ -67,11 +67,10 @@ export async function linedOutputOf(command: string, args: string[], directory: 
 }
 
 export async function executeCommandWithShellConfig(command: string): Promise<string[]> {
-    const shellPath: string = process.env.SHELL;
-    const shellName = baseName(shellPath);
+    const shellName = baseName(shell());
     const sourceCommands = (await existingConfigFiles(shellName)).map(fileName => `source ${fileName}`);
 
-    return await linedOutputOf(shellPath, ["-c", `'${[...sourceCommands, command].join("; ")}'`], process.env.HOME);
+    return await linedOutputOf(shell(), ["-c", `'${[...sourceCommands, command].join("; ")}'`], process.env.HOME);
 }
 
 async function existingConfigFiles(shellName: string): Promise<string[]> {
@@ -86,6 +85,6 @@ function configFiles(shellName: string): string[] {
         case "bash":
             return ["~/.bashrc", "~/.bash_profile"];
         default:
-            return [];
+            throw `Unknown shell: ${shellName}`;
     }
 }
