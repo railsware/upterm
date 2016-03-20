@@ -39,7 +39,7 @@
     "pty.js": "shockone/pty.js",
     "react": "0.14.7",
     "react-dom": "0.14.7",
-    "rx": "4.1.0"
+    "rxjs": "5.0.0-beta.2"
   },
   "devDependencies": {
     "asar": "0.10.0",

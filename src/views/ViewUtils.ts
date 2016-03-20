@@ -31,10 +31,9 @@ export function withModifierKey(event: KeyboardEvent) {
     return isModifierKey(event) || event.ctrlKey || event.altKey || event.metaKey;
 }
 
-export const isSpecialKey = _.memoize(
-    (event: React.KeyboardEvent) => _.values(keys).some((matcher: (event: React.KeyboardEvent) => boolean) => matcher(event)),
-    (event: React.KeyboardEvent) => JSON.stringify([event.ctrlKey, event.keyCode])
-);
+export function isSpecialKey(event: KeyboardEvent): boolean {
+  return _.values(keys).some((matcher: (event: KeyboardEvent) => boolean) => matcher(event));
+}
 
 export function getHTMLAttributes(object: Dictionary<any>): Object {
     let htmlAttributes: Dictionary<any> = {};

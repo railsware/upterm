@@ -10,33 +10,10 @@ import PromptModel from "../Prompt";
 import JobModel from "../Job";
 import {Suggestion} from "../plugins/autocompletion_providers/Suggestions";
 import {KeyCode} from "../Enums";
-const rx = require("rx");
+import {Subject} from "rxjs/Subject";
+import "rxjs/add/operator/filter";
+import "rxjs/add/operator/map";
 const reactDOM = require("react-dom");
-
-
-// TODO: Figure out how it works.
-function createEventHandler(): any {
-    const subject: any = function () {
-        subject.onNext.apply(subject, arguments);
-    };
-
-    function getEnumerablePropertyNames(target: Dictionary<any>) {
-        const result: string[] = [];
-        /* tslint:disable:forin */
-        for (let key in target) {
-            result.push(key);
-        }
-        return result;
-    }
-
-    getEnumerablePropertyNames(rx.Subject.prototype)
-        .forEach(function (property) {
-            subject[property] = rx.Subject.prototype[property];
-        });
-    rx.Subject.call(subject);
-
-    return subject;
-}
 
 interface Props {
     job: JobModel;
@@ -69,40 +46,42 @@ export default class PromptComponent extends React.Component<Props, State> imple
             latestKeyCode: undefined,
         };
 
-        const allKeys = createEventHandler();
+        const keyDownSubject: Subject<KeyboardEvent> = new Subject();
 
-        allKeys // Should be before setting latestKeyCode.
+
+        keyDownSubject // Should be before setting latestKeyCode.
             .filter((event: KeyboardEvent) => event.keyCode === KeyCode.Period && (event.altKey || this.state.latestKeyCode === KeyCode.Escape))
-            .forEach(this.appendLastLexemeOfPreviousJob.bind(this));
-        allKeys
+            .forEach(this.appendLastLexemeOfPreviousJob, this);
+
+        keyDownSubject
             .filter(_.negate(withModifierKey))
-            .forEach((event: KeyboardEvent) => this.setState({latestKeyCode: event.keyCode}));
+            .forEach((event: KeyboardEvent) => this.setState({latestKeyCode: event.keyCode}), this);
 
 
-        const promptKeys = allKeys.filter(() => this.props.status !== e.Status.InProgress)
+        const promptKeys = keyDownSubject.filter(() => this.props.status !== e.Status.InProgress)
             .filter(isSpecialKey)
             .map(stopBubblingUp);
         promptKeys
             .filter(() => this.isAutocompleteShown())
             .filter(keys.tab)
-            .forEach(() => this.applySuggestion());
+            .forEach(this.applySuggestion, this);
         promptKeys
-            .filter(keys.deleteWord).forEach(() => this.deleteWord());
+            .filter(keys.deleteWord).forEach(() => this.deleteWord(), this);
         promptKeys
-            .filter(keys.enter).forEach(() => this.execute());
+            .filter(keys.enter).forEach(this.execute, this);
         promptKeys
-            .filter(keys.interrupt).forEach(() => this.prompt.setValue("").then(() => this.setDOMValueProgrammatically("")));
+            .filter(keys.interrupt).forEach(() => this.prompt.setValue("").then(() => this.setDOMValueProgrammatically("")), this);
         promptKeys
             .filter((event: KeyboardEvent) => keys.goDown(event) || keys.goUp(event))
             .filter(() => this.isAutocompleteShown())
-            .forEach((event: KeyboardEvent) => this.navigateAutocomplete(event));
+            .forEach(this.navigateAutocomplete, this);
         promptKeys
             .filter((event: KeyboardEvent) => keys.goDown(event) || keys.goUp(event))
             .filter(() => !this.isAutocompleteShown())
-            .forEach((event: KeyboardEvent) => this.navigateHistory(event));
+            .forEach(this.navigateHistory, this);
 
         this.handlers = {
-            onKeyDown: allKeys,
+            onKeyDown: (event: KeyboardEvent) => keyDownSubject.next(event),
         };
 
         // FIXME: find a better design to propagate events.
