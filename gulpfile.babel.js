@@ -29,10 +29,6 @@ const options = {
         target: "compiled/src",
         config: $.typescript.createProject('src/tsconfig.json', {typescript: require("typescript")})
     },
-    test: {
-        source: "test/**/*.ts",
-        target: "compiled/test"
-    },
     sass: {
         source: ["stylesheets/*.scss", "decorators/*.scss"],
         target: {
