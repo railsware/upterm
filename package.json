@@ -74,7 +74,7 @@
     "electron": "electron .",
     "start": "gulp",
     "package": "gulp build && electron-packager . \"$npm_package_productName\" --overwrite --platform=darwin --arch=x64 --version=$npm_package_electronVersion --out='/Applications' --icon='./icon.icns' --asar=true",
-    "test": "mocha --require ts-node/register test/**",
+    "test": "mocha --require ts-node/register  --harmony_rest_parameters --harmony_default_parameters test/**",
     "update-typings": "typings install --browser",
     "update-dependencies": "ncu -u",
     "lint": "tslint `find src -name '*.ts*'`"

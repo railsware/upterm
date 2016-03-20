@@ -1,7 +1,8 @@
 import {expect} from "chai";
+import {lex} from "../src/CommandExpander";
 
 describe("sldfsdf", () => {
     it("fasfd", () => {
-        expect('adfs').to.not.be.a('string');
+        expect(lex("some words")).to.eql(["some", "words"]);
     });
 });
