@@ -40,28 +40,24 @@ export default class Job extends EmitterWithUniqueID {
         this.parser = new Parser(this);
     }
 
-    execute(): void {
+    async execute(): Promise<void> {
         this.setStatus(Status.InProgress);
 
-        Promise.all(
-            PluginManager.preexecPlugins.map(plugin => plugin(this))
-        ).then(
-            () => CommandExecutor.execute(this),
-            errorMessage => this.handleError(errorMessage)
-        ).then(
-            () => {
-                this.buffer.showCursor(false);
-                // Need to check the status here because it"s
-                // executed even after the process was killed.
-                if (this.status === Status.InProgress) {
-                    this.setStatus(Status.Success);
-                }
-                this.emit("end");
-            },
-            errorMessage => {
-                this.handleError(errorMessage);
+        await Promise.all(PluginManager.preexecPlugins.map(plugin => plugin(this)));
+
+        try {
+            await CommandExecutor.execute(this);
+
+            this.buffer.showCursor(false);
+            // Need to check the status here because it's
+            // executed even after the process was interrupted.
+            if (this.status === Status.InProgress) {
+                this.setStatus(Status.Success);
             }
-        );
+            this.emit("end");
+        } catch (exception) {
+            this.handleError(exception);
+        }
     }
 
     handleError(message: string): void {
