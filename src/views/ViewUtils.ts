@@ -1,4 +1,3 @@
-import * as React from "react";
 import {KeyCode} from "../Enums";
 
 export function stopBubblingUp(event: Event): Event {
