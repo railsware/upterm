@@ -11,5 +11,10 @@
     "pretty": true,
     "jsx": "react",
     "outDir": "compiled"
-  }
+  },
+  "exclude": [
+    "node_modules",
+    "typings",
+    "test"
+  ]
 }
