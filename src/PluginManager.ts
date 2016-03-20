@@ -1,9 +1,9 @@
 import {OutputDecorator, EnvironmentObserverPlugin, AutocompletionProvider, PreexecPlugin} from "./Interfaces";
 import * as Path from "path";
 import * as _ from "lodash";
-import Utils from "./Utils";
+import {recursiveFilesIn} from "./Utils";
 
-// Technical debt: register all the plugin types via single method.
+// FIXME: Technical debt: register all the plugin types via single method.
 export default class PluginManager {
     private static _outputDecorators: OutputDecorator[] = [];
     private static _environmentObservers: EnvironmentObserverPlugin[] = [];
@@ -67,7 +67,7 @@ export default class PluginManager {
 
 export async function loadAllPlugins(): Promise<void> {
     const pluginsDirectory = Path.join(__dirname, "plugins");
-    const filePaths = await Utils.recursiveFilesIn(pluginsDirectory);
+    const filePaths = await recursiveFilesIn(pluginsDirectory);
 
     _._(filePaths).map(require).map("default").value();
 }

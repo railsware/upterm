@@ -28,8 +28,11 @@ export class Tab {
         this.activeSessionIndex = this.sessions.length - 1;
     }
 
-    removeSession(session: Session): void {
-        session.jobs.forEach(job => job.removeAllListeners());
+    closeSession(session: Session): void {
+        session.jobs.forEach(job => {
+            job.removeAllListeners();
+            job.interrupt();
+        });
         session.removeAllListeners();
 
         _.pull(this.sessions, session);

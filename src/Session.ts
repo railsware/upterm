@@ -2,25 +2,26 @@ import {readFileSync, writeFile} from "fs";
 import * as _ from "lodash";
 import Job from "./Job";
 import History from "./History";
-import Utils from "./Utils";
 import Serializer from "./Serializer";
 import EmitterWithUniqueID from "./EmitterWithUniqueID";
 import PluginManager from "./PluginManager";
 import {Status} from "./Enums";
 import ApplicationComponent from "./views/1_ApplicationComponent";
+import Environment from "./Environment";
+import {homeDirectory, normalizeDirectory} from "./Utils";
 const remote = require("remote");
 const app = remote.require("app");
 const browserWindow: typeof Electron.BrowserWindow = remote.require("electron").BrowserWindow;
 
 export default class Session extends EmitterWithUniqueID {
     jobs: Array<Job> = [];
+    environment = new Environment();
     history: typeof History;
-    public historicalCurrentDirectoriesStack: string[] = [];
-    private _currentDirectory: string;
-    private stateFileName = `${Utils.homeDirectory}/.black-screen-state`;
+    historicalCurrentDirectoriesStack: string[] = [];
+    private stateFileName = `${homeDirectory()}/.black-screen-state`;
     // The value of the dictionary is the default value used if there is no serialized data.
     private serializableProperties: Dictionary<any> = {
-        currentDirectory: `String:${Utils.homeDirectory}`,
+        directory: `String:${homeDirectory()}`,
         history: `History:[]`,
     };
 
@@ -43,8 +44,9 @@ export default class Session extends EmitterWithUniqueID {
         job.once("end", () => {
             if (app.dock && !browserWindow.getAllWindows().some(window => window.isFocused())) {
                 app.dock.bounce("informational");
-                const smiley = job.status === Status.Success ? "1" : "✕";
-                app.dock.setBadge(smiley);
+                app.dock.setBadge(job.status === Status.Success ? "1" : "✕");
+                /* tslint:disable:no-unused-expression */
+                new Notification("Command has been completed", { body: job.prompt.value });
             }
             this.createJob();
         });
@@ -67,17 +69,17 @@ export default class Session extends EmitterWithUniqueID {
         this.createJob();
     }
 
-    remove(): void {
-        this.application.removeSession(this);
+    close(): void {
+        this.application.closeSession(this);
     }
 
-    get currentDirectory(): string {
-        return this._currentDirectory;
+    get directory(): string {
+        return this.environment.get("PWD");
     }
 
-    set currentDirectory(value: string) {
-        let normalizedDirectory =  Utils.normalizeDir(value);
-        if (normalizedDirectory === this._currentDirectory) {
+    set directory(value: string) {
+        let normalizedDirectory = normalizeDirectory(value);
+        if (normalizedDirectory === this.directory) {
             return;
         }
 
@@ -85,8 +87,8 @@ export default class Session extends EmitterWithUniqueID {
             observer.currentWorkingDirectoryWillChange(this, normalizedDirectory)
         );
 
-        this._currentDirectory = normalizedDirectory;
-        this.historicalCurrentDirectoriesStack.push(this._currentDirectory);
+        this.environment.set("PWD", normalizedDirectory);
+        this.historicalCurrentDirectoriesStack.push(normalizedDirectory);
 
         PluginManager.environmentObservers.forEach(observer =>
             observer.currentWorkingDirectoryDidChange(this, normalizedDirectory)

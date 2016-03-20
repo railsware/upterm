@@ -1,8 +1,8 @@
 import {FileInfo} from "../../Interfaces";
-import Utils from "../../Utils";
 import Job from "../../Job";
 import * as Path from "path";
 import {Color} from "../../Enums";
+import {resolveDirectory, statsIn, directoryName, normalizeDirectory, isDirectory} from "../../Utils";
 
 type SuggestionsPromise = Promise<Suggestion[]>;
 
@@ -18,7 +18,7 @@ export class Suggestion {
         this._synopsis = "";
         this._description = "";
         this._type = "";
-        this._childrenProvider = async (job) => [];
+        this._childrenProvider = async(job) => [];
     }
 
     get value(): string {
@@ -62,7 +62,7 @@ export class Suggestion {
     }
 
     async getChildren(job: Job): Promise<Suggestion[]> {
-        return [];
+        return await this._childrenProvider(job);
     }
 
     withValue(value: string): Suggestion {
@@ -91,7 +91,7 @@ export class Suggestion {
     }
 
     private get truncatedDescription(): string {
-        return _.truncate(this.description, { length: 50, separator: " " });
+        return _.truncate(this.description, {length: 50, separator: " "});
     }
 }
 
@@ -103,6 +103,7 @@ abstract class BaseOption extends Suggestion {
 
 export class Option extends BaseOption {
     private _alias: string;
+
     constructor(protected _name: string) {
         super();
     };
@@ -226,7 +227,7 @@ export class File extends Suggestion {
 
     private get unescapedFileName(): string {
         if (this._info.stat.isDirectory()) {
-            return Utils.normalizeDir(this._info.name);
+            return normalizeDirectory(this._info.name);
         } else {
             return this._info.name;
         }
@@ -270,15 +271,13 @@ export class SubSubcommand extends Subcommand {
     }
 }
 
-export async function fileSuggestions(job: Job): Promise<File[]> {
-    const prompt = job.prompt;
+export async function fileSuggestions(searchDirectory: string, alreadyEnteredPath: string): Promise<File[]> {
+    const directoryOfAlreadyEnteredPath = directoryName(alreadyEnteredPath);
+    const fullSearchDirectory = resolveDirectory(searchDirectory, directoryOfAlreadyEnteredPath);
 
-    if (!prompt.arguments.length) {
+    if (await isDirectory(fullSearchDirectory)) {
+        return (await statsIn(fullSearchDirectory)).map(stat => new File(stat, directoryOfAlreadyEnteredPath));
+    } else {
         return [];
     }
-
-    const relativeSearchDirectory = Utils.dirName(prompt.lastArgument);
-    const fileInfos = await Utils.stats(Utils.resolveDirectory(job.session.currentDirectory, relativeSearchDirectory));
-
-    return fileInfos.map(fileInfo => new File(fileInfo, relativeSearchDirectory));
 }

@@ -3,211 +3,178 @@ import * as Path from "path";
 import * as i from "./Interfaces";
 import * as e from "./Enums";
 import * as _ from "lodash";
-import {Stats, readFile, exists, readdir, stat} from "fs";
+import * as fs from "fs";
+import {KeyCode} from "./Enums";
 
 interface FSExtraWalkObject {
     path: string;
-    stats: Stats;
+    stats: fs.Stats;
 }
 
-export default class Utils {
-    public static paths: Array<string> = process.env.PATH.split(Path.delimiter);
-    public static executables: Array<string> = [];
+export function info(...args: any[]): void {
+    print(e.LogLevel.Info, args);
+}
 
-    static info(...args: any[]): void {
-        this.print(e.LogLevel.Info, args);
+export function debug(...args: any[]): void {
+    print(e.LogLevel.Debug, args);
+}
+
+export function log(...args: any[]): void {
+    print(e.LogLevel.Log, args);
+}
+
+export function error(...args: any[]): void {
+    print(e.LogLevel.Error, args);
+}
+
+export function print(level: e.LogLevel, args: Array<any>): void {
+    if ((typeof window !== "undefined") && window.DEBUG) {
+        (<Function>(<any>console)[level])(...args);
     }
+}
 
-    static debug(...args: any[]): void {
-        this.print(e.LogLevel.Debug, args);
+export function times(n: number, action: Function): void {
+    for (let i = 0; i !== n; ++i) {
+        action();
     }
+}
 
-    static log(...args: any[]): void {
-        this.print(e.LogLevel.Log, args);
+async function filesIn(directoryPath: string): Promise<string[]> {
+    if (await exists(directoryPath) && await isDirectory(directoryPath)) {
+        return await readDirectory(directoryPath);
+    } else {
+        return [];
     }
+}
 
-    static error(...args: any[]): void {
-        this.print(e.LogLevel.Error, args);
-    }
+export function recursiveFilesIn(directoryPath: string): Promise<string[]> {
+    let files: string[] = [];
 
-    static print(level: e.LogLevel, args: Array<any>): void {
-        if ((typeof window !== "undefined") && window.DEBUG) {
-            (<Function>(<any>console)[level])(...args);
-        }
-    }
+    return new Promise(resolve =>
+        walk(directoryPath)
+            .on("data", (file: FSExtraWalkObject) => file.stats.isFile() && files.push(file.path))
+            .on("end", () => resolve(files))
+    );
+}
 
-    static times(n: number, action: Function): void {
-        for (let i = 0; i !== n; ++i) {
-            action();
-        }
-    }
-
-    static filesIn(directory: string): Promise<string[]> {
-        return new Promise((resolve, reject) => {
-            Utils.ifExists(directory, () => {
-                stat(directory, (statError: NodeJS.ErrnoException, pathStat: Stats) => {
-                    if (statError) {
-                        reject(statError);
-                    }
-
-                    if (!pathStat.isDirectory()) {
-                        reject(`${directory} is not a directory.`);
-                    }
-
-                    readdir(directory, (readError: NodeJS.ErrnoException, files: Array<string>) => {
-                        if (readError) {
-                            reject(readError);
-                        }
-
-                        resolve(files);
-                    });
-                });
-            });
-        });
-    }
-
-    static recursiveFilesIn(directoryPath: string): Promise<string[]> {
-        let files: string[] = [];
-
-        return new Promise(resolve =>
-            walk(directoryPath)
-                .on("data", (file: FSExtraWalkObject) => file.stats.isFile() && files.push(file.path))
-                .on("end", () => resolve(files))
-        );
-    }
-
-    static stats(directory: string): Promise<i.FileInfo[]> {
-        return Utils.filesIn(directory).then(files =>
-            Promise.all(files.map(fileName =>
-                new Promise((resolve, reject) =>
-                    stat(Path.join(directory, fileName), (error: NodeJS.ErrnoException, stat: Stats) => {
-                        if (error) {
-                            reject(error);
-                        }
-
-                        resolve({ name: fileName, stat: stat });
-                    })
-                )
-            ))
-        );
-    }
-
-    static ifExists(fileName: string, callback: Function, elseCallback?: Function) {
-        exists(fileName, (pathExists: boolean) => {
-            if (pathExists) {
-                callback();
-            } else if (elseCallback) {
-                elseCallback();
+export function stat(filePath: string): Promise<fs.Stats> {
+    return new Promise((resolve, reject) => {
+        fs.stat(filePath, (error: NodeJS.ErrnoException, pathStat: fs.Stats) => {
+            if (error) {
+                reject(error);
+            } else {
+                resolve(pathStat);
             }
         });
-    }
+    });
+}
 
-    static exists(filePath: string): Promise<boolean> {
-        return new Promise(resolve => exists(filePath, resolve));
-    }
+export async function statsIn(directoryPath: string): Promise<i.FileInfo[]> {
+    return Promise.all((await filesIn(directoryPath)).map(async (fileName) => {
+        return {name: fileName, stat: await stat(Path.join(directoryPath, fileName))};
+    }));
+}
 
-    static isDirectory(directoryName: string): Promise<boolean> {
-        return new Promise((resolve) => {
-            Utils.ifExists(
-                directoryName,
-                () => {
-                    stat(directoryName, (error: NodeJS.ErrnoException, pathStat: Stats) => {
-                        resolve(pathStat.isDirectory());
-                    });
-                },
-                () => resolve(false));
+export function exists(filePath: string): Promise<boolean> {
+    return new Promise(resolve => fs.exists(filePath, resolve));
+}
+
+export async function isDirectory(directoryPath: string): Promise<boolean> {
+    if (await exists(directoryPath)) {
+        return (await stat(directoryPath)).isDirectory();
+    } else {
+        return false;
+    }
+}
+
+export function readFile(filePath: string): Promise<string> {
+    return new Promise((resolve, reject) => {
+        fs.readFile(filePath, (error, buffer) => {
+            if (error) {
+                reject(error);
+            } else {
+                resolve(buffer.toString());
+            }
         });
-    }
+    });
+}
 
-    static readFile(filePath: string): Promise<string> {
-        return new Promise((resolve, reject) => {
-            readFile(filePath, (error, buffer) => {
-                if (error) {
-                    reject(error);
-                } else {
-                    resolve(buffer.toString());
-                }
-            });
+export function readDirectory(directoryPath: string): Promise<string[]> {
+    return new Promise((resolve, reject) => {
+        fs.readdir(directoryPath, (readError: NodeJS.ErrnoException, files: Array<string>) => {
+            if (readError) {
+                reject(readError);
+            }
+
+            resolve(files);
         });
+    });
+}
+
+export function normalizeDirectory(directoryPath: string): string {
+    return Path.normalize(directoryPath + Path.sep);
+}
+
+export function directoryName(path: string): string {
+    return normalizeDirectory(path.endsWith(Path.sep) ? path : Path.dirname(path));
+}
+
+export function baseName(path: string): string {
+    if (path.split(Path.sep).length === 1) {
+        return path;
+    } else {
+        return path.substring(directoryName(path).length);
+    }
+}
+
+
+const executables: Array<string> = [];
+export async function executablesInPaths(paths: string): Promise<string[]> {
+    if (executables.length) {
+        return executables;
     }
 
-    static normalizeDir(path: string): string {
-        return Path.normalize(path + Path.sep);
+    const validPaths = await filterAsync(paths.split(Path.delimiter), isDirectory);
+    const allFiles: string[][] = await Promise.all(validPaths.map(filesIn));
+
+    return _.uniq(_.flatten(allFiles));
+}
+
+export function homeDirectory(): string {
+    return process.env[(isWindows()) ? "USERPROFILE" : "HOME"];
+}
+
+export function resolveDirectory(pwd: string, directory: string): string {
+    return normalizeDirectory(resolveFile(pwd, directory));
+}
+
+export function resolveFile(pwd: string, file: string): string {
+    return Path.resolve(pwd, file.replace(/^~/, homeDirectory()));
+}
+
+export function userFriendlyPath(path: string): string {
+    return path.replace(homeDirectory(), "~");
+}
+
+export async function filterAsync<T>(values: T[], asyncPredicate: (t: T) => Promise<boolean>): Promise<T[]> {
+    const filtered = await Promise.all(values.map(asyncPredicate));
+    return values.filter((value: T, index: number) => filtered[index]);
+}
+
+export function pluralize(word: string, count = 2) {
+    return count === 1 ? word : pluralFormOf(word);
+}
+
+function pluralFormOf(word: string) {
+    if (word.endsWith("y")) {
+        return word.substring(0, word.length - 1) + "ies";
+    } else {
+        return word + "s";
     }
+}
 
-    static dirName(path: string): string {
-        return this.normalizeDir(path.endsWith(Path.sep) ? path : Path.dirname(path));
-    }
-
-    static baseName(path: string): string {
-        if (path.split(Path.sep).length === 1) {
-            return path;
-        } else {
-            return path.substring(this.dirName(path).length);
-        }
-    }
-
-    static humanFileSize(bytes: number): string {
-        const threshold = 1024;
-        const units = ["KiB", "MiB", "GiB", "TiB", "PiB", "EiB", "ZiB", "YiB"];
-
-        if (Math.abs(bytes) < threshold) {
-            return bytes + "B";
-        }
-
-        let unitIndex = -1;
-
-        do {
-            bytes /= threshold;
-            ++unitIndex;
-        } while (Math.abs(bytes) >= threshold && unitIndex < units.length - 1);
-
-        return bytes.toFixed(1) + "" + units[unitIndex];
-    }
-
-    static async executablesInPaths(): Promise<string[]> {
-        if (this.executables.length) {
-            return this.executables;
-        }
-
-        const validPaths = await this.filterAsync(this.paths, this.isDirectory);
-        const allFiles: string[][] = await Promise.all(validPaths.map(this.filesIn));
-
-        return _.uniq(_.flatten(allFiles));
-    }
-
-    static get isWindows(): boolean {
-        return process.platform === "win32";
-    }
-
-    static get homeDirectory(): string {
-        return process.env[(Utils.isWindows) ? "USERPROFILE" : "HOME"];
-    }
-
-    static resolveDirectory(pwd: string, directory: string): string {
-        return Utils.normalizeDir(Utils.resolveFile(pwd, directory));
-    }
-
-    static resolveFile(pwd: string, file: string): string {
-        return Path.resolve(pwd, file.replace(/^~/, Utils.homeDirectory));
-    }
-
-    static async filterAsync<T>(values: T[], asyncPredicate: (t: T) => Promise<boolean>): Promise<T[]> {
-        const filtered = await Promise.all(values.map(asyncPredicate));
-        return values.filter((value: T, index: number) => filtered[index]);
-    }
-
-    static pluralize(word: string, count = 2) {
-        return count === 1 ? word : this.pluralFormOf(word);
-    }
-
-    private static pluralFormOf(word: string) {
-        if (word.endsWith("y")) {
-            return word.substring(0, word.length - 1) + "ies";
-        } else {
-            return word + "s";
-        }
-    }
+export function isWindows(): boolean {
+    return process.platform === "win32";
 }
 
 export function groupWhen<T>(grouper: (a: T, b: T) => boolean, row: T[]): T[][] {
@@ -232,4 +199,129 @@ export function groupWhen<T>(grouper: (a: T, b: T) => boolean, row: T[]): T[][] 
     result.push(currentGroup);
 
     return result;
+}
+
+
+/**
+ * @link https://lists.w3.org/Archives/Public/www-dom/2010JulSep/att-0182/keyCode-spec.html
+ * @link http://unixpapa.com/js/key.html
+ * @link http://www.cambiaresearch.com/articles/15/javascript-key-codes
+ */
+export function convertKeyCode(keyCode: number, shift: boolean): string {
+    switch (keyCode) {
+        case KeyCode.Backspace:
+            return String.fromCharCode(127);
+        case KeyCode.Tab:
+            return String.fromCharCode(KeyCode.Tab);
+        case KeyCode.CarriageReturn:
+            return String.fromCharCode(KeyCode.CarriageReturn);
+        case KeyCode.Escape:
+            return String.fromCharCode(KeyCode.Escape);
+        case KeyCode.Space:
+            return " ";
+        case KeyCode.Left:
+            return "\x1b[D";
+        case KeyCode.Up:
+            return "\x1b[A";
+        case KeyCode.Right:
+            return "\x1b[C";
+        case KeyCode.Down:
+            return "\x1b[B";
+        case 48:
+            return shift ? ")" : "0";
+        case 49:
+            return shift ? "!" : "1";
+        case 50:
+            return shift ? "@" : "2";
+        case 51:
+            return shift ? "#" : "3";
+        case 52:
+            return shift ? "$" : "4";
+        case 53:
+            return shift ? "%" : "5";
+        case 54:
+            return shift ? "^" : "6";
+        case 55:
+            return shift ? "&" : "7";
+        case 56:
+            return shift ? "*" : "8";
+        case 57:
+            return shift ? "(" : "9";
+        case 65:
+            return shift ? "A" : "a";
+        case 66:
+            return shift ? "B" : "b";
+        case 67:
+            return shift ? "C" : "c";
+        case 68:
+            return shift ? "D" : "d";
+        case 69:
+            return shift ? "E" : "e";
+        case 70:
+            return shift ? "F" : "f";
+        case 71:
+            return shift ? "G" : "g";
+        case 72:
+            return shift ? "H" : "h";
+        case 73:
+            return shift ? "I" : "i";
+        case 74:
+            return shift ? "J" : "j";
+        case 75:
+            return shift ? "K" : "k";
+        case 76:
+            return shift ? "L" : "l";
+        case 77:
+            return shift ? "M" : "m";
+        case 78:
+            return shift ? "N" : "n";
+        case 79:
+            return shift ? "O" : "o";
+        case 80:
+            return shift ? "P" : "p";
+        case 81:
+            return shift ? "Q" : "q";
+        case 82:
+            return shift ? "R" : "r";
+        case 83:
+            return shift ? "S" : "s";
+        case 84:
+            return shift ? "T" : "t";
+        case 85:
+            return shift ? "U" : "u";
+        case 86:
+            return shift ? "V" : "v";
+        case 87:
+            return shift ? "W" : "w";
+        case 88:
+            return shift ? "X" : "x";
+        case 89:
+            return shift ? "Y" : "y";
+        case 90:
+            return shift ? "Z" : "z";
+        case 186:
+            return shift ? ":" : ";";
+        case 187:
+            return shift ? "+" : "=";
+        case 188:
+            return shift ? "<" : ",";
+        case 189:
+            return shift ? "_" : "-";
+        case 190:
+            return shift ? ">" : ".";
+        case 191:
+            return shift ? "?" : "/";
+        case 192:
+            return shift ? "~" : "`";
+        case 219:
+            return shift ? "{" : "[";
+        case 220:
+            return shift ? "|" : "\\";
+        case 221:
+            return shift ? "}" : "]";
+        case 222:
+            return shift ? "\"" : "'";
+        default:
+            throw `Unknown key code: ${keyCode}`;
+    }
 }

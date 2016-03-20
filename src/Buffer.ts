@@ -1,11 +1,10 @@
 import * as events from "events";
-import Char from "./Char";
+import Char, {attributesFlyweight} from "./Char";
 import Cursor from "./Cursor";
 import * as i from "./Interfaces";
 import * as e from "./Enums";
-import Utils from "./Utils";
 import {List} from "immutable";
-import {attributesFlyweight} from "./Char";
+import {error, times} from "./Utils";
 const shell: Electron.Shell = require("remote").require("electron").shell;
 
 export default class Buffer extends events.EventEmitter {
@@ -13,7 +12,7 @@ export default class Buffer extends events.EventEmitter {
     public cursor: Cursor = new Cursor();
     public activeBuffer = e.Buffer.Standard;
     private storage = List<List<Char>>();
-    private _attributes: i.Attributes = { color: e.Color.White, weight: e.Weight.Normal };
+    private _attributes: i.Attributes = {color: e.Color.White, weight: e.Weight.Normal};
     private isOriginModeSet = false;
     private _margins: Margins = {};
 
@@ -21,13 +20,13 @@ export default class Buffer extends events.EventEmitter {
         super();
     }
 
-    writeString(value: string): void {
+    writeMany(value: string): void {
         for (let i = 0; i !== value.length; ++i) {
-            this.write(value.charAt(i));
+            this.writeOne(value.charAt(i));
         }
     }
 
-    write(char: string): void {
+    writeOne(char: string): void {
         const charObject = Char.flyweight(char, this.attributes);
 
         if (charObject.isSpecial()) {
@@ -36,39 +35,39 @@ export default class Buffer extends events.EventEmitter {
                     shell.beep();
                     break;
                 case e.KeyCode.Backspace:
-                    this.moveCursorRelative({ horizontal: -1 });
+                    this.moveCursorRelative({horizontal: -1});
                     break;
                 case e.KeyCode.Tab:
-                    this.moveCursorAbsolute({ column: Math.floor((this.cursor.column() + 8) / 8) * 8 });
+                    this.moveCursorAbsolute({column: Math.floor((this.cursor.column() + 8) / 8) * 8});
                     break;
                 case e.KeyCode.NewLine:
                     if (this.cursor.row() === this._margins.bottom) {
                         this.scrollDown(1);
                     } else {
-                        this.moveCursorRelative({ vertical: 1 }).moveCursorAbsolute({ column: 0 });
+                        this.moveCursorRelative({vertical: 1}).moveCursorAbsolute({column: 0});
                     }
 
                     break;
                 case e.KeyCode.CarriageReturn:
-                    this.moveCursorAbsolute({ column: 0 });
+                    this.moveCursorAbsolute({column: 0});
                     break;
                 default:
-                    Utils.error(`Couldn"t write a special char "${charObject}" with char code ${charObject.toString().charCodeAt(0)}.`);
+                    error(`Couldn"t write a special char "${charObject}" with char code ${charObject.toString().charCodeAt(0)}.`);
             }
         } else {
             this.set(this.cursorPosition, charObject);
-            this.moveCursorRelative({ horizontal: 1 });
+            this.moveCursorRelative({horizontal: 1});
         }
         this.emitData();
     }
 
     scrollUp(count: number, addAtLine: number) {
         this.storage = this.storage.splice(this._margins.bottom - count + 1, count).toList();
-        Utils.times(count, () => this.storage = this.storage.splice(addAtLine, 0, undefined).toList());
+        times(count, () => this.storage = this.storage.splice(addAtLine, 0, undefined).toList());
     }
 
     scrollDown(count: number, deletedLine = this._margins.top) {
-        Utils.times(count, () => this.storage = this.storage.splice(this._margins.bottom + 1, 0, undefined).toList());
+        times(count, () => this.storage = this.storage.splice(this._margins.bottom + 1, 0, undefined).toList());
         this.storage = this.storage.splice(deletedLine, count).toList();
     }
 
@@ -97,7 +96,7 @@ export default class Buffer extends events.EventEmitter {
             let char: Char = storage.getIn(coordinates);
             storage = storage.setIn(
                 coordinates,
-                Char.flyweight(char.toString(), Object.assign({}, char.attributes, { cursor: true }))
+                Char.flyweight(char.toString(), Object.assign({}, char.attributes, {cursor: true}))
             );
         }
 
@@ -117,11 +116,13 @@ export default class Buffer extends events.EventEmitter {
     }
 
     showCursor(state: boolean): void {
+        this.ensureRowExists(this.cursor.row());
         this.cursor.show = state;
         this.emitData();
     }
 
     blinkCursor(state: boolean): void {
+        this.ensureRowExists(this.cursor.row());
         this.cursor.blink = state;
         this.emitData();
     }
@@ -146,8 +147,8 @@ export default class Buffer extends events.EventEmitter {
                 this.cursorPosition.row,
                 List<Char>(),
                 (row: List<Char>) => row.take(this.cursorPosition.column)
-                                         .concat(Array(n).fill(Char.empty), row.skip(this.cursorPosition.column + n))
-                                         .toList()
+                    .concat(Array(n).fill(Char.empty), row.skip(this.cursorPosition.column + n))
+                    .toList()
             );
         }
         this.emitData();
@@ -181,7 +182,7 @@ export default class Buffer extends events.EventEmitter {
 
     clear() {
         this.storage = List<List<Char>>();
-        this.moveCursorAbsolute({ row: 0, column: 0 });
+        this.moveCursorAbsolute({row: 0, column: 0});
     }
 
     clearToBeginning() {
@@ -228,18 +229,21 @@ export default class Buffer extends events.EventEmitter {
 
     private get homePosition(): RowColumn {
         if (this.isOriginModeSet) {
-            return { row: this._margins.top || 0, column: this._margins.left || 0 };
+            return {row: this._margins.top || 0, column: this._margins.left || 0};
         } else {
-            return { row: 0, column: 0 };
+            return {row: 0, column: 0};
         }
     }
 
     private set(position: RowColumn, char: Char): void {
-        if (!this.storage.get(position.row)) {
-            this.storage = this.storage.set(position.row, List<Char>());
-        }
-
+        this.ensureRowExists(position.row);
         this.storage = this.storage.setIn([position.row, position.column], char);
+    }
+
+    private ensureRowExists(rowNumber: number): void {
+        if (!this.storage.get(rowNumber)) {
+            this.storage = this.storage.set(rowNumber, List<Char>());
+        }
     }
 
     private emitData() {

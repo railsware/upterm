@@ -32,3 +32,6 @@ Icon
 Network Trash Folder
 Temporary Items
 .apdisk
+
+# Directory created by Visual Studio Code
+.vscode

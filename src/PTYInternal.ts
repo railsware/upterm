@@ -1,11 +1,17 @@
 import * as pty from "pty.js";
+import {baseName} from "./Utils";
 
 let commandName = process.argv[2];
 let args = process.argv.slice(5);
 let columns = parseInt(process.argv[3], 10);
 let rows = parseInt(process.argv[4], 10);
 
-const fork = pty.fork(process.env.SHELL, ["-c", `${commandName} ${args.join(" ")}`], {
+const noConfigSwitches: Dictionary<string[]> = {
+    zsh: ["--no-globalrcs", "--no-rcs"],
+    bash: ["--noprofile", "--norc"],
+};
+
+const fork = pty.fork(process.env.SHELL, [...noConfigSwitches[baseName(process.env.SHELL)], "-c", `${commandName} ${args.join(" ")}`], {
     cols: columns,
     rows: rows,
     cwd: process.cwd(),

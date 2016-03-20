@@ -4,10 +4,11 @@ const reactDOM = require("react-dom");
 import * as React from "react";
 import ApplicationComponent from "./1_ApplicationComponent";
 import {loadAllPlugins} from "../PluginManager";
+import {loadEnvironment} from "../Environment";
 
 $(() => {
-    // FIXME: Remove after switching to Webpack (because all the files will be loaded at start anyway).
-    loadAllPlugins()
+    // FIXME: Remove loadAllPlugins after switching to Webpack (because all the files will be loaded at start anyway).
+    Promise.all([loadAllPlugins(), loadEnvironment()])
         .then(() => reactDOM.render(<ApplicationComponent/>, document.getElementById("black-screen")) )
         .then(() => Aliases.all());
 });

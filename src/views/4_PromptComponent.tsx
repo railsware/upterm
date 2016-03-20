@@ -102,7 +102,7 @@ export default class PromptComponent extends React.Component<Props, State> imple
             .forEach((event: KeyboardEvent) => this.navigateHistory(event));
 
         this.handlers = {
-            onKeyDown: allKeys
+            onKeyDown: allKeys,
         };
 
         // FIXME: find a better design to propagate events.
@@ -180,7 +180,7 @@ export default class PromptComponent extends React.Component<Props, State> imple
             decorationToggle = <DecorationToggleComponent job={this.props.jobView}/>;
         }
 
-        if (this.props.status !== e.Status.NotStarted) {
+        if (this.props.status !== e.Status.NotStarted && this.props.job.buffer.size > 100) {
             scrollToTop = <a className="scroll-to-top" onClick={this.handleScrollToTop.bind(this)}><i className="fa fa-long-arrow-up"/></a>;
         }
 

@@ -47,6 +47,7 @@ More Screenshots
 ----------------
 
 ![](README/npm_autocompletion.png)
+![](README/error.png)
 ![](README/history_autocompletion.png)
 ![](README/top_autocompletion.png)
 ![](README/json_decorator.png)

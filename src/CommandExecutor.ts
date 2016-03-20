@@ -1,8 +1,9 @@
 import Job from "./Job";
 import Command from "./Command";
-import Utils from "./Utils";
 import PTY from "./PTY";
 import * as Path from "path";
+import {executablesInPaths, resolveFile, isWindows, filterAsync} from "./Utils";
+import {exists} from "fs";
 
 abstract class CommandExecutionStrategy {
     protected args: string[];
@@ -37,14 +38,13 @@ class BuiltInCommandExecutionStrategy extends CommandExecutionStrategy {
 
 class UnixSystemFileExecutionStrategy extends CommandExecutionStrategy {
     static async canExecute(job: Job) {
-        return (await Utils.executablesInPaths()).includes(job.prompt.commandName) ||
-            await Utils.exists(Utils.resolveFile(job.session.currentDirectory, job.prompt.commandName));
+        return (await executablesInPaths(job.environment.path)).includes(job.prompt.commandName) || await exists(resolveFile(job.session.directory, job.prompt.commandName));
     }
 
     startExecution() {
         return new Promise((resolve, reject) => {
             this.job.command = new PTY(
-                this.job.prompt.commandName, this.args, this.job.session.currentDirectory, this.job.dimensions,
+                this.job.prompt.commandName, this.args, this.job.environment.toObject(), this.job.dimensions,
                 (data: string) => this.job.parser.parse(data),
                 (exitCode: number) => exitCode === 0 ? resolve() : reject()
             );
@@ -54,13 +54,13 @@ class UnixSystemFileExecutionStrategy extends CommandExecutionStrategy {
 
 class WindowsSystemFileExecutionStrategy extends CommandExecutionStrategy {
     static async canExecute(job: Job) {
-        return Utils.isWindows;
+        return isWindows();
     }
 
     startExecution() {
         return new Promise((resolve) => {
             this.job.command = new PTY(
-                this.cmdPath, ["/s", "/c", this.job.prompt.expanded.join(" ")], this.job.session.currentDirectory, this.job.dimensions,
+                this.cmdPath, ["/s", "/c", this.job.prompt.expanded.join(" ")], this.job.environment.toObject(), this.job.dimensions,
                 (data: string) => this.job.parser.parse(data),
                 (exitCode: number) => resolve()
             );
@@ -68,10 +68,10 @@ class WindowsSystemFileExecutionStrategy extends CommandExecutionStrategy {
     }
 
     private get cmdPath(): string {
-        if (process.env.comspec) {
-            return process.env.comspec;
-        } else if (process.env.SystemRoot) {
-            return Path.join(process.env.SystemRoot, "System32", "cmd.exe");
+        if (this.job.environment.has("comspec")) {
+            return this.job.environment.get("comspec");
+        } else if (this.job.environment.has("SystemRoot")) {
+            return Path.join(this.job.environment.get("SystemRoot"), "System32", "cmd.exe");
         } else {
             return "cmd.exe";
         }
@@ -86,9 +86,10 @@ export default class CommandExecutor {
     ];
 
     static async execute(job: Job): Promise<{}> {
-        const applicableExecutors = await Utils.filterAsync(this.executors, executor => executor.canExecute(job));
+        const applicableExecutors = await filterAsync(this.executors, executor => executor.canExecute(job));
 
         if (applicableExecutors.length) {
+            job.buffer.showCursor(true);
             return new applicableExecutors[0](job).startExecution();
         } else {
             throw `Black Screen: command "${job.prompt.commandName}" not found.`;

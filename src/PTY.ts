@@ -1,6 +1,7 @@
 import * as ChildProcess from "child_process";
-const ptyInternalPath = require.resolve("./PTYInternal");
 import * as OS from "os";
+import {baseName, resolveFile, exists, filterAsync} from "./Utils";
+const ptyInternalPath = require.resolve("./PTYInternal");
 
 interface Message {
     data?: string;
@@ -13,11 +14,11 @@ export default class PTY {
     // TODO: write proper signatures.
     // TODO: use generators.
     // TODO: terminate. https://github.com/atom/atom/blob/v1.0.15/src/task.coffee#L151
-    constructor(command: string, args: string[], cwd: string, dimensions: Dimensions, dataHandler: Function, exitHandler: Function) {
+    constructor(command: string, args: string[], env: ProcessEnvironment, dimensions: Dimensions, dataHandler: Function, exitHandler: Function) {
         this.process = ChildProcess.fork(
             ptyInternalPath,
             [command, dimensions.columns.toString(), dimensions.rows.toString(), ...args],
-            { env: process.env, cwd: cwd }
+            {env: env, cwd: env.PWD}
         );
 
         this.process.on("message", (message: Message) => {
@@ -25,6 +26,7 @@ export default class PTY {
                 dataHandler(message.data);
             } else if (message.hasOwnProperty("exit")) {
                 exitHandler(message.exit);
+                this.process.disconnect();
             } else {
                 throw `Unhandled message: ${JSON.stringify(message)}`;
             }
@@ -32,34 +34,58 @@ export default class PTY {
     }
 
     write(data: string): void {
-        this.process.send({ input: data });
+        this.process.send({input: data});
     }
 
     set dimensions(dimensions: Dimensions) {
-        this.process.send({ resize: [dimensions.columns, dimensions.rows] });
+        this.process.send({resize: [dimensions.columns, dimensions.rows]});
     }
 
     kill(signal: string): void {
-        this.process.send({ signal: signal });
+        this.process.send({signal: signal});
     }
 }
 
-export function executeCommand(command: string, args: string[] = [], directory: string = process.env.HOME): Promise<string> {
+export function executeCommand(command: string, args: string[] = [], directory: string): Promise<string> {
     return new Promise((resolve, reject) => {
         let output = "";
         /* tslint:disable:no-unused-expression */
         new PTY(
             command,
             args,
-            directory,
-            { columns: 80, rows: 20 },
+            <ProcessEnvironment>_.extend({PWD: directory}, process.env),
+            {columns: 80, rows: 20},
             (text: string) => output += text,
             (exitCode: number) => exitCode === 0 ? resolve(output) : reject(exitCode)
         );
     });
 }
 
-export async function linedOutputOf(command: string, args: string[], directory: string) {
+export async function linedOutputOf(command: string, args: string[], directory: string): Promise<string[]> {
     let output = await executeCommand(command, args, directory);
     return output.split(OS.EOL).filter(path => path.length > 0);
+}
+
+export async function executeCommandWithShellConfig(command: string): Promise<string[]> {
+    const shellPath: string = process.env.SHELL;
+    const shellName = baseName(shellPath);
+    const sourceCommands = (await existingConfigFiles(shellName)).map(fileName => `source ${fileName}`);
+
+    return await linedOutputOf(shellPath, ["-c", `'${[...sourceCommands, command].join("; ")}'`], process.env.HOME);
+}
+
+async function existingConfigFiles(shellName: string): Promise<string[]> {
+    const resolvedConfigFiles = configFiles(shellName).map(fileName => resolveFile(process.env.HOME, fileName));
+    return await filterAsync(resolvedConfigFiles, exists);
+}
+
+function configFiles(shellName: string): string[] {
+    switch (shellName) {
+        case "zsh":
+            return ["~/.zshrc", "~/.zsh_profile"];
+        case "bash":
+            return ["~/.bashrc", "~/.bash_profile"];
+        default:
+            return [];
+    }
 }

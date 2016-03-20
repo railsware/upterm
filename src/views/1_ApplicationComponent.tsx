@@ -18,7 +18,7 @@ export default class ApplicationComponent extends React.Component<{}, State> {
     constructor(props: {}) {
         super(props);
 
-        this.createTab();
+        this.addTab();
         this.state = {sessions: this.activeTab.sessions};
 
         $(window).resize(() => {
@@ -28,8 +28,10 @@ export default class ApplicationComponent extends React.Component<{}, State> {
         });
 
         ipcRenderer.on("change-working-directory", (event: Event, directory: string) =>
-            this.activeTab.activeSession().currentDirectory = directory
+            this.activeTab.activeSession().directory = directory
         );
+
+        window.onbeforeunload = () => this.closeAllTabs();
     }
 
     handleKeyDown(event: KeyboardEvent) {
@@ -47,7 +49,7 @@ export default class ApplicationComponent extends React.Component<{}, State> {
         }
 
         if (event.ctrlKey && event.keyCode === KeyCode.D) {
-            this.removeSession(this.activeTab.activeSession());
+            this.closeSession(this.activeTab.activeSession());
 
             this.setState({sessions: this.activeTab.sessions});
 
@@ -72,7 +74,7 @@ export default class ApplicationComponent extends React.Component<{}, State> {
 
         if (event.metaKey && event.keyCode === KeyCode.T) {
             if (this.tabs.length < 9) {
-                this.createTab();
+                this.addTab();
                 this.setState({sessions: this.activeTab.sessions});
             } else {
                 shell.beep();
@@ -82,7 +84,7 @@ export default class ApplicationComponent extends React.Component<{}, State> {
         }
 
         if (event.metaKey && event.keyCode === KeyCode.W) {
-            this.removeTab(this.activeTab);
+            this.closeTab(this.activeTab);
             this.setState({sessions: this.activeTab.sessions});
 
             event.stopPropagation();
@@ -121,9 +123,9 @@ export default class ApplicationComponent extends React.Component<{}, State> {
 
         let sessions = this.state.sessions.map(session =>
             <SessionComponent session={session}
-                               key={session.id}
-                               isActive={session === this.activeTab.activeSession()}
-                               activate={() => {
+                              key={session.id}
+                              isActive={session === this.activeTab.activeSession()}
+                              activate={() => {
                                    this.activeTab.activateSession(session);
                                    this.setState({ sessions: this.activeTab.sessions });
                                }}>
@@ -138,14 +140,14 @@ export default class ApplicationComponent extends React.Component<{}, State> {
         );
     }
 
-    public removeSession(sessionToRemove: Session) {
+    public closeSession(sessionToClose: Session) {
         for (const tab of this.tabs) {
             for (const session of tab.sessions) {
-                if (session === sessionToRemove) {
-                    tab.removeSession(session);
+                if (session === sessionToClose) {
+                    tab.closeSession(session);
 
                     if (tab.sessions.length === 0) {
-                        this.removeTab(tab);
+                        this.closeTab(tab);
                     }
 
                     this.setState({sessions: this.activeTab.sessions});
@@ -162,15 +164,26 @@ export default class ApplicationComponent extends React.Component<{}, State> {
         return this.tabs[this.activeTabIndex];
     }
 
-    private createTab(): void {
+    private addTab(): void {
         this.tabs.push(new Tab(this));
         this.activeTabIndex = this.tabs.length - 1;
     }
 
-    private removeTab(tab: Tab): void {
+    private closeAllTabs(): void {
+        // Can't use forEach here because closeTab changes the array being iterated.
+        while (this.tabs.length) {
+            this.closeTab(this.tabs[0], false);
+        }
+    }
+
+    private closeTab(tab: Tab, quit = true): void {
+        // Can't use forEach here because closeSession changes the array being iterated.
+        while (tab.sessions.length) {
+            tab.closeSession(tab.sessions[0]);
+        }
         _.pull(this.tabs, tab);
 
-        if (this.tabs.length === 0) {
+        if (this.tabs.length === 0 && quit) {
             ipcRenderer.send("quit");
         } else if (this.tabs.length === this.activeTabIndex) {
             this.activeTabIndex -= 1;
