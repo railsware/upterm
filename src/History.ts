@@ -2,11 +2,9 @@ import {lex} from "./CommandExpander";
 
 export class HistoryEntry {
     private _raw: string;
-    private _historyExpanded: string[];
 
-    constructor(private entryValue: string, private entryExpanded: string[]) {
-        this._raw = entryValue.trim().replace(/\s+/g, " ");
-        this._historyExpanded = entryExpanded;
+    constructor(raw: string, private _historyExpanded: string[]) {
+        this._raw = raw.trim().replace(/\s+/g, " ");
     }
 
     get raw(): string {
