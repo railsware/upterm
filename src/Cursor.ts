@@ -18,8 +18,8 @@ export default class Cursor {
     }
 
     moveRelative(advancement: Advancement): Cursor {
-        const row = Math.max(0, this.row() + (advancement.vertical || 0));
-        const column = Math.max(0, this.column() + (advancement.horizontal || 0));
+        const row = Math.max(0, this.row + (advancement.vertical || 0));
+        const column = Math.max(0, this.column + (advancement.horizontal || 0));
 
         this.moveAbsolute({ row: row, column: column }, { column: 0, row: 0 });
 
@@ -30,11 +30,11 @@ export default class Cursor {
         return this.position;
     }
 
-    column(): number {
+    get column(): number {
         return this.position.column;
     }
 
-    row(): number {
+    get row(): number {
         return this.position.row;
     }
 

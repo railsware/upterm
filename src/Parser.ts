@@ -399,13 +399,13 @@ export default class Parser {
                 url = "http://www.vt100.net/docs/vt510-rm/IL";
                 short = "Inserts one or more blank lines, starting at the cursor. (DL)";
 
-                this.buffer.scrollUp(param || 1, this.buffer.cursor.row());
+                this.buffer.scrollUp(param || 1, this.buffer.cursor.row);
                 break;
             case "M":
                 url = "http://www.vt100.net/docs/vt510-rm/DL";
                 short = "Deletes one or more lines in the scrolling region, starting with the line that has the cursor. (DL)";
 
-                this.buffer.scrollDown(param || 1, this.buffer.cursor.row());
+                this.buffer.scrollDown(param || 1, this.buffer.cursor.row);
                 break;
             case "X":
                 short = "Erase P s Character(s) (default = 1) (ECH)";

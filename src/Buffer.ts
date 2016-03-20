@@ -38,10 +38,10 @@ export default class Buffer extends events.EventEmitter {
                     this.moveCursorRelative({horizontal: -1});
                     break;
                 case e.KeyCode.Tab:
-                    this.moveCursorAbsolute({column: Math.floor((this.cursor.column() + 8) / 8) * 8});
+                    this.moveCursorAbsolute({column: Math.floor((this.cursor.column + 8) / 8) * 8});
                     break;
                 case e.KeyCode.NewLine:
-                    if (this.cursor.row() === this._margins.bottom) {
+                    if (this.cursor.row === this._margins.bottom) {
                         this.scrollDown(1);
                     } else {
                         this.moveCursorRelative({vertical: 1}).moveCursorAbsolute({column: 0});
@@ -116,20 +116,20 @@ export default class Buffer extends events.EventEmitter {
     }
 
     showCursor(state: boolean): void {
-        this.ensureRowExists(this.cursor.row());
+        this.ensureRowExists(this.cursor.row);
         this.cursor.show = state;
         this.emitData();
     }
 
     blinkCursor(state: boolean): void {
-        this.ensureRowExists(this.cursor.row());
+        this.ensureRowExists(this.cursor.row);
         this.cursor.blink = state;
         this.emitData();
     }
 
     moveCursorRelative(position: Advancement): Buffer {
         this.cursor.moveRelative(position);
-        this.ensureRowExists(this.cursor.row());
+        this.ensureRowExists(this.cursor.row);
         this.emitData();
 
         return this;
@@ -137,7 +137,7 @@ export default class Buffer extends events.EventEmitter {
 
     moveCursorAbsolute(position: RowColumn): Buffer {
         this.cursor.moveAbsolute(position, this.homePosition);
-        this.ensureRowExists(this.cursor.row());
+        this.ensureRowExists(this.cursor.row);
         this.emitData();
 
         return this;
