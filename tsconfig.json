@@ -10,7 +10,7 @@
     "noEmitOnError": true,
     "pretty": true,
     "jsx": "react",
-    "outDir": "compiled"
+    "outDir": "compiled/src"
   },
   "exclude": [
     "node_modules",
