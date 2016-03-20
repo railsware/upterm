@@ -27,7 +27,7 @@ const options = {
     typeScript: {
         source: "src/**/*.ts*",
         target: "compiled/src",
-        config: $.typescript.createProject('tsconfig.json', {typescript: require("typescript")})
+        config: $.typescript.createProject('src/tsconfig.json', {typescript: require("typescript")})
     },
     test: {
         source: "test/**/*.ts",
