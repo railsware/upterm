@@ -2,8 +2,7 @@ import Job from "./Job";
 import Command from "./Command";
 import PTY from "./PTY";
 import * as Path from "path";
-import {executablesInPaths, resolveFile, isWindows, filterAsync} from "./Utils";
-import {exists} from "fs";
+import {executablesInPaths, resolveFile, isWindows, filterAsync, exists} from "./Utils";
 
 abstract class CommandExecutionStrategy {
     protected args: string[];
@@ -38,7 +37,15 @@ class BuiltInCommandExecutionStrategy extends CommandExecutionStrategy {
 
 class UnixSystemFileExecutionStrategy extends CommandExecutionStrategy {
     static async canExecute(job: Job) {
-        return (await executablesInPaths(job.environment.path)).includes(job.prompt.commandName) || await exists(resolveFile(job.session.directory, job.prompt.commandName));
+        return await this.isExecutableFromPath(job) || await this.isPathOfExecutable(job);
+    }
+
+    private static async isExecutableFromPath(job: Job): Promise<boolean> {
+        return (await executablesInPaths(job.environment.path) ).includes(job.prompt.commandName);
+    }
+
+    private static async isPathOfExecutable(job: Job): Promise<boolean> {
+        return await exists(resolveFile(job.session.directory, job.prompt.commandName));
     }
 
     startExecution() {
