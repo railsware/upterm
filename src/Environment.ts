@@ -1,6 +1,7 @@
 import {delimiter} from "path";
 import {executeCommandWithShellConfig} from "./PTY";
 import {clone} from "lodash";
+import {homeDirectory} from "./Utils";
 
 const env: Dictionary<string> = {};
 export async function loadEnvironment(): Promise<void> {
@@ -53,5 +54,17 @@ export default class Environment {
 
     cdpath(pwd: string): string[] {
         return (this.get("CDPATH") || "").split(delimiter).map(path => path || pwd);
+    }
+
+    get pwd(): string {
+        if (!this.get("PWD")) {
+            this.pwd = homeDirectory();
+        }
+
+        return this.get("PWD");
+    }
+
+    set pwd(value: string) {
+        this.set("PWD", value);
     }
 }

@@ -74,7 +74,7 @@ export default class Session extends EmitterWithUniqueID {
     }
 
     get directory(): string {
-        return this.environment.get("PWD");
+        return this.environment.pwd;
     }
 
     set directory(value: string) {
@@ -87,7 +87,7 @@ export default class Session extends EmitterWithUniqueID {
             observer.currentWorkingDirectoryWillChange(this, normalizedDirectory)
         );
 
-        this.environment.set("PWD", normalizedDirectory);
+        this.environment.pwd = normalizedDirectory;
         this.historicalCurrentDirectoriesStack.push(normalizedDirectory);
 
         PluginManager.environmentObservers.forEach(observer =>
