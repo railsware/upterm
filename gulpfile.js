@@ -40,7 +40,7 @@ const options = {
     }
 };
 
-gulp.task("typescript", $.shell.task("tsc", {cwd: "/Users/me/dev/black-screen"}));
+gulp.task("typescript", $.shell.task("npm run tsc", {cwd: "/Users/me/dev/black-screen"}));
 
 gulp.task("sass", function () {
         return gulp.src(options.sass.source)

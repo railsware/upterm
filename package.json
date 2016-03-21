@@ -77,7 +77,8 @@
     "test": "mocha --require ts-node/register  --harmony_rest_parameters --harmony_default_parameters test/**",
     "update-typings": "typings install --browser",
     "update-dependencies": "ncu -u",
-    "lint": "tslint `find src -name '*.ts*'`"
+    "lint": "tslint `find src -name '*.ts*'`",
+    "tsc": "tsc"
   },
   "license": "MIT"
 }
