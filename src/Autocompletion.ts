@@ -15,9 +15,12 @@ export default class Autocompletion implements i.AutocompletionProvider {
         return Promise.all(providers.map(provider => provider.getSuggestions(job))).then(results =>
             _._(results)
                 .flatten()
+                // .forEach((suggestion: Suggestion) =>
+                //         suggestion.score = score(suggestion.value, suggestion.getPrefix(job))
+                // )
                 .filter((suggestion: Suggestion) =>
-                    !suggestion.shouldIgnore(job) &&
-                    score(suggestion.value, suggestion.getPrefix(job)) > 0)
+                        !suggestion.shouldIgnore(job) &&
+                        score(suggestion.value, suggestion.getPrefix(job)) > 0)
                 .sortBy((suggestion: Suggestion) => -score(suggestion.value, suggestion.getPrefix(job)))
                 .uniqBy((suggestion: Suggestion) => suggestion.value)
                 .take(Autocompletion.limit)
