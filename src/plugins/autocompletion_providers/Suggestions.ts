@@ -12,6 +12,7 @@ export class Suggestion {
     private _description: string;
     private _type: string;
     private _childrenProvider: (job: Job) => SuggestionsPromise;
+    private _score: number;
 
     constructor() {
         this._value = "";
@@ -47,6 +48,14 @@ export class Suggestion {
 
     get displayValue(): string {
         return this.value;
+    }
+
+    get score(): number {
+        return this._score;
+    }
+
+    set score(v: number) {
+        this._score = v;
     }
 
     getPrefix(job: Job): string {
