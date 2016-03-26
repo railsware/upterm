@@ -8,19 +8,20 @@ const score: (i: string, m: string) => number = require("fuzzaldrin").score;
 export default class Autocompletion implements i.AutocompletionProvider {
     static limit = 9;
 
-    getSuggestions(job: Job) {
+    async getSuggestions(job: Job) {
         let specializedProviders = PluginManager.specializedAutocompletionProviders(job.prompt.expandedFinishedLexemes);
         let providers = specializedProviders.length ? specializedProviders : PluginManager.genericAutocompletionProviders;
 
-        // FIXME: skip suggestions that have 0 score.
-        return Promise.all(providers.map(provider => provider.getSuggestions(job))).then(results =>
-            _._(results)
-                .flatten()
-                .filter((suggestion: Suggestion) => !suggestion.shouldIgnore(job))
-                .sortBy((suggestion: Suggestion) => -score(suggestion.value, suggestion.getPrefix(job)))
-                .uniqBy((suggestion: Suggestion) => suggestion.value)
-                .take(Autocompletion.limit)
-                .value()
-        );
+        const suggestions: Suggestion[][] = await Promise.all(providers.map(provider => provider.getSuggestions(job)));
+        const scoredSuggestions = _.flatten(suggestions)
+            .filter(suggestion => !suggestion.shouldIgnore(job))
+            .map(suggestion => {
+                return {suggestion: suggestion, score: score(suggestion.value, suggestion.getPrefix(job))};
+            })
+            .filter(wrapper => wrapper.score > 0)
+            .sort(wrapper => -wrapper.score)
+            .map(wrapper => wrapper.suggestion);
+
+        return _.uniqBy(scoredSuggestions, suggestion => suggestion.value).slice(0, Autocompletion.limit);
     }
 }
