@@ -2,7 +2,7 @@ import * as _ from "lodash";
 import * as i from "./Interfaces";
 import * as React from "react";
 import Session from "./Session";
-import Parser from "./Parser";
+import ANSIParser from "./ANSIParser";
 import Prompt from "./Prompt";
 import Buffer from "./Buffer";
 import CommandExecutor from "./CommandExecutor";
@@ -19,7 +19,7 @@ function makeThrottledDataEmitter(timesPerSecond: number, subject: EmitterWithUn
 
 export default class Job extends EmitterWithUniqueID {
     public command: PTY;
-    public parser: Parser;
+    public parser: ANSIParser;
     public status: Status = Status.NotStarted;
     private _prompt: Prompt;
     private _buffer: Buffer;
@@ -37,7 +37,7 @@ export default class Job extends EmitterWithUniqueID {
 
         this._buffer = new Buffer(this.dimensions);
         this._buffer.on("data", this.throttledDataEmitter.bind(this));
-        this.parser = new Parser(this);
+        this.parser = new ANSIParser(this);
     }
 
     async execute(): Promise<void> {

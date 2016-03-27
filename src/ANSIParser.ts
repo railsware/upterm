@@ -56,7 +56,7 @@ const CSI = {
     },
 };
 
-export default class Parser {
+export default class ANSIParser {
     private parser: AnsiParser;
     private buffer: BufferModel;
 
