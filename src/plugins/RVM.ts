@@ -1,7 +1,7 @@
 import Session from "../Session";
 import PluginManager from "../PluginManager";
 import * as Path from "path";
-import {homeDirectory, exists, readFile} from "../Utils";
+import {homeDirectory, exists, readFile} from "../utils/Common";
 
 const rvmDirectory = Path.join(homeDirectory(), ".rvm");
 const rubyVersionFileName = ".ruby-version";

@@ -1,6 +1,6 @@
 import * as ChildProcess from "child_process";
 import * as OS from "os";
-import {baseName, resolveFile, exists, filterAsync, shell} from "./Utils";
+import {baseName, resolveFile, exists, filterAsync, shell} from "./utils/Common";
 const ptyInternalPath = require.resolve("./PTYInternal");
 
 interface Message {

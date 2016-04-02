@@ -2,7 +2,7 @@ import * as _ from "lodash";
 import Job from "../../Job";
 import PluginManager from "../../PluginManager";
 import {Executable} from "./Suggestions";
-import {executablesInPaths} from "../../Utils";
+import {executablesInPaths} from "../../utils/Common";
 
 const descriptions: {[indexer: string]: string} = {
     admin: "Create and administer SCCS files",

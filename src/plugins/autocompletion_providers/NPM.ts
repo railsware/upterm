@@ -2,7 +2,7 @@ import Job from "../../Job";
 import * as Path from "path";
 import PluginManager from "../../PluginManager";
 import {Suggestion, Subcommand, SubSubcommand} from "./Suggestions";
-import {exists, readFile} from "../../Utils";
+import {exists, readFile} from "../../utils/Common";
 
 const subcommands = [
     new Subcommand("access").withSynopsis("Set access level on published packages"),

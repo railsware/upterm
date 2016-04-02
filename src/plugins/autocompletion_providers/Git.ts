@@ -5,7 +5,7 @@ import * as Path from "path";
 import PluginManager from "../../PluginManager";
 import {linedOutputOf} from "../../PTY";
 import {Suggestion, Subcommand, Option, OptionWithValue, LongOption} from "./Suggestions";
-import {exists} from "../../Utils";
+import {exists} from "../../utils/Common";
 
 class File extends Suggestion {
     constructor(protected _line: string) {

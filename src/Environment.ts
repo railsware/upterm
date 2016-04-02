@@ -1,7 +1,7 @@
 import {delimiter} from "path";
 import {executeCommandWithShellConfig} from "./PTY";
 import {clone} from "lodash";
-import {homeDirectory} from "./Utils";
+import {homeDirectory} from "./utils/Common";
 
 const env: Dictionary<string> = {};
 export async function loadEnvironment(): Promise<void> {

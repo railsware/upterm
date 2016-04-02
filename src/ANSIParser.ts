@@ -3,7 +3,7 @@ import Char from "./Char";
 import {Color, Weight, Brightness, KeyCode, LogLevel, Buffer, colorIndex} from "./Enums";
 import {Attributes} from "./Interfaces";
 import BufferModel from "./Buffer";
-import {print, error, info, debug} from "./Utils";
+import {print, error, info, debug} from "./utils/Common";
 
 const ansiParserConstructor: typeof AnsiParser = require("node-ansiparser");
 

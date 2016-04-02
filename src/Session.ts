@@ -8,7 +8,7 @@ import PluginManager from "./PluginManager";
 import {Status} from "./Enums";
 import ApplicationComponent from "./views/1_ApplicationComponent";
 import Environment from "./Environment";
-import {homeDirectory, normalizeDirectory} from "./Utils";
+import {homeDirectory, normalizeDirectory} from "./utils/Common";
 const remote = require("remote");
 const app = remote.require("app");
 const browserWindow: typeof Electron.BrowserWindow = remote.require("electron").BrowserWindow;

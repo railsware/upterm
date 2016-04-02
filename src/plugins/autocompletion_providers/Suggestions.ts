@@ -2,7 +2,7 @@ import {FileInfo} from "../../Interfaces";
 import Job from "../../Job";
 import * as Path from "path";
 import {Color} from "../../Enums";
-import {resolveDirectory, statsIn, directoryName, normalizeDirectory, isDirectory} from "../../Utils";
+import {resolveDirectory, statsIn, directoryName, normalizeDirectory, isDirectory} from "../../utils/Common";
 
 type SuggestionsPromise = Promise<Suggestion[]>;
 

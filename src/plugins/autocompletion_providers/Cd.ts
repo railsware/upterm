@@ -2,7 +2,7 @@ import PluginManager from "../../PluginManager";
 import {Suggestion, fileSuggestions} from "./Suggestions";
 import * as _ from "lodash";
 import {expandHistoricalDirectory, isHistoricalDirectory} from "../../Command";
-import {userFriendlyPath} from "../../Utils";
+import {userFriendlyPath} from "../../utils/Common";
 
 PluginManager.registerAutocompletionProvider({
     forCommand: "cd",

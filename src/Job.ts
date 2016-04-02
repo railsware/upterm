@@ -11,7 +11,7 @@ import PluginManager from "./PluginManager";
 import EmitterWithUniqueID from "./EmitterWithUniqueID";
 import {Status} from "./Enums";
 import Environment from "./Environment";
-import {convertKeyCode} from "./Utils";
+import {convertKeyCode} from "./utils/Common";
 
 function makeThrottledDataEmitter(timesPerSecond: number, subject: EmitterWithUniqueID) {
     return _.throttle(() => subject.emit("data"), 1000 / timesPerSecond);

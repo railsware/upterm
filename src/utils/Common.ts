@@ -1,10 +1,10 @@
 import {walk} from "fs-extra";
 import * as Path from "path";
-import * as i from "./Interfaces";
-import * as e from "./Enums";
+import * as i from "./../Interfaces";
+import * as e from "./../Enums";
 import * as _ from "lodash";
 import * as fs from "fs";
-import {KeyCode} from "./Enums";
+import {KeyCode} from "./../Enums";
 
 interface FSExtraWalkObject {
     path: string;

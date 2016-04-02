@@ -2,7 +2,7 @@ import * as React from "react";
 import * as e from "../Enums";
 import Buffer from "../Buffer";
 import Char from "../Char";
-import {groupWhen} from "../Utils";
+import {groupWhen} from "../utils/Common";
 import {List} from "immutable";
 import {scrollToBottom, getHTMLAttributes} from "./ViewUtils";
 import {Attributes} from "../Interfaces";

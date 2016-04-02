@@ -4,7 +4,7 @@ import Cursor from "./Cursor";
 import * as i from "./Interfaces";
 import * as e from "./Enums";
 import {List} from "immutable";
-import {error, times} from "./Utils";
+import {error, times} from "./utils/Common";
 const shell: Electron.Shell = require("remote").require("electron").shell;
 
 export default class Buffer extends events.EventEmitter {

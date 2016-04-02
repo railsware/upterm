@@ -1,5 +1,5 @@
 import * as pty from "pty.js";
-import {baseName, shell} from "./Utils";
+import {baseName, shell} from "./utils/Common";
 
 let commandName = process.argv[2];
 let args = process.argv.slice(5);

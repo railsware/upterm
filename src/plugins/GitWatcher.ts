@@ -7,7 +7,7 @@ import * as Path from "path";
 import {EventEmitter} from "events";
 import {executeCommand} from "../PTY";
 import {debounce} from "../Decorators";
-import {exists, readFile} from "../Utils";
+import {exists, readFile} from "../utils/Common";
 
 const GIT_WATCHER_EVENT_NAME = "git-data-changed";
 

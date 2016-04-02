@@ -2,7 +2,7 @@ import Job from "./Job";
 import Command from "./Command";
 import PTY from "./PTY";
 import * as Path from "path";
-import {executablesInPaths, resolveFile, isWindows, filterAsync, exists} from "./Utils";
+import {executablesInPaths, resolveFile, isWindows, filterAsync, exists} from "./utils/Common";
 
 abstract class CommandExecutionStrategy {
     protected args: string[];

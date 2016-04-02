@@ -1,7 +1,7 @@
 import {OutputDecorator, EnvironmentObserverPlugin, AutocompletionProvider, PreexecPlugin} from "./Interfaces";
 import * as Path from "path";
 import * as _ from "lodash";
-import {recursiveFilesIn} from "./Utils";
+import {recursiveFilesIn} from "./utils/Common";
 
 // FIXME: Technical debt: register all the plugin types via single method.
 export default class PluginManager {
