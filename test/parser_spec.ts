@@ -1,5 +1,5 @@
 import {expect} from "chai";
-import {item, sat, plus, pplus, char, str} from "../src/Parser";
+import {item, sat, plus, pplus, char, str, seq} from "../src/Parser";
 
 describe("parser", () => {
     describe("item", () => {
@@ -56,6 +56,15 @@ describe("parser", () => {
     });
 
     describe("str", () => {
+        context("empty string to match", () => {
+            it("parses the string", async () => {
+                const result = await str("")("hello");
+
+                expect(result.length).to.eql(1);
+                expect(result[0]).to.eql({ parse: "", rest: "hello" });
+            });
+        });
+
         context("matches", () => {
             it("parses the string", async () => {
                 const result = await str("hel")("hello");
@@ -115,6 +124,42 @@ describe("parser", () => {
         context("neither parser matches", () => {
             it("returns an empty array", async () => {
                 const result = await pplus(char("k"), char("k"))("hello");
+
+                expect(result.length).to.eql(0);
+            });
+        });
+    });
+
+    describe("seq", () => {
+
+        context("the first parser doesn't match", () => {
+            it("returns no results", async () => {
+                const result = await seq(char("H"), char("e"))("hello");
+
+                expect(result.length).to.eql(0);
+            });
+        });
+
+        context("the second parser doesn't match", () => {
+            it("returns no results", async () => {
+                const result = await seq(char("h"), char("E"))("hello");
+
+                expect(result.length).to.eql(0);
+            });
+        });
+
+        context("both parsers match", () => {
+            it("returns the combined result", async () => {
+                const result = await seq(char("h"), char("e"))("hello");
+
+                expect(result.length).to.eql(1);
+                expect(result[0]).to.eql({ parse: ["h", "e"], rest: "llo" });
+            });
+        });
+
+        context("neither parser matches", () => {
+            it("returns no results", async () => {
+                const result = await seq(char("H"), char("E"))("hello");
 
                 expect(result.length).to.eql(0);
             });

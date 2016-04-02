@@ -41,13 +41,15 @@ export function zero<A>(): IParser<A> {
     return async (cs: string) => [];
 }
 
-export const sat = (pred: (v: string) => boolean): IParser<string> =>
-    bind(item, x => pred(x) ? unit(x) : zero<string>());
+export const sat = (predicate: (v: string) => boolean): IParser<string> =>
+    bind(item, x => predicate(x) ? unit(x) : zero<string>());
 
 export const char = (x: string) => sat(y => y === x);
 
-export const str = (xs: string): IParser<string> =>
-    xs.length ? bind(char(xs[0]), c => bind(str(xs.substr(1)), cs => unit(c + cs))) : unit("");
+export const str = (stringToMatch: string): IParser<string> =>
+    stringToMatch.length ?
+        bind(char(stringToMatch[0]), c => bind(str(stringToMatch.substr(1)), cs => unit(c + cs))) :
+        unit("");
 
 export function plus<A>(p: IParser<A>, q: IParser<A>): IParser<A> {
     return async (cs: string) => (await p(cs)).concat(await q(cs));
@@ -60,26 +62,17 @@ export function pplus<A>(p: IParser<A>, q: IParser<A>): IParser<A> {
     };
 }
 
-//
-// export const seq = <A, B>(p: Parser<A>, q: Parser<B>): Parser<[A, B]> =>
-//     p.bind(x => q.bind(y => unit<[A, B]>([x, y])));
-//
-// export const naiveSeq = <A, B>(p: Parser<A>, q: Parser<B>): Parser<[A, B]> => mp(cs => {
-//     const pRes: [A, string][] = p(cs);
-//     const qRes: [B, string][] = q(pRes[0][1]);
-//     const res: [A, B] = [pRes[0][0], qRes[0][0]];
-//
-//     return [[res, qRes[0][1]]];
-// });
-//
-// export const digit = sat(x => x >= "0" && x <= "9");
-// export const lower = sat(x => x >= "a" && x <= "z");
-// export const upper = sat(x => x >= "A" && x <= "Z");
-//
-// export const letter = plus(lower, upper);
-// export const alphanum = plus(letter, digit);
-//
-// export const word: Parser<string> = plus(letter.bind(x => word.bind(xs => unit(x + xs))), unit(""));
+export const seq = <A, B>(p: IParser<A>, q: IParser<B>): IParser<[A, B]> =>
+    bind(p, x => bind(q, y => unit<[A, B]>([x, y])));
+
+export const digit = sat(x => x >= "0" && x <= "9");
+export const lower = sat(x => x >= "a" && x <= "z");
+export const upper = sat(x => x >= "A" && x <= "Z");
+
+export const letter = plus(lower, upper);
+export const alphanum = plus(letter, digit);
+
+// export const word: IParser<string> = plus(bind(letter, x => bind(word, xs => unit(x + xs))), unit(""));
 // export const many1 = <A>(p: Parser<A>): Parser<A[]> => p.bind(x => many(p).bind(xs => unit([x].concat(xs))));
 // export const many = <A>(p: Parser<A>): Parser<A[]> => pplus(many1(p), unit([]));
 //
