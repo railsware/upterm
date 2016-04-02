@@ -72,58 +72,65 @@ export const upper = sat(x => x >= "A" && x <= "Z");
 export const letter = plus(lower, upper);
 export const alphanum = plus(letter, digit);
 
-// export const word: IParser<string> = plus(bind(letter, x => bind(word, xs => unit(x + xs))), unit(""));
-// export const many1 = <A>(p: Parser<A>): Parser<A[]> => p.bind(x => many(p).bind(xs => unit([x].concat(xs))));
-// export const many = <A>(p: Parser<A>): Parser<A[]> => pplus(many1(p), unit([]));
-//
-// export const ident = lower.bind(x => many(alphanum).bind(xs => unit(x + xs)));
-// export const nat: Parser<number> = many1(digit).bind(xs => unit(parseFloat(xs.join(""))));
-//
-// export const sepby1 = <A, B>(p: Parser<A>, sep: Parser<B>): Parser<A[]> =>
-//     p.bind(x => many(sep.bind(_ => p)).bind(xs => unit([x].concat(xs))));
+export const word: IParser<string> = plus(bind(letter, x => bind(word, xs => unit(x + xs))), unit(""));
+export const many1 = <A>(p: IParser<A>): IParser<A[]> => bind(p, x => bind(many(p), xs => unit([x].concat(xs))));
+export const many = <A>(p: IParser<A>): IParser<A[]> => pplus(many1(p), unit([]));
 
-// export const sepby = (p, sep) => pplus(sepby1(p, sep), unit([]));
-//
-// export const chainl1 = <A>(p: Parser<A>, op: Parser<(a: A) => (b: A) => A>): Parser<A> => {
-//     const rest = (x: A): Parser<A> => pplus(op.bind(f => p.bind(y => rest(f(x)(y)))), unit(x));
-//     return p.bind(rest);
-// };
-//
-// export const chainl = (p, op, a) => pplus(chainl1(p, op), unit(a));
-//
-// export const int = plus(char("-").bind(_ => nat.bind(n => unit(-n))), nat);
-// export const ints = char("[").bind(_ => sepby1(int, char(",")).bind(ns => char("]").bind(_ => unit(ns))));
-// export const bracket = (open, p, close) => open.bind(_ => p.bind(x => close.bind(_ => unit(x))));
-// export const intsv2 = bracket(char("["), sepby1(int, char(",")), (char("]")));
-//
-// export const space = many(sat(x => x === " "));
-// export const token = <A>(p: Parser<A>): Parser<A> => p.bind(a => space.bind(_ => unit(a)));
-// export const symb = (cs: string): Parser<string> => token(str(cs));
-// export const apply = <A>(p: Parser<A>, cs: string): [A, string][] => space.bind(_ => p)(cs);
-//
-// export let expr: Parser<number>;
-// export let addop: Parser<(a: number) => (b: number) => number>;
-// export let mulop: Parser<(a: number) => (b: number) => number>;
-// export let term: Parser<number>;
-// export let factor: Parser<number>;
-// export let numericDigit: Parser<number>;
-//
-// addop = pplus(
-//     symb("+").bind(_ => unit(a => b => a + b)),
-//     symb("-").bind(_ => unit(a => b => a - b))
-// );
-//
-// mulop = pplus(
-//     symb("*").bind(_ => unit(a => b => a * b)),
-//     symb("/").bind(_ => unit(a => b => a / b))
-// );
-//
-// numericDigit = token(digit).bind(x => unit(parseInt(x, 10)));
-//
-// factor = pplus(
-//     numericDigit,
-//     symb("(").bind(_ => expr.bind(n => symb(")").bind(_ => unit(n))))
-// );
-//
-// term = chainl1(factor, mulop);
-// expr = chainl1(term, addop);
+export const ident = bind(lower, x => bind(many(alphanum), xs => unit(x + xs)));
+
+export const nat: IParser<number> = bind(many1(digit), xs => unit(parseFloat(xs.join(""))));
+
+export const sepby1 = <A, B>(p: IParser<A>, sep: IParser<B>): IParser<A[]> =>
+    bind(p, x => bind(many(bind(sep, _ => p)), xs => unit([x].concat(xs))));
+
+export const sepby = <A, B>(p: IParser<A>, sep: IParser<B>): IParser<A[]> => pplus(sepby1(p, sep), unit([]));
+
+export const chainl1 = <A>(p: IParser<A>, op: IParser<(a: A) => (b: A) => A>): IParser<A> => {
+    const rest = (x: A): IParser<A> => pplus(bind(op, f => bind(p, y => rest(f(x)(y)))), unit(x));
+    return bind(p, rest);
+};
+
+export const chainl = <A>(p: IParser<A>, op: IParser<(a: A) => (b: A) => A>, a: A): IParser<A> => pplus(chainl1(p, op), unit(a));
+
+export const int = plus(bind(char("-"), _ => bind(nat, n => unit(-n))), nat);
+export const ints = bind(char("["), _ => bind(sepby1(int, char(",")), ns => bind(char("]"), _ => unit(ns))));
+
+export const bracket = <A, B>(open: IParser<B>, p: IParser<A>, close: IParser<B>): IParser<A> => bind(open, _ => bind(p, x => bind(close, _ => unit(x))));
+export const intsv2 = bracket(char("["), sepby1(int, char(",")), (char("]")));
+
+export const space = many(char(" "));
+export const token = <A>(p: IParser<A>): IParser<A> => bind(p, a => bind(space, _ => unit(a)));
+export const symb = (cs: string): IParser<string> => token(str(cs));
+export const apply = <A>(p: IParser<A>, cs: string): Results<A> => bind(space, _ => p)(cs);
+
+export const numericDigit: IParser<number> = bind(token(digit), x => unit(parseInt(x, 10)));
+export const addop: IParser<(a: number) => (b: number) => number> = pplus(
+    bind(symb("+"), _ => unit(add)),
+    bind(symb("-"), _ => unit(subtract))
+);
+export const mulop: IParser<(a: number) => (b: number) => number> = pplus(
+    bind(symb("*"), _ => unit(multiply)),
+    bind(symb("/"), _ => unit(divide))
+);
+export const factor: IParser<number> = pplus(
+    numericDigit,
+    bind(symb("("), _ => bind(expr, n => bind(symb(")"), _ => unit(n))))
+);
+export const term: IParser<number> = chainl1(factor, mulop);
+export const expr: IParser<number> = chainl1(term, addop);
+
+function add(a: number) {
+    return (b: number) => a + b;
+}
+
+function subtract(a: number) {
+    return (b: number) => a - b;
+}
+
+function multiply(a: number) {
+    return (b: number) => a * b;
+}
+
+function divide(a: number) {
+    return (b: number) => a / b;
+}

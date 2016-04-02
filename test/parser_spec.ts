@@ -131,7 +131,6 @@ describe("parser", () => {
     });
 
     describe("seq", () => {
-
         context("the first parser doesn't match", () => {
             it("returns no results", async () => {
                 const result = await seq(char("H"), char("e"))("hello");
