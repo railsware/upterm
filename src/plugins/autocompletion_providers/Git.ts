@@ -6,6 +6,7 @@ import PluginManager from "../../PluginManager";
 import {linedOutputOf} from "../../PTY";
 import {Suggestion, Subcommand, Option, OptionWithValue, LongOption} from "./Suggestions";
 import {exists} from "../../utils/Common";
+import * as Git from "../../utils/Git";
 
 class File extends Suggestion {
     constructor(protected _line: string) {
@@ -39,24 +40,6 @@ class File extends Suggestion {
             "D": e.Color.Red,
         };
     };
-}
-
-class Branch extends Suggestion {
-    constructor(protected _line: string) {
-        super();
-    }
-
-    get value(): string {
-        return this._line.trim();
-    }
-
-    get type(): string {
-        return "branch";
-    }
-
-    get isCurrent(): boolean {
-        return this._line[0] === "*";
-    }
 }
 
 const addOptions = [
@@ -124,8 +107,7 @@ async function gitSuggestions(job: Job): Promise<Suggestion[]> {
     }
 
     if ((subcommand === "checkout" || subcommand === "merge") && args.length === 1) {
-        let output = await linedOutputOf("git", ["branch", "--no-color"], job.session.directory);
-        let branches: Suggestion[] = output.map(branch => new Branch(branch)).filter(branch => !branch.isCurrent);
+        let branches: Suggestion[] = (await Git.branches(job.session.directory)).filter(branch => !branch.isCurrent()).map(branch => new Suggestion().withValue(branch.toString()).withType("branch"));
 
         const argument = job.prompt.lastArgument;
         if (doesLookLikeBranchAlias(argument)) {
