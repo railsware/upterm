@@ -42,7 +42,7 @@ export function zero<A>(): Parser<A> {
 }
 
 export const sat = (predicate: (v: string) => boolean): Parser<string> =>
-    bind(item, x => predicate(x) ? unit(x) : zero<string>());
+    bind(item, x => predicate(x) ? unit(x) : zero());
 
 export const char = (x: string) => sat(y => y === x);
 
@@ -60,6 +60,10 @@ export function pplus<A>(p: Parser<A>, q: Parser<A>): Parser<A> {
         const results = await plus<A>(p, q)(cs);
         return results.length ? [results[0]] : [];
     };
+}
+
+export function choice<A>(ps: Array<Parser<A>>): Parser<A> {
+    return ps.reduce((a, b) => plus(a, b), zero());
 }
 
 export const seq = <A, B>(p: Parser<A>, q: Parser<B>): Parser<[A, B]> =>

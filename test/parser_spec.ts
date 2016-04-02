@@ -1,5 +1,5 @@
 import {expect} from "chai";
-import {item, sat, plus, pplus, char, str, seq, symbol, many} from "../src/Parser";
+import {item, sat, plus, pplus, char, str, seq, symbol, many, choice} from "../src/Parser";
 
 describe("parser", () => {
     describe("item", () => {
@@ -187,6 +187,59 @@ describe("parser", () => {
 
             expect(result.length).to.eql(1);
             expect(result[0]).to.eql({ parse: ["git", "git"], rest: "commit" });
+        });
+    });
+
+    describe("choice", () => {
+        context("no parsers", () => {
+            it("returns no matches", async() => {
+                const result = await choice([])("git commit");
+
+                expect(result.length).to.eql(0);
+            });
+        });
+
+        context("one parser", () => {
+            context("matches", () => {
+                it("returns all the matches", async() => {
+                    const result = await choice([symbol("git")])("git commit");
+
+                    expect(result).to.eql([
+                        { parse: "git", rest: "commit" },
+                    ]);
+                });
+            });
+
+            context("doesn't match", () => {
+                it("returns no matches", async() => {
+                    const result = await choice([symbol("hg")])("git commit");
+
+                    expect(result.length).to.eql(0);
+                });
+            });
+        });
+
+        context("two parsers", () => {
+            it("returns all the matches", async() => {
+                const result = await choice([symbol("g"), symbol("gi")])("git commit");
+
+                expect(result).to.eql([
+                    { parse: "g", rest: "it commit" },
+                    { parse: "gi", rest: "t commit" },
+                ]);
+            });
+        });
+
+        context("more than two parsers", () => {
+            it("returns all the matches", async() => {
+                const result = await choice([symbol("g"), symbol("gi"), symbol("git")])("git commit");
+
+                expect(result).to.eql([
+                    { parse: "g", rest: "it commit" },
+                    { parse: "gi", rest: "t commit" },
+                    { parse: "git", rest: "commit" },
+                ]);
+            });
         });
     });
 });
