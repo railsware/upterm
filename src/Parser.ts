@@ -100,21 +100,21 @@ export const intsv2 = bracket(char("["), sepby1(int, char(",")), (char("]")));
 
 export const space = many(char(" "));
 export const token = <A>(p: IParser<A>): IParser<A> => bind(p, a => bind(space, _ => unit(a)));
-export const symb = (cs: string): IParser<string> => token(str(cs));
+export const symbol = (cs: string): IParser<string> => token(str(cs));
 export const apply = <A>(p: IParser<A>, cs: string): Results<A> => bind(space, _ => p)(cs);
 
 export const numericDigit: IParser<number> = bind(token(digit), x => unit(parseInt(x, 10)));
 export const addop: IParser<(a: number) => (b: number) => number> = pplus(
-    bind(symb("+"), _ => unit(add)),
-    bind(symb("-"), _ => unit(subtract))
+    bind(symbol("+"), _ => unit(add)),
+    bind(symbol("-"), _ => unit(subtract))
 );
 export const mulop: IParser<(a: number) => (b: number) => number> = pplus(
-    bind(symb("*"), _ => unit(multiply)),
-    bind(symb("/"), _ => unit(divide))
+    bind(symbol("*"), _ => unit(multiply)),
+    bind(symbol("/"), _ => unit(divide))
 );
 export const factor: IParser<number> = pplus(
     numericDigit,
-    bind(symb("("), _ => bind(expr, n => bind(symb(")"), _ => unit(n))))
+    bind(symbol("("), _ => bind(expr, n => bind(symbol(")"), _ => unit(n))))
 );
 export const term: IParser<number> = chainl1(factor, mulop);
 export const expr: IParser<number> = chainl1(term, addop);

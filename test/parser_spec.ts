@@ -1,5 +1,5 @@
 import {expect} from "chai";
-import {item, sat, plus, pplus, char, str, seq} from "../src/Parser";
+import {item, sat, plus, pplus, char, str, seq, symbol, many} from "../src/Parser";
 
 describe("parser", () => {
     describe("item", () => {
@@ -162,6 +162,31 @@ describe("parser", () => {
 
                 expect(result.length).to.eql(0);
             });
+        });
+    });
+
+    describe("symbol", () => {
+        it("parses a symbol", async () => {
+            const result = await symbol("git")("git commit");
+
+            expect(result.length).to.eql(1);
+            expect(result[0]).to.eql({ parse: "git", rest: "commit" });
+        });
+    });
+
+    describe("many", () => {
+        it("parses zero occurrences", async() => {
+            const result = await many(symbol("git"))("commit");
+
+            expect(result.length).to.eql(1);
+            expect(result[0]).to.eql({ parse: [], rest: "commit" });
+        });
+
+        it("parses multiple occurrences", async() => {
+            const result = await many(symbol("git"))("git git commit");
+
+            expect(result.length).to.eql(1);
+            expect(result[0]).to.eql({ parse: ["git", "git"], rest: "commit" });
         });
     });
 });
