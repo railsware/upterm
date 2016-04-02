@@ -40,6 +40,15 @@ export function unit<A>(a: A): IParser<A> {
 export function zero<A>(): IParser<A> {
     return async (cs: string) => [];
 }
+
+export const sat = (pred: (v: string) => boolean): IParser<string> =>
+    bind(item, x => pred(x) ? unit(x) : zero<string>());
+
+export const char = (x: string) => sat(y => y === x);
+
+export const str = (xs: string): IParser<string> =>
+    xs.length ? bind(char(xs[0]), c => bind(str(xs.substr(1)), cs => unit(c + cs))) : unit("");
+
 export function plus<A>(p: IParser<A>, q: IParser<A>): IParser<A> {
     return async (cs: string) => (await p(cs)).concat(await q(cs));
 }
@@ -51,14 +60,6 @@ export function pplus<A>(p: IParser<A>, q: IParser<A>): IParser<A> {
     };
 }
 
-export const sat = (pred: (v: string) => boolean): IParser<string> =>
-    bind(item, x => pred(x) ? unit(x) : zero<string>());
-
-export const char = (x: string) => sat(y => y === x);
-
-//
-// export const str = (x: string): Parser<string> =>
-//     x.length ? char(x[0]).bind(c => str(x.substr(1)).bind(cs => unit(c + cs))) : unit("");
 //
 // export const seq = <A, B>(p: Parser<A>, q: Parser<B>): Parser<[A, B]> =>
 //     p.bind(x => q.bind(y => unit<[A, B]>([x, y])));

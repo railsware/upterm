@@ -1,5 +1,5 @@
 import {expect} from "chai";
-import {item, sat, plus, pplus, char} from "../src/Parser";
+import {item, sat, plus, pplus, char, str} from "../src/Parser";
 
 describe("parser", () => {
     describe("item", () => {
@@ -49,6 +49,25 @@ describe("parser", () => {
         context("doesn't match", () => {
             it("returns an empty array", async () => {
                 const result = await char("H")("hello");
+
+                expect(result.length).to.eql(0);
+            });
+        });
+    });
+
+    describe("str", () => {
+        context("matches", () => {
+            it("parses the string", async () => {
+                const result = await str("hel")("hello");
+
+                expect(result.length).to.eql(1);
+                expect(result[0]).to.eql({ parse: "hel", rest: "lo" });
+            });
+        });
+
+        context("doesn't match", () => {
+            it("returns an empty array", async () => {
+                const result = await str("hek")("hello");
 
                 expect(result.length).to.eql(0);
             });
