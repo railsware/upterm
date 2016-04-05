@@ -17,10 +17,10 @@ function concat<A>(nestedArray: A[][]): A[] {
     return resultingArray;
 }
 
-function bind<A, B>(p: Parser<A>, f: (f: A) => Parser<B>): Parser<B> {
+function bind<A, B>(p: Parser<A>, q: (q: A) => Parser<B>): Parser<B> {
     return async (cs: string) => {
         const results: Array<Result<A>> = await p(cs);
-        const secondParserResults: Result<B>[][] = await Promise.all(results.map((result: Result<A>) => f(result.parse)(result.rest)));
+        const secondParserResults: Result<B>[][] = await Promise.all(results.map((result: Result<A>) => q(result.parse)(result.rest)));
         return concat(secondParserResults);
     };
 }
@@ -57,8 +57,17 @@ export function plus<A>(p: Parser<A>, q: Parser<A>): Parser<A> {
 
 export function pplus<A>(p: Parser<A>, q: Parser<A>): Parser<A> {
     return async (cs: string) => {
-        const results = await plus<A>(p, q)(cs);
-        return results.length ? [results[0]] : [];
+        const pResults = await p(cs);
+        if (pResults.length) {
+            return [pResults[0]];
+        }
+
+        const qResults = await q(cs);
+        if (qResults.length) {
+            return [qResults[0]];
+        }
+
+        return [];
     };
 }
 
