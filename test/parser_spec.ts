@@ -1,5 +1,5 @@
 import {expect} from "chai";
-import {item, sat, plus, pplus, char, str, seq, symbol, many, choice} from "../src/Parser";
+import {item, sat, plus, pplus, char, str, seq, symbol, many, choice, branch, token} from "../src/Parser";
 
 describe("parser", () => {
     describe("item", () => {

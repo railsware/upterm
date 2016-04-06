@@ -1,6 +1,6 @@
 import {linedOutputOf} from "../PTY";
 
-class Branch {
+export class Branch {
     constructor(private name: string, private _isCurrent: boolean) {
     }
 
@@ -13,7 +13,7 @@ class Branch {
     }
 }
 
-export async function branches(directory: string) {
+export async function branches(directory: string): Promise<Branch[]> {
     let lines = await linedOutputOf("git", ["branch", "--no-color"], directory);
     return lines.map(line => new Branch(line.slice(2), line[0] === "*"));
 }

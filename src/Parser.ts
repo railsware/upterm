@@ -1,3 +1,4 @@
+import * as Git from "./utils/Git";
 type Result<A> = {parse: A, rest: string};
 type Results<A> = Promise<Array<Result<A>>>;
 
@@ -73,6 +74,14 @@ export function pplus<A>(p: Parser<A>, q: Parser<A>): Parser<A> {
 
 export function choice<A>(ps: Array<Parser<A>>): Parser<A> {
     return ps.reduce((a, b) => plus(a, b), zero());
+}
+
+export function branch(directory: string): Parser<string> {
+    return async (cs: string): Results<string> => {
+        const branches: Git.Branch[] = await Git.branches(directory);
+        const parser = choice(branches.filter(branch => !branch.isCurrent()).map(branch => str(branch.toString())));
+        return parser(cs);
+    };
 }
 
 export const seq = <A, B>(p: Parser<A>, q: Parser<B>): Parser<[A, B]> =>

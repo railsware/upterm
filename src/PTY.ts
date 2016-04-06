@@ -1,5 +1,6 @@
 import * as ChildProcess from "child_process";
 import * as OS from "os";
+import * as _ from "lodash";
 import {baseName, resolveFile, exists, filterAsync, shell} from "./utils/Common";
 const ptyInternalPath = require.resolve("./PTYInternal");
 
@@ -48,16 +49,13 @@ export default class PTY {
 
 export function executeCommand(command: string, args: string[] = [], directory: string): Promise<string> {
     return new Promise((resolve, reject) => {
-        let output = "";
-        /* tslint:disable:no-unused-expression */
-        new PTY(
-            command,
-            args,
-            <ProcessEnvironment>_.extend({PWD: directory}, process.env),
-            {columns: 80, rows: 20},
-            (text: string) => output += text,
-            (exitCode: number) => exitCode === 0 ? resolve(output) : reject(exitCode)
-        );
+        ChildProcess.exec(`${command} ${args.join(" ")}`, { env: _.extend({PWD: directory}, process.env)}, (error: Error, output: Buffer) => {
+            if (error) {
+                reject();
+            } else {
+                resolve(output.toString());
+            }
+        });
     });
 }
 
