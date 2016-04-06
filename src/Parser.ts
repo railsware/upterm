@@ -1,9 +1,12 @@
 import * as Git from "./utils/Git";
 type Result<A> = {parse: A, rest: string};
 type Results<A> = Promise<Array<Result<A>>>;
+type ParserInput = {
+    string: string;
+};
 
 interface Parser<A> {
-    (cs: string): Results<A>;
+    (cs: ParserInput): Results<A>;
 }
 
 function concat<A>(nestedArray: A[][]): A[] {
@@ -19,27 +22,27 @@ function concat<A>(nestedArray: A[][]): A[] {
 }
 
 function bind<A, B>(p: Parser<A>, q: (q: A) => Parser<B>): Parser<B> {
-    return async (cs: string) => {
+    return async (cs: ParserInput) => {
         const results: Array<Result<A>> = await p(cs);
-        const secondParserResults: Result<B>[][] = await Promise.all(results.map((result: Result<A>) => q(result.parse)(result.rest)));
+        const secondParserResults: Result<B>[][] = await Promise.all(results.map((result: Result<A>) => q(result.parse)({string: result.rest})));
         return concat(secondParserResults);
     };
 }
 
-export async function item(cs: string): Results<string> {
-    if (cs.length) {
-        return [{ parse: cs[0], rest: cs.substr(1)}];
+export async function item(cs: ParserInput): Results<string> {
+    if (cs.string.length) {
+        return [{ parse: cs.string[0], rest: cs.string.substr(1)}];
     } else {
         return [];
     }
 }
 
 export function unit<A>(a: A): Parser<A> {
-    return async (cs) => [{parse: a, rest: cs}];
+    return async (cs) => [{parse: a, rest: cs.string}];
 }
 
 export function zero<A>(): Parser<A> {
-    return async (cs: string) => [];
+    return async (cs: ParserInput) => [];
 }
 
 export const sat = (predicate: (v: string) => boolean): Parser<string> =>
@@ -53,11 +56,11 @@ export const str = (stringToMatch: string): Parser<string> =>
         unit("");
 
 export function plus<A>(p: Parser<A>, q: Parser<A>): Parser<A> {
-    return async (cs: string) => (await p(cs)).concat(await q(cs));
+    return async (cs: ParserInput) => (await p(cs)).concat(await q(cs));
 }
 
 export function pplus<A>(p: Parser<A>, q: Parser<A>): Parser<A> {
-    return async (cs: string) => {
+    return async (cs: ParserInput) => {
         const pResults = await p(cs);
         if (pResults.length) {
             return [pResults[0]];
@@ -77,7 +80,7 @@ export function choice<A>(ps: Array<Parser<A>>): Parser<A> {
 }
 
 export function branch(directory: string): Parser<string> {
-    return async (cs: string): Results<string> => {
+    return async (cs: ParserInput): Results<string> => {
         const branches: Git.Branch[] = await Git.branches(directory);
         const parser = choice(branches.filter(branch => !branch.isCurrent()).map(branch => str(branch.toString())));
         return parser(cs);
@@ -123,7 +126,6 @@ export const intsv2 = bracket(char("["), sepby1(int, char(",")), (char("]")));
 export const space = many(char(" "));
 export const token = <A>(p: Parser<A>): Parser<A> => bind(p, a => bind(space, _ => unit(a)));
 export const symbol = (cs: string): Parser<string> => token(str(cs));
-export const apply = <A>(p: Parser<A>, cs: string): Results<A> => bind(space, _ => p)(cs);
 
 export const numericDigit: Parser<number> = bind(token(digit), x => unit(parseInt(x, 10)));
 export const addop: Parser<(a: number) => (b: number) => number> = pplus(
