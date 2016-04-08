@@ -8,7 +8,7 @@ import {scrollToBottom, getHTMLAttributes} from "./ViewUtils";
 import {Attributes} from "../Interfaces";
 
 const CharGroupComponent = ({text, attributes}: {text: string, attributes: Attributes}) =>
-    <span {...getHTMLAttributes(attributes)}>{text}</span>;
+    React.createElement("span", getHTMLAttributes(attributes), text);
 
 const Cut = ({numberOfRows, clickHandler}: { numberOfRows: number, clickHandler: React.EventHandler<React.MouseEvent> }) =>
     <div className="output-cut" onClick={clickHandler}>{`Show all ${numberOfRows} rows.`}</div>;
