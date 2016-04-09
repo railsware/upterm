@@ -72,7 +72,7 @@ export default class ApplicationComponent extends React.Component<{}, State> {
             }
         }
 
-        if (event.metaKey && event.keyCode === KeyCode.T) {
+        if ((event.metaKey || event.ctrlKey) && event.keyCode === KeyCode.T) {
             if (this.tabs.length < 9) {
                 this.addTab();
                 this.setState({sessions: this.activeTab.sessions});
