@@ -65,27 +65,27 @@ export class Suggestion {
         return await this._childrenProvider(job);
     }
 
-    withValue(value: string): Suggestion {
+    withValue(value: string): this {
         this._value = value;
         return this;
     }
 
-    withSynopsis(synopsis: string): Suggestion {
+    withSynopsis(synopsis: string): this {
         this._synopsis = synopsis;
         return this;
     }
 
-    withDescription(description: string): Suggestion {
+    withDescription(description: string): this {
         this._description = description;
         return this;
     }
 
-    withType(type: string): Suggestion {
+    withType(type: string): this {
         this._type = type;
         return this;
     }
 
-    withChildrenProvider(provider: (job: Job) => SuggestionsPromise): Suggestion {
+    withChildrenProvider(provider: (job: Job) => SuggestionsPromise): this {
         this._childrenProvider = provider;
         return this;
     }
@@ -125,7 +125,7 @@ export class Option extends BaseOption {
         return `-${this._alias || this._name[0]}`;
     }
 
-    withAlias(alias: string): Option {
+    withAlias(alias: string): this {
         this._alias = alias;
         return this;
     }
