@@ -5,7 +5,7 @@ export default class Cursor {
     constructor(private position: RowColumn = { row: 0, column: 0 }) {
     }
 
-    moveAbsolute(position: RowColumn, homePosition: RowColumn): Cursor {
+    moveAbsolute(position: RowColumn, homePosition: RowColumn): this {
         if (typeof position.column === "number") {
             this.position.column = position.column + homePosition.column;
         }
@@ -17,7 +17,7 @@ export default class Cursor {
         return this;
     }
 
-    moveRelative(advancement: Advancement): Cursor {
+    moveRelative(advancement: Advancement): this {
         const row = Math.max(0, this.row + (advancement.vertical || 0));
         const column = Math.max(0, this.column + (advancement.horizontal || 0));
 
