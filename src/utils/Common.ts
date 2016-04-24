@@ -182,6 +182,16 @@ export async function filterAsync<T>(values: T[], asyncPredicate: (t: T) => Prom
     return values.filter((value: T, index: number) => filtered[index]);
 }
 
+export async function reduceAsync<A, E>(array: E[], initial: A, callback: (a: A, e: E) => Promise<A>): Promise<A> {
+    let accumulator = initial;
+
+    for (const element of array) {
+        accumulator = await callback(accumulator, element);
+    }
+
+    return accumulator;
+}
+
 export function pluralize(word: string, count = 2) {
     return count === 1 ? word : pluralFormOf(word);
 }

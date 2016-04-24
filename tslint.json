@@ -104,11 +104,7 @@
         "variable-declaration": "nospace"
       }
     ],
-    "variable-name": [
-      true,
-      "allow-leading-underscore",
-      "ban-keywords"
-    ],
+    "variable-name": false,
     "whitespace": [
       true,
       "check-branch",
