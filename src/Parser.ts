@@ -123,16 +123,12 @@ class Choice<L, R> extends Valid<[L, R]> {
             return rightDerived;
         }
 
-        if (leftDerived.isExhausted) {
-            return rightDerived;
-        }
-
         if (!rightDerived.isValid) {
-            return rightDerived;
+            return leftDerived;
         }
 
-        if (rightDerived.isExhausted) {
-            return leftDerived;
+        if (leftDerived.isExhausted || rightDerived.isExhausted) {
+            return new Success();
         }
 
         return new Choice(leftDerived, rightDerived);
