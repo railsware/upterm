@@ -16,6 +16,10 @@ abstract class Parser<T> {
     bind<U>(parser: Parser<U>): Parser<[T, U]> {
         return new Sequence(this, parser);
     }
+
+    or<U>(parser: Parser<U>): Parser<[T, U]> {
+        return new Or(this, parser);
+    }
 }
 
 abstract class Valid<T> extends Parser<T> {
@@ -110,7 +114,7 @@ class Sequence<L, R> extends Valid<[L, R]> {
     }
 }
 
-class Choice<L, R> extends Valid<[L, R]> {
+class Or<L, R> extends Valid<[L, R]> {
     constructor(private left: Parser<L>, private right: Parser<R>) {
         super();
     }
@@ -131,7 +135,7 @@ class Choice<L, R> extends Valid<[L, R]> {
             return new Success();
         }
 
-        return new Choice(leftDerived, rightDerived);
+        return new Or(leftDerived, rightDerived);
     }
 
     get suggestions() {
@@ -140,4 +144,3 @@ class Choice<L, R> extends Valid<[L, R]> {
 }
 
 export const string = (value: string) => new StringLiteral(value);
-export const choice = <L, R>(left: Parser<L>, right: Parser<R>) => new Choice(left, right);
