@@ -144,3 +144,12 @@ class Or<L, R> extends Valid<[L, R]> {
 }
 
 export const string = (value: string) => new StringLiteral(value);
+export const choice = <T>(parsers: Parser<T>[]): Parser<T> => {
+    if (parsers.length === 0) {
+        return new Failure();
+    } else if (parsers.length === 1) {
+        return parsers[0];
+    } else {
+        return parsers.reduce((left, right) => new Or(left, right));
+    }
+};

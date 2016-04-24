@@ -1,11 +1,11 @@
 import {expect} from "chai";
-import {string} from "../src/Parser.ts";
+import {string, choice} from "../src/Parser.ts";
 
 describe("parser", () => {
     it("returns suggestions", async() => {
         const result = await string("git")
             .bind(string(" "))
-            .bind(string("commit").or(string("checkout")))
+            .bind(choice([string("commit"), string("checkout"), string("merge")]))
             .parse("git c");
 
         expect(result.suggestions).to.eql(["ommit", "heckout"]);
