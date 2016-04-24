@@ -8,6 +8,15 @@ describe("parser", () => {
             .bind(choice([string("commit"), string("checkout"), string("merge")]))
             .parse("git c");
 
-        expect(result.suggestions).to.eql(["ommit", "heckout"]);
+        expect(result.suggestions).to.eql([
+            {
+                prefix: "c",
+                value: "ommit",
+            },
+            {
+                prefix: "c",
+                value: "heckout",
+            },
+        ]);
     });
 });

@@ -1,7 +1,10 @@
 import {reduceAsync} from "./utils/Common";
 
 type char = string;
-type Suggestion = string;
+interface Suggestion {
+    prefix: string;
+    value: string;
+}
 
 abstract class Parser<T> {
     abstract get isValid(): boolean;
@@ -86,7 +89,12 @@ class StringLiteral extends Valid<string> {
     }
 
     get suggestions() {
-        return [this.string.slice(this.startIndex)];
+        return [
+            {
+                prefix: this.string.slice(0, this.startIndex),
+                value: this.string.slice(this.startIndex),
+            },
+        ];
     }
 }
 
@@ -153,3 +161,4 @@ export const choice = <T>(parsers: Parser<T>[]): Parser<T> => {
         return parsers.reduce((left, right) => new Or(left, right));
     }
 };
+export const token = (value: string) => string(value).bind(string(" "));
