@@ -127,34 +127,39 @@ export function baseName(path: string): string {
     }
 }
 
+export const {executablesInPaths} = new class {
+    private executables: Array<string> = [];
 
-const executables: Array<string> = [];
-export async function executablesInPaths(paths: string): Promise<string[]> {
-    if (executables.length) {
-        return executables;
-    }
-
-    const validPaths = await filterAsync(paths.split(Path.delimiter), isDirectory);
-    const allFiles: string[][] = await Promise.all(validPaths.map(filesIn));
-
-    return _.uniq(_.flatten(allFiles));
-}
-
-let shellPath: string;
-const supportedShells = { bash: true, zsh: true };
-export function shell(): string {
-    if (!shellPath) {
-        const shellName = baseName(process.env.SHELL);
-        if (shellName in supportedShells) {
-            shellPath = process.env.SHELL;
-        } else {
-            shellPath = "/bin/bash";
-            console.error(`${shellName} is not supported; defaulting to ${shellPath}`);
+    executablesInPaths = async (paths: string): Promise<string[]> => {
+        if (this.executables.length) {
+            return this.executables;
         }
-    }
 
-    return shellPath;
-}
+        const validPaths = await filterAsync(paths.split(Path.delimiter), isDirectory);
+        const allFiles: string[][] = await Promise.all(validPaths.map(filesIn));
+
+        return _.uniq(_.flatten(allFiles));
+    };
+};
+
+export const {shell} = new class {
+    private shellPath: string;
+    private supportedShells = { bash: true, zsh: true };
+
+    shell = () => {
+        if (!this.shellPath) {
+            const shellName = baseName(process.env.SHELL);
+            if (shellName in this.supportedShells) {
+                this.shellPath = process.env.SHELL;
+            } else {
+                this.shellPath = "/bin/bash";
+                console.error(`${shellName} is not supported; defaulting to ${this.shellPath}`);
+            }
+        }
+
+        return this.shellPath;
+    };
+};
 
 export function homeDirectory(): string {
     return process.env[(isWindows()) ? "USERPROFILE" : "HOME"];
