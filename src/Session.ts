@@ -33,7 +33,7 @@ export default class Session extends EmitterWithUniqueID {
         this.deserialize();
         this.history = History;
 
-        this.on("job", this.serialize.bind(this));
+        this.on("job", this.serialize);
 
         this.clearJobs();
     }
@@ -95,7 +95,7 @@ export default class Session extends EmitterWithUniqueID {
         );
     }
 
-    private serialize(): void {
+    private serialize = () => {
         let values: Dictionary<string> = {};
 
         _.each(this.serializableProperties, (value: string, key: string) =>
@@ -105,7 +105,7 @@ export default class Session extends EmitterWithUniqueID {
         writeFile(this.stateFileName, JSON.stringify(values), (error: any) => {
             if (error) throw error;
         });
-    }
+    };
 
     private deserialize(): void {
         _.each(this.readSerialized(), (value: string, key: string) => {

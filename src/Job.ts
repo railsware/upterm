@@ -36,7 +36,7 @@ export default class Job extends EmitterWithUniqueID {
         this.frequentDataEmitter = makeThrottledDataEmitter(60, this);
 
         this._buffer = new Buffer(this.dimensions);
-        this._buffer.on("data", this.throttledDataEmitter.bind(this));
+        this._buffer.on("data", this.throttledDataEmitter);
         this.parser = new ANSIParser(this);
     }
 
@@ -160,7 +160,6 @@ export default class Job extends EmitterWithUniqueID {
         this.emit("status", status);
     }
 
-    private throttledDataEmitter() {
+    private throttledDataEmitter = () =>
         this._buffer.size < Buffer.hugeOutputThreshold ? this.frequentDataEmitter() : this.rareDataEmitter();
-    }
 }
