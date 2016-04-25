@@ -1463,7 +1463,7 @@
                 },
                 "inherits": {
                   "version": "2.0.1",
-                  "from": "inherits@~2.0.0",
+                  "from": "inherits@2",
                   "resolved": "https://registry.npmjs.org/inherits/-/inherits-2.0.1.tgz"
                 },
                 "minimatch": {
@@ -1928,7 +1928,8 @@
           "dependencies": {
             "graceful-readlink": {
               "version": "1.0.1",
-              "from": "graceful-readlink@>=1.0.0"
+              "from": "graceful-readlink@1.0.1",
+              "resolved": "https://registry.npmjs.org/graceful-readlink/-/graceful-readlink-1.0.1.tgz"
             }
           }
         }
@@ -2847,7 +2848,8 @@
           "dependencies": {
             "minimatch": {
               "version": "2.0.10",
-              "from": "minimatch@>=2.0.1 <3.0.0"
+              "from": "minimatch@2.0.10",
+              "resolved": "https://registry.npmjs.org/minimatch/-/minimatch-2.0.10.tgz"
             }
           }
         },
@@ -4851,9 +4853,9 @@
       "resolved": "https://registry.npmjs.org/run-series/-/run-series-1.1.4.tgz"
     },
     "rxjs": {
-      "version": "5.0.0-beta.2",
-      "from": "rxjs@5.0.0-beta.2",
-      "resolved": "https://registry.npmjs.org/rxjs/-/rxjs-5.0.0-beta.2.tgz"
+      "version": "5.0.0-beta.6",
+      "from": "rxjs@5.0.0-beta.6",
+      "resolved": "https://registry.npmjs.org/rxjs/-/rxjs-5.0.0-beta.6.tgz"
     },
     "sass-graph": {
       "version": "2.1.1",

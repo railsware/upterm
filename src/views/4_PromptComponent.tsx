@@ -51,11 +51,11 @@ export default class PromptComponent extends React.Component<Props, State> imple
 
         keyDownSubject // Should be before setting latestKeyCode.
             .filter((event: KeyboardEvent) => event.keyCode === KeyCode.Period && (event.altKey || this.state.latestKeyCode === KeyCode.Escape))
-            .forEach(this.appendLastLexemeOfPreviousJob, this);
+            .forEach((event: KeyboardEvent) => this.appendLastLexemeOfPreviousJob(event));
 
         keyDownSubject
             .filter(_.negate(withModifierKey))
-            .forEach((event: KeyboardEvent) => this.setState({latestKeyCode: event.keyCode}), this);
+            .forEach((event: KeyboardEvent) => this.setState({latestKeyCode: event.keyCode}));
 
 
         const promptKeys = keyDownSubject.filter(() => this.props.status !== e.Status.InProgress)
@@ -64,21 +64,21 @@ export default class PromptComponent extends React.Component<Props, State> imple
         promptKeys
             .filter(() => this.isAutocompleteShown())
             .filter(keys.tab)
-            .forEach(this.applySuggestion, this);
+            .forEach(() => this.applySuggestion());
         promptKeys
-            .filter(keys.deleteWord).forEach(() => this.deleteWord(), this);
+            .filter(keys.deleteWord).forEach(() => this.deleteWord());
         promptKeys
-            .filter(keys.enter).forEach(this.execute, this);
+            .filter(keys.enter).forEach(() => this.execute());
         promptKeys
-            .filter(keys.interrupt).forEach(() => this.prompt.setValue("").then(() => this.setDOMValueProgrammatically("")), this);
+            .filter(keys.interrupt).forEach(() => this.prompt.setValue("").then(() => this.setDOMValueProgrammatically("")));
         promptKeys
             .filter((event: KeyboardEvent) => keys.goDown(event) || keys.goUp(event))
             .filter(() => this.isAutocompleteShown())
-            .forEach(this.navigateAutocomplete, this);
+            .forEach((event: KeyboardEvent) => this.navigateAutocomplete(event));
         promptKeys
             .filter((event: KeyboardEvent) => keys.goDown(event) || keys.goUp(event))
             .filter(() => !this.isAutocompleteShown())
-            .forEach(this.navigateHistory, this);
+            .forEach((event: KeyboardEvent) => this.navigateHistory(event));
 
         this.handlers = {
             onKeyDown: (event: KeyboardEvent) => keyDownSubject.next(event),
