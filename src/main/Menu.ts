@@ -3,36 +3,13 @@ const menuConstructor: typeof Electron.Menu = require("menu");
 export default {
     setMenu: (app: Electron.App, browserWindow: Electron.BrowserWindow) => {
         if (process.platform === "darwin") {
-            const template = [
+            const template: Electron.MenuItemOptions[] = [
                 {
                     label: "Black Screen",
                     submenu: [
                         {
                             label: "About Black Screen",
-                            selector: "orderFrontStandardAboutPanel:",
-                        },
-                        {
-                            type: "separator",
-                        },
-                        {
-                            type: "separator",
-                        },
-                        {
-                            label: "Hide Black Screen",
-                            accelerator: "Command+H",
-                            selector: "hide:",
-                        },
-                        {
-                            label: "Hide Others",
-                            accelerator: "Command+Shift+H",
-                            selector: "hideOtherApplications:",
-                        },
-                        {
-                            label: "Show All",
-                            selector: "unhideAllApplications:",
-                        },
-                        {
-                            type: "separator",
+                            role: "about",
                         },
                         {
                             label: "Quit",
@@ -49,12 +26,12 @@ export default {
                         {
                             label: "Undo",
                             accelerator: "Command+Z",
-                            selector: "undo:",
+                            role: "undo",
                         },
                         {
                             label: "Redo",
                             accelerator: "Shift+Command+Z",
-                            selector: "redo:",
+                            role: "redo",
                         },
                         {
                             type: "separator",
@@ -62,22 +39,22 @@ export default {
                         {
                             label: "Cut",
                             accelerator: "Command+X",
-                            selector: "cut:",
+                            role: "cut",
                         },
                         {
                             label: "Copy",
                             accelerator: "Command+C",
-                            selector: "copy:",
+                            role: "copy",
                         },
                         {
                             label: "Paste",
                             accelerator: "Command+V",
-                            selector: "paste:",
+                            role: "paste",
                         },
                         {
                             label: "Select All",
                             accelerator: "Command+A",
-                            selector: "selectAll:",
+                            role: "selectall",
                         },
                     ],
                 },
@@ -104,28 +81,6 @@ export default {
                             click: function () {
                                 browserWindow.webContents.toggleDevTools();
                             },
-                        },
-                    ],
-                },
-                {
-                    label: "Window",
-                    submenu: [
-                        {
-                            label: "Minimize",
-                            accelerator: "Command+M",
-                            selector: "performMiniaturize:",
-                        },
-                        {
-                            label: "Close",
-                            accelerator: "Command+W",
-                            selector: "performClose:",
-                        },
-                        {
-                            type: "separator",
-                        },
-                        {
-                            label: "Bring All to Front",
-                            selector: "arrangeInFront:",
                         },
                     ],
                 },

@@ -25,9 +25,7 @@ function getMainWindow(): Electron.BrowserWindow {
             webPreferences: {
                 experimentalFeatures: true,
                 experimentalCanvasFeatures: true,
-                overlayScrollbars: true,
             },
-            subpixelFontScaling: true,
             titleBarStyle: "hidden",
             resizable: true,
             minWidth: 500,

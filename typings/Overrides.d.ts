@@ -27,12 +27,6 @@ declare class AnsiParser {
     parse(data: string): any;
 }
 
-declare module _ {
-    interface LoDashStatic {
-        _: LoDashStatic;
-    }
-}
-
 declare module "fs-extra" {
     export function walk(dirPath: string): NodeJS.ReadableStream;
 }

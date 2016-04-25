@@ -1,6 +1,7 @@
 import {FileInfo} from "../../Interfaces";
 import Job from "../../Job";
 import * as Path from "path";
+import * as _ from "lodash";
 import {Color} from "../../Enums";
 import {resolveDirectory, statsIn, directoryName, normalizeDirectory, isDirectory} from "../../utils/Common";
 

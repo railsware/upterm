@@ -1,4 +1,5 @@
 import {lex} from "./CommandExpander";
+import * as _ from "lodash";
 
 export class HistoryEntry {
     private _raw: string;

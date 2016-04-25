@@ -143,6 +143,7 @@ export const {executablesInPaths} = new class {
 };
 
 export const {shell} = new class {
+    /* tslint:disable:member-ordering */
     private shellPath: string;
     private supportedShells = { bash: true, zsh: true };
 
