@@ -45,7 +45,7 @@
     "asar": "0.11.0",
     "chai": "3.5.0",
     "del": "2.2.0",
-    "electron-packager": "7.0.0",
+    "electron-packager": "7.0.1",
     "electron-prebuilt": "0.37.6",
     "electron-rebuild": "1.1.3",
     "gulp": "3.9.1",
