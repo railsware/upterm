@@ -1,10 +1,7 @@
 import {reduceAsync} from "./utils/Common";
+import {Suggestion} from "./plugins/autocompletion_providers/Suggestions";
 
 type char = string;
-interface Suggestion {
-    prefix: string;
-    value: string;
-}
 
 abstract class Parser<T> {
     abstract get isValid(): boolean;
@@ -22,6 +19,10 @@ abstract class Parser<T> {
 
     or<U>(parser: Parser<U>): Parser<[T, U]> {
         return new Or(this, parser);
+    }
+
+    decorate(decorator: (s: Suggestion) => Suggestion): Parser<T> {
+        return new SuggestionsDecorator(this, decorator);
     }
 }
 
@@ -89,12 +90,7 @@ class StringLiteral extends Valid<string> {
     }
 
     get suggestions() {
-        return [
-            {
-                prefix: this.string.slice(0, this.startIndex),
-                value: this.string.slice(this.startIndex),
-            },
-        ];
+        return [new Suggestion().withValue(this.string)];
     }
 }
 
@@ -148,6 +144,29 @@ class Or<L, R> extends Valid<[L, R]> {
 
     get suggestions() {
         return this.left.suggestions.concat(this.right.suggestions);
+    }
+}
+
+class SuggestionsDecorator<T> extends Valid<T> {
+    constructor(private parser: Parser<T>, private decorator: (s: Suggestion) => Suggestion) {
+        super();
+    }
+
+    async derive(char: char): Promise<Parser<T>> {
+        const derived = await this.parser.derive(char);
+        if (!derived.isValid) {
+            return new Failure();
+        }
+
+        if (derived.isExhausted) {
+            return new Success();
+        }
+
+        return new SuggestionsDecorator(derived, this.decorator);
+    }
+
+    get suggestions() {
+        return this.parser.suggestions.map(this.decorator);
     }
 }
 

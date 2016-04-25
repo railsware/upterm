@@ -4,7 +4,7 @@ import PluginManager from "../../PluginManager";
 import {Executable} from "./Suggestions";
 import {executablesInPaths} from "../../utils/Common";
 
-const descriptions: {[indexer: string]: string} = {
+export const commandDescriptions: Dictionary<string> = {
     admin: "Create and administer SCCS files",
     alias: "Define or display aliases",
     ar: "Create and maintain library archives",
@@ -167,7 +167,6 @@ const descriptions: {[indexer: string]: string} = {
     zcat: "Expand and concatenate data",
 };
 
-
 PluginManager.registerAutocompletionProvider({
 
     getSuggestions: async function (job: Job) {
@@ -177,6 +176,6 @@ PluginManager.registerAutocompletionProvider({
             return [];
         }
 
-        return _.map(await executablesInPaths(job.environment.path), (executable: string) => new Executable(executable).withDescription(descriptions[executable]));
+        return _.map(await executablesInPaths(job.environment.path), (executable: string) => new Executable(executable).withDescription(commandDescriptions[executable]));
     },
 });
