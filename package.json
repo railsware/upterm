@@ -46,7 +46,7 @@
     "chai": "3.5.0",
     "del": "2.2.0",
     "electron-packager": "7.0.0",
-    "electron-prebuilt": "0.37.6",
+    "electron-prebuilt": "0.37.7",
     "electron-rebuild": "1.1.3",
     "gulp": "3.9.1",
     "gulp-cached": "1.1.0",
