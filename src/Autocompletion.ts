@@ -1,7 +1,7 @@
 import * as _ from "lodash";
 import * as i from "./Interfaces";
 import Job from "./Job";
-import {choice, token} from "./Parser";
+import {choice, token, executable} from "./Parser";
 import {commandDescriptions} from "./plugins/autocompletion_providers/Executable";
 const score: (i: string, m: string) => number = require("fuzzaldrin").score;
 
@@ -19,10 +19,10 @@ export default class Autocompletion implements i.AutocompletionProvider {
             token("add"),
             token("checkout"),
         ]);
-        const git = token("git").bind(gitCommand);
-        const ls = token("ls");
-        const executable = choice(_.map(commandDescriptions, (value, key) =>
-            token(key).decorate(suggestion => suggestion.withDescription(value).withType("executable"))
+        const git = executable("git").bind(gitCommand);
+        const ls = executable("ls");
+        const exec = choice(_.map(commandDescriptions, (value, key) =>
+            executable(key).decorate(suggestion => suggestion.withDescription(value))
         ));
         const command = choice([
             ls,
@@ -32,7 +32,7 @@ export default class Autocompletion implements i.AutocompletionProvider {
         const anyCommand = choice([
             sudo,
             command,
-            executable,
+            exec,
         ]);
         const separator = choice([
             token("&&"),

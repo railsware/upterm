@@ -181,3 +181,4 @@ export const choice = <T>(parsers: Parser<T>[]): Parser<T> => {
     }
 };
 export const token = (value: string) => string(value).bind(string(" "));
+export const executable = (name: string) => token(name).decorate(suggestion => suggestion.withType("executable"));
