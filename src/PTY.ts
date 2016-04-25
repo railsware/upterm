@@ -1,5 +1,6 @@
 import * as ChildProcess from "child_process";
 import * as OS from "os";
+import * as _ from "lodash";
 import {baseName, resolveFile, exists, filterAsync, shell} from "./Utils";
 const ptyInternalPath = require.resolve("./PTYInternal");
 
