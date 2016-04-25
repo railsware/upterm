@@ -163,6 +163,11 @@ export default class PromptComponent extends React.Component<Props, State> imple
             scrollToTop = <a className="scroll-to-top" onClick={this.handleScrollToTop.bind(this)}><i className="fa fa-long-arrow-up"/></a>;
         }
 
+        let contentEditable: boolean = this.props.status === e.Status.NotStarted ||
+             this.props.status === e.Status.InProgress;
+        let promptValue: String;
+        { contentEditable ? promptValue = "" : promptValue = this.prompt.value; }
+
         return (
             <div className={classes}>
                 <div className="arrow"></div>
@@ -173,7 +178,9 @@ export default class PromptComponent extends React.Component<Props, State> imple
                      onKeyPress={this.handleKeyPress.bind(this)}
                      type="text"
                      ref="command"
-                     contentEditable={this.props.status === e.Status.NotStarted || this.props.status === e.Status.InProgress}></div>
+                     contentEditable={contentEditable}>
+                    {promptValue}
+                </div>
                 {autocompletedPreview}
                 {inlineSynopsis}
                 {autocomplete}
