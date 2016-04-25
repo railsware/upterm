@@ -54,7 +54,7 @@ export class Suggestion {
     }
 
     shouldIgnore(job: Job): boolean {
-        return job.prompt.expandedFinishedLexemes.includes(this.value);
+        return false;
     }
 
     shouldSuggestChildren(job: Job): boolean {
