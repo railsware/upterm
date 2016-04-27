@@ -281,10 +281,6 @@ export default class PromptComponent extends React.Component<Props, State> imple
         let valueWithoutPrefix = prefixLength ? valueUpToCaret.slice(0, -prefixLength) : valueUpToCaret;
 
         let newValue = valueWithoutPrefix + suggestion.value;
-        if (!suggestion.partial && newValue.slice(-1) !== " " && valueFromCaret[0] !== " ") {
-            newValue += " ";
-        }
-
 
         return newValue + valueFromCaret;
     }
