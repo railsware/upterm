@@ -1,19 +1,10 @@
 import * as _ from "lodash";
 import * as i from "./Interfaces";
-import * as Git from "./utils/Git";
 import Job from "./Job";
-import {choice, token, executable, fromSource} from "./Parser";
+import {choice, token, executable} from "./Parser";
 import {commandDescriptions} from "./plugins/autocompletion_providers/Executable";
+import {git} from "./plugins/autocompletion_providers/Git";
 
-const gitCommand = choice([
-    token("commit"),
-    token("add"),
-    token("checkout").bind(fromSource(token, async (context) => {
-        const branches = await Git.branches(context.directory);
-        return branches.filter(branch => !branch.isCurrent()).map(branch => branch.toString());
-    })),
-]);
-const git = executable("git").bind(gitCommand);
 const ls = executable("ls");
 const exec = choice(_.map(commandDescriptions, (value, key) =>
     executable(key).decorate(suggestion => suggestion.withDescription(value))

@@ -7,6 +7,7 @@ import {linedOutputOf} from "../../PTY";
 import {Suggestion, Subcommand, Option, OptionWithValue, LongOption} from "./Suggestions";
 import {exists} from "../../utils/Common";
 import * as Git from "../../utils/Git";
+import {executable, token, fromSource, choice} from "../../Parser";
 
 class File extends Suggestion {
     constructor(protected _line: string) {
@@ -241,3 +242,14 @@ PluginManager.registerAutocompletionProvider({
         getSuggestions: gitSuggestions,
     })
 );
+
+const gitCommand = choice([
+    token("commit"),
+    token("add"),
+    token("checkout").bind(fromSource(token, async (context) => {
+        const branches = await Git.branches(context.directory);
+        return branches.filter(branch => !branch.isCurrent()).map(branch => branch.toString());
+    })),
+]);
+
+export const git = executable("git").bind(gitCommand);
