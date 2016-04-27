@@ -4,10 +4,11 @@ import Job from "./Job";
 import {choice, token, executable} from "./Parser";
 import {commandDescriptions} from "./plugins/autocompletion_providers/Executable";
 import {git} from "./plugins/autocompletion_providers/Git";
+import {description} from "./plugins/autocompletion_providers/Suggestions";
 
 const ls = executable("ls");
 const exec = choice(_.map(commandDescriptions, (value, key) =>
-    executable(key).decorate(suggestion => suggestion.withDescription(value))
+    executable(key).decorate(description(value))
 ));
 const command = choice([
     ls,

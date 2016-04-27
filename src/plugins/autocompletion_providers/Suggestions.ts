@@ -5,6 +5,7 @@ import * as _ from "lodash";
 import {Color} from "../../Enums";
 import {resolveDirectory, statsIn, directoryName, normalizeDirectory, isDirectory} from "../../utils/Common";
 
+type SuggestionType = "executable" | "command" | "option" | "option-value" | "branch";
 type SuggestionsPromise = Promise<Suggestion[]>;
 
 export class Suggestion {
@@ -58,10 +59,6 @@ export class Suggestion {
         return false;
     }
 
-    shouldSuggestChildren(job: Job): boolean {
-        return false;
-    }
-
     async getChildren(job: Job): Promise<Suggestion[]> {
         return await this._childrenProvider(job);
     }
@@ -86,15 +83,13 @@ export class Suggestion {
         return this;
     }
 
-    withChildrenProvider(provider: (job: Job) => SuggestionsPromise): this {
-        this._childrenProvider = provider;
-        return this;
-    }
-
     private get truncatedDescription(): string {
         return _.truncate(this.description, {length: 50, separator: " "});
     }
 }
+
+export const type = (value: SuggestionType) => <T extends Suggestion>(suggestion: T) => suggestion.withType(value);
+export const description = (value: string) => <T extends Suggestion>(suggestion: T) => suggestion.withDescription(value);
 
 abstract class BaseOption extends Suggestion {
     get type() {
@@ -172,10 +167,6 @@ export class OptionWithValue extends BaseOption {
 
     shouldIgnore(job: Job): boolean {
         return job.prompt.expanded.some(word => word.includes(this.value));
-    }
-
-    shouldSuggestChildren(job: Job): boolean {
-        return job.prompt.lastLexeme.includes(this.value);
     }
 }
 

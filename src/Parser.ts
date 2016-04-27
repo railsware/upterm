@@ -1,5 +1,5 @@
 import {reduceAsync} from "./utils/Common";
-import {Suggestion} from "./plugins/autocompletion_providers/Suggestions";
+import {Suggestion, type} from "./plugins/autocompletion_providers/Suggestions";
 
 type char = string;
 interface ParsingContext {
@@ -188,10 +188,11 @@ export const choice = <T>(parsers: Parser<T>[]): Parser<T> => {
         return parsers.reduce((left, right) => new Or(left, right));
     }
 };
+
 export const token = (value: string) => string(`${value} `);
-export const executable = (name: string) => token(name).decorate(suggestion => suggestion.withType("executable"));
-export const option = (value: string) => string(`--${value}=`).decorate(suggestion => suggestion.withType("option"));
-export const subCommand = (value: string) => token(value).decorate(suggestion => suggestion.withType("command"));
+export const executable = (name: string) => token(name).decorate(type("executable"));
+export const option = (value: string) => string(`--${value}=`).decorate(type("option"));
+export const subCommand = (value: string) => token(value).decorate(type("command"));
 
 type DataSource = (context: ParsingContext) => Promise<string[]>;
 

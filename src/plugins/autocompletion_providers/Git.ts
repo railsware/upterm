@@ -1,5 +1,6 @@
 import * as Git from "../../utils/Git";
 import {executable, token, fromSource, choice, string, subCommand, option} from "../../Parser";
+import {description, type} from "./Suggestions";
 
 // class File extends Suggestion {
 //     constructor(protected _line: string) {
@@ -131,66 +132,66 @@ import {executable, token, fromSource, choice, string, subCommand, option} from 
 // }
 
 const cleanupMode = choice([
-    token("strip").decorate(suggestion => suggestion.withDescription("Strip leading and trailing empty lines, trailing whitespace, commentary and collapse consecutive empty lines.")),
-    token("whitespace").decorate(suggestion => suggestion.withDescription("Same as strip except #commentary is not removed.")),
-    token("verbatim").decorate(suggestion => suggestion.withDescription("Do not change the message at all.")),
-    token("scissors").decorate(suggestion => suggestion.withDescription('Same as whitespace, except that everything from (and including) the line \
+    token("strip").decorate(description("Strip leading and trailing empty lines, trailing whitespace, commentary and collapse consecutive empty lines.")),
+    token("whitespace").decorate(description("Same as strip except #commentary is not removed.")),
+    token("verbatim").decorate(description("Do not change the message at all.")),
+    token("scissors").decorate(description('Same as whitespace, except that everything from (and including) the line \
         "#------------------------ >8 ------------------------"\
         is truncated if the message is to be edited. "#" can be customized with core.commentChar.')),
-    token("default").decorate(suggestion => suggestion.withDescription("Same as strip if the message is to be edited. Otherwise whitespace")),
-]).decorate(suggestion => suggestion.withType("option-value"));
+    token("default").decorate(description("Same as strip if the message is to be edited. Otherwise whitespace")),
+]).decorate(type("option-value"));
 
 const commitOption = choice([
     option("message")
-        .decorate(suggestion => suggestion.withDescription("Use the given <msg> as the commit message. If multiple -m options are given, their values are concatenated as separate paragraphs.")),
+        .decorate(description("Use the given <msg> as the commit message. If multiple -m options are given, their values are concatenated as separate paragraphs.")),
     option("cleanup")
-        .decorate(suggestion => suggestion.withDescription("This option determines how the supplied commit message should be cleaned up before committing. The <mode> can be strip, whitespace, verbatim, scissors or default."))
+        .decorate(description("This option determines how the supplied commit message should be cleaned up before committing. The <mode> can be strip, whitespace, verbatim, scissors or default."))
         .bind(cleanupMode),
 ]);
 
 const branchesExceptCurrent = fromSource(string, async (context) => {
     const branches = await Git.branches(context.directory);
     return branches.filter(branch => !branch.isCurrent()).map(branch => branch.toString());
-}).decorate(suggestion => suggestion.withType("branch"));
+}).decorate(type("branch"));
 
 const gitCommand = choice([
-    subCommand("add").decorate(suggestion => suggestion.withDescription("Add file contents to the index.")),
-    subCommand("am").decorate(suggestion => suggestion.withDescription("Apply a series of patches from a mailbox.")),
-    subCommand("archive").decorate(suggestion => suggestion.withDescription("Create an archive of files from a named tree.")),
-    subCommand("bisect").decorate(suggestion => suggestion.withDescription("Find by binary search the change that introduced a bug.")),
-    subCommand("branch").decorate(suggestion => suggestion.withDescription("List, create, or delete branches.")),
-    subCommand("bundle").decorate(suggestion => suggestion.withDescription("Move objects and refs by archive.")),
-    subCommand("checkout").decorate(suggestion => suggestion.withDescription("Switch branches or restore working tree files.")).bind(branchesExceptCurrent),
-    subCommand("cherry-pick").decorate(suggestion => suggestion.withDescription("Apply the changes introduced by some existing commits.")),
-    subCommand("citool").decorate(suggestion => suggestion.withDescription("Graphical alternative to git-commit.")),
-    subCommand("clean").decorate(suggestion => suggestion.withDescription("Remove untracked files from the working tree.")),
-    subCommand("clone").decorate(suggestion => suggestion.withDescription("Clone a repository into a new directory.")),
-    subCommand("commit").decorate(suggestion => suggestion.withDescription("Record changes to the repository.")).bind(commitOption),
-    subCommand("describe").decorate(suggestion => suggestion.withDescription("Describe a commit using the most recent tag reachable from it.")),
-    subCommand("diff").decorate(suggestion => suggestion.withDescription("Show changes between commits, commit and working tree, etc.")),
-    subCommand("fetch").decorate(suggestion => suggestion.withDescription("Download objects and refs from another repository.")),
-    subCommand("format-patch").decorate(suggestion => suggestion.withDescription("Prepare patches for e-mail submission.")),
-    subCommand("gc").decorate(suggestion => suggestion.withDescription("Cleanup unnecessary files and optimize the local repository.")),
-    subCommand("grep").decorate(suggestion => suggestion.withDescription("Print lines matching a pattern.")),
-    subCommand("gui").decorate(suggestion => suggestion.withDescription("A portable graphical interface to Git.")),
-    subCommand("init").decorate(suggestion => suggestion.withDescription("Create an empty Git repository or reinitialize an existing one.")),
-    subCommand("log").decorate(suggestion => suggestion.withDescription("Show commit logs.")),
-    subCommand("merge").decorate(suggestion => suggestion.withDescription("Join two or more development histories together.")).bind(branchesExceptCurrent),
-    subCommand("mv").decorate(suggestion => suggestion.withDescription("Move or rename a file, a directory, or a symlink.")),
-    subCommand("notes").decorate(suggestion => suggestion.withDescription("Add or inspect object notes.")),
-    subCommand("pull").decorate(suggestion => suggestion.withDescription("Fetch from and integrate with another repository or a local branch.")),
-    subCommand("push").decorate(suggestion => suggestion.withDescription("Update remote refs along with associated objects.")),
-    subCommand("rebase").decorate(suggestion => suggestion.withDescription("Forward-port local commits to the updated upstream head.")),
-    subCommand("reset").decorate(suggestion => suggestion.withDescription("Reset current HEAD to the specified state.")),
-    subCommand("revert").decorate(suggestion => suggestion.withDescription("Revert some existing commits.")),
-    subCommand("rm").decorate(suggestion => suggestion.withDescription("Remove files from the working tree and from the index.")),
-    subCommand("shortlog").decorate(suggestion => suggestion.withDescription("Summarize git log output.")),
-    subCommand("show").decorate(suggestion => suggestion.withDescription("Show various types of objects.")),
-    subCommand("stash").decorate(suggestion => suggestion.withDescription("Stash the changes in a dirty working directory away.")),
-    subCommand("status").decorate(suggestion => suggestion.withDescription("Show the working tree status.")),
-    subCommand("submodule").decorate(suggestion => suggestion.withDescription("Initialize, update or inspect submodules.")),
-    subCommand("tag").decorate(suggestion => suggestion.withDescription("Create, list, delete or verify a tag object signed with GPG.")),
-    subCommand("worktree").decorate(suggestion => suggestion.withDescription("Manage multiple worktrees.")),
+    subCommand("add").decorate(description("Add file contents to the index.")),
+    subCommand("am").decorate(description("Apply a series of patches from a mailbox.")),
+    subCommand("archive").decorate(description("Create an archive of files from a named tree.")),
+    subCommand("bisect").decorate(description("Find by binary search the change that introduced a bug.")),
+    subCommand("branch").decorate(description("List, create, or delete branches.")),
+    subCommand("bundle").decorate(description("Move objects and refs by archive.")),
+    subCommand("checkout").decorate(description("Switch branches or restore working tree files.")).bind(branchesExceptCurrent),
+    subCommand("cherry-pick").decorate(description("Apply the changes introduced by some existing commits.")),
+    subCommand("citool").decorate(description("Graphical alternative to git-commit.")),
+    subCommand("clean").decorate(description("Remove untracked files from the working tree.")),
+    subCommand("clone").decorate(description("Clone a repository into a new directory.")),
+    subCommand("commit").decorate(description("Record changes to the repository.")).bind(commitOption),
+    subCommand("describe").decorate(description("Describe a commit using the most recent tag reachable from it.")),
+    subCommand("diff").decorate(description("Show changes between commits, commit and working tree, etc.")),
+    subCommand("fetch").decorate(description("Download objects and refs from another repository.")),
+    subCommand("format-patch").decorate(description("Prepare patches for e-mail submission.")),
+    subCommand("gc").decorate(description("Cleanup unnecessary files and optimize the local repository.")),
+    subCommand("grep").decorate(description("Print lines matching a pattern.")),
+    subCommand("gui").decorate(description("A portable graphical interface to Git.")),
+    subCommand("init").decorate(description("Create an empty Git repository or reinitialize an existing one.")),
+    subCommand("log").decorate(description("Show commit logs.")),
+    subCommand("merge").decorate(description("Join two or more development histories together.")).bind(branchesExceptCurrent),
+    subCommand("mv").decorate(description("Move or rename a file, a directory, or a symlink.")),
+    subCommand("notes").decorate(description("Add or inspect object notes.")),
+    subCommand("pull").decorate(description("Fetch from and integrate with another repository or a local branch.")),
+    subCommand("push").decorate(description("Update remote refs along with associated objects.")),
+    subCommand("rebase").decorate(description("Forward-port local commits to the updated upstream head.")),
+    subCommand("reset").decorate(description("Reset current HEAD to the specified state.")),
+    subCommand("revert").decorate(description("Revert some existing commits.")),
+    subCommand("rm").decorate(description("Remove files from the working tree and from the index.")),
+    subCommand("shortlog").decorate(description("Summarize git log output.")),
+    subCommand("show").decorate(description("Show various types of objects.")),
+    subCommand("stash").decorate(description("Stash the changes in a dirty working directory away.")),
+    subCommand("status").decorate(description("Show the working tree status.")),
+    subCommand("submodule").decorate(description("Initialize, update or inspect submodules.")),
+    subCommand("tag").decorate(description("Create, list, delete or verify a tag object signed with GPG.")),
+    subCommand("worktree").decorate(description("Manage multiple worktrees.")),
 ]);
 
 export const git = executable("git").bind(gitCommand);
