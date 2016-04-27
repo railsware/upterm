@@ -19,12 +19,12 @@ function makeThrottledDataEmitter(timesPerSecond: number, subject: EmitterWithUn
 
 export default class Job extends EmitterWithUniqueID {
     public command: PTY;
-    public parser: ANSIParser;
     public status: Status = Status.NotStarted;
-    private _prompt: Prompt;
-    private _buffer: Buffer;
-    private rareDataEmitter: Function;
-    private frequentDataEmitter: Function;
+    public readonly parser: ANSIParser;
+    private readonly _prompt: Prompt;
+    private readonly _buffer: Buffer;
+    private readonly rareDataEmitter: Function;
+    private readonly frequentDataEmitter: Function;
 
     constructor(private _session: Session) {
         super();
