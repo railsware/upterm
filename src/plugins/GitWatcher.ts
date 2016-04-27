@@ -14,6 +14,7 @@ const GIT_WATCHER_EVENT_NAME = "git-data-changed";
 class GitWatcher extends EventEmitter {
     GIT_HEAD_FILE_NAME = Path.join(".git", "HEAD");
     GIT_HEADS_DIRECTORY_NAME = Path.join(".git", "refs", "heads");
+    IGNORED_PATTERNS = [/node_modules/, /\.git\/objects/];
 
     watcher: FSWatcher;
     gitDirectory: string;
@@ -32,8 +33,17 @@ class GitWatcher extends EventEmitter {
     async watch() {
         if (await exists(this.gitDirectory)) {
             this.updateGitData();
-            this.watcher = watch(this.directory, {ignoreInitial: true, followSymlinks: false});
-            this.watcher.on("all", (type: string, fileName: string) => {
+            this.watcher = watch(this.directory, {
+                ignoreInitial: true,
+                followSymlinks: false,
+                usePolling: false,
+                useFsEvents: true,
+                ignored: this.IGNORED_PATTERNS,
+            });
+
+            this.watcher.on(
+                "all",
+                (type: string, fileName: string) => {
                     if (!fileName.startsWith(".git") ||
                         fileName === this.GIT_HEAD_FILE_NAME ||
                         fileName.startsWith(this.GIT_HEADS_DIRECTORY_NAME)) {
