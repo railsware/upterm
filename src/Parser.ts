@@ -6,30 +6,30 @@ interface ParsingContext {
     directory: string;
 }
 
-abstract class Parser<T> {
+abstract class Parser {
     abstract get isValid(): boolean;
     abstract get isExhausted(): boolean;
-    abstract async derive(char: char, context: ParsingContext): Promise<Parser<T>>;
+    abstract async derive(char: char, context: ParsingContext): Promise<Parser>;
     abstract async suggestions(context: ParsingContext): Promise<Suggestion[]>;
 
-    async parse(string: string, context: ParsingContext): Promise<Parser<T>> {
+    async parse(string: string, context: ParsingContext): Promise<Parser> {
         return reduceAsync(Array.from(string), this, (parser, char) => parser.derive(char, context));
     }
 
-    bind<U>(parser: Parser<U>): Parser<[T, U]> {
+    bind(parser: Parser): Parser {
         return new Sequence(this, parser);
     }
 
-    or<U>(parser: Parser<U>): Parser<[T, U]> {
+    or(parser: Parser): Parser {
         return new Or(this, parser);
     }
 
-    decorate(decorator: (s: Suggestion) => Suggestion): Parser<T> {
+    decorate(decorator: (s: Suggestion) => Suggestion): Parser {
         return new SuggestionsDecorator(this, decorator);
     }
 }
 
-abstract class Valid<T> extends Parser<T> {
+abstract class Valid extends Parser {
     get isValid() {
         return true;
     }
@@ -39,7 +39,7 @@ abstract class Valid<T> extends Parser<T> {
     }
 }
 
-class Success<T> extends Parser<T> {
+class Success extends Parser {
     get isValid() {
         return true;
     }
@@ -57,7 +57,7 @@ class Success<T> extends Parser<T> {
     }
 }
 
-class Failure<T> extends Parser<T> {
+class Failure extends Parser {
     get isValid() {
         return false;
     }
@@ -75,12 +75,12 @@ class Failure<T> extends Parser<T> {
     }
 }
 
-class StringLiteral extends Valid<string> {
+class StringLiteral extends Valid {
     constructor(private string: string, private startIndex = 0) {
         super();
     }
 
-    async derive(char: char, context: ParsingContext): Promise<Parser<string>> {
+    async derive(char: char, context: ParsingContext): Promise<Parser> {
         if (this.string.charAt(this.startIndex) === char) {
             if (this.startIndex === this.string.length - 1) {
                 return new Success();
@@ -97,12 +97,12 @@ class StringLiteral extends Valid<string> {
     }
 }
 
-class Sequence<L, R> extends Valid<[L, R]> {
-    constructor(private left: Parser<L>, private right: Parser<R>) {
+class Sequence extends Valid {
+    constructor(private left: Parser, private right: Parser) {
         super();
     }
 
-    async derive(char: char, context: ParsingContext): Promise<Parser<[L, R]>> {
+    async derive(char: char, context: ParsingContext): Promise<Parser> {
         const leftDerived = await this.left.derive(char, context);
 
         if (!leftDerived.isValid) {
@@ -121,12 +121,12 @@ class Sequence<L, R> extends Valid<[L, R]> {
     }
 }
 
-class Or<L, R> extends Valid<[L, R]> {
-    constructor(private left: Parser<L>, private right: Parser<R>) {
+class Or extends Valid {
+    constructor(private left: Parser, private right: Parser) {
         super();
     }
 
-    async derive(char: char, context: ParsingContext): Promise<Parser<[L, R]>> {
+    async derive(char: char, context: ParsingContext): Promise<Parser> {
         const leftDerived = await this.left.derive(char, context);
         const rightDerived = await this.right.derive(char, context);
 
@@ -153,12 +153,12 @@ class Or<L, R> extends Valid<[L, R]> {
     }
 }
 
-class SuggestionsDecorator<T> extends Valid<T> {
-    constructor(private parser: Parser<T>, private decorator: (s: Suggestion) => Suggestion) {
+class SuggestionsDecorator extends Valid {
+    constructor(private parser: Parser, private decorator: (s: Suggestion) => Suggestion) {
         super();
     }
 
-    async derive(char: char, context: ParsingContext): Promise<Parser<T>> {
+    async derive(char: char, context: ParsingContext): Promise<Parser> {
         const derived = await this.parser.derive(char, context);
         if (!derived.isValid) {
             return new Failure();
@@ -179,7 +179,7 @@ class SuggestionsDecorator<T> extends Valid<T> {
 }
 
 export const string = (value: string) => new StringLiteral(value);
-export const choice = <T>(parsers: Parser<T>[]): Parser<T> => {
+export const choice = (parsers: Parser[]): Parser => {
     if (parsers.length === 0) {
         return new Failure();
     } else if (parsers.length === 1) {
@@ -196,12 +196,12 @@ export const subCommand = (value: string) => token(value).decorate(type("command
 
 type DataSource = (context: ParsingContext) => Promise<string[]>;
 
-class FromDataSource<T> extends Valid<T> {
-    constructor(private parserConstructor: (s: string) => Parser<T>, private source: DataSource) {
+class FromDataSource extends Valid {
+    constructor(private parserConstructor: (s: string) => Parser, private source: DataSource) {
         super();
     }
 
-    async derive(char: char, context: ParsingContext): Promise<Parser<T>> {
+    async derive(char: char, context: ParsingContext): Promise<Parser> {
         const parser = await this.getParser(context);
         return parser.derive(char, context);
     }
@@ -211,10 +211,10 @@ class FromDataSource<T> extends Valid<T> {
         return parser.suggestions(context);
     }
 
-    private async getParser(context: ParsingContext): Promise<Parser<T>> {
+    private async getParser(context: ParsingContext): Promise<Parser> {
         const data = await this.source(context);
         return choice(data.map(this.parserConstructor));
     }
 }
 
-export const fromSource = <T>(parserConstructor: (s: string) => Parser<T>, source: DataSource) => new FromDataSource(parserConstructor, source);
+export const fromSource = (parserConstructor: (s: string) => Parser, source: DataSource) => new FromDataSource(parserConstructor, source);
