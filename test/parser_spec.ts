@@ -1,22 +1,20 @@
 import {expect} from "chai";
 import {string, choice} from "../src/Parser.ts";
+import {Suggestion} from "../src/plugins/autocompletion_providers/Suggestions";
+
+const context = {
+    directory: "/",
+};
+const valuesOf = (suggestions: Suggestion[]) => suggestions.map(suggestion => suggestion.value);
 
 describe("parser", () => {
     it("returns suggestions", async() => {
-        const result = await string("git")
+        const derived = await string("git")
             .bind(string(" "))
             .bind(choice([string("commit"), string("checkout"), string("merge")]))
-            .parse("git c");
+            .parse("git c", context);
+        const suggestions = await derived.suggestions(context);
 
-        expect(result.suggestions).to.eql([
-            {
-                prefix: "c",
-                value: "ommit",
-            },
-            {
-                prefix: "c",
-                value: "heckout",
-            },
-        ]);
+        expect(valuesOf(suggestions)).to.eql(["commit", "checkout"]);
     });
 });
