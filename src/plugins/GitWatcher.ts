@@ -23,7 +23,7 @@ class GitWatcher extends EventEmitter {
         this.gitDirectory = Path.join(this.directory, ".git");
     }
 
-    destructor() {
+    stopWatching() {
         if (this.watcher) {
             this.watcher.close();
         }
@@ -81,7 +81,7 @@ class WatchManager implements EnvironmentObserverPlugin {
         details.sessions.delete(session);
 
         if (details.sessions.size === 0) {
-            details.watcher.destructor();
+            details.watcher.stopWatching();
             this.directoryToDetails.delete(directory);
         }
     }
