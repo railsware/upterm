@@ -179,13 +179,14 @@ class SuggestionsDecorator extends Valid {
 }
 
 export const string = (value: string) => new StringLiteral(value);
+export const or = (left: Parser, right: Parser) => new Or(left, right);
 export const choice = (parsers: Parser[]): Parser => {
     if (parsers.length === 0) {
         return new Failure();
     } else if (parsers.length === 1) {
         return parsers[0];
     } else {
-        return parsers.reduce((left, right) => new Or(left, right));
+        return parsers.reduce((left, right) => or(left, right));
     }
 };
 
