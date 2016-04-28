@@ -6,6 +6,8 @@ interface ParsingContext {
     directory: string;
 }
 
+type DataSource = (context: ParsingContext) => Promise<string[]>;
+
 abstract class Parser {
     abstract get isValid(): boolean;
     abstract get isExhausted(): boolean;
@@ -178,25 +180,6 @@ class SuggestionsDecorator extends Valid {
     }
 }
 
-export const string = (value: string) => new StringLiteral(value);
-export const or = (left: Parser, right: Parser) => new Or(left, right);
-export const choice = (parsers: Parser[]): Parser => {
-    if (parsers.length === 0) {
-        return new Failure();
-    } else if (parsers.length === 1) {
-        return parsers[0];
-    } else {
-        return parsers.reduce((left, right) => or(left, right));
-    }
-};
-
-export const token = (value: string) => string(`${value} `);
-export const executable = (name: string) => token(name).decorate(type("executable"));
-export const option = (value: string) => string(`--${value}=`).decorate(type("option"));
-export const subCommand = (value: string) => token(value).decorate(type("command"));
-
-type DataSource = (context: ParsingContext) => Promise<string[]>;
-
 class FromDataSource extends Valid {
     constructor(private parserConstructor: (s: string) => Parser, private source: DataSource) {
         super();
@@ -217,5 +200,22 @@ class FromDataSource extends Valid {
         return choice(data.map(this.parserConstructor));
     }
 }
+
+export const string = (value: string) => new StringLiteral(value);
+export const or = (left: Parser, right: Parser) => new Or(left, right);
+export const choice = (parsers: Parser[]): Parser => {
+    if (parsers.length === 0) {
+        return new Failure();
+    } else if (parsers.length === 1) {
+        return parsers[0];
+    } else {
+        return parsers.reduce((left, right) => or(left, right));
+    }
+};
+
+export const token = (value: string) => string(`${value} `);
+export const executable = (name: string) => token(name).decorate(type("executable"));
+export const option = (value: string) => string(`--${value}=`).decorate(type("option"));
+export const subCommand = (value: string) => token(value).decorate(type("command"));
 
 export const fromSource = (parserConstructor: (s: string) => Parser, source: DataSource) => new FromDataSource(parserConstructor, source);
