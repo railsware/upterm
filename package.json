@@ -27,7 +27,7 @@
     "chokidar": "1.4.3",
     "fixed-sticky": "0.1.7",
     "font-awesome": "4.6.1",
-    "fs-extra": "0.29.0",
+    "fs-extra": "0.30.0",
     "fuzzaldrin": "2.1.0",
     "immutable": "3.8.1",
     "jison": "0.4.17",
