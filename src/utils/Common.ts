@@ -357,3 +357,12 @@ export function convertKeyCode(keyCode: number, shift: boolean): string {
             throw `Unknown key code: ${keyCode}`;
     }
 }
+
+export function commonPrefix(left: string, right: string) {
+    let i = 0;
+
+    while (i < left.length && left.charAt(i) === right.charAt(i)) {
+        ++i;
+    }
+    return left.substring(0, i);
+}

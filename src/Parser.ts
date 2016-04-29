@@ -1,10 +1,14 @@
-import {reduceAsync} from "./utils/Common";
 import {Suggestion, type} from "./plugins/autocompletion_providers/Suggestions";
-
-type char = string;
+import {commonPrefix} from "./utils/Common";
 
 interface Context {
     directory: string;
+}
+
+interface Result {
+    parser: Parser;
+    rest: string;
+    parsed: string;
 }
 
 type DataSource = (context: Context) => Promise<string[]>;
@@ -12,12 +16,8 @@ type DataSource = (context: Context) => Promise<string[]>;
 abstract class Parser {
     abstract get isValid(): boolean;
     abstract get isExhausted(): boolean;
-    abstract async derive(char: char, context: Context): Promise<Parser>;
+    abstract async derive(string: string, context: Context): Promise<Result>;
     abstract async suggestions(context: Context): Promise<Suggestion[]>;
-
-    async parse(string: string, context: Context): Promise<Parser> {
-        return reduceAsync(Array.from(string), this, (parser, char) => parser.derive(char, context));
-    }
 
     bind(parser: Parser): Parser {
         return new Sequence(this, parser);
@@ -51,8 +51,12 @@ class Success extends Parser {
         return true;
     }
 
-    async derive(char: char, context: Context) {
-        return this;
+    async derive(string: string, context: Context): Promise<Result> {
+        return {
+            parser: this,
+            rest: string,
+            parsed: "",
+        };
     }
 
     async suggestions(context: Context): Promise<Suggestion[]> {
@@ -69,8 +73,12 @@ class Failure extends Parser {
         return false;
     }
 
-    async derive(char: char, context: Context) {
-        return this;
+    async derive(string: string, context: Context): Promise<Result> {
+        return {
+            parser: this,
+            rest: string,
+            parsed: "",
+        };
     }
 
     async suggestions(context: Context): Promise<Suggestion[]> {
@@ -83,15 +91,36 @@ class StringLiteral extends Valid {
         super();
     }
 
-    async derive(char: char, context: Context): Promise<Parser> {
-        if (this.string.charAt(this.startIndex) === char) {
-            if (this.startIndex === this.string.length - 1) {
-                return new Success();
+    async derive(string: string, context: Context): Promise<Result> {
+        const substring = this.string.slice(this.startIndex);
+        const prefix = commonPrefix(string, substring);
+
+        if (prefix) {
+            if (prefix === substring) {
+                return {
+                    parser: new Success(),
+                    rest: string.slice(prefix.length),
+                    parsed: prefix,
+                };
+            } else if (prefix === string) {
+                return {
+                    parser: new StringLiteral(this.string, this.startIndex + prefix.length),
+                    rest: string.slice(prefix.length),
+                    parsed: prefix,
+                };
             } else {
-                return new StringLiteral(this.string, this.startIndex + 1);
+                return {
+                    parser: new Failure(),
+                    rest: string.slice(prefix.length),
+                    parsed: prefix,
+                };
             }
         } else {
-            return new Failure();
+            return {
+                parser: new Failure(),
+                rest: string.slice(prefix.length),
+                parsed: prefix,
+            };
         }
     }
 
@@ -105,18 +134,22 @@ class Sequence extends Valid {
         super();
     }
 
-    async derive(char: char, context: Context): Promise<Parser> {
-        const leftDerived = await this.left.derive(char, context);
+    async derive(string: string, context: Context): Promise<Result> {
+        const leftResult = await this.left.derive(string, context);
 
-        if (!leftDerived.isValid) {
-            return leftDerived;
+        if (!leftResult.parser.isValid) {
+            return leftResult;
         }
 
-        if (leftDerived.isExhausted) {
-            return this.right;
+        if (!leftResult.parser.isExhausted) {
+            return {
+                parser: new Sequence(leftResult.parser, this.right),
+                rest: leftResult.rest,
+                parsed: leftResult.parsed,
+            };
         }
 
-        return new Sequence(leftDerived, this.right);
+        return await this.right.derive(leftResult.rest, context);
     }
 
     async suggestions(context: Context): Promise<Suggestion[]> {
@@ -129,23 +162,23 @@ class Or extends Valid {
         super();
     }
 
-    async derive(char: char, context: Context): Promise<Parser> {
-        const leftDerived = await this.left.derive(char, context);
-        const rightDerived = await this.right.derive(char, context);
+    async derive(string: string, context: Context): Promise<Result> {
+        const leftResult = await this.left.derive(string, context);
+        const rightResult = await this.right.derive(string, context);
 
-        if (!leftDerived.isValid) {
-            return rightDerived;
+        if (!leftResult.parser.isValid) {
+            return rightResult;
         }
 
-        if (!rightDerived.isValid) {
-            return leftDerived;
+        if (!rightResult.parser.isValid) {
+            return leftResult;
         }
 
-        if (leftDerived.isExhausted || rightDerived.isExhausted) {
-            return new Success();
-        }
-
-        return new Or(leftDerived, rightDerived);
+        return {
+            parser: new Or(leftResult.parser, rightResult.parser),
+            rest: leftResult.rest,
+            parsed: leftResult.parsed,
+        };
     }
 
     async suggestions(context: Context): Promise<Suggestion[]> {
@@ -161,17 +194,29 @@ class SuggestionsDecorator extends Valid {
         super();
     }
 
-    async derive(char: char, context: Context): Promise<Parser> {
-        const derived = await this.parser.derive(char, context);
-        if (!derived.isValid) {
-            return new Failure();
+    async derive(string: string, context: Context): Promise<Result> {
+        const result = await this.parser.derive(string, context);
+        if (!result.parser.isValid) {
+            return {
+                parser: new Failure(),
+                rest: result.rest,
+                parsed: result.parsed,
+            };
         }
 
-        if (derived.isExhausted) {
-            return new Success();
+        if (result.parser.isExhausted) {
+            return {
+                parser: new Success(),
+                rest: result.rest,
+                parsed: result.parsed,
+            };
         }
 
-        return new SuggestionsDecorator(derived, this.decorator);
+        return {
+            parser: new SuggestionsDecorator(result.parser, this.decorator),
+            rest: result.rest,
+            parsed: result.parsed,
+        };
     }
 
     async suggestions(context: Context): Promise<Suggestion[]> {
@@ -186,9 +231,9 @@ class FromDataSource extends Valid {
         super();
     }
 
-    async derive(char: char, context: Context): Promise<Parser> {
+    async derive(string: string, context: Context): Promise<Result> {
         const parser = await this.getParser(context);
-        return parser.derive(char, context);
+        return parser.derive(string, context);
     }
 
     async suggestions(context: Context): Promise<Suggestion[]> {
@@ -204,6 +249,8 @@ class FromDataSource extends Valid {
 
 export const string = (value: string) => new StringLiteral(value);
 export const or = (left: Parser, right: Parser) => new Or(left, right);
+export const token = (value: string) => string(`${value} `);
+export const fromSource = (parserConstructor: (s: string) => Parser, source: DataSource) => new FromDataSource(parserConstructor, source);
 export const choice = (parsers: Parser[]): Parser => {
     if (parsers.length === 0) {
         return new Failure();
@@ -214,9 +261,7 @@ export const choice = (parsers: Parser[]): Parser => {
     }
 };
 
-export const token = (value: string) => string(`${value} `);
+
 export const executable = (name: string) => token(name).decorate(type("executable"));
 export const option = (value: string) => string(`--${value}=`).decorate(type("option"));
 export const subCommand = (value: string) => token(value).decorate(type("command"));
-
-export const fromSource = (parserConstructor: (s: string) => Parser, source: DataSource) => new FromDataSource(parserConstructor, source);

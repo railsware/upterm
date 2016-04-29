@@ -36,8 +36,8 @@ export default class Autocompletion implements i.AutocompletionProvider {
             console.time(`suggestion for '${job.prompt.value}'`);
         }
 
-        const applied = await grammar.parse(job.prompt.value, job.session);
-        const suggestions = await applied.suggestions(job.session);
+        const result = await grammar.derive(job.prompt.value, job.session);
+        const suggestions = await result.parser.suggestions(job.session);
         const unique = _.uniqBy(suggestions, suggestion => suggestion.value).slice(0, Autocompletion.limit);
 
         if (window.DEBUG) {
