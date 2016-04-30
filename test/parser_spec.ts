@@ -59,8 +59,17 @@ describe("parser", () => {
     });
 
     describe("many", () => {
+        const parser = string("git").bind(many(" ")).bind(string("commit"));
+
+        it("matches one occurrence", async() => {
+            const result = await parser.parse("git c", context);
+            const suggestions = await result.parser.suggestions(context);
+
+            expect(valuesOf(suggestions)).to.eql(["commit"]);
+        });
+
         it("matches two occurrences", async() => {
-            const result = await string("git").bind(many(" ")).bind(string("commit")).parse("git  c", context);
+            const result = await parser.parse("git  c", context);
             const suggestions = await result.parser.suggestions(context);
 
             expect(valuesOf(suggestions)).to.eql(["commit"]);
