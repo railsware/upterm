@@ -146,7 +146,7 @@ const commitOption = choice([
         .decorate(description("Use the given <msg> as the commit message. If multiple -m options are given, their values are concatenated as separate paragraphs.")),
     option("cleanup")
         .decorate(description("This option determines how the supplied commit message should be cleaned up before committing. The <mode> can be strip, whitespace, verbatim, scissors or default."))
-        .bind(cleanupMode),
+        .sequence(cleanupMode),
 ]);
 
 const branchesExceptCurrent = fromSource(string, async (context) => {
@@ -161,12 +161,12 @@ const gitCommand = choice([
     subCommand("bisect").decorate(description("Find by binary search the change that introduced a bug.")),
     subCommand("branch").decorate(description("List, create, or delete branches.")),
     subCommand("bundle").decorate(description("Move objects and refs by archive.")),
-    subCommand("checkout").decorate(description("Switch branches or restore working tree files.")).bind(branchesExceptCurrent),
+    subCommand("checkout").decorate(description("Switch branches or restore working tree files.")).sequence(branchesExceptCurrent),
     subCommand("cherry-pick").decorate(description("Apply the changes introduced by some existing commits.")),
     subCommand("citool").decorate(description("Graphical alternative to git-commit.")),
     subCommand("clean").decorate(description("Remove untracked files from the working tree.")),
     subCommand("clone").decorate(description("Clone a repository into a new directory.")),
-    subCommand("commit").decorate(description("Record changes to the repository.")).bind(commitOption),
+    subCommand("commit").decorate(description("Record changes to the repository.")).sequence(commitOption),
     subCommand("describe").decorate(description("Describe a commit using the most recent tag reachable from it.")),
     subCommand("diff").decorate(description("Show changes between commits, commit and working tree, etc.")),
     subCommand("fetch").decorate(description("Download objects and refs from another repository.")),
@@ -176,7 +176,7 @@ const gitCommand = choice([
     subCommand("gui").decorate(description("A portable graphical interface to Git.")),
     subCommand("init").decorate(description("Create an empty Git repository or reinitialize an existing one.")),
     subCommand("log").decorate(description("Show commit logs.")),
-    subCommand("merge").decorate(description("Join two or more development histories together.")).bind(branchesExceptCurrent),
+    subCommand("merge").decorate(description("Join two or more development histories together.")).sequence(branchesExceptCurrent),
     subCommand("mv").decorate(description("Move or rename a file, a directory, or a symlink.")),
     subCommand("notes").decorate(description("Add or inspect object notes.")),
     subCommand("pull").decorate(description("Fetch from and integrate with another repository or a local branch.")),
@@ -194,4 +194,4 @@ const gitCommand = choice([
     subCommand("worktree").decorate(description("Manage multiple worktrees.")),
 ]);
 
-export const git = executable("git").bind(gitCommand);
+export const git = executable("git").sequence(gitCommand);

@@ -14,7 +14,7 @@ const command = choice([
     ls,
     git,
 ]);
-const sudo = token("sudo").bind(command);
+const sudo = token("sudo").sequence(command);
 const anyCommand = choice([
     sudo,
     command,
@@ -25,7 +25,7 @@ const separator = choice([
     token(";"),
 ]);
 
-const grammar = anyCommand.bind(separator).bind(anyCommand);
+const grammar = anyCommand.sequence(separator).sequence(anyCommand);
 
 export default class Autocompletion implements i.AutocompletionProvider {
     static limit = 9;

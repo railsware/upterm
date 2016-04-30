@@ -19,7 +19,7 @@ abstract class Parser {
     abstract async derive(string: string, context: Context): Promise<Result>;
     abstract async suggestions(context: Context): Promise<Suggestion[]>;
 
-    bind(parser: Parser): Parser {
+    sequence(parser: Parser): Parser {
         return new Sequence(this, parser);
     }
 
@@ -242,7 +242,7 @@ class Many1 extends Valid {
     }
 
     async derive(string: string, context: Context): Promise<Result> {
-        return await new Or(new StringLiteral(this.string), new StringLiteral(this.string).bind(new Many1(this.string))).derive(string, context);
+        return await new Or(new StringLiteral(this.string), new StringLiteral(this.string).sequence(new Many1(this.string))).derive(string, context);
     }
 
     async suggestions(context: Context): Promise<Suggestion[]> {
@@ -311,7 +311,7 @@ class FromDataSource extends Valid {
 export const string = (value: string) => new StringLiteral(value);
 export const or = (left: Parser, right: Parser) => new Or(left, right);
 export const optional = (value: string) => or(nothing, string(value));
-export const token = (value: string) => string(value).bind(many1(" "));
+export const token = (value: string) => string(value).sequence(many1(" "));
 export const fromSource = (parserConstructor: (s: string) => Parser, source: DataSource) => new FromDataSource(parserConstructor, source);
 export const choice = (parsers: Parser[]): Parser => {
     if (parsers.length === 0) {

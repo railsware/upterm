@@ -10,8 +10,8 @@ const valuesOf = (suggestions: Suggestion[]) => suggestions.map(suggestion => su
 describe("parser", () => {
     it("returns suggestions", async() => {
         const result = await string("git")
-            .bind(string(" "))
-            .bind(choice([string("commit"), string("checkout"), string("merge")]))
+            .sequence(string(" "))
+            .sequence(choice([string("commit"), string("checkout"), string("merge")]))
             .parse("git c", context);
         const suggestions = await result.parser.suggestions(context);
 
@@ -50,8 +50,8 @@ describe("parser", () => {
 
         it("doesn't commit to a branch too early", async() => {
             const result = await string("git")
-                .bind(or(string(" "), string("  ")))
-                .bind(string("commit"))
+                .sequence(or(string(" "), string("  ")))
+                .sequence(string("commit"))
                 .parse("git  commit", context);
 
             expect(result.parser.isValid).to.eql(true);
@@ -59,7 +59,7 @@ describe("parser", () => {
     });
 
     describe("many1", () => {
-        const parser = string("git").bind(many1(" ")).bind(string("commit"));
+        const parser = string("git").sequence(many1(" ")).sequence(string("commit"));
 
         it("matches one occurrence", async() => {
             const result = await parser.parse("git c", context);
@@ -78,14 +78,14 @@ describe("parser", () => {
 
     describe("optional", () => {
         it("matches no occurrence", async() => {
-            const result = await optional("sudo ").bind(string("git")).parse("g", context);
+            const result = await optional("sudo ").sequence(string("git")).parse("g", context);
             const suggestions = await result.parser.suggestions(context);
 
             expect(valuesOf(suggestions)).to.eql(["git"]);
         });
 
         it("matches with an occurrence", async() => {
-            const result = await optional("sudo ").bind(string("git")).parse("sudo g", context);
+            const result = await optional("sudo ").sequence(string("git")).parse("sudo g", context);
             const suggestions = await result.parser.suggestions(context);
 
             expect(valuesOf(suggestions)).to.eql(["git"]);
