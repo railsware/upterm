@@ -222,15 +222,15 @@ class Or extends Valid {
     }
 }
 
-export const many1 = (value: string) => new Many(value);
+export const many1 = (value: string) => new Many1(value);
 
-class Many extends Valid {
+class Many1 extends Valid {
     constructor(private string: string) {
         super();
     }
 
     async derive(string: string, context: Context): Promise<Result> {
-        return await new Or(new StringLiteral(this.string), new StringLiteral(this.string).bind(new Many(this.string))).derive(string, context);
+        return await new Or(new StringLiteral(this.string), new StringLiteral(this.string).bind(new Many1(this.string))).derive(string, context);
     }
 
     async suggestions(context: Context): Promise<Suggestion[]> {
