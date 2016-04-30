@@ -16,7 +16,7 @@ type DataSource = (context: Context) => Promise<string[]>;
 abstract class Parser {
     abstract get isValid(): boolean;
     abstract get isExhausted(): boolean;
-    abstract async parse(string: string, context: Context): Promise<Result>;
+    abstract async derive(string: string, context: Context): Promise<Result>;
     abstract async suggestions(context: Context): Promise<Suggestion[]>;
 
     bind(parser: Parser): Parser {
@@ -31,14 +31,14 @@ abstract class Parser {
         return new SuggestionsDecorator(this, decorator);
     }
 
-    async fffffff(string: string, context: Context): Promise<Result> {
-        const result = await this.parse(string, context);
+    async parse(string: string, context: Context): Promise<Result> {
+        const result = await this.derive(string, context);
 
         if (!result.parser.isValid || result.parser.isExhausted || !result.rest) {
             return result;
         }
 
-        return await result.parser.fffffff(result.rest, context);
+        return await result.parser.parse(result.rest, context);
     }
 }
 
@@ -61,7 +61,7 @@ class Success extends Parser {
         return true;
     }
 
-    async parse(string: string, context: Context): Promise<Result> {
+    async derive(string: string, context: Context): Promise<Result> {
         return {
             parser: new Failure(),
             rest: string,
@@ -75,7 +75,7 @@ class Success extends Parser {
 }
 
 class Nothing extends Valid {
-    async parse(string: string, context: Context): Promise<Result> {
+    async derive(string: string, context: Context): Promise<Result> {
         return {
             parser: new Success(),
             rest: string,
@@ -98,7 +98,7 @@ class Failure extends Parser {
         return false;
     }
 
-    async parse(string: string, context: Context): Promise<Result> {
+    async derive(string: string, context: Context): Promise<Result> {
         return {
             parser: this,
             rest: string,
@@ -116,7 +116,7 @@ class StringLiteral extends Valid {
         super();
     }
 
-    async parse(string: string, context: Context): Promise<Result> {
+    async derive(string: string, context: Context): Promise<Result> {
         if (this.string.length === 0) {
             return {
                 parser: new Success(),
@@ -167,8 +167,8 @@ class Sequence extends Valid {
         super();
     }
 
-    async parse(string: string, context: Context): Promise<Result> {
-        const leftResult = await this.left.parse(string, context);
+    async derive(string: string, context: Context): Promise<Result> {
+        const leftResult = await this.left.derive(string, context);
 
         if (!leftResult.parser.isValid) {
             return leftResult;
@@ -182,7 +182,7 @@ class Sequence extends Valid {
             };
         }
 
-        return await this.right.parse(leftResult.rest, context);
+        return await this.right.derive(leftResult.rest, context);
     }
 
     async suggestions(context: Context): Promise<Suggestion[]> {
@@ -195,9 +195,9 @@ class Or extends Valid {
         super();
     }
 
-    async parse(string: string, context: Context): Promise<Result> {
-        const leftResult = await this.left.parse(string, context);
-        const rightResult = await this.right.parse(string, context);
+    async derive(string: string, context: Context): Promise<Result> {
+        const leftResult = await this.left.derive(string, context);
+        const rightResult = await this.right.derive(string, context);
 
         if (!leftResult.parser.isValid) {
             return rightResult;
@@ -229,8 +229,8 @@ class Many extends Valid {
         super();
     }
 
-    async parse(string: string, context: Context): Promise<Result> {
-        return await new Or(new StringLiteral(this.string), new StringLiteral(this.string).bind(new Many(this.string))).parse(string, context);
+    async derive(string: string, context: Context): Promise<Result> {
+        return await new Or(new StringLiteral(this.string), new StringLiteral(this.string).bind(new Many(this.string))).derive(string, context);
     }
 
     async suggestions(context: Context): Promise<Suggestion[]> {
@@ -243,8 +243,8 @@ class SuggestionsDecorator extends Valid {
         super();
     }
 
-    async parse(string: string, context: Context): Promise<Result> {
-        const result = await this.parser.parse(string, context);
+    async derive(string: string, context: Context): Promise<Result> {
+        const result = await this.parser.derive(string, context);
         if (!result.parser.isValid) {
             return {
                 parser: new Failure(),
@@ -280,9 +280,9 @@ class FromDataSource extends Valid {
         super();
     }
 
-    async parse(string: string, context: Context): Promise<Result> {
+    async derive(string: string, context: Context): Promise<Result> {
         const parser = await this.getParser(context);
-        return parser.parse(string, context);
+        return parser.derive(string, context);
     }
 
     async suggestions(context: Context): Promise<Suggestion[]> {

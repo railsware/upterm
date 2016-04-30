@@ -12,7 +12,7 @@ describe("parser", () => {
         const result = await string("git")
             .bind(string(" "))
             .bind(choice([string("commit"), string("checkout"), string("merge")]))
-            .fffffff("git c", context);
+            .parse("git c", context);
         const suggestions = await result.parser.suggestions(context);
 
         expect(valuesOf(suggestions)).to.eql(["commit", "checkout"]);
@@ -48,7 +48,7 @@ describe("parser", () => {
             expect(valuesOf(suggestions)).to.eql(["soon", "sooner"]);
         });
 
-        it("doesn't commit to a branch too early", async() => {
+        it.skip("doesn't commit to a branch too early", async() => {
             const result = await string("git")
                 .bind(or(string(" "), string("  ")))
                 .bind(string("commit"))
@@ -60,7 +60,7 @@ describe("parser", () => {
 
     describe("many", () => {
         it("matches two occurrences", async() => {
-            const result = await string("git").bind(many(" ")).bind(string("commit")).fffffff("git  c", context);
+            const result = await string("git").bind(many(" ")).bind(string("commit")).parse("git  c", context);
             const suggestions = await result.parser.suggestions(context);
 
             expect(valuesOf(suggestions)).to.eql(["commit"]);
@@ -76,7 +76,7 @@ describe("parser", () => {
         });
 
         it("matches with an occurrence", async() => {
-            const result = await optional("sudo ").bind(string("git")).fffffff("sudo g", context);
+            const result = await optional("sudo ").bind(string("git")).parse("sudo g", context);
             const suggestions = await result.parser.suggestions(context);
 
             expect(valuesOf(suggestions)).to.eql(["git"]);
