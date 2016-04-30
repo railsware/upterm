@@ -222,7 +222,7 @@ class Or extends Valid {
     }
 }
 
-export const many = (value: string) => new Many(value);
+export const many1 = (value: string) => new Many(value);
 
 class Many extends Valid {
     constructor(private string: string) {
@@ -299,7 +299,7 @@ class FromDataSource extends Valid {
 export const string = (value: string) => new StringLiteral(value);
 export const or = (left: Parser, right: Parser) => new Or(left, right);
 export const optional = (value: string) => or(nothing, string(value));
-export const token = (value: string) => string(`${value} `);
+export const token = (value: string) => string(value).bind(many1(" "));
 export const fromSource = (parserConstructor: (s: string) => Parser, source: DataSource) => new FromDataSource(parserConstructor, source);
 export const choice = (parsers: Parser[]): Parser => {
     if (parsers.length === 0) {

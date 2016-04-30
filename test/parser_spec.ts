@@ -1,5 +1,5 @@
 import {expect} from "chai";
-import {string, choice, or, many, optional} from "../src/Parser.ts";
+import {string, choice, or, many1, optional} from "../src/Parser.ts";
 import {Suggestion} from "../src/plugins/autocompletion_providers/Suggestions";
 
 const context = {
@@ -58,8 +58,8 @@ describe("parser", () => {
         });
     });
 
-    describe("many", () => {
-        const parser = string("git").bind(many(" ")).bind(string("commit"));
+    describe("many1", () => {
+        const parser = string("git").bind(many1(" ")).bind(string("commit"));
 
         it("matches one occurrence", async() => {
             const result = await parser.parse("git c", context);
