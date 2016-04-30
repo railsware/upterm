@@ -1,5 +1,5 @@
 import {expect} from "chai";
-import {string, choice, or, many1, optional} from "../src/Parser.ts";
+import {string, choice, or, many1, optional, token} from "../src/Parser.ts";
 import {Suggestion} from "../src/plugins/autocompletion_providers/Suggestions";
 
 const context = {
@@ -16,6 +16,15 @@ describe("parser", () => {
         const suggestions = await result.parser.suggestions(context);
 
         expect(valuesOf(suggestions)).to.eql(["commit", "checkout"]);
+    });
+
+    describe("sequence", () => {
+        it.skip("combines the parsed values of both parsers", async() => {
+            const input = "git   co";
+            const result = await token("git").sequence(token("commit")).parse(input, context);
+
+            expect(result.parsed).to.eql(input);
+        });
     });
 
     describe("string", () => {
