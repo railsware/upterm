@@ -30,6 +30,16 @@ abstract class Parser {
     decorate(decorator: (s: Suggestion) => Suggestion): Parser {
         return new SuggestionsDecorator(this, decorator);
     }
+
+    async fffffff(string: string, context: Context): Promise<Result> {
+        const result = await this.parse(string, context);
+
+        if (!result.parser.isValid || result.parser.isExhausted || !result.rest) {
+            return result;
+        }
+
+        return await result.parser.fffffff(result.rest, context);
+    }
 }
 
 abstract class Valid extends Parser {
@@ -53,7 +63,7 @@ class Success extends Parser {
 
     async parse(string: string, context: Context): Promise<Result> {
         return {
-            parser: this,
+            parser: new Failure(),
             rest: string,
             parsed: "",
         };
@@ -63,6 +73,21 @@ class Success extends Parser {
         return [];
     }
 }
+
+class Nothing extends Valid {
+    async parse(string: string, context: Context): Promise<Result> {
+        return {
+            parser: new Success(),
+            rest: string,
+            parsed: "",
+        };
+    }
+
+    async suggestions(context: Context): Promise<Suggestion[]> {
+        return [];
+    }
+}
+const nothing = new Nothing();
 
 class Failure extends Parser {
     get isValid() {
@@ -92,13 +117,21 @@ class StringLiteral extends Valid {
     }
 
     async parse(string: string, context: Context): Promise<Result> {
+        if (this.string.length === 0) {
+            return {
+                parser: new Success(),
+                rest: string,
+                parsed: "",
+            };
+        }
+
         const substring = this.string.slice(this.startIndex);
         const prefix = commonPrefix(string, substring);
 
         if (prefix) {
             if (prefix === substring) {
                 return {
-                    parser: new Success(),
+                    parser: nothing,
                     rest: string.slice(prefix.length),
                     parsed: prefix,
                 };
@@ -176,8 +209,8 @@ class Or extends Valid {
 
         return {
             parser: new Or(leftResult.parser, rightResult.parser),
-            rest: leftResult.rest,
-            parsed: leftResult.parsed,
+            rest: rightResult.rest,
+            parsed: rightResult.parsed,
         };
     }
 
@@ -186,6 +219,22 @@ class Or extends Valid {
         const rightSuggestions = await this.right.suggestions(context);
 
         return leftSuggestions.concat(rightSuggestions);
+    }
+}
+
+export const many = (value: string) => new Many(value);
+
+class Many extends Valid {
+    constructor(private string: string) {
+        super();
+    }
+
+    async parse(string: string, context: Context): Promise<Result> {
+        return await new Or(new StringLiteral(this.string), new StringLiteral(this.string).bind(new Many(this.string))).parse(string, context);
+    }
+
+    async suggestions(context: Context): Promise<Suggestion[]> {
+        return [];
     }
 }
 
@@ -249,6 +298,7 @@ class FromDataSource extends Valid {
 
 export const string = (value: string) => new StringLiteral(value);
 export const or = (left: Parser, right: Parser) => new Or(left, right);
+export const optional = (value: string) => or(nothing, string(value));
 export const token = (value: string) => string(`${value} `);
 export const fromSource = (parserConstructor: (s: string) => Parser, source: DataSource) => new FromDataSource(parserConstructor, source);
 export const choice = (parsers: Parser[]): Parser => {

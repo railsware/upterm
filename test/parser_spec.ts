@@ -1,5 +1,5 @@
 import {expect} from "chai";
-import {string, choice, or} from "../src/Parser.ts";
+import {string, choice, or, many, optional} from "../src/Parser.ts";
 import {Suggestion} from "../src/plugins/autocompletion_providers/Suggestions";
 
 const context = {
@@ -12,7 +12,7 @@ describe("parser", () => {
         const result = await string("git")
             .bind(string(" "))
             .bind(choice([string("commit"), string("checkout"), string("merge")]))
-            .parse("git c", context);
+            .fffffff("git c", context);
         const suggestions = await result.parser.suggestions(context);
 
         expect(valuesOf(suggestions)).to.eql(["commit", "checkout"]);
@@ -55,6 +55,31 @@ describe("parser", () => {
                 .parse("git  commit", context);
 
             expect(result.parser.isValid).to.eql(true);
+        });
+    });
+
+    describe("many", () => {
+        it("matches two occurrences", async() => {
+            const result = await string("git").bind(many(" ")).bind(string("commit")).fffffff("git  c", context);
+            const suggestions = await result.parser.suggestions(context);
+
+            expect(valuesOf(suggestions)).to.eql(["commit"]);
+        });
+    });
+
+    describe("optional", () => {
+        it("matches no occurrence", async() => {
+            const result = await optional("sudo ").bind(string("git")).parse("g", context);
+            const suggestions = await result.parser.suggestions(context);
+
+            expect(valuesOf(suggestions)).to.eql(["git"]);
+        });
+
+        it("matches with an occurrence", async() => {
+            const result = await optional("sudo ").bind(string("git")).fffffff("sudo g", context);
+            const suggestions = await result.parser.suggestions(context);
+
+            expect(valuesOf(suggestions)).to.eql(["git"]);
         });
     });
 });
