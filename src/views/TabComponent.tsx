@@ -8,10 +8,12 @@ export interface TabProps {
     isActive: boolean;
     activate: () => void;
     position: number;
+    closeHandler: () => void;
 }
 
-export const TabComponent = ({ isActive, activate, position }: TabProps) =>
+export const TabComponent = ({ isActive, activate, position, closeHandler }: TabProps) =>
     <li className={`tab ${isActive ? "active" : "inactive"}`} onClick={activate}>
+        <span className="tabClose" value={(position - 1).toString()} onClick={closeHandler} />
         <span className="commandSign">⌘</span>
         <span className="position">{position}</span>
     </li>;
@@ -99,4 +101,5 @@ export class Tab {
             height: letter.clientHeight,
         };
     };
+
 }
