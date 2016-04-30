@@ -75,6 +75,10 @@ class Success extends Parser {
 }
 
 class Nothing extends Valid {
+    get isExhausted() {
+        return true;
+    }
+
     async derive(string: string, context: Context): Promise<Result> {
         return {
             parser: new Success(),
@@ -205,6 +209,14 @@ class Or extends Valid {
 
         if (!rightResult.parser.isValid) {
             return leftResult;
+        }
+
+        if (leftResult.parser.isExhausted && rightResult.parser.isExhausted && leftResult.rest  === rightResult.rest && rightResult.parsed === leftResult.parsed) {
+            return {
+                parser: new Success(),
+                rest: rightResult.rest,
+                parsed: rightResult.parsed,
+            };
         }
 
         return {

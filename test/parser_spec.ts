@@ -48,7 +48,7 @@ describe("parser", () => {
             expect(valuesOf(suggestions)).to.eql(["soon", "sooner"]);
         });
 
-        it.skip("doesn't commit to a branch too early", async() => {
+        it("doesn't commit to a branch too early", async() => {
             const result = await string("git")
                 .bind(or(string(" "), string("  ")))
                 .bind(string("commit"))
