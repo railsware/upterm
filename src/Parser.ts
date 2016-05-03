@@ -1,164 +1,68 @@
 import {Suggestion, type} from "./plugins/autocompletion_providers/Suggestions";
-import {commonPrefix} from "./utils/Common";
+import * as _ from "lodash";
 
 interface Context {
     directory: string;
 }
 
-interface Result {
-    parser: Parser;
-    rest: string;
-    parsed: string;
+enum Progress {
+    Failed,
+    InProgress,
+    Finished,
 }
 
-type DataSource = (context: Context) => Promise<string[]>;
+interface Result {
+    parser: Parser;
+    parse: string;
+    progress: Progress;
+}
 
 abstract class Parser {
-    abstract get isValid(): boolean;
-    abstract get isExhausted(): boolean;
-    abstract async derive(string: string, context: Context): Promise<Result>;
+    abstract async derive(string: string, context: Context): Promise<Array<Result>>;
     abstract async suggestions(context: Context): Promise<Suggestion[]>;
 
     sequence(parser: Parser): Parser {
         return new Sequence(this, parser);
     }
 
-    or(parser: Parser): Parser {
-        return new Or(this, parser);
-    }
-
     decorate(decorator: (s: Suggestion) => Suggestion): Parser {
         return new SuggestionsDecorator(this, decorator);
     }
-
-    async parse(string: string, context: Context): Promise<Result> {
-        const result = await this.derive(string, context);
-
-        if (!result.parser.isValid || result.parser.isExhausted || !result.rest) {
-            return result;
-        }
-
-        return await result.parser.parse(result.rest, context);
-    }
 }
 
-abstract class Valid extends Parser {
-    get isValid() {
-        return true;
+function getProgress(actual: string, expected: string) {
+    if (expected.length === 0) {
+        return Progress.Finished;
     }
 
-    get isExhausted() {
-        return false;
+    if (actual.startsWith(expected)) {
+        return Progress.Finished;
     }
+
+    if (expected.length <= actual.length) {
+        return Progress.Failed;
+    }
+
+    if (expected.startsWith(actual)) {
+        return Progress.InProgress;
+    }
+
+    return Progress.Failed;
 }
 
-class Success extends Parser {
-    get isValid() {
-        return true;
-    }
-
-    get isExhausted() {
-        return true;
-    }
-
-    async derive(string: string, context: Context): Promise<Result> {
-        return {
-            parser: new Failure(),
-            rest: string,
-            parsed: "",
-        };
-    }
-
-    async suggestions(context: Context): Promise<Suggestion[]> {
-        return [];
-    }
-}
-
-class Nothing extends Valid {
-    get isExhausted() {
-        return true;
-    }
-
-    async derive(string: string, context: Context): Promise<Result> {
-        return {
-            parser: new Success(),
-            rest: string,
-            parsed: "",
-        };
-    }
-
-    async suggestions(context: Context): Promise<Suggestion[]> {
-        return [];
-    }
-}
-const nothing = new Nothing();
-
-class Failure extends Parser {
-    get isValid() {
-        return false;
-    }
-
-    get isExhausted() {
-        return false;
-    }
-
-    async derive(string: string, context: Context): Promise<Result> {
-        return {
-            parser: this,
-            rest: string,
-            parsed: "",
-        };
-    }
-
-    async suggestions(context: Context): Promise<Suggestion[]> {
-        return [];
-    }
-}
-
-class StringLiteral extends Valid {
-    constructor(private string: string, private startIndex = 0) {
+class StringLiteral extends Parser {
+    constructor(private string: string) {
         super();
     }
 
-    async derive(string: string, context: Context): Promise<Result> {
-        if (this.string.length === 0) {
-            return {
-                parser: new Success(),
-                rest: string,
-                parsed: "",
-            };
-        }
+    async derive(input: string, context: Context): Promise<Array<Result>> {
+        const progress = getProgress(input, this.string);
 
-        const substring = this.string.slice(this.startIndex);
-        const prefix = commonPrefix(string, substring);
-
-        if (prefix) {
-            if (prefix === substring) {
-                return {
-                    parser: nothing,
-                    rest: string.slice(prefix.length),
-                    parsed: prefix,
-                };
-            } else if (prefix === string) {
-                return {
-                    parser: new StringLiteral(this.string, this.startIndex + prefix.length),
-                    rest: string.slice(prefix.length),
-                    parsed: prefix,
-                };
-            } else {
-                return {
-                    parser: new Failure(),
-                    rest: string.slice(prefix.length),
-                    parsed: prefix,
-                };
-            }
-        } else {
-            return {
-                parser: new Failure(),
-                rest: string.slice(prefix.length),
-                parsed: prefix,
-            };
-        }
+        return [{
+            parser: this,
+            parse: progress === Progress.Finished ? this.string : "",
+            progress: progress,
+        }];
     }
 
     async suggestions(context: Context): Promise<Suggestion[]> {
@@ -166,27 +70,30 @@ class StringLiteral extends Valid {
     }
 }
 
-class Sequence extends Valid {
+class Sequence extends Parser {
     constructor(private left: Parser, private right: Parser) {
         super();
     }
 
-    async derive(string: string, context: Context): Promise<Result> {
-        const leftResult = await this.left.derive(string, context);
+    async derive(input: string, context: Context): Promise<Array<Result>> {
 
-        if (!leftResult.parser.isValid) {
-            return leftResult;
-        }
+        const leftResults = await this.left.derive(input, context);
 
-        if (!leftResult.parser.isExhausted) {
-            return {
-                parser: new Sequence(leftResult.parser, this.right),
-                rest: leftResult.rest,
-                parsed: leftResult.parsed,
-            };
-        }
+        const results = await Promise.all(leftResults.map(async (leftResult) => {
+            if (leftResult.progress === Progress.Finished) {
+                const rightResults = await this.right.derive(input.slice(leftResult.parse.length), context);
 
-        return await this.right.derive(leftResult.rest, context);
+                return rightResults.map(rightResult => ({
+                    parser: rightResult.parser,
+                    parse: leftResult.parse + rightResult.parse,
+                    progress: rightResult.progress,
+                }));
+            } else {
+                return [leftResult];
+            }
+        }));
+
+        return _.flatten(results).filter(result => result.progress !== Progress.Failed);
     }
 
     async suggestions(context: Context): Promise<Suggestion[]> {
@@ -194,55 +101,33 @@ class Sequence extends Valid {
     }
 }
 
-class Or extends Valid {
-    constructor(private left: Parser, private right: Parser) {
+class Choice extends Parser {
+    constructor(private parsers: Parser[]) {
         super();
     }
 
-    async derive(string: string, context: Context): Promise<Result> {
-        const leftResult = await this.left.derive(string, context);
-        const rightResult = await this.right.derive(string, context);
+    async derive(string: string, context: Context): Promise<Array<Result>> {
+        const results = await Promise.all(this.parsers.map(parser => parser.derive(string, context)));
 
-        if (!leftResult.parser.isValid) {
-            return rightResult;
-        }
-
-        if (!rightResult.parser.isValid) {
-            return leftResult;
-        }
-
-        if (leftResult.parser.isExhausted && rightResult.parser.isExhausted && leftResult.rest  === rightResult.rest && rightResult.parsed === leftResult.parsed) {
-            return {
-                parser: new Success(),
-                rest: rightResult.rest,
-                parsed: rightResult.parsed,
-            };
-        }
-
-        return {
-            parser: new Or(leftResult.parser, rightResult.parser),
-            rest: rightResult.rest,
-            parsed: rightResult.parsed,
-        };
+        return _.flatten(results).filter(result => result.progress !== Progress.Failed);
     }
 
     async suggestions(context: Context): Promise<Suggestion[]> {
-        const leftSuggestions = await this.left.suggestions(context);
-        const rightSuggestions = await this.right.suggestions(context);
+        const suggestions = await Promise.all(this.parsers.map(parser => parser.suggestions(context)));
 
-        return leftSuggestions.concat(rightSuggestions);
+        return _.flatten(suggestions);
     }
 }
 
-export const many1 = (value: string) => new Many1(value);
+export const many1 = (parser: Parser) => new Many1(parser);
 
-class Many1 extends Valid {
-    constructor(private string: string) {
+class Many1 extends Parser {
+    constructor(private parser: Parser) {
         super();
     }
 
-    async derive(string: string, context: Context): Promise<Result> {
-        return await new Or(new StringLiteral(this.string), new StringLiteral(this.string).sequence(new Many1(this.string))).derive(string, context);
+    async derive(string: string, context: Context): Promise<Array<Result>> {
+        return await new Choice([this.parser, this.parser.sequence(new Many1(this.parser))]).derive(string, context);
     }
 
     async suggestions(context: Context): Promise<Suggestion[]> {
@@ -250,34 +135,14 @@ class Many1 extends Valid {
     }
 }
 
-class SuggestionsDecorator extends Valid {
+class SuggestionsDecorator extends Parser {
     constructor(private parser: Parser, private decorator: (s: Suggestion) => Suggestion) {
         super();
     }
 
-    async derive(string: string, context: Context): Promise<Result> {
-        const result = await this.parser.derive(string, context);
-        if (!result.parser.isValid) {
-            return {
-                parser: new Failure(),
-                rest: result.rest,
-                parsed: result.parsed,
-            };
-        }
-
-        if (result.parser.isExhausted) {
-            return {
-                parser: new Success(),
-                rest: result.rest,
-                parsed: result.parsed,
-            };
-        }
-
-        return {
-            parser: new SuggestionsDecorator(result.parser, this.decorator),
-            rest: result.rest,
-            parsed: result.parsed,
-        };
+    async derive(string: string, context: Context): Promise<Array<Result>> {
+        const results = await this.parser.derive(string, context);
+        return results.map(result => ({parser: new SuggestionsDecorator(result.parser, this.decorator), parse: result.parse, progress: result.progress}));
     }
 
     async suggestions(context: Context): Promise<Suggestion[]> {
@@ -287,12 +152,14 @@ class SuggestionsDecorator extends Valid {
     }
 }
 
-class FromDataSource extends Valid {
+type DataSource = (context: Context) => Promise<string[]>;
+
+class FromDataSource extends Parser {
     constructor(private parserConstructor: (s: string) => Parser, private source: DataSource) {
         super();
     }
 
-    async derive(string: string, context: Context): Promise<Result> {
+    async derive(string: string, context: Context): Promise<Array<Result>> {
         const parser = await this.getParser(context);
         return parser.derive(string, context);
     }
@@ -304,26 +171,15 @@ class FromDataSource extends Valid {
 
     private async getParser(context: Context): Promise<Parser> {
         const data = await this.source(context);
-        return choice(data.map(this.parserConstructor));
+        return new Choice(data.map(this.parserConstructor));
     }
 }
 
 export const string = (value: string) => new StringLiteral(value);
-export const or = (left: Parser, right: Parser) => new Or(left, right);
-export const optional = (value: string) => or(nothing, string(value));
-export const token = (value: string) => string(value).sequence(many1(" "));
+export const choice = (parsers: Parser[]) => new Choice(parsers);
+export const optional = (parser: Parser) => choice([string(""), parser]);
+export const token = (value: string) => string(value).sequence(many1(string(" ")));
 export const fromSource = (parserConstructor: (s: string) => Parser, source: DataSource) => new FromDataSource(parserConstructor, source);
-export const choice = (parsers: Parser[]): Parser => {
-    if (parsers.length === 0) {
-        return new Failure();
-    } else if (parsers.length === 1) {
-        return parsers[0];
-    } else {
-        return parsers.reduce((left, right) => or(left, right));
-    }
-};
-
-
 export const executable = (name: string) => token(name).decorate(type("executable"));
 export const option = (value: string) => string(`--${value}=`).decorate(type("option"));
 export const subCommand = (value: string) => token(value).decorate(type("command"));

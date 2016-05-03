@@ -1,103 +1,172 @@
 import {expect} from "chai";
-import {string, choice, or, many1, optional, token} from "../src/Parser.ts";
-import {Suggestion} from "../src/plugins/autocompletion_providers/Suggestions";
+import {string, choice, many1, optional} from "../src/Parser.ts";
+// import {Suggestion} from "../src/plugins/autocompletion_providers/Suggestions";
 
 const context = {
     directory: "/",
 };
-const valuesOf = (suggestions: Suggestion[]) => suggestions.map(suggestion => suggestion.value);
+// const valuesOf = (suggestions: Suggestion[]) => suggestions.map(suggestion => suggestion.value);
 
 describe("parser", () => {
-    it("returns suggestions", async() => {
-        const result = await string("git")
-            .sequence(string(" "))
-            .sequence(choice([string("commit"), string("checkout"), string("merge")]))
-            .parse("git c", context);
-        const suggestions = await result.parser.suggestions(context);
-
-        expect(valuesOf(suggestions)).to.eql(["commit", "checkout"]);
-    });
+    // it("returns suggestions", async() => {
+    //     const result = await string("git")
+    //         .sequence(string(" "))
+    //         .sequence(choice([string("commit"), string("checkout"), string("merge")]))
+    //         .parse("git c", context);
+    //     const suggestions = await result.parser.suggestions(context);
+    //
+    //     expect(valuesOf(suggestions)).to.eql(["commit", "checkout"]);
+    // });
 
     describe("sequence", () => {
-        it.skip("combines the parsed values of both parsers", async() => {
-            const input = "git   co";
-            const result = await token("git").sequence(token("commit")).parse(input, context);
+        describe("git commit", () => {
+            const git = string("git ");
+            const commit = string("commit");
+            const parser = git.sequence(commit);
 
-            expect(result.parsed).to.eql(input);
+            it("derives the first parser for no input", async() => {
+                const results = await parser.derive("", context);
+
+                expect(results.length).to.equal(1);
+                expect(results[0].parser).to.equal(git);
+            });
+
+            it("derives the first parser for a part of first parsers' input", async() => {
+                const results = await parser.derive("gi", context);
+
+                expect(results.length).to.equal(1);
+                expect(results[0].parser).to.equal(git);
+            });
+
+            it("derives the second parser if the input exactly matches the first parser", async() => {
+                const results = await parser.derive("git ", context);
+
+                expect(results.length).to.equal(1);
+                expect(results[0].parser).to.equal(commit);
+            });
+
+            it("derives the second parser if the input exceeds the first parser", async() => {
+                const results = await parser.derive("git c", context);
+
+                expect(results.length).to.equal(1);
+                expect(results[0].parser).to.equal(commit);
+            });
+        });
+
+        describe("chaining", () => {
+            it("derives when chained to the left", async() => {
+                const commit = string("commit");
+                const parser = string("git").sequence(string(" ")).sequence(commit);
+                const results = await parser.derive("git ", context);
+
+                expect(results.length).to.equal(1);
+                expect(results[0]).to.deep.include({
+                    parser: commit,
+                    parse: "git ",
+                });
+            });
+
+            it("derives when chained to the right", async() => {
+                const commit = string("commit");
+                const parser = string("git").sequence(string(" ").sequence(commit));
+                const results = await parser.derive("git ", context);
+
+                expect(results.length).to.equal(1);
+                expect(results[0]).to.include({
+                    parser: commit,
+                    parse: "git ",
+                });
+            });
         });
     });
 
     describe("string", () => {
         it("fails when only beginnings match", async() => {
-            const result = await string("grep").parse("git c", context);
+            const parser = string("grep");
+            const results = await parser.derive("git c", context);
 
-            expect(result.parser.isValid).to.eql(false);
+            expect(results.length).to.equal(1);
+            expect(results[0].parser).to.equal(parser);
         });
     });
 
-    describe("or", () => {
-        it("chooses the left parser if the right one doesn't match", async() => {
-            const result = await or(string("foo"), string("bar")).parse("f", context);
-            const suggestions = await result.parser.suggestions(context);
+    describe("choice", () => {
+        it("derives the left parser if the right one doesn't match", async() => {
+            const left = string("foo");
+            const right = string("bar");
 
-            expect(valuesOf(suggestions)).to.eql(["foo"]);
+            const results = await choice([left, right]).derive("f", context);
+
+            expect(results.length).to.equal(1);
+            expect(results[0].parser).to.equal(left);
         });
 
-        it("chooses the right parser if the left one doesn't match", async() => {
-            const result = await or(string("foo"), string("bar")).parse("b", context);
-            const suggestions = await result.parser.suggestions(context);
+        it("derives the right parser if the left one doesn't match", async() => {
+            const left = string("foo");
+            const right = string("bar");
 
-            expect(valuesOf(suggestions)).to.eql(["bar"]);
+            const results = await choice([left, right]).derive("b", context);
+
+            expect(results.length).to.equal(1);
+            expect(results[0].parser).to.equal(right);
         });
 
-        it("keeps both parsers if they match", async() => {
-            const result = await or(string("soon"), string("sooner")).parse("soo", context);
-            const suggestions = await result.parser.suggestions(context);
+        it("derives both parsers if they match", async() => {
+            const soon = string("soon");
+            const sooner = string("sooner");
 
-            expect(valuesOf(suggestions)).to.eql(["soon", "sooner"]);
+            const results = await choice([soon, sooner]).derive("soo", context);
+
+            expect(results.length).to.equal(2);
+            expect(results.map(result => result.parser)).to.eql([soon, sooner]);
         });
 
         it("doesn't commit to a branch too early", async() => {
-            const result = await string("git")
-                .sequence(or(string(" "), string("  ")))
-                .sequence(string("commit"))
-                .parse("git  commit", context);
+            const commit = string("commit");
+            const results = await string("git")
+                .sequence(choice([string(" "), string("  ")]))
+                .sequence(commit)
+                .derive("git  commit", context);
 
-            expect(result.parser.isValid).to.eql(true);
+            expect(results.length).to.equal(1);
+            expect(results[0].parser).to.equal(commit);
         });
     });
 
     describe("many1", () => {
-        const parser = string("git").sequence(many1(" ")).sequence(string("commit"));
+        const commit = string("commit");
+        const parser = string("git").sequence(many1(string(" "))).sequence(commit);
 
         it("matches one occurrence", async() => {
-            const result = await parser.parse("git c", context);
-            const suggestions = await result.parser.suggestions(context);
+            const results = await parser.derive("git c", context);
 
-            expect(valuesOf(suggestions)).to.eql(["commit"]);
+            expect(results.length).to.equal(1);
+            expect(results[0].parser).to.equal(commit);
         });
 
         it("matches two occurrences", async() => {
-            const result = await parser.parse("git  c", context);
-            const suggestions = await result.parser.suggestions(context);
+            const results = await parser.derive("git  c", context);
 
-            expect(valuesOf(suggestions)).to.eql(["commit"]);
+            expect(results.length).to.equal(1);
+            expect(results[0].parser).to.equal(commit);
         });
     });
 
     describe("optional", () => {
         it("matches no occurrence", async() => {
-            const result = await optional("sudo ").sequence(string("git")).parse("g", context);
-            const suggestions = await result.parser.suggestions(context);
+            const git = string("git");
+            const results = await optional(string("sudo ")).sequence(git).derive("g", context);
 
-            expect(valuesOf(suggestions)).to.eql(["git"]);
+            expect(results.length).to.equal(1);
+            expect(results[0].parser).to.equal(git);
         });
 
         it("matches with an occurrence", async() => {
-            const result = await optional("sudo ").sequence(string("git")).parse("sudo g", context);
-            const suggestions = await result.parser.suggestions(context);
+            const git = string("git");
+            const results = await optional(string("sudo ")).sequence(git).derive("sudo g", context);
 
-            expect(valuesOf(suggestions)).to.eql(["git"]);
+            expect(results.length).to.equal(1);
+            expect(results[0].parser).to.equal(git);
         });
     });
 });
