@@ -15,11 +15,11 @@ interface Result {
     parser: Parser;
     parse: string;
     progress: Progress;
+    suggestions: Suggestion[];
 }
 
 abstract class Parser {
     abstract async derive(string: string, context: Context): Promise<Array<Result>>;
-    abstract async suggestions(context: Context): Promise<Suggestion[]>;
 
     sequence(parser: Parser): Parser {
         return new Sequence(this, parser);
@@ -62,11 +62,8 @@ class StringLiteral extends Parser {
             parser: this,
             parse: progress === Progress.Finished ? this.string : "",
             progress: progress,
+            suggestions: [new Suggestion().withValue(this.string)],
         }];
-    }
-
-    async suggestions(context: Context): Promise<Suggestion[]> {
-        return [new Suggestion().withValue(this.string)];
     }
 }
 
@@ -87,6 +84,7 @@ class Sequence extends Parser {
                     parser: rightResult.parser,
                     parse: leftResult.parse + rightResult.parse,
                     progress: rightResult.progress,
+                    suggestions: rightResult.suggestions,
                 }));
             } else {
                 return [leftResult];
@@ -94,10 +92,6 @@ class Sequence extends Parser {
         }));
 
         return _.flatten(results).filter(result => result.progress !== Progress.Failed);
-    }
-
-    async suggestions(context: Context): Promise<Suggestion[]> {
-        return this.left.suggestions(context);
     }
 }
 
@@ -111,12 +105,6 @@ class Choice extends Parser {
 
         return _.flatten(results).filter(result => result.progress !== Progress.Failed);
     }
-
-    async suggestions(context: Context): Promise<Suggestion[]> {
-        const suggestions = await Promise.all(this.parsers.map(parser => parser.suggestions(context)));
-
-        return _.flatten(suggestions);
-    }
 }
 
 export const many1 = (parser: Parser) => new Many1(parser);
@@ -129,10 +117,6 @@ class Many1 extends Parser {
     async derive(string: string, context: Context): Promise<Array<Result>> {
         return await new Choice([this.parser, this.parser.sequence(new Many1(this.parser))]).derive(string, context);
     }
-
-    async suggestions(context: Context): Promise<Suggestion[]> {
-        return [];
-    }
 }
 
 class SuggestionsDecorator extends Parser {
@@ -142,13 +126,12 @@ class SuggestionsDecorator extends Parser {
 
     async derive(string: string, context: Context): Promise<Array<Result>> {
         const results = await this.parser.derive(string, context);
-        return results.map(result => ({parser: new SuggestionsDecorator(result.parser, this.decorator), parse: result.parse, progress: result.progress}));
-    }
-
-    async suggestions(context: Context): Promise<Suggestion[]> {
-        const suggestions = await this.parser.suggestions(context);
-
-        return suggestions.map(this.decorator);
+        return results.map(result => ({
+            parser: new SuggestionsDecorator(result.parser, this.decorator),
+            parse: result.parse,
+            progress: result.progress,
+            suggestions: result.suggestions.map(this.decorator),
+        }));
     }
 }
 
@@ -160,18 +143,9 @@ class FromDataSource extends Parser {
     }
 
     async derive(string: string, context: Context): Promise<Array<Result>> {
-        const parser = await this.getParser(context);
-        return parser.derive(string, context);
-    }
-
-    async suggestions(context: Context): Promise<Suggestion[]> {
-        const parser = await this.getParser(context);
-        return parser.suggestions(context);
-    }
-
-    private async getParser(context: Context): Promise<Parser> {
         const data = await this.source(context);
-        return new Choice(data.map(this.parserConstructor));
+        const parser = new Choice(data.map(this.parserConstructor));
+        return parser.derive(string, context);
     }
 }
 

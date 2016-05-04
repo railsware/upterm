@@ -37,7 +37,7 @@ export default class Autocompletion implements i.AutocompletionProvider {
         }
 
         const results = await grammar.derive(job.prompt.value, job.session);
-        const suggestions = await Promise.all(results.map(result => result.parser.suggestions(job.session)));
+        const suggestions = results.map(result => result.suggestions);
         const unique = _.uniqBy(_.flatten(suggestions), suggestion => suggestion.value).slice(0, Autocompletion.limit);
 
         if (window.DEBUG) {
