@@ -9,19 +9,12 @@ type SuggestionType = "executable" | "command" | "option" | "option-value" | "br
 type SuggestionsPromise = Promise<Suggestion[]>;
 
 export class Suggestion {
-    protected _value: string;
-    private _synopsis: string;
-    private _description: string;
-    private _type: string;
-    private _childrenProvider: (job: Job) => SuggestionsPromise;
-
-    constructor() {
-        this._value = "";
-        this._synopsis = "";
-        this._description = "";
-        this._type = "";
-        this._childrenProvider = async(job) => [];
-    }
+    protected _value = "";
+    private _synopsis = "";
+    private _description = "";
+    private _type = "";
+    private _prefix = "";
+    private _childrenProvider: (job: Job) => SuggestionsPromise = async(job) => [];
 
     get value(): string {
         return this._value;
@@ -39,6 +32,10 @@ export class Suggestion {
         return this._type;
     }
 
+    get prefix(): string {
+        return this._prefix;
+    }
+
     get iconColor(): Color {
         return Color.White;
     }
@@ -49,10 +46,6 @@ export class Suggestion {
 
     get displayValue(): string {
         return this.value;
-    }
-
-    getPrefix(job: Job): string {
-        return job.prompt.lastLexeme;
     }
 
     shouldIgnore(job: Job): boolean {
@@ -80,6 +73,11 @@ export class Suggestion {
 
     withType(type: string): this {
         this._type = type;
+        return this;
+    }
+
+    withPrefix(prefix: string): this {
+        this._prefix = prefix;
         return this;
     }
 

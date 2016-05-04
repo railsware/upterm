@@ -264,25 +264,16 @@ export default class PromptComponent extends React.Component<Props, State> imple
         await this.prompt.setValue(this.valueWithCurrentSuggestion);
         this.setDOMValueProgrammatically(this.prompt.value);
 
-        this.prompt.getSuggestions().then(suggestions =>
-            this.setState({suggestions: suggestions, highlightedSuggestionIndex: 0})
-        );
+        const suggestions = await this.prompt.getSuggestions();
+        this.setState({suggestions: suggestions, highlightedSuggestionIndex: 0});
     }
 
     private get valueWithCurrentSuggestion(): string {
         let state = this.state;
         const suggestion = state.suggestions[state.highlightedSuggestionIndex];
+        const valueFromCaret = this.prompt.value.slice(getCaretPosition(this.commandNode));
 
-        // FIXME: replace the current lexeme prefix.
-        const prefixLength = suggestion.getPrefix(this.props.job).length;
-        const caretPosition = getCaretPosition(this.commandNode);
-        const valueUpToCaret = this.prompt.value.slice(0, caretPosition);
-        const valueFromCaret = this.prompt.value.slice(caretPosition);
-        let valueWithoutPrefix = prefixLength ? valueUpToCaret.slice(0, -prefixLength) : valueUpToCaret;
-
-        let newValue = valueWithoutPrefix + suggestion.value;
-
-        return newValue + valueFromCaret;
+        return suggestion.prefix + suggestion.value + valueFromCaret;
     }
 
     private showAutocomplete(): boolean {
