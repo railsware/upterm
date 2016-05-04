@@ -1,5 +1,5 @@
 import * as Git from "../../utils/Git";
-import {executable, token, fromSource, choice, string, subCommand, option} from "../../Parser";
+import {executable, token, fromSource, choice, string, subCommand, option, decorate, sequence} from "../../Parser";
 import {description, type} from "./Suggestions";
 
 // class File extends Suggestion {
@@ -131,67 +131,76 @@ import {description, type} from "./Suggestions";
 //     return alias;
 // }
 
-const cleanupMode = choice([
-    token("strip").decorate(description("Strip leading and trailing empty lines, trailing whitespace, commentary and collapse consecutive empty lines.")),
-    token("whitespace").decorate(description("Same as strip except #commentary is not removed.")),
-    token("verbatim").decorate(description("Do not change the message at all.")),
-    token("scissors").decorate(description('Same as whitespace, except that everything from (and including) the line \
+const cleanupMode = decorate(
+    choice([
+        decorate(token("strip"), description("Strip leading and trailing empty lines, trailing whitespace, commentary and collapse consecutive empty lines.")),
+        decorate(token("whitespace"), description("Same as strip except #commentary is not removed.")),
+        decorate(token("verbatim"), description("Do not change the message at all.")),
+        decorate(token("scissors"), description('Same as whitespace, except that everything from (and including) the line \
         "#------------------------ >8 ------------------------"\
         is truncated if the message is to be edited. "#" can be customized with core.commentChar.')),
-    token("default").decorate(description("Same as strip if the message is to be edited. Otherwise whitespace")),
-]).decorate(type("option-value"));
+        decorate(token("default"), description("Same as strip if the message is to be edited. Otherwise whitespace")),
+    ]),
+    type("option-value")
+);
 
 const commitOption = choice([
-    option("message")
-        .decorate(description("Use the given <msg> as the commit message. If multiple -m options are given, their values are concatenated as separate paragraphs.")),
-    option("cleanup")
-        .decorate(description("This option determines how the supplied commit message should be cleaned up before committing. The <mode> can be strip, whitespace, verbatim, scissors or default."))
-        .sequence(cleanupMode),
+    decorate(option("message"), description("Use the given <msg> as the commit message. If multiple -m options are given, their values are concatenated as separate paragraphs.")),
+    sequence(
+        decorate(
+            option("cleanup"),
+            description("This option determines how the supplied commit message should be cleaned up before committing. The <mode> can be strip, whitespace, verbatim, scissors or default.")
+        ),
+        cleanupMode
+    ),
 ]);
 
-const branchesExceptCurrent = fromSource(string, async (context) => {
-    const branches = await Git.branches(context.directory);
-    return branches.filter(branch => !branch.isCurrent()).map(branch => branch.toString());
-}).decorate(type("branch"));
+const branchesExceptCurrent = decorate(
+    fromSource(string, async (context) => {
+        const branches = await Git.branches(context.directory);
+        return branches.filter(branch => !branch.isCurrent()).map(branch => branch.toString());
+    }),
+    type("branch")
+);
 
 const gitCommand = choice([
-    subCommand("add").decorate(description("Add file contents to the index.")),
-    subCommand("am").decorate(description("Apply a series of patches from a mailbox.")),
-    subCommand("archive").decorate(description("Create an archive of files from a named tree.")),
-    subCommand("bisect").decorate(description("Find by binary search the change that introduced a bug.")),
-    subCommand("branch").decorate(description("List, create, or delete branches.")),
-    subCommand("bundle").decorate(description("Move objects and refs by archive.")),
-    subCommand("checkout").decorate(description("Switch branches or restore working tree files.")).sequence(branchesExceptCurrent),
-    subCommand("cherry-pick").decorate(description("Apply the changes introduced by some existing commits.")),
-    subCommand("citool").decorate(description("Graphical alternative to git-commit.")),
-    subCommand("clean").decorate(description("Remove untracked files from the working tree.")),
-    subCommand("clone").decorate(description("Clone a repository into a new directory.")),
-    subCommand("commit").decorate(description("Record changes to the repository.")).sequence(commitOption),
-    subCommand("describe").decorate(description("Describe a commit using the most recent tag reachable from it.")),
-    subCommand("diff").decorate(description("Show changes between commits, commit and working tree, etc.")),
-    subCommand("fetch").decorate(description("Download objects and refs from another repository.")),
-    subCommand("format-patch").decorate(description("Prepare patches for e-mail submission.")),
-    subCommand("gc").decorate(description("Cleanup unnecessary files and optimize the local repository.")),
-    subCommand("grep").decorate(description("Print lines matching a pattern.")),
-    subCommand("gui").decorate(description("A portable graphical interface to Git.")),
-    subCommand("init").decorate(description("Create an empty Git repository or reinitialize an existing one.")),
-    subCommand("log").decorate(description("Show commit logs.")),
-    subCommand("merge").decorate(description("Join two or more development histories together.")).sequence(branchesExceptCurrent),
-    subCommand("mv").decorate(description("Move or rename a file, a directory, or a symlink.")),
-    subCommand("notes").decorate(description("Add or inspect object notes.")),
-    subCommand("pull").decorate(description("Fetch from and integrate with another repository or a local branch.")),
-    subCommand("push").decorate(description("Update remote refs along with associated objects.")),
-    subCommand("rebase").decorate(description("Forward-port local commits to the updated upstream head.")),
-    subCommand("reset").decorate(description("Reset current HEAD to the specified state.")),
-    subCommand("revert").decorate(description("Revert some existing commits.")),
-    subCommand("rm").decorate(description("Remove files from the working tree and from the index.")),
-    subCommand("shortlog").decorate(description("Summarize git log output.")),
-    subCommand("show").decorate(description("Show various types of objects.")),
-    subCommand("stash").decorate(description("Stash the changes in a dirty working directory away.")),
-    subCommand("status").decorate(description("Show the working tree status.")),
-    subCommand("submodule").decorate(description("Initialize, update or inspect submodules.")),
-    subCommand("tag").decorate(description("Create, list, delete or verify a tag object signed with GPG.")),
-    subCommand("worktree").decorate(description("Manage multiple worktrees.")),
+    decorate(subCommand("add"), description("Add file contents to the index.")),
+    decorate(subCommand("am"), description("Apply a series of patches from a mailbox.")),
+    decorate(subCommand("archive"), description("Create an archive of files from a named tree.")),
+    decorate(subCommand("bisect"), description("Find by binary search the change that introduced a bug.")),
+    decorate(subCommand("branch"), description("List, create, or delete branches.")),
+    decorate(subCommand("bundle"), description("Move objects and refs by archive.")),
+    sequence(decorate(subCommand("checkout"), description("Switch branches or restore working tree files.")), branchesExceptCurrent),
+    decorate(subCommand("cherry-pick"), description("Apply the changes introduced by some existing commits.")),
+    decorate(subCommand("citool"), description("Graphical alternative to git-commit.")),
+    decorate(subCommand("clean"), description("Remove untracked files from the working tree.")),
+    decorate(subCommand("clone"), description("Clone a repository into a new directory.")),
+    sequence(decorate(subCommand("commit"), description("Record changes to the repository.")), commitOption),
+    decorate(subCommand("describe"), description("Describe a commit using the most recent tag reachable from it.")),
+    decorate(subCommand("diff"), description("Show changes between commits, commit and working tree, etc.")),
+    decorate(subCommand("fetch"), description("Download objects and refs from another repository.")),
+    decorate(subCommand("format-patch"), description("Prepare patches for e-mail submission.")),
+    decorate(subCommand("gc"), description("Cleanup unnecessary files and optimize the local repository.")),
+    decorate(subCommand("grep"), description("Print lines matching a pattern.")),
+    decorate(subCommand("gui"), description("A portable graphical interface to Git.")),
+    decorate(subCommand("init"), description("Create an empty Git repository or reinitialize an existing one.")),
+    decorate(subCommand("log"), description("Show commit logs.")),
+    sequence(decorate(subCommand("merge"), description("Join two or more development histories together.")), branchesExceptCurrent),
+    decorate(subCommand("mv"), description("Move or rename a file, a directory, or a symlink.")),
+    decorate(subCommand("notes"), description("Add or inspect object notes.")),
+    decorate(subCommand("pull"), description("Fetch from and integrate with another repository or a local branch.")),
+    decorate(subCommand("push"), description("Update remote refs along with associated objects.")),
+    decorate(subCommand("rebase"), description("Forward-port local commits to the updated upstream head.")),
+    decorate(subCommand("reset"), description("Reset current HEAD to the specified state.")),
+    decorate(subCommand("revert"), description("Revert some existing commits.")),
+    decorate(subCommand("rm"), description("Remove files from the working tree and from the index.")),
+    decorate(subCommand("shortlog"), description("Summarize git log output.")),
+    decorate(subCommand("show"), description("Show various types of objects.")),
+    decorate(subCommand("stash"), description("Stash the changes in a dirty working directory away.")),
+    decorate(subCommand("status"), description("Show the working tree status.")),
+    decorate(subCommand("submodule"), description("Initialize, update or inspect submodules.")),
+    decorate(subCommand("tag"), description("Create, list, delete or verify a tag object signed with GPG.")),
+    decorate(subCommand("worktree"), description("Manage multiple worktrees.")),
 ]);
 
-export const git = executable("git").sequence(gitCommand);
+export const git = sequence(executable("git"), gitCommand);

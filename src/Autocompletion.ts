@@ -1,20 +1,20 @@
 import * as _ from "lodash";
 import * as i from "./Interfaces";
 import Job from "./Job";
-import {choice, token, executable} from "./Parser";
+import {choice, token, executable, decorate, sequence} from "./Parser";
 import {commandDescriptions} from "./plugins/autocompletion_providers/Executable";
 import {git} from "./plugins/autocompletion_providers/Git";
 import {description} from "./plugins/autocompletion_providers/Suggestions";
 
 const ls = executable("ls");
 const exec = choice(_.map(commandDescriptions, (value, key) =>
-    executable(key).decorate(description(value))
+    decorate(executable(key), description(value))
 ));
 const command = choice([
     ls,
     git,
 ]);
-const sudo = token("sudo").sequence(command);
+const sudo = sequence(token("sudo"), command);
 const anyCommand = choice([
     sudo,
     command,
@@ -25,7 +25,7 @@ const separator = choice([
     token(";"),
 ]);
 
-const grammar = anyCommand.sequence(separator).sequence(anyCommand);
+const grammar = sequence(sequence(anyCommand, separator), anyCommand);
 
 export default class Autocompletion implements i.AutocompletionProvider {
     static limit = 9;
@@ -36,7 +36,7 @@ export default class Autocompletion implements i.AutocompletionProvider {
             console.time(`suggestion for '${job.prompt.value}'`);
         }
 
-        const results = await grammar.derive(job.prompt.value, job.session);
+        const results = await grammar(job.prompt.value, job.session);
         const suggestions = results.map(result => result.suggestions);
         const unique = _.uniqBy(_.flatten(suggestions), suggestion => suggestion.value).slice(0, Autocompletion.limit);
 
