@@ -1,7 +1,7 @@
 import {Suggestion, type} from "./plugins/autocompletion_providers/Suggestions";
 import * as _ from "lodash";
 
-interface Context {
+export interface Context {
     directory: string;
 }
 
@@ -16,6 +16,7 @@ type DataSource = (context: Context) => Promise<string[]>;
 
 interface Result {
     parser: Parser;
+    context: Context;
     parse: string;
     progress: Progress;
     suggestions: Suggestion[];
@@ -47,6 +48,7 @@ export const string = (expected: string) => {
 
         return [{
             parser: parser,
+            context: context,
             parse: progress === Progress.Finished ? expected : "",
             progress: progress,
             suggestions: [new Suggestion().withValue(expected)],
@@ -60,10 +62,11 @@ export const sequence = (left: Parser, right: Parser) => async (input: string, c
 
     const results = await Promise.all(leftResults.map(async (leftResult) => {
         if (leftResult.progress === Progress.Finished) {
-            const rightResults = await right(input.slice(leftResult.parse.length), context);
+            const rightResults = await right(input.slice(leftResult.parse.length), leftResult.context);
 
             return rightResults.map(rightResult => ({
                 parser: rightResult.parser,
+                context: rightResult.context,
                 parse: leftResult.parse + rightResult.parse,
                 progress: rightResult.progress,
                 suggestions: rightResult.suggestions,
@@ -91,10 +94,15 @@ export const decorate = (parser: Parser, decorator: (s: Suggestion) => Suggestio
 
     return results.map(result => ({
         parser: decorate(result.parser, decorator),
+        context: result.context,
         parse: result.parse,
         progress: result.progress,
         suggestions: result.suggestions.map(decorator),
     }));
+};
+
+export const decorateResult = (parser: Parser, decorator: (c: Result) => Result) => async (actual: string, context: Context): Promise<Array<Result>> => {
+    return (await parser(actual, context)).map(decorator);
 };
 
 export const fromSource = (parserConstructor: (s: string) => Parser, source: DataSource) => async (actual: string, context: Context): Promise<Array<Result>> => {

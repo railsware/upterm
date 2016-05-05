@@ -1,10 +1,11 @@
 import * as _ from "lodash";
 import * as i from "./Interfaces";
 import Job from "./Job";
-import {choice, token, executable, decorate, sequence} from "./Parser";
+import {choice, token, executable, decorate, sequence, string, many1} from "./Parser";
 import {commandDescriptions} from "./plugins/autocompletion_providers/Executable";
 import {git} from "./plugins/autocompletion_providers/Git";
 import {description} from "./plugins/autocompletion_providers/Suggestions";
+import {cd} from "./plugins/autocompletion_providers/Cd";
 
 const ls = executable("ls");
 const exec = choice(_.map(commandDescriptions, (value, key) =>
@@ -13,6 +14,7 @@ const exec = choice(_.map(commandDescriptions, (value, key) =>
 const command = choice([
     ls,
     git,
+    cd,
 ]);
 const sudo = sequence(token("sudo"), command);
 const anyCommand = choice([
@@ -21,8 +23,8 @@ const anyCommand = choice([
     exec,
 ]);
 const separator = choice([
-    token("&&"),
-    token(";"),
+    sequence(many1(string(" ")), token("&&")),
+    sequence(many1(string(" ")), token(";")),
 ]);
 
 const grammar = sequence(sequence(anyCommand, separator), anyCommand);
@@ -36,7 +38,7 @@ export default class Autocompletion implements i.AutocompletionProvider {
             console.time(`suggestion for '${job.prompt.value}'`);
         }
 
-        const results = await grammar(job.prompt.value, job.session);
+        const results = await grammar(job.prompt.value, {directory: job.session.directory});
         const suggestions = results.map(result => result.suggestions.map(suggestion => suggestion.withPrefix(result.parse)));
         const unique = _.uniqBy(_.flatten(suggestions), suggestion => suggestion.value).slice(0, Autocompletion.limit);
 

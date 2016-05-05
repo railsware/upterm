@@ -552,16 +552,12 @@ pre {
         @extend .fa-file;
       }
 
-      &.file.directory .icon {
+      &.directory .icon {
+        @extend .fa;
         @extend .fa-folder;
       }
 
       &.file {
-        &.directory {
-          .icon {
-            @extend .fa-folder;
-          }
-        }
         &.zip, &.gzip {
           .icon {
             @extend .fa-file-archive-o;
