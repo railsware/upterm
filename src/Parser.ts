@@ -105,6 +105,9 @@ export const decorateResult = (parser: Parser, decorator: (c: Result) => Result)
     return (await parser(actual, context)).map(decorator);
 };
 
+export const withoutSuggestions = (parser: Parser) => decorateResult(parser, result => Object.assign({}, result, {suggestions: []}));
+export const spacesWithoutSuggestion = withoutSuggestions(many1(string(" ")));
+
 export const fromSource = (parserConstructor: (s: string) => Parser, source: DataSource) => async (actual: string, context: Context): Promise<Array<Result>> => {
     const data = await source(context);
     const parser = choice(data.map(parserConstructor));
