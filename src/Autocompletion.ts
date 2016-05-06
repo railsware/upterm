@@ -1,7 +1,7 @@
 import * as _ from "lodash";
 import * as i from "./Interfaces";
 import Job from "./Job";
-import {choice, token, executable, decorate, sequence, spacesWithoutSuggestion, withoutSuggestions} from "./Parser";
+import {choice, token, executable, decorate, sequence, withoutSuggestions} from "./Parser";
 import {commandDescriptions} from "./plugins/autocompletion_providers/Executable";
 import {git} from "./plugins/autocompletion_providers/Git";
 import {description} from "./plugins/autocompletion_providers/Suggestions";

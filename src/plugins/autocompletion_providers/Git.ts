@@ -1,5 +1,5 @@
 import * as Git from "../../utils/Git";
-import {executable, token, fromSource, choice, string, subCommand, option, decorate, sequence} from "../../Parser";
+import {executable, fromSource, choice, string, subCommand, option, decorate, sequence} from "../../Parser";
 import {description, type} from "./Suggestions";
 
 // class File extends Suggestion {
