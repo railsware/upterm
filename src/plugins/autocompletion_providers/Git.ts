@@ -160,6 +160,7 @@ const commitOption = choice([
 ]);
 
 const pushOption = choice([commandSwitch("force-with-lease")]);
+const statusOption = choice([commandSwitch("short")]);
 
 const branchesExceptCurrent = decorate(
     runtime(async(context) => {
@@ -203,7 +204,7 @@ const gitCommand = choice([
     decorate(string("shortlog"), compose(command, description("Summarize git log output."))),
     decorate(string("show"), compose(command, description("Show various types of objects."))),
     decorate(string("stash"), compose(command, description("Stash the changes in a dirty working directory away."))),
-    decorate(string("status"), compose(command, description("Show the working tree status."))),
+    sequence(decorate(string("status"), compose(command, description("Show the working tree status."))), optional(sequence(spacesWithoutSuggestion, statusOption))),
     decorate(string("submodule"), compose(command, description("Initialize, update or inspect submodules."))),
     decorate(string("tag"), compose(command, description("Create, list, delete or verify a tag object signed with GPG."))),
     decorate(string("worktree"), compose(command, description("Manage multiple worktrees."))),
