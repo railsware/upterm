@@ -16,7 +16,7 @@ const command = choice([
     git,
     cd,
 ]);
-const sudo = sequence(token("sudo"), command);
+const sudo = sequence(executable("sudo"), command);
 const anyCommand = choice([
     sudo,
     command,
