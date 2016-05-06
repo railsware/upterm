@@ -5,7 +5,7 @@ import * as _ from "lodash";
 import {Color} from "../../Enums";
 import {resolveDirectory, statsIn, directoryName, normalizeDirectory, isDirectory} from "../../utils/Common";
 
-type SuggestionType = "executable" | "command" | "option" | "option-value" | "branch" | "directory";
+type SuggestionType = "executable" | "command" | "option" | "option-value" | "branch" | "directory" | "alias";
 type SuggestionsPromise = Promise<Suggestion[]>;
 
 export class Suggestion {

@@ -6,6 +6,7 @@ import {commandDescriptions} from "./plugins/autocompletion_providers/Executable
 import {git} from "./plugins/autocompletion_providers/Git";
 import {description} from "./plugins/autocompletion_providers/Suggestions";
 import {cd} from "./plugins/autocompletion_providers/Cd";
+import {alias} from "./plugins/autocompletion_providers/Alias";
 
 const ls = executable("ls");
 const exec = choice(_.map(commandDescriptions, (value, key) =>
@@ -21,6 +22,7 @@ const anyCommand = choice([
     sudo,
     command,
     exec,
+    alias,
 ]);
 const separator = choice([
     withoutSuggestions(token(string("&&"))),
