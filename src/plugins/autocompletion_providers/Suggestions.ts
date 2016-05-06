@@ -87,6 +87,7 @@ export class Suggestion {
 }
 
 export const type = (value: SuggestionType) => <T extends Suggestion>(suggestion: T) => suggestion.withType(value);
+export const command = type("command");
 export const description = (value: string) => <T extends Suggestion>(suggestion: T) => suggestion.withDescription(value);
 
 abstract class BaseOption extends Suggestion {

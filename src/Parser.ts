@@ -115,7 +115,8 @@ export const fromSource = (parserConstructor: (s: string) => Parser, source: Dat
 };
 
 export const optional = (parser: Parser) => choice([string(""), parser]);
-export const token = (value: string) => decorate(sequence(string(value), spacesWithoutSuggestion), suggestion => suggestion.withValue(suggestion.value + " "));
-export const executable = (name: string) => decorate(token(name), type("executable"));
+export const token = (parser: Parser) => decorate(sequence(parser, spacesWithoutSuggestion), suggestion => suggestion.withValue(suggestion.value + " "));
+export const executable = (name: string) => decorate(token(string(name)), type("executable"));
+export const commandSwitch = (value: string) => decorate(string(`--${value}`), type("option"));
 export const option = (value: string) => decorate(string(`--${value}=`), type("option"));
-export const subCommand = (value: string) => decorate(token(value), type("command"));
+// export const subCommand = (value: string) => decorate(string(value), type("command"));
