@@ -10,10 +10,12 @@ type SuggestionsPromise = Promise<Suggestion[]>;
 
 export class Suggestion {
     protected _value = "";
+    private _displayValue = "";
     private _synopsis = "";
     private _description = "";
     private _type = "";
     private _prefix = "";
+    private _isNoop = false;
     private _childrenProvider: (job: Job) => SuggestionsPromise = async(job) => [];
 
     get value(): string {
@@ -45,7 +47,7 @@ export class Suggestion {
     }
 
     get displayValue(): string {
-        return this.value;
+        return this._displayValue || this.value;
     }
 
     shouldIgnore(job: Job): boolean {
@@ -58,6 +60,24 @@ export class Suggestion {
 
     withValue(value: string): this {
         this._value = value;
+        return this;
+    }
+
+    /**
+     * Is used for informational purposes only,
+     * as opposed to usage for changing the input.
+     * E.g. to show expanded values of aliases.
+     */
+    get noop(): this {
+        this._isNoop = true;
+        this._displayValue = this.value;
+        this._value = "";
+
+        return this;
+    }
+
+    withDisplayValue(value: string): this {
+        this._displayValue = value;
         return this;
     }
 
@@ -143,29 +163,6 @@ export class ShortOption extends BaseOption {
 
     get value() {
         return `-${this._name}`;
-    }
-}
-
-export class OptionWithValue extends BaseOption {
-    constructor(value: string, protected _displayValue: string) {
-        super();
-        this.withValue(value);
-    };
-
-    get value() {
-        return `--${this._value}=`;
-    }
-
-    get displayValue() {
-        return this._displayValue;
-    }
-
-    get partial(): boolean {
-        return true;
-    }
-
-    shouldIgnore(job: Job): boolean {
-        return job.prompt.expanded.some(word => word.includes(this.value));
     }
 }
 

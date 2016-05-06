@@ -182,7 +182,7 @@ const gitCommand = choice([
     decorate(string("citool"), compose(command, description("Graphical alternative to git-commit."))),
     decorate(string("clean"), compose(command, description("Remove untracked files from the working tree."))),
     decorate(string("clone"), compose(command, description("Clone a repository into a new directory."))),
-    sequence(decorate(token(string("commit")), compose(command, description("Record changes to the repository."))), commitOption),
+    sequence(decorate(string("commit"), compose(command, description("Record changes to the repository."))), optional(sequence(spacesWithoutSuggestion, commitOption))),
     decorate(string("describe"), compose(command, description("Describe a commit using the most recent tag reachable from it."))),
     decorate(string("diff"), compose(command, description("Show changes between commits, commit and working tree, etc."))),
     decorate(string("fetch"), compose(command, description("Download objects and refs from another repository."))),

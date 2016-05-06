@@ -38,11 +38,11 @@ describe("parser", () => {
                 expect(results[0].parser).to.equal(git);
             });
 
-            it("derives the second parser if the input exactly matches the first parser", async() => {
+            it("derives the first parser if the input exactly matches the first parser", async() => {
                 const results = await parser("git ", context);
 
                 expect(results.length).to.equal(1);
-                expect(results[0].parser).to.equal(commit);
+                expect(results[0].parser).to.equal(git);
             });
 
             it("derives the second parser if the input exceeds the first parser", async() => {
@@ -54,26 +54,28 @@ describe("parser", () => {
         });
 
         describe("chaining", () => {
+            const commit = string("commit");
+            const git = string("git");
+            const space = string(" ");
+
             it("derives when chained to the left", async() => {
-                const commit = string("commit");
-                const parser = sequence(sequence(string("git"), string(" ")), commit);
+                const parser = sequence(sequence(git, space), commit);
                 const results = await parser("git ", context);
 
                 expect(results.length).to.equal(1);
                 expect(results[0]).to.deep.include({
-                    parser: commit,
+                    parser: space,
                     parse: "git ",
                 });
             });
 
             it("derives when chained to the right", async() => {
-                const commit = string("commit");
-                const parser = sequence(sequence(string("git"), string(" ")), commit);
+                const parser = sequence(git, sequence(space, commit));
                 const results = await parser("git ", context);
 
                 expect(results.length).to.equal(1);
-                expect(results[0]).to.include({
-                    parser: commit,
+                expect(results[0]).to.deep.include({
+                    parser: space,
                     parse: "git ",
                 });
             });

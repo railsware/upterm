@@ -264,8 +264,7 @@ export default class PromptComponent extends React.Component<Props, State> imple
         await this.prompt.setValue(this.valueWithCurrentSuggestion);
         this.setDOMValueProgrammatically(this.prompt.value);
 
-        const suggestions = await this.prompt.getSuggestions();
-        this.setState({suggestions: suggestions, highlightedSuggestionIndex: 0});
+        await this.getSuggestions();
     }
 
     private get valueWithCurrentSuggestion(): string {
@@ -292,11 +291,16 @@ export default class PromptComponent extends React.Component<Props, State> imple
     private async handleInput(event: React.SyntheticEvent): Promise<void> {
         await this.prompt.setValue((event.target as HTMLElement).innerText);
 
-        // TODO: remove repetition.
-        // TODO: make it a stream.
-        this.prompt.getSuggestions().then(suggestions =>
-            this.setState({suggestions: suggestions, highlightedSuggestionIndex: 0})
-        );
+        await this.getSuggestions();
+    }
+
+    private async getSuggestions() {
+        let suggestions = await this.prompt.getSuggestions();
+
+        this.setState({
+            highlightedSuggestionIndex: 0,
+            suggestions: suggestions.filter(suggestion => this.state.latestKeyCode !== KeyCode.Tab || !suggestion.noop),
+        });
     }
 
     private handleScrollToTop(event: Event) {

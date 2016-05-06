@@ -50,18 +50,22 @@ export const string = (expected: string) => {
             context: context,
             parse: progress === Progress.Finished ? expected : "",
             progress: progress,
-            suggestions: (progress === Progress.Finished) ? [] : [new Suggestion().withValue(expected)],
+            suggestions: (progress === Progress.Finished)
+                ? [new Suggestion().withValue(expected).noop]
+                : [new Suggestion().withValue(expected)],
         }];
     };
     return parser;
 };
 
-export const sequence = (left: Parser, right: Parser) => async (input: string, context: Context): Promise<Array<Result>> => {
-    const leftResults = await left(input, context);
+export const sequence = (left: Parser, right: Parser) => async (actual: string, context: Context): Promise<Array<Result>> => {
+    const leftResults = await left(actual, context);
 
     const results = await Promise.all(leftResults.map(async (leftResult) => {
-        if (leftResult.progress === Progress.Finished) {
-            const rightResults = await right(input.slice(leftResult.parse.length), leftResult.context);
+        const rightActual = actual.slice(leftResult.parse.length);
+
+        if (leftResult.progress === Progress.Finished && (rightActual.length || leftResult.suggestions.length === 0)) {
+            const rightResults = await right(rightActual, leftResult.context);
 
             return rightResults.map(rightResult => ({
                 parser: rightResult.parser,
