@@ -159,14 +159,7 @@ const commitOption = choice([
     ),
 ]);
 
-const pushOption = optional(
-    sequence(
-        spacesWithoutSuggestion,
-        choice([
-            commandSwitch("force-with-lease"),
-        ])
-    )
-);
+const pushOption = choice([commandSwitch("force-with-lease")]);
 
 const branchesExceptCurrent = decorate(
     runtime(async(context) => {
@@ -188,7 +181,7 @@ const gitCommand = choice([
     decorate(string("citool"), compose(command, description("Graphical alternative to git-commit."))),
     decorate(string("clean"), compose(command, description("Remove untracked files from the working tree."))),
     decorate(string("clone"), compose(command, description("Clone a repository into a new directory."))),
-    sequence(decorate(string("commit"), compose(command, description("Record changes to the repository."))), commitOption),
+    sequence(decorate(token(string("commit")), compose(command, description("Record changes to the repository."))), commitOption),
     decorate(string("describe"), compose(command, description("Describe a commit using the most recent tag reachable from it."))),
     decorate(string("diff"), compose(command, description("Show changes between commits, commit and working tree, etc."))),
     decorate(string("fetch"), compose(command, description("Download objects and refs from another repository."))),
@@ -198,11 +191,11 @@ const gitCommand = choice([
     decorate(string("gui"), compose(command, description("A portable graphical interface to Git."))),
     decorate(string("init"), compose(command, description("Create an empty Git repository or reinitialize an existing one."))),
     decorate(string("log"), compose(command, description("Show commit logs."))),
-    sequence(decorate(string("merge"), compose(command, description("Join two or more development histories together."))), branchesExceptCurrent),
+    sequence(decorate(token(string("merge")), compose(command, description("Join two or more development histories together."))), branchesExceptCurrent),
     decorate(string("mv"), compose(command, description("Move or rename a file, a directory, or a symlink."))),
     decorate(string("notes"), compose(command, description("Add or inspect object notes."))),
     decorate(string("pull"), compose(command, description("Fetch from and integrate with another repository or a local branch."))),
-    sequence(decorate(string("push"), compose(command, description("Update remote refs along with associated objects."))), pushOption),
+    sequence(decorate(string("push"), compose(command, description("Update remote refs along with associated objects."))), optional(sequence(spacesWithoutSuggestion, pushOption))),
     decorate(string("rebase"), compose(command, description("Forward-port local commits to the updated upstream head."))),
     decorate(string("reset"), compose(command, description("Reset current HEAD to the specified state."))),
     decorate(string("revert"), compose(command, description("Revert some existing commits."))),
