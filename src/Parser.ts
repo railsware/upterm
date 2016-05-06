@@ -51,7 +51,7 @@ export const string = (expected: string) => {
             context: context,
             parse: progress === Progress.Finished ? expected : "",
             progress: progress,
-            suggestions: [new Suggestion().withValue(expected)],
+            suggestions: (progress === Progress.Finished) ? [] : [new Suggestion().withValue(expected)],
         }];
     };
     return parser;
@@ -115,7 +115,7 @@ export const fromSource = (parserConstructor: (s: string) => Parser, source: Dat
 };
 
 export const optional = (parser: Parser) => choice([string(""), parser]);
-export const token = (value: string) => decorate(sequence(string(value), many1(string(" "))), suggestion => suggestion.withValue(suggestion.value + " "));
+export const token = (value: string) => decorate(sequence(string(value), spacesWithoutSuggestion), suggestion => suggestion.withValue(suggestion.value + " "));
 export const executable = (name: string) => decorate(token(name), type("executable"));
 export const option = (value: string) => decorate(string(`--${value}=`), type("option"));
 export const subCommand = (value: string) => decorate(token(value), type("command"));
