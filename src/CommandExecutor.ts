@@ -7,12 +7,12 @@ import {executablesInPaths, resolveFile, isWindows, filterAsync, exists} from ".
 abstract class CommandExecutionStrategy {
     protected args: string[];
 
-    constructor(protected job: Job) {
-        this.args = job.prompt.arguments.filter(argument => argument.length > 0);
-    }
-
     static async canExecute(job: Job): Promise<boolean> {
         return false;
+    }
+
+    constructor(protected job: Job) {
+        this.args = job.prompt.arguments.filter(argument => argument.length > 0);
     }
 
     abstract startExecution(): Promise<{}>;

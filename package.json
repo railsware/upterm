@@ -59,10 +59,10 @@
     "gulp-util": "3.0.7",
     "mocha": "2.4.5",
     "node-gyp": "3.3.1",
-    "npm-check-updates": "2.6.3",
+    "npm-check-updates": "2.6.4",
     "run-sequence": "1.1.5",
     "ts-node": "0.7.2",
-    "tslint": "3.8.1",
+    "tslint": "3.9.0",
     "typescript": "1.9.0-dev.20160425",
     "typings": "0.8.1"
   },
