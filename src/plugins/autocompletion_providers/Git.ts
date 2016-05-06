@@ -1,6 +1,6 @@
 import * as Git from "../../utils/Git";
 import {
-    executable, fromSource, choice, string, option, decorate, sequence, optional,
+    executable, runtime, choice, string, option, decorate, sequence, optional,
     spacesWithoutSuggestion, commandSwitch, token,
 } from "../../Parser";
 import {description, type, command} from "./Suggestions";
@@ -169,7 +169,7 @@ const pushOption = optional(
 );
 
 const branchesExceptCurrent = decorate(
-    fromSource(async(context) => {
+    runtime(async(context) => {
         const branches = (await Git.branches(context.directory)).filter(branch => !branch.isCurrent());
         return choice(branches.map(branch => string(branch.toString())));
     }),

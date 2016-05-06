@@ -4,7 +4,7 @@ import {type} from "./Suggestions";
 // import {expandHistoricalDirectory, isHistoricalDirectory} from "Command";
 // import {userFriendlyPath} from "utils/Common";
 import {
-    executable, fromSource, string, Context, sequence, many1, decorateResult, decorate, choice,
+    executable, runtime, string, Context, sequence, many1, decorateResult, decorate, choice,
     withoutSuggestions, append,
 } from "../../Parser";
 import {isDirectory, statsIn, resolveDirectory} from "../../utils/Common";
@@ -56,7 +56,7 @@ const directoryAlias = withoutSuggestions(choice(["~", "/", ".", ".."].map(strin
 const directory = many1(
     decorate(
         decorateResult(
-            fromSource(async (context: Context) => {
+            runtime(async (context: Context) => {
                 if (!(await isDirectory(context.directory))) {
                     return [];
                 }

@@ -12,7 +12,6 @@ enum Progress {
 }
 
 type Parser = (input: string, context: Context) => Promise<Array<Result>>;
-type DataSource = (context: Context) => Promise<Parser>;
 
 interface Result {
     parser: Parser;
@@ -108,8 +107,8 @@ export const decorateResult = (parser: Parser, decorator: (c: Result) => Result)
 export const withoutSuggestions = (parser: Parser) => decorateResult(parser, result => Object.assign({}, result, {suggestions: []}));
 export const spacesWithoutSuggestion = withoutSuggestions(many1(string(" ")));
 
-export const fromSource = (source: DataSource) => async (actual: string, context: Context): Promise<Array<Result>> => {
-    const parser = await source(context);
+export const runtime = (producer: (context: Context) => Promise<Parser>) => async (actual: string, context: Context): Promise<Array<Result>> => {
+    const parser = await producer(context);
     return parser(actual, context);
 };
 
