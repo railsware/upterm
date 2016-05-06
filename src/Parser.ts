@@ -12,7 +12,7 @@ enum Progress {
 }
 
 type Parser = (input: string, context: Context) => Promise<Array<Result>>;
-type DataSource = (context: Context) => Promise<string[]>;
+type DataSource = (context: Context) => Promise<Parser>;
 
 interface Result {
     parser: Parser;
@@ -108,15 +108,14 @@ export const decorateResult = (parser: Parser, decorator: (c: Result) => Result)
 export const withoutSuggestions = (parser: Parser) => decorateResult(parser, result => Object.assign({}, result, {suggestions: []}));
 export const spacesWithoutSuggestion = withoutSuggestions(many1(string(" ")));
 
-export const fromSource = (parserConstructor: (s: string) => Parser, source: DataSource) => async (actual: string, context: Context): Promise<Array<Result>> => {
-    const data = await source(context);
-    const parser = choice(data.map(parserConstructor));
+export const fromSource = (source: DataSource) => async (actual: string, context: Context): Promise<Array<Result>> => {
+    const parser = await source(context);
     return parser(actual, context);
 };
 
 export const optional = (parser: Parser) => choice([string(""), parser]);
+export const append = (suffix: string, parser: Parser) => decorate(sequence(parser, withoutSuggestions(string(suffix))), suggestion => suggestion.withValue(suggestion.value + suffix));
 export const token = (parser: Parser) => decorate(sequence(parser, spacesWithoutSuggestion), suggestion => suggestion.withValue(suggestion.value + " "));
 export const executable = (name: string) => decorate(token(string(name)), type("executable"));
 export const commandSwitch = (value: string) => decorate(string(`--${value}`), type("option"));
 export const option = (value: string) => decorate(string(`--${value}=`), type("option"));
-// export const subCommand = (value: string) => decorate(string(value), type("command"));

@@ -3,8 +3,11 @@ import {type} from "./Suggestions";
 // import * as _ from "lodash";
 // import {expandHistoricalDirectory, isHistoricalDirectory} from "Command";
 // import {userFriendlyPath} from "utils/Common";
-import {executable, fromSource, string, Context, sequence, many1, decorateResult, decorate} from "../../Parser";
-import {isDirectory, statsIn, normalizeDirectory} from "../../utils/Common";
+import {
+    executable, fromSource, string, Context, sequence, many1, decorateResult, decorate, choice,
+    withoutSuggestions, append,
+} from "../../Parser";
+import {isDirectory, statsIn, resolveDirectory} from "../../utils/Common";
 
 // PluginManager.registerAutocompletionProvider({
 //     forCommand: "cd",
@@ -48,17 +51,20 @@ import {isDirectory, statsIn, normalizeDirectory} from "../../utils/Common";
 //     },
 // });
 
+const directoryAlias = withoutSuggestions(choice(["~", "/", ".", ".."].map(string)));
+
 const directory = many1(
     decorate(
         decorateResult(
-            fromSource(string, async (context: Context) => {
+            fromSource(async (context: Context) => {
                 if (!(await isDirectory(context.directory))) {
                     return [];
                 }
 
-                return (await statsIn(context.directory)).filter(info => info.stat.isDirectory()).map(info => normalizeDirectory(info.name));
+                const childDirectories = choice((await statsIn(context.directory)).filter(info => info.stat.isDirectory()).map(info => info.name).map(string));
+                return append("/", choice([directoryAlias, childDirectories]));
             }),
-            result => Object.assign({}, result, {context: Object.assign({}, result.context, {directory: result.context.directory + result.parse})})
+            result => Object.assign({}, result, {context: Object.assign({}, result.context, {directory: resolveDirectory(result.context.directory, result.parse)})})
         ),
         type("directory")
     )

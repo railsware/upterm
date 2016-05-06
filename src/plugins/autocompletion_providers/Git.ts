@@ -169,9 +169,9 @@ const pushOption = optional(
 );
 
 const branchesExceptCurrent = decorate(
-    fromSource(string, async(context) => {
-        const branches = await Git.branches(context.directory);
-        return branches.filter(branch => !branch.isCurrent()).map(branch => branch.toString());
+    fromSource(async(context) => {
+        const branches = (await Git.branches(context.directory)).filter(branch => !branch.isCurrent());
+        return choice(branches.map(branch => string(branch.toString())));
     }),
     type("branch")
 );
