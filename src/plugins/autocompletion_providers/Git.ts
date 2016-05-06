@@ -133,13 +133,13 @@ import {description, type} from "./Suggestions";
 
 const cleanupMode = decorate(
     choice([
-        decorate(token("strip"), description("Strip leading and trailing empty lines, trailing whitespace, commentary and collapse consecutive empty lines.")),
-        decorate(token("whitespace"), description("Same as strip except #commentary is not removed.")),
-        decorate(token("verbatim"), description("Do not change the message at all.")),
-        decorate(token("scissors"), description('Same as whitespace, except that everything from (and including) the line \
+        decorate(string("strip"), description("Strip leading and trailing empty lines, trailing whitespace, commentary and collapse consecutive empty lines.")),
+        decorate(string("whitespace"), description("Same as strip except #commentary is not removed.")),
+        decorate(string("verbatim"), description("Do not change the message at all.")),
+        decorate(string("scissors"), description('Same as whitespace, except that everything from (and including) the line \
         "#------------------------ >8 ------------------------"\
         is truncated if the message is to be edited. "#" can be customized with core.commentChar.')),
-        decorate(token("default"), description("Same as strip if the message is to be edited. Otherwise whitespace")),
+        decorate(string("default"), description("Same as strip if the message is to be edited. Otherwise whitespace")),
     ]),
     type("option-value")
 );
