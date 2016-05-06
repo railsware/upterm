@@ -366,3 +366,7 @@ export function commonPrefix(left: string, right: string) {
     }
     return left.substring(0, i);
 }
+
+export function compose<A, B, C>(f: (fp: A) => B, g: (gp: B) => C): (rp: A) => C {
+    return (p: A) => g(f(p));
+}
