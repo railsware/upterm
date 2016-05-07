@@ -1,10 +1,8 @@
 import * as Path from "path";
 import * as _ from "lodash";
-import Job from "../../Job";
-import PluginManager from "../../PluginManager";
-import {Suggestion, Subcommand, SubSubcommand, description, command} from "./Suggestions";
+import {description, command} from "./Suggestions";
 import {exists, readFile, compose} from "../../utils/Common";
-import {string, decorate, spacesWithoutSuggestion, token, executable, sequence, choice, runtime} from "../../Parser";
+import {string, decorate, token, executable, sequence, choice, runtime} from "../../Parser";
 
 const npmCommandConfig = [
     {
