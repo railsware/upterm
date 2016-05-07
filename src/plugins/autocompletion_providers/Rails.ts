@@ -1,18 +1,42 @@
-import PluginManager from "../../PluginManager";
-import {Subcommand} from "./Suggestions";
+import {executable, sequence, string, decorate, choice} from "../../Parser";
+import {description, command} from "./Suggestions";
+import {compose} from "../../utils/Common";
+import * as _ from "lodash";
 
-const subcommands = [
-    new Subcommand("runner").withSynopsis("Run a piece of code in the application environment"),
-    new Subcommand("console").withSynopsis("Start the Rails console"),
-    new Subcommand("server").withSynopsis("Start the Rails server"),
-    new Subcommand("generate").withSynopsis("Generate new code'g')"),
-    new Subcommand("destroy").withSynopsis('Undo code generated with "generate"'),
-    new Subcommand("dbconsole").withSynopsis("Start a console for the Rails database"),
-    new Subcommand("new").withSynopsis("Create a new Rails application"),
-    new Subcommand("plugin new").withSynopsis("Generates skeleton for developing a Rails plugin"),
+const railsCommandConfig = [
+    {
+        name: "runner",
+        description: "Run a piece of code in the application environment",
+    },
+    {
+        name: "console",
+        description: "Start the Rails console",
+    },
+    {
+        name: "server",
+        description: "Start the Rails server",
+    },
+    {
+        name: "generate",
+        description: "Generate new code'g')",
+    },
+    {
+        name: "destroy",
+        description: "generate",
+    },
+    {
+        name: "dbconsole",
+        description: "Start a console for the Rails database",
+    },
+    {
+        name: "new",
+        description: "Create a new Rails application",
+    },
+    {
+        name: "plugin new",
+        description: "Generates skeleton for developing a Rails plugin",
+    },
 ];
 
-PluginManager.registerAutocompletionProvider({
-    forCommand: "rails",
-    getSuggestions: async (job) => subcommands,
-});
+const railsCommand = choice(_.map(railsCommandConfig, config => decorate(string(config.name), compose(command, description(config.description)))));
+export const rails = sequence(executable("rails"), railsCommand);

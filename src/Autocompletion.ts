@@ -9,6 +9,7 @@ import {cd} from "./plugins/autocompletion_providers/Cd";
 import {alias} from "./plugins/autocompletion_providers/Alias";
 import {file} from "./plugins/autocompletion_providers/File";
 import {npm} from "./plugins/autocompletion_providers/NPM";
+import {rails} from "./plugins/autocompletion_providers/Rails";
 
 const ls = executable("ls");
 const exec = choice(_.map(commandDescriptions, (value, key) =>
@@ -20,6 +21,7 @@ export const command = choice([
     git,
     cd,
     npm,
+    rails,
     sequence(executable("nvim"), file),
 ]);
 

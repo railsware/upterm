@@ -3,7 +3,7 @@ import Job from "../../Job";
 import * as Path from "path";
 import * as _ from "lodash";
 import {Color} from "../../Enums";
-import {resolveDirectory, statsIn, directoryName, normalizeDirectory, isDirectory} from "../../utils/Common";
+import {normalizeDirectory} from "../../utils/Common";
 
 type SuggestionType = "executable" | "command" | "option" | "option-value" | "branch" | "directory" | "file" | "alias";
 type SuggestionsPromise = Promise<Suggestion[]>;
@@ -249,22 +249,5 @@ export class Subcommand extends Suggestion {
 
     shouldIgnore(job: Job): boolean {
         return job.prompt.expanded.length !== 2;
-    }
-}
-
-export class SubSubcommand extends Subcommand {
-    shouldIgnore(job: Job): boolean {
-        return job.prompt.expanded.length !== 3;
-    }
-}
-
-export async function fileSuggestions(searchDirectory: string, alreadyEnteredPath: string): Promise<File[]> {
-    const directoryOfAlreadyEnteredPath = directoryName(alreadyEnteredPath);
-    const fullSearchDirectory = resolveDirectory(searchDirectory, directoryOfAlreadyEnteredPath);
-
-    if (await isDirectory(fullSearchDirectory)) {
-        return (await statsIn(fullSearchDirectory)).map(stat => new File(stat, directoryOfAlreadyEnteredPath));
-    } else {
-        return [];
     }
 }
