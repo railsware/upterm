@@ -117,7 +117,7 @@ export default class ApplicationComponent extends React.Component<{}, State> {
                                 this.activeTabIndex = index;
                                 this.setState({ sessions: this.activeTab.sessions });
                               }}
-                              closeHandler={this.closeSelectedTab.bind(this)}>
+                              closeHandler={this.createCloseTabHandler(index)}>
                 </TabComponent>
             );
         }
@@ -141,12 +141,13 @@ export default class ApplicationComponent extends React.Component<{}, State> {
         );
     }
 
-    closeSelectedTab(event: any) {
-        let selectedTabIndex: number = Number(event.target.value);
-        this.closeTab(this.tabs[selectedTabIndex]);
-        this.setState({sessions: this.activeTab.sessions});
-        event.stopPropagation();
-        event.preventDefault();
+    createCloseTabHandler(index: number) {
+        return (event: KeyboardEvent) => {
+            this.closeTab(this.tabs[index]);
+            this.setState({sessions: this.activeTab.sessions});
+            event.stopPropagation();
+            event.preventDefault();
+        };
     }
 
     public closeSession(sessionToClose: Session) {
