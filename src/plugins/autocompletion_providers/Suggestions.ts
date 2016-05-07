@@ -145,16 +145,6 @@ export class Option extends BaseOption {
     }
 }
 
-export class LongOption extends BaseOption {
-    constructor(protected _name: string) {
-        super();
-    };
-
-    get value() {
-        return `--${this._name}`;
-    }
-}
-
 export class ShortOption extends BaseOption {
     constructor(protected _name: string) {
         super();
@@ -231,23 +221,5 @@ export class File extends Suggestion {
         } else {
             return "unknown";
         }
-    }
-}
-
-export class Subcommand extends Suggestion {
-    constructor(protected _name: string) {
-        super();
-    }
-
-    get value(): string {
-        return this._name;
-    }
-
-    get type(): string {
-        return "command";
-    }
-
-    shouldIgnore(job: Job): boolean {
-        return job.prompt.expanded.length !== 2;
     }
 }
