@@ -383,47 +383,31 @@ body, pre {
     -webkit-user-select: none;
 
     .tab {
+      position: relative;
       height: $title-bar-height;
       width: 150px;
       display: inline-block;
       text-align: center;
       padding-top: 2px;
-      
+
       &:hover span.tabClose {
-        color: #95A2BB;
+        color: map-get($colors, 'white');
       }
 
       & span.tabClose {
-        width: 9%;
-        text-align: left;
-        font-family: FontAwesome;
-        padding-bottom: 5px;
-        vertical-align: middle;
+        $margin: $title-bar-height - $font-size;
+
+        position: absolute;
+        left: $margin;
+        top: $margin / 2;
+
+        @extend .fa;
+        @extend .fa-times;
+
         color: transparent;
 
-        &:before {
-          content: "\f00d";
-          font-size: $font-size - 3;
-          padding-right: 0px;
-        }
-
         &:hover {
-          color: white;
-          cursor: pointer;
-          border-top: 4px;
-          padding-right: 4px;
-        }
-      }
-
-      &.active {
-          font-weight: 600;
-          border-top: 2px solid #747e87;
-          background-color: transparent;
-      }
-            
-      &.inactive {
-        &:not(:hover) {
-          opacity: 0.3;
+          color: map-get($colors, 'red');
         }
       }
 
@@ -433,12 +417,6 @@ body, pre {
         &.command-sign {
           font-size: $font-size + 3;
           vertical-align: middle;
-        }
-        
-        &.position {
-            width: 60%;
-            text-align: left;
-            padding-left: 5px;
         }
       }
 
