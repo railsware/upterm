@@ -7,6 +7,7 @@ import {git} from "./plugins/autocompletion_providers/Git";
 import {description} from "./plugins/autocompletion_providers/Suggestions";
 import {cd} from "./plugins/autocompletion_providers/Cd";
 import {alias} from "./plugins/autocompletion_providers/Alias";
+import {file} from "./plugins/autocompletion_providers/File";
 
 const ls = executable("ls");
 const exec = choice(_.map(commandDescriptions, (value, key) =>
@@ -17,6 +18,7 @@ export const command = choice([
     ls,
     git,
     cd,
+    sequence(executable("nvim"), file),
 ]);
 
 const sudo = sequence(executable("sudo"), command);

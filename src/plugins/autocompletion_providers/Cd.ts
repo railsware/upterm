@@ -61,8 +61,8 @@ const directory = many1(
                     return [];
                 }
 
-                const childDirectories = choice((await statsIn(context.directory)).filter(info => info.stat.isDirectory()).map(info => info.name).map(string));
-                return append("/", choice([directoryAlias, childDirectories]));
+                const childDirectory = choice((await statsIn(context.directory)).filter(info => info.stat.isDirectory()).map(info => info.name).map(string));
+                return append("/", choice([directoryAlias, childDirectory]));
             }),
             result => Object.assign({}, result, {context: Object.assign({}, result.context, {directory: resolveDirectory(result.context.directory, result.parse)})})
         ),
