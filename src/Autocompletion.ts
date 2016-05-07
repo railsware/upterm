@@ -12,11 +12,13 @@ const ls = executable("ls");
 const exec = choice(_.map(commandDescriptions, (value, key) =>
     decorate(executable(key), description(value))
 ));
-const command = choice([
+
+export const command = choice([
     ls,
     git,
     cd,
 ]);
+
 const sudo = sequence(executable("sudo"), command);
 const anyCommand = choice([
     sudo,

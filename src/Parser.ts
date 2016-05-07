@@ -122,3 +122,14 @@ export const token = (parser: Parser) => decorate(sequence(parser, spacesWithout
 export const executable = (name: string) => decorate(token(string(name)), type("executable"));
 export const commandSwitch = (value: string) => decorate(string(`--${value}`), type("option"));
 export const option = (value: string) => decorate(string(`--${value}=`), type("option"));
+
+export const debug = (parser: Parser) => async (actual: string, context: Context) => {
+    const results = await parser(actual, context);
+
+    if (_.some(results, result => result.suggestions.length !== 0)) {
+        /* tslint:disable:no-debugger */
+        debugger;
+    }
+
+    return results;
+};
