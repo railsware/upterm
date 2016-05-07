@@ -76,11 +76,6 @@ export class Suggestion {
         return this;
     }
 
-    withDisplayValue(value: string): this {
-        this._displayValue = value;
-        return this;
-    }
-
     withSynopsis(synopsis: string): this {
         this._synopsis = synopsis;
         return this;
