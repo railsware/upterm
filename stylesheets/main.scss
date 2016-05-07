@@ -383,14 +383,32 @@ body, pre {
     -webkit-user-select: none;
 
     .tab {
+      position: relative;
       height: $title-bar-height;
       width: 150px;
       display: inline-block;
       text-align: center;
       padding-top: 2px;
 
-      &.inactive:not(:hover) {
-        opacity: 0.3;
+      &:hover span.tabClose {
+        color: map-get($colors, 'white');
+      }
+
+      & span.tabClose {
+        $margin: $title-bar-height - $font-size;
+
+        position: absolute;
+        left: $margin;
+        top: $margin / 2;
+
+        @extend .fa;
+        @extend .fa-times;
+
+        color: transparent;
+
+        &:hover {
+          color: map-get($colors, 'red');
+        }
       }
 
       span {

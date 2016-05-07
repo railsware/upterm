@@ -116,7 +116,8 @@ export default class ApplicationComponent extends React.Component<{}, State> {
                               activate={() => {
                                 this.activeTabIndex = index;
                                 this.setState({ sessions: this.activeTab.sessions });
-                              }}>
+                              }}
+                              closeHandler={this.createCloseTabHandler(index)}>
                 </TabComponent>
             );
         }
@@ -128,7 +129,7 @@ export default class ApplicationComponent extends React.Component<{}, State> {
                               activate={() => {
                                    this.activeTab.activateSession(session);
                                    this.setState({ sessions: this.activeTab.sessions });
-                               }}>
+                              }}>
             </SessionComponent>
         );
 
@@ -138,6 +139,15 @@ export default class ApplicationComponent extends React.Component<{}, State> {
                 <div className="active-tab-content">{sessions}</div>
             </div>
         );
+    }
+
+    createCloseTabHandler(index: number) {
+        return (event: KeyboardEvent) => {
+            this.closeTab(this.tabs[index]);
+            this.setState({sessions: this.activeTab.sessions});
+            event.stopPropagation();
+            event.preventDefault();
+        };
     }
 
     public closeSession(sessionToClose: Session) {
