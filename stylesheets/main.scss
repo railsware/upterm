@@ -388,9 +388,43 @@ body, pre {
       display: inline-block;
       text-align: center;
       padding-top: 2px;
+      
+      &:hover span.tabClose {
+        color: #95A2BB;
+      }
 
-      &.inactive:not(:hover) {
-        opacity: 0.3;
+      & span.tabClose {
+        width: 9%;
+        text-align: left;
+        font-family: FontAwesome;
+        padding-bottom: 5px;
+        vertical-align: middle;
+        color: transparent;
+
+        &:before {
+          content: "\f00d";
+          font-size: $font-size - 3;
+          padding-right: 0px;
+        }
+
+        &:hover {
+          color: white;
+          cursor: pointer;
+          border-top: 4px;
+          padding-right: 4px;
+        }
+      }
+
+      &.active {
+          font-weight: 600;
+          border-top: 2px solid #747e87;
+          background-color: transparent;
+      }
+            
+      &.inactive {
+        &:not(:hover) {
+          opacity: 0.3;
+        }
       }
 
       span {
@@ -399,6 +433,12 @@ body, pre {
         &.command-sign {
           font-size: $font-size + 3;
           vertical-align: middle;
+        }
+        
+        &.position {
+            width: 60%;
+            text-align: left;
+            padding-left: 5px;
         }
       }
 
