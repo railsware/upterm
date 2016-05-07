@@ -11,7 +11,6 @@ export const alias = runtime(async () => {
     return choice(_.map(aliases, (expanded, key) => choice([
         decorate(token(string(key)), compose(type("alias"), description(expanded))),
         async (actual: string, context: Context) => {
-            console.log(actual);
             if (actual.startsWith(`${key} `)) {
                 const results = await command(expanded + actual.slice(key.length), context);
                 return results.map(result => Object.assign({}, result, {parse: key + result.parse.slice(expanded.length)}));
