@@ -76,6 +76,10 @@ export class Suggestion {
         return this;
     }
 
+    get isNoop(): boolean {
+        return this._isNoop;
+    }
+
     withSynopsis(synopsis: string): this {
         this._synopsis = synopsis;
         return this;

@@ -299,7 +299,7 @@ export default class PromptComponent extends React.Component<Props, State> imple
 
         this.setState({
             highlightedSuggestionIndex: 0,
-            suggestions: suggestions.filter(suggestion => this.state.latestKeyCode !== KeyCode.Tab || !suggestion.noop),
+            suggestions: suggestions.filter(suggestion => this.state.latestKeyCode !== KeyCode.Tab || !suggestion.isNoop),
         });
     }
 
