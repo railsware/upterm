@@ -12,7 +12,7 @@ enum Progress {
     Finished,
 }
 
-type Parser = (context: Context) => Promise<Array<Result>>;
+export type Parser = (context: Context) => Promise<Array<Result>>;
 
 interface Result {
     parser: Parser;
