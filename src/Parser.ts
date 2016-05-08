@@ -59,14 +59,14 @@ export const string = (expected: string) => {
     return parser;
 };
 
-export const sequence = (left: Parser, right: Parser) => async (context: Context): Promise<Array<Result>> => {
+export const bind = (left: Parser, rightGenerator: (result: Result) => Parser) => async (context: Context): Promise<Array<Result>> => {
     const leftResults = await left(context);
 
     const results = await Promise.all(leftResults.map(async (leftResult) => {
         const rightInput = context.input.slice(leftResult.parse.length);
 
         if (leftResult.progress === Progress.Finished && (rightInput.length || leftResult.suggestions.length === 0)) {
-            const rightResults = await right(Object.assign({}, leftResult.context, { input: rightInput }));
+            const rightResults = await rightGenerator(leftResult)(Object.assign({}, leftResult.context, { input: rightInput }));
 
             return rightResults.map(rightResult => ({
                 parser: rightResult.parser,
@@ -82,6 +82,7 @@ export const sequence = (left: Parser, right: Parser) => async (context: Context
 
     return _.flatten(results).filter(result => result.progress !== Progress.Failed);
 };
+export const sequence = (left: Parser, right: Parser) => bind(left, () => right);
 
 export const choice = (parsers: Parser[]) => async (context: Context): Promise<Array<Result>> => {
     const results = await Promise.all(parsers.map(parser => parser(context)));
