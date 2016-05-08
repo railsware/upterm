@@ -1,6 +1,5 @@
 import {Suggestion, type} from "./plugins/autocompletion_providers/Suggestions";
 import * as _ from "lodash";
-import {parser} from "./CommandExpander";
 import {compose} from "./utils/Common";
 
 export interface Context {
