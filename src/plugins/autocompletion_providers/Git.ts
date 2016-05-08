@@ -1,7 +1,7 @@
 import * as Git from "../../utils/Git";
 import {
     executable, runtime, choice, string, option, decorate, sequence, optional,
-    spacesWithoutSuggestion, commandSwitch, token, many1,
+    spacesWithoutSuggestion, commandSwitch, token, many1, optionalContinuation,
 } from "../../Parser";
 import {description, type, command} from "./Suggestions";
 import {compose} from "../../utils/Common";
@@ -184,7 +184,7 @@ const gitCommand = choice([
     decorate(string("citool"), compose(command, description("Graphical alternative to git-commit."))),
     decorate(string("clean"), compose(command, description("Remove untracked files from the working tree."))),
     decorate(string("clone"), compose(command, description("Clone a repository into a new directory."))),
-    sequence(decorate(string("commit"), compose(command, description("Record changes to the repository."))), optional(sequence(spacesWithoutSuggestion, commitOption))),
+    sequence(decorate(string("commit"), compose(command, description("Record changes to the repository."))), optionalContinuation(commitOption)),
     decorate(string("describe"), compose(command, description("Describe a commit using the most recent tag reachable from it."))),
     decorate(string("diff"), compose(command, description("Show changes between commits, commit and working tree, etc."))),
     decorate(string("fetch"), compose(command, description("Download objects and refs from another repository."))),
@@ -198,7 +198,7 @@ const gitCommand = choice([
     decorate(string("mv"), compose(command, description("Move or rename a file, a directory, or a symlink."))),
     decorate(string("notes"), compose(command, description("Add or inspect object notes."))),
     decorate(string("pull"), compose(command, description("Fetch from and integrate with another repository or a local branch."))),
-    sequence(decorate(string("push"), compose(command, description("Update remote refs along with associated objects."))), optional(sequence(spacesWithoutSuggestion, pushOption))),
+    sequence(decorate(string("push"), compose(command, description("Update remote refs along with associated objects."))), optionalContinuation(pushOption)),
     decorate(string("rebase"), compose(command, description("Forward-port local commits to the updated upstream head."))),
     decorate(string("reset"), compose(command, description("Reset current HEAD to the specified state."))),
     decorate(string("revert"), compose(command, description("Revert some existing commits."))),
@@ -206,7 +206,7 @@ const gitCommand = choice([
     decorate(string("shortlog"), compose(command, description("Summarize git log output."))),
     decorate(string("show"), compose(command, description("Show various types of objects."))),
     decorate(string("stash"), compose(command, description("Stash the changes in a dirty working directory away."))),
-    sequence(decorate(string("status"), compose(command, description("Show the working tree status."))), optional(sequence(spacesWithoutSuggestion, statusOption))),
+    sequence(decorate(string("status"), compose(command, description("Show the working tree status."))), optionalContinuation(statusOption)),
     decorate(string("submodule"), compose(command, description("Initialize, update or inspect submodules."))),
     decorate(string("tag"), compose(command, description("Create, list, delete or verify a tag object signed with GPG."))),
     decorate(string("worktree"), compose(command, description("Manage multiple worktrees."))),

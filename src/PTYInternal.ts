@@ -11,7 +11,7 @@ const noConfigSwitches: Dictionary<string[]> = {
     bash: ["--noprofile", "--norc"],
 };
 
-const fork = pty.fork(shell(), [...noConfigSwitches[baseName(shell())], "-c", `${commandName} ${args.join(" ")}`], {
+const fork = pty.fork(shell(), [...noConfigSwitches[baseName(shell())], "-c", `${commandName} ${args.map(arg => `'${arg}'`).join(" ")}`], {
     cols: columns,
     rows: rows,
     cwd: process.cwd(),
@@ -50,4 +50,3 @@ process.on("message", (message: IncomingMessage) => {
 
 fork.on("data", (data: string) => process.send({ data: data }));
 fork.on("exit", (code: number) => process.send({ exit: code }));
-

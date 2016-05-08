@@ -1,20 +1,25 @@
 import * as _ from "lodash";
 import * as i from "./Interfaces";
 import Job from "./Job";
-import {choice, token, executable, decorate, sequence, withoutSuggestions, string} from "./Parser";
+import {
+    choice, token, executable, decorate, sequence, withoutSuggestions, string, many1,
+    optionalContinuation,
+} from "./Parser";
 import {commandDescriptions} from "./plugins/autocompletion_providers/Executable";
 import {git} from "./plugins/autocompletion_providers/Git";
-import {description} from "./plugins/autocompletion_providers/Suggestions";
+import {description, type} from "./plugins/autocompletion_providers/Suggestions";
 import {cd} from "./plugins/autocompletion_providers/Cd";
 import {alias} from "./plugins/autocompletion_providers/Alias";
 import {file} from "./plugins/autocompletion_providers/File";
 import {npm} from "./plugins/autocompletion_providers/NPM";
 import {rails} from "./plugins/autocompletion_providers/Rails";
+import {compose} from "./utils/Common";
 
 const ls = executable("ls");
-const exec = choice(_.map(commandDescriptions, (value, key) =>
-    decorate(executable(key), description(value))
-));
+const exec = sequence(
+    choice(_.map(commandDescriptions, (value, key) => decorate(string(key), compose(description(value), type("executable"))))),
+    optionalContinuation(many1(file))
+);
 
 export const command = choice([
     ls,
@@ -22,7 +27,6 @@ export const command = choice([
     cd,
     npm,
     rails,
-    sequence(executable("nvim"), file),
 ]);
 
 const sudo = sequence(executable("sudo"), command);

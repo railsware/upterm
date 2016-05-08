@@ -143,6 +143,7 @@ export const runtime = (producer: (context: Context) => Promise<Parser>) => asyn
 };
 
 export const optional = (parser: Parser) => choice([string(""), parser]);
+export const optionalContinuation = (parser: Parser) => optional(sequence(spacesWithoutSuggestion, parser));
 export const append = (suffix: string, parser: Parser) => decorate(sequence(parser, withoutSuggestions(string(suffix))), suggestion => suggestion.withValue(suggestion.value + suffix));
 export const token = (parser: Parser) => decorate(sequence(parser, spacesWithoutSuggestion), suggestion => suggestion.withValue(suggestion.value + " "));
 export const executable = (name: string) => decorate(token(string(name)), type("executable"));
