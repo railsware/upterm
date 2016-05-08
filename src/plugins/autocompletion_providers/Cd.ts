@@ -1,50 +1,8 @@
 import {executable, sequence, decorate, string, noisySuggestions, runtime, choice} from "../../Parser";
-import {fileGenerator} from "./Common";
+import {directoryAlias, fileInDirectoryGenerator} from "./Common";
 import {expandHistoricalDirectory} from "../../Command";
 import {description, type} from "./Suggestions";
 import * as _ from "lodash";
-
-// PluginManager.registerAutocompletionProvider({
-//     forCommand: "cd",
-//     getSuggestions: async(job) => {
-//         if (job.prompt.expanded.length !== 2) {
-//             return [];
-//         }
-//
-//         const argument = job.prompt.lastArgument;
-//
-//         if (isHistoricalDirectory(argument)) {
-//             let suggestions: Suggestion[] = [];
-//             try {
-//                 const expanded = expandHistoricalDirectory(argument, job);
-//                 suggestions.push(new Suggestion().withValue(argument).withSynopsis(expanded).withType("file directory"));
-//             } catch (error) {
-//                 return new Suggestion().withValue(argument).withSynopsis(error.message).withType("error");
-//             }
-//
-//             if (argument === "-") {
-//                 suggestions = suggestions.concat(_.range(2, job.session.historicalCurrentDirectoriesStack.length).map(index => {
-//                     const position = `-${index}`;
-//                     return new Suggestion().withValue(position).withSynopsis(expandHistoricalDirectory(position, job)).withType("file directory");
-//                 }));
-//             }
-//
-//             return suggestions;
-//         }
-//
-//         const suggestionPromises = job.environment.cdpath(job.session.directory)
-//             .map(async (directory) => {
-//                 let suggestions: Suggestion[] = (await fileSuggestions(directory, job.prompt.lastArgument)).filter(suggestion => suggestion.info.stat.isDirectory());
-//
-//                 if (directory !== job.session.directory) {
-//                     suggestions = suggestions.map(suggestion => suggestion.withSynopsis(`In CDPATH ${userFriendlyPath(directory)}`));
-//                 }
-//
-//                 return suggestions;
-//             });
-//         return _.flatten(await Promise.all(suggestionPromises));
-//     },
-// });
 
 const historicalDirectory = runtime(async (context) =>
     noisySuggestions(
@@ -58,7 +16,24 @@ const historicalDirectory = runtime(async (context) =>
     )
 );
 
+const cdpathDirectory = runtime(
+    async (context) => {
+        const directoriesToBe = context.cdpath.map(async (directory) => {
+            const file = await fileInDirectoryGenerator(directory, info => info.stat.isDirectory());
+
+            if (directory === context.directory) {
+                return file;
+            } else {
+                return noisySuggestions(decorate(file, description(`In ${directory}`)));
+            }
+        });
+
+        return choice(await Promise.all(directoriesToBe));
+    }
+);
+
 export const cd = sequence(executable("cd"), choice([
-    fileGenerator(info => info.stat.isDirectory()),
     historicalDirectory,
+    directoryAlias,
+    cdpathDirectory,
 ]));

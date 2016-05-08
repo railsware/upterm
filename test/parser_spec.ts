@@ -2,7 +2,7 @@ import {expect} from "chai";
 import {string, choice, many1, optional, sequence, Parser} from "../src/Parser.ts";
 
 async function parse(parser: Parser, input: string) {
-    return await parser({input: input, directory: "/", historicalCurrentDirectoriesStack: []});
+    return await parser({input: input, directory: "/", historicalCurrentDirectoriesStack: [], cdpath: []});
 }
 
 describe("parser", () => {

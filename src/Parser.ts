@@ -5,6 +5,7 @@ export interface Context {
     input: string;
     directory: string;
     historicalCurrentDirectoriesStack: string[];
+    cdpath: string[];
 }
 
 enum Progress {
