@@ -106,7 +106,8 @@ import {file} from "./File";
 //     }
 //
 //     if ((subcommand === "checkout" || subcommand === "merge") && args.length === 1) {
-//         let branches: Suggestion[] = (await Git.branches(job.session.directory)).filter(branch => !branch.isCurrent()).map(branch => new Suggestion().withValue(branch.toString()).withType("branch"));
+//         let branches: Suggestion[] = (await Git.branches(job.session.directory)).filter(branch => !branch.isCurrent()).
+//              map(branch => new Suggestion().withValue(branch.toString()).withType("branch"));
 //
 //         const argument = job.prompt.lastArgument;
 //         if (doesLookLikeBranchAlias(argument)) {

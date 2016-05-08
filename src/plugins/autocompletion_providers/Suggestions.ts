@@ -1,12 +1,10 @@
 import {FileInfo} from "../../Interfaces";
-import Job from "../../Job";
 import * as Path from "path";
 import * as _ from "lodash";
 import {Color} from "../../Enums";
 import {normalizeDirectory} from "../../utils/Common";
 
 type SuggestionType = "executable" | "command" | "option" | "option-value" | "branch" | "directory" | "file" | "alias";
-type SuggestionsPromise = Promise<Suggestion[]>;
 
 export class Suggestion {
     protected _value = "";
@@ -16,7 +14,6 @@ export class Suggestion {
     private _type = "";
     private _prefix = "";
     private _isNoop = false;
-    private _childrenProvider: (job: Job) => SuggestionsPromise = async(job) => [];
 
     get value(): string {
         return this._value;
@@ -42,20 +39,8 @@ export class Suggestion {
         return Color.White;
     }
 
-    get partial(): boolean {
-        return false;
-    }
-
     get displayValue(): string {
         return this._displayValue || this.value;
-    }
-
-    shouldIgnore(job: Job): boolean {
-        return false;
-    }
-
-    async getChildren(job: Job): Promise<Suggestion[]> {
-        return await this._childrenProvider(job);
     }
 
     withValue(value: string): this {
@@ -130,18 +115,8 @@ export class Option extends BaseOption {
         return `${this.alias} ${this.value}`;
     }
 
-    shouldIgnore(job: Job): boolean {
-        const finishedWords = job.prompt.expandedFinishedLexemes;
-        return finishedWords.includes(this.value) || finishedWords.includes(this.alias);
-    }
-
     private get alias(): string {
         return `-${this._alias || this._name[0]}`;
-    }
-
-    withAlias(alias: string): this {
-        this._alias = alias;
-        return this;
     }
 }
 
