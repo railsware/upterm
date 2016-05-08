@@ -12,9 +12,13 @@ const grammar = makeGrammar(aliases);
 describe("grammar", () => {
     describe("input method", () => {
         it("displays a finished alias when typed", async() => {
-            const results = await grammar(context({input: "gs", inputMethod: InputMethod.Typed}));
+            const results = await grammar(context({input: "git status", inputMethod: InputMethod.Typed}));
+            expect(suggestionDisplayValues(results)).to.eql(["status"]);
+        });
 
-            expect(suggestionDisplayValues(results)).to.eql(["gs"]);
+        it("doesn't display a finished alias when autocompleted", async() => {
+            const results = await grammar(context({input: "git status", inputMethod: InputMethod.Autocompleted}));
+            expect(suggestionDisplayValues(results)).to.eql([]);
         });
     });
 });
