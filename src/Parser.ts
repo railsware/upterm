@@ -8,6 +8,7 @@ export interface Context {
 
 enum Progress {
     Failed,
+    OnStart,
     InProgress,
     Finished,
 }
@@ -25,6 +26,10 @@ interface Result {
 function getProgress(input: string, expected: string) {
     if (expected.length === 0) {
         return Progress.Finished;
+    }
+
+    if (input.length === 0) {
+        return Progress.OnStart;
     }
 
     if (input.startsWith(expected)) {
@@ -110,6 +115,24 @@ export const decorateResult = (parser: Parser, decorator: (c: Result) => Result)
 };
 
 export const withoutSuggestions = (parser: Parser) => decorateResult(parser, result => Object.assign({}, result, {suggestions: []}));
+
+/**
+ * Display suggestions only if a person has already input at least one character of the expected value.
+ * Used to display easy and popular suggestions, which would add noise to the autocompletion box.
+ *
+ * @example cd ../
+ * @example cd -
+ */
+export const noisySuggestions = (parser: Parser) => decorateResult(
+    parser,
+    result => Object.assign(
+        {},
+        result,
+        {
+            suggestions: (result.progress === Progress.InProgress || result.progress === Progress.Finished) ? result.suggestions : [],
+        }
+    )
+);
 export const spacesWithoutSuggestion = withoutSuggestions(many1(string(" ")));
 
 export const runtime = (producer: (context: Context) => Promise<Parser>) => async (context: Context): Promise<Array<Result>> => {

@@ -5,7 +5,7 @@ import {type} from "./Suggestions";
 // import {userFriendlyPath} from "utils/Common";
 import {
     executable, runtime, string, sequence, many1, decorateResult, decorate, choice,
-    withoutSuggestions, append,
+    append, noisySuggestions,
 } from "../../Parser";
 import {isDirectory, statsIn, resolveDirectory} from "../../utils/Common";
 
@@ -51,7 +51,7 @@ import {isDirectory, statsIn, resolveDirectory} from "../../utils/Common";
 //     },
 // });
 
-const directoryAlias = withoutSuggestions(choice(["~", "/", ".", ".."].map(string)));
+const directoryAlias = noisySuggestions(choice(["~", "/", "..", "."].map(string)));
 
 const directory = many1(
     decorate(
@@ -61,7 +61,7 @@ const directory = many1(
                     return [];
                 }
 
-                const childDirectory = choice((await statsIn(context.directory)).filter(info => info.stat.isDirectory()).map(info => info.name).map(string));
+                const childDirectory = choice((await statsIn(context.directory)).filter(info => info.stat.isDirectory()).map(info => info.name).map(name => name.startsWith(".") ? noisySuggestions(string(name)) : string(name)));
                 return append("/", choice([directoryAlias, childDirectory]));
             }),
             result => Object.assign({}, result, {context: Object.assign({}, result.context, {directory: resolveDirectory(result.context.directory, result.parse)})})
