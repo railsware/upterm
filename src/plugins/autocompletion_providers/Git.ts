@@ -1,10 +1,11 @@
 import * as Git from "../../utils/Git";
 import {
     executable, runtime, choice, string, option, decorate, sequence, optional,
-    spacesWithoutSuggestion, commandSwitch, token,
+    spacesWithoutSuggestion, commandSwitch, token, many1,
 } from "../../Parser";
 import {description, type, command} from "./Suggestions";
 import {compose} from "../../utils/Common";
+import {file} from "./File";
 
 // class File extends Suggestion {
 //     constructor(protected _line: string) {
@@ -171,7 +172,7 @@ const branchesExceptCurrent = decorate(
 );
 
 const gitCommand = choice([
-    decorate(string("add"), compose(command, description("Add file contents to the index."))),
+    sequence(decorate(token(string("add")), compose(command, description("Add file contents to the index."))), many1(file)),
     decorate(string("am"), compose(command, description("Apply a series of patches from a mailbox."))),
     decorate(string("archive"), compose(command, description("Create an archive of files from a named tree."))),
     decorate(string("bisect"), compose(command, description("Find by binary search the change that introduced a bug."))),
