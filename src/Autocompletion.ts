@@ -1,9 +1,8 @@
 import * as _ from "lodash";
-import * as i from "./Interfaces";
 import Job from "./Job";
 import {
     choice, token, executable, decorate, sequence, string, many1,
-    optionalContinuation, spacesWithoutSuggestion, many, noisySuggestions,
+    optionalContinuation, spacesWithoutSuggestion, many, noisySuggestions, InputMethod,
 } from "./Parser";
 import {commandDescriptions} from "./plugins/autocompletion_providers/Executable";
 import {git} from "./plugins/autocompletion_providers/Git";
@@ -43,29 +42,28 @@ const separator = choice([
 
 const grammar = sequence(sequence(anyCommand, separator), anyCommand);
 
-export default class Autocompletion implements i.AutocompletionProvider {
-    static limit = 9;
+const limit = 9;
 
-    async getSuggestions(job: Job) {
-        if (window.DEBUG) {
-            /* tslint:disable:no-console */
-            console.time(`suggestion for '${job.prompt.value}'`);
-        }
-
-        const results = await grammar({
-            input: job.prompt.value,
-            directory: job.session.directory,
-            historicalCurrentDirectoriesStack: job.session.historicalCurrentDirectoriesStack,
-            cdpath: job.environment.cdpath(job.session.directory),
-        });
-        const suggestions = results.map(result => result.suggestions.map(suggestion => suggestion.withPrefix(result.parse)));
-        const unique = _.uniqBy(_.flatten(suggestions), suggestion => suggestion.value).slice(0, Autocompletion.limit);
-
-        if (window.DEBUG) {
-            /* tslint:disable:no-console */
-            console.timeEnd(`suggestion for '${job.prompt.value}'`);
-        }
-
-        return unique;
+export async function getSuggestions(job: Job, inputMethod: InputMethod) {
+    if (window.DEBUG) {
+        /* tslint:disable:no-console */
+        console.time(`suggestion for '${job.prompt.value}'`);
     }
+
+    const results = await grammar({
+        input: job.prompt.value,
+        directory: job.session.directory,
+        historicalCurrentDirectoriesStack: job.session.historicalCurrentDirectoriesStack,
+        cdpath: job.environment.cdpath(job.session.directory),
+        inputMethod: inputMethod,
+    });
+    const suggestions = results.map(result => result.suggestions.map(suggestion => suggestion.withPrefix(result.parse)));
+    const unique = _.uniqBy(_.flatten(suggestions), suggestion => suggestion.value).slice(0, limit);
+
+    if (window.DEBUG) {
+        /* tslint:disable:no-console */
+        console.timeEnd(`suggestion for '${job.prompt.value}'`);
+    }
+
+    return unique;
 }

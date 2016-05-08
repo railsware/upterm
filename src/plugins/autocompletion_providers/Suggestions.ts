@@ -13,7 +13,6 @@ export class Suggestion {
     private _description = "";
     private _type = "";
     private _prefix = "";
-    private _isNoop = false;
 
     get value(): string {
         return this._value;
@@ -51,23 +50,6 @@ export class Suggestion {
     withDisplayValue(value: string): this {
         this._displayValue = value;
         return this;
-    }
-
-    /**
-     * Is used for informational purposes only,
-     * as opposed to usage for changing the input.
-     * E.g. to show expanded values of aliases.
-     */
-    get noop(): this {
-        this._isNoop = true;
-        this._displayValue = this.value;
-        this._value = "";
-
-        return this;
-    }
-
-    get isNoop(): boolean {
-        return this._isNoop;
     }
 
     withSynopsis(synopsis: string): this {

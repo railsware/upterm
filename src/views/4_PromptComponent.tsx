@@ -10,9 +10,11 @@ import PromptModel from "../Prompt";
 import JobModel from "../Job";
 import {Suggestion} from "../plugins/autocompletion_providers/Suggestions";
 import {KeyCode} from "../Enums";
+import {getSuggestions} from "../Autocompletion";
 import {Subject} from "rxjs/Subject";
 import "rxjs/add/operator/filter";
 import "rxjs/add/operator/map";
+import {InputMethod} from "../Parser";
 const reactDOM = require("react-dom");
 
 interface Props {
@@ -295,12 +297,10 @@ export default class PromptComponent extends React.Component<Props, State> imple
     }
 
     private async getSuggestions() {
-        let suggestions = await this.prompt.getSuggestions();
+        const inputMethod = (this.state.latestKeyCode === KeyCode.Tab) ? InputMethod.Autocompleted : InputMethod.Typed;
+        let suggestions = await getSuggestions(this.props.job, inputMethod);
 
-        this.setState({
-            highlightedSuggestionIndex: 0,
-            suggestions: suggestions.filter(suggestion => this.state.latestKeyCode !== KeyCode.Tab || !suggestion.isNoop),
-        });
+        this.setState({highlightedSuggestionIndex: 0, suggestions: suggestions});
     }
 
     private handleScrollToTop(event: Event) {

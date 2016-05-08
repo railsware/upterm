@@ -2,11 +2,17 @@ import {Suggestion, type} from "./plugins/autocompletion_providers/Suggestions";
 import * as _ from "lodash";
 import {compose} from "./utils/Common";
 
+export enum InputMethod {
+    Typed,
+    Autocompleted,
+}
+
 export interface Context {
     input: string;
     directory: string;
     historicalCurrentDirectoriesStack: string[];
     cdpath: string[];
+    inputMethod: InputMethod;
 }
 
 enum Progress {
@@ -60,7 +66,7 @@ export const string = (expected: string) => {
             parse: progress === Progress.Finished ? expected : "",
             progress: progress,
             suggestions: (progress === Progress.Finished)
-                ? [new Suggestion().withValue(expected).noop]
+                ? (context.inputMethod === InputMethod.Autocompleted ? [] : [new Suggestion().withDisplayValue(expected).withValue("")])
                 : [new Suggestion().withValue(expected)],
         }];
     };
