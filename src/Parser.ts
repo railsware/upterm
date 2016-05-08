@@ -59,14 +59,15 @@ export const string = (expected: string) => {
     return parser;
 };
 
-export const bind = (left: Parser, rightGenerator: (result: Result) => Parser) => async (context: Context): Promise<Array<Result>> => {
+export const bind = (left: Parser, rightGenerator: (result: Result) => Promise<Parser>) => async (context: Context): Promise<Array<Result>> => {
     const leftResults = await left(context);
 
     const results = await Promise.all(leftResults.map(async (leftResult) => {
         const rightInput = context.input.slice(leftResult.parse.length);
 
         if (leftResult.progress === Progress.Finished && (rightInput.length || leftResult.suggestions.length === 0)) {
-            const rightResults = await rightGenerator(leftResult)(Object.assign({}, leftResult.context, { input: rightInput }));
+            const right = await rightGenerator(leftResult);
+            const rightResults = await right(Object.assign({}, leftResult.context, { input: rightInput }));
 
             return rightResults.map(rightResult => ({
                 parser: rightResult.parser,
@@ -82,7 +83,7 @@ export const bind = (left: Parser, rightGenerator: (result: Result) => Parser) =
 
     return _.flatten(results).filter(result => result.progress !== Progress.Failed);
 };
-export const sequence = (left: Parser, right: Parser) => bind(left, () => right);
+export const sequence = (left: Parser, right: Parser) => bind(left, async () => right);
 
 export const choice = (parsers: Parser[]) => async (context: Context): Promise<Array<Result>> => {
     const results = await Promise.all(parsers.map(parser => parser(context)));
@@ -90,9 +91,7 @@ export const choice = (parsers: Parser[]) => async (context: Context): Promise<A
     return _.flatten(results).filter(result => result.progress !== Progress.Failed);
 };
 
-export const many1 = (parser: Parser) => async (context: Context): Promise<Array<Result>> => {
-    return await choice([parser, sequence(parser, many1(parser))])(context);
-};
+export const many1 = (parser: Parser): Parser => choice([parser, bind(parser, async () => many1(parser))]);
 
 export const decorate = (parser: Parser, decorator: (s: Suggestion) => Suggestion) => async (context: Context): Promise<Array<Result>> => {
     const results = await parser(context);
