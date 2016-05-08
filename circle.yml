@@ -1,6 +1,6 @@
 machine:
   node:
-    version: 5.11.0
+    version: 6.1.0
 test:
   post:
     - "npm run lint"

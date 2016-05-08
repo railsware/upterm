@@ -24,7 +24,7 @@ enum Progress {
 
 export type Parser = (context: Context) => Promise<Array<Result>>;
 
-interface Result {
+export interface Result {
     parser: Parser;
     context: Context;
     parse: string;
