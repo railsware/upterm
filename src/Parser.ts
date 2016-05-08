@@ -4,6 +4,7 @@ import * as _ from "lodash";
 export interface Context {
     input: string;
     directory: string;
+    historicalCurrentDirectoriesStack: string[];
 }
 
 enum Progress {

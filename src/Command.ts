@@ -14,7 +14,7 @@ const executors: Dictionary<(i: Job, a: string[]) => void> = {
             const enteredPath = args[0];
 
             if (isHistoricalDirectory(enteredPath)) {
-                fullPath = expandHistoricalDirectory(enteredPath, job);
+                fullPath = expandHistoricalDirectory(enteredPath, job.session.historicalCurrentDirectoriesStack);
             } else {
                 fullPath = job.environment.cdpath(job.session.directory)
                     .map(path => resolveDirectory(path, enteredPath))
@@ -72,11 +72,10 @@ export default class Command {
     }
 }
 
-export function expandHistoricalDirectory(alias: string, job: Job): string {
+export function expandHistoricalDirectory(alias: string, stack: string[]): string {
     if (alias === "-") {
         alias = "-1";
     }
-    const stack = job.session.historicalCurrentDirectoriesStack;
     const index = stack.length - 1 + parseInt(alias, 10);
 
     if (index < 0) {

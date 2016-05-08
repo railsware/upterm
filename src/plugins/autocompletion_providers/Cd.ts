@@ -1,5 +1,8 @@
-import {executable, sequence} from "../../Parser";
+import {executable, sequence, decorate, string, noisySuggestions, runtime, choice} from "../../Parser";
 import {fileGenerator} from "./Common";
+import {expandHistoricalDirectory} from "../../Command";
+import {description, type} from "./Suggestions";
+import * as _ from "lodash";
 
 // PluginManager.registerAutocompletionProvider({
 //     forCommand: "cd",
@@ -43,4 +46,19 @@ import {fileGenerator} from "./Common";
 //     },
 // });
 
-export const cd = sequence(executable("cd"), fileGenerator(info => info.stat.isDirectory()));
+const historicalDirectory = runtime(async (context) =>
+    noisySuggestions(
+        decorate(
+            choice(
+                _.take(["-", "-2", "-3", "-4", "-5", "-6", "-7", "-8", "-9"], context.historicalCurrentDirectoriesStack.length - 1)
+                    .map(alias => decorate(string(alias), description(expandHistoricalDirectory(alias, context.historicalCurrentDirectoriesStack))))
+            ),
+            type("directory")
+        )
+    )
+);
+
+export const cd = sequence(executable("cd"), choice([
+    fileGenerator(info => info.stat.isDirectory()),
+    historicalDirectory,
+]));
