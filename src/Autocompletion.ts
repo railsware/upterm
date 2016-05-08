@@ -2,8 +2,8 @@ import * as _ from "lodash";
 import * as i from "./Interfaces";
 import Job from "./Job";
 import {
-    choice, token, executable, decorate, sequence, withoutSuggestions, string, many1,
-    optionalContinuation,
+    choice, token, executable, decorate, sequence, string, many1,
+    optionalContinuation, spacesWithoutSuggestion, many, noisySuggestions,
 } from "./Parser";
 import {commandDescriptions} from "./plugins/autocompletion_providers/Executable";
 import {git} from "./plugins/autocompletion_providers/Git";
@@ -37,8 +37,8 @@ const anyCommand = choice([
     alias,
 ]);
 const separator = choice([
-    withoutSuggestions(token(string("&&"))),
-    withoutSuggestions(token(string(";"))),
+    noisySuggestions(sequence(many(spacesWithoutSuggestion), token(string("&&")))),
+    noisySuggestions(sequence(many(spacesWithoutSuggestion), token(string(";")))),
 ]);
 
 const grammar = sequence(sequence(anyCommand, separator), anyCommand);

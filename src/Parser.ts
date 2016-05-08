@@ -1,5 +1,7 @@
 import {Suggestion, type} from "./plugins/autocompletion_providers/Suggestions";
 import * as _ from "lodash";
+import {parser} from "./CommandExpander";
+import {compose} from "./utils/Common";
 
 export interface Context {
     input: string;
@@ -98,7 +100,9 @@ export const choice = (parsers: Parser[]) => async (context: Context): Promise<A
     return _.flatten(results).filter(result => result.progress !== Progress.Failed);
 };
 
+export const optional = (parser: Parser) => choice([string(""), parser]);
 export const many1 = (parser: Parser): Parser => choice([parser, bind(parser, async () => many1(parser))]);
+export const many = compose(many1, optional);
 
 export const decorate = (parser: Parser, decorator: (s: Suggestion) => Suggestion) => async (context: Context): Promise<Array<Result>> => {
     const results = await parser(context);
@@ -142,7 +146,6 @@ export const runtime = (producer: (context: Context) => Promise<Parser>) => asyn
     return parser(context);
 };
 
-export const optional = (parser: Parser) => choice([string(""), parser]);
 export const optionalContinuation = (parser: Parser) => optional(sequence(spacesWithoutSuggestion, parser));
 export const append = (suffix: string, parser: Parser) => decorate(sequence(parser, withoutSuggestions(string(suffix))), suggestion => suggestion.withValue(suggestion.value + suffix));
 export const token = (parser: Parser) => decorate(sequence(parser, spacesWithoutSuggestion), suggestion => suggestion.withValue(suggestion.value + " "));
