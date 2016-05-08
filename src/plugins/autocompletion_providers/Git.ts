@@ -1,7 +1,7 @@
 import * as Git from "../../utils/Git";
 import {
-    executable, runtime, choice, string, option, decorate, sequence, optional,
-    spacesWithoutSuggestion, commandSwitch, token, many1, optionalContinuation,
+    executable, runtime, choice, string, option, decorate, sequence,
+    commandSwitch, token, many1, optionalContinuation,
 } from "../../Parser";
 import {description, type, command} from "./Suggestions";
 import {compose} from "../../utils/Common";
