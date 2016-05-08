@@ -28,12 +28,14 @@ export const fileInDirectoryGenerator = async(directory: string, filter: (info: 
     const stats = await statsIn(directory);
 
     return choice(stats.filter(filter).map(info => {
+        const file = decorate(string(info.name), suggestion => suggestion.withDisplayValue(info.name).withValue(info.name.replace(/\s/g, "\\ ")));
+
         if (info.stat.isDirectory()) {
             return changingContextDirectory(
-                info.name.startsWith(".") ? noisySuggestions(decorate(append("/", string(info.name)), type("directory"))) : decorate(append("/", string(info.name)), type("directory"))
+                info.name.startsWith(".") ? noisySuggestions(decorate(append("/", file), type("directory"))) : decorate(append("/", file), type("directory"))
             );
         } else {
-            return info.name.startsWith(".") ? noisySuggestions(decorate(string(info.name), type("file"))) : decorate(string(info.name), type("file"));
+            return info.name.startsWith(".") ? noisySuggestions(decorate(file, type("file"))) : decorate(file, type("file"));
         }
     }));
 };

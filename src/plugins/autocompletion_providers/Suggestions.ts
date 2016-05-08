@@ -48,6 +48,11 @@ export class Suggestion {
         return this;
     }
 
+    withDisplayValue(value: string): this {
+        this._displayValue = value;
+        return this;
+    }
+
     /**
      * Is used for informational purposes only,
      * as opposed to usage for changing the input.
