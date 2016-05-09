@@ -541,6 +541,11 @@ pre {
         margin-right: 5px;
       }
 
+      .debug-tag {
+        color: red;
+        float: right;
+      }
+
       .icon:before {
         display: inline-block;
         content: ' ';

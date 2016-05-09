@@ -13,6 +13,7 @@ export class Suggestion {
     private _description = "";
     private _type = "";
     private _prefix = "";
+    private _debugTag = "";
 
     get value(): string {
         return this._value;
@@ -42,6 +43,10 @@ export class Suggestion {
         return this._displayValue || this.value;
     }
 
+    get debugTag(): string {
+        return this._debugTag;
+    }
+
     withValue(value: string): this {
         this._value = value;
         return this;
@@ -69,6 +74,11 @@ export class Suggestion {
 
     withPrefix(prefix: string): this {
         this._prefix = prefix;
+        return this;
+    }
+
+    withDebugTag(tag: string): this {
+        this._debugTag = tag;
         return this;
     }
 

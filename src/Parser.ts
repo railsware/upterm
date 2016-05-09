@@ -158,8 +158,10 @@ export const executable = (name: string) => decorate(token(string(name)), type("
 export const commandSwitch = (value: string) => decorate(string(`--${value}`), type("option"));
 export const option = (value: string) => decorate(string(`--${value}=`), type("option"));
 
-export const debug = (parser: Parser) => async (context: Context) => {
-    const results = await parser(context);
+export const debug = (parser: Parser, tag = "debugged") => async (context: Context) => {
+    window.DEBUG = true;
+
+    const results = await decorate(parser, suggestion => suggestion.withDebugTag(tag))(context);
 
     if (_.some(results, result => result.suggestions.length !== 0)) {
         /* tslint:disable:no-debugger */

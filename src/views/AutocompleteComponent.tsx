@@ -24,6 +24,7 @@ const SuggestionComponent = ({suggestion, onHover, onClick, isHighlighted}: Sugg
             <i className="icon" dataColor={suggestion.iconColor}/>
             <span className="value">{suggestion.displayValue}</span>
             <span className="synopsis">{suggestion.synopsis}</span>
+            <span className="debug-tag">{suggestion.debugTag}</span>
         </li>
     );
 };
