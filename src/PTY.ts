@@ -49,7 +49,12 @@ export default class PTY {
 
 export function executeCommand(command: string, args: string[] = [], directory: string): Promise<string> {
     return new Promise((resolve, reject) => {
-        ChildProcess.exec(`${command} ${args.join(" ")}`, { env: _.extend({PWD: directory}, process.env)}, (error, output) => {
+        const options = {
+            env: _.extend({PWD: directory}, process.env),
+            cwd: directory,
+        };
+
+        ChildProcess.exec(`${command} ${args.join(" ")}`, options, (error, output) => {
             if (error) {
                 reject();
             } else {
