@@ -15,7 +15,7 @@ export interface Context {
     inputMethod: InputMethod;
 }
 
-enum Progress {
+export enum Progress {
     Failed,
     OnStart,
     InProgress,
@@ -75,39 +75,55 @@ export const string = (expected: string) => {
 
 export const bind = (left: Parser, rightGenerator: (result: Result) => Promise<Parser>) => async (context: Context): Promise<Array<Result>> => {
     const leftResults = await left(context);
+    const results: Result[] = [];
 
-    const results = await Promise.all(leftResults.map(async (leftResult) => {
+    for (const leftResult of leftResults) {
         const rightInput = context.input.slice(leftResult.parse.length);
 
         if (leftResult.progress === Progress.Finished && (rightInput.length || leftResult.suggestions.length === 0)) {
             const right = await rightGenerator(leftResult);
             const rightResults = await right(Object.assign({}, leftResult.context, { input: rightInput }));
 
-            return rightResults.map(rightResult => ({
-                parser: rightResult.parser,
-                context: rightResult.context,
-                parse: leftResult.parse + rightResult.parse,
-                progress: rightResult.progress,
-                suggestions: rightResult.suggestions,
-            }));
+            for (const rightResult of rightResults) {
+                if (rightResult.progress !== Progress.Failed) {
+                    results.push({
+                        parser: rightResult.parser,
+                        context: rightResult.context,
+                        parse: leftResult.parse + rightResult.parse,
+                        progress: rightResult.progress,
+                        suggestions: rightResult.suggestions,
+                    });
+                }
+            }
         } else {
-            return [leftResult];
+            if (leftResult.progress !== Progress.Failed) {
+                results.push(leftResult);
+            }
         }
-    }));
+    }
 
-    return _.flatten(results).filter(result => result.progress !== Progress.Failed);
+    return results;
 };
+
 export const sequence = (left: Parser, right: Parser) => bind(left, async () => right);
 
 export const choice = (parsers: Parser[]) => async (context: Context): Promise<Array<Result>> => {
-    const results = await Promise.all(parsers.map(parser => parser(context)));
+    const results: Result[] = [];
 
-    return _.flatten(results).filter(result => result.progress !== Progress.Failed);
+    for (const parser of parsers) {
+        const parserResults = await parser(context);
+
+        for (const result of parserResults) {
+            if (result.progress !== Progress.Failed) {
+                results.push(result);
+            }
+        }
+    }
+
+    return results;
 };
 
-export const optional = (parser: Parser) => choice([string(""), parser]);
 export const many1 = (parser: Parser): Parser => choice([parser, bind(parser, async () => many1(parser))]);
-export const many = compose(many1, optional);
 
 export const decorate = (parser: Parser, decorator: (s: Suggestion) => Suggestion) => async (context: Context): Promise<Array<Result>> => {
     const results = await parser(context);
@@ -126,6 +142,8 @@ export const decorateResult = (parser: Parser, decorator: (c: Result) => Result)
 };
 
 export const withoutSuggestions = (parser: Parser) => decorateResult(parser, result => Object.assign({}, result, {suggestions: []}));
+export const optional = (parser: Parser) => choice([withoutSuggestions(string("")), parser]);
+export const many = compose(many1, optional);
 
 /**
  * Display suggestions only if a person has already input at least one character of the expected value.
