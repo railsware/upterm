@@ -1,5 +1,7 @@
 import {expect} from "chai";
-import {string, choice, many1, optional, sequence, Parser, InputMethod} from "../src/Parser.ts";
+import * as _ from "lodash";
+import {string, choice, many1, optional, sequence, Parser, InputMethod, Progress, token} from "../src/Parser.ts";
+import {suggestionDisplayValues} from "./helpers";
 
 async function parse(parser: Parser, input: string) {
     return await parser({
@@ -73,6 +75,20 @@ describe("parser", () => {
                     parse: "git ",
                 });
             });
+        });
+
+        it.skip("isn't finished when parsed only the left part", async() => {
+            const spaces = sequence(string("git"), string(" "));
+            const results = await parse(spaces, "git");
+
+            expect(_.uniq(results.map(result => result.progress))).to.eql([Progress.InProgress]);
+        });
+
+        it.skip("shows the second parser's suggestions right before its start", async() => {
+            const spaces = sequence(token(string("git")), string("commit"));
+            const results = await parse(spaces, "git ");
+
+            expect(suggestionDisplayValues(results)).to.eql(["commit"]);
         });
     });
 
