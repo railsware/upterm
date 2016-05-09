@@ -15,12 +15,12 @@ and make a better looking terminal with appropriate tools.
 ###### Autocompletion
 
 Black Screen shows the autocompletion box as you type and tries to be smart about what to suggest.
-Often you can find useful additional information to the right of the autocomplete, e.g. expanded alias value, 
-history substitutions for `!!` and friends, command descriptions, etc. And you can [write your own autocompletion providers](src/plugins/autocompletion_providers) too!
+Often you can find useful additional information on the right side of the autocompletion, e.g. expanded alias value,
+history substitutions for `!!`, command descriptions, value of the previous directory (`cd -`), etc.
 
 ###### Compatibility
 
-We aim to be compatible at least with [VT100](https://en.wikipedia.org/wiki/VT100), meaning that all your favorite programs (emacs, vim, ssh, htop, etc.) should work as expected.
+We aim to be compatible at least with [VT100](https://en.wikipedia.org/wiki/VT100). All the programs (emacs, ssh, vim) should work as expected.
 
 Installation
 ------------
