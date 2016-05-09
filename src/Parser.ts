@@ -140,7 +140,7 @@ export const noisySuggestions = (parser: Parser) => decorateResult(
         {},
         result,
         {
-            suggestions: (result.progress === Progress.InProgress || result.progress === Progress.Finished) ? result.suggestions : [],
+            suggestions: (result.progress !== Progress.OnStart && result.progress !== Progress.Failed) ? result.suggestions : [],
         }
     )
 );
