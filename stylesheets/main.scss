@@ -424,6 +424,12 @@ body, pre {
         background-color: $panel-color;
         opacity: 1;
       }
+
+      &.inactive {
+        &:not(:hover) {
+          opacity: 0.3;
+        }
+      }
     }
   }
 
