@@ -82,17 +82,19 @@ interface WatchesValue {
 class WatchManager implements EnvironmentObserverPlugin {
     directoryToDetails: Map<string, WatchesValue> = new Map();
 
-    currentWorkingDirectoryWillChange(session: Session, directory: string) {
-        if (!this.directoryToDetails.has(directory)) {
+    currentWorkingDirectoryWillChange(session: Session, newDirectory: string) {
+        const oldDirectory = session.directory;
+
+        if (!this.directoryToDetails.has(oldDirectory)) {
             return;
         }
 
-        const details = this.directoryToDetails.get(directory);
+        const details = this.directoryToDetails.get(oldDirectory);
         details.sessions.delete(session);
 
         if (details.sessions.size === 0) {
             details.watcher.stopWatching();
-            this.directoryToDetails.delete(directory);
+            this.directoryToDetails.delete(oldDirectory);
         }
     }
 
