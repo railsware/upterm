@@ -11,6 +11,7 @@ import {file} from "./plugins/autocompletion_providers/File";
 import {compose} from "./utils/Common";
 import {command} from "./plugins/autocompletion_providers/Command";
 import Aliases from "./Aliases";
+import {redirect} from "./plugins/autocompletion_providers/Redirect";
 
 export const makeGrammar = (aliases: Dictionary<string>) => {
     const exec = sequence(
@@ -19,12 +20,15 @@ export const makeGrammar = (aliases: Dictionary<string>) => {
     );
 
     const sudo = sequence(executable("sudo"), command);
-    const anyCommand = choice([
-        sudo,
-        command,
-        exec,
-        makeAlias(aliases),
-    ]);
+    const anyCommand = sequence(
+        choice([
+            sudo,
+            command,
+            exec,
+            makeAlias(aliases),
+        ]),
+        redirect
+    );
     const separator = choice([
         noisySuggestions(sequence(many(spacesWithoutSuggestion), token(string("&&")))),
         noisySuggestions(sequence(many(spacesWithoutSuggestion), token(string(";")))),
