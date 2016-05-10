@@ -14,6 +14,11 @@ interface Advancement {
 }
 
 interface RowColumn {
+    column: number;
+    row: number;
+}
+
+interface MaybeRowColumn {
     column?: number;
     row?: number;
 }

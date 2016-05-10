@@ -135,7 +135,7 @@ export default class Buffer extends events.EventEmitter {
         return this;
     }
 
-    moveCursorAbsolute(position: RowColumn): this {
+    moveCursorAbsolute(position: MaybeRowColumn): this {
         this.cursor.moveAbsolute(position, this.homePosition);
         this.ensureRowExists(this.cursor.row);
         this.emitData();
