@@ -14,7 +14,7 @@ export default class Buffer extends events.EventEmitter {
     private storage = List<List<Char>>();
     private _attributes: i.Attributes = {color: e.Color.White, weight: e.Weight.Normal};
     private isOriginModeSet = false;
-    private _margins: Margins = {};
+    private _margins: Margins = {top: 0, left: 0};
 
     constructor(private _dimensions: Dimensions) {
         super();
@@ -221,8 +221,8 @@ export default class Buffer extends events.EventEmitter {
         this.isOriginModeSet = mode;
     }
 
-    set margins(margins: Margins) {
-        this._margins = margins;
+    set margins(margins: MaybeMargins) {
+        this._margins = Object.assign({}, this._margins, margins);
     }
 
     at(position: RowColumn): Char {

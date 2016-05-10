@@ -29,11 +29,17 @@ interface VcsData {
     status?: string;
 }
 
-
-interface Margins {
+interface MaybeMargins {
     top?: number;
     bottom?: number;
     left?: number;
+    right?: number;
+}
+
+interface Margins {
+    top: number;
+    bottom?: number;
+    left: number;
     right?: number;
 }
 
