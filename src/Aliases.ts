@@ -12,12 +12,21 @@ export default class Aliases {
 
         return lines.reduce(
             (accumulator: Dictionary<string>, aliasLine: string) => {
-                let split = aliasLine.split("=");
+                let [short, long] = aliasLine.split("=");
 
-                let name = /(alias )?(.*)/.exec(split[0])[2];
-                let value = /'?([^']*)'?/.exec(split[1])[1];
+                if (short && long) {
+                    const nameCapture = /(alias )?(.*)/.exec(short);
+                    const valueCapture = /'?([^']*)'?/.exec(long);
 
-                accumulator[name] = value;
+                    if (nameCapture && valueCapture) {
+                        accumulator[nameCapture[2]] = valueCapture[1];
+                    } else {
+                        throw `Alias line is incorrect: ${aliasLine}`;
+                    }
+                } else {
+                    throw `Can't parse alias line: ${aliasLine}`;
+                }
+
                 return accumulator;
             },
             <Dictionary<string>>{}
