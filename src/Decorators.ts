@@ -5,7 +5,7 @@ export function memoize(resolver: Function = undefined) {
         resolver = (...args: any[]) => JSON.stringify(args);
     }
 
-    return (target: any, name: string, descriptor: PropertyDescriptor) => {
+    return (target: any, name: string, descriptor: TypedPropertyDescriptor<any>) => {
         descriptor.value = _.memoize(descriptor.value, resolver);
 
         return descriptor;
