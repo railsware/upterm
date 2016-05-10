@@ -309,13 +309,14 @@ export default class ANSIParser {
         };
     }
 
-    private csiHandler(collected: any, params: Array<number>, flag: string): HandlerResult {
+    private csiHandler(collected: any, rawParams: number[] | number, flag: string): HandlerResult {
         let short = "";
         let long = "";
         let url = "";
         let status = "handled";
 
-        const param = <number>(Array.isArray(params) ? params[0] : params);
+        let params: number[] = Array.isArray(rawParams) ? rawParams : [];
+        const param: number | undefined = params[0];
 
         switch (flag) {
             case "A":
