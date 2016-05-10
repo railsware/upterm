@@ -370,3 +370,13 @@ export function commonPrefix(left: string, right: string) {
 export function compose<A, B, C>(f: (fp: A) => B, g: (gp: B) => C): (rp: A) => C {
     return (p: A) => g(f(p));
 }
+
+export function mapObject<T, R>(object: Dictionary<T>, mapper: (key: string, value: T) => R): R[] {
+    const result: R[] = [];
+
+    for (const key of Object.keys(object)) {
+        result.push(mapper(key, object[key]));
+    }
+
+    return result;
+}
