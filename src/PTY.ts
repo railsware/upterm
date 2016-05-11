@@ -1,49 +1,56 @@
 import * as ChildProcess from "child_process";
 import * as OS from "os";
 import * as _ from "lodash";
+import * as pty from "pty.js";
 import {baseName, resolveFile, exists, filterAsync, shell} from "./utils/Common";
-const ptyInternalPath = require.resolve("./PTYInternal");
 
-interface Message {
-    data?: string;
-    exit?: number;
-}
+const noConfigSwitches: Dictionary<string[]> = {
+    zsh: ["--no-globalrcs", "--no-rcs"],
+    bash: ["--noprofile", "--norc"],
+};
 
 export default class PTY {
-    private process: ChildProcess.ChildProcess;
+    private terminal: pty.Terminal;
 
     // TODO: write proper signatures.
     // TODO: use generators.
     // TODO: terminate. https://github.com/atom/atom/blob/v1.0.15/src/task.coffee#L151
     constructor(command: string, args: string[], env: ProcessEnvironment, dimensions: Dimensions, dataHandler: (d: string) => void, exitHandler: (c: number) => void) {
-        this.process = ChildProcess.fork(
-            ptyInternalPath,
-            [command, dimensions.columns.toString(), dimensions.rows.toString(), ...args],
-            {env: env, cwd: env.PWD}
-        );
+        this.terminal = pty.fork(shell(), [...noConfigSwitches[baseName(shell())], "-c", `${command} ${args.map(arg => `'${arg}'`).join(" ")}`], {
+            cols: dimensions.columns,
+            rows: dimensions.rows,
+            cwd: env.PWD,
+            env: env,
+        });
 
-        this.process.on("message", (message: Message) => {
-            if (message.hasOwnProperty("data")) {
-                dataHandler(message.data);
-            } else if (message.hasOwnProperty("exit")) {
-                exitHandler(message.exit);
-                this.process.disconnect();
-            } else {
-                throw `Unhandled message: ${JSON.stringify(message)}`;
-            }
+        this.terminal.on("data", (data: string) => dataHandler(data));
+        this.terminal.on("exit", (code: number) => {
+            exitHandler(code);
         });
     }
 
     write(data: string): void {
-        this.process.send({input: data});
+        this.terminal.write(data);
     }
 
     set dimensions(dimensions: Dimensions) {
-        this.process.send({resize: [dimensions.columns, dimensions.rows]});
+        this.terminal.resize(dimensions.columns, dimensions.rows);
     }
 
     kill(signal: string): void {
-        this.process.send({signal: signal});
+        /**
+         *  The if branch is necessary because pty.js doesn"t handle SIGINT correctly.
+         *  You can test whether it works by executing
+         *     ruby -e "loop { puts "yes"; sleep 1 }"
+         *  and trying to kill it with SIGINT.
+         *
+         *  {@link https://github.com/chjj/pty.js/issues/58}
+         */
+        if (signal === "SIGINT") {
+            this.terminal.kill("SIGTERM");
+        } else {
+            this.terminal.kill(signal);
+        }
     }
 }
 
