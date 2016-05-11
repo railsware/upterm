@@ -1,4 +1,4 @@
-const menuConstructor: typeof Electron.Menu = require("menu");
+import {Menu, shell} from "electron";
 
 export default {
     setMenu: (app: Electron.App, browserWindow: Electron.BrowserWindow) => {
@@ -91,15 +91,15 @@ export default {
                             label: "GitHub Repository",
                             click: function () {
                                 /* tslint:disable:no-unused-expression */
-                                require("shell").openExternal("https://github.com/shockone/black-screen");
+                                shell.openExternal("https://github.com/shockone/black-screen");
                             },
                         },
                     ],
                 },
             ];
 
-            let menu = menuConstructor.buildFromTemplate(template);
-            menuConstructor.setApplicationMenu(menu);
+            let menu = Menu.buildFromTemplate(template);
+            Menu.setApplicationMenu(menu);
         } else {
             const template = [
                 {
@@ -134,14 +134,14 @@ export default {
                         {
                             label: "GitHub Repository",
                             click: function () {
-                                require("shell").openExternal("https://github.com/shockone/black-screen");
+                                shell.openExternal("https://github.com/shockone/black-screen");
                             },
                         },
                     ],
                 },
             ];
 
-            let menu = menuConstructor.buildFromTemplate(template);
+            let menu = Menu.buildFromTemplate(template);
             browserWindow.setMenu(menu);
         }
     },

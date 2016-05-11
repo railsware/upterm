@@ -9,9 +9,7 @@ import {Status} from "./Enums";
 import ApplicationComponent from "./views/1_ApplicationComponent";
 import Environment from "./Environment";
 import {homeDirectory, normalizeDirectory} from "./utils/Common";
-const remote = require("remote");
-const app = remote.require("app");
-const browserWindow: typeof Electron.BrowserWindow = remote.require("electron").BrowserWindow;
+import {remote} from "electron";
 
 export default class Session extends EmitterWithUniqueID {
     jobs: Array<Job> = [];
@@ -42,9 +40,9 @@ export default class Session extends EmitterWithUniqueID {
         const job = new Job(this);
 
         job.once("end", () => {
-            if (app.dock && !browserWindow.getAllWindows().some(window => window.isFocused())) {
-                app.dock.bounce("informational");
-                app.dock.setBadge(job.status === Status.Success ? "1" : "✕");
+            if (remote.app.dock && !remote.BrowserWindow.getAllWindows().some(window => window.isFocused())) {
+                remote.app.dock.bounce("informational");
+                remote.app.dock.setBadge(job.status === Status.Success ? "1" : "✕");
                 /* tslint:disable:no-unused-expression */
                 new Notification("Command has been completed", { body: job.prompt.value });
             }

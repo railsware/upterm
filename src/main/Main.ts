@@ -1,6 +1,4 @@
-const app: Electron.App = require("app");
-const browserWindowConstructor: typeof Electron.BrowserWindow = require("browser-window");
-import {ipcMain, nativeImage} from "electron";
+import {app, ipcMain, nativeImage, BrowserWindow, screen} from "electron";
 import menu from "./Menu";
 
 let browserWindow: Electron.BrowserWindow = undefined;
@@ -17,7 +15,6 @@ app.on("mainWindow-all-closed", () => process.platform === "darwin" || app.quit(
 ipcMain.on("quit", app.quit);
 
 function getMainWindow(): Electron.BrowserWindow {
-    const screen: Electron.Screen = require("screen");
     const workAreaSize = screen.getPrimaryDisplay().workAreaSize;
 
     if (!browserWindow) {
@@ -34,7 +31,7 @@ function getMainWindow(): Electron.BrowserWindow {
             height: workAreaSize.height,
             show: false,
         };
-        browserWindow = new browserWindowConstructor(options);
+        browserWindow = new BrowserWindow(options);
 
         browserWindow.loadURL("file://" + __dirname + "/../views/index.html");
         menu.setMenu(app, browserWindow);
