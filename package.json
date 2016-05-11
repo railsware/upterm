@@ -22,7 +22,7 @@
     "shell",
     "console"
   ],
-  "electronVersion": "0.37.8",
+  "electronVersion": "1.0.0",
   "dependencies": {
     "chokidar": "1.5.0",
     "fixed-sticky": "0.1.7",
