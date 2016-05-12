@@ -61,7 +61,7 @@
     "node-sass": "3.7.0",
     "npm-check-updates": "2.6.4",
     "run-sequence": "1.1.5",
-    "ts-node": "0.7.2",
+    "ts-node": "0.7.3",
     "tslint": "3.10.1",
     "typescript": "1.9.0-dev.20160425",
     "typings": "0.8.1"
