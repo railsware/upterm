@@ -74,7 +74,7 @@
     "electron": "electron .",
     "start": "gulp",
     "package": "gulp build && electron-packager . \"$npm_package_productName\" --overwrite --platform=darwin --arch=x64 --version=$(npm run electron-version --silent) --out='/Applications' --icon='./icon.icns' --asar=true",
-    "test": "mocha --require ts-node/register test/**",
+    "test": "ELECTRON_RUN_AS_NODE=1 electron $(which mocha) --require ts-node/register test/**",
     "update-typings": "typings ls | awk '$2 ~ /.+/ {print $2}' | xargs -I {} typings i '{}' -S -A --source dt",
     "update-dependencies": "ncu -u",
     "lint": "tslint `find src -name '*.ts*'`",
