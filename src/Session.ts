@@ -13,12 +13,12 @@ import {remote} from "electron";
 
 export default class Session extends EmitterWithUniqueID {
     jobs: Array<Job> = [];
-    environment = new Environment();
-    history: typeof History;
+    readonly environment = new Environment();
+    readonly history = History;
     historicalCurrentDirectoriesStack: string[] = [];
-    private stateFileName = `${homeDirectory()}/.black-screen-state`;
+    private readonly stateFileName = `${homeDirectory()}/.black-screen-state`;
     // The value of the dictionary is the default value used if there is no serialized data.
-    private serializableProperties: Dictionary<any> = {
+    private readonly serializableProperties: Dictionary<string> = {
         directory: `String:${homeDirectory()}`,
         history: `History:[]`,
     };
@@ -29,7 +29,6 @@ export default class Session extends EmitterWithUniqueID {
         // TODO: We want to deserialize properties only for the first instance
         // TODO: of Session for the application.
         this.deserialize();
-        this.history = History;
 
         this.on("job", this.serialize);
 
