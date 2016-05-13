@@ -5,7 +5,7 @@ import * as _ from "lodash";
 import Session from "../Session";
 import {ipcRenderer} from "electron";
 import {KeyCode} from "../Enums";
-const shell: Electron.Shell = require("remote").require("electron").shell;
+import {remote} from "electron";
 
 interface State {
     sessions: Session[];
@@ -77,7 +77,7 @@ export default class ApplicationComponent extends React.Component<{}, State> {
                 this.addTab();
                 this.setState({sessions: this.activeTab.sessions});
             } else {
-                shell.beep();
+                remote.shell.beep();
             }
 
             event.stopPropagation();
@@ -98,7 +98,7 @@ export default class ApplicationComponent extends React.Component<{}, State> {
                 this.activeTabIndex = newTabIndex;
                 this.setState({sessions: this.activeTab.sessions});
             } else {
-                shell.beep();
+                remote.shell.beep();
             }
 
             event.stopPropagation();

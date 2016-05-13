@@ -1,13 +1,12 @@
 import Session from "../Session";
 import PluginManager from "../PluginManager";
-const remote = require("remote");
-const app = remote.require("app");
+import {remote} from "electron";
 
 PluginManager.registerEnvironmentObserver({
     currentWorkingDirectoryWillChange: () => { /* do nothing */ },
 
     currentWorkingDirectoryDidChange: (session: Session, directory: string) => {
-        app.addRecentDocument(directory);
+        remote.app.addRecentDocument(directory);
         remote.getCurrentWindow().setRepresentedFilename(directory);
     },
 });

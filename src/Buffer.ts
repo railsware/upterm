@@ -5,7 +5,7 @@ import * as i from "./Interfaces";
 import * as e from "./Enums";
 import {List} from "immutable";
 import {error, times} from "./utils/Common";
-const shell: Electron.Shell = require("remote").require("electron").shell;
+import {remote} from "electron";
 
 export default class Buffer extends events.EventEmitter {
     public static hugeOutputThreshold = 300;
@@ -32,7 +32,7 @@ export default class Buffer extends events.EventEmitter {
         if (charObject.isSpecial()) {
             switch (charObject.keyCode) {
                 case e.KeyCode.Bell:
-                    shell.beep();
+                    remote.shell.beep();
                     break;
                 case e.KeyCode.Backspace:
                     this.moveCursorRelative({horizontal: -1});

@@ -70,7 +70,7 @@ export default class PromptComponent extends React.Component<Props, State> imple
         promptKeys
             .filter(keys.deleteWord).forEach(() => this.deleteWord());
         promptKeys
-            .filter(keys.enter).forEach(() => this.execute());
+            .filter(keys.enter).forEach((event: KeyboardEvent) => this.execute(event));
         promptKeys
             .filter(keys.interrupt).forEach(() => this.prompt.setValue("").then(() => this.setDOMValueProgrammatically("")));
         promptKeys
@@ -187,7 +187,9 @@ export default class PromptComponent extends React.Component<Props, State> imple
         );
     }
 
-    private execute(): void {
+    private async execute(event: KeyboardEvent): Promise<void> {
+        await this.prompt.setValue((event.target as HTMLElement).innerText);
+
         if (!this.isEmpty()) {
             this.prompt.execute();
         }
