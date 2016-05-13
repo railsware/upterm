@@ -72,13 +72,19 @@
     "electron-version": "cat package.json | grep 'electron-prebuilt\": \"' | cut -d '\"' -f 4",
     "recompile": "export ELECTRON_VERSION=$(npm run electron-version --silent); HOME=~/.electron-gyp cd node_modules/pty.js; node-gyp rebuild --target=$ELECTRON_VERSION --arch=x64 --dist-url=https://atom.io/download/atom-shell",
     "electron": "electron .",
-    "start": "gulp",
-    "package": "gulp build && electron-packager . \"$npm_package_productName\" --overwrite --platform=darwin --arch=x64 --version=$(npm run electron-version --silent) --out='/Applications' --icon='./icon.icns' --asar=true",
+    "start": "npm run compile && npm run watch-tsc | npm run watch-scss | npm run electron",
+    "package": "npm run compile && electron-packager . \"$npm_package_productName\" --overwrite --platform=darwin --arch=x64 --version=$(npm run electron-version --silent) --out='/Applications' --icon='./icon.icns' --asar=true",
     "test": "ELECTRON_RUN_AS_NODE=1 electron $(which mocha) --require ts-node/register test/**",
     "update-typings": "typings ls | awk '$2 ~ /.+/ {print $2}' | xargs -I {} typings i '{}' -S -A --source dt",
     "update-dependencies": "ncu -u",
     "lint": "tslint `find src -name '*.ts*'`",
-    "tsc": "tsc"
+    "cleanup": "rm -rf compiled",
+    "copy-html": "cp src/views/index.html compiled/src/views > /dev/tty",
+    "compile": "npm run cleanup && npm run compile-tsc && npm run compile-scss && npm run copy-html",
+    "compile-scss": "node-sass stylesheets/main.scss compiled/all.css > /dev/tty",
+    "compile-tsc": "tsc",
+    "watch-scss": "node-sass --watch stylesheets/main.scss compiled/all.css > /dev/tty",
+    "watch-tsc": "tsc --watch > /dev/tty"
   },
   "license": "MIT"
 }
