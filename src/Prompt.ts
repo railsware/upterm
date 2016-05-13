@@ -27,7 +27,7 @@ export default class Prompt extends events.EventEmitter {
         this._value = value;
 
         this._lexemes = lex(this.value);
-        this._historyExpanded = await expandHistory(this._lexemes);
+        this._historyExpanded = expandHistory(this._lexemes);
         this._expanded = await expandAliases(this._historyExpanded);
     }
 
