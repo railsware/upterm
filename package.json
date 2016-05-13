@@ -16,6 +16,10 @@
   "bugs": {
     "url": "https://github.com/shockone/black-screen/issues"
   },
+  "engineStrict" : true,
+  "engines": {
+    "node": ">= 6.0.0"
+  },
   "keywords": [
     "terminal",
     "emulator",
