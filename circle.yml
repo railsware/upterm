@@ -4,3 +4,4 @@ machine:
 test:
   post:
     - "npm run lint"
+    - "npm run integration-test"
