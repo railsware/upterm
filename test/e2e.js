@@ -2,7 +2,7 @@ const {Application} = require("spectron");
 const {expect} = require("chai");
 
 describe("application launch", function () {
-    this.timeout(10000);
+    this.timeout(50000);
 
     let app;
 
