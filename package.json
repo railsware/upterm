@@ -67,7 +67,7 @@
     "start": "npm run compile && npm run watch-tsc | npm run watch-scss | npm run electron",
     "package": "npm run compile && electron-packager . \"$npm_package_productName\" --overwrite --platform=darwin --arch=x64 --version=$(npm run electron-version --silent) --out='/Applications' --icon='./icon.icns' --asar=true",
     "test": "ELECTRON_RUN_AS_NODE=1 electron $(which mocha) --require ts-node/register test/**.ts",
-    "integration-test": "mocha",
+    "integration-test": "npm run compile && mocha",
     "update-typings": "typings ls | awk '$2 ~ /.+/ {print $2}' | xargs -I {} typings i '{}' -S -A --source dt",
     "update-dependencies": "ncu -u",
     "lint": "tslint `find src -name '*.ts*'`",
