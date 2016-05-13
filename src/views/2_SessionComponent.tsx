@@ -73,6 +73,8 @@ export default class SessionComponent extends React.Component<Props, State> {
         if (event.metaKey && event.keyCode === KeyCode.D) {
             window.DEBUG = !window.DEBUG;
 
+            require("devtron").install();
+
             event.stopPropagation();
             this.forceUpdate();
 

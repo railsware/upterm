@@ -1,6 +1,7 @@
 import {app, ipcMain, nativeImage, BrowserWindow, screen} from "electron";
 import menu from "./Menu";
 
+
 let browserWindow: Electron.BrowserWindow = undefined;
 
 if (app.dock) {
