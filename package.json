@@ -16,7 +16,7 @@
   "bugs": {
     "url": "https://github.com/shockone/black-screen/issues"
   },
-  "engineStrict" : true,
+  "engineStrict": true,
   "engines": {
     "node": ">= 6.0.0"
   },
@@ -59,7 +59,7 @@
     "spectron": "3.0.0",
     "ts-node": "0.7.3",
     "tslint": "3.10.2",
-    "typescript": "1.9.0-dev.20160425",
+    "typescript": "1.9.0-dev.20160514",
     "typings": "0.8.1"
   },
   "scripts": {

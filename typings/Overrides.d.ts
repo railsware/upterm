@@ -46,3 +46,7 @@ declare namespace __React {
 interface KeyboardEvent extends UIEvent {
     keyIdentifier: string;
 }
+
+interface NodeBuffer extends Uint8Array {
+    fill(value: number, offset?: number, end?: number): this;
+}
