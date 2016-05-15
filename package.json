@@ -16,7 +16,7 @@
   "bugs": {
     "url": "https://github.com/shockone/black-screen/issues"
   },
-  "engineStrict" : true,
+  "engineStrict": true,
   "engines": {
     "node": ">= 6.0.0"
   },
@@ -49,7 +49,7 @@
     "chai": "3.5.0",
     "devtron": "1.1.0",
     "electron-packager": "7.0.1",
-    "electron-prebuilt": "1.0.2",
+    "electron-prebuilt": "1.1.0",
     "electron-rebuild": "1.1.3",
     "mocha": "2.4.5",
     "node-gyp": "3.3.1",
