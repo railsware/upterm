@@ -54,7 +54,7 @@
     "mocha": "2.4.5",
     "node-gyp": "3.3.1",
     "node-sass": "3.7.0",
-    "npm-check-updates": "2.6.4",
+    "npm-check-updates": "2.6.5",
     "run-sequence": "1.1.5",
     "spectron": "3.0.0",
     "ts-node": "0.7.3",
