@@ -55,7 +55,7 @@
     "node-gyp": "3.3.1",
     "node-sass": "3.7.0",
     "npm-check-updates": "2.6.5",
-    "run-sequence": "1.1.5",
+    "run-sequence": "1.2.0",
     "spectron": "3.0.0",
     "ts-node": "0.7.3",
     "tslint": "3.10.2",
