@@ -5,6 +5,7 @@ import Job from "../Job";
 import StatusLineComponent from "./StatusLineComponent";
 import JobComponent from "./3_JobComponent";
 import {KeyCode} from "../Enums";
+import {css} from "./css/main";
 
 interface Props {
     session: Session;
@@ -48,7 +49,7 @@ export default class SessionComponent extends React.Component<Props, State> {
                  onClickCapture={this.handleClick.bind(this)}
                  onKeyDownCapture={this.handleKeyDown.bind(this)}>
 
-                <div className="jobs">{jobs}</div>
+                <div style={css.jobs(this.props.isActive)}>{jobs}</div>
                 <StatusLineComponent currentWorkingDirectory={this.props.session.directory}
                                      vcsData={this.state.vcsData}/>
             </div>

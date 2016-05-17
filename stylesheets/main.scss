@@ -117,10 +117,6 @@ body, pre {
   margin: 0;
 }
 
-.jobs {
-  margin-bottom: 40px;
-}
-
 .job {
   &.failure, &.interrupted, &.success {
     .output.alternate {
@@ -456,10 +452,6 @@ body, pre {
     opacity: 0.4;
     box-shadow: 0 0 0 1px map-get($colors, 'white');
     margin: 0 0 1px 1px;
-
-    & .jobs {
-      pointer-events: none;
-    }
   }
   &.active {
     outline: none;
