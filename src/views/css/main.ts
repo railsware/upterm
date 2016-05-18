@@ -1,4 +1,5 @@
 import {Buffer, Status} from "../../Enums";
+import * as colors from "./colors";
 
 export interface CSSObject {
     pointerEvents?: string;
@@ -12,6 +13,13 @@ export interface CSSObject {
 const fontSize = 14;
 const rowHeight = fontSize + 4;
 const outputPadding = 10;
+
+const infoPanel = {
+    padding: "8px 0 6px 0.6em",
+    minHeight: "2em",
+    lineHeight: 1.3,
+    backgroundColor: colors.panel,
+};
 
 export namespace css {
     const inactiveJobs: CSSObject = {
@@ -40,5 +48,17 @@ export namespace css {
         }
 
         return style;
-    }
+    };
+
+    export const description = Object.assign(
+        {
+            display: "block",
+            boxShadow: "0 4px 8px 1px rgba(0, 0, 0, 0.3)",
+            position: "absolute",
+            left: 0,
+            right: 0,
+            fontSize: "0.8em",
+        },
+        infoPanel
+    );
 }

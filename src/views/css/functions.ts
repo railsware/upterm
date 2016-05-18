@@ -1,9 +1,9 @@
-// FIXME.
-export function lighten(color: string, percent: number) {
+const tinyColor: any = require("tinycolor2");
 
+export function lighten(color: string, percent: number) {
+    return tinyColor(color).lighten(percent).toString();
 }
 
-// FIXME.
 export function darken(color: string, percent: number) {
-
+    return tinyColor(color).darken(percent).toString();
 }

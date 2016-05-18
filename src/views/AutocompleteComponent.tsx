@@ -1,5 +1,6 @@
 import * as React from "react";
 import {Suggestion} from "../plugins/autocompletion_providers/Suggestions";
+import {css} from "./css/main";
 
 interface SuggestionProps {
     suggestion: Suggestion;
@@ -51,7 +52,7 @@ export default class AutocompleteComponent extends React.Component<AutocompleteP
         const suggestionDescription = this.props.suggestions[this.props.highlightedIndex].description;
         let descriptionElement: React.ReactElement<any>;
         if (suggestionDescription) {
-            descriptionElement = <div className="description">{suggestionDescription}</div>;
+            descriptionElement = <div style={css.description}>{suggestionDescription}</div>;
         }
 
         if (this.props.caretOffset.top + 300 > window.innerHeight) {

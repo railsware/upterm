@@ -628,19 +628,6 @@ pre {
       }
     }
   }
-
-  .description {
-    display: block;
-    box-shadow: 0 4px 8px 1px rgba(0, 0, 0, 0.3);
-
-    position: absolute;
-    left: 0;
-    right: 0;
-
-    font-size: 0.8em;
-
-    @include info-panel;
-  }
 }
 
 .fixedsticky {

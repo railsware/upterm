@@ -64,7 +64,7 @@ function generateGreyScaleColors() {
     return greyScaleColors;
 }
 
-const backgroundColor = baseColors.black;
-const panelColor = darken(backgroundColor, 3);
+export const background = baseColors.black;
+export const panel = darken(background, 3);
 
-export const colors = Object.assign({}, brightColors, baseColors, extraColors, generateIndexedColors(), generateGreyScaleColors());
+export const all = Object.assign({}, brightColors, baseColors, extraColors, generateIndexedColors(), generateGreyScaleColors());
