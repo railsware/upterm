@@ -6,6 +6,8 @@ import {groupWhen} from "../utils/Common";
 import {List} from "immutable";
 import {scrollToBottom, getHTMLAttributes} from "./ViewUtils";
 import {Attributes} from "../Interfaces";
+import {Status} from "../Enums";
+import {css, CSSObject} from "./css/main";
 
 const CharGroupComponent = ({text, attributes}: {text: string, attributes: Attributes}) =>
     React.createElement("span", getHTMLAttributes(attributes), text);
@@ -15,6 +17,7 @@ const Cut = ({numberOfRows, clickHandler}: { numberOfRows: number, clickHandler:
 
 interface RowProps {
     row: Immutable.List<Char>;
+    style: CSSObject;
 }
 
 const charGrouper = (a: Char, b: Char) => a.attributes === b.attributes;
@@ -32,12 +35,13 @@ class RowComponent extends React.Component<RowProps, {}> {
                                 key={index}/>
         );
 
-        return <div className="row">{charGroups}</div>;
+        return <div style={this.props.style}>{charGroups}</div>;
     }
 }
 
 interface Props {
     buffer: Buffer;
+    jobStatus: Status;
 }
 
 interface State {
@@ -54,7 +58,7 @@ export default class BufferComponent extends React.Component<Props, State> {
         return (
             <pre className={`output ${this.props.buffer.activeBuffer}`}>
                 {this.shouldCutOutput ? <Cut numberOfRows={this.props.buffer.size} clickHandler={() => this.setState({ expandButtonPressed: true })}/> : undefined}
-                {this.renderableRows.map((row, index) => <RowComponent row={row || List<Char>()} key={index}/>)}
+                {this.renderableRows.map((row, index) => <RowComponent row={row || List<Char>()} key={index} style={css.row(this.props.jobStatus, this.props.buffer.activeBuffer)}/>)}
             </pre>
         );
     }

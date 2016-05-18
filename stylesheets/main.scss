@@ -121,10 +121,6 @@ body, pre {
   &.failure, &.interrupted, &.success {
     .output.alternate {
       zoom: 0.1;
-
-      .row {
-        height: 70px;
-      }
     }
   }
   &.in-progress {
@@ -138,10 +134,6 @@ body, pre {
 
       margin: 0;
       padding: 5px 0 0 0;
-
-      .row {
-        margin: 0;
-      }
     }
   }
 
@@ -345,9 +337,6 @@ body, pre {
   // To display even empty rows. The height might need tweaking.
   // TODO: Remove if we always have a fixed buffer width.
   .row {
-    padding: 0 $output-padding;
-    min-height: $row-height;
-
     span {
       display: inline-block;
       height: $row-height;

@@ -50,7 +50,7 @@ export default class JobComponent extends React.Component<Props, State> implemen
         if (this.state.canBeDecorated && this.state.decorate) {
             buffer = this.props.job.decorate();
         } else {
-            buffer = <BufferComponent buffer={this.props.job.buffer}/>;
+            buffer = <BufferComponent buffer={this.props.job.buffer} jobStatus={this.state.status}/>;
         }
 
         return (
