@@ -38,7 +38,6 @@
     "jquery.caret": "^0.2.1",
     "lodash": "4.12.0",
     "node-ansiparser": "2.1.0",
-    "octicons": "3.5.0",
     "pty.js": "shockone/pty.js",
     "react": "15.0.2",
     "react-dom": "15.0.2",

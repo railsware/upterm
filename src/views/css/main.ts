@@ -61,4 +61,24 @@ export namespace css {
         },
         infoPanel
     );
+
+    export const icon = {
+        fontFamily: "FontAwesome",
+        display: "inline-block",
+        content: ' ',
+
+        width: "2em",
+        height: "2em",
+        lineHeight: "2em",
+
+
+        verticalAlign: "middle",
+        textAlign: "center",
+        fontStyle: "normal",
+
+        opacity: ".5",
+        marginRight: 10,
+
+        backgroundColor: "rgba(0, 0, 0, 0.15)",
+    }
 }

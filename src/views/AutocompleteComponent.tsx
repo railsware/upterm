@@ -10,7 +10,7 @@ interface SuggestionProps {
 }
 
 const SuggestionComponent = ({suggestion, onHover, onClick, isHighlighted}: SuggestionProps) => {
-    let classes = [suggestion.type];
+    let classes: string[] = [];
 
     if (isHighlighted) {
         classes.push("highlighted");
@@ -22,7 +22,7 @@ const SuggestionComponent = ({suggestion, onHover, onClick, isHighlighted}: Sugg
             onMouseOver={onHover}
             onClick={onClick}>
 
-            <i className="icon" dataColor={suggestion.iconColor}/>
+            <i style={css.icon} dataColor={suggestion.iconColor} dangerouslySetInnerHTML={{__html: suggestion.type}}/>
             <span className="value">{suggestion.displayValue}</span>
             <span className="synopsis">{suggestion.synopsis}</span>
             <span className="debug-tag">{suggestion.debugTag}</span>
