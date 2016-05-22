@@ -528,20 +528,6 @@ pre {
         color: map-get($colors, 'yellow');
       }
 
-      &.file {
-        &.zip, &.gzip {
-          .icon {
-            @extend .fa-file-archive-o;
-          }
-        }
-
-        &.js, &.ts, &.rb, &.json {
-          .icon {
-            @extend .fa-file-code-o;
-          }
-        }
-      }
-
       &.history .icon {
         @extend .fa;
         @extend .fa-history;

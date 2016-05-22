@@ -35,7 +35,8 @@ export const fileInDirectoryGenerator = async(directory: string, filter: (info: 
                 info.name.startsWith(".") ? noisySuggestions(decorate(append("/", file), style(styles.directory))) : decorate(append("/", file), style(styles.directory))
             );
         } else {
-            return info.name.startsWith(".") ? noisySuggestions(decorate(file, style(styles.file))) : decorate(file, style(styles.file));
+            const styled = decorate(file, style(styles.file(info)));
+            return info.name.startsWith(".") ? noisySuggestions(styled) : styled;
         }
     }));
 };

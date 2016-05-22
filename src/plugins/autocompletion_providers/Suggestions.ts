@@ -42,9 +42,11 @@ export const styles = {
         value: fontAwesome.folder,
         css: {}
     },
-    file: {
-        value: fontAwesome.file,
-        css: {}
+    file: (fileInfo: FileInfo) => {
+        return {
+            value: extensionIcon(Path.extname(fileInfo.name)),
+            css: {}
+        }
     },
     alias: {
         value: fontAwesome.at,
@@ -53,6 +55,21 @@ export const styles = {
         }
     },
 };
+
+function extensionIcon(extension: string) {
+    switch (extension) {
+        case ".zip":
+        case ".gzip":
+            return fontAwesome.fileArchiveO;
+        case ".js":
+        case ".ts":
+        case ".rb":
+        case ".json":
+            return fontAwesome.fileCodeO;
+        default:
+            return fontAwesome.file;
+    }
+}
 
 export class Suggestion {
     protected _value = "";
