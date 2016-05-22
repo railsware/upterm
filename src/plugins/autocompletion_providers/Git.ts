@@ -3,7 +3,7 @@ import {
     executable, runtime, choice, string, option, decorate, sequence,
     commandSwitch, token, many1, optionalContinuation,
 } from "../../Parser";
-import {description, type, command} from "./Suggestions";
+import {description, command, styles, style} from "./Suggestions";
 import {compose} from "../../utils/Common";
 import {file} from "./File";
 
@@ -147,7 +147,7 @@ const cleanupMode = decorate(
         is truncated if the message is to be edited. "#" can be customized with core.commentChar.')),
         decorate(string("default"), description("Same as strip if the message is to be edited. Otherwise whitespace")),
     ]),
-    type("option-value")
+    style(styles.optionValue)
 );
 
 const commitOption = choice([
@@ -169,7 +169,7 @@ const branchesExceptCurrent = decorate(
         const branches = (await Git.branches(context.directory)).filter(branch => !branch.isCurrent());
         return choice(branches.map(branch => string(branch.toString())));
     }),
-    type("branch")
+    style(styles.branch)
 );
 
 const gitCommand = choice([

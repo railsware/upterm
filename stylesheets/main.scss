@@ -528,16 +528,6 @@ pre {
         color: map-get($colors, 'yellow');
       }
 
-      &.file .icon {
-        @extend .fa;
-        @extend .fa-file;
-      }
-
-      &.directory .icon {
-        @extend .fa;
-        @extend .fa-folder;
-      }
-
       &.file {
         &.zip, &.gzip {
           .icon {
@@ -552,12 +542,6 @@ pre {
         }
       }
 
-      &.executable .icon {
-        @extend .fa;
-        @extend .fa-asterisk;
-        color: map-get($colors, 'green');
-      }
-
       &.history .icon {
         @extend .fa;
         @extend .fa-history;
@@ -568,30 +552,6 @@ pre {
         @extend .fa;
         @extend .fa-exclamation;
         color: map-get($colors, 'blue');
-      }
-
-      &.command .icon {
-        @extend .fa;
-        @extend .fa-terminal;
-        color: map-get($colors, 'green');
-      }
-
-      &.option .icon {
-        @extend .fa;
-        @extend .fa-flag-o;
-        color: map-get($colors, 'green');
-      }
-
-      &.option-value .icon {
-        &:before {
-          content: "=";
-          color: map-get($colors, 'green');
-        }
-      }
-
-      &.branch .icon {
-        @extend .fa;
-        @extend .fa-code-fork;
       }
 
       &.highlighted {

@@ -65,7 +65,6 @@ export namespace css {
     export const icon = {
         fontFamily: "FontAwesome",
         display: "inline-block",
-        content: ' ',
 
         width: "2em",
         height: "2em",

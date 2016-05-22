@@ -9,7 +9,7 @@ import {
     Parser,
     withoutSuggestions,
 } from "../../Parser";
-import {type} from "./Suggestions";
+import {styles, style} from "./Suggestions";
 import {FileInfo} from "../../Interfaces";
 
 const changingContextDirectory = (parser: Parser) => decorateResult(
@@ -32,10 +32,10 @@ export const fileInDirectoryGenerator = async(directory: string, filter: (info: 
 
         if (info.stat.isDirectory()) {
             return changingContextDirectory(
-                info.name.startsWith(".") ? noisySuggestions(decorate(append("/", file), type("directory"))) : decorate(append("/", file), type("directory"))
+                info.name.startsWith(".") ? noisySuggestions(decorate(append("/", file), style(styles.directory))) : decorate(append("/", file), style(styles.directory))
             );
         } else {
-            return info.name.startsWith(".") ? noisySuggestions(decorate(file, type("file"))) : decorate(file, type("file"));
+            return info.name.startsWith(".") ? noisySuggestions(decorate(file, style(styles.file))) : decorate(file, style(styles.file));
         }
     }));
 };

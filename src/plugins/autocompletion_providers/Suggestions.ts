@@ -3,15 +3,63 @@ import * as Path from "path";
 import * as _ from "lodash";
 import {Color} from "../../Enums";
 import {normalizeDirectory} from "../../utils/Common";
+import {fontAwesome} from "../../views/css/FontAwesome";
+import {colors} from "../../views/css/colors";
+import {CSSObject} from "../../views/css/main";
 
-type SuggestionType = "executable" | "command" | "option" | "option-value" | "branch" | "directory" | "file" | "alias";
+type Style = { value: string; css: CSSObject};
+
+export const styles = {
+    executable: {
+        value: fontAwesome.asterisk,
+        css: {
+            color: colors.green
+        }
+    },
+    command: {
+        value: fontAwesome.terminal,
+        css: {
+            color: colors.green
+        }
+    },
+    option: {
+        value: fontAwesome.flagO,
+        css: {
+            color: colors.green
+        }
+    },
+    optionValue: {
+        value: "=",
+        css: {
+            color: colors.green
+        }
+    },
+    branch: {
+        value: fontAwesome.codeFork,
+        css: {}
+    },
+    directory: {
+        value: fontAwesome.folder,
+        css: {}
+    },
+    file: {
+        value: fontAwesome.file,
+        css: {}
+    },
+    alias: {
+        value: fontAwesome.at,
+        css: {
+            color: colors.yellow,
+        }
+    },
+};
 
 export class Suggestion {
     protected _value = "";
     private _displayValue = "";
     private _synopsis = "";
     private _description = "";
-    private _type = "";
+    private _style = {value: "", css: {}};
     private _prefix = "";
     private _debugTag = "";
 
@@ -27,8 +75,8 @@ export class Suggestion {
         return this._description;
     }
 
-    get type(): string {
-        return this._type;
+    get style(): Style {
+        return this._style;
     }
 
     get prefix(): string {
@@ -67,8 +115,8 @@ export class Suggestion {
         return this;
     }
 
-    withType(type: string): this {
-        this._type = type;
+    withStyle(style: Style): this {
+        this._style = style;
         return this;
     }
 
@@ -87,14 +135,11 @@ export class Suggestion {
     }
 }
 
-export const type = (value: SuggestionType) => <T extends Suggestion>(suggestion: T) => suggestion.withType(value);
-export const command = type("command");
+export const style = (value: Style) => <T extends Suggestion>(suggestion: T) => suggestion.withStyle(value);
+export const command = style(styles.command);
 export const description = (value: string) => <T extends Suggestion>(suggestion: T) => suggestion.withDescription(value);
 
 abstract class BaseOption extends Suggestion {
-    get type() {
-        return "option";
-    }
 }
 
 export class Option extends BaseOption {
@@ -139,10 +184,6 @@ export class Executable extends Suggestion {
     get displayValue() {
         return this._name;
     }
-
-    get type() {
-        return "executable";
-    }
 }
 
 export class File extends Suggestion {
@@ -156,10 +197,6 @@ export class File extends Suggestion {
 
     get displayValue() {
         return this.unescapedFileName;
-    }
-
-    get type() {
-        return ["file", this.extension].join(" ");
     }
 
     get partial() {
