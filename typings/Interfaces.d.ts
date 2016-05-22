@@ -17,8 +17,7 @@ interface RowColumn {
     column: number;
     row: number;
 }
-
-interface MaybeRowColumn {
+interface PartialRowColumn {
     column?: number;
     row?: number;
 }
@@ -29,17 +28,16 @@ interface VcsData {
     status?: string;
 }
 
-interface MaybeMargins {
-    top?: number;
-    bottom?: number;
-    left?: number;
-    right?: number;
-}
-
 interface Margins {
     top: number;
     bottom?: number;
     left: number;
+    right?: number;
+}
+interface PartialMargins {
+    top?: number;
+    bottom?: number;
+    left?: number;
     right?: number;
 }
 
