@@ -522,12 +522,6 @@ pre {
         color: map-get($colors, 'red');
       }
 
-      &.alias .icon {
-        @extend .fa;
-        @extend .fa-at;
-        color: map-get($colors, 'yellow');
-      }
-
       &.history .icon {
         @extend .fa;
         @extend .fa-history;
