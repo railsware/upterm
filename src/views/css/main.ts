@@ -20,12 +20,13 @@ export interface CSSObject {
 }
 
 const fontSize = 14;
-const rowHeight = fontSize + 4;
 const outputPadding = 10;
 const promptPadding = 5;
 const promptHeight = 12 + (2 * promptPadding);
 const defaultShadow = "0 2px 8px 1px rgba(0, 0, 0, 0.3)";
-const titleBarHeight = 24;
+export const titleBarHeight = 24;
+export const rowHeight = fontSize + 4;
+export const letterWidth = fontSize / 2 + 1.5;
 
 const infoPanel = {
     padding: "8px 0 6px 0.6em",

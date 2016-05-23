@@ -3,6 +3,7 @@ import * as React from "react";
 import * as _ from "lodash";
 import Session from "../Session";
 import ApplicationComponent from "./1_ApplicationComponent";
+import {titleBarHeight, letterWidth, rowHeight} from "./css/main";
 
 export interface TabProps {
     isActive: boolean;
@@ -80,26 +81,15 @@ export class Tab {
 
     private get contentDimensions(): Dimensions {
         return {
-            columns: Math.floor(this.contentSize.width / this.charSize.width),
-            rows: Math.floor(this.contentSize.height / this.charSize.height),
+            columns: Math.floor(this.contentSize.width / letterWidth),
+            rows: Math.floor(this.contentSize.height / rowHeight),
         };
     }
 
     private get contentSize(): Size {
-        const titleBarHeight = 24; // Make sure it's the same as $title-bar-height SCSS variable.
         return {
             width: window.innerWidth,
             height: window.innerHeight - titleBarHeight,
         };
     }
-
-    private get charSize(): Size {
-        const letter = document.getElementById("sizes-calculation");
-
-        return {
-            width: letter.clientWidth + 0.5,
-            height: letter.clientHeight,
-        };
-    };
-
 }
