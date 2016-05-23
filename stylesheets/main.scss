@@ -420,22 +420,6 @@ body, pre {
   }
 }
 
-.session {
-  height: 100%;
-  width: 100%;
-  flex: 1;
-  overflow-x: scroll;
-
-  &.inactive {
-    opacity: 0.4;
-    box-shadow: 0 0 0 1px map-get($colors, 'white');
-    margin: 0 0 1px 1px;
-  }
-  &.active {
-    outline: none;
-  }
-}
-
 pre {
   white-space: pre-wrap;
 }

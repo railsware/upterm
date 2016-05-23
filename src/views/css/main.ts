@@ -1,17 +1,22 @@
 import {Buffer, Status} from "../../Enums";
 import {colors, panel as panelColor} from "./colors";
-import {info} from "../../utils/Common";
 
 export interface CSSObject {
     pointerEvents?: string;
     marginBottom?: number;
     padding?: string | number;
     minHeight?: number;
-    height?: number;
-    margin?: number;
+    height?: number | string;
+    margin?: number | string;
     listStyleType?: "none";
     backgroundColor?: string;
     cursor?: "pointer";
+    width?: string;
+    flex?: number;
+    overflowX?: "scroll";
+    outline?: "none";
+    opacity?: number;
+    boxShadow?: string;
 }
 
 const fontSize = 14;
@@ -164,5 +169,24 @@ export namespace css {
                 display: "inline-block",
             };
         }
-    }
+    };
+
+    export const session = (isActive: boolean) => {
+        const styles: CSSObject = {
+            height: "100%",
+            width: "100%",
+            flex: 1,
+            overflowX: "scroll",
+        };
+
+        if (isActive) {
+            styles.outline = "none";
+        } else {
+            styles.opacity = 0.4;
+            styles.boxShadow = `0 0 0 1px ${colors.white}`;
+            styles.margin = "0 0 1px 1px";
+        }
+
+        return styles;
+    };
 }
