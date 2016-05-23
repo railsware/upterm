@@ -135,7 +135,7 @@ export default class ApplicationComponent extends React.Component<{}, State> {
         );
 
         return (
-            <div onKeyDownCapture={this.handleKeyDown.bind(this)}>
+            <div style={css.application} onKeyDownCapture={this.handleKeyDown.bind(this)}>
                 <ul style={css.tabs}>{tabs}</ul>
                 <div style={css.activeTabContent}>{sessions}</div>
             </div>

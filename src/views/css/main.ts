@@ -44,6 +44,10 @@ export namespace css {
         marginBottom: 40,
     };
 
+    export const application = {
+        marginBottom: 24,
+    };
+
     export const jobs = (isSessionActive: boolean): CSSObject =>
         isSessionActive ? commonJobs : Object.assign({}, commonJobs, inactiveJobs);
 
