@@ -44,8 +44,7 @@ export default class SessionComponent extends React.Component<Props, State> {
         );
 
         return (
-            <div className={`session ${(this.props.isActive ? "active" : "inactive")}`}
-                 style={css.session(this.props.isActive)}
+            <div style={css.session(this.props.isActive)}
                  tabIndex={0}
                  onClickCapture={this.handleClick.bind(this)}
                  onKeyDownCapture={this.handleKeyDown.bind(this)}>
