@@ -511,11 +511,6 @@ pre {
         margin-right: 5px;
       }
 
-      .debug-tag {
-        color: red;
-        float: right;
-      }
-
       &.error .icon {
         @extend .fa;
         @extend .fa-exclamation-triangle;

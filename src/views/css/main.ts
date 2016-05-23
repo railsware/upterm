@@ -79,5 +79,10 @@ export namespace css {
         marginRight: 10,
 
         backgroundColor: "rgba(0, 0, 0, 0.15)",
-    }
+    };
+
+    export const debugTag = {
+        color: "red",
+        float: "right",
+    };
 }
