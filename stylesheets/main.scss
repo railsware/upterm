@@ -326,9 +326,9 @@ body, pre {
 
     &:before {
       margin-right: 10px;
+      @extend .octicon;
+      @extend .octicon-unfold;
     }
-    @extend .octicon;
-    @extend .octicon-unfold;
 
     position: relative;
     top: -10px;
