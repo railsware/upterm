@@ -1,10 +1,9 @@
 import * as React from "react";
-import * as e from "../Enums";
 import Buffer from "../Buffer";
 import Char from "../Char";
 import {groupWhen} from "../utils/Common";
 import {List} from "immutable";
-import {scrollToBottom, getHTMLAttributes} from "./ViewUtils";
+import {getHTMLAttributes} from "./ViewUtils";
 import {Attributes} from "../Interfaces";
 import {Status} from "../Enums";
 import {css, CSSObject} from "./css/main";
@@ -35,7 +34,7 @@ class RowComponent extends React.Component<RowProps, {}> {
                                 key={index}/>
         );
 
-        return <div style={this.props.style}>{charGroups}</div>;
+        return <div style={this.props.style} ref={(div: HTMLElement | undefined) => div && div.scrollIntoView()}>{charGroups}</div>;
     }
 }
 
@@ -61,12 +60,6 @@ export default class BufferComponent extends React.Component<Props, State> {
                 {this.renderableRows.map((row, index) => <RowComponent row={row || List<Char>()} key={index} style={css.row(this.props.jobStatus, this.props.buffer.activeBuffer)}/>)}
             </pre>
         );
-    }
-
-    componentDidUpdate() {
-        if (this.props.buffer.activeBuffer === e.Buffer.Standard) {
-            scrollToBottom();
-        }
     }
 
     private get shouldCutOutput(): boolean {

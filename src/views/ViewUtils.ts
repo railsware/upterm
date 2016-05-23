@@ -8,11 +8,6 @@ export function stopBubblingUp(event: Event): Event {
     return event;
 }
 
-export function scrollToBottom(): void {
-    let session = $(".session.active");
-    session.scrollTop(session[0].scrollHeight);
-}
-
 export const keys = {
     goUp: (event: KeyboardEvent) => (event.ctrlKey && event.keyCode === KeyCode.P) || event.keyCode === KeyCode.Up,
     goDown: (event: KeyboardEvent) => (event.ctrlKey && event.keyCode === KeyCode.N) || event.keyCode === KeyCode.Down,
