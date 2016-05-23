@@ -22,10 +22,12 @@ interface PartialRowColumn {
     row?: number;
 }
 
+type VcsStatus = "dirty" | "clean";
+
 interface VcsData {
     isRepository: boolean;
     branch?: string;
-    status?: string;
+    status?: VcsStatus;
 }
 
 interface Margins {

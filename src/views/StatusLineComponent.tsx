@@ -1,5 +1,7 @@
 /* tslint:disable:no-unused-variable */
 import * as React from "react";
+import {css} from "./css/main";
+import {fontAwesome} from "./css/fontAwesome";
 
 const CurrentDirectory = ({currentWorkingDirectory}: { currentWorkingDirectory: string }) =>
     <div className="current-directory">{currentWorkingDirectory}</div>;
@@ -11,8 +13,11 @@ const VcsDataComponent = ({data}: { data: VcsData }) => {
     }
 
     return (
-        <div className="vcs-data">
-            <div className={`status ${data.status}`}>{data.branch}</div>
+        <div style={css.statusLine.vcsData}>
+            <div style={css.statusLine.status(data.status)}>
+                <span style={css.statusLine.icon} dangerouslySetInnerHTML={{__html: fontAwesome.codeFork}}/>
+                {data.branch}
+            </div>
         </div>
     );
 };

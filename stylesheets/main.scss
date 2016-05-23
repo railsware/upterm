@@ -453,26 +453,6 @@ body, pre {
       margin-right: 5px;
     }
   }
-
-  .vcs-data {
-    display: inline-block;
-    float: right;
-    margin-right: 10px;
-
-    .status {
-      display: inline-block;
-
-      &:before {
-        @extend .fa;
-        @extend .fa-code-fork;
-        margin-right: 5px;
-      }
-
-      &.dirty {
-        color: map-get($colors, 'blue');
-      }
-    }
-  }
 }
 
 pre {

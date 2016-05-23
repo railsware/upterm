@@ -133,4 +133,22 @@ export namespace css {
             margin: 0,
         }
     };
+    
+    export const statusLine = {
+        vcsData: {
+            display: "inline-block",
+            float: "right",
+            marginRight: 10,
+        },
+        icon: {
+            fontFamily: "FontAwesome",
+            marginRight: 5,
+        },
+        status: (status: VcsStatus) => {
+            return {
+                color: status === "dirty" ? colors.blue : colors.white,
+                display: "inline-block",
+            };
+        }
+    }
 }
