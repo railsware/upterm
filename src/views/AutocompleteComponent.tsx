@@ -14,7 +14,7 @@ const SuggestionComponent = ({suggestion, onHover, onClick, isHighlighted}: Sugg
         onMouseOver={onHover}
         onClick={onClick}>
 
-        <i style={Object.assign({}, css.icon, suggestion.style.css)} dataColor={suggestion.iconColor} dangerouslySetInnerHTML={{__html: suggestion.style.value}}/>
+        <i style={Object.assign({}, css.suggestionIcon, suggestion.style.css)} dataColor={suggestion.iconColor} dangerouslySetInnerHTML={{__html: suggestion.style.value}}/>
         <span style={css.autocomplete.value}>{suggestion.displayValue}</span>
         <span style={css.autocomplete.synopsis}>{suggestion.synopsis}</span>
         <span style={css.debugTag}>{suggestion.debugTag}</span>

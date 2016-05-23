@@ -1,5 +1,6 @@
 import {Buffer, Status} from "../../Enums";
 import {colors, panel as panelColor} from "./colors";
+import {TabHoverState} from "../TabComponent";
 
 export interface CSSObject {
     pointerEvents?: string;
@@ -44,6 +45,10 @@ export namespace css {
         marginBottom: 40,
     };
 
+    const icon = {
+        fontFamily: "FontAwesome",
+    };
+
     export const application = {
         marginBottom: 24,
     };
@@ -80,24 +85,22 @@ export namespace css {
         infoPanel
     );
 
-    export const icon = {
-        fontFamily: "FontAwesome",
-        display: "inline-block",
-
-        width: "2em",
-        height: "2em",
-        lineHeight: "2em",
-
-
-        verticalAlign: "middle",
-        textAlign: "center",
-        fontStyle: "normal",
-
-        opacity: ".5",
-        marginRight: 10,
-
-        backgroundColor: "rgba(0, 0, 0, 0.15)",
-    };
+    export const suggestionIcon = Object.assign(
+        {},
+        icon,
+        {
+            display: "inline-block",
+            width: "2em",
+            height: "2em",
+            lineHeight: "2em",
+            verticalAlign: "middle",
+            textAlign: "center",
+            fontStyle: "normal",
+            opacity: ".5",
+            marginRight: 10,
+            backgroundColor: "rgba(0, 0, 0, 0.15)",
+        }
+    );
 
     export const debugTag = {
         color: "red",
@@ -165,10 +168,7 @@ export namespace css {
             float: "right",
             marginRight: 10,
         },
-        icon: {
-            fontFamily: "FontAwesome",
-            marginRight: 5,
-        },
+        icon: Object.assign({}, icon, {marginRight: 5}),
         status: (status: VcsStatus) => {
             return {
                 color: status === "dirty" ? colors.blue : colors.white,
@@ -215,4 +215,47 @@ export namespace css {
         WebkitPaddingStart: 0,
         WebkitUserSelect: "none",
     };
+    
+    export const tab = (isHovered: boolean, isActive: boolean) => {
+        return {
+            backgroundColor: isHovered ? panelColor : colors.black,
+            opacity:  (isHovered || isActive) ? 1 : 0.3,
+            position: "relative",
+            height: titleBarHeight,
+            width: 150,
+            display: "inline-block",
+            textAlign: "center",
+            paddingTop: 2,
+        }
+    };
+
+    export const tabClose = (hover: TabHoverState) => {
+        const margin = titleBarHeight - fontSize;
+
+        return Object.assign(
+            {},
+            icon,
+            {
+                color: tabCloseButtonColor(hover),
+                position: "absolute",
+                left: margin,
+                top: margin / 2,
+            }
+        );
+    };
+
+    export const commandSign = {
+        fontSize: fontSize + 3,
+        verticalAlign: "middle",
+    }
+}
+
+function tabCloseButtonColor(hover: TabHoverState) {
+    if (hover === TabHoverState.Close) {
+        return colors.red;
+    } else if (hover === TabHoverState.Tab) {
+        return colors.white;
+    } else {
+        return "transparent";
+    }
 }
