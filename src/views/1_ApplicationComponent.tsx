@@ -6,6 +6,7 @@ import Session from "../Session";
 import {ipcRenderer} from "electron";
 import {KeyCode} from "../Enums";
 import {remote} from "electron";
+import {css} from "./css/main";
 
 interface State {
     sessions: Session[];
@@ -134,9 +135,9 @@ export default class ApplicationComponent extends React.Component<{}, State> {
         );
 
         return (
-            <div className="application" onKeyDownCapture={this.handleKeyDown.bind(this)}>
-                <ul className="tabs">{tabs}</ul>
-                <div className="active-tab-content">{sessions}</div>
+            <div onKeyDownCapture={this.handleKeyDown.bind(this)}>
+                <ul style={css.tabs}>{tabs}</ul>
+                <div style={css.activeTabContent}>{sessions}</div>
             </div>
         );
     }

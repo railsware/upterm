@@ -345,78 +345,53 @@ body, pre {
   white-space: nowrap;
 }
 
-.application {
-  .tabs {
-    height: $title-bar-height;
-    display: flex;
-    justify-content: center;
+.tab {
+  position: relative;
+  height: $title-bar-height;
+  width: 150px;
+  display: inline-block;
+  text-align: center;
+  padding-top: 2px;
 
-    -webkit-margin-before: 0;
-    -webkit-margin-after: 0;
-    -webkit-padding-start: 0;
-    -webkit-user-select: none;
+  &:hover span.tabClose {
+    color: map-get($colors, 'white');
+  }
 
-    .tab {
-      position: relative;
-      height: $title-bar-height;
-      width: 150px;
-      display: inline-block;
-      text-align: center;
-      padding-top: 2px;
+  & span.tabClose {
+    $margin: $title-bar-height - $font-size;
 
-      &:hover span.tabClose {
-        color: map-get($colors, 'white');
-      }
+    position: absolute;
+    left: $margin;
+    top: $margin / 2;
 
-      & span.tabClose {
-        $margin: $title-bar-height - $font-size;
+    @extend .fa;
+    @extend .fa-times;
 
-        position: absolute;
-        left: $margin;
-        top: $margin / 2;
+    color: transparent;
 
-        @extend .fa;
-        @extend .fa-times;
-
-        color: transparent;
-
-        &:hover {
-          color: map-get($colors, 'red');
-        }
-      }
-
-      span {
-        display: inline-block;
-
-        &.command-sign {
-          font-size: $font-size + 3;
-          vertical-align: middle;
-        }
-      }
-
-      &:hover {
-        background-color: $panel-color;
-        opacity: 1;
-      }
-
-      &.inactive {
-        &:not(:hover) {
-          opacity: 0.3;
-        }
-      }
+    &:hover {
+      color: map-get($colors, 'red');
     }
   }
 
-  .active-tab-content {
-    display: flex;
+  span {
+    display: inline-block;
 
-    flex-wrap: nowrap;
-    flex-direction: column;
+    &.command-sign {
+      font-size: $font-size + 3;
+      vertical-align: middle;
+    }
+  }
 
-    position: absolute;
-    width: 100%;
-    top: $title-bar-height;
-    bottom: 2em;
+  &:hover {
+    background-color: $panel-color;
+    opacity: 1;
+  }
+
+  &.inactive {
+    &:not(:hover) {
+      opacity: 0.3;
+    }
   }
 }
 

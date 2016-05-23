@@ -25,6 +25,7 @@ const outputPadding = 10;
 const promptPadding = 5;
 const promptHeight = 12 + (2 * promptPadding);
 const defaultShadow = "0 2px 8px 1px rgba(0, 0, 0, 0.3)";
+const titleBarHeight = 24;
 
 const infoPanel = {
     padding: "8px 0 6px 0.6em",
@@ -188,5 +189,25 @@ export namespace css {
         }
 
         return styles;
+    };
+
+    export const activeTabContent = {
+        display: "flex",
+        flexWrap: "nowrap",
+        flexDirection: "column",
+        position: "absolute",
+        width: "100%",
+        top: titleBarHeight,
+        bottom: "2em",
+    };
+
+    export const tabs = {
+        height: titleBarHeight,
+        display: "flex",
+        justifyContent: "center",
+        WebkitMarginBefore: 0,
+        WebkitMarginAfter: 0,
+        WebkitPaddingStart: 0,
+        WebkitUserSelect: "none",
     };
 }
