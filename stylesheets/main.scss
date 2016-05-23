@@ -436,25 +436,6 @@ body, pre {
   }
 }
 
-.status-line {
-  position: fixed;
-  bottom: 0;
-  width: 100%;
-  z-index: 3;
-
-  @include info-panel;
-
-  .current-directory {
-    display: inline-block;
-
-    &:before {
-      @extend .fa;
-      @extend .fa-folder-open;
-      margin-right: 5px;
-    }
-  }
-}
-
 pre {
   white-space: pre-wrap;
 }

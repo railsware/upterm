@@ -1,5 +1,6 @@
 import {Buffer, Status} from "../../Enums";
 import {colors, panel as panelColor} from "./colors";
+import {info} from "../../utils/Common";
 
 export interface CSSObject {
     pointerEvents?: string;
@@ -135,6 +136,19 @@ export namespace css {
     };
     
     export const statusLine = {
+        itself: Object.assign(
+            {},
+            infoPanel,
+            {
+                position: "fixed",
+                bottom: 0,
+                width: "100%",
+                zIndex: 3,
+            }
+        ),
+        currentDirectory: {
+            display: "inline-block",
+        },
         vcsData: {
             display: "inline-block",
             float: "right",

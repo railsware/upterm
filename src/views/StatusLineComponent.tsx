@@ -4,7 +4,10 @@ import {css} from "./css/main";
 import {fontAwesome} from "./css/fontAwesome";
 
 const CurrentDirectory = ({currentWorkingDirectory}: { currentWorkingDirectory: string }) =>
-    <div className="current-directory">{currentWorkingDirectory}</div>;
+    <div style={css.statusLine.currentDirectory}>
+        <span style={css.statusLine.icon} dangerouslySetInnerHTML={{__html: fontAwesome.folderOpen}}/>
+        {currentWorkingDirectory}
+    </div>;
 
 const VcsDataComponent = ({data}: { data: VcsData }) => {
     if (!data.isRepository) {
@@ -23,7 +26,7 @@ const VcsDataComponent = ({data}: { data: VcsData }) => {
 };
 
 const StatusLine = ({currentWorkingDirectory, vcsData}: { currentWorkingDirectory: string; vcsData: VcsData }) =>
-    <div className="status-line">
+    <div style={css.statusLine.itself}>
         <CurrentDirectory currentWorkingDirectory={currentWorkingDirectory}/>
         <VcsDataComponent data={vcsData}/>
     </div>;
