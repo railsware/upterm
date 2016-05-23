@@ -480,37 +480,8 @@ pre {
 }
 
 .autocomplete {
-  position: absolute;
-  top: $prompt-height;
-  min-width: 300px;
-
-  box-shadow: $default-shadow;
-  background-color: map-get($colors, 'black');
-
   ul {
-    max-height: 300px;
-
-    overflow: auto;
-
-    padding: 0;
-    margin: 0;
-
     li {
-      list-style-type: none;
-      padding: 2px;
-
-      .value {
-        padding-right: 30px;
-      }
-
-      .synopsis {
-        float: right;
-        opacity: 0.5;
-        font-size: 0.8em;
-        margin-top: 0.65em;
-        margin-right: 5px;
-      }
-
       &.error .icon {
         @extend .fa;
         @extend .fa-exclamation-triangle;
@@ -527,10 +498,6 @@ pre {
         @extend .fa;
         @extend .fa-exclamation;
         color: map-get($colors, 'blue');
-      }
-
-      &.highlighted {
-        background-color: #383E4A;
       }
     }
   }

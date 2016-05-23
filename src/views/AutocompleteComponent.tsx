@@ -9,26 +9,16 @@ interface SuggestionProps {
     isHighlighted: boolean;
 }
 
-const SuggestionComponent = ({suggestion, onHover, onClick, isHighlighted}: SuggestionProps) => {
-    let classes: string[] = [];
+const SuggestionComponent = ({suggestion, onHover, onClick, isHighlighted}: SuggestionProps) =>
+    <li style={css.autocomplete.item(isHighlighted)}
+        onMouseOver={onHover}
+        onClick={onClick}>
 
-    if (isHighlighted) {
-        classes.push("highlighted");
-    }
-
-    return (
-        <li className={classes.join(" ")}
-            style={{cursor: "pointer"}}
-            onMouseOver={onHover}
-            onClick={onClick}>
-
-            <i style={Object.assign({}, css.icon, suggestion.style.css)} dataColor={suggestion.iconColor} dangerouslySetInnerHTML={{__html: suggestion.style.value}}/>
-            <span className="value">{suggestion.displayValue}</span>
-            <span className="synopsis">{suggestion.synopsis}</span>
-            <span style={css.debugTag}>{suggestion.debugTag}</span>
-        </li>
-    );
-};
+        <i style={Object.assign({}, css.icon, suggestion.style.css)} dataColor={suggestion.iconColor} dangerouslySetInnerHTML={{__html: suggestion.style.value}}/>
+        <span style={css.autocomplete.value}>{suggestion.displayValue}</span>
+        <span style={css.autocomplete.synopsis}>{suggestion.synopsis}</span>
+        <span style={css.debugTag}>{suggestion.debugTag}</span>
+    </li>;
 
 interface AutocompleteProps {
     caretOffset: Offset;
@@ -60,8 +50,8 @@ export default class AutocompleteComponent extends React.Component<AutocompleteP
         }
 
         return (
-            <div className="autocomplete" style={{left: this.props.caretOffset.left}}>
-                <ul>{suggestionViews}</ul>
+            <div style={css.autocomplete.box(this.props.caretOffset)}>
+                <ul style={css.autocomplete.suggestionsList}>{suggestionViews}</ul>
                 {descriptionElement}
             </div>
         );
