@@ -479,30 +479,6 @@ pre {
   white-space: pre-wrap;
 }
 
-.autocomplete {
-  ul {
-    li {
-      &.error .icon {
-        @extend .fa;
-        @extend .fa-exclamation-triangle;
-        color: map-get($colors, 'red');
-      }
-
-      &.history .icon {
-        @extend .fa;
-        @extend .fa-history;
-        color: map-get($colors, 'blue');
-      }
-
-      &.history-expansion .icon {
-        @extend .fa;
-        @extend .fa-exclamation;
-        color: map-get($colors, 'blue');
-      }
-    }
-  }
-}
-
 .fixedsticky {
   top: 0;
 }
