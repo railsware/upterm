@@ -54,12 +54,15 @@ export default class AutocompleteComponent extends React.Component<AutocompleteP
             descriptionElement = <div className="description">{suggestionDescription}</div>;
         }
 
+        let classes = ["autocomplete"];
+
         if (this.props.caretOffset.top + 300 > window.innerHeight) {
             this.props.caretOffset.bottom = 28 + (suggestionDescription ? 28 : 0);
+            classes.push("above");
         }
 
         return (
-            <div className="autocomplete" style={{left: this.props.caretOffset.left}}>
+            <div className={classes.join(" ")} style={{left: this.props.caretOffset.left}}>
                 <ul>{suggestionViews}</ul>
                 {descriptionElement}
             </div>
