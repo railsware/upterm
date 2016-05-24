@@ -323,14 +323,6 @@ body, pre {
       cursor: pointer;
     }
   }
-  // To display even empty rows. The height might need tweaking.
-  // TODO: Remove if we always have a fixed buffer width.
-  .row {
-    span {
-      display: inline-block;
-      height: $row-height;
-    }
-  }
 }
 
 pre {

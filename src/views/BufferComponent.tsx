@@ -9,7 +9,7 @@ import {Status} from "../Enums";
 import {css, CSSObject} from "./css/main";
 
 const CharGroupComponent = ({text, attributes}: {text: string, attributes: Attributes}) =>
-    React.createElement("span", getHTMLAttributes(attributes), text);
+    React.createElement("span", Object.assign(getHTMLAttributes(attributes), {style: css.charGroup}), text);
 
 const Cut = ({numberOfRows, clickHandler}: { numberOfRows: number, clickHandler: React.EventHandler<React.MouseEvent> }) =>
     <div className="output-cut" onClick={clickHandler}>{`Show all ${numberOfRows} rows.`}</div>;

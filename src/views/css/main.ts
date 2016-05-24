@@ -247,7 +247,20 @@ export namespace css {
     export const commandSign = {
         fontSize: fontSize + 3,
         verticalAlign: "middle",
-    }
+    };
+
+    // To display even empty rows. The height might need tweaking.
+    // TODO: Remove if we always have a fixed buffer width.
+    export const charGroup = {
+        display: "inline-block",
+        height: rowHeight,
+    };
+
+    const outputPadding = 10;
+
+    export const output = {
+        paddingTop: outputPadding,
+    };
 }
 
 function tabCloseButtonColor(hover: TabHoverState) {
