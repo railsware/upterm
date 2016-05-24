@@ -513,6 +513,7 @@ pre {
   position: absolute;
   top: $prompt-height;
   min-width: 300px;
+  z-index: 3;
 
   box-shadow: $default-shadow;
   background-color: map-get($colors, 'black');
