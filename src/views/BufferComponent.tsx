@@ -7,13 +7,38 @@ import {getHTMLAttributes} from "./ViewUtils";
 import {Attributes} from "../Interfaces";
 import {Status} from "../Enums";
 import {css, CSSObject} from "./css/main";
+import {fontAwesome} from "./css/FontAwesome";
 
 const CharGroupComponent = ({text, attributes}: {text: string, attributes: Attributes}) =>
     React.createElement("span", Object.assign(getHTMLAttributes(attributes), {style: css.charGroup}), text);
 
-const Cut = ({numberOfRows, clickHandler}: { numberOfRows: number, clickHandler: React.EventHandler<React.MouseEvent> }) =>
-    <div className="output-cut" onClick={clickHandler}>{`Show all ${numberOfRows} rows.`}</div>;
+interface CutProps {
+    numberOfRows: number;
+    clickHandler: React.EventHandler<React.MouseEvent>;
+}
 
+interface CutState {
+    isHovered: boolean;
+}
+
+class Cut extends React.Component<CutProps, CutState> {
+    constructor() {
+        super();
+        this.state = {isHovered: false};
+    }
+
+    render() {
+        return (
+            <div style={css.outputCut(this.state.isHovered)}
+                 onClick={this.props.clickHandler}
+                 onMouseEnter={() => this.setState({isHovered: true})}
+                 onMouseLeave={() => this.setState({isHovered: false})}>
+                <i style={css.outputCutIcon} dangerouslySetInnerHTML={{__html: fontAwesome.expand}}/>
+                {`Show all ${this.props.numberOfRows} rows.`}
+            </div>
+        );
+    }
+}
 interface RowProps {
     row: Immutable.List<Char>;
     style: CSSObject;
@@ -55,7 +80,8 @@ export default class BufferComponent extends React.Component<Props, State> {
 
     render() {
         return (
-            <pre className={`output ${this.props.buffer.activeBuffer}`}>
+            <pre className={`output ${this.props.buffer.activeBuffer}`}
+                 style={css.output(this.props.buffer.activeBuffer)}>
                 {this.shouldCutOutput ? <Cut numberOfRows={this.props.buffer.size} clickHandler={() => this.setState({ expandButtonPressed: true })}/> : undefined}
                 {this.renderableRows.map((row, index) => <RowComponent row={row || List<Char>()} key={index} style={css.row(this.props.jobStatus, this.props.buffer.activeBuffer)}/>)}
             </pre>

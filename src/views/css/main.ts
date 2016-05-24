@@ -1,6 +1,7 @@
 import {Buffer, Status} from "../../Enums";
-import {colors, panel as panelColor} from "./colors";
+import {colors, panel as panelColor, background as backgroundColor} from "./colors";
 import {TabHoverState} from "../TabComponent";
+import {darken, lighten} from "./functions";
 
 export interface CSSObject {
     pointerEvents?: string;
@@ -258,9 +259,29 @@ export namespace css {
 
     const outputPadding = 10;
 
-    export const output = {
-        paddingTop: outputPadding,
-    };
+    const outputCutHeight = fontSize * 2.6;
+    export const outputCut = (isHovered: boolean) => Object.assign(
+        {},
+        jaggedBorder(isHovered ? 0 : 0),
+        {
+            position: "relative",
+            top: -10,
+            width: "100%",
+            height: outputCutHeight,
+            textAlign: "center",
+            paddingTop: (outputCutHeight - fontSize) / 3,
+            color: lighten(backgroundColor, isHovered ? 35 : 30),
+            cursor: "pointer"
+        }
+    );
+
+    export const outputCutIcon = Object.assign({marginRight: 10}, icon);
+    
+    export const output = (buffer: Buffer) => {
+        return {
+            padding: `${outputPadding}px ${buffer === Buffer.Alternate ? 0 : outputPadding}px`,
+        }
+    }
 }
 
 function tabCloseButtonColor(hover: TabHoverState) {
@@ -270,5 +291,16 @@ function tabCloseButtonColor(hover: TabHoverState) {
         return colors.white;
     } else {
         return "transparent";
+    }
+}
+
+function jaggedBorder(darkenPercent: number) {
+    return {
+        background: `-webkit-linear-gradient(${darken(panelColor, darkenPercent)} 0%, transparent 0%),
+                     -webkit-linear-gradient(135deg, ${backgroundColor} 33.33%, transparent 33.33%) 0 0,
+                     ${backgroundColor} -webkit-linear-gradient(45deg, ${backgroundColor} 33.33%,
+                     ${darken(panelColor, darkenPercent)} 33.33%) 0 0`,
+        backgroundRepeat: "repeat-x",
+        backgroundSize: "0 100%, 15px 50px, 15px 50px",
     }
 }
