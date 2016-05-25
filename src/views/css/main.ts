@@ -28,6 +28,7 @@ export interface CSSObject {
     bottom?: number;
     left?: number;
     right?: number;
+    whiteSpace?: "pre-wrap",
     zIndex?: number;
     gridArea?: string,
     display?: "grid";
@@ -75,6 +76,10 @@ export namespace css {
 
     export const application = {
         marginBottom: 24,
+        backgroundColor: backgroundColor,
+        color: colors.white,
+        fontFamily: "'Hack', 'Fira Code', 'Menlo', monospace",
+        fontSize: fontSize,
     };
 
     export const jobs = (isSessionActive: boolean): CSSObject =>
@@ -227,6 +232,7 @@ export namespace css {
         position: "absolute",
         width: "100%",
         top: titleBarHeight,
+        backgroundColor: backgroundColor,
         bottom: "2em",
     };
 
@@ -303,6 +309,8 @@ export namespace css {
     export const output = (buffer: Buffer, status: Status) => {
         const styles: CSSObject = {
             padding: `${outputPadding}px ${buffer === Buffer.Alternate ? 0 : outputPadding}px`,
+            whiteSpace: "pre-wrap",
+            backgroundColor: backgroundColor,
         };
 
         if (buffer === Buffer.Alternate) {

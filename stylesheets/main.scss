@@ -98,11 +98,7 @@ html {
   -webkit-backface-visibility: hidden;
 }
 
-body, pre {
-  background-color: $background-color;
-  color: map-get($colors, 'white');
-  font-family: 'Hack', 'Fira Code', 'Meslo LG S for Powerline', 'Menlo', monospace !important;
-  font-size: $font-size;
+body {
   margin: 0;
 }
 
@@ -117,7 +113,6 @@ $progress-bar-stripes-size: 30px;
 }
 
 .prompt-wrapper {
-
   &.fixedsticky-on {
     box-shadow: $default-shadow;
   }

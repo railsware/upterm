@@ -79,10 +79,10 @@ export default class BufferComponent extends React.Component<Props, State> {
 
     render() {
         return (
-            <pre style={css.output(this.props.job.buffer.activeBuffer, this.props.job.status)}>
+            <div style={css.output(this.props.job.buffer.activeBuffer, this.props.job.status)}>
                 {this.shouldCutOutput ? <Cut numberOfRows={this.props.job.buffer.size} clickHandler={() => this.setState({ expandButtonPressed: true })}/> : undefined}
                 {this.renderableRows.map((row, index) => <RowComponent row={row || List<Char>()} key={index} style={css.row(this.props.job.status, this.props.job.buffer.activeBuffer)}/>)}
-            </pre>
+            </div>
         );
     }
 
