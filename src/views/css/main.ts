@@ -1,8 +1,9 @@
-import {Buffer, Status, Weight} from "../../Enums";
+import {Buffer, Status, Weight, Brightness} from "../../Enums";
 import {colors, panel as panelColor, background as backgroundColor} from "./colors";
 import {TabHoverState} from "../TabComponent";
 import {darken, lighten, failurize} from "./functions";
 import {Attributes} from "../../Interfaces";
+import * as _ from "lodash";
 
 export interface CSSObject {
     pointerEvents?: string;
@@ -291,6 +292,10 @@ export namespace css {
             color: colors[attributes.color],
             backgroundColor: colors[attributes["background-color"]]
         };
+
+        if (attributes.brightness === Brightness.Bright) {
+            styles.color = colors[`bright${_.capitalize(<any>attributes.color)}`] || colors[attributes.color];
+        }
 
         if (attributes.inverse) {
             const color = styles.color;

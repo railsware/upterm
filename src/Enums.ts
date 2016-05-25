@@ -56,8 +56,8 @@ export enum KeyCode {
 export var colorIndex: any[] = [
     "black", "red", "green", "yellow", "blue", "magenta", "cyan", "white",
 
-    "bright-black", "bright-red", "bright-green", "bright-yellow",
-    "bright-blue", "bright-magenta", "bright-cyan", "bright-white",
+    "brightBlack", "brightRed", "brightGreen", "brightYellow",
+    "brightBlue", "brightMagenta", "brightCyan", "brightWhite",
 ].concat(<Array<any>>_.range(16, 256));
 
 export enum Color {

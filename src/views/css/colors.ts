@@ -54,7 +54,7 @@ function generateGreyScaleColors() {
         const color = index * 10 + 8;
         const key = index + 232;
 
-        greyScaleColors[key] = `rgb(${toRgb(color)}, ${toRgb(color)}, ${toRgb(color)})`;
+        greyScaleColors[key] = `rgb(${color}, ${color}, ${color})`;
     }
 
     return greyScaleColors;
