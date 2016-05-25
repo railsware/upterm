@@ -17,6 +17,7 @@ import "rxjs/add/operator/map";
 import {InputMethod} from "../Parser";
 import {css} from "./css/main";
 import {fontAwesome} from "./css/FontAwesome";
+import {Status} from "../Enums";
 const reactDOM = require("react-dom");
 
 interface Props {
@@ -172,7 +173,9 @@ export default class PromptComponent extends React.Component<Props, State> imple
         return (
             <div className={classes}>
                 <div className="arrow"></div>
-                <div className="prompt-info" title={JSON.stringify(this.props.status)}></div>
+                <div style={css.promptInfo(this.props.status)}
+                     title={JSON.stringify(this.props.status)}
+                     dangerouslySetInnerHTML={{__html: this.props.status === Status.Interrupted ? fontAwesome.close : ""}}></div>
                 <div style={css.prompt}
                      onKeyDown={this.handlers.onKeyDown.bind(this)}
                      onInput={this.handleInput.bind(this)}

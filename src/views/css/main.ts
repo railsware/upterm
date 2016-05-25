@@ -12,7 +12,8 @@ export interface CSSObject {
     margin?: number | string;
     listStyleType?: "none";
     backgroundColor?: string;
-    cursor?: "pointer";
+    cursor?: "pointer" | "help";
+    color?: string;
     width?: string;
     flex?: number;
     overflowX?: "scroll";
@@ -20,12 +21,13 @@ export interface CSSObject {
     opacity?: number;
     boxShadow?: string;
     zoom?: number;
-    position?: "fixed";
+    position?: "fixed" | "relative";
     top?: number;
     bottom?: number;
     left?: number;
     right?: number;
     zIndex?: number;
+    gridArea?: string,
 }
 
 const fontSize = 14;
@@ -377,6 +379,25 @@ export namespace css {
             zIndex: 2,
         }
     );
+
+    export const promptInfo = (status: Status) => {
+        const styles: CSSObject = {
+            cursor: "help",
+            zIndex: 2,
+            gridArea: "decoration",
+        };
+
+        if (status === Status.Interrupted) {
+            Object.assign(styles, icon);
+
+            styles.position = "relative";
+            styles.left = 6;
+            styles.top = 1;
+            styles.color = colors.black
+        }
+
+        return styles;
+    };
 }
 
 function tabCloseButtonColor(hover: TabHoverState) {

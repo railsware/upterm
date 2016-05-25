@@ -158,23 +158,6 @@ body, pre {
     }
   }
 
-  .prompt-info {
-    cursor: help;
-    z-index: 2;
-    grid-area: decoration;
-  }
-
-  &.interrupted {
-    .prompt-info {
-      position: relative;
-      left: 6px;
-      top: 1px;
-      @extend .fa;
-      @extend .fa-close;
-      color: map-get($colors, 'black');
-    }
-  }
-
   &.in-progress {
     .arrow {
       cursor: progress;
