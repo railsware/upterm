@@ -247,15 +247,6 @@ body, pre {
       @include action;
       color: map-get($colors, 'white');
     }
-
-    .decoration-toggle {
-      @include action;
-      color: map-get($colors, 'green');
-
-      &.disabled {
-        color: map-get($colors, 'white');
-      }
-    }
   }
 }
 

@@ -2,6 +2,7 @@ import {Buffer, Status} from "../../Enums";
 import {colors, panel as panelColor, background as backgroundColor} from "./colors";
 import {TabHoverState} from "../TabComponent";
 import {darken, lighten, failurize} from "./functions";
+import {is} from "immutable/dist/immutable-nonambient";
 
 export interface CSSObject {
     pointerEvents?: string;
@@ -312,7 +313,26 @@ export namespace css {
         }
 
         return styles;
-    }
+    };
+
+    const action = {
+        textAlign: "center",
+        width: fontSize,
+        display: "inline-block",
+        margin: "0 3px",
+    };
+    
+    export const decorationToggle = (isEnabled: boolean) => {
+        return Object.assign(
+            {},
+            action,
+            icon,
+            {
+                color: isEnabled ? colors.green : colors.white,
+                cursor: "pointer",
+            }
+        )
+    };
 }
 
 function tabCloseButtonColor(hover: TabHoverState) {
