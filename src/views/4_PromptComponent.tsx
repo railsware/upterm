@@ -154,7 +154,7 @@ export default class PromptComponent extends React.Component<Props, State> imple
             } else {
                 const highlightedSuggestion = this.state.suggestions[this.state.highlightedSuggestionIndex];
                 if (highlightedSuggestion.synopsis) {
-                    inlineSynopsis = <div className="inline-synopsis">{this.prompt.value} —— {highlightedSuggestion.synopsis}</div>;
+                    inlineSynopsis = <div style={css.inlineSynopsis}>{this.prompt.value} —— {highlightedSuggestion.synopsis}</div>;
                 }
             }
         }

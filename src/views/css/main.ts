@@ -341,6 +341,22 @@ export namespace css {
             }
         )
     };
+
+    const promptInlineElement = {
+        padding: "0 10px 3px 10px", // FIXME: Use grid-column-gap when it's supported.
+        gridArea: "prompt",
+        fontSize: fontSize,
+        WebkitFontFeatureSettings: '"liga", "dlig"',
+    };
+
+    export const inlineSynopsis = Object.assign(
+        {},
+        promptInlineElement,
+        {
+            color: colors.yellow,
+            opacity: 0.4,
+        }
+    );
 }
 
 function tabCloseButtonColor(hover: TabHoverState) {
