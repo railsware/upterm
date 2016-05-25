@@ -16,7 +16,7 @@ interface HandlerResult {
 }
 
 const SGR: { [indexer: string]: Attributes|string } = {
-    0: {color: Color.White, weight: Weight.Normal, underline: false, "background-color": Color.Black, inverse: false},
+    0: {color: Color.White, weight: Weight.Normal, underline: false, backgroundColor: Color.Black, inverse: false},
     1: {brightness: Brightness.Bright},
     2: {weight: Weight.Faint},
     4: {underline: true},
@@ -32,20 +32,20 @@ const SGR: { [indexer: string]: Attributes|string } = {
     37: {color: Color.White},
     38: "color",
     39: {color: Color.White},
-    40: {"background-color": Color.Black},
-    41: {"background-color": Color.Red},
-    42: {"background-color": Color.Green},
-    43: {"background-color": Color.Yellow},
-    44: {"background-color": Color.Blue},
-    45: {"background-color": Color.Magenta},
-    46: {"background-color": Color.Cyan},
-    47: {"background-color": Color.White},
-    48: "background-color",
-    49: {"background-color": Color.Black},
+    40: {backgroundColor: Color.Black},
+    41: {backgroundColor: Color.Red},
+    42: {backgroundColor: Color.Green},
+    43: {backgroundColor: Color.Yellow},
+    44: {backgroundColor: Color.Blue},
+    45: {backgroundColor: Color.Magenta},
+    46: {backgroundColor: Color.Cyan},
+    47: {backgroundColor: Color.White},
+    48: "backgroundColor",
+    49: {backgroundColor: Color.Black},
 };
 
 function isSetColorExtended(sgrValue: any) {
-    return sgrValue === "color" || sgrValue === "background-color";
+    return sgrValue === "color" || sgrValue === "backgroundColor";
 }
 
 const CSI = {

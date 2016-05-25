@@ -290,7 +290,7 @@ export namespace css {
             display: "inline-block",
             height: rowHeight,
             color: colors[attributes.color],
-            backgroundColor: colors[attributes["background-color"]]
+            backgroundColor: colors[attributes.backgroundColor]
         };
 
         if (attributes.brightness === Brightness.Bright) {

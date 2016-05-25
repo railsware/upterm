@@ -8,7 +8,7 @@ import {Suggestion} from "./plugins/autocompletion_providers/Suggestions";
 export interface Attributes {
     inverse?: boolean;
     color?: Color;
-    "background-color"?: Color;
+    backgroundColor?: Color;
     brightness?: Brightness;
     weight?: Weight;
     underline?: boolean;
