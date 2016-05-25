@@ -3,14 +3,13 @@ import Buffer from "../Buffer";
 import Char from "../Char";
 import {groupWhen} from "../utils/Common";
 import {List} from "immutable";
-import {getHTMLAttributes} from "./ViewUtils";
 import {Attributes} from "../Interfaces";
 import {css, CSSObject} from "./css/main";
 import {fontAwesome} from "./css/FontAwesome";
 import Job from "../Job";
 
 const CharGroupComponent = ({text, attributes}: {text: string, attributes: Attributes}) =>
-    React.createElement("span", Object.assign(getHTMLAttributes(attributes), {style: css.charGroup}), text);
+    <span style={css.charGroup(attributes)}>{text}</span>;
 
 interface CutProps {
     numberOfRows: number;

@@ -30,14 +30,6 @@ export function isSpecialKey(event: KeyboardEvent): boolean {
   return _.values(keys).some((matcher: (event: KeyboardEvent) => boolean) => matcher(event));
 }
 
-export function getHTMLAttributes(object: Dictionary<any>): Object {
-    let htmlAttributes: Dictionary<any> = {};
-
-    Object.keys(object).forEach((key: string) => htmlAttributes[`data-${key}`] = object[key]);
-
-    return htmlAttributes;
-}
-
 export function setCaretPosition(node: Node, position: number) {
     const selection = window.getSelection();
     const range = document.createRange();

@@ -54,19 +54,6 @@ $prompt-height: 12px + (2 * $prompt-padding);
   }
 }
 
-[data-cursor='true'] {
-  background-color: map-get($colors, 'white') !important;
-  color: map-get($colors, 'black') !important;
-}
-
-[data-weight='bold'] {
-  font-weight: bold;
-}
-
-[data-underline='true'] {
-  text-decoration: underline;
-}
-
 * {
   box-sizing: border-box;
 }

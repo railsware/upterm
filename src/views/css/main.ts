@@ -1,7 +1,8 @@
-import {Buffer, Status} from "../../Enums";
+import {Buffer, Status, Weight} from "../../Enums";
 import {colors, panel as panelColor, background as backgroundColor} from "./colors";
 import {TabHoverState} from "../TabComponent";
 import {darken, lighten, failurize} from "./functions";
+import {Attributes} from "../../Interfaces";
 
 export interface CSSObject {
     pointerEvents?: string;
@@ -31,7 +32,7 @@ export interface CSSObject {
     whiteSpace?: "pre-wrap",
     zIndex?: number;
     gridArea?: string,
-    display?: "grid";
+    display?: "grid" | "inline-block";
     gridTemplateAreas?: string;
     gridTemplateRows?: "auto";
     gridTemplateColumns?: string;
@@ -42,6 +43,8 @@ export interface CSSObject {
     content?: string;
     transformOrigin?: string;
     transform?: string;
+    textDecoration?: "underline";
+    fontWeight?: "bold";
 }
 
 const fontSize = 14;
@@ -281,9 +284,26 @@ export namespace css {
 
     // To display even empty rows. The height might need tweaking.
     // TODO: Remove if we always have a fixed buffer width.
-    export const charGroup = {
-        display: "inline-block",
-        height: rowHeight,
+    export const charGroup = (attributes: Attributes) => {
+        const styles: CSSObject = {
+            display: "inline-block",
+            height: rowHeight,
+        };
+
+        if (attributes.underline) {
+            styles.textDecoration = "underline";
+        }
+
+        if (attributes.weight === Weight.Bold) {
+            styles.fontWeight = "bold";
+        }
+
+        if (attributes.cursor) {
+            styles.backgroundColor = colors.white;
+            styles.color = colors.black;
+        }
+
+        return styles;
     };
 
     const outputPadding = 10;
