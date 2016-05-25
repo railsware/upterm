@@ -57,7 +57,7 @@
     "spectron": "3.1.0",
     "ts-node": "0.7.3",
     "tslint": "3.10.2",
-    "typescript": "1.9.0-dev.20160514",
+    "typescript": "1.9.0-dev.20160525-1.0",
     "typings": "1.0.4"
   },
   "scripts": {
