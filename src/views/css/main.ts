@@ -2,7 +2,6 @@ import {Buffer, Status} from "../../Enums";
 import {colors, panel as panelColor, background as backgroundColor} from "./colors";
 import {TabHoverState} from "../TabComponent";
 import {darken, lighten, failurize} from "./functions";
-import {is} from "immutable/dist/immutable-nonambient";
 
 export interface CSSObject {
     pointerEvents?: string;
@@ -33,6 +32,7 @@ const fontSize = 14;
 const outputPadding = 10;
 const promptPadding = 5;
 const promptHeight = 12 + (2 * promptPadding);
+const promptBackgroundColor = lighten(colors.black, 5);
 const defaultShadow = "0 2px 8px 1px rgba(0, 0, 0, 0.3)";
 export const titleBarHeight = 24;
 export const rowHeight = fontSize + 4;
@@ -355,6 +355,14 @@ export namespace css {
         {
             color: colors.yellow,
             opacity: 0.4,
+        }
+    );
+
+    export const autocompletedPreview = Object.assign(
+        {},
+        promptInlineElement,
+        {
+            color: lighten(promptBackgroundColor, 15),
         }
     );
 }

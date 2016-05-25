@@ -150,7 +150,7 @@ export default class PromptComponent extends React.Component<Props, State> imple
                                                   ref="autocomplete"/>;
             const completed = this.valueWithCurrentSuggestion;
             if (completed.trim() !== this.prompt.value && completed.startsWith(this.prompt.value)) {
-                autocompletedPreview = <div className="autocompleted-preview">{completed}</div>;
+                autocompletedPreview = <div style={css.autocompletedPreview}>{completed}</div>;
             } else {
                 const highlightedSuggestion = this.state.suggestions[this.state.highlightedSuggestionIndex];
                 if (highlightedSuggestion.synopsis) {

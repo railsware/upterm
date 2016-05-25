@@ -198,7 +198,7 @@ body, pre {
     }
   }
 
-  .prompt, .autocompleted-preview {
+  .prompt {
     padding: 0 10px 3px 10px; // FIXME: Use grid-column-gap when it's supported.
     grid-area: prompt;
     font-size: $font-size;
@@ -220,10 +220,6 @@ body, pre {
   .prompt {
     color: map-get($colors, 'white');
     z-index: 2;
-  }
-
-  .autocompleted-preview {
-    color: lighten($prompt-background-color, 15%);
   }
 }
 
