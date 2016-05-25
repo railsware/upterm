@@ -242,11 +242,6 @@ body, pre {
       display: inline-block;
       margin: 0 3px;
     }
-
-    .scroll-to-top {
-      @include action;
-      color: map-get($colors, 'white');
-    }
   }
 }
 

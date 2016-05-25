@@ -29,7 +29,7 @@ export default class DecorationToggleComponent extends React.Component<Props, St
 
     render() {
         return (
-            <i style={css.decorationToggle(this.state.enabled)}
+            <span style={css.decorationToggle(this.state.enabled)}
                onClick={this.handleClick.bind(this)}
                dangerouslySetInnerHTML={{__html: fontAwesome.magic}}/>
         );

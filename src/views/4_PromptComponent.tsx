@@ -15,6 +15,8 @@ import {Subject} from "rxjs/Subject";
 import "rxjs/add/operator/filter";
 import "rxjs/add/operator/map";
 import {InputMethod} from "../Parser";
+import {css} from "./css/main";
+import {fontAwesome} from "./css/FontAwesome";
 const reactDOM = require("react-dom");
 
 interface Props {
@@ -162,7 +164,9 @@ export default class PromptComponent extends React.Component<Props, State> imple
         }
 
         if (this.props.status !== e.Status.NotStarted && this.props.job.buffer.size > 100) {
-            scrollToTop = <a className="scroll-to-top" onClick={this.handleScrollToTop.bind(this)}><i className="fa fa-long-arrow-up"/></a>;
+            scrollToTop = <span style={css.action}
+                             onClick={this.handleScrollToTop.bind(this)}
+                             dangerouslySetInnerHTML={{__html: fontAwesome.longArrowUp}}/>;
         }
 
         return (

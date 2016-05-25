@@ -315,21 +315,23 @@ export namespace css {
         return styles;
     };
 
-    const action = {
-        textAlign: "center",
-        width: fontSize,
-        display: "inline-block",
-        margin: "0 3px",
-    };
+    export const action = Object.assign(
+        {
+            textAlign: "center",
+            width: fontSize,
+            display: "inline-block",
+            margin: "0 3px",
+            cursor: "pointer",
+        },
+        icon
+    );
     
     export const decorationToggle = (isEnabled: boolean) => {
         return Object.assign(
             {},
             action,
-            icon,
             {
                 color: isEnabled ? colors.green : colors.white,
-                cursor: "pointer",
             }
         )
     };
