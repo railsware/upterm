@@ -50,3 +50,7 @@ interface KeyboardEvent extends UIEvent {
 interface NodeBuffer extends Uint8Array {
     fill(value: number, offset?: number, end?: number): this;
 }
+
+interface ObjectConstructor {
+    assign<A, B, C, D, E, F>(a: A, b: B, c: C, d: D, e: E, f: F): A & B & C & D & E & F;
+}

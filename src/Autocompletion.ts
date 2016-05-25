@@ -5,7 +5,7 @@ import {
     optionalContinuation, spacesWithoutSuggestion, many, noisySuggestions, InputMethod, Parser,
 } from "./Parser";
 import {commandDescriptions} from "./plugins/autocompletion_providers/Executable";
-import {description, type} from "./plugins/autocompletion_providers/Suggestions";
+import {description, style, styles} from "./plugins/autocompletion_providers/Suggestions";
 import {makeAlias} from "./plugins/autocompletion_providers/Alias";
 import {file} from "./plugins/autocompletion_providers/File";
 import {compose, mapObject} from "./utils/Common";
@@ -15,7 +15,7 @@ import {redirect} from "./plugins/autocompletion_providers/Redirect";
 
 export const makeGrammar = (aliases: Dictionary<string>) => {
     const exec = sequence(
-        choice(mapObject(commandDescriptions, (key, value) => decorate(string(key), compose(description(value), type("executable"))))),
+        choice(mapObject(commandDescriptions, (key, value) => decorate(string(key), compose(description(value), style(styles.executable))))),
         optionalContinuation(many1(file))
     );
 

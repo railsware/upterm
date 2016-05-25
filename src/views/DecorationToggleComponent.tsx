@@ -1,6 +1,8 @@
 import * as React from "react";
 import {stopBubblingUp} from "./ViewUtils";
 import Job from "./3_JobComponent";
+import {css} from "./css/main";
+import {fontAwesome} from "./css/FontAwesome";
 
 interface Props {
     job: Job;
@@ -26,16 +28,10 @@ export default class DecorationToggleComponent extends React.Component<Props, St
     }
 
     render() {
-        let classes = ["decoration-toggle"];
-
-        if (!this.state.enabled) {
-            classes.push("disabled");
-        }
-
         return (
-            <a className={classes.join(" ")} onClick={this.handleClick.bind(this)}>
-                <i className="fa fa-magic"></i>
-            </a>
+            <span style={css.decorationToggle(this.state.enabled)}
+               onClick={this.handleClick.bind(this)}
+               dangerouslySetInnerHTML={{__html: fontAwesome.magic}}/>
         );
     }
 }

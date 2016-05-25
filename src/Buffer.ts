@@ -135,7 +135,7 @@ export default class Buffer extends events.EventEmitter {
         return this;
     }
 
-    moveCursorAbsolute(position: MaybeRowColumn): this {
+    moveCursorAbsolute(position: PartialRowColumn): this {
         this.cursor.moveAbsolute(position, this.homePosition);
         this.ensureRowExists(this.cursor.row);
         this.emitData();
@@ -221,7 +221,7 @@ export default class Buffer extends events.EventEmitter {
         this.isOriginModeSet = mode;
     }
 
-    set margins(margins: MaybeMargins) {
+    set margins(margins: PartialMargins) {
         this._margins = Object.assign({}, this._margins, margins);
     }
 

@@ -1,7 +1,7 @@
 import {executable, sequence, decorate, string, noisySuggestions, runtime, choice} from "../../Parser";
 import {directoryAlias, fileInDirectoryGenerator} from "./Common";
 import {expandHistoricalDirectory} from "../../Command";
-import {description, type} from "./Suggestions";
+import {description, styles, style} from "./Suggestions";
 import * as _ from "lodash";
 
 const historicalDirectory = runtime(async (context) =>
@@ -11,7 +11,7 @@ const historicalDirectory = runtime(async (context) =>
                 _.take(["-", "-2", "-3", "-4", "-5", "-6", "-7", "-8", "-9"], context.historicalCurrentDirectoriesStack.length - 1)
                     .map(alias => decorate(string(alias), description(expandHistoricalDirectory(alias, context.historicalCurrentDirectoriesStack))))
             ),
-            type("directory")
+            style(styles.directory)
         )
     )
 );

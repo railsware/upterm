@@ -15,6 +15,9 @@ import {Subject} from "rxjs/Subject";
 import "rxjs/add/operator/filter";
 import "rxjs/add/operator/map";
 import {InputMethod} from "../Parser";
+import {css} from "./css/main";
+import {fontAwesome} from "./css/FontAwesome";
+import {Status} from "../Enums";
 const reactDOM = require("react-dom");
 
 interface Props {
@@ -148,11 +151,11 @@ export default class PromptComponent extends React.Component<Props, State> imple
                                                   ref="autocomplete"/>;
             const completed = this.valueWithCurrentSuggestion;
             if (completed.trim() !== this.prompt.value && completed.startsWith(this.prompt.value)) {
-                autocompletedPreview = <div className="autocompleted-preview">{completed}</div>;
+                autocompletedPreview = <div style={css.autocompletedPreview}>{completed}</div>;
             } else {
                 const highlightedSuggestion = this.state.suggestions[this.state.highlightedSuggestionIndex];
                 if (highlightedSuggestion.synopsis) {
-                    inlineSynopsis = <div className="inline-synopsis">{this.prompt.value} —— {highlightedSuggestion.synopsis}</div>;
+                    inlineSynopsis = <div style={css.inlineSynopsis}>{this.prompt.value} —— {highlightedSuggestion.synopsis}</div>;
                 }
             }
         }
@@ -162,14 +165,21 @@ export default class PromptComponent extends React.Component<Props, State> imple
         }
 
         if (this.props.status !== e.Status.NotStarted && this.props.job.buffer.size > 100) {
-            scrollToTop = <a className="scroll-to-top" onClick={this.handleScrollToTop.bind(this)}><i className="fa fa-long-arrow-up"/></a>;
+            scrollToTop = <span style={css.action}
+                             onClick={this.handleScrollToTop.bind(this)}
+                             dangerouslySetInnerHTML={{__html: fontAwesome.longArrowUp}}/>;
         }
 
         return (
-            <div className={classes}>
-                <div className="arrow"></div>
-                <div className="prompt-info" title={JSON.stringify(this.props.status)}></div>
-                <div className={"prompt"}
+            <div className={classes} style={css.promptWrapper(this.props.status)}>
+                <div style={css.arrow(this.props.status)}>
+                    <div style={css.arrowInner(this.props.status)}></div>
+                </div>
+                <div style={css.promptInfo(this.props.status)}
+                     title={JSON.stringify(this.props.status)}
+                     dangerouslySetInnerHTML={{__html: this.props.status === Status.Interrupted ? fontAwesome.close : ""}}></div>
+                <div className="prompt"
+                     style={css.prompt}
                      onKeyDown={this.handlers.onKeyDown.bind(this)}
                      onInput={this.handleInput.bind(this)}
                      onKeyPress={this.handleKeyPress.bind(this)}
@@ -179,7 +189,7 @@ export default class PromptComponent extends React.Component<Props, State> imple
                 {autocompletedPreview}
                 {inlineSynopsis}
                 {autocomplete}
-                <div className="actions">
+                <div style={css.actions}>
                     {decorationToggle}
                     {scrollToTop}
                 </div>

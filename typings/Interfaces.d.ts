@@ -17,29 +17,29 @@ interface RowColumn {
     column: number;
     row: number;
 }
-
-interface MaybeRowColumn {
+interface PartialRowColumn {
     column?: number;
     row?: number;
 }
 
+type VcsStatus = "dirty" | "clean";
+
 interface VcsData {
     isRepository: boolean;
     branch?: string;
-    status?: string;
-}
-
-interface MaybeMargins {
-    top?: number;
-    bottom?: number;
-    left?: number;
-    right?: number;
+    status?: VcsStatus;
 }
 
 interface Margins {
     top: number;
     bottom?: number;
     left: number;
+    right?: number;
+}
+interface PartialMargins {
+    top?: number;
+    bottom?: number;
+    left?: number;
     right?: number;
 }
 

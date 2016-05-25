@@ -61,7 +61,7 @@ class GitWatcher extends EventEmitter {
         let content = await readFile(Path.join(this.gitDirectory, "HEAD"));
 
         executeCommand("git", ["status", "--porcelain"], this.directory).then(changes => {
-            const status = changes.length ? "dirty" : "clean";
+            const status: VcsStatus = changes.length ? "dirty" : "clean";
 
             const data: VcsData = {
                 isRepository: true,
