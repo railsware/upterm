@@ -173,7 +173,7 @@ export default class PromptComponent extends React.Component<Props, State> imple
             <div className={classes}>
                 <div className="arrow"></div>
                 <div className="prompt-info" title={JSON.stringify(this.props.status)}></div>
-                <div className={"prompt"}
+                <div style={css.prompt}
                      onKeyDown={this.handlers.onKeyDown.bind(this)}
                      onInput={this.handleInput.bind(this)}
                      onKeyPress={this.handleKeyPress.bind(this)}

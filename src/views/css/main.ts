@@ -347,6 +347,9 @@ export namespace css {
         gridArea: "prompt",
         fontSize: fontSize,
         WebkitFontFeatureSettings: '"liga", "dlig"',
+        whiteSpace: "pre-wrap",
+        WebkitAppearance: "none",
+        outline: "none",
     };
 
     export const inlineSynopsis = Object.assign(
@@ -363,6 +366,15 @@ export namespace css {
         promptInlineElement,
         {
             color: lighten(promptBackgroundColor, 15),
+        }
+    );
+
+    export const prompt = Object.assign(
+        {},
+        promptInlineElement,
+        {
+            color: colors.white,
+            zIndex: 2,
         }
     );
 }

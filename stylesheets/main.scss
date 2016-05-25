@@ -197,30 +197,6 @@ body, pre {
       background-size: $progress-bar-stripes-size $progress-bar-stripes-size;
     }
   }
-
-  .prompt {
-    padding: 0 10px 3px 10px; // FIXME: Use grid-column-gap when it's supported.
-    grid-area: prompt;
-    font-size: $font-size;
-    -webkit-font-feature-settings:"liga", "dlig";
-
-    @mixin common {
-      white-space: pre-wrap;
-      -webkit-appearance: none;
-      outline: none;
-    }
-
-    @include common;
-
-    &:focus {
-      @include common;
-    }
-  }
-
-  .prompt {
-    color: map-get($colors, 'white');
-    z-index: 2;
-  }
 }
 
 pre {
