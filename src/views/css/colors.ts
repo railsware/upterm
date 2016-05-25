@@ -22,10 +22,6 @@ const brightColors = {
     brightCyan: "#7adada"
 };
 
-const extraColors = {
-    selectionColor: `rgba(${lighten(baseColors.black, 20)}, 0.7)`,
-};
-
 function toRgb(colorComponent: number) {
     if (colorComponent === 0) {
         return 0;
@@ -67,4 +63,4 @@ function generateGreyScaleColors() {
 export const background = baseColors.black;
 export const panel = darken(background, 3);
 
-export const colors = Object.assign({}, brightColors, baseColors, extraColors, generateIndexedColors(), generateGreyScaleColors());
+export const colors = Object.assign({}, brightColors, baseColors, generateIndexedColors(), generateGreyScaleColors());

@@ -288,7 +288,16 @@ export namespace css {
         const styles: CSSObject = {
             display: "inline-block",
             height: rowHeight,
+            color: colors[attributes.color],
+            backgroundColor: colors[attributes["background-color"]]
         };
+
+        if (attributes.inverse) {
+            const color = styles.color;
+
+            styles.color = styles.backgroundColor;
+            styles.backgroundColor = color;
+        }
 
         if (attributes.underline) {
             styles.textDecoration = "underline";
@@ -443,6 +452,7 @@ export namespace css {
     export const promptWrapper = (status: Status) => {
         const decorationWidth = 30;
         const styles: CSSObject = {
+            top: 0,
             paddingTop: promptPadding,
             position: "relative", // To position the autocompletion box correctly.
             display: "grid",

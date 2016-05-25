@@ -13,6 +13,34 @@
   <script src="../../../node_modules/jquery.caret/dist/jquery.caret.min.js"></script>
   <script src="../../../node_modules/fixed-sticky/fixedsticky.js"></script>
   <script src="../../src/views/Main.js"></script>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      -webkit-backface-visibility: hidden;
+    }
+
+    body {
+      margin: 0;
+    }
+
+    @font-face {
+      font-family: "FontAwesome";
+      src: url(../../../node_modules/font-awesome/fonts/fontawesome-webfont.ttf) format("truetype");
+    }
+
+    @keyframes progress-bar-stripes {
+      from {
+        background-position: 0 0;
+      }
+      to {
+        background-position: 30px 0;
+      }
+    }
+  </style>
 </head>
 <body>
 
