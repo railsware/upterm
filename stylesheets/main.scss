@@ -1,6 +1,5 @@
 @import 'colors';
 
-$fa-font-path: "../node_modules/font-awesome/fonts";
 $font-size: 14px;
 $row-height: $font-size + 4px;
 $title-bar-height: 24px; // If you change it, also change the same variable in ApplicationComponent.
@@ -9,26 +8,15 @@ $prompt-background-color: lighten(map-get($colors, 'black'), 5%);
 $prompt-padding: 5px;
 $prompt-height: 12px + (2 * $prompt-padding);
 
-@function failurize-color($color){
-  @return saturate(adjust-hue($color, 140deg), 20%);
-}
-
-@import '../node_modules/font-awesome/scss/font-awesome';
-
-// Fix the issue when icons aren't displayed.
-// https://github.com/shockone/black-screen/issues/95
-.fa {
-  transform: translate(0, 0);
-}
-
-a {
-  color: map-get($colors, 'blue');
-}
-
 @each $color, $value in $base-colors {
   [data-color='#{$color}'][data-brightness='bright'] {
     color: map-get($bright-colors, 'bright-#{$color}');
   }
+}
+
+@font-face {
+  font-family: "FontAwesome";
+  src: url(../node_modules/font-awesome/fonts/fontawesome-webfont.ttf) format("truetype");
 }
 
 @each $color, $value in $colors {
@@ -79,13 +67,6 @@ a {
   text-decoration: underline;
 }
 
-@mixin info-panel {
-  padding: 8px 0 6px 0.6em;
-  min-height: 2em;
-  line-height: 1.3;
-  background-color: $panel-color;
-}
-
 * {
   box-sizing: border-box;
 }
@@ -116,10 +97,6 @@ $progress-bar-stripes-size: 30px;
   &.fixedsticky-on {
     box-shadow: $default-shadow;
   }
-}
-
-pre {
-  white-space: pre-wrap;
 }
 
 .fixedsticky {
