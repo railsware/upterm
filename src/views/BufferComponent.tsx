@@ -5,7 +5,6 @@ import {groupWhen} from "../utils/Common";
 import {List} from "immutable";
 import {getHTMLAttributes} from "./ViewUtils";
 import {Attributes} from "../Interfaces";
-import {Status} from "../Enums";
 import {css, CSSObject} from "./css/main";
 import {fontAwesome} from "./css/FontAwesome";
 import Job from "../Job";
