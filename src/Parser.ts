@@ -1,226 +1,190 @@
-import Invocation = require("./Invocation");
-var ANSIParser: AnsiParserConstructor = require('node-ansiparser');
+import {Suggestion, styles, style} from "./plugins/autocompletion_providers/Suggestions";
+import * as _ from "lodash";
+import {compose} from "./utils/Common";
 
-import e = require('./Enums');
-import i = require('./Interfaces');
-import Utils = require('./Utils');
-import Buffer = require('./Buffer');
-
-import Color = e.Color;
-import Weight = e.Weight;
-
-var CGR: { [indexer: string]: i.Attributes|string } = {
-    0: {color: Color.White, weight: e.Weight.Normal, underline: false, 'background-color': Color.Black},
-    1: {weight: Weight.Bold},
-    2: {weight: Weight.Faint},
-    4: {underline: true},
-    7: 'negative',
-    30: {color: Color.Black},
-    31: {color: Color.Red},
-    32: {color: Color.Green},
-    33: {color: Color.Yellow},
-    34: {color: Color.Blue},
-    35: {color: Color.Magenta},
-    36: {color: Color.Cyan},
-    37: {color: Color.White},
-    38: 'color',
-    40: {'background-color': Color.Black},
-    41: {'background-color': Color.Red},
-    42: {'background-color': Color.Green},
-    43: {'background-color': Color.Yellow},
-    44: {'background-color': Color.Blue},
-    45: {'background-color': Color.Magenta},
-    46: {'background-color': Color.Cyan},
-    47: {'background-color': Color.White},
-    48: 'background-color'
-};
-
-function isSetColorExtended(cgrValue: any) {
-    return cgrValue == 'color' || cgrValue == 'background-color';
+export enum InputMethod {
+    Typed,
+    Autocompleted,
 }
 
-var CSI = {
-    mode: {
-        blinkingCursor: 12,
-        cursor: 25,
-        scrollbar: 30,
-        alternateScreen: 1049,
-        bracketedPaste: 2004,
-    },
-    flag: {
-        cursorPosition: 'H',
-        eraseDisplay: 'J',
-        eraseInLine: 'K',
-        setMode: 'h',
-        resetMode: 'l',
-        selectGraphicRendition: 'm'
-    },
-    erase: {
-        toEnd: 0,
-        toBeginning: 1,
-        entire: 2,
+export interface Context {
+    input: string;
+    directory: string;
+    historicalCurrentDirectoriesStack: string[];
+    cdpath: string[];
+    inputMethod: InputMethod;
+}
+
+export enum Progress {
+    Failed,
+    OnStart,
+    InProgress,
+    Finished,
+}
+
+export type Parser = (context: Context) => Promise<Array<Result>>;
+
+export interface Result {
+    parser: Parser;
+    context: Context;
+    parse: string;
+    progress: Progress;
+    suggestions: Suggestion[];
+}
+
+function getProgress(input: string, expected: string) {
+    if (expected.length === 0) {
+        return Progress.Finished;
     }
+
+    if (input.length === 0) {
+        return Progress.OnStart;
+    }
+
+    if (input.startsWith(expected)) {
+        return Progress.Finished;
+    }
+
+    if (expected.length <= input.length) {
+        return Progress.Failed;
+    }
+
+    if (expected.startsWith(input)) {
+        return Progress.InProgress;
+    }
+
+    return Progress.Failed;
+}
+
+export const string = (expected: string) => {
+    const parser = async (context: Context): Promise<Array<Result>> => {
+        const progress = getProgress(context.input, expected);
+
+        return [{
+            parser: parser,
+            context: context,
+            parse: progress === Progress.Finished ? expected : "",
+            progress: progress,
+            suggestions: (progress === Progress.Finished)
+                ? (context.inputMethod === InputMethod.Autocompleted ? [] : [new Suggestion().withDisplayValue(expected).withValue("")])
+                : [new Suggestion().withValue(expected)],
+        }];
+    };
+    return parser;
 };
 
-var DECPrivateMode = '?';
+export const bind = (left: Parser, rightGenerator: (result: Result) => Promise<Parser>) => async (context: Context): Promise<Array<Result>> => {
+    const leftResults = await left(context);
+    const results: Result[] = [];
 
-class Parser {
-    private parser: AnsiParser;
-    private buffer: Buffer;
+    for (const leftResult of leftResults) {
+        const rightInput = context.input.slice(leftResult.parse.length);
 
-    constructor(private invocation: Invocation) {
-        this.buffer = this.invocation.getBuffer();
-        this.parser = this.initializeAnsiParser();
-    }
+        if (leftResult.progress === Progress.Finished && (rightInput.length || leftResult.suggestions.length === 0)) {
+            const right = await rightGenerator(leftResult);
+            const rightResults = await right(Object.assign({}, leftResult.context, { input: rightInput }));
 
-    parse(data: string): void {
-        this.parser.parse(data);
-    }
-
-    private initializeAnsiParser(): AnsiParser {
-        return new ANSIParser({
-            inst_p: (text: string) => {
-                Utils.log('text', text);
-
-                for (var i = 0; i != text.length; ++i) {
-                    this.buffer.write(text.charAt(i));
+            for (const rightResult of rightResults) {
+                if (rightResult.progress !== Progress.Failed) {
+                    results.push({
+                        parser: rightResult.parser,
+                        context: rightResult.context,
+                        parse: leftResult.parse + rightResult.parse,
+                        progress: rightResult.progress,
+                        suggestions: rightResult.suggestions,
+                    });
                 }
-            },
-            inst_o: function (s: any) {
-                Utils.error('osc', s);
-            },
-            inst_x: (flag: string) => {
-                Utils.log('flag', flag);
-                this.buffer.write(flag);
-            },
-            inst_c: (collected: any, params: Array<number>, flag: string) => {
-                Utils.log('csi', collected, params, flag);
-
-                switch (flag) {
-                    case CSI.flag.selectGraphicRendition:
-                        if (params.length == 0) {
-                            this.buffer.setAttributes(CGR[0]);
-                            return;
-                        }
-
-                        while (params.length) {
-                            var cgr = params.shift();
-
-                            var attributeToSet = CGR[cgr];
-
-                            if (!attributeToSet) {
-                                Utils.error('cgr', cgr, params);
-                            } else if (isSetColorExtended(attributeToSet)) {
-                                var next = params.shift();
-                                if (next == 5) {
-                                    var colorIndex = params.shift();
-                                    this.buffer.setAttributes({[<string>attributeToSet]: e.ColorIndex[colorIndex]});
-                                } else {
-                                    Utils.error('cgr', cgr, next, params);
-                                }
-                            } else if (attributeToSet == 'negative'){
-                                var attributes = this.buffer.getAttributes();
-
-                                this.buffer.setAttributes({
-                                    'background-color': attributes.color,
-                                    'color': attributes['background-color']
-                                });
-                            } else {
-                                this.buffer.setAttributes(attributeToSet);
-                            }
-                        }
-                        break;
-                    case CSI.flag.cursorPosition:
-                        this.buffer.moveCursorAbsolute({vertical: params[0], horizontal: params[1]});
-                        break;
-                    case CSI.flag.eraseDisplay:
-                        switch (params[0]) {
-                            case CSI.erase.entire:
-                                this.buffer.clear();
-                                break;
-                            case CSI.erase.toEnd:
-                            case undefined:
-                                this.buffer.clearToEnd();
-                                break;
-                            case CSI.erase.toBeginning:
-                                this.buffer.clearToBeginning();
-                                break;
-                        }
-                        break;
-
-                    case 'c':
-                        this.invocation.write('\x1b>1;2;');
-                        break;
-                    case CSI.flag.eraseInLine:
-                        switch (params[0]) {
-                            case CSI.erase.entire:
-                                this.buffer.clearRow();
-                                break;
-                            case CSI.erase.toEnd:
-                            case undefined:
-                                this.buffer.clearRowToEnd();
-                                break;
-                            case CSI.erase.toBeginning:
-                                this.buffer.clearRowToBeginning();
-                                break;
-                        }
-                        break;
-                    case CSI.flag.setMode:
-                        if (collected != DECPrivateMode) {
-                            return console.error('Private mode sequence should start with a ?. Started with', collected);
-                        }
-
-                        if (params.length != 1) {
-                            return console.error('CSI mode has multiple arguments:', params);
-                        }
-
-                        switch (params[0]) {
-                            case CSI.mode.blinkingCursor:
-                                this.buffer.blinkCursor(true);
-                                break;
-                            case CSI.mode.cursor:
-                                this.buffer.showCursor(true);
-                                break;
-                            case CSI.mode.alternateScreen:
-                                Utils.log('Switching to an alternate screen.');
-                                this.buffer.activeBuffer = 'alternate';
-                                break;
-                            case CSI.mode.bracketedPaste:
-                                Utils.log('Enabling bracketed paste');
-                                break;
-                            default:
-                                Utils.error('Unknown CSI mode:', params[0]);
-                        }
-                        break;
-                    case CSI.flag.resetMode:
-                        if (collected != DECPrivateMode) {
-                            return console.error('Private mode sequence should start with a ?. Started with', collected);
-                        }
-
-                        if (params.length != 1) {
-                            return console.error('CSI mode has multiple arguments:', params);
-                        }
-
-                        switch (params[0]) {
-                            case CSI.mode.blinkingCursor:
-                                this.buffer.blinkCursor(false);
-                                break;
-                            case CSI.mode.cursor:
-                                this.buffer.showCursor(false);
-                                break;
-                            default:
-                                Utils.error('Unknown CSI reset:', params[0]);
-                        }
-                        break;
-                    default:
-                        Utils.error('csi', collected, params, flag);
-                }
-            },
-            inst_e: function (collected: any, flag: any) {
-                Utils.error('esc', collected, flag);
             }
-        });
+        } else {
+            if (leftResult.progress !== Progress.Failed) {
+                results.push(leftResult);
+            }
+        }
     }
-}
 
-export = Parser;
+    return results;
+};
+
+export const sequence = (left: Parser, right: Parser) => bind(left, async () => right);
+
+export const choice = (parsers: Parser[]) => async (context: Context): Promise<Array<Result>> => {
+    const results: Result[] = [];
+
+    for (const parser of parsers) {
+        const parserResults = await parser(context);
+
+        for (const result of parserResults) {
+            if (result.progress !== Progress.Failed) {
+                results.push(result);
+            }
+        }
+    }
+
+    return results;
+};
+
+export const many1 = (parser: Parser): Parser => choice([parser, bind(parser, async () => many1(parser))]);
+
+export const decorate = (parser: Parser, decorator: (s: Suggestion) => Suggestion) => async (context: Context): Promise<Array<Result>> => {
+    const results = await parser(context);
+
+    return results.map(result => ({
+        parser: decorate(result.parser, decorator),
+        context: result.context,
+        parse: result.parse,
+        progress: result.progress,
+        suggestions: result.suggestions.map(decorator),
+    }));
+};
+
+export const decorateResult = (parser: Parser, decorator: (c: Result) => Result) => async (context: Context): Promise<Array<Result>> => {
+    return (await parser(context)).map(decorator);
+};
+
+export const withoutSuggestions = (parser: Parser) => decorateResult(parser, result => Object.assign({}, result, {suggestions: []}));
+export const optional = (parser: Parser) => choice([withoutSuggestions(string("")), parser]);
+export const many = compose(many1, optional);
+
+/**
+ * Display suggestions only if a person has already input at least one character of the expected value.
+ * Used to display easy and popular suggestions, which would add noise to the autocompletion box.
+ *
+ * @example cd ../
+ * @example cd -
+ */
+export const noisySuggestions = (parser: Parser) => decorateResult(
+    parser,
+    result => Object.assign(
+        {},
+        result,
+        {
+            suggestions: (result.progress !== Progress.OnStart && result.progress !== Progress.Failed) ? result.suggestions : [],
+        }
+    )
+);
+export const spacesWithoutSuggestion = withoutSuggestions(many1(string(" ")));
+
+export const runtime = (producer: (context: Context) => Promise<Parser>) => async (context: Context): Promise<Array<Result>> => {
+    const parser = await producer(context);
+    return parser(context);
+};
+
+export const optionalContinuation = (parser: Parser) => optional(sequence(spacesWithoutSuggestion, parser));
+export const append = (suffix: string, parser: Parser) => decorate(sequence(parser, withoutSuggestions(string(suffix))), suggestion => suggestion.withValue(suggestion.value + suffix));
+export const token = (parser: Parser) => decorate(sequence(parser, spacesWithoutSuggestion), suggestion => suggestion.withValue(suggestion.value + " "));
+export const executable = (name: string) => decorate(token(string(name)), style(styles.executable));
+export const commandSwitch = (value: string) => decorate(string(`--${value}`), style(styles.option));
+export const option = (value: string) => decorate(string(`--${value}=`), style(styles.option));
+
+export const debug = (parser: Parser, tag = "debugged") => async (context: Context) => {
+    window.DEBUG = true;
+
+    const results = await decorate(parser, suggestion => suggestion.withDebugTag(tag))(context);
+
+    if (_.some(results, result => result.suggestions.length !== 0)) {
+        /* tslint:disable:no-debugger */
+        debugger;
+    }
+
+    return results;
+};

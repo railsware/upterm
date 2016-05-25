@@ -1,70 +1,53 @@
-import events = require('events');
-import Autocompletion = require('./Autocompletion');
-import Buffer = require('./Buffer');
-import Aliases = require('./Aliases');
-import History = require('./History');
-import _ = require('lodash');
-import i = require('./Interfaces');
-import ParsableString = require('./ParsableString');
+import * as events from "events";
+import {History, HistoryEntry} from "./History";
+import * as _ from "lodash";
+import {expandAliases, expandHistory, lex} from "./CommandExpander";
+import Job from "./Job";
 
-class Prompt extends events.EventEmitter {
-    buffer: Buffer;
-    // TODO: change the type.
-    history: any;
-    private autocompletion = new Autocompletion();
-    private commandParts: string[];
+export default class Prompt extends events.EventEmitter {
+    private _value = "";
+    private _expanded: string[];
+    private _lexemes: string[];
+    private _historyExpanded: string[];
 
-    constructor(private directory: string) {
+    constructor(private job: Job) {
         super();
-
-        this.buffer = new Buffer();
-        this.buffer.on('data', () => { this.commandParts = this.toParsableString().expandToArray(); });
-        this.history = History;
     }
 
     execute(): void {
-        this.history.append(this.buffer.toString());
-        this.emit('send');
+        History.add(new HistoryEntry(this.value, this._historyExpanded));
+        this.job.execute();
     }
 
-    getCommandName(): string {
-        return this.getWholeCommand()[0];
+    get value(): string {
+        return this._value;
     }
 
-    getArguments(): string[] {
-        return this.getWholeCommand().slice(1);
+    async setValue(value: string): Promise<void> {
+        this._value = value;
+
+        this._lexemes = lex(this.value);
+        this._historyExpanded = expandHistory(this._lexemes);
+        this._expanded = await expandAliases(this._historyExpanded);
     }
 
-    getLastArgument(): string {
-        return this.getWholeCommand().slice(-1)[0] || '';
+    get commandName(): string {
+        return this.expanded[0];
     }
 
-    getWholeCommand(): string[] {
-        return this.commandParts;
+    get arguments(): string[] {
+        return this.expanded.slice(1);
     }
 
-    getSuggestions(): Promise<i.Suggestion[]> {
-        return this.autocompletion.getSuggestions(this)
+    get expanded(): string[] {
+        return this._expanded;
     }
 
-    getCWD(): string {
-        return this.directory;
+    get lexemes(): string[] {
+        return this._lexemes;
     }
 
-    getBuffer(): Buffer {
-        return this.buffer;
-    }
-
-    replaceCurrentLexeme(suggestion: i.Suggestion): void {
-        var lexemes = this.toParsableString().getLexemes();
-        lexemes[lexemes.length - 1] = `${suggestion.prefix || ""}${suggestion.value}`;
-
-        this.buffer.setTo(lexemes.join(' '));
-    }
-
-    toParsableString(): ParsableString {
-        return new ParsableString(this.buffer.toString());
+    get lastLexeme(): string {
+        return _.last(this.lexemes) || "";
     }
 }
-
-export = Prompt;

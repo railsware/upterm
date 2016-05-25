@@ -1,60 +1,49 @@
-import e = require('./Enums');
-import fs = require('fs');
-import Prompt = require("./Prompt");
-
-export interface Dimensions {
-    columns: number;
-    rows: number;
-}
+import {Color, Weight, Brightness} from "./Enums";
+import {Stats} from "fs";
+import {ReactElement} from "react";
+import Job from "./Job";
+import Session from "./Session";
+import {Suggestion} from "./plugins/autocompletion_providers/Suggestions";
 
 export interface Attributes {
-    color?: e.Color;
-    'background-color'?: e.Color;
-    weight?: e.Weight;
+    inverse?: boolean;
+    color?: Color;
+    backgroundColor?: Color;
+    brightness?: Brightness;
+    weight?: Weight;
     underline?: boolean;
     crossedOut?: boolean;
     blinking?: boolean;
+    cursor?: boolean;
 }
 
-export interface Advancement {
-    vertical?: number;
-    horizontal?: number;
-}
-
-export interface Position {
-    column: number;
-    row: number;
-}
-
+// FIXME: rename to contributor.
 export interface AutocompletionProvider {
-    getSuggestions(prompt: Prompt): Promise<Suggestion[]>;
-}
-
-export interface Suggestion {
-    value: string;
-    score: number;
-    synopsis: string;
-    description: string;
-    type: string;
-    partial?: boolean;
-    prefix?: string;
-}
-
-export interface Parsable {
-    getLexemes: () => string[];
-    getLastLexeme: () => string;
-    getText: () => string;
-    parse: () => void;
-    onParsingError: Function;
-}
-
-export interface VcsData {
-    isRepository: boolean;
-    branch?: string;
-    status?: string;
+    forCommand?: string;
+    getSuggestions(job: Job): Promise<Suggestion[]>;
 }
 
 export interface FileInfo {
     name: string;
-    stat: fs.Stats;
+    stat: Stats;
+}
+
+export interface OutputDecorator {
+    isApplicable: (job: Job) => boolean;
+    decorate: (job: Job) => ReactElement<any>;
+
+    /**
+     * @note Setting this property to `true` will result in rendering performance
+     *       decrease because the output will be re-decorated after each data chunk.
+     */
+    shouldDecorateRunningPrograms?: boolean;
+}
+
+export interface EnvironmentObserverPlugin {
+    currentWorkingDirectoryWillChange: (session: Session, directory: string) => void;
+    currentWorkingDirectoryDidChange: (session: Session, directory: string) => void;
+}
+
+export interface PreexecPlugin {
+    (job: Job): Promise<void>;
 }

@@ -1,0 +1,7 @@
+machine:
+  node:
+    version: 6.1.0
+test:
+  post:
+    - "npm run lint"
+    - "npm run integration-test"

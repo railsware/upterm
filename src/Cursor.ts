@@ -1,64 +1,56 @@
-import i = require('./Interfaces');
+export default class Cursor {
+    private _show = false;
+    private _blink = false;
 
-class Cursor {
-    private show = false;
-    private blink = false;
-
-    constructor(private position: i.Position = {column: 0, row: 0}) {
+    constructor(private position: RowColumn = { row: 0, column: 0 }) {
     }
 
-    moveAbsolute(advancement: i.Advancement): Cursor {
-        if (typeof advancement.horizontal != 'undefined') {
-            this.position.column = advancement.horizontal;
+    moveAbsolute(position: PartialRowColumn, homePosition: PartialRowColumn): this {
+        if (typeof position.column === "number") {
+            this.position.column = position.column + homePosition.column;
         }
 
-        if (typeof advancement.vertical != 'undefined') {
-            this.position.row = advancement.vertical;
+        if (typeof position.row === "number") {
+            this.position.row = position.row + homePosition.row;
         }
 
         return this;
     }
 
-    moveRelative(advancement: i.Advancement): Cursor {
-        this.moveAbsolute({
-            vertical: this.row() + (advancement.vertical || 0),
-            horizontal: this.column() + (advancement.horizontal || 0)
-        });
+    moveRelative(advancement: Advancement): this {
+        const row = Math.max(0, this.row + (advancement.vertical || 0));
+        const column = Math.max(0, this.column + (advancement.horizontal || 0));
+
+        this.moveAbsolute({ row: row, column: column }, { column: 0, row: 0 });
 
         return this;
     }
 
-    next(): void {
-        this.moveRelative({horizontal: 1});
-    }
-
-    getPosition(): i.Position {
+    getPosition(): RowColumn {
         return this.position;
     }
 
-    column(): number {
+    get column(): number {
         return this.position.column;
     }
 
-    row(): number {
+    get row(): number {
         return this.position.row;
     }
 
-    getShow(): boolean {
-        return this.show;
+    get blink(): boolean {
+        return this._blink;
     }
 
-    getBlink(): boolean {
-        return this.blink;
+    set blink(value: boolean) {
+        this._blink = value;
     }
 
-    setShow(state: boolean): void {
-        this.show = state;
+    get show(): boolean {
+        return this._show;
     }
 
-    setBlink(state: boolean): void {
-        this.blink = state;
+    set show(value: boolean) {
+        this._show = value;
     }
 }
-
-export = Cursor;

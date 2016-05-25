@@ -1,32 +1,35 @@
-import pty = require('pty.js');
-import _ = require('lodash')
+import {executeCommandWithShellConfig} from "./PTY";
+import {memoize} from "./Decorators";
 
-class Aliases {
-    static aliases: _.Dictionary<string>;
-
-    static initialize(): void {
-        this.aliases = {};
-        this.importAliasesFrom('zsh');
+export default class Aliases {
+    static async find(alias: string): Promise<string> {
+        return (await this.all())[alias];
     }
 
-    static find(alias: string): string {
-        return this.aliases[alias];
-    }
+    @memoize()
+    static async all(): Promise<Dictionary<string>> {
+        const lines = await executeCommandWithShellConfig("alias");
 
-    static importAliasesFrom(shellName: string): void {
-        var zsh = pty.spawn(shellName, ['-i', '-c', 'alias'], {env: process.env});
+        return lines.reduce(
+            (accumulator: Dictionary<string>, aliasLine: string) => {
+                let [short, long] = aliasLine.split("=");
 
-        var aliases = '';
-        zsh.stdout.on('data', (text: string) => aliases += text.toString());
-        zsh.on('exit', () => {
-            aliases.split('\n').forEach((alias: string) => {
-                var split = alias.split('=');
-                this.aliases[split[0]] = /'?([^']*)'?/.exec(split[1])[1];
-            });
-        });
+                if (short && long) {
+                    const nameCapture = /(alias )?(.*)/.exec(short);
+                    const valueCapture = /'?([^']*)'?/.exec(long);
+
+                    if (nameCapture && valueCapture) {
+                        accumulator[nameCapture[2]] = valueCapture[1];
+                    } else {
+                        throw `Alias line is incorrect: ${aliasLine}`;
+                    }
+                } else {
+                    throw `Can't parse alias line: ${aliasLine}`;
+                }
+
+                return accumulator;
+            },
+            <Dictionary<string>>{}
+        );
     }
 }
-
-Aliases.initialize();
-
-export = Aliases;

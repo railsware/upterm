@@ -1,9 +1,7 @@
 /node_modules/
-/bower_components/
 /compiled/*
 /tmp/*
 /npm-debug.log
-/src/tsconfig.json
 /Black Screen.app/
 
 # Created by https://www.gitignore.io/api/osx
@@ -34,3 +32,6 @@ Icon
 Network Trash Folder
 Temporary Items
 .apdisk
+
+# Directory created by Visual Studio Code
+.vscode

@@ -1,250 +1,254 @@
-import events = require('events');
-import Char = require('./Char');
-import Cursor = require('./Cursor');
-import React = require('react');
-import i = require('./Interfaces');
-import e = require('./Enums');
-import _ = require('lodash');
-import Utils = require("./Utils");
-import {memoize} from "./Decorators";
+import * as events from "events";
+import Char, {attributesFlyweight} from "./Char";
+import Cursor from "./Cursor";
+import * as i from "./Interfaces";
+import * as e from "./Enums";
+import {List} from "immutable";
+import {error, times} from "./utils/Common";
+import {remote} from "electron";
 
-class Buffer extends events.EventEmitter {
-    private storage: Array<Array<Char>> = [];
+export default class Buffer extends events.EventEmitter {
+    public static hugeOutputThreshold = 300;
     public cursor: Cursor = new Cursor();
-    public activeBuffer = 'standard';
-    private attributes: i.Attributes = {color: e.Color.White, weight: e.Weight.Normal};
+    public activeBuffer = e.Buffer.Standard;
+    private storage = List<List<Char>>();
+    private _attributes: i.Attributes = {color: e.Color.White, weight: e.Weight.Normal};
+    private isOriginModeSet = false;
+    private _margins: Margins = {top: 0, left: 0};
 
-    constructor() {
+    constructor(private _dimensions: Dimensions) {
         super();
     }
 
-    @memoize((row: Array<Char>, index: number, cursor: Cursor): any[] => {
-        var key: any[] = [row, index];
-
-        if (cursor.getPosition().row == index) {
-            key = key.concat([cursor.getPosition(), cursor.getBlink(), cursor.getShow()]);
-        }
-
-        return key;
-    })
-    renderRow(row: Array<Char>, index: number, cursor: Cursor): any {
-        var consecutive: Array<any> = [];
-        var current = {attributes: <i.Attributes>null, text: ''};
-        var cursorPosition = cursor.getPosition();
-
-        if (index == cursorPosition.row && this.cursor.getShow()) {
-            var rowWithCursor: Char[] = [];
-
-            for (var i = 0; i != row.length; ++i) {
-                var old = row[i];
-                if (old) {
-                    rowWithCursor[i] = Char.flyweight(old.toString(), old.getAttributes());
-                }
-            }
-            // TODO: change accordingly to the theme background color.
-            var cursorAttributes = {'background-color': e.Color.White, color: e.Color.Black};
-
-            if (rowWithCursor[cursorPosition.column]) {
-                var char = rowWithCursor[cursorPosition.column];
-                var newChar = Char.flyweight(char.toString(), _.merge(char.getAttributes(), cursorAttributes));
-            } else {
-                newChar = Char.flyweight(' ', cursorAttributes);
-            }
-
-            rowWithCursor[cursorPosition.column] = newChar;
-        } else {
-            rowWithCursor = row;
-        }
-
-        // Foreach "merges" consecutive undefined.
-        for (var i = 0, l = rowWithCursor.length; i != l; i++) {
-            var element = rowWithCursor[i];
-
-            if (element) {
-                var attributes = element.getAttributes();
-                var value = element.toString();
-            } else {
-                attributes = {};
-                value = ' ';
-            }
-
-            if (_.isEqual(attributes, current.attributes)) {
-                current.text += value;
-                current.attributes = attributes;
-            } else {
-                consecutive.push(current);
-                current = {attributes: attributes, text: value};
-            }
-        }
-
-        consecutive.push(current);
-
-        var children = consecutive.map((group, groupIndex) =>
-                React.createElement(
-                    'span',
-                    _.merge(this.getHTMLAttributes(group.attributes), {key: `group-${groupIndex}`}),
-                    group.text
-                )
-        );
-
-        return React.createElement('div', {className: 'row', key: `row-${index}`}, null, ...children);
-    }
-
-    writeString(string: string, attributes = this.attributes): void {
-        for (var i = 0; i != string.length; ++i) {
-            this.write(string.charAt(i), attributes);
+    writeMany(value: string): void {
+        for (let i = 0; i !== value.length; ++i) {
+            this.writeOne(value.charAt(i));
         }
     }
 
-    setTo(string: string, attributes = this.attributes): void {
-        this.clear();
-        this.writeString(string, attributes)
-    }
+    writeOne(char: string): void {
+        const charObject = Char.flyweight(char, this.attributes);
 
-    write(raw: string, attributes = this.attributes): void {
-        var char = Char.flyweight(raw, this.getAttributes());
-
-        if (char.isSpecial()) {
-            switch (char.getCharCode()) {
-                case e.CharCode.Bell:
-                    if ((<any>window)['DEBUG']) {
-                        var audio = new Audio("data:audio/wav;base64,//uQRAAAAWMSLwUIYAAsYkXgoQwAEaYLWfkWgAI0wWs/ItAAAGDgYtAgAyN+QWaAAihwMWm4G8QQRDiMcCBcH3Cc+CDv/7xA4Tvh9Rz/y8QADBwMWgQAZG/ILNAARQ4GLTcDeIIIhxGOBAuD7hOfBB3/94gcJ3w+o5/5eIAIAAAVwWgQAVQ2ORaIQwEMAJiDg95G4nQL7mQVWI6GwRcfsZAcsKkJvxgxEjzFUgfHoSQ9Qq7KNwqHwuB13MA4a1q/DmBrHgPcmjiGoh//EwC5nGPEmS4RcfkVKOhJf+WOgoxJclFz3kgn//dBA+ya1GhurNn8zb//9NNutNuhz31f////9vt///z+IdAEAAAK4LQIAKobHItEIYCGAExBwe8jcToF9zIKrEdDYIuP2MgOWFSE34wYiR5iqQPj0JIeoVdlG4VD4XA67mAcNa1fhzA1jwHuTRxDUQ//iYBczjHiTJcIuPyKlHQkv/LHQUYkuSi57yQT//uggfZNajQ3Vmz+Zt//+mm3Wm3Q576v////+32///5/EOgAAADVghQAAAAA//uQZAUAB1WI0PZugAAAAAoQwAAAEk3nRd2qAAAAACiDgAAAAAAABCqEEQRLCgwpBGMlJkIz8jKhGvj4k6jzRnqasNKIeoh5gI7BJaC1A1AoNBjJgbyApVS4IDlZgDU5WUAxEKDNmmALHzZp0Fkz1FMTmGFl1FMEyodIavcCAUHDWrKAIA4aa2oCgILEBupZgHvAhEBcZ6joQBxS76AgccrFlczBvKLC0QI2cBoCFvfTDAo7eoOQInqDPBtvrDEZBNYN5xwNwxQRfw8ZQ5wQVLvO8OYU+mHvFLlDh05Mdg7BT6YrRPpCBznMB2r//xKJjyyOh+cImr2/4doscwD6neZjuZR4AgAABYAAAABy1xcdQtxYBYYZdifkUDgzzXaXn98Z0oi9ILU5mBjFANmRwlVJ3/6jYDAmxaiDG3/6xjQQCCKkRb/6kg/wW+kSJ5//rLobkLSiKmqP/0ikJuDaSaSf/6JiLYLEYnW/+kXg1WRVJL/9EmQ1YZIsv/6Qzwy5qk7/+tEU0nkls3/zIUMPKNX/6yZLf+kFgAfgGyLFAUwY//uQZAUABcd5UiNPVXAAAApAAAAAE0VZQKw9ISAAACgAAAAAVQIygIElVrFkBS+Jhi+EAuu+lKAkYUEIsmEAEoMeDmCETMvfSHTGkF5RWH7kz/ESHWPAq/kcCRhqBtMdokPdM7vil7RG98A2sc7zO6ZvTdM7pmOUAZTnJW+NXxqmd41dqJ6mLTXxrPpnV8avaIf5SvL7pndPvPpndJR9Kuu8fePvuiuhorgWjp7Mf/PRjxcFCPDkW31srioCExivv9lcwKEaHsf/7ow2Fl1T/9RkXgEhYElAoCLFtMArxwivDJJ+bR1HTKJdlEoTELCIqgEwVGSQ+hIm0NbK8WXcTEI0UPoa2NbG4y2K00JEWbZavJXkYaqo9CRHS55FcZTjKEk3NKoCYUnSQ0rWxrZbFKbKIhOKPZe1cJKzZSaQrIyULHDZmV5K4xySsDRKWOruanGtjLJXFEmwaIbDLX0hIPBUQPVFVkQkDoUNfSoDgQGKPekoxeGzA4DUvnn4bxzcZrtJyipKfPNy5w+9lnXwgqsiyHNeSVpemw4bWb9psYeq//uQZBoABQt4yMVxYAIAAAkQoAAAHvYpL5m6AAgAACXDAAAAD59jblTirQe9upFsmZbpMudy7Lz1X1DYsxOOSWpfPqNX2WqktK0DMvuGwlbNj44TleLPQ+Gsfb+GOWOKJoIrWb3cIMeeON6lz2umTqMXV8Mj30yWPpjoSa9ujK8SyeJP5y5mOW1D6hvLepeveEAEDo0mgCRClOEgANv3B9a6fikgUSu/DmAMATrGx7nng5p5iimPNZsfQLYB2sDLIkzRKZOHGAaUyDcpFBSLG9MCQALgAIgQs2YunOszLSAyQYPVC2YdGGeHD2dTdJk1pAHGAWDjnkcLKFymS3RQZTInzySoBwMG0QueC3gMsCEYxUqlrcxK6k1LQQcsmyYeQPdC2YfuGPASCBkcVMQQqpVJshui1tkXQJQV0OXGAZMXSOEEBRirXbVRQW7ugq7IM7rPWSZyDlM3IuNEkxzCOJ0ny2ThNkyRai1b6ev//3dzNGzNb//4uAvHT5sURcZCFcuKLhOFs8mLAAEAt4UWAAIABAAAAAB4qbHo0tIjVkUU//uQZAwABfSFz3ZqQAAAAAngwAAAE1HjMp2qAAAAACZDgAAAD5UkTE1UgZEUExqYynN1qZvqIOREEFmBcJQkwdxiFtw0qEOkGYfRDifBui9MQg4QAHAqWtAWHoCxu1Yf4VfWLPIM2mHDFsbQEVGwyqQoQcwnfHeIkNt9YnkiaS1oizycqJrx4KOQjahZxWbcZgztj2c49nKmkId44S71j0c8eV9yDK6uPRzx5X18eDvjvQ6yKo9ZSS6l//8elePK/Lf//IInrOF/FvDoADYAGBMGb7FtErm5MXMlmPAJQVgWta7Zx2go+8xJ0UiCb8LHHdftWyLJE0QIAIsI+UbXu67dZMjmgDGCGl1H+vpF4NSDckSIkk7Vd+sxEhBQMRU8j/12UIRhzSaUdQ+rQU5kGeFxm+hb1oh6pWWmv3uvmReDl0UnvtapVaIzo1jZbf/pD6ElLqSX+rUmOQNpJFa/r+sa4e/pBlAABoAAAAA3CUgShLdGIxsY7AUABPRrgCABdDuQ5GC7DqPQCgbbJUAoRSUj+NIEig0YfyWUho1VBBBA//uQZB4ABZx5zfMakeAAAAmwAAAAF5F3P0w9GtAAACfAAAAAwLhMDmAYWMgVEG1U0FIGCBgXBXAtfMH10000EEEEEECUBYln03TTTdNBDZopopYvrTTdNa325mImNg3TTPV9q3pmY0xoO6bv3r00y+IDGid/9aaaZTGMuj9mpu9Mpio1dXrr5HERTZSmqU36A3CumzN/9Robv/Xx4v9ijkSRSNLQhAWumap82WRSBUqXStV/YcS+XVLnSS+WLDroqArFkMEsAS+eWmrUzrO0oEmE40RlMZ5+ODIkAyKAGUwZ3mVKmcamcJnMW26MRPgUw6j+LkhyHGVGYjSUUKNpuJUQoOIAyDvEyG8S5yfK6dhZc0Tx1KI/gviKL6qvvFs1+bWtaz58uUNnryq6kt5RzOCkPWlVqVX2a/EEBUdU1KrXLf40GoiiFXK///qpoiDXrOgqDR38JB0bw7SoL+ZB9o1RCkQjQ2CBYZKd/+VJxZRRZlqSkKiws0WFxUyCwsKiMy7hUVFhIaCrNQsKkTIsLivwKKigsj8XYlwt/WKi2N4d//uQRCSAAjURNIHpMZBGYiaQPSYyAAABLAAAAAAAACWAAAAApUF/Mg+0aohSIRobBAsMlO//Kk4soosy1JSFRYWaLC4qZBYWFRGZdwqKiwkNBVmoWFSJkWFxX4FFRQWR+LsS4W/rFRb/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////VEFHAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAU291bmRib3kuZGUAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAMjAwNGh0dHA6Ly93d3cuc291bmRib3kuZGUAAAAAAAAAACU=");
-                        audio.play();
+        if (charObject.isSpecial()) {
+            switch (charObject.keyCode) {
+                case e.KeyCode.Bell:
+                    remote.shell.beep();
+                    break;
+                case e.KeyCode.Backspace:
+                    this.moveCursorRelative({horizontal: -1});
+                    break;
+                case e.KeyCode.Tab:
+                    this.moveCursorAbsolute({column: Math.floor((this.cursor.column + 8) / 8) * 8});
+                    break;
+                case e.KeyCode.NewLine:
+                    if (this.cursor.row === this._margins.bottom) {
+                        this.scrollDown(1);
+                    } else {
+                        this.moveCursorRelative({vertical: 1}).moveCursorAbsolute({column: 0});
                     }
 
-                    Utils.log('bell');
                     break;
-                case e.CharCode.NewLine:
-                    this.cursor.moveRelative({vertical: 1}).moveAbsolute({horizontal: 0});
-                    break;
-                case e.CharCode.CarriageReturn:
-                    this.cursor.moveAbsolute({horizontal: 0});
+                case e.KeyCode.CarriageReturn:
+                    this.moveCursorAbsolute({column: 0});
                     break;
                 default:
-                    Utils.error(`Couldn't write a special char '${char}' with char code ${char.toString().charCodeAt(0)}.`);
+                    error(`Couldn"t write a special char "${charObject}" with char code ${charObject.toString().charCodeAt(0)}.`);
             }
         } else {
-            this.set(this.cursor.getPosition(), char);
-            this.cursor.next();
+            this.set(this.cursorPosition, charObject);
+            this.moveCursorRelative({horizontal: 1});
         }
-
-        this.emit('data');
+        this.emitData();
     }
 
-    getAttributes(): i.Attributes {
-        return _.clone(this.attributes);
+    scrollUp(count: number, addAtLine: number) {
+        this.storage = this.storage.splice(this._margins.bottom - count + 1, count).toList();
+        times(count, () => this.storage = this.storage.splice(addAtLine, 0, undefined).toList());
+    }
+
+    scrollDown(count: number, deletedLine = this._margins.top) {
+        times(count, () => this.storage = this.storage.splice(this._margins.bottom + 1, 0, undefined).toList());
+        this.storage = this.storage.splice(deletedLine, count).toList();
+    }
+
+    get attributes(): i.Attributes {
+        return this._attributes;
     }
 
     setAttributes(attributes: i.Attributes): void {
-        this.attributes = _.merge(this.attributes, attributes);
+        this._attributes = attributesFlyweight(Object.assign({}, this._attributes, attributes));
     }
 
-    toString(): string {
-        return this.toLines().join('\n');
+    toRenderable(fromStorage = this.storage): List<List<Char>> {
+        let storage = fromStorage;
+
+        if (this.cursor.show || this.cursor.blink) {
+            const coordinates = [this.cursorPosition.row, this.cursorPosition.column];
+
+            if (!storage.get(this.cursorPosition.row)) {
+                storage = storage.set(this.cursorPosition.row, List<Char>(Array(this.cursorPosition.column).fill(Char.empty)));
+            }
+
+            if (!storage.getIn(coordinates)) {
+                storage = storage.setIn(coordinates, Char.empty);
+            }
+
+            let char: Char = storage.getIn(coordinates);
+            storage = storage.setIn(
+                coordinates,
+                Char.flyweight(char.toString(), Object.assign({}, char.attributes, {cursor: true}))
+            );
+        }
+
+        return storage;
+    }
+
+    toCutRenderable(): List<List<Char>> {
+        return this.toRenderable(<List<List<Char>>>(this.storage.takeLast(Buffer.hugeOutputThreshold)));
     }
 
     toLines(): string[] {
-        return this.storage.map((row) => {
-            return row.map((char) => {
-                return char.toString();
-            }).join('')
-        });
+        return this.storage.map(row => row.map(char => char.toString()).join("")).toArray();
     }
 
-    map<R>(callback: (row: Array<Char>, index: number) => R): R[] {
-        return this.storage.map(callback);
+    toString(): string {
+        return this.toLines().join("\n");
     }
 
     showCursor(state: boolean): void {
-        this.cursor.setShow(state);
+        this.ensureRowExists(this.cursor.row);
+        this.cursor.show = state;
+        this.emitData();
     }
 
     blinkCursor(state: boolean): void {
-        this.cursor.setBlink(state);
+        this.ensureRowExists(this.cursor.row);
+        this.cursor.blink = state;
+        this.emitData();
     }
 
-    moveCursorAbsolute(position: i.Advancement) {
-        this.cursor.moveAbsolute(position);
-        this.emit('data'); // Otherwise the view won't re-render on space in vim.
+    moveCursorRelative(position: Advancement): this {
+        this.cursor.moveRelative(position);
+        this.ensureRowExists(this.cursor.row);
+        this.emitData();
+
+        return this;
+    }
+
+    moveCursorAbsolute(position: PartialRowColumn): this {
+        this.cursor.moveAbsolute(position, this.homePosition);
+        this.ensureRowExists(this.cursor.row);
+        this.emitData();
+
+        return this;
+    }
+
+    eraseRight(n: number) {
+        if (this.storage.get(this.cursorPosition.row)) {
+            this.storage = this.storage.update(
+                this.cursorPosition.row,
+                List<Char>(),
+                (row: List<Char>) => row.take(this.cursorPosition.column)
+                    .concat(Array(n).fill(Char.empty), row.skip(this.cursorPosition.column + n))
+                    .toList()
+            );
+        }
+        this.emitData();
     }
 
     clearRow() {
-        var cursorPosition = this.cursor.getPosition();
-        this.storage[cursorPosition.row] = null;
+        this.storage = this.storage.set(this.cursorPosition.row, List<Char>());
+        this.emitData();
     }
 
     clearRowToEnd() {
-        var cursorPosition = this.cursor.getPosition();
-        var row = this.storage[cursorPosition.row];
-
-        if (row) {
-            row.splice(cursorPosition.column, Number.MAX_VALUE);
+        if (this.storage.get(this.cursorPosition.row)) {
+            this.storage = this.storage.update(
+                this.cursorPosition.row,
+                List<Char>(),
+                (row: List<Char>) => row.take(this.cursorPosition.column).toList()
+            );
         }
+        this.emitData();
     }
 
     clearRowToBeginning() {
-        var cursorPosition = this.cursor.getPosition();
-        var row = this.storage[cursorPosition.row];
-
-        if (row) {
-            row.splice(0, cursorPosition.column - 1);
+        if (this.storage.get(this.cursorPosition.row)) {
+            const replacement = Array(this.cursorPosition.column).fill(Char.empty);
+            this.storage = this.storage.update(
+                this.cursorPosition.row,
+                row => row.splice(0, this.cursorPosition.column + 1, ...replacement).toList());
         }
+        this.emitData();
     }
 
     clear() {
-        this.storage = [];
-        this.cursor.moveAbsolute({horizontal: 0, vertical: 0});
+        this.storage = List<List<Char>>();
+        this.moveCursorAbsolute({row: 0, column: 0});
     }
 
     clearToBeginning() {
-        var cursorPosition = this.cursor.getPosition();
         this.clearRowToBeginning();
-        this.storage.splice(0, cursorPosition.row - 1);
+        const replacement = Array(this.cursorPosition.row);
+
+        this.storage = this.storage.splice(0, this.cursorPosition.row, ...replacement).toList();
+        this.emitData();
     }
 
     clearToEnd() {
-        var cursorPosition = this.cursor.getPosition();
         this.clearRowToEnd();
-        this.storage.splice(cursorPosition.row + 1, Number.MAX_VALUE);
+        this.storage.splice(this.cursorPosition.row + 1, Number.MAX_VALUE);
+        this.emitData();
+    }
+
+    get size(): number {
+        return this.storage.size;
+    }
+
+    get cursorPosition(): RowColumn {
+        return this.cursor.getPosition();
     }
 
     isEmpty(): boolean {
-        return this.storage.length === 0;
+        return this.storage.size === 0;
     }
 
-    render() {
-        return React.createElement('pre', {className: `output ${this.activeBuffer}`}, null,
-            ...this.storage.map((row: Char[], index: number) => {
-                return this.renderRow(row, index, this.cursor);
-            })
-        );
+    set dimensions(dimensions: Dimensions) {
+        this._dimensions = dimensions;
     }
 
-    private getHTMLAttributes(attributes: i.Attributes): Object {
-        var htmlAttributes: _.Dictionary<any> = {};
-        _.each(attributes, (value, key) => {
-            htmlAttributes[`data-${key}`] = value;
-        });
-
-        return htmlAttributes;
+    set originMode(mode: boolean) {
+        this.isOriginModeSet = mode;
     }
 
-    private set(position: i.Position, char: Char): void {
-        if (!this.hasRow(position.row)) {
-            this.addRow(position.row);
+    set margins(margins: PartialMargins) {
+        this._margins = Object.assign({}, this._margins, margins);
+    }
+
+    at(position: RowColumn): Char {
+        return this.storage.getIn([position.row, position.column]);
+    }
+
+    private get homePosition(): RowColumn {
+        if (this.isOriginModeSet) {
+            return {row: this._margins.top || 0, column: this._margins.left || 0};
+        } else {
+            return {row: 0, column: 0};
         }
-
-        this.storage[position.row][position.column] = char;
     }
 
-    private addRow(row: number): void {
-        this.storage[row] = []
+    private set(position: RowColumn, char: Char): void {
+        this.ensureRowExists(position.row);
+        this.storage = this.storage.setIn([position.row, position.column], char);
     }
 
-    private hasRow(rowIndex: number): boolean {
-        var row = this.storage[rowIndex];
-        return row && (typeof row == 'object');
+    private ensureRowExists(rowNumber: number): void {
+        if (!this.storage.get(rowNumber)) {
+            this.storage = this.storage.set(rowNumber, List<Char>());
+        }
     }
+
+    private emitData() {
+        this.emit("data");
+    };
 }
-
-export = Buffer;

@@ -1,9 +1,6 @@
-/// <reference path="../node_modules/typescript/lib/lib.es6.d.ts" />
+/// <reference path="../typings/browser.d.ts" />
 
-/// <reference path="../dts/AnsiParser.d.ts" />
-/// <reference path="../dts/ObjectChange.d.ts" />
-/// <reference path="../dts/typings/node/node.d.ts" />
-/// <reference path="../dts/typings/jquery/jquery.d.ts" />
-/// <reference path="../dts/typings/lodash/lodash.d.ts" />
-/// <reference path="../dts/typings/react/react.d.ts" />
-/// <reference path="../dts/typings/pty.js/pty.js.d.ts" />
+/// <reference path="../typings/Overrides.d.ts" />
+/// <reference path="../typings/Interfaces.d.ts" />
+
+/// <reference path="../node_modules/immutable/dist/immutable.d.ts" />

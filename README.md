@@ -1,60 +1,72 @@
 [![Join the chat at https://gitter.im/shockone/black-screen](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/shockone/black-screen?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+![](https://circleci.com/gh/shockone/black-screen.png?style=shield)
 
-### What is it?
+What Is It?
+-----------
 
-Black Screen is a modern terminal emulator (and shell) based on [Electron](http://electron.atom.io/).
-As opposed to most of the terminal emulators, it exploits the capabilities of contemporary interfaces.
+Black Screen is an IDE in the world of terminals. Strictly speaking, it's both a
+terminal emulator and an *interactive* shell based on [Electron](http://electron.atom.io/).
+Also, unlike most of the emulators you can meet nowadays it uses HTML and CSS for its UI (exactly as Atom does), 
+which means we can [stop misusing unicode characters](https://github.com/vim-airline/vim-airline) 
+and make a better looking terminal with appropriate tools.
 
-![](https://dl.dropboxusercontent.com/spa/dlqheu39w0arg9q/ucvbthot.png)
+![](README/main.png)
 
-### Technologies
+###### Autocompletion
 
-* Electron
-* TypeScript
-* NodeJS
-* ReactJS
-* SASS
+Black Screen shows the autocompletion box as you type and tries to be smart about what to suggest.
+Often you can find useful additional information on the right side of the autocompletion, e.g. expanded alias value,
+history substitutions for `!!`, command descriptions, value of the previous directory (`cd -`), etc.
 
-### Installation
+###### Compatibility
 
-Note: Only OS X is currently supported, but we plan to make Black Screen work on all the major platforms.
+We aim to be compatible at least with [VT100](https://en.wikipedia.org/wiki/VT100). All the programs (emacs, ssh, vim) should work as expected.
 
-###### Download
+Installation
+------------
+
 ```bash
-git clone https://github.com/black-screen/black-screen
-```
-###### Install Dependencies
-```bash
-cd black-screen
-npm install
-```
-###### Start
-```bash
+git clone https://github.com/shockone/black-screen.git && cd black-screen
+npm i
 npm start
 ```
 
-#### Package
+To create a standalone application, execute `npm run package` in the project directory.
 
-To create a standalone application, run:
+**Note: Only OS X is currently supported, although there are good chances it will work on Linux. We plan to make Black Screen work on all the major platforms in the future.**
 
-```bash
-npm run package
-```
+Technologies
+------------
 
-### Test
+* [Electron](http://electron.atom.io/)
+* [TypeScript](http://www.typescriptlang.org/)
+* [ReactJS](https://facebook.github.io/react/)
 
-* Install [selenium-standalone](https://github.com/vvo/selenium-standalone)
-* `selenium-standalone start`
-* `npm run test`
 
-### TODO
+More Screenshots
+----------------
+
+![](README/npm_autocompletion.png)
+![](README/error.png)
+![](README/history_autocompletion.png)
+![](README/top_autocompletion.png)
+![](README/json_decorator.png)
+![](README/vim.png)
+![](README/emacs.png)
+![](README/htop.png)
+![](README/cd.png)
+
+TODO
+----
 
 You can find the list of items currently being worked on in this issue: [TODO](https://github.com/shockone/black-screen/issues/58)
 
-### Contributing
+Contributing
+------------
 
-See [contributing guide](https://github.com/shockone/black-screen/blob/master/CONTRIBUTING.md).
+See [Contributing Guide](CONTRIBUTING.md).
 
-### License
+License
+-------
 
-The MIT License.
+[The MIT License](LICENSE).

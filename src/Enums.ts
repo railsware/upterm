@@ -1,47 +1,112 @@
-import _ = require('lodash');
+import * as _ from "lodash";
 
-export enum CharCode {
+/**
+ * @link https://css-tricks.com/snippets/javascript/javascript-keycodes/
+ * @link https://lists.w3.org/Archives/Public/www-dom/2010JulSep/att-0182/keyCode-spec.html
+ */
+export enum KeyCode {
     Bell = 7,
+    Backspace = 8,
+    Tab = 9,
     NewLine = 10,
-    CarriageReturn = 13
+    CarriageReturn = 13,
+    Shift = 16,
+    Ctrl = 17,
+    Alt = 18,
+    Escape = 27,
+    Space = 32,
+    Left = 37,
+    Up = 38,
+    Right = 39,
+    Down = 40,
+    One = 49,
+    Nine = 57,
+    A = 65,
+    B = 66,
+    C = 67,
+    D = 68,
+    E = 69,
+    F = 70,
+    G = 71,
+    H = 72,
+    I = 73,
+    J = 74,
+    K = 75,
+    L = 76,
+    M = 77,
+    N = 78,
+    O = 79,
+    P = 80,
+    Q = 81,
+    R = 82,
+    S = 83,
+    T = 84,
+    U = 85,
+    V = 86,
+    W = 87,
+    X = 88,
+    Y = 89,
+    Z = 90,
+    Delete = 127,
+    Underscore = 189,
+    Period = 190,
+    VerticalBar = 220,
 }
 
-export var ColorIndex: any[] = [
-    'black', 'red', 'green', 'yellow', 'blue', 'magenta', 'cyan', 'white',
+export var colorIndex: any[] = [
+    "black", "red", "green", "yellow", "blue", "magenta", "cyan", "white",
 
-    'bright-black', 'bright-red', 'bright-green', 'bright-yellow',
-    'bright-blue', 'bright-magenta', 'bright-cyan', 'bright-white',
+    "brightBlack", "brightRed", "brightGreen", "brightYellow",
+    "brightBlue", "brightMagenta", "brightCyan", "brightWhite",
 ].concat(<Array<any>>_.range(16, 256));
 
 export enum Color {
-    Black = <Color>ColorIndex[0],
-    Red = <Color>ColorIndex[1],
-    Green = <Color>ColorIndex[2],
-    Yellow = <Color>ColorIndex[3],
-    Blue = <Color>ColorIndex[4],
-    Magenta = <Color>ColorIndex[5],
-    Cyan = <Color>ColorIndex[6],
-    White = <Color>ColorIndex[7],
+    Black = <Color>colorIndex[0],
+    Red = <Color>colorIndex[1],
+    Green = <Color>colorIndex[2],
+    Yellow = <Color>colorIndex[3],
+    Blue = <Color>colorIndex[4],
+    Magenta = <Color>colorIndex[5],
+    Cyan = <Color>colorIndex[6],
+    White = <Color>colorIndex[7],
 
-    BrightBlack = <Color>ColorIndex[8],
-    BrightRed = <Color>ColorIndex[9],
-    BrightGreen = <Color>ColorIndex[10],
-    BrightYellow = <Color>ColorIndex[11],
-    BrightBlue = <Color>ColorIndex[12],
-    BrightMagenta = <Color>ColorIndex[13],
-    BrightCyan = <Color>ColorIndex[14],
-    BrightWhite = <Color>ColorIndex[15],
+    BrightBlack = <Color>colorIndex[8],
+    BrightRed = <Color>colorIndex[9],
+    BrightGreen = <Color>colorIndex[10],
+    BrightYellow = <Color>colorIndex[11],
+    BrightBlue = <Color>colorIndex[12],
+    BrightMagenta = <Color>colorIndex[13],
+    BrightCyan = <Color>colorIndex[14],
+    BrightWhite = <Color>colorIndex[15],
 }
 
 export enum Status {
-    NotStarted = <Status><any>'not-started',
-    InProgress = <Status><any>'in-progress',
-    Failure = <Status><any>'failure',
-    Success = <Status><any>'success',
+    NotStarted,
+    InProgress,
+    Failure,
+    Interrupted,
+    Success,
+}
+
+export enum Buffer {
+    Standard,
+    Alternate
 }
 
 export enum Weight {
-    Normal = <Weight><any>'normal',
-    Bold = <Weight><any>'bold',
-    Faint = <Weight><any>'faint'
+    Normal,
+    Bold,
+    Faint,
+}
+
+export enum Brightness {
+    Normal,
+    Bright,
+}
+
+export enum LogLevel {
+    Info = <LogLevel><any>"info",
+    Debug = <LogLevel><any>"debug",
+    Log = <LogLevel><any>"log",
+    Error = <LogLevel><any>"error",
 }
