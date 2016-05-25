@@ -1,7 +1,7 @@
 import {Buffer, Status} from "../../Enums";
 import {colors, panel as panelColor, background as backgroundColor} from "./colors";
 import {TabHoverState} from "../TabComponent";
-import {darken, lighten} from "./functions";
+import {darken, lighten, failurize} from "./functions";
 
 export interface CSSObject {
     pointerEvents?: string;
@@ -19,6 +19,13 @@ export interface CSSObject {
     outline?: "none";
     opacity?: number;
     boxShadow?: string;
+    zoom?: number;
+    position?: "fixed";
+    top?: number;
+    bottom?: number;
+    left?: number;
+    right?: number;
+    zIndex?: number;
 }
 
 const fontSize = 14;
@@ -276,11 +283,35 @@ export namespace css {
     );
 
     export const outputCutIcon = Object.assign({marginRight: 10}, icon);
-    
-    export const output = (buffer: Buffer) => {
-        return {
+
+    export const output = (buffer: Buffer, status: Status) => {
+        const styles: CSSObject = {
             padding: `${outputPadding}px ${buffer === Buffer.Alternate ? 0 : outputPadding}px`,
+        };
+
+        if (buffer === Buffer.Alternate) {
+            if ([Status.Failure, Status.Interrupted, Status.Success].includes(status)) {
+                styles.zoom = 0.1;
+            }
+
+            if (status === Status.InProgress) {
+                styles.position = "fixed";
+                styles.top = titleBarHeight;
+                styles.bottom = 0;
+                styles.left = 0;
+                styles.right = 0;
+                styles.zIndex = 4;
+
+                styles.margin = 0;
+                styles.padding = "5px 0 0 0";
+            }
+        } else {
+            if ([Status.Failure, Status.Interrupted].includes(status)) {
+                styles.backgroundColor = failurize(backgroundColor);
+            }
         }
+
+        return styles;
     }
 }
 

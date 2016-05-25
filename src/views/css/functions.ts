@@ -7,3 +7,7 @@ export function lighten(color: string, percent: number) {
 export function darken(color: string, percent: number) {
     return tinyColor(color).darken(percent).toHexString();
 }
+
+export function failurize(color: string) {
+    return tinyColor(color).spin(140).saturate(20).toHexString();
+}

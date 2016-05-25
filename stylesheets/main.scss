@@ -106,33 +106,6 @@ body, pre {
   margin: 0;
 }
 
-.job {
-  &.failure, &.interrupted, &.success {
-    .output.alternate {
-      zoom: 0.1;
-    }
-  }
-  &.in-progress {
-    .output.alternate {
-      position: fixed;
-      top: $title-bar-height;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      z-index: 4;
-
-      margin: 0;
-      padding: 5px 0 0 0;
-    }
-  }
-
-  &.failure, &.interrupted {
-    .output {
-      background-color: failurize-color($background-color);
-    }
-  }
-}
-
 .prompt-wrapper {
   $decoration-width: 30px;
   $arrow-z-index: 2;

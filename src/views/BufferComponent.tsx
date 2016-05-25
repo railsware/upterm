@@ -8,6 +8,7 @@ import {Attributes} from "../Interfaces";
 import {Status} from "../Enums";
 import {css, CSSObject} from "./css/main";
 import {fontAwesome} from "./css/FontAwesome";
+import Job from "../Job";
 
 const CharGroupComponent = ({text, attributes}: {text: string, attributes: Attributes}) =>
     React.createElement("span", Object.assign(getHTMLAttributes(attributes), {style: css.charGroup}), text);
@@ -64,8 +65,7 @@ class RowComponent extends React.Component<RowProps, {}> {
 }
 
 interface Props {
-    buffer: Buffer;
-    jobStatus: Status;
+    job: Job;
 }
 
 interface State {
@@ -80,19 +80,18 @@ export default class BufferComponent extends React.Component<Props, State> {
 
     render() {
         return (
-            <pre className={`output ${this.props.buffer.activeBuffer}`}
-                 style={css.output(this.props.buffer.activeBuffer)}>
-                {this.shouldCutOutput ? <Cut numberOfRows={this.props.buffer.size} clickHandler={() => this.setState({ expandButtonPressed: true })}/> : undefined}
-                {this.renderableRows.map((row, index) => <RowComponent row={row || List<Char>()} key={index} style={css.row(this.props.jobStatus, this.props.buffer.activeBuffer)}/>)}
+            <pre style={css.output(this.props.job.buffer.activeBuffer, this.props.job.status)}>
+                {this.shouldCutOutput ? <Cut numberOfRows={this.props.job.buffer.size} clickHandler={() => this.setState({ expandButtonPressed: true })}/> : undefined}
+                {this.renderableRows.map((row, index) => <RowComponent row={row || List<Char>()} key={index} style={css.row(this.props.job.status, this.props.job.buffer.activeBuffer)}/>)}
             </pre>
         );
     }
 
     private get shouldCutOutput(): boolean {
-        return this.props.buffer.size > Buffer.hugeOutputThreshold && !this.state.expandButtonPressed;
+        return this.props.job.buffer.size > Buffer.hugeOutputThreshold && !this.state.expandButtonPressed;
     };
 
     private get renderableRows(): List<List<Char>> {
-        return this.shouldCutOutput ? this.props.buffer.toCutRenderable() : this.props.buffer.toRenderable();
+        return this.shouldCutOutput ? this.props.job.buffer.toCutRenderable() : this.props.job.buffer.toRenderable();
     }
 }
