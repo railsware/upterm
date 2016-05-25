@@ -183,7 +183,7 @@ export default class PromptComponent extends React.Component<Props, State> imple
                 {autocompletedPreview}
                 {inlineSynopsis}
                 {autocomplete}
-                <div className="actions">
+                <div style={css.actions}>
                     {decorationToggle}
                     {scrollToTop}
                 </div>

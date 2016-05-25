@@ -230,19 +230,6 @@ body, pre {
     color: map-get($colors, "yellow");
     opacity: 0.4;
   }
-
-  .actions {
-    grid-area: actions;
-    margin-right: 15px;
-    text-align: right;
-
-    @mixin action {
-      text-align: center;
-      width: $font-size;
-      display: inline-block;
-      margin: 0 3px;
-    }
-  }
 }
 
 pre {

@@ -315,6 +315,12 @@ export namespace css {
         return styles;
     };
 
+    export const actions = {
+        gridArea: "actions",
+        marginRight: 15,
+        textAlign: "right",
+    };
+
     export const action = Object.assign(
         {
             textAlign: "center",
