@@ -13,16 +13,17 @@ export interface CSSObject {
     margin?: number | string;
     listStyleType?: "none";
     backgroundColor?: string;
-    cursor?: "pointer" | "help";
+    cursor?: "pointer" | "help" | "progress";
     color?: string;
-    width?: string;
+    width?: string | number;
     flex?: number;
+    overflow?: "hidden";
     overflowX?: "scroll";
     outline?: "none";
     opacity?: number;
     boxShadow?: string;
     zoom?: number;
-    position?: "fixed" | "relative";
+    position?: "fixed" | "relative" | "absolute";
     top?: number;
     bottom?: number;
     left?: number;
@@ -33,6 +34,13 @@ export interface CSSObject {
     gridTemplateAreas?: string;
     gridTemplateRows?: "auto";
     gridTemplateColumns?: string;
+    transition?: string;
+    animation?: string;
+    backgroundImage?: string;
+    backgroundSize?: string | number;
+    content?: string;
+    transformOrigin?: string;
+    transform?: string;
 }
 
 const fontSize = 14;
@@ -419,6 +427,61 @@ export namespace css {
 
         if ([Status.Failure, Status.Interrupted].includes(status)) {
             styles.backgroundColor = failurize(promptBackgroundColor);
+        }
+
+        return styles;
+    };
+
+    const decorationWidth = 30;
+    const arrowZIndex = 2;
+    const progressBarStripesSize = 30;
+    const arrowColor = lighten(promptBackgroundColor, 10);
+    
+    export const arrow = (status: Status) => {
+        const styles: CSSObject = {
+            gridArea: "decoration",
+            position: "relative",
+            width: decorationWidth,
+            height: promptHeight - promptPadding,
+            margin: "0 auto",
+            overflow: "hidden",
+            zIndex: arrowZIndex,
+        };
+
+        if (status === Status.InProgress) {
+            styles.cursor = "progress";
+        }
+
+        return styles;
+    };
+
+    export const arrowInner = (status: Status) => {
+        const styles: CSSObject = {
+            content: '',
+            position: "absolute",
+            width: "200%",
+            height: "200%",
+            top: -11,
+            right: -8,
+            backgroundColor: arrowColor,
+            transformOrigin: "54% 0",
+            transform: "rotate(45deg)",
+            zIndex: arrowZIndex - 1,
+
+            backgroundSize: 0, // Is used to animate the inProgress arrow.
+        };
+
+        if (status === Status.InProgress) {
+            const color = lighten(colors.black, 3);
+
+            styles.transition = "background 0.1s step-end 0.3s";
+            styles.animation = "progress-bar-stripes 0.5s linear infinite";
+            styles.backgroundImage = `linear-gradient(45deg, ${color} 25%, transparent 25%, transparent 50%, ${color} 50%, ${color} 75%, transparent 75%, transparent)`;
+            styles.backgroundSize = `${progressBarStripesSize}px ${progressBarStripesSize}px`;
+        }
+
+        if ([Status.Failure, Status.Interrupted].includes(status)) {
+            styles.backgroundColor = failurize(arrowColor);
         }
 
         return styles;

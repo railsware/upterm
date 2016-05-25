@@ -172,7 +172,9 @@ export default class PromptComponent extends React.Component<Props, State> imple
 
         return (
             <div className={classes} style={css.promptWrapper(this.props.status)}>
-                <div className="arrow"></div>
+                <div style={css.arrow(this.props.status)}>
+                    <div style={css.arrowInner(this.props.status)}></div>
+                </div>
                 <div style={css.promptInfo(this.props.status)}
                      title={JSON.stringify(this.props.status)}
                      dangerouslySetInnerHTML={{__html: this.props.status === Status.Interrupted ? fontAwesome.close : ""}}></div>

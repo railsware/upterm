@@ -106,68 +106,20 @@ body, pre {
   margin: 0;
 }
 
+$progress-bar-stripes-size: 30px;
+@keyframes progress-bar-stripes {
+  from {
+    background-position: 0 0;
+  }
+  to {
+    background-position: $progress-bar-stripes-size 0;
+  }
+}
+
 .prompt-wrapper {
-  $decoration-width: 30px;
-  $arrow-z-index: 2;
-  $progress-bar-stripes-size: 30px;
-  $arrow-color: lighten($prompt-background-color, 10%);
 
   &.fixedsticky-on {
     box-shadow: $default-shadow;
-  }
-
-  .arrow {
-    grid-area: decoration;
-    position: relative;
-    width: $decoration-width;
-    height: $prompt-height - $prompt-padding;
-    margin: 0 auto;
-    overflow: hidden;
-    z-index: $arrow-z-index;
-
-    &:after {
-      content: '';
-      position: absolute;
-      width: 200%;
-      height: 200%;
-      top: -11px;
-      right: -8px;
-      background-color: $arrow-color;
-      transform-origin: 54% 0;
-      transform: rotate(45deg);
-      z-index: $arrow-z-index - 1;
-
-      background-size: 0; // Is used to animate the in-progress arrow.
-    }
-  }
-
-  &.failure, &.interrupted {
-    .arrow:after {
-      background-color: failurize-color($arrow-color);
-    }
-  }
-
-  &.in-progress {
-    .arrow {
-      cursor: progress;
-    }
-
-    .arrow:after {
-      @keyframes progress-bar-stripes {
-        from {
-          background-position: 0 0;
-        }
-        to {
-          background-position: $progress-bar-stripes-size 0;
-        }
-      }
-
-      $color: lighten(map-get($colors, 'black'), 3%);
-      transition: background 0.1s step-end 0.3s;
-      animation: progress-bar-stripes 0.5s linear infinite;
-      background-image: linear-gradient(45deg, $color 25%, transparent 25%, transparent 50%, $color 50%, $color 75%, transparent 75%, transparent);
-      background-size: $progress-bar-stripes-size $progress-bar-stripes-size;
-    }
   }
 }
 
