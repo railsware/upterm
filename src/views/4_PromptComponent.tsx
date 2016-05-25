@@ -171,7 +171,7 @@ export default class PromptComponent extends React.Component<Props, State> imple
         }
 
         return (
-            <div className={classes}>
+            <div className={classes} style={css.promptWrapper(this.props.status)}>
                 <div className="arrow"></div>
                 <div style={css.promptInfo(this.props.status)}
                      title={JSON.stringify(this.props.status)}

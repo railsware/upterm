@@ -7,6 +7,7 @@ export interface CSSObject {
     pointerEvents?: string;
     marginBottom?: number;
     padding?: string | number;
+    paddingTop?: number;
     minHeight?: number;
     height?: number | string;
     margin?: number | string;
@@ -28,6 +29,10 @@ export interface CSSObject {
     right?: number;
     zIndex?: number;
     gridArea?: string,
+    display?: "grid";
+    gridTemplateAreas?: string;
+    gridTemplateRows?: "auto";
+    gridTemplateColumns?: string;
 }
 
 const fontSize = 14;
@@ -394,6 +399,26 @@ export namespace css {
             styles.left = 6;
             styles.top = 1;
             styles.color = colors.black
+        }
+
+        return styles;
+    };
+
+    export const promptWrapper = (status: Status) => {
+        const decorationWidth = 30;
+        const styles: CSSObject = {
+            paddingTop: promptPadding,
+            position: "relative", // To position the autocompletion box correctly.
+            display: "grid",
+            gridTemplateAreas: "'decoration prompt actions'",
+            gridTemplateRows: "auto",
+            gridTemplateColumns: `${decorationWidth}px 1fr 150px`,
+            backgroundColor: promptBackgroundColor,
+            minHeight: promptHeight + promptPadding,
+        };
+
+        if ([Status.Failure, Status.Interrupted].includes(status)) {
+            styles.backgroundColor = failurize(promptBackgroundColor);
         }
 
         return styles;

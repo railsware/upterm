@@ -112,15 +112,6 @@ body, pre {
   $progress-bar-stripes-size: 30px;
   $arrow-color: lighten($prompt-background-color, 10%);
 
-  padding-top: $prompt-padding;
-  position: relative; // To position the autocompletion box correctly.
-  display: grid;
-  grid-template-areas: "decoration prompt actions";
-  grid-template-rows: auto;
-  grid-template-columns: $decoration-width 1fr 150px;
-  background-color: $prompt-background-color;
-  min-height: $prompt-height + $prompt-padding;
-
   &.fixedsticky-on {
     box-shadow: $default-shadow;
   }
@@ -151,8 +142,6 @@ body, pre {
   }
 
   &.failure, &.interrupted {
-    background-color: failurize-color($prompt-background-color);
-
     .arrow:after {
       background-color: failurize-color($arrow-color);
     }
