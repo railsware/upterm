@@ -178,7 +178,8 @@ export default class PromptComponent extends React.Component<Props, State> imple
                 <div style={css.promptInfo(this.props.status)}
                      title={JSON.stringify(this.props.status)}
                      dangerouslySetInnerHTML={{__html: this.props.status === Status.Interrupted ? fontAwesome.close : ""}}></div>
-                <div style={css.prompt}
+                <div className="prompt"
+                     style={css.prompt}
                      onKeyDown={this.handlers.onKeyDown.bind(this)}
                      onInput={this.handleInput.bind(this)}
                      onKeyPress={this.handleKeyPress.bind(this)}

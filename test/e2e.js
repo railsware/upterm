@@ -22,10 +22,10 @@ describe("application launch", function () {
         waitUntilWindowLoaded().
         waitForExist(".prompt").
         setValue(".prompt", "ls /\n").
-        waitForExist(".job.success").
-        getText(".job.success .output").
+        waitForExist(".prompt[contenteditable=false]").
+        getText(".job .output").
         then((output) => {
-            expect(output).to.contain("usr").and.to.contain("var");
+            expect(output[0]).to.contain("usr").and.to.contain("var");
         });
     })
 });
