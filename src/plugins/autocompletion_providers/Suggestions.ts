@@ -13,46 +13,46 @@ export const styles = {
     executable: {
         value: fontAwesome.asterisk,
         css: {
-            color: colors.green
-        }
+            color: colors.green,
+        },
     },
     command: {
         value: fontAwesome.terminal,
         css: {
-            color: colors.green
-        }
+            color: colors.green,
+        },
     },
     option: {
         value: fontAwesome.flagO,
         css: {
-            color: colors.green
-        }
+            color: colors.green,
+        },
     },
     optionValue: {
         value: "=",
         css: {
-            color: colors.green
-        }
+            color: colors.green,
+        },
     },
     branch: {
         value: fontAwesome.codeFork,
-        css: {}
+        css: {},
     },
     directory: {
         value: fontAwesome.folder,
-        css: {}
+        css: {},
     },
     file: (fileInfo: FileInfo) => {
         return {
             value: extensionIcon(Path.extname(fileInfo.name)),
-            css: {}
-        }
+            css: {},
+        };
     },
     alias: {
         value: fontAwesome.at,
         css: {
             color: colors.yellow,
-        }
+        },
     },
 };
 

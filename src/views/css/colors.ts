@@ -1,4 +1,4 @@
-import {lighten, darken} from "./functions";
+import {darken} from "./functions";
 
 const baseColors = {
     black: "#292C33",
@@ -19,20 +19,20 @@ const brightColors = {
     brightYellow: "#e9cc92",
     brightBlue: "#6cb2f0",
     brightMagenta: "#e8b6e7",
-    brightCyan: "#7adada"
+    brightCyan: "#7adada",
 };
 
 function toRgb(colorComponent: number) {
     if (colorComponent === 0) {
         return 0;
     }
-    
+
     return 55 + colorComponent * 40;
 }
 
 
 function generateIndexedColors() {
-    const indexedColors: Dictionary<string>= {};
+    const indexedColors: Dictionary<string> = {};
 
     for (let index = 0; index <= 215; ++index) {
         const red = Math.floor(index / 36);

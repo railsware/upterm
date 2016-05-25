@@ -30,9 +30,9 @@ export interface CSSObject {
     bottom?: number;
     left?: number;
     right?: number;
-    whiteSpace?: "pre-wrap",
+    whiteSpace?: "pre-wrap";
     zIndex?: number;
-    gridArea?: string,
+    gridArea?: string;
     display?: "grid" | "inline-block";
     gridTemplateAreas?: string;
     gridTemplateRows?: "auto";
@@ -148,7 +148,7 @@ export namespace css {
                 left: caretOffset.left,
                 minWidth: 300,
                 boxShadow: defaultShadow,
-                backgroundColor: colors.black
+                backgroundColor: colors.black,
             };
         },
         synopsis: {
@@ -179,9 +179,9 @@ export namespace css {
             overflow: "auto",
             padding: 0,
             margin: 0,
-        }
+        },
     };
-    
+
     export const statusLine = {
         itself: Object.assign(
             {},
@@ -207,7 +207,7 @@ export namespace css {
                 color: status === "dirty" ? colors.blue : colors.white,
                 display: "inline-block",
             };
-        }
+        },
     };
 
     export const session = (isActive: boolean) => {
@@ -249,7 +249,7 @@ export namespace css {
         WebkitPaddingStart: 0,
         WebkitUserSelect: "none",
     };
-    
+
     export const tab = (isHovered: boolean, isActive: boolean) => {
         return {
             backgroundColor: isHovered ? panelColor : colors.black,
@@ -260,7 +260,7 @@ export namespace css {
             display: "inline-block",
             textAlign: "center",
             paddingTop: 2,
-        }
+        };
     };
 
     export const tabClose = (hover: TabHoverState) => {
@@ -290,7 +290,7 @@ export namespace css {
             display: "inline-block",
             height: rowHeight,
             color: colors[attributes.color],
-            backgroundColor: colors[attributes.backgroundColor]
+            backgroundColor: colors[attributes.backgroundColor],
         };
 
         if (attributes.brightness === Brightness.Bright) {
@@ -320,8 +320,6 @@ export namespace css {
         return styles;
     };
 
-    const outputPadding = 10;
-
     const outputCutHeight = fontSize * 2.6;
     export const outputCut = (isHovered: boolean) => Object.assign(
         {},
@@ -334,7 +332,7 @@ export namespace css {
             textAlign: "center",
             paddingTop: (outputCutHeight - fontSize) / 3,
             color: lighten(backgroundColor, isHovered ? 35 : 30),
-            cursor: "pointer"
+            cursor: "pointer",
         }
     );
 
@@ -388,7 +386,7 @@ export namespace css {
         },
         icon
     );
-    
+
     export const decorationToggle = (isEnabled: boolean) => {
         return Object.assign(
             {},
@@ -396,7 +394,7 @@ export namespace css {
             {
                 color: isEnabled ? colors.green : colors.white,
             }
-        )
+        );
     };
 
     const promptInlineElement = {
@@ -448,7 +446,7 @@ export namespace css {
             styles.position = "relative";
             styles.left = 6;
             styles.top = 1;
-            styles.color = colors.black
+            styles.color = colors.black;
         }
 
         return styles;
@@ -479,7 +477,7 @@ export namespace css {
     const arrowZIndex = 2;
     const progressBarStripesSize = 30;
     const arrowColor = lighten(promptBackgroundColor, 10);
-    
+
     export const arrow = (status: Status) => {
         const styles: CSSObject = {
             gridArea: "decoration",
@@ -500,7 +498,7 @@ export namespace css {
 
     export const arrowInner = (status: Status) => {
         const styles: CSSObject = {
-            content: '',
+            content: "",
             position: "absolute",
             width: "200%",
             height: "200%",
@@ -549,5 +547,5 @@ function jaggedBorder(darkenPercent: number) {
                      ${darken(panelColor, darkenPercent)} 33.33%) 0 0`,
         backgroundRepeat: "repeat-x",
         backgroundSize: "0 100%, 15px 50px, 15px 50px",
-    }
+    };
 }
