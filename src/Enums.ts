@@ -81,27 +81,27 @@ export enum Color {
 }
 
 export enum Status {
-    NotStarted = <Status><any>"not-started",
-    InProgress = <Status><any>"in-progress",
-    Failure = <Status><any>"failure",
-    Interrupted = <Status><any>"interrupted",
-    Success = <Status><any>"success",
+    NotStarted,
+    InProgress,
+    Failure,
+    Interrupted,
+    Success,
 }
 
 export enum Buffer {
-    Standard = <Buffer><any>"standard",
-    Alternate = <Buffer><any>"alternate"
+    Standard,
+    Alternate
 }
 
 export enum Weight {
-    Normal = <Weight><any>"normal",
-    Bold = <Weight><any>"bold",
-    Faint = <Weight><any>"faint",
+    Normal,
+    Bold,
+    Faint,
 }
 
 export enum Brightness {
-    Normal = <Brightness><any>"normal",
-    Bright = <Brightness><any>"bright",
+    Normal,
+    Bright,
 }
 
 export enum LogLevel {
