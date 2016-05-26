@@ -149,11 +149,13 @@ export namespace css {
         box: (caretOffset: Offset) => {
             return {
                 position: "absolute",
-                top: promptHeight,
+                top: caretOffset.bottom ? 'auto' : promptHeight,
+                bottom: caretOffset.bottom || 'auto',
                 left: caretOffset.left,
                 minWidth: 300,
                 boxShadow: defaultShadow,
                 backgroundColor: colors.black,
+                zIndex: 3,
             };
         },
         synopsis: {

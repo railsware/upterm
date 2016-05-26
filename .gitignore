@@ -35,3 +35,6 @@ Temporary Items
 
 # Directory created by Visual Studio Code
 .vscode
+
+# Directory created by IDEA
+.idea
