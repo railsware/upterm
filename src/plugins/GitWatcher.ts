@@ -1,7 +1,6 @@
 import Session from "../Session";
 import PluginManager from "../PluginManager";
 import {EnvironmentObserverPlugin} from "../Interfaces";
-// import {watch} from "chokidar";
 import {watch, FSWatcher} from "fs";
 import * as Path from "path";
 import {EventEmitter} from "events";
@@ -14,7 +13,6 @@ const GIT_WATCHER_EVENT_NAME = "git-data-changed";
 class GitWatcher extends EventEmitter {
     GIT_HEAD_FILE_NAME = Path.join(".git", "HEAD");
     GIT_HEADS_DIRECTORY_NAME = Path.join(".git", "refs", "heads");
-    IGNORED_PATTERNS = [/node_modules/, /\.git\/objects/];
 
     watcher: FSWatcher;
     gitDirectory: string;

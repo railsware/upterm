@@ -27,7 +27,6 @@
     "console"
   ],
   "dependencies": {
-    "chokidar": "1.5.1",
     "fixed-sticky": "0.1.7",
     "font-awesome": "4.6.3",
     "fs-extra": "0.30.0",

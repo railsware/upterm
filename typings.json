@@ -1,7 +1,6 @@
 {
   "ambientDependencies": {
     "chai": "registry:dt/chai#3.4.0+20160317120654",
-    "chokidar": "registry:dt/chokidar#1.4.3+20160316155526",
     "github-electron": "registry:dt/github-electron#0.37.8+20160509083739",
     "jquery": "registry:dt/jquery#1.10.0+20160417213236",
     "mocha": "registry:dt/mocha#2.2.5+20160317120654",

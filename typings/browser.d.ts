@@ -1,5 +1,4 @@
 /// <reference path="browser/ambient/chai/index.d.ts" />
-/// <reference path="browser/ambient/chokidar/index.d.ts" />
 /// <reference path="browser/ambient/github-electron/index.d.ts" />
 /// <reference path="browser/ambient/jquery/index.d.ts" />
 /// <reference path="browser/ambient/mocha/index.d.ts" />
