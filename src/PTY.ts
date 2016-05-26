@@ -9,6 +9,16 @@ const noConfigSwitches: Dictionary<string[]> = {
     bash: ["--noprofile", "--norc"],
 };
 
+function escapeArgument(argument: string) {
+    if (argument.includes('"') || argument.includes(" ")) {
+        return `'${argument}'`;
+    } else if (argument.includes("'")) {
+        return `"${argument}"`;
+    } else {
+        return argument;
+    }
+}
+
 export default class PTY {
     private terminal: pty.Terminal;
 
@@ -16,7 +26,7 @@ export default class PTY {
     // TODO: use generators.
     // TODO: terminate. https://github.com/atom/atom/blob/v1.0.15/src/task.coffee#L151
     constructor(command: string, args: string[], env: ProcessEnvironment, dimensions: Dimensions, dataHandler: (d: string) => void, exitHandler: (c: number) => void) {
-        this.terminal = pty.fork(shell(), [...noConfigSwitches[baseName(shell())], "-c", `${command} ${args.map(arg => `'${arg}'`).join(" ")}`], {
+        this.terminal = pty.fork(shell(), [...noConfigSwitches[baseName(shell())], "-c", `${command} ${args.map(escapeArgument).join(" ")}`], {
             cols: dimensions.columns,
             rows: dimensions.rows,
             cwd: env.PWD,
