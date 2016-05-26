@@ -76,8 +76,7 @@
     "cleanup": "rm -rf compiled",
     "copy-html": "cp src/views/index.html compiled/src/views > /dev/tty",
     "compile": "npm run cleanup && npm run compile-tsc && npm run copy-html",
-    "compile-tsc": "tsc",
-    "watch-tsc": "tsc --watch > /dev/tty"
+    "compile-tsc": "tsc"
   },
   "license": "MIT"
 }
