@@ -7,9 +7,11 @@ import * as _ from "lodash";
 
 export interface CSSObject {
     pointerEvents?: string;
+    marginTop?: number;
     marginBottom?: number;
     padding?: string | number;
     paddingTop?: number;
+    paddingBottom?: number;
     minHeight?: number;
     height?: number | string;
     margin?: number | string;
@@ -59,8 +61,11 @@ export const rowHeight = fontSize + 4;
 export const letterWidth = fontSize / 2 + 1.5;
 
 const infoPanel = {
-    padding: "8px 0 6px 0.6em",
-    minHeight: "2em",
+    paddingTop: 8,
+    paddingRight: 0,
+    paddingBottom: 6,
+    paddingLeft: 0.6 * fontSize,
+    height: 2 * fontSize + 4,
     lineHeight: 1.3,
     backgroundColor: panelColor,
 };
@@ -237,7 +242,7 @@ export namespace css {
         width: "100%",
         top: titleBarHeight,
         backgroundColor: backgroundColor,
-        bottom: "2em",
+        bottom: statusLine.itself.height,
     };
 
     export const tabs = {
