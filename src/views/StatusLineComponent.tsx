@@ -1,7 +1,7 @@
 /* tslint:disable:no-unused-variable */
 import * as React from "react";
 import {css} from "./css/main";
-import {fontAwesome} from "./css/fontAwesome";
+import {fontAwesome} from "./css/FontAwesome";
 
 const CurrentDirectory = ({currentWorkingDirectory}: { currentWorkingDirectory: string }) =>
     <div style={css.statusLine.currentDirectory}>
