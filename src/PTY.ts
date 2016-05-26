@@ -88,7 +88,7 @@ export async function linedOutputOf(command: string, args: string[], directory: 
 
 export async function executeCommandWithShellConfig(command: string): Promise<string[]> {
     const shellName = baseName(shell());
-    const sourceCommands = (await existingConfigFiles(shellName)).map(fileName => `source ${fileName}`);
+    const sourceCommands = (await existingConfigFiles(shellName)).map(fileName => `source ${fileName} &> /dev/null`);
 
     return await linedOutputOf(shell(), ["-c", `'${[...sourceCommands, command].join("; ")}'`], process.env.HOME);
 }
