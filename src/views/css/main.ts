@@ -70,18 +70,57 @@ const infoPanel = {
     backgroundColor: panelColor,
 };
 
+const inactiveJobs: CSSObject = {
+    pointerEvents: "none",
+};
+
+const commonJobs: CSSObject = {
+    marginBottom: 40,
+};
+
+const icon = {
+    fontFamily: "FontAwesome",
+};
+
+const outputCutHeight = fontSize * 2.6;
+
+const decorationWidth = 30;
+const arrowZIndex = 2;
+const progressBarStripesSize = 30;
+const arrowColor = lighten(promptBackgroundColor, 10);
+
+const promptInlineElement = {
+    padding: "0 10px 3px 10px", // FIXME: Use grid-column-gap when it's supported.
+    gridArea: "prompt",
+    fontSize: fontSize,
+    WebkitFontFeatureSettings: '"liga", "dlig"',
+    whiteSpace: "pre-wrap",
+    WebkitAppearance: "none",
+    outline: "none",
+};
+
+function tabCloseButtonColor(hover: TabHoverState) {
+    if (hover === TabHoverState.Close) {
+        return colors.red;
+    } else if (hover === TabHoverState.Tab) {
+        return colors.white;
+    } else {
+        return "transparent";
+    }
+}
+
+function jaggedBorder(darkenPercent: number) {
+    return {
+        background: `-webkit-linear-gradient(${darken(panelColor, darkenPercent)} 0%, transparent 0%),
+                     -webkit-linear-gradient(135deg, ${backgroundColor} 33.33%, transparent 33.33%) 0 0,
+                     ${backgroundColor} -webkit-linear-gradient(45deg, ${backgroundColor} 33.33%,
+                     ${darken(panelColor, darkenPercent)} 33.33%) 0 0`,
+        backgroundRepeat: "repeat-x",
+        backgroundSize: "0 100%, 15px 50px, 15px 50px",
+    };
+}
+
 export namespace css {
-    const inactiveJobs: CSSObject = {
-        pointerEvents: "none",
-    };
-
-    const commonJobs: CSSObject = {
-        marginBottom: 40,
-    };
-
-    const icon = {
-        fontFamily: "FontAwesome",
-    };
 
     export const application = {
         marginBottom: 24,
@@ -326,7 +365,6 @@ export namespace css {
         return styles;
     };
 
-    const outputCutHeight = fontSize * 2.6;
     export const outputCut = (isHovered: boolean) => Object.assign(
         {},
         jaggedBorder(isHovered ? 0 : 0),
@@ -403,16 +441,6 @@ export namespace css {
         );
     };
 
-    const promptInlineElement = {
-        padding: "0 10px 3px 10px", // FIXME: Use grid-column-gap when it's supported.
-        gridArea: "prompt",
-        fontSize: fontSize,
-        WebkitFontFeatureSettings: '"liga", "dlig"',
-        whiteSpace: "pre-wrap",
-        WebkitAppearance: "none",
-        outline: "none",
-    };
-
     export const inlineSynopsis = Object.assign(
         {},
         promptInlineElement,
@@ -479,11 +507,6 @@ export namespace css {
         return styles;
     };
 
-    const decorationWidth = 30;
-    const arrowZIndex = 2;
-    const progressBarStripesSize = 30;
-    const arrowColor = lighten(promptBackgroundColor, 10);
-
     export const arrow = (status: Status) => {
         const styles: CSSObject = {
             gridArea: "decoration",
@@ -532,26 +555,5 @@ export namespace css {
         }
 
         return styles;
-    };
-}
-
-function tabCloseButtonColor(hover: TabHoverState) {
-    if (hover === TabHoverState.Close) {
-        return colors.red;
-    } else if (hover === TabHoverState.Tab) {
-        return colors.white;
-    } else {
-        return "transparent";
-    }
-}
-
-function jaggedBorder(darkenPercent: number) {
-    return {
-        background: `-webkit-linear-gradient(${darken(panelColor, darkenPercent)} 0%, transparent 0%),
-                     -webkit-linear-gradient(135deg, ${backgroundColor} 33.33%, transparent 33.33%) 0 0,
-                     ${backgroundColor} -webkit-linear-gradient(45deg, ${backgroundColor} 33.33%,
-                     ${darken(panelColor, darkenPercent)} 33.33%) 0 0`,
-        backgroundRepeat: "repeat-x",
-        backgroundSize: "0 100%, 15px 50px, 15px 50px",
     };
 }
