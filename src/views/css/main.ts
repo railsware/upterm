@@ -150,6 +150,7 @@ export namespace css {
                 minWidth: 300,
                 boxShadow: defaultShadow,
                 backgroundColor: colors.black,
+                zIndex: 3,
             };
         },
         synopsis: {
