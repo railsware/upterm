@@ -7,6 +7,5 @@ PluginManager.registerEnvironmentObserver({
 
     currentWorkingDirectoryDidChange: (session: Session, directory: string) => {
         remote.app.addRecentDocument(directory);
-        remote.getCurrentWindow().setRepresentedFilename(directory);
     },
 });

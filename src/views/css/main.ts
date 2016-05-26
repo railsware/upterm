@@ -244,6 +244,7 @@ export namespace css {
         height: titleBarHeight,
         display: "flex",
         justifyContent: "center",
+        WebkitAppRegion: "drag",
         WebkitMarginBefore: 0,
         WebkitMarginAfter: 0,
         WebkitPaddingStart: 0,
