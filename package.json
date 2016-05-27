@@ -65,7 +65,7 @@
     "electron-version": "cat package.json | grep 'electron-prebuilt\": \"' | cut -d '\"' -f 4",
     "recompile": "export ELECTRON_VERSION=$(npm run electron-version --silent); HOME=~/.electron-gyp cd node_modules/pty.js; node-gyp rebuild --target=$ELECTRON_VERSION --arch=x64 --dist-url=https://atom.io/download/atom-shell",
     "electron": "electron .",
-    "prestart": "npm run compile",
+    "prestart": "npm install && npm run compile",
     "start": "bash start.sh",
     "package": "npm run compile && electron-packager . \"$npm_package_productName\" --overwrite --platform=darwin --arch=x64 --version=$(npm run electron-version --silent) --out='/Applications' --icon='./icon.icns' --asar=true",
     "test": "ELECTRON_RUN_AS_NODE=1 electron $(which mocha) --require ts-node/register test/**.ts",
