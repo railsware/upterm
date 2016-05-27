@@ -4,7 +4,7 @@ import Char from "../Char";
 import {groupWhen} from "../utils/Common";
 import {List} from "immutable";
 import {Attributes} from "../Interfaces";
-import {css, CSSObject} from "./css/main";
+import * as css from "./css/main";
 import {fontAwesome} from "./css/FontAwesome";
 import Job from "../Job";
 
@@ -40,7 +40,7 @@ class Cut extends React.Component<CutProps, CutState> {
 }
 interface RowProps {
     row: Immutable.List<Char>;
-    style: CSSObject;
+    style: css.CSSObject;
 }
 
 const charGrouper = (a: Char, b: Char) => a.attributes === b.attributes;

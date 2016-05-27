@@ -1,7 +1,7 @@
 import * as React from "react";
 import {stopBubblingUp} from "./ViewUtils";
 import Job from "./3_JobComponent";
-import {css} from "./css/main";
+import * as css from "./css/main";
 import {fontAwesome} from "./css/FontAwesome";
 
 interface Props {

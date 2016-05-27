@@ -6,7 +6,7 @@ import Session from "../Session";
 import {ipcRenderer} from "electron";
 import {KeyCode} from "../Enums";
 import {remote} from "electron";
-import {css} from "./css/main";
+import * as css from "./css/main";
 
 interface State {
     sessions: Session[];

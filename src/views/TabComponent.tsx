@@ -3,7 +3,7 @@ import * as React from "react";
 import * as _ from "lodash";
 import Session from "../Session";
 import ApplicationComponent from "./1_ApplicationComponent";
-import {css, titleBarHeight, letterWidth, rowHeight} from "./css/main";
+import * as css from "./css/main";
 import {fontAwesome} from "./css/FontAwesome";
 
 export interface TabProps {
@@ -107,15 +107,15 @@ export class Tab {
 
     private get contentDimensions(): Dimensions {
         return {
-            columns: Math.floor(this.contentSize.width / letterWidth),
-            rows: Math.floor(this.contentSize.height / rowHeight),
+            columns: Math.floor(this.contentSize.width / css.letterWidth),
+            rows: Math.floor(this.contentSize.height / css.rowHeight),
         };
     }
 
     private get contentSize(): Size {
         return {
             width: window.innerWidth,
-            height: window.innerHeight - titleBarHeight,
+            height: window.innerHeight - css.titleBarHeight,
         };
     }
 }

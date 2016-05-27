@@ -15,7 +15,7 @@ import {Subject} from "rxjs/Subject";
 import "rxjs/add/operator/filter";
 import "rxjs/add/operator/map";
 import {InputMethod} from "../Parser";
-import {css} from "./css/main";
+import * as css from "./css/main";
 import {fontAwesome} from "./css/FontAwesome";
 import {Status} from "../Enums";
 const reactDOM = require("react-dom");

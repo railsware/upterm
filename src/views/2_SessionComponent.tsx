@@ -5,7 +5,7 @@ import Job from "../Job";
 import StatusLineComponent from "./StatusLineComponent";
 import JobComponent from "./3_JobComponent";
 import {KeyCode} from "../Enums";
-import {css} from "./css/main";
+import * as css from "./css/main";
 
 interface Props {
     session: Session;

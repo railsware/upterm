@@ -1,6 +1,6 @@
 import * as React from "react";
 import {Suggestion} from "../plugins/autocompletion_providers/Suggestions";
-import {css} from "./css/main";
+import * as css from "./css/main";
 
 interface SuggestionProps {
     suggestion: Suggestion;
