@@ -142,26 +142,6 @@ export const {executablesInPaths} = new class {
     };
 };
 
-export const {shell} = new class {
-    /* tslint:disable:member-ordering */
-    private shellPath: string;
-    private supportedShells = { bash: true, zsh: true };
-
-    shell = () => {
-        if (!this.shellPath) {
-            const shellName = baseName(process.env.SHELL);
-            if (shellName in this.supportedShells) {
-                this.shellPath = process.env.SHELL;
-            } else {
-                this.shellPath = "/bin/bash";
-                console.error(`${shellName} is not supported; defaulting to ${this.shellPath}`);
-            }
-        }
-
-        return this.shellPath;
-    };
-};
-
 export function homeDirectory(): string {
     return process.env[(isWindows()) ? "USERPROFILE" : "HOME"];
 }
