@@ -56,6 +56,7 @@ const fontSize = 14;
 const outputPadding = 10;
 const promptPadding = 5;
 const promptHeight = 12 + (2 * promptPadding);
+const promptWrapperHeight = promptHeight + promptPadding;
 const promptBackgroundColor = lighten(colors.black, 5);
 const defaultShadow = "0 2px 8px 1px rgba(0, 0, 0, 0.3)";
 export const titleBarHeight = 24;
@@ -492,8 +493,6 @@ export const promptInfo = (status: Status) => {
 
     return styles;
 };
-
-const promptWrapperHeight = promptHeight + promptPadding;
 
 export const promptWrapper = (status: Status) => {
     const styles: CSSObject = {
