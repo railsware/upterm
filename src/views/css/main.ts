@@ -490,7 +490,6 @@ export const promptInfo = (status: Status) => {
 };
 
 export const promptWrapper = (status: Status) => {
-    const decorationWidth = 30;
     const styles: CSSObject = {
         top: 0,
         paddingTop: promptPadding,
