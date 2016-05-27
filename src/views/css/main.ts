@@ -12,6 +12,8 @@ export interface CSSObject {
     padding?: string | number;
     paddingTop?: number;
     paddingBottom?: number;
+    paddingLeft?: number;
+    paddingRight?: number;
     minHeight?: number;
     height?: number | string;
     margin?: number | string;
@@ -28,8 +30,8 @@ export interface CSSObject {
     boxShadow?: string;
     zoom?: number;
     position?: "fixed" | "relative" | "absolute";
-    top?: number;
-    bottom?: number;
+    top?: number | "auto";
+    bottom?: number | "auto";
     left?: number;
     right?: number;
     whiteSpace?: "pre-wrap";
