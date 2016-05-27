@@ -2,13 +2,14 @@ import {expect} from "chai";
 import * as _ from "lodash";
 import {string, choice, many1, optional, sequence, Parser, InputMethod, Progress, token} from "../src/Parser.ts";
 import {suggestionDisplayValues} from "./helpers";
+import Environment from "../src/Environment";
 
 async function parse(parser: Parser, input: string) {
     return await parser({
         input: input,
         directory: "/",
         historicalCurrentDirectoriesStack: [],
-        cdpath: [],
+        environment: new Environment(),
         inputMethod: InputMethod.Typed,
     });
 }

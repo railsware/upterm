@@ -12,11 +12,12 @@ import {compose, mapObject} from "./utils/Common";
 import {command} from "./plugins/autocompletion_providers/Command";
 import Aliases from "./Aliases";
 import {redirect} from "./plugins/autocompletion_providers/Redirect";
+import {environmentVariable} from "./plugins/autocompletion_providers/EnvironmentVariable";
 
 export const makeGrammar = (aliases: Dictionary<string>) => {
     const exec = sequence(
         choice(mapObject(commandDescriptions, (key, value) => decorate(string(key), compose(description(value), style(styles.executable))))),
-        optionalContinuation(many1(file))
+        optionalContinuation(many1(choice([file, environmentVariable])))
     );
 
     const sudo = sequence(executable("sudo"), command);
@@ -56,7 +57,7 @@ export const {getSuggestions} = new class {
             input: job.prompt.value,
             directory: job.session.directory,
             historicalCurrentDirectoriesStack: job.session.historicalCurrentDirectoriesStack,
-            cdpath: job.environment.cdpath(job.session.directory),
+            environment: job.environment,
             inputMethod: inputMethod,
         });
 

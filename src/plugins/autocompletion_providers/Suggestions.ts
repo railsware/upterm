@@ -34,6 +34,12 @@ export const styles = {
             color: colors.green,
         },
     },
+    environmentVariable: {
+        value: fontAwesome.usd,
+        css: {
+            color: colors.yellow,
+        },
+    },
     branch: {
         value: fontAwesome.codeFork,
         css: {},

@@ -18,7 +18,7 @@ const historicalDirectory = runtime(async (context) =>
 
 const cdpathDirectory = runtime(
     async (context) => {
-        const directoriesToBe = context.cdpath.map(async (directory) => {
+        const directoriesToBe = context.environment.cdpath(context.directory).map(async (directory) => {
             const file = await fileInDirectoryGenerator(directory, info => info.stat.isDirectory());
 
             if (directory === context.directory) {
