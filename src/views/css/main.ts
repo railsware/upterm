@@ -109,14 +109,11 @@ function tabCloseButtonColor(hover: TabHoverState) {
     }
 }
 
-function jaggedBorder(darkenPercent: number) {
+function jaggedBorder(color: string, panelColor: string, darkenPercent: number) {
     return {
-        background: `-webkit-linear-gradient(${darken(panelColor, darkenPercent)} 0%, transparent 0%),
-                     -webkit-linear-gradient(135deg, ${backgroundColor} 33.33%, transparent 33.33%) 0 0,
-                     ${backgroundColor} -webkit-linear-gradient(45deg, ${backgroundColor} 33.33%,
-                     ${darken(panelColor, darkenPercent)} 33.33%) 0 0`,
-        backgroundRepeat: "repeat-x",
-        backgroundSize: "0 100%, 15px 50px, 15px 50px",
+        background: `-webkit-linear-gradient(${darken(panelColor, darkenPercent)} 0%, transparent 0%) 0 100% repeat-x,
+                     -webkit-linear-gradient(135deg, ${color} 33.33%, transparent 33.33%) 0 0 / 15px 50px,
+                     -webkit-linear-gradient(45deg, ${color} 33.33%, ${darken(panelColor, darkenPercent)} 33.33%) 0 0 / 15px 50px`,
     };
 }
 
@@ -363,13 +360,18 @@ export const charGroup = (attributes: Attributes) => {
     return styles;
 };
 
-export const outputCut = (isHovered: boolean) => Object.assign(
+export const outputCut = (status: Status, isHovered: boolean) => Object.assign(
     {},
-    jaggedBorder(isHovered ? 0 : 0),
+    jaggedBorder(
+        [Status.Failure, Status.Interrupted].includes(status) ? failurize(backgroundColor) : backgroundColor,
+        [Status.Failure, Status.Interrupted].includes(status) ? failurize(panelColor) : panelColor,
+        isHovered ? 0 : 0
+    ),
     {
         position: "relative",
-        top: -10,
-        width: "100%",
+        top: -outputPadding,
+        left: -outputPadding,
+        width: "102%",
         height: outputCutHeight,
         textAlign: "center",
         paddingTop: (outputCutHeight - fontSize) / 3,
@@ -382,7 +384,10 @@ export const outputCutIcon = Object.assign({marginRight: 10}, icon);
 
 export const output = (buffer: Buffer, status: Status) => {
     const styles: CSSObject = {
-        padding: `${outputPadding}px ${buffer === Buffer.Alternate ? 0 : outputPadding}px`,
+        paddingTop: outputPadding,
+        paddingBottom: outputPadding,
+        paddingLeft: buffer === Buffer.Alternate ? 0 : outputPadding,
+        paddingRight: buffer === Buffer.Alternate ? 0 : outputPadding,
         whiteSpace: "pre-wrap",
         backgroundColor: backgroundColor,
     };

@@ -12,7 +12,7 @@ const CharGroupComponent = ({text, attributes}: {text: string, attributes: Attri
     <span style={css.charGroup(attributes)}>{text}</span>;
 
 interface CutProps {
-    numberOfRows: number;
+    job: Job;
     clickHandler: React.EventHandler<React.MouseEvent>;
 }
 
@@ -28,12 +28,12 @@ class Cut extends React.Component<CutProps, CutState> {
 
     render() {
         return (
-            <div style={css.outputCut(this.state.isHovered)}
+            <div style={css.outputCut(this.props.job.status, this.state.isHovered)}
                  onClick={this.props.clickHandler}
                  onMouseEnter={() => this.setState({isHovered: true})}
                  onMouseLeave={() => this.setState({isHovered: false})}>
                 <i style={css.outputCutIcon} dangerouslySetInnerHTML={{__html: fontAwesome.expand}}/>
-                {`Show all ${this.props.numberOfRows} rows.`}
+                {`Show all ${this.props.job.buffer.size} rows.`}
             </div>
         );
     }
@@ -80,7 +80,7 @@ export default class BufferComponent extends React.Component<Props, State> {
         return (
             <div className="output"
                  style={css.output(this.props.job.buffer.activeBuffer, this.props.job.status)}>
-                {this.shouldCutOutput ? <Cut numberOfRows={this.props.job.buffer.size} clickHandler={() => this.setState({ expandButtonPressed: true })}/> : undefined}
+                {this.shouldCutOutput ? <Cut job={this.props.job} clickHandler={() => this.setState({ expandButtonPressed: true })}/> : undefined}
                 {this.renderableRows.map((row, index) => <RowComponent row={row || List<Char>()} key={index} style={css.row(this.props.job.status, this.props.job.buffer.activeBuffer)}/>)}
             </div>
         );
