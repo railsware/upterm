@@ -185,7 +185,7 @@ export const autocomplete = {
     box: (caretOffset: Offset) => {
         return {
             position: "absolute",
-            top: caretOffset.bottom ? "auto" : promptHeight,
+            top: caretOffset.bottom ? "auto" : promptWrapperHeight,
             bottom: caretOffset.bottom || "auto",
             left: caretOffset.left,
             minWidth: 300,
@@ -493,6 +493,8 @@ export const promptInfo = (status: Status) => {
     return styles;
 };
 
+const promptWrapperHeight = promptHeight + promptPadding;
+
 export const promptWrapper = (status: Status) => {
     const styles: CSSObject = {
         top: 0,
@@ -503,7 +505,7 @@ export const promptWrapper = (status: Status) => {
         gridTemplateRows: "auto",
         gridTemplateColumns: `${decorationWidth}px 1fr 150px`,
         backgroundColor: promptBackgroundColor,
-        minHeight: promptHeight + promptPadding,
+        minHeight: promptWrapperHeight,
     };
 
     if ([Status.Failure, Status.Interrupted].includes(status)) {
