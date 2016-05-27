@@ -39,7 +39,7 @@ class Cut extends React.Component<CutProps, CutState> {
     }
 }
 interface RowProps {
-    row: Immutable.List<Char>;
+    row: List<Char>;
     style: css.CSSObject;
 }
 
