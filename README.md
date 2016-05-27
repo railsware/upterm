@@ -27,7 +27,6 @@ Installation
 
 ```bash
 git clone https://github.com/shockone/black-screen.git && cd black-screen
-npm i
 npm start
 ```
 
