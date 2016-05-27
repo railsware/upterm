@@ -3,6 +3,7 @@ import Command from "./Command";
 import PTY from "./PTY";
 import * as Path from "path";
 import {executablesInPaths, resolveFile, isWindows, filterAsync, exists} from "./utils/Common";
+import {loginShell} from "./utils/Shell";
 
 abstract class CommandExecutionStrategy {
     protected args: string[];
@@ -35,9 +36,11 @@ class BuiltInCommandExecutionStrategy extends CommandExecutionStrategy {
     }
 }
 
-class UnixSystemFileExecutionStrategy extends CommandExecutionStrategy {
+class ShellExecutionStrategy extends CommandExecutionStrategy {
     static async canExecute(job: Job) {
-        return await this.isExecutableFromPath(job) || await this.isPathOfExecutable(job);
+        return loginShell.preCommandModifiers.includes(job.prompt.commandName) ||
+            await this.isExecutableFromPath(job) ||
+            await this.isPathOfExecutable(job);
     }
 
     private static async isExecutableFromPath(job: Job): Promise<boolean> {
@@ -59,7 +62,7 @@ class UnixSystemFileExecutionStrategy extends CommandExecutionStrategy {
     }
 }
 
-class WindowsSystemFileExecutionStrategy extends CommandExecutionStrategy {
+class WindowsShellExecutionStrategy extends CommandExecutionStrategy {
     static async canExecute(job: Job) {
         return isWindows();
     }
@@ -88,8 +91,8 @@ class WindowsSystemFileExecutionStrategy extends CommandExecutionStrategy {
 export default class CommandExecutor {
     private static executors = [
         BuiltInCommandExecutionStrategy,
-        WindowsSystemFileExecutionStrategy,
-        UnixSystemFileExecutionStrategy,
+        WindowsShellExecutionStrategy,
+        ShellExecutionStrategy,
     ];
 
     static async execute(job: Job): Promise<{}> {

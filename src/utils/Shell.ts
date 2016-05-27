@@ -4,6 +4,7 @@ abstract class Shell {
     abstract get executableName(): string;
     abstract get configFiles(): string[];
     abstract get noConfigSwitches(): string[];
+    abstract get preCommandModifiers(): string[];
 
     async existingConfigFiles(): Promise<string[]> {
         const resolvedConfigFiles = this.configFiles.map(fileName => resolveFile(process.env.HOME, fileName));
@@ -23,6 +24,10 @@ class Bash extends Shell {
     get noConfigSwitches() {
         return ["--noprofile", "--norc"];
     }
+
+    get preCommandModifiers(): string[] {
+        return [];
+    }
 }
 
 class ZSH extends Shell {
@@ -36,6 +41,16 @@ class ZSH extends Shell {
 
     get noConfigSwitches() {
         return ["--no-globalrcs", "--no-rcs"];
+    }
+
+    get preCommandModifiers() {
+        return [
+            "-",
+            "noglob",
+            "nocorrect",
+            "exec",
+            "command",
+        ];
     }
 }
 
