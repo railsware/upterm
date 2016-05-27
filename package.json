@@ -74,7 +74,7 @@
     "update-dependencies": "ncu -u",
     "lint": "tslint `find src -name '*.ts*'`",
     "cleanup": "rm -rf compiled",
-    "copy-html": "cp src/views/index.html compiled/src/views > /dev/tty",
+    "copy-html": "mkdir -p compiled/src/views && cp src/views/index.html compiled/src/views > /dev/tty",
     "compile": "npm run cleanup && npm run compile-tsc && npm run copy-html",
     "compile-tsc": "tsc"
   },
