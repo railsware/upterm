@@ -83,7 +83,7 @@ export function executeCommand(command: string, args: string[] = [], directory: 
 
 export async function linedOutputOf(command: string, args: string[], directory: string): Promise<string[]> {
     let output = await executeCommand(command, args, directory);
-    return output.split(OS.EOL).filter(path => path.length > 0);
+    return output.split("\\" + OS.EOL).join(" ").split(OS.EOL).filter(path => path.length > 0);
 }
 
 export async function executeCommandWithShellConfig(command: string): Promise<string[]> {
