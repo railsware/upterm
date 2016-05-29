@@ -59,7 +59,7 @@
     "release": "build --publish always",
     "electron": "electron .",
     "prestart": "npm install && npm run compile",
-    "start": "bash start.sh",
+    "start": "bash housekeeping/start.sh",
     "test": "npm run unit-tests && npm run integration-tests",
     "unit-tests": "ELECTRON_RUN_AS_NODE=1 electron $(which mocha) --require ts-node/register test/**.ts",
     "integration-tests": "npm run compile && mocha",
