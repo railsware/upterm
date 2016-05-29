@@ -14,4 +14,4 @@ deploy:
   provider: script
   script: npm version patch && npm run release
   on:
-    branch: single-package-json
+    branch: master
