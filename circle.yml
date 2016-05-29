@@ -9,7 +9,7 @@ deployment:
   release:
     branch: feature-automatic-releases
     commands:
-      - npm version patch
+      - (cd compiled && npm version patch)
       - npm run release
 general:
   branches:
