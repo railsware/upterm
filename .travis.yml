@@ -5,9 +5,9 @@ language: node_js
 os:
   - osx
 
-deploy:
-  skip_cleanup: true
-  provider: script
-  script: npm run release
-  on:
-    branch: feature-automatic-releases
+#deploy:
+#  skip_cleanup: true
+#  provider: script
+#  script: npm run release
+#  on:
+#    branch: feature-automatic-releases
