@@ -1,8 +1,10 @@
 const {Application} = require("spectron");
 const {expect} = require("chai");
 
+const timeout = 50000;
+
 describe("application launch", function () {
-    this.timeout(50000);
+    this.timeout(timeout);
 
     let app;
 
@@ -20,7 +22,7 @@ describe("application launch", function () {
     it("can execute a command", function () {
         return app.client.
         waitUntilWindowLoaded().
-        waitForExist(".prompt").
+        waitForExist(".prompt", timeout).
         setValue(".prompt", "ls /\n").
         waitForExist(".prompt[contenteditable=false]").
         getText(".job .output").
