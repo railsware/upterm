@@ -1,5 +1,6 @@
 {
   "name": "black-screen",
+  "version": "0.0.3",
   "main": "src/main/Main.js",
   "description": "A terminal emulator for the 21st century.",
   "author": "Volodymyr Shatskyi <shockone89@gmail.com>",
