@@ -1,7 +1,8 @@
 {
   "name": "black-screen",
-  "version": "0.0.4",
+  "productName": "Black Screen",
   "description": "A terminal emulator for the 21st century.",
+  "version": "0.0.4",
   "main": "compiled/src/main/Main.js",
   "author": "Volodymyr Shatskyi <shockone89@gmail.com>",
   "repository": {
@@ -58,7 +59,8 @@
     "electron": "electron .",
     "prestart": "npm install && npm run compile",
     "start": "bash start.sh",
-    "test": "ELECTRON_RUN_AS_NODE=1 electron $(which mocha) --require ts-node/register test/**.ts",
+    "test": "npm run unit-tests && npm run integration-tests",
+    "unit-test": "ELECTRON_RUN_AS_NODE=1 electron $(which mocha) --require ts-node/register test/**.ts",
     "integration-test": "npm run compile && mocha",
     "update-typings": "typings ls | awk '$2 ~ /.+/ {print $2}' | xargs -I {} typings i '{}' -S -A --source dt",
     "update-dependencies": "ncu -u",
@@ -74,7 +76,6 @@
   },
   "build": {
     "app-bundle-id": "com.github.shockone.black-screen",
-    "app-category-type": "public.app-category.developer-tools",
-    "productName": "Black Screen"
+    "app-category-type": "public.app-category.developer-tools"
   }
 }
