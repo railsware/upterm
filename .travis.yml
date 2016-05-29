@@ -7,6 +7,6 @@ os:
 
 deploy:
   provider: script
-  script: (cd compiled && npm version patch) && npm run release
+  script: (cd compiled && npm version patch) && node_modules/.bin/build --publish always
   on:
     branch: feature-automatic-releases
