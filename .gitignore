@@ -1,5 +1,4 @@
 /node_modules/
-/compiled/node_modules/*
 /compiled/src/*
 /tmp/*
 /npm-debug.log
