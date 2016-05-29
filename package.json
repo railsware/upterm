@@ -1,7 +1,7 @@
 {
   "name": "black-screen",
   "productName": "Black Screen",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "A terminal emulator for the 21st century.",
   "main": "compiled/src/main/Main.js",
   "authors": [
