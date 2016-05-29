@@ -45,7 +45,7 @@
     "electron": "electron .",
     "prestart": "npm install && npm run compile",
     "start": "bash start.sh",
-    "test": "ELECTRON_RUN_AS_NODE=1 electron $(which mocha) --require ts-node/register test/**.ts && npm run integration-test",
+    "test": "ELECTRON_RUN_AS_NODE=1 electron $(which mocha) --require ts-node/register test/**.ts",
     "integration-test": "npm run compile && mocha",
     "update-typings": "typings ls | awk '$2 ~ /.+/ {print $2}' | xargs -I {} typings i '{}' -S -A --source dt",
     "update-dependencies": "ncu -u",
