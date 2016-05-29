@@ -2,7 +2,6 @@
   "name": "black-screen",
   "main": "src/main/Main.js",
   "description": "A terminal emulator for the 21st century.",
-  "version": "0.0.3",
   "author": "Volodymyr Shatskyi <shockone89@gmail.com>",
   "homepage": "https://github.com/shockone/black-screen",
   "license": "MIT",
