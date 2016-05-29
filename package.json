@@ -41,7 +41,6 @@
     "preinstall": "npm prune",
     "postinstall": "install-app-deps",
     "pack": "build",
-    "dist": "build",
     "release": "build",
     "electron": "electron .",
     "prestart": "npm install && npm run compile",
