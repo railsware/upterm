@@ -1,5 +1,5 @@
 [![Join the chat at https://gitter.im/shockone/black-screen](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/shockone/black-screen?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
-![](https://api.travis-ci.org/shockone/black-screen.svg)
+[![Travis CI Status](https://travis-ci.org/shockone/black-screen)](https://api.travis-ci.org/shockone/black-screen.svg)
 
 What Is It?
 -----------
