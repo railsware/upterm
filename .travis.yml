@@ -12,6 +12,6 @@ cache:
 deploy:
   skip_cleanup: true
   provider: script
-  script: npm version patch && npm run release
+  script: npm version patch && npm prune --production && npm run release
   on:
     branch: master
