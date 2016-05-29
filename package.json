@@ -26,27 +26,11 @@
     "shell",
     "console"
   ],
-  "dependencies": {
-    "fixed-sticky": "0.1.7",
-    "font-awesome": "4.6.3",
-    "fs-extra": "0.30.0",
-    "fuzzaldrin": "2.1.0",
-    "immutable": "3.8.1",
-    "jison": "0.4.17",
-    "jquery": "2.2.4",
-    "jquery.caret": "^0.2.1",
-    "lodash": "4.13.1",
-    "node-ansiparser": "2.1.0",
-    "pty.js": "shockone/pty.js",
-    "react": "15.1.0",
-    "react-dom": "15.1.0",
-    "rxjs": "5.0.0-beta.8",
-    "tinycolor2": "1.3.0"
-  },
   "devDependencies": {
     "asar": "0.11.0",
     "chai": "3.5.0",
     "devtron": "1.1.2",
+    "electron-builder": "3.25.0",
     "electron-packager": "7.0.2",
     "electron-prebuilt": "1.1.3",
     "electron-rebuild": "1.1.4",
@@ -61,7 +45,10 @@
   },
   "scripts": {
     "preinstall": "npm prune",
-    "postinstall": "npm run recompile",
+    "postinstall": "install-app-deps",
+    "pack": "build",
+    "dist": "build",
+    "release": "build",
     "electron-version": "cat package.json | grep 'electron-prebuilt\": \"' | cut -d '\"' -f 4",
     "recompile": "export ELECTRON_VERSION=$(npm run electron-version --silent); HOME=~/.electron-gyp cd node_modules/pty.js; node-gyp rebuild --target=$ELECTRON_VERSION --arch=x64 --dist-url=https://atom.io/download/atom-shell",
     "electron": "electron .",
@@ -73,10 +60,18 @@
     "update-typings": "typings ls | awk '$2 ~ /.+/ {print $2}' | xargs -I {} typings i '{}' -S -A --source dt",
     "update-dependencies": "ncu -u",
     "lint": "tslint `find src -name '*.ts*'`",
-    "cleanup": "rm -rf compiled",
+    "cleanup": "rm -rf compiled/src",
     "copy-html": "mkdir -p compiled/src/views && cp src/views/index.html compiled/src/views > /dev/tty",
     "compile": "npm run cleanup && npm run compile-tsc && npm run copy-html",
     "compile-tsc": "tsc"
   },
-  "license": "MIT"
+  "license": "MIT",
+  "directories": {
+    "app": "compiled"
+  },
+  "build": {
+    "app-bundle-id": "com.github.shockone.black-screen",
+    "app-category-type": "public.app-category.developer-tools",
+    "productName": "Black Screen"
+  }
 }
