@@ -1,12 +1,9 @@
 {
   "name": "black-screen",
+  "version": "0.0.4",
   "description": "A terminal emulator for the 21st century.",
   "main": "compiled/src/main/Main.js",
-  "authors": [
-    "Volodymyr Shatsky <shockone89@gmail.com>",
-    "Konstantin Azizov <azizovkostya97@gmail.com>",
-    "Volodymyr Barna <roberto.te.ua@gmail.com>"
-  ],
+  "author": "Volodymyr Shatskyi <shockone89@gmail.com>",
   "repository": {
     "type": "git",
     "url": "https://github.com/shockone/black-screen.git"
@@ -56,8 +53,7 @@
   },
   "scripts": {
     "preinstall": "npm prune",
-    "postinstall": "install-app-deps",
-    "pack": "build",
+    "pack": "npm run compile && build",
     "release": "npm run compile && build --publish always",
     "electron": "electron .",
     "prestart": "npm install && npm run compile",
@@ -74,7 +70,7 @@
   },
   "license": "MIT",
   "directories": {
-    "app": "compiled"
+    "app": "."
   },
   "build": {
     "app-bundle-id": "com.github.shockone.black-screen",
