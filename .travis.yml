@@ -1,17 +1,17 @@
 osx_image: xcode7.3
-
 language: node_js
-
 os:
-  - osx
-
+- osx
 cache:
   directories:
-    - node_modules
-
+  - node_modules
 deploy:
   skip_cleanup: true
   provider: script
   script: bash housekeeping/deploy.sh
   on:
     branch: master
+env:
+  global:
+    # GH_TOKEN
+    secure: LkI4RAc08x0XsiMlK0cIKFy381qJ8v8WKepjhAGdwbNgPqDcMqLXSznTTaGTcN1hKonHBPJVL9l0G02oRjj/ulh/yeGV1Q/JRPBm2XLoG0EX6hcuDj/skaLO24fuYf/miYejZbJcRBj2F/OP7sR1SfQPl6dfzEnLj96IHCUxzEBbB6PPJdGRL35117HqD0Y/LGLPkHgdh53n/FEtsEbl6DwvkPr8+yDZxUCqTJW53ZoBJzf9znZE5gMZg6btkStWTUuM5n5doe446ipRouGtomOXkgsCtQbsd66cRzdlIlEGKUEDaEL/c4KDMIUUDw2MpxoUm2fDJ98krxRLhvANgN/rqQVBoYY45OT7SzK9TYcvqS36E6a9pdmFpt0M3w532f5E6simgJp1a6gBoSBBYoZL8hRscF2VgAvjJV0QVQzos6Ec01nGjAbpC/i2B6IR6tnI1L5C3YHR4xDvSqW3iDo3hpc+Y4INOMysMt3cK+oWx3bEsbH8G3JRbU6Edz5vUVQ5aeoyVgfr/vxhIohWq8NpGd8zqdyyfKq59DYugkDNpvKr07w+FQZLtexILKw6FzNEjm3gI9prz5a7+WzFLQcdgy6xFM7z3GN5e1kbX39BSMcmkueWk96kCYSpKOflAX5h+WOs3VjwVxoIaB5uYeQD10L+6703eSyXy3Ni3Sg=
