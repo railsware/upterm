@@ -5,7 +5,7 @@ import menu from "./Menu";
 let browserWindow: Electron.BrowserWindow = undefined;
 
 if (app.dock) {
-    app.dock.setIcon(nativeImage.createFromPath("icon.png"));
+    app.dock.setIcon(nativeImage.createFromPath("build/icon.png"));
 }
 
 app.on("open-file", (event: Event, file: string) => getMainWindow().webContents.send("change-working-directory", file));
