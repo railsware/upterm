@@ -1,6 +1,9 @@
 machine:
   node:
     version: 6.2.0
+dependencies:
+  pre:
+    - sudo apt-get update; sudo apt-get install --no-install-recommends -y icnsutils graphicsmagick xz-utils
 test:
   post:
     - npm run lint
