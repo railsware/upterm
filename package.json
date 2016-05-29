@@ -27,15 +27,11 @@
     "console"
   ],
   "devDependencies": {
-    "asar": "0.11.0",
     "chai": "3.5.0",
     "devtron": "1.1.2",
     "electron-builder": "3.25.0",
-    "electron-packager": "7.0.2",
     "electron-prebuilt": "1.1.3",
-    "electron-rebuild": "1.1.4",
     "mocha": "2.5.3",
-    "node-gyp": "3.3.1",
     "npm-check-updates": "2.6.5",
     "spectron": "3.1.1",
     "ts-node": "0.7.3",
@@ -49,12 +45,9 @@
     "pack": "build",
     "dist": "build",
     "release": "build",
-    "electron-version": "cat package.json | grep 'electron-prebuilt\": \"' | cut -d '\"' -f 4",
-    "recompile": "export ELECTRON_VERSION=$(npm run electron-version --silent); HOME=~/.electron-gyp cd node_modules/pty.js; node-gyp rebuild --target=$ELECTRON_VERSION --arch=x64 --dist-url=https://atom.io/download/atom-shell",
     "electron": "electron .",
     "prestart": "npm install && npm run compile",
     "start": "bash start.sh",
-    "package": "npm run compile && electron-packager . \"$npm_package_productName\" --overwrite --platform=darwin --arch=x64 --version=$(npm run electron-version --silent) --out='/Applications' --icon='./icon.icns' --asar=true",
     "test": "ELECTRON_RUN_AS_NODE=1 electron $(which mocha) --require ts-node/register test/**.ts",
     "integration-test": "npm run compile && mocha",
     "update-typings": "typings ls | awk '$2 ~ /.+/ {print $2}' | xargs -I {} typings i '{}' -S -A --source dt",
@@ -62,8 +55,8 @@
     "lint": "tslint `find src -name '*.ts*'`",
     "cleanup": "rm -rf compiled/src",
     "copy-html": "mkdir -p compiled/src/views && cp src/views/index.html compiled/src/views > /dev/tty",
-    "compile": "npm run cleanup && npm run compile-tsc && npm run copy-html",
-    "compile-tsc": "tsc"
+    "compile": "npm run cleanup && npm run tsc && npm run copy-html",
+    "tsc": "tsc"
   },
   "license": "MIT",
   "directories": {
