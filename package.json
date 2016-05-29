@@ -1,6 +1,5 @@
 {
   "name": "black-screen",
-  "productName": "Black Screen",
   "description": "A terminal emulator for the 21st century.",
   "main": "compiled/src/main/Main.js",
   "authors": [
