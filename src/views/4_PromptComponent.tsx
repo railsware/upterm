@@ -30,6 +30,7 @@ interface Props {
 interface State {
     highlightedSuggestionIndex?: number;
     latestKeyCode?: number;
+    offsetTop?: number;
     suggestions?: Suggestion[];
 }
 
@@ -60,7 +61,10 @@ export default class PromptComponent extends React.Component<Props, State> imple
 
         keyDownSubject
             .filter(_.negate(withModifierKey))
-            .forEach((event: KeyboardEvent) => this.setState({latestKeyCode: event.keyCode}));
+            .forEach((event: KeyboardEvent) => this.setState({
+                latestKeyCode: event.keyCode,
+                offsetTop: (event.target as HTMLDivElement).getBoundingClientRect().top}
+            ));
 
 
         const promptKeys = keyDownSubject.filter(() => this.props.status !== e.Status.InProgress)
@@ -133,7 +137,6 @@ export default class PromptComponent extends React.Component<Props, State> imple
     }
 
     render() {
-        const classes = ["prompt-wrapper", this.props.status].join(" ");
         // FIXME: write better types.
         let autocomplete: any;
         let autocompletedPreview: any;
@@ -143,7 +146,8 @@ export default class PromptComponent extends React.Component<Props, State> imple
 
         if (this.showAutocomplete()) {
             autocomplete = <AutocompleteComponent suggestions={this.state.suggestions}
-                                                  caretOffset={$(this.commandNode).caret("offset")}
+                                                  offsetTop={this.state.offsetTop}
+                                                  caretPosition={getCaretPosition(this.commandNode)}
                                                   onSuggestionHover={this.highlightSuggestion.bind(this)}
                                                   onSuggestionClick={this.applySuggestion.bind(this)}
                                                   highlightedIndex={this.state.highlightedSuggestionIndex}
@@ -170,7 +174,7 @@ export default class PromptComponent extends React.Component<Props, State> imple
         }
 
         return (
-            <div className={classes} style={css.promptWrapper(this.props.status)}>
+            <div className="prompt-wrapper" style={css.promptWrapper(this.props.status)}>
                 <div style={css.arrow(this.props.status)}>
                     <div style={css.arrowInner(this.props.status)}></div>
                 </div>
@@ -179,7 +183,7 @@ export default class PromptComponent extends React.Component<Props, State> imple
                      dangerouslySetInnerHTML={{__html: this.props.status === Status.Interrupted ? fontAwesome.close : ""}}></div>
                 <div className="prompt"
                      style={css.prompt}
-                     onKeyDown={this.handlers.onKeyDown.bind(this)}
+                     onKeyDown={event => this.handlers.onKeyDown(event)}
                      onInput={this.handleInput.bind(this)}
                      onKeyPress={this.handleKeyPress.bind(this)}
                      type="text"

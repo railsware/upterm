@@ -55,9 +55,10 @@ export interface CSSObject {
 
 const fontSize = 14;
 const outputPadding = 10;
-const promptPadding = 5;
-const promptHeight = 12 + (2 * promptPadding);
-const promptWrapperHeight = promptHeight + promptPadding;
+const promptVerticalPadding = 5;
+const promptHorizontalPadding = 10;
+const promptHeight = 12 + (2 * promptVerticalPadding);
+const promptWrapperHeight = promptHeight + promptVerticalPadding;
 const promptBackgroundColor = lighten(colors.black, 5);
 const suggestionSize = 2 * fontSize;
 const defaultShadow = "0 2px 8px 1px rgba(0, 0, 0, 0.3)";
@@ -95,7 +96,10 @@ const progressBarStripesSize = 30;
 const arrowColor = lighten(promptBackgroundColor, 10);
 
 const promptInlineElement = {
-    padding: "0 10px 3px 10px", // FIXME: Use grid-column-gap when it's supported.
+    paddingTop: 0,
+    paddingRight: promptHorizontalPadding,
+    paddingBottom: 3,
+    paddingLeft: promptHorizontalPadding,
     gridArea: "prompt",
     fontSize: fontSize,
     WebkitFontFeatureSettings: '"liga", "dlig"',
@@ -185,14 +189,14 @@ export const debugTag = {
 };
 
 export const autocomplete = {
-    box: (caretOffset: Offset, hasDescription: boolean) => {
-        const shouldDisplayAbove = caretOffset.top + (suggestionsLimit * suggestionSize) > window.innerHeight;
+    box: (offsetTop: number, caretPosition: number, hasDescription: boolean) => {
+        const shouldDisplayAbove = offsetTop + (suggestionsLimit * suggestionSize) > window.innerHeight;
 
         return {
             position: "absolute",
             top: shouldDisplayAbove ? "auto" : promptWrapperHeight,
             bottom: shouldDisplayAbove ? suggestionSize + (hasDescription ? suggestionSize : 0) : "auto",
-            left: caretOffset.left,
+            left: decorationWidth + promptHorizontalPadding + (caretPosition * letterWidth),
             minWidth: 300,
             boxShadow: defaultShadow,
             backgroundColor: colors.black,
@@ -501,7 +505,7 @@ export const promptInfo = (status: Status) => {
 export const promptWrapper = (status: Status) => {
     const styles: CSSObject = {
         top: 0,
-        paddingTop: promptPadding,
+        paddingTop: promptVerticalPadding,
         position: "relative", // To position the autocompletion box correctly.
         display: "grid",
         gridTemplateAreas: "'decoration prompt actions'",
@@ -523,7 +527,7 @@ export const arrow = (status: Status) => {
         gridArea: "decoration",
         position: "relative",
         width: decorationWidth,
-        height: promptHeight - promptPadding,
+        height: promptHeight - promptVerticalPadding,
         margin: "0 auto",
         overflow: "hidden",
         zIndex: arrowZIndex,
