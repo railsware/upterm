@@ -28,7 +28,6 @@
     "fuzzaldrin": "2.1.0",
     "immutable": "3.8.1",
     "jison": "0.4.17",
-    "jquery": "2.2.4",
     "lodash": "4.13.1",
     "node-ansiparser": "2.1.0",
     "pty.js": "shockone/pty.js",

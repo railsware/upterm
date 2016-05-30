@@ -174,7 +174,7 @@ export default class PromptComponent extends React.Component<Props, State> imple
         }
 
         return (
-            <div className="prompt-wrapper" style={css.promptWrapper(this.props.status)}>
+            <div className="prompt-wrapper" id={this.props.job.id} style={css.promptWrapper(this.props.status)}>
                 <div style={css.arrow(this.props.status)}>
                     <div style={css.arrowInner(this.props.status)}></div>
                 </div>
@@ -321,8 +321,7 @@ export default class PromptComponent extends React.Component<Props, State> imple
     private handleScrollToTop(event: Event) {
         stopBubblingUp(event);
 
-        const offset = $(reactDOM.findDOMNode(this.props.jobView)).offset().top - 10;
-        $("html, body").animate({scrollTop: offset}, 300);
+        document.location.href = `#${this.props.job.id}`;
     }
 
     private handleKeyPress(event: Event) {
