@@ -14,12 +14,6 @@ interface Window {
     Notification: typeof Notification;
 }
 
-declare type Offset = {top: number, left: number, bottom: number};
-
-interface JQuery {
-    caret: (v: string|number) => Offset;
-}
-
 declare class AnsiParser {
     constructor(callbacks: Dictionary<Function>)
 

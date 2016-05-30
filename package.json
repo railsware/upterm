@@ -29,7 +29,6 @@
     "immutable": "3.8.1",
     "jison": "0.4.17",
     "jquery": "2.2.4",
-    "jquery.caret": "^0.2.1",
     "lodash": "4.13.1",
     "node-ansiparser": "2.1.0",
     "pty.js": "shockone/pty.js",
