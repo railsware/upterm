@@ -114,6 +114,7 @@ export default class Job extends EmitterWithUniqueID {
         if (this.command && this.status === Status.InProgress) {
             this.command.kill("SIGINT");
             this.setStatus(Status.Interrupted);
+            this.emit("end");
         }
     }
 
