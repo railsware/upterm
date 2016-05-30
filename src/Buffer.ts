@@ -44,7 +44,7 @@ export default class Buffer extends events.EventEmitter {
                     if (this.cursor.row === this._margins.bottom) {
                         this.scrollDown(1);
                     } else {
-                        this.moveCursorRelative({vertical: 1}).moveCursorAbsolute({column: 0});
+                        this.moveCursorRelative({vertical: 1});
                     }
 
                     break;
