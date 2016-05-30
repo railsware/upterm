@@ -116,6 +116,8 @@ export default class PromptComponent extends React.Component<Props, State> imple
                 document.execCommand("insertHTML", false, text);
             }
         });
+
+        this.setDOMValueProgrammatically(this.prompt.value);
     }
 
     componentDidUpdate(prevProps: Props, prevState: State) {
