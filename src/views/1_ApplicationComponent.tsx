@@ -7,6 +7,7 @@ import {ipcRenderer} from "electron";
 import {KeyCode} from "../Enums";
 import {remote} from "electron";
 import * as css from "./css/main";
+import {restoreWindowBounds, saveWindowBounds} from "./ViewUtils";
 
 interface State {
     sessions: Session[];
@@ -18,21 +19,31 @@ export default class ApplicationComponent extends React.Component<{}, State> {
 
     constructor(props: {}) {
         super(props);
+        const focusedWindow = remote.BrowserWindow.getFocusedWindow();
+
+        restoreWindowBounds(focusedWindow);
 
         this.addTab();
         this.state = {sessions: this.activeTab.sessions};
 
-        $(window).resize(() => {
-            for (const tab of this.tabs) {
-                tab.updateAllSessionsDimensions();
-            }
-        });
+        focusedWindow
+            .on("move", () => saveWindowBounds(focusedWindow))
+            .on("resize", () => {
+                saveWindowBounds(focusedWindow);
+
+                for (const tab of this.tabs) {
+                    tab.updateAllSessionsDimensions();
+                }
+            });
 
         ipcRenderer.on("change-working-directory", (event: Electron.IpcRendererEvent, directory: string) =>
             this.activeTab.activeSession().directory = directory
         );
 
-        window.onbeforeunload = () => this.closeAllTabs();
+        window.onbeforeunload = () => {
+            focusedWindow.removeAllListeners();
+            this.closeAllTabs();
+        }
     }
 
     handleKeyDown(event: KeyboardEvent) {

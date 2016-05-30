@@ -75,3 +75,19 @@ export function getCaretPosition(element: any): number {
     }
     return caretOffset;
 }
+
+const windowBoundsKey = "windowBounds";
+
+export function saveWindowBounds(browserWindow: Electron.BrowserWindow) {
+    const bounds = browserWindow.getBounds();
+
+    localStorage.setItem(windowBoundsKey, JSON.stringify(bounds));
+}
+
+export function restoreWindowBounds(browserWindow: Electron.BrowserWindow) {
+    const windowBounds: Electron.Rectangle = JSON.parse(localStorage.getItem(windowBoundsKey));
+
+    if (windowBounds) {
+        browserWindow.setBounds(windowBounds);
+    }
+}
