@@ -100,9 +100,6 @@ export default class PromptComponent extends React.Component<Props, State> imple
     }
 
     componentDidMount() {
-        $(reactDOM.findDOMNode(this)).fixedsticky();
-        $(".fixedsticky-dummy").remove();
-
         const node = this.commandNode;
         node.focus();
         node.addEventListener("paste", (event: ClipboardEvent) => {
@@ -136,7 +133,7 @@ export default class PromptComponent extends React.Component<Props, State> imple
     }
 
     render() {
-        const classes = ["prompt-wrapper", "fixedsticky", this.props.status].join(" ");
+        const classes = ["prompt-wrapper", this.props.status].join(" ");
         // FIXME: write better types.
         let autocomplete: any;
         let autocompletedPreview: any;

@@ -17,7 +17,6 @@ interface Window {
 declare type Offset = {top: number, left: number, bottom: number};
 
 interface JQuery {
-    fixedsticky: Function;
     caret: (v: string|number) => Offset;
 }
 

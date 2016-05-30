@@ -23,7 +23,6 @@
     "console"
   ],
   "dependencies": {
-    "fixed-sticky": "0.1.7",
     "font-awesome": "4.6.3",
     "fs-extra": "0.30.0",
     "fuzzaldrin": "2.1.0",
