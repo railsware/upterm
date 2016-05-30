@@ -38,9 +38,10 @@ export const makeGrammar = (aliases: Dictionary<string>) => {
     return sequence(sequence(anyCommand, separator), anyCommand);
 };
 
+export const suggestionsLimit = 9;
+
 export const {getSuggestions} = new class {
     private grammar: Parser;
-    private limit = 9;
 
     getSuggestions = async (job: Job, inputMethod: InputMethod) => {
         if (!this.grammar) {
@@ -62,7 +63,7 @@ export const {getSuggestions} = new class {
         });
 
         const suggestions = results.map(result => result.suggestions.map(suggestion => suggestion.withPrefix(result.parse)));
-        const unique = _.uniqBy(_.flatten(suggestions), suggestion => suggestion.value).slice(0, this.limit);
+        const unique = _.uniqBy(_.flatten(suggestions), suggestion => suggestion.value).slice(0, suggestionsLimit);
 
         if (window.DEBUG) {
             /* tslint:disable:no-console */

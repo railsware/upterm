@@ -4,6 +4,7 @@ import {TabHoverState} from "../TabComponent";
 import {darken, lighten, failurize} from "./functions";
 import {Attributes} from "../../Interfaces";
 import * as _ from "lodash";
+import {suggestionsLimit} from "../../Autocompletion";
 
 export interface CSSObject {
     pointerEvents?: string;
@@ -58,6 +59,7 @@ const promptPadding = 5;
 const promptHeight = 12 + (2 * promptPadding);
 const promptWrapperHeight = promptHeight + promptPadding;
 const promptBackgroundColor = lighten(colors.black, 5);
+const suggestionSize = 2 * fontSize;
 const defaultShadow = "0 2px 8px 1px rgba(0, 0, 0, 0.3)";
 export const titleBarHeight = 24;
 export const rowHeight = fontSize + 4;
@@ -165,8 +167,8 @@ export const suggestionIcon = Object.assign(
     icon,
     {
         display: "inline-block",
-        width: "2em",
-        height: "2em",
+        width: suggestionSize,
+        height: suggestionSize,
         lineHeight: "2em",
         verticalAlign: "middle",
         textAlign: "center",
@@ -183,11 +185,13 @@ export const debugTag = {
 };
 
 export const autocomplete = {
-    box: (caretOffset: Offset) => {
+    box: (caretOffset: Offset, hasDescription: boolean) => {
+        const shouldDisplayAbove = caretOffset.top + (suggestionsLimit * suggestionSize) > window.innerHeight;
+
         return {
             position: "absolute",
-            top: caretOffset.bottom ? "auto" : promptWrapperHeight,
-            bottom: caretOffset.bottom || "auto",
+            top: shouldDisplayAbove ? "auto" : promptWrapperHeight,
+            bottom: shouldDisplayAbove ? suggestionSize + (hasDescription ? suggestionSize : 0) : "auto",
             left: caretOffset.left,
             minWidth: 300,
             boxShadow: defaultShadow,

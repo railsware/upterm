@@ -41,16 +41,13 @@ export default class AutocompleteComponent extends React.Component<AutocompleteP
 
         const suggestionDescription = this.props.suggestions[this.props.highlightedIndex].description;
         let descriptionElement: React.ReactElement<any>;
+
         if (suggestionDescription) {
             descriptionElement = <div style={css.description}>{suggestionDescription}</div>;
         }
 
-        if (this.props.caretOffset.top + 300 > window.innerHeight) {
-            this.props.caretOffset.bottom = 28 + (suggestionDescription ? 28 : 0);
-        }
-
         return (
-            <div style={css.autocomplete.box(this.props.caretOffset)}>
+            <div style={css.autocomplete.box(this.props.caretOffset, suggestionDescription.length !== 0)}>
                 <ul style={css.autocomplete.suggestionsList}>{suggestionViews}</ul>
                 {descriptionElement}
             </div>
