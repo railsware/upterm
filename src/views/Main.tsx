@@ -1,3 +1,5 @@
+process.env.NODE_ENV = "production";
+
 import Aliases from "../Aliases";
 const reactDOM = require("react-dom");
 /* tslint:disable:no-unused-variable */

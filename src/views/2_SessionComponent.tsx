@@ -74,6 +74,12 @@ export default class SessionComponent extends React.Component<Props, State> {
         if (event.metaKey && event.keyCode === KeyCode.D) {
             window.DEBUG = !window.DEBUG;
 
+            if (window.DEBUG) {
+                process.env.NODE_ENV = "development";
+            } else {
+                process.env.NODE_ENV = "production";
+            }
+
             require("devtron").install();
 
             event.stopPropagation();
