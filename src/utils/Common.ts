@@ -92,7 +92,7 @@ export async function isDirectory(directoryPath: string): Promise<boolean> {
 }
 
 async function ensureDirectoryExists(filePath: string): Promise<void> {
-    var directoryPath = Path.dirname(filePath);
+    const directoryPath = Path.dirname(filePath);
     if (await exists(directoryPath)) {
         return;
     }

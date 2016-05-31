@@ -18,7 +18,6 @@ import {InputMethod} from "../Parser";
 import * as css from "./css/main";
 import {fontAwesome} from "./css/FontAwesome";
 import {Status} from "../Enums";
-const reactDOM = require("react-dom");
 
 interface Props {
     job: JobModel;

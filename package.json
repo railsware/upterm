@@ -56,7 +56,7 @@
     "electron": "electron .",
     "prestart": "npm install && npm run compile",
     "start": "bash housekeeping/start.sh",
-    "test": "npm run unit-tests && npm run integration-tests",
+    "test": "npm run lint && npm run unit-tests && npm run integration-tests",
     "unit-tests": "ELECTRON_RUN_AS_NODE=1 electron $(which mocha) --require ts-node/register test/**.ts",
     "integration-tests": "npm run compile && mocha",
     "update-typings": "typings ls | awk '$2 ~ /.+/ {print $2}' | xargs -I {} typings i '{}' -S -A --source dt",

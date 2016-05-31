@@ -46,7 +46,7 @@ export default class ApplicationComponent extends React.Component<{}, State> {
                 .removeAllListeners("devtools-closed");
 
             this.closeAllTabs();
-        }
+        };
     }
 
     handleKeyDown(event: KeyboardEvent) {
@@ -165,13 +165,7 @@ export default class ApplicationComponent extends React.Component<{}, State> {
         };
     }
 
-    private recalculateDimensions() {
-        for (const tab of this.tabs) {
-            tab.updateAllSessionsDimensions();
-        }
-    }
-
-    public closeSession(sessionToClose: Session) {
+    closeSession(sessionToClose: Session) {
         for (const tab of this.tabs) {
             for (const session of tab.sessions) {
                 if (session === sessionToClose) {
@@ -189,6 +183,12 @@ export default class ApplicationComponent extends React.Component<{}, State> {
         }
 
         throw "Couldn't find the session you asked me to remove.";
+    }
+
+    private recalculateDimensions() {
+        for (const tab of this.tabs) {
+            tab.updateAllSessionsDimensions();
+        }
     }
 
     private get activeTab(): Tab {
