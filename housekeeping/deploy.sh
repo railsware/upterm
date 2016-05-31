@@ -19,7 +19,7 @@ BODY=$(git log --oneline --no-merges $TAG_NAME...$PREVIOUS_TAG_NAME)
 echo "($?) Body:"
 echo $BODY
 
-ESCAPED_BODY=$(echo $BODY | grep -v '\[ci skip\]' | tr '\n' '|' | sed 's/|/\\n/g' | sed 's/"/\\"/g')
+ESCAPED_BODY=$(echo $BODY | grep -v '\[ci skip\]' | python -c "import json,sys; print json.dumps(sys.stdin.read());")
 echo "($?) Escaped body:"
 echo $ESCAPED_BODY
 
