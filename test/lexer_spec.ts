@@ -2,6 +2,10 @@ import {expect} from "chai";
 import {lex} from "../src/CommandExpander";
 
 describe("lex", () => {
+    it("returns an empty array on empty input", () => {
+        expect(lex("")).to.eql([]);
+    });
+
     it("splits on a space", () => {
         expect(lex("some words")).to.eql(["some", "words"]);
     });

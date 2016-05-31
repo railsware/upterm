@@ -26,6 +26,10 @@ export async function expandAliases(lexemes: string[]): Promise<string[]> {
 }
 
 export function lex(input: string): string[] {
+    if (input.length === 0) {
+        return [];
+    }
+
     let lexemes = input.match(/"(?:\\"|[^"])+"|'(?:\\'|[^'])+'|(?:[^ ]+\\ )+[^ ]+|[^ ]+/g);
 
     if (input.endsWith(" ")) {
