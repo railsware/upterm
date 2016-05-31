@@ -5,16 +5,6 @@ import * as pty from "pty.js";
 import {loginShell} from "./utils/Shell";
 import {debug} from "./utils/Common";
 
-function escapeArgument(argument: string) {
-    if (argument.includes('"') || argument.includes(" ")) {
-        return `'${argument}'`;
-    } else if (argument.includes("'")) {
-        return `"${argument}"`;
-    } else {
-        return argument;
-    }
-}
-
 export default class PTY {
     private terminal: pty.Terminal;
 
@@ -22,9 +12,9 @@ export default class PTY {
     // TODO: use generators.
     // TODO: terminate. https://github.com/atom/atom/blob/v1.0.15/src/task.coffee#L151
     constructor(command: string, args: string[], env: ProcessEnvironment, dimensions: Dimensions, dataHandler: (d: string) => void, exitHandler: (c: number) => void) {
-        const shellArguments = [...loginShell.noConfigSwitches, "-c", `${command} ${args.map(escapeArgument).join(" ")}`];
+        const shellArguments = [...loginShell.noConfigSwitches, "-c", `${command} ${args.join(" ")}`];
 
-        debug(`PTY: ${loginShell.executableName} ${shellArguments.join(" ")}`);
+        debug(`PTY: ${loginShell.executableName} ${JSON.stringify(shellArguments)}`);
 
         this.terminal = pty.fork(loginShell.executableName, shellArguments, {
             cols: dimensions.columns,
