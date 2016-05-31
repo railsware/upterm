@@ -48,7 +48,6 @@ export default class Job extends EmitterWithUniqueID {
         try {
             await CommandExecutor.execute(this);
 
-            this.buffer.showCursor(false);
             // Need to check the status here because it's
             // executed even after the process was interrupted.
             if (this.status === Status.InProgress) {
@@ -61,7 +60,6 @@ export default class Job extends EmitterWithUniqueID {
     }
 
     handleError(message: string): void {
-        this.buffer.showCursor(false);
         this.setStatus(Status.Failure);
         if (message) {
             this._buffer.writeMany(message);

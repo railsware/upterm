@@ -91,6 +91,6 @@ export default class BufferComponent extends React.Component<Props, State> {
     };
 
     private get renderableRows(): List<List<Char>> {
-        return this.shouldCutOutput ? this.props.job.buffer.toCutRenderable() : this.props.job.buffer.toRenderable();
+        return this.shouldCutOutput ? this.props.job.buffer.toCutRenderable(this.props.job.status) : this.props.job.buffer.toRenderable(this.props.job.status);
     }
 }

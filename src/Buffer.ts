@@ -79,10 +79,10 @@ export default class Buffer extends events.EventEmitter {
         this._attributes = attributesFlyweight(Object.assign({}, this._attributes, attributes));
     }
 
-    toRenderable(fromStorage = this.storage): List<List<Char>> {
+    toRenderable(status: e.Status, fromStorage = this.storage): List<List<Char>> {
         let storage = fromStorage;
 
-        if (this.cursor.show || this.cursor.blink) {
+        if (status === e.Status.InProgress && (this.cursor.show || this.cursor.blink)) {
             const coordinates = [this.cursorPosition.row, this.cursorPosition.column];
 
             if (!storage.get(this.cursorPosition.row)) {
@@ -103,8 +103,8 @@ export default class Buffer extends events.EventEmitter {
         return storage;
     }
 
-    toCutRenderable(): List<List<Char>> {
-        return this.toRenderable(<List<List<Char>>>(this.storage.takeLast(Buffer.hugeOutputThreshold)));
+    toCutRenderable(status: e.Status): List<List<Char>> {
+        return this.toRenderable(status, <List<List<Char>>>(this.storage.takeLast(Buffer.hugeOutputThreshold)));
     }
 
     toLines(): string[] {
