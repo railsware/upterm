@@ -1,34 +1,6 @@
-const jison = require("jison");
 import * as _ from "lodash";
 import Aliases from "./Aliases";
 import History from "./History";
-
-const grammar = `
-%lex
-WORD [\\w/-]+
-ESCAPED_SPACE \\\\\\s
-%%
-\\s+                            {/* skip whitespace */}
-\\"[^\\"]+\\"                   { return yytext.slice(1, -1); }
-\\'[^\\']+\\'                   { return yytext.slice(1, -1); }
-({WORD}{ESCAPED_SPACE})+{WORD}  {return yytext.replace(/\\\\/g, '');}
-[^\\s]+                         {return yytext;}
-<<EOF>> {return 'EOF';}
-
-/lex
-
-%start COMMAND
-
-%%
-
-COMMAND
-    : WORD EOF
-    | WORD COMMAND
-    ;
-        `;
-
-export let parser = new jison.Parser(grammar);
-let lexer = parser.lexer;
 
 export function expandHistory(lexemes: string[]): string[] {
     return _.flatten(lexemes.map(lexeme => historyReplacement(lexeme)));
@@ -54,15 +26,7 @@ export async function expandAliases(lexemes: string[]): Promise<string[]> {
 }
 
 export function lex(input: string): string[] {
-    lexer.setInput(input);
-
-    let lexemes: string[] = [];
-    let lexeme = lexer.lex();
-
-    while (typeof lexeme === "string") {
-        lexemes.push(lexeme);
-        lexeme = lexer.lex();
-    }
+    let lexemes = input.match(/"(?:\\"|[^"])+"|'(?:\\'|[^'])+'|(?:[^ ]+\\ )+[^ ]+|[^ ]+/g);
 
     if (input.endsWith(" ")) {
         lexemes.push("");

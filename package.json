@@ -27,7 +27,6 @@
     "fs-extra": "0.30.0",
     "fuzzaldrin": "2.1.0",
     "immutable": "3.8.1",
-    "jison": "0.4.17",
     "lodash": "4.13.1",
     "node-ansiparser": "2.1.0",
     "pty.js": "shockone/pty.js",

@@ -3,6 +3,7 @@ import * as OS from "os";
 import * as _ from "lodash";
 import * as pty from "pty.js";
 import {loginShell} from "./utils/Shell";
+import {debug} from "./utils/Common";
 
 function escapeArgument(argument: string) {
     if (argument.includes('"') || argument.includes(" ")) {
@@ -21,7 +22,11 @@ export default class PTY {
     // TODO: use generators.
     // TODO: terminate. https://github.com/atom/atom/blob/v1.0.15/src/task.coffee#L151
     constructor(command: string, args: string[], env: ProcessEnvironment, dimensions: Dimensions, dataHandler: (d: string) => void, exitHandler: (c: number) => void) {
-        this.terminal = pty.fork(loginShell.executableName, [...loginShell.noConfigSwitches, "-c", `${command} ${args.map(escapeArgument).join(" ")}`], {
+        const shellArguments = [...loginShell.noConfigSwitches, "-c", `${command} ${args.map(escapeArgument).join(" ")}`];
+
+        debug(`PTY: ${loginShell.executableName} ${shellArguments.join(" ")}`);
+
+        this.terminal = pty.fork(loginShell.executableName, shellArguments, {
             cols: dimensions.columns,
             rows: dimensions.rows,
             cwd: env.PWD,
