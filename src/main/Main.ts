@@ -1,5 +1,7 @@
 import {app, ipcMain, nativeImage, BrowserWindow, screen} from "electron";
 import menu from "./Menu";
+import {readFileSync} from "fs";
+import {windowBoundsFilePath} from "../utils/Common";
 
 
 let browserWindow: Electron.BrowserWindow = undefined;
@@ -16,7 +18,7 @@ app.on("mainWindow-all-closed", () => process.platform === "darwin" || app.quit(
 ipcMain.on("quit", app.quit);
 
 function getMainWindow(): Electron.BrowserWindow {
-    const workAreaSize = screen.getPrimaryDisplay().workAreaSize;
+    const bounds = windowBounds();
 
     if (!browserWindow) {
         let options: Electron.BrowserWindowOptions = {
@@ -28,8 +30,10 @@ function getMainWindow(): Electron.BrowserWindow {
             resizable: true,
             minWidth: 500,
             minHeight: 300,
-            width: workAreaSize.width,
-            height: workAreaSize.height,
+            width: bounds.width,
+            height: bounds.height,
+            x: bounds.x,
+            y: bounds.y,
             show: false,
         };
         browserWindow = new BrowserWindow(options);
@@ -47,4 +51,19 @@ function getMainWindow(): Electron.BrowserWindow {
     }
 
     return browserWindow;
+}
+
+function windowBounds(): Electron.Bounds {
+    try {
+        return JSON.parse(readFileSync(windowBoundsFilePath).toString());
+    } catch (error) {
+        const workAreaSize = screen.getPrimaryDisplay().workAreaSize;
+
+        return {
+            width: workAreaSize.width,
+            height: workAreaSize.height,
+            x: 0,
+            y: 0,
+        };
+    }
 }

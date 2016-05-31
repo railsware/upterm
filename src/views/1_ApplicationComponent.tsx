@@ -7,7 +7,7 @@ import {ipcRenderer} from "electron";
 import {KeyCode} from "../Enums";
 import {remote} from "electron";
 import * as css from "./css/main";
-import {restoreWindowBounds, saveWindowBounds} from "./ViewUtils";
+import {saveWindowBounds} from "./ViewUtils";
 
 interface State {
     sessions: Session[];
@@ -20,9 +20,6 @@ export default class ApplicationComponent extends React.Component<{}, State> {
     constructor(props: {}) {
         super(props);
         const focusedWindow = remote.BrowserWindow.getFocusedWindow();
-
-        restoreWindowBounds(focusedWindow);
-        setTimeout(() => this.recalculateDimensions(), 500);
 
         this.addTab();
         this.state = {sessions: this.activeTab.sessions};

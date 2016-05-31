@@ -64,7 +64,7 @@ class ShellExecutionStrategy extends CommandExecutionStrategy {
 
 class WindowsShellExecutionStrategy extends CommandExecutionStrategy {
     static async canExecute(job: Job) {
-        return isWindows();
+        return isWindows;
     }
 
     startExecution() {

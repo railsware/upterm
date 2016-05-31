@@ -58,7 +58,7 @@ export default class Environment {
 
     get pwd(): string {
         if (!this.get("PWD")) {
-            this.pwd = homeDirectory();
+            this.pwd = homeDirectory;
         }
 
         return this.get("PWD");

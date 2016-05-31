@@ -9,7 +9,7 @@ const executors: Dictionary<(i: Job, a: string[]) => void> = {
         let fullPath: string;
 
         if (!args.length) {
-            fullPath = homeDirectory();
+            fullPath = homeDirectory;
         } else {
             const enteredPath = args[0];
 

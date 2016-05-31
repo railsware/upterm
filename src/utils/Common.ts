@@ -172,20 +172,19 @@ export const {executablesInPaths} = new class {
     };
 };
 
-export function homeDirectory(): string {
-    return process.env[(isWindows()) ? "USERPROFILE" : "HOME"];
-}
+export const isWindows = process.platform === "win32";
+export const homeDirectory = process.env[(isWindows) ? "USERPROFILE" : "HOME"];
 
 export function resolveDirectory(pwd: string, directory: string): string {
     return normalizeDirectory(resolveFile(pwd, directory));
 }
 
 export function resolveFile(pwd: string, file: string): string {
-    return Path.resolve(pwd, file.replace(/^~/, homeDirectory()));
+    return Path.resolve(pwd, file.replace(/^~/, homeDirectory));
 }
 
 export function userFriendlyPath(path: string): string {
-    return path.replace(homeDirectory(), "~");
+    return path.replace(homeDirectory, "~");
 }
 
 export async function filterAsync<T>(values: T[], asyncPredicate: (t: T) => Promise<boolean>): Promise<T[]> {
@@ -213,10 +212,6 @@ function pluralFormOf(word: string) {
     } else {
         return word + "s";
     }
-}
-
-export function isWindows(): boolean {
-    return process.platform === "win32";
 }
 
 export function groupWhen<T>(grouper: (a: T, b: T) => boolean, row: T[]): T[][] {
@@ -390,3 +385,7 @@ export function mapObject<T, R>(object: Dictionary<T>, mapper: (key: string, val
 
     return result;
 }
+
+const baseConfigDirectory = Path.join(homeDirectory, ".black-screen");
+export const stateFilePath = Path.join(baseConfigDirectory, "state");
+export const windowBoundsFilePath = Path.join(baseConfigDirectory, "windowBounds");

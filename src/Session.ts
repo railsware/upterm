@@ -8,19 +8,17 @@ import PluginManager from "./PluginManager";
 import {Status} from "./Enums";
 import ApplicationComponent from "./views/1_ApplicationComponent";
 import Environment from "./Environment";
-import {homeDirectory, normalizeDirectory, writeFileCreatingParents} from "./utils/Common";
+import {homeDirectory, normalizeDirectory, writeFileCreatingParents, stateFilePath} from "./utils/Common";
 import {remote} from "electron";
-import * as Path from "path";
 
 export default class Session extends EmitterWithUniqueID {
     jobs: Array<Job> = [];
     readonly environment = new Environment();
     history: typeof History;
     historicalCurrentDirectoriesStack: string[] = [];
-    private readonly stateFileName = Path.join(homeDirectory(), ".black-screen", "state");
     // The value of the dictionary is the default value used if there is no serialized data.
     private readonly serializableProperties: Dictionary<string> = {
-        directory: `String:${homeDirectory()}`,
+        directory: `String:${homeDirectory}`,
         history: `History:[]`,
     };
 
@@ -101,7 +99,7 @@ export default class Session extends EmitterWithUniqueID {
             values[key] = Serializer.serialize((<any>this)[key])
         );
 
-        writeFileCreatingParents(this.stateFileName, JSON.stringify(values)).then(
+        writeFileCreatingParents(stateFilePath, JSON.stringify(values)).then(
             () => void 0,
             (error: any) => { if (error) throw error; }
         );
@@ -123,7 +121,7 @@ export default class Session extends EmitterWithUniqueID {
 
     private readSerialized(): Dictionary<any> {
         try {
-            return JSON.parse(readFileSync(this.stateFileName).toString());
+            return JSON.parse(readFileSync(stateFilePath).toString());
         } catch (error) {
             return this.serializableProperties;
         }
