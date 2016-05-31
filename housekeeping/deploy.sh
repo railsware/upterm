@@ -6,6 +6,8 @@ npm version patch -m "Bump version to %s. [ci skip]"
 npm run release
 git push --quiet "https://$GH_TOKEN:x-oauth-basic@github.com/shockone/black-screen.git" HEAD:master --tags > /dev/null 2>&1
 
+echo "Git version: $(git --version)"
+
 TAG_NAME=$(git describe --abbrev=0)
 echo "($?) Current tag: $TAG_NAME"
 
@@ -15,7 +17,7 @@ echo "($?) Previous tag: $PREVIOUS_TAG_NAME"
 LAST_DRAFT_ID=$(curl "https://$GH_TOKEN:x-oauth-basic@api.github.com/repos/shockone/black-screen/releases" | python -c "import json,sys; array=json.load(sys.stdin); print array[0]['id'];")
 echo "($?) Last draft ID: $LAST_DRAFT_ID"
 
-BODY=$(git log --pretty=format:'%h% %d %s%n' --abbrev-commit --no-merges $TAG_NAME...$PREVIOUS_TAG_NAME)
+BODY=$(git log --pretty=format:'* %h% %d %s\\n' --abbrev-commit --no-merges $TAG_NAME...$PREVIOUS_TAG_NAME)
 echo "($?) Body:"
 echo $BODY
 
