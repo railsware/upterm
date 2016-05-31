@@ -7,7 +7,7 @@ import {
 import {commandDescriptions} from "./plugins/autocompletion_providers/Executable";
 import {description, style, styles} from "./plugins/autocompletion_providers/Suggestions";
 import {makeAlias} from "./plugins/autocompletion_providers/Alias";
-import {file} from "./plugins/autocompletion_providers/File";
+import {relativeFilePath} from "./plugins/autocompletion_providers/File";
 import {compose, mapObject} from "./utils/Common";
 import {command} from "./plugins/autocompletion_providers/Command";
 import Aliases from "./Aliases";
@@ -17,7 +17,7 @@ import {environmentVariable} from "./plugins/autocompletion_providers/Environmen
 export const makeGrammar = (aliases: Dictionary<string>) => {
     const exec = sequence(
         choice(mapObject(commandDescriptions, (key, value) => decorate(string(key), compose(description(value), style(styles.executable))))),
-        optionalContinuation(many1(choice([file, environmentVariable])))
+        optionalContinuation(many1(choice([relativeFilePath, environmentVariable])))
     );
 
     const sudo = sequence(executable("sudo"), command);

@@ -7,7 +7,7 @@ import {
     decorate,
     noisySuggestions,
     Parser,
-    withoutSuggestions,
+    withoutSuggestions, runtime, many1,
 } from "../../Parser";
 import {styles, style} from "./Suggestions";
 import {FileInfo} from "../../Interfaces";
@@ -24,19 +24,24 @@ export const directoryAlias = noisySuggestions(
     ])
 );
 
-export const fileInDirectoryGenerator = async(directory: string, filter: (info: FileInfo) => boolean) => {
+const fileName = (name: string) => decorate(string(name), suggestion => suggestion.withDisplayValue(name).withValue(suggestion.value.replace(/\s/g, "\\ ")));
+
+export const pathPart = async(directory: string, filter: (info: FileInfo) => boolean) => {
     const stats = await statsIn(directory);
 
     return choice(stats.filter(filter).map(info => {
-        const file = decorate(string(info.name), suggestion => suggestion.withDisplayValue(info.name).withValue(info.name.replace(/\s/g, "\\ ")));
-
         if (info.stat.isDirectory()) {
-            return changingContextDirectory(
-                info.name.startsWith(".") ? noisySuggestions(decorate(append("/", file), style(styles.directory))) : decorate(append("/", file), style(styles.directory))
-            );
+            const styledDirectory = decorate(fileName(`${info.name}/`), style(styles.directory));
+            return changingContextDirectory(info.name.startsWith(".") ? noisySuggestions(styledDirectory) : styledDirectory);
         } else {
-            const styled = decorate(file, style(styles.file(info)));
+            const styled = decorate(fileName(info.name), style(styles.file(info)));
             return info.name.startsWith(".") ? noisySuggestions(styled) : styled;
         }
     }));
 };
+
+export const pathInCurrentDirectory = (filter: (info: FileInfo) => boolean) => many1(
+    runtime(
+        async(context) => choice([directoryAlias].concat(await pathPart(context.directory, filter)))
+    )
+);

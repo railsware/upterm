@@ -5,7 +5,7 @@ import {
 } from "../../Parser";
 import {description, command, styles, style} from "./Suggestions";
 import {compose} from "../../utils/Common";
-import {file} from "./File";
+import {relativeFilePath} from "./File";
 
 // class File extends Suggestion {
 //     constructor(protected _line: string) {
@@ -173,7 +173,7 @@ const branchesExceptCurrent = decorate(
 );
 
 const gitCommand = choice([
-    sequence(decorate(token(string("add")), compose(command, description("Add file contents to the index."))), many1(file)),
+    sequence(decorate(token(string("add")), compose(command, description("Add file contents to the index."))), many1(relativeFilePath)),
     decorate(string("am"), compose(command, description("Apply a series of patches from a mailbox."))),
     decorate(string("archive"), compose(command, description("Create an archive of files from a named tree."))),
     decorate(string("bisect"), compose(command, description("Find by binary search the change that introduced a bug."))),

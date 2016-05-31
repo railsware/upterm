@@ -1,8 +1,9 @@
 import {executable, sequence, decorate, string, noisySuggestions, runtime, choice} from "../../Parser";
-import {directoryAlias, fileInDirectoryGenerator} from "./Common";
+import {directoryAlias, pathPart} from "./Common";
 import {expandHistoricalDirectory} from "../../Command";
 import {description, styles, style} from "./Suggestions";
 import * as _ from "lodash";
+import {relativeDirectoryPath} from "./File";
 
 const historicalDirectory = runtime(async (context) =>
     noisySuggestions(
@@ -19,7 +20,7 @@ const historicalDirectory = runtime(async (context) =>
 const cdpathDirectory = runtime(
     async (context) => {
         const directoriesToBe = context.environment.cdpath(context.directory).map(async (directory) => {
-            const file = await fileInDirectoryGenerator(directory, info => info.stat.isDirectory());
+            const file = await pathPart(directory, info => info.stat.isDirectory());
 
             if (directory === context.directory) {
                 return file;
@@ -36,4 +37,5 @@ export const cd = sequence(decorate(executable("cd"), description("Change the wo
     historicalDirectory,
     directoryAlias,
     cdpathDirectory,
+    relativeDirectoryPath,
 ]));
