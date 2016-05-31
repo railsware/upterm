@@ -88,6 +88,6 @@ export function restoreWindowBounds(browserWindow: Electron.BrowserWindow) {
     const windowBounds: Electron.Rectangle = JSON.parse(localStorage.getItem(windowBoundsKey));
 
     if (windowBounds) {
-        browserWindow.setBounds(windowBounds);
+        browserWindow.setBounds(windowBounds, false);
     }
 }

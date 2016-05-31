@@ -22,6 +22,7 @@ export default class ApplicationComponent extends React.Component<{}, State> {
         const focusedWindow = remote.BrowserWindow.getFocusedWindow();
 
         restoreWindowBounds(focusedWindow);
+        setTimeout(() => this.recalculateDimensions(), 500);
 
         this.addTab();
         this.state = {sessions: this.activeTab.sessions};
