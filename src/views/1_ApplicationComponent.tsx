@@ -30,18 +30,23 @@ export default class ApplicationComponent extends React.Component<{}, State> {
             .on("move", () => saveWindowBounds(focusedWindow))
             .on("resize", () => {
                 saveWindowBounds(focusedWindow);
-
-                for (const tab of this.tabs) {
-                    tab.updateAllSessionsDimensions();
-                }
-            });
+                this.recalculateDimensions();
+            })
+            .webContents
+            .on("devtools-opened", () => this.recalculateDimensions())
+            .on("devtools-closed", () => this.recalculateDimensions());
 
         ipcRenderer.on("change-working-directory", (event: Electron.IpcRendererEvent, directory: string) =>
             this.activeTab.activeSession().directory = directory
         );
 
         window.onbeforeunload = () => {
-            focusedWindow.removeAllListeners();
+            focusedWindow
+                .removeAllListeners()
+                .webContents
+                .removeAllListeners("devtools-opened")
+                .removeAllListeners("devtools-closed");
+
             this.closeAllTabs();
         }
     }
@@ -160,6 +165,12 @@ export default class ApplicationComponent extends React.Component<{}, State> {
             event.stopPropagation();
             event.preventDefault();
         };
+    }
+
+    private recalculateDimensions() {
+        for (const tab of this.tabs) {
+            tab.updateAllSessionsDimensions();
+        }
     }
 
     public closeSession(sessionToClose: Session) {
