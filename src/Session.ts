@@ -1,4 +1,4 @@
-import {readFileSync, writeFile} from "fs";
+import {readFileSync} from "fs";
 import * as _ from "lodash";
 import Job from "./Job";
 import History from "./History";
@@ -8,15 +8,16 @@ import PluginManager from "./PluginManager";
 import {Status} from "./Enums";
 import ApplicationComponent from "./views/1_ApplicationComponent";
 import Environment from "./Environment";
-import {homeDirectory, normalizeDirectory} from "./utils/Common";
+import {homeDirectory, normalizeDirectory, writeFileCreatingParents} from "./utils/Common";
 import {remote} from "electron";
+import * as Path from "path";
 
 export default class Session extends EmitterWithUniqueID {
     jobs: Array<Job> = [];
     readonly environment = new Environment();
     history: typeof History;
     historicalCurrentDirectoriesStack: string[] = [];
-    private readonly stateFileName = `${homeDirectory()}/.black-screen-state`;
+    private readonly stateFileName = Path.join(homeDirectory(), ".black-screen", "state");
     // The value of the dictionary is the default value used if there is no serialized data.
     private readonly serializableProperties: Dictionary<string> = {
         directory: `String:${homeDirectory()}`,
@@ -100,9 +101,10 @@ export default class Session extends EmitterWithUniqueID {
             values[key] = Serializer.serialize((<any>this)[key])
         );
 
-        writeFile(this.stateFileName, JSON.stringify(values), (error: any) => {
-            if (error) throw error;
-        });
+        writeFileCreatingParents(this.stateFileName, JSON.stringify(values)).then(
+            () => void 0,
+            (error: any) => { if (error) throw error; }
+        );
     };
 
     private deserialize(): void {

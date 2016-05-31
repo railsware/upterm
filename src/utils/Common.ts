@@ -75,6 +75,10 @@ export async function statsIn(directoryPath: string): Promise<i.FileInfo[]> {
     }));
 }
 
+export function mkdir(directoryPath: string): Promise<{}> {
+    return new Promise(resolve => fs.mkdir(directoryPath, resolve));
+}
+
 export function exists(filePath: string): Promise<boolean> {
     return new Promise(resolve => fs.exists(filePath, resolve));
 }
@@ -85,6 +89,32 @@ export async function isDirectory(directoryPath: string): Promise<boolean> {
     } else {
         return false;
     }
+}
+
+async function ensureDirectoryExists(filePath: string): Promise<void> {
+    var directoryPath = Path.dirname(filePath);
+    if (await exists(directoryPath)) {
+        return;
+    }
+    await ensureDirectoryExists(directoryPath);
+    await mkdir(directoryPath);
+}
+
+export async function writeFileCreatingParents(filePath: string, content: string): Promise<{}> {
+    await ensureDirectoryExists(filePath);
+    return writeFile(filePath, content);
+}
+
+export function writeFile(filePath: string, content: string): Promise<{}> {
+    return new Promise((resolve, reject) => {
+        fs.writeFile(filePath, content, (error) => {
+            if (error) {
+                reject(error);
+            } else {
+                resolve();
+            }
+        });
+    });
 }
 
 export function readFile(filePath: string): Promise<string> {
