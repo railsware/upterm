@@ -18,7 +18,6 @@ export const commandDescriptions: Dictionary<string> = {
     cc: "Compile standard C programs",
     cal: "Print a calendar",
     cat: "Concatenate and print files",
-    cd: "Change the working directory",
     cflow: "Generate a C-language flowgraph",
     chgrp: "Change the file group ownership",
     chmod: "Change the file modes/attributes/permissions",

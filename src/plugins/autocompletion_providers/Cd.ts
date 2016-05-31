@@ -32,7 +32,7 @@ const cdpathDirectory = runtime(
     }
 );
 
-export const cd = sequence(executable("cd"), choice([
+export const cd = sequence(decorate(executable("cd"), description("Change the working directory")), choice([
     historicalDirectory,
     directoryAlias,
     cdpathDirectory,
