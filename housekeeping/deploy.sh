@@ -17,11 +17,11 @@ echo "($?) Previous tag: $PREVIOUS_TAG_NAME"
 LAST_DRAFT_ID=$(curl "https://$GH_TOKEN:x-oauth-basic@api.github.com/repos/shockone/black-screen/releases" | python -c "import json,sys; array=json.load(sys.stdin); print array[0]['id'];")
 echo "($?) Last draft ID: $LAST_DRAFT_ID"
 
-BODY=$(git log --pretty=format:'* %h% %d %s\\n' --abbrev-commit --no-merges $TAG_NAME...$PREVIOUS_TAG_NAME)
+BODY=$(git log --pretty=format:'%h% %d %s\\n' --abbrev-commit --no-merges $TAG_NAME...$PREVIOUS_TAG_NAME)
 echo "($?) Body:"
 echo $BODY
 
-ESCAPED_BODY=$(echo $BODY | python -c "import json,sys; print json.dumps(sys.stdin.read())[1:-1];")
+ESCAPED_BODY=$(echo $BODY | tr '"' "'")
 echo "($?) Escaped body:"
 echo $ESCAPED_BODY
 
