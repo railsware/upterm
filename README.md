@@ -25,9 +25,13 @@ We aim to be compatible at least with [VT100](https://en.wikipedia.org/wiki/VT10
 Install
 ------------
 
+black-screen can be installed with [homebrew](http://brew.sh/). 
+
 ```bash
 brew cask install black-screen
 ```
+
+If you encounter: ```Error: No available Cask for black-screen``` please run: ```brew update``` and try again. 
 
 Linux and Windows builds will be available after 1.0.0 release. Currently only OS X is supported to speed up the development process.
 
