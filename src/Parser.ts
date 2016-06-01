@@ -26,8 +26,6 @@ export enum Progress {
 export type Parser = (context: Context) => Promise<Array<Result>>;
 
 export interface Result {
-    parser: Parser;
-    context: Context;
     parse: string;
     progress: Progress;
     suggestions: Suggestion[];
@@ -83,13 +81,11 @@ export const bind = (left: Parser, rightGenerator: (result: Result) => Promise<P
 
         if (leftResult.progress === Progress.Finished && (rightInput.length || leftResult.suggestions.length === 0)) {
             const right = await rightGenerator(leftResult);
-            const rightResults = await right(Object.assign({}, leftResult.context, { input: rightInput }));
+            const rightResults = await right(Object.assign({}, context, { input: rightInput }));
 
             for (const rightResult of rightResults) {
                 if (rightResult.progress !== Progress.Failed) {
                     results.push({
-                        parser: rightResult.parser,
-                        context: rightResult.context,
                         parse: leftResult.parse + rightResult.parse,
                         progress: rightResult.progress,
                         suggestions: rightResult.suggestions,
@@ -143,8 +139,6 @@ export const decorate = (parser: Parser, decorator: (s: Suggestion) => Suggestio
     const results = await parser(context);
 
     return results.map(result => ({
-        parser: decorate(result.parser, decorator),
-        context: result.context,
         parse: result.parse,
         progress: result.progress,
         suggestions: result.suggestions.map(decorator),
@@ -184,7 +178,6 @@ export const runtime = (producer: (context: Context) => Promise<Parser>) => asyn
 };
 
 export const optionalContinuation = (parser: Parser) => optional(sequence(spacesWithoutSuggestion, parser));
-export const append = (suffix: string, parser: Parser) => decorate(sequence(parser, withoutSuggestions(string(suffix))), suggestion => suggestion.withValue(suggestion.value + suffix));
 export const token = (parser: Parser) => decorate(sequence(parser, spacesWithoutSuggestion), suggestion => suggestion.withValue(suggestion.value + " "));
 export const executable = (name: string) => decorate(token(string(name)), style(styles.executable));
 export const commandSwitch = (value: string) => decorate(string(`--${value}`), style(styles.option));

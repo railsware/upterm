@@ -25,28 +25,28 @@ describe("parser", () => {
                 const results = await parse(parser, "");
 
                 expect(results.length).to.equal(1);
-                expect(results[0].parser).to.equal(git);
+                expect(suggestionDisplayValues(results)).to.eql(["git "]);
             });
 
             it("derives the first parser for a part of first parsers' input", async() => {
                 const results = await parse(parser, "gi");
 
                 expect(results.length).to.equal(1);
-                expect(results[0].parser).to.equal(git);
+                expect(suggestionDisplayValues(results)).to.eql(["git "]);
             });
 
             it("derives the first parser if the input exactly matches the first parser", async() => {
                 const results = await parse(parser, "git ");
 
                 expect(results.length).to.equal(1);
-                expect(results[0].parser).to.equal(git);
+                expect(suggestionDisplayValues(results)).to.eql(["git "]);
             });
 
             it("derives the second parser if the input exceeds the first parser", async() => {
                 const results = await parse(parser, "git c");
 
                 expect(results.length).to.equal(1);
-                expect(results[0].parser).to.equal(commit);
+                expect(suggestionDisplayValues(results)).to.eql(["commit"]);
             });
         });
 
@@ -61,7 +61,6 @@ describe("parser", () => {
 
                 expect(results.length).to.equal(1);
                 expect(results[0]).to.deep.include({
-                    parser: space,
                     parse: "git ",
                 });
             });
@@ -72,7 +71,6 @@ describe("parser", () => {
 
                 expect(results.length).to.equal(1);
                 expect(results[0]).to.deep.include({
-                    parser: space,
                     parse: "git ",
                 });
             });
@@ -99,7 +97,7 @@ describe("parser", () => {
             const results = await parse(parser, "git c");
 
             expect(results.length).to.equal(1);
-            expect(results[0].parser).to.equal(parser);
+            expect(suggestionDisplayValues(results)).to.eql(["grep"]);
         });
     });
 
@@ -111,7 +109,7 @@ describe("parser", () => {
             const results = await parse(choice([left, right]), "f");
 
             expect(results.length).to.equal(1);
-            expect(results[0].parser).to.equal(left);
+            expect(suggestionDisplayValues(results)).to.eql(["foo"]);
         });
 
         it("derives the right parser if the left one doesn't match", async() => {
@@ -121,7 +119,7 @@ describe("parser", () => {
             const results = await parse(choice([left, right]), "b");
 
             expect(results.length).to.equal(1);
-            expect(results[0].parser).to.equal(right);
+            expect(suggestionDisplayValues(results)).to.eql(["bar"]);
         });
 
         it("derives both parsers if they match", async() => {
@@ -131,7 +129,7 @@ describe("parser", () => {
             const results = await parse(choice([soon, sooner]), "soo");
 
             expect(results.length).to.equal(2);
-            expect(results.map(result => result.parser)).to.eql([soon, sooner]);
+            expect(suggestionDisplayValues(results)).to.eql(["soon", "sooner"]);
         });
 
         it("doesn't commit to a branch too early", async() => {
@@ -139,7 +137,7 @@ describe("parser", () => {
             const results = await parse(sequence(sequence(string("git"), choice([string(" "), string("  ")])), commit), "git  commit");
 
             expect(results.length).to.equal(1);
-            expect(results[0].parser).to.equal(commit);
+            expect(suggestionDisplayValues(results)).to.eql(["commit"]);
         });
     });
 
@@ -151,14 +149,14 @@ describe("parser", () => {
             const results = await parse(parser, "git c");
 
             expect(results.length).to.equal(1);
-            expect(results[0].parser).to.equal(commit);
+            expect(suggestionDisplayValues(results)).to.eql(["commit"]);
         });
 
         it("matches two occurrences", async() => {
             const results = await parse(parser, "git  c");
 
             expect(results.length).to.equal(1);
-            expect(results[0].parser).to.equal(commit);
+            expect(suggestionDisplayValues(results)).to.eql(["commit"]);
         });
     });
 
@@ -168,7 +166,7 @@ describe("parser", () => {
             const results = await parse(sequence(optional(string("sudo ")), git), "g");
 
             expect(results.length).to.equal(1);
-            expect(results[0].parser).to.equal(git);
+            expect(suggestionDisplayValues(results)).to.eql(["git"]);
         });
 
         it("matches with an occurrence", async() => {
@@ -176,7 +174,7 @@ describe("parser", () => {
             const results = await parse(sequence(optional(string("sudo ")), git), "sudo g");
 
             expect(results.length).to.equal(1);
-            expect(results[0].parser).to.equal(git);
+            expect(suggestionDisplayValues(results)).to.eql(["git"]);
         });
     });
 });
