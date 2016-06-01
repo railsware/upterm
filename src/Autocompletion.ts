@@ -17,7 +17,13 @@ import {environmentVariable} from "./plugins/autocompletion_providers/Environmen
 export const makeGrammar = (aliases: Dictionary<string>) => {
     const exec = sequence(
         choice(mapObject(commandDescriptions, (key, value) => decorate(string(key), compose(description(value), style(styles.executable))))),
-        optionalContinuation(many1(choice([relativeFilePath, environmentVariable])))
+        optionalContinuation(many1(sequence(
+            choice([
+                relativeFilePath,
+                environmentVariable,
+            ]),
+            spacesWithoutSuggestion
+        )))
     );
 
     const sudo = sequence(executable("sudo"), command);
