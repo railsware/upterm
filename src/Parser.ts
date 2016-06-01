@@ -124,6 +124,19 @@ export const choice = (parsers: Parser[]) => async (context: Context): Promise<A
     return results;
 };
 
+const last = (parser: Parser): Parser => async (context: Context): Promise<Array<Result>> => {
+    const results = await parser(context);
+    return results.slice(results.length - 1);
+};
+
+const shortCircuitOnEmptyInput = (parser: Parser): Parser => async(context: Context): Promise<Array<Result>> => {
+    if (context.input.length === 0) {
+        return [];
+    }
+
+    return parser(context);
+};
+
 export const many1 = (parser: Parser): Parser => choice([parser, bind(parser, async () => many1(parser))]);
 
 export const decorate = (parser: Parser, decorator: (s: Suggestion) => Suggestion) => async (context: Context): Promise<Array<Result>> => {
@@ -153,7 +166,7 @@ export const many = compose(many1, optional);
  * @example cd ../
  * @example cd -
  */
-export const noisySuggestions = (parser: Parser) => decorateResult(
+export const noisySuggestions = (parser: Parser) => shortCircuitOnEmptyInput(decorateResult(
     parser,
     result => Object.assign(
         {},
@@ -162,8 +175,8 @@ export const noisySuggestions = (parser: Parser) => decorateResult(
             suggestions: (result.progress !== Progress.OnStart && result.progress !== Progress.Failed) ? result.suggestions : [],
         }
     )
-);
-export const spacesWithoutSuggestion = withoutSuggestions(many1(string(" ")));
+));
+export const spacesWithoutSuggestion = withoutSuggestions(last(many1(string(" "))));
 
 export const runtime = (producer: (context: Context) => Promise<Parser>) => async (context: Context): Promise<Array<Result>> => {
     const parser = await producer(context);
