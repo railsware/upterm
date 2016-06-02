@@ -33,7 +33,7 @@ export class JobComponent extends React.Component<Props, State> implements KeyDo
     componentDidMount() {
         this.props.job
             .on("data", () => this.forceUpdate())
-            .on("status", () => this.forceUpdate())
+            .on("status", () => this.forceUpdate());
     }
 
     componentDidUpdate() {

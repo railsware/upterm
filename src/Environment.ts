@@ -2,6 +2,7 @@ import {delimiter} from "path";
 import {executeCommandWithShellConfig} from "./PTY";
 import {clone} from "lodash";
 import {homeDirectory} from "./utils/Common";
+import * as Path from "path";
 
 const env: Dictionary<string> = {};
 export async function loadEnvironment(): Promise<void> {
@@ -48,8 +49,8 @@ export class Environment {
         return key in this.storage;
     }
 
-    get path(): string {
-        return this.get("PATH");
+    get path(): EnvironmentPath {
+        return new EnvironmentPath(this);
     }
 
     cdpath(pwd: string): string[] {
@@ -66,5 +67,42 @@ export class Environment {
 
     set pwd(value: string) {
         this.set("PWD", value);
+    }
+}
+
+export class EnvironmentPath {
+    constructor(private environment: Environment) {
+    }
+
+    append(path: string) {
+        if (!this.has(path)) {
+            this.environment.set("PATH", this.raw + Path.delimiter + path);
+        }
+    }
+
+    prepend(path: string) {
+        if (!this.has(path)) {
+            this.environment.set("PATH", path + Path.delimiter + this.raw);
+        }
+    }
+
+    get split() {
+        return this.raw.split(Path.delimiter);
+    }
+
+    remove(toRemove: string) {
+        this.removeWhere(existing => existing !== toRemove);
+    }
+
+    removeWhere(remover: (existing: string) => boolean) {
+        this.environment.set("PATH", this.split.filter(remover).join(Path.delimiter));
+    }
+
+    private has(path: string) {
+        return this.split.includes(path);
+    }
+
+    private get raw() {
+        return this.environment.get("PATH");
     }
 }

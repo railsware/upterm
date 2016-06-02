@@ -98,8 +98,7 @@ export const menu = {
                 },
             ];
 
-            let menu = Menu.buildFromTemplate(template);
-            Menu.setApplicationMenu(menu);
+            Menu.setApplicationMenu(Menu.buildFromTemplate(template));
         } else {
             const template = [
                 {
@@ -141,8 +140,7 @@ export const menu = {
                 },
             ];
 
-            let menu = Menu.buildFromTemplate(template);
-            browserWindow.setMenu(menu);
+            browserWindow.setMenu(Menu.buildFromTemplate(template));
         }
     },
 };

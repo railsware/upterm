@@ -10,12 +10,9 @@ PluginManager.registerEnvironmentObserver({
 
         if (await exists(rcPath)) {
             const version = (await readFile(rcPath)).trim();
-            const newPath = Path.join(homeDirectory, ".nvm", "versions", "node", version, "bin") + Path.delimiter + session.environment.path;
-
-            session.environment.set("PATH", newPath);
+            session.environment.path.prepend(Path.join(homeDirectory, ".nvm", "versions", "node", version, "bin"));
         } else {
-            const path = session.environment.path.split(Path.delimiter).filter(path => !path.includes(".nvm")).join(Path.delimiter);
-            session.environment.setMany({PATH: path});
+            session.environment.path.removeWhere(path => !path.includes(".nvm"));
         }
     },
 });
