@@ -30,7 +30,7 @@ export function lex(input: string): string[] {
         return [];
     }
 
-    let lexemes = input.match(/"(?:\\"|[^"])+"|'(?:\\'|[^'])+'|(?:[^ ]+\\ )+[^ ]+|[^ ]+/g);
+    let lexemes: string[] = input.match(/"(?:\\"|[^"])+"|'(?:\\'|[^'])+'|(?:[^ ]+\\ )+[^ ]+|[^ ]+/g) || [];
 
     if (input.endsWith(" ")) {
         lexemes.push("");

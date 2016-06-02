@@ -108,7 +108,7 @@ export default class Buffer extends events.EventEmitter {
     }
 
     toLines(): string[] {
-        return this.storage.map(row => row.map(char => char.toString()).join("")).toArray();
+        return this.storage.map(row => row!.map(char => char!.toString()).join("")).toArray();
     }
 
     toString(): string {

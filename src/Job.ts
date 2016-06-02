@@ -128,7 +128,11 @@ export default class Job extends EmitterWithUniqueID {
     }
 
     decorate(): React.ReactElement<any> {
-        return this.firstApplicableDecorator.decorate(this);
+        if (this.firstApplicableDecorator) {
+            return this.firstApplicableDecorator.decorate(this);
+        } else {
+            throw "No applicable decorator found.";
+        }
     }
 
     get environment(): Environment {
@@ -142,7 +146,7 @@ export default class Job extends EmitterWithUniqueID {
         );
     }
 
-    private get firstApplicableDecorator(): i.OutputDecorator {
+    private get firstApplicableDecorator(): i.OutputDecorator | undefined {
         return this.decorators.find(decorator => decorator.isApplicable(this));
     }
 

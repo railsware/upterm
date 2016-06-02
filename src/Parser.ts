@@ -60,8 +60,6 @@ export const string = (expected: string) => {
         const progress = getProgress(context.input, expected);
 
         return [{
-            parser: parser,
-            context: context,
             parse: progress === Progress.Finished ? expected : "",
             progress: progress,
             suggestions: (progress === Progress.Finished)
