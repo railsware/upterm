@@ -316,7 +316,7 @@ export default class ANSIParser {
         let status = "handled";
 
         let params: number[] = Array.isArray(rawParams) ? rawParams : [];
-        const param: number | undefined = params[0];
+        const param: number = params[0] || 0;
 
         switch (flag) {
             case "A":
@@ -361,7 +361,6 @@ export default class ANSIParser {
                         this.buffer.clear();
                         break;
                     case CSI.erase.toEnd:
-                    case undefined:
                         short = "Erase Display Below (ED).";
 
                         this.buffer.clearToEnd();
@@ -384,7 +383,6 @@ export default class ANSIParser {
                         this.buffer.clearRow();
                         break;
                     case CSI.erase.toEnd:
-                    case undefined:
                         short = "Erase Line to Right (DECSEL).";
                         this.buffer.clearRowToEnd();
                         break;
@@ -438,9 +436,8 @@ export default class ANSIParser {
                     break;
                 }
 
-                while (params.length) {
-                    const sgr = params.shift();
-
+                while (params.length !== 0) {
+                    const sgr = params.shift()!;
                     const attributeToSet = SGR[sgr];
 
                     if (!attributeToSet) {
@@ -449,7 +446,12 @@ export default class ANSIParser {
                         const next = params.shift();
                         if (next === 5) {
                             const color = params.shift();
-                            this.buffer.setAttributes({[<string>attributeToSet]: colorIndex[color]});
+
+                            if (color) {
+                                this.buffer.setAttributes({[<string>attributeToSet]: colorIndex[color]});
+                            } else {
+                                error("sgr", sgr, next, params);
+                            }
                         } else {
                             error("sgr", sgr, next, params);
                         }
