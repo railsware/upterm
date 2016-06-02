@@ -14,7 +14,7 @@ interface Props {
 }
 
 interface State {
-    vcsData: VcsData;
+    vcsData: VcsData | undefined;
 }
 
 export class SessionComponent extends React.Component<Props, State> {
@@ -24,7 +24,7 @@ export class SessionComponent extends React.Component<Props, State> {
         super(props);
 
         this.state = {
-            vcsData: {isRepository: false},
+            vcsData: undefined,
         };
     }
 

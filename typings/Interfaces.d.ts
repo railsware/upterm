@@ -25,9 +25,8 @@ interface PartialRowColumn {
 type VcsStatus = "dirty" | "clean";
 
 interface VcsData {
-    isRepository: boolean;
-    branch?: string;
-    status?: VcsStatus;
+    branch: string;
+    status: VcsStatus;
 }
 
 interface Margins {

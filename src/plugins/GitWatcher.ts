@@ -60,7 +60,6 @@ class GitWatcher extends EventEmitter {
             const status: VcsStatus = changes.length ? "dirty" : "clean";
 
             const data: VcsData = {
-                isRepository: true,
                 branch: head,
                 status: status,
             };
