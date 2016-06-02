@@ -1,5 +1,5 @@
 import {expect} from "chai";
-import PTY from "../src/PTY";
+import {PTY} from "../src/PTY";
 
 describe("PTY", () => {
     it("doesn't interpolate expressions inside single quotes", (done) => {

@@ -1,7 +1,7 @@
 import {InputMethod, Context, Result} from "../src/Parser";
 import * as _ from "lodash";
 import {Suggestion} from "../src/plugins/autocompletion_providers/Suggestions";
-import Environment from "../src/Environment";
+import {Environment} from "../src/Environment";
 
 export const defaultContext: Context = {
     input: "",
