@@ -1,8 +1,8 @@
 /* tslint:disable:no-unused-variable */
 import * as React from "react";
 import * as _ from "lodash";
-import Session from "../Session";
-import ApplicationComponent from "./1_ApplicationComponent";
+import {Session} from "../Session";
+import {ApplicationComponent} from "./1_ApplicationComponent";
 import * as css from "./css/main";
 import {fontAwesome} from "./css/FontAwesome";
 

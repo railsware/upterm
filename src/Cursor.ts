@@ -1,4 +1,4 @@
-export default class Cursor {
+export class Cursor {
     private _show = true;
     private _blink = false;
 

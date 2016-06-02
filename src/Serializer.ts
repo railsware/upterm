@@ -1,7 +1,7 @@
 import * as _ from "lodash";
-import History from "./History";
+import {History} from "./History";
 
-export default class Serializer {
+export class Serializer {
     static serialize(serializable: any): string {
         if (typeof serializable.serialize === "function") {
             return serializable.serialize();

@@ -1,8 +1,8 @@
-import Job from "./Job";
-import Char from "./Char";
+import {Job} from "./Job";
+import {Char} from "./Char";
 import {Color, Weight, Brightness, KeyCode, LogLevel, Buffer, colorIndex} from "./Enums";
 import {Attributes} from "./Interfaces";
-import BufferModel from "./Buffer";
+import {Buffer as BufferModel} from "./Buffer";
 import {print, error, info, debug} from "./utils/Common";
 
 const ansiParserConstructor: typeof AnsiParser = require("node-ansiparser");
@@ -56,7 +56,7 @@ const CSI = {
     },
 };
 
-export default class ANSIParser {
+export class ANSIParser {
     private parser: AnsiParser;
     private buffer: BufferModel;
 

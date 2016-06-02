@@ -1,6 +1,6 @@
 import {Menu, shell} from "electron";
 
-export default {
+export const menu = {
     setMenu: (app: Electron.App, browserWindow: Electron.BrowserWindow) => {
         if (process.platform === "darwin") {
             const template: Electron.MenuItemOptions[] = [

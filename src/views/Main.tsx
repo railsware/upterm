@@ -1,10 +1,10 @@
 process.env.NODE_ENV = "production";
 
-import Aliases from "../Aliases";
+import {Aliases} from "../Aliases";
 const reactDOM = require("react-dom");
 /* tslint:disable:no-unused-variable */
 import * as React from "react";
-import ApplicationComponent from "./1_ApplicationComponent";
+import {ApplicationComponent} from "./1_ApplicationComponent";
 import {loadAllPlugins} from "../PluginManager";
 import {loadEnvironment} from "../Environment";
 

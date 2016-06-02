@@ -1,5 +1,5 @@
-import Job from "../../Job";
-import PluginManager from "../../PluginManager";
+import {Job} from "../../Job";
+import {PluginManager} from "../../PluginManager";
 import {Option} from "./Suggestions";
 
 const options = [

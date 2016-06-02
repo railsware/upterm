@@ -1,5 +1,5 @@
-import Session from "../Session";
-import PluginManager from "../PluginManager";
+import {Session} from "../Session";
+import {PluginManager} from "../PluginManager";
 import {remote} from "electron";
 
 PluginManager.registerEnvironmentObserver({

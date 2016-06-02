@@ -12,7 +12,7 @@ interface State {
     enabled: boolean;
 }
 
-export default class DecorationToggleComponent extends React.Component<Props, State> {
+export class DecorationToggleComponent extends React.Component<Props, State> {
     constructor(props: Props) {
         super(props);
 

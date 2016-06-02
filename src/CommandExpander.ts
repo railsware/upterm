@@ -1,6 +1,6 @@
 import * as _ from "lodash";
-import Aliases from "./Aliases";
-import History from "./History";
+import {Aliases} from "./Aliases";
+import {History} from "./History";
 
 export function expandHistory(lexemes: string[]): string[] {
     return _.flatten(lexemes.map(lexeme => historyReplacement(lexeme)));

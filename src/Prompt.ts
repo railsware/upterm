@@ -2,9 +2,9 @@ import * as events from "events";
 import {History, HistoryEntry} from "./History";
 import * as _ from "lodash";
 import {expandAliases, expandHistory, lex} from "./CommandExpander";
-import Job from "./Job";
+import {Job} from "./Job";
 
-export default class Prompt extends events.EventEmitter {
+export class Prompt extends events.EventEmitter {
     private _value = "";
     private _expanded: string[];
     private _lexemes: string[];

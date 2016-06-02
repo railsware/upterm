@@ -1,17 +1,17 @@
 import {readFileSync} from "fs";
 import * as _ from "lodash";
-import Job from "./Job";
-import History from "./History";
-import Serializer from "./Serializer";
-import EmitterWithUniqueID from "./EmitterWithUniqueID";
-import PluginManager from "./PluginManager";
+import {Job} from "./Job";
+import {History} from "./History";
+import {Serializer} from "./Serializer";
+import {EmitterWithUniqueID} from "./EmitterWithUniqueID";
+import {PluginManager} from "./PluginManager";
 import {Status} from "./Enums";
-import ApplicationComponent from "./views/1_ApplicationComponent";
-import Environment from "./Environment";
+import {ApplicationComponent} from "./views/1_ApplicationComponent";
+import {Environment} from "./Environment";
 import {homeDirectory, normalizeDirectory, writeFileCreatingParents, stateFilePath} from "./utils/Common";
 import {remote} from "electron";
 
-export default class Session extends EmitterWithUniqueID {
+export class Session extends EmitterWithUniqueID {
     jobs: Array<Job> = [];
     readonly environment = new Environment();
     history: typeof History;

@@ -1,12 +1,12 @@
 import * as React from "react";
-import Buffer from "../Buffer";
-import Char from "../Char";
+import {Buffer} from "../Buffer";
+import {Char} from "../Char";
 import {groupWhen} from "../utils/Common";
 import {List} from "immutable";
 import {Attributes} from "../Interfaces";
 import * as css from "./css/main";
 import {fontAwesome} from "./css/FontAwesome";
-import Job from "../Job";
+import {Job} from "../Job";
 
 const CharGroupComponent = ({text, attributes}: {text: string, attributes: Attributes}) =>
     <span style={css.charGroup(attributes)}>{text}</span>;
@@ -70,7 +70,7 @@ interface State {
     expandButtonPressed: boolean;
 }
 
-export default class BufferComponent extends React.Component<Props, State> {
+export class BufferComponent extends React.Component<Props, State> {
     constructor(props: Props) {
         super(props);
         this.state = { expandButtonPressed: false };

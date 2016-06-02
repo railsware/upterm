@@ -1,12 +1,12 @@
 import * as React from "react";
 import * as e from "../Enums";
-import JobModel from "../Job";
+import {Job} from "../Job";
 import {keys, isModifierKey} from "./ViewUtils";
-import PromptComponent from "./4_PromptComponent";
-import BufferComponent from "./BufferComponent";
+import {PromptComponent} from "./4_PromptComponent";
+import {BufferComponent} from "./BufferComponent";
 
 interface Props {
-    job: JobModel;
+    job: Job;
     hasLocusOfAttention: boolean;
 }
 
@@ -16,7 +16,7 @@ interface State {
 
 export const decorateByDefault = false;
 
-export default class JobComponent extends React.Component<Props, State> implements KeyDownReceiver {
+export class JobComponent extends React.Component<Props, State> implements KeyDownReceiver {
     constructor(props: Props) {
         super(props);
 

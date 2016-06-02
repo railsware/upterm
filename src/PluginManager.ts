@@ -4,7 +4,7 @@ import * as _ from "lodash";
 import {recursiveFilesIn} from "./utils/Common";
 
 // FIXME: Technical debt: register all the plugin types via single method.
-export default class PluginManager {
+export class PluginManager {
     private static _outputDecorators: OutputDecorator[] = [];
     private static _environmentObservers: EnvironmentObserverPlugin[] = [];
     private static _genericAutocompletionProviders: AutocompletionProvider[] = [];

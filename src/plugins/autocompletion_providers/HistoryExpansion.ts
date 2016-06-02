@@ -1,7 +1,7 @@
 import * as i from "../../Interfaces";
-import Job from "../../Job";
+import {Job} from "../../Job";
 import {isCompleteHistoryCommand, historyReplacement} from "../../CommandExpander";
-import PluginManager from "../../PluginManager";
+import {PluginManager} from "../../PluginManager";
 import {Suggestion} from "./Suggestions";
 
 const descriptions: Dictionary<string> = {

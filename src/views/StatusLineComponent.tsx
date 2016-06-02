@@ -25,10 +25,8 @@ const VcsDataComponent = ({data}: { data: VcsData }) => {
     );
 };
 
-const StatusLine = ({currentWorkingDirectory, vcsData}: { currentWorkingDirectory: string; vcsData: VcsData }) =>
+export const StatusLineComponent = ({currentWorkingDirectory, vcsData}: { currentWorkingDirectory: string; vcsData: VcsData }) =>
     <div style={css.statusLine.itself}>
         <CurrentDirectory currentWorkingDirectory={currentWorkingDirectory}/>
         <VcsDataComponent data={vcsData}/>
     </div>;
-
-export default StatusLine;

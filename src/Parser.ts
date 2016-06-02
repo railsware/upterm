@@ -1,7 +1,7 @@
 import {Suggestion, styles, style} from "./plugins/autocompletion_providers/Suggestions";
 import * as _ from "lodash";
 import {compose} from "./utils/Common";
-import Environment from "./Environment";
+import {Environment} from "./Environment";
 
 export enum InputMethod {
     Typed,

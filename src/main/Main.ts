@@ -1,5 +1,5 @@
 import {app, ipcMain, nativeImage, BrowserWindow, screen} from "electron";
-import menu from "./Menu";
+import {menu} from "./Menu";
 import {readFileSync} from "fs";
 import {windowBoundsFilePath} from "../utils/Common";
 

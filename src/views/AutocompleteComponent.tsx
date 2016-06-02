@@ -30,7 +30,7 @@ interface AutocompleteProps {
     ref: string;
 }
 
-export default class AutocompleteComponent extends React.Component<AutocompleteProps, {}> {
+export class AutocompleteComponent extends React.Component<AutocompleteProps, {}> {
     render() {
         const suggestionViews = this.props.suggestions.map((suggestion, index) =>
             <SuggestionComponent suggestion={suggestion}

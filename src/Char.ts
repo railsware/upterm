@@ -12,7 +12,7 @@ export const attributesFlyweight = _.memoize(
     }
 );
 
-export default class Char {
+export class Char {
     static empty = Char.flyweight(" ", {});
 
     @memoize()

@@ -1,6 +1,6 @@
-import Job from "../../Job";
+import {Job} from "../../Job";
 import * as _ from "lodash";
-import PluginManager from "../../PluginManager";
+import {PluginManager} from "../../PluginManager";
 import {ShortOption} from "./Suggestions";
 
 const options = _.map(

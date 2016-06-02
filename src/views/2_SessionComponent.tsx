@@ -1,9 +1,9 @@
 import * as React from "react";
 import * as _ from "lodash";
-import Session from "../Session";
-import Job from "../Job";
-import StatusLineComponent from "./StatusLineComponent";
-import JobComponent from "./3_JobComponent";
+import {Session} from "../Session";
+import {Job} from "../Job";
+import {StatusLineComponent} from "./StatusLineComponent";
+import {JobComponent} from "./3_JobComponent";
 import {KeyCode} from "../Enums";
 import * as css from "./css/main";
 
@@ -17,7 +17,7 @@ interface State {
     vcsData: VcsData;
 }
 
-export default class SessionComponent extends React.Component<Props, State> {
+export class SessionComponent extends React.Component<Props, State> {
     RENDER_JOBS_COUNT = 25;
 
     constructor(props: Props) {

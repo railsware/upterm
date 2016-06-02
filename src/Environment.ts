@@ -13,7 +13,7 @@ export async function loadEnvironment(): Promise<void> {
     });
 }
 
-export default class Environment {
+export class Environment {
     private storage: Dictionary<string> = clone(env);
 
     set(key: string, value: string): void {

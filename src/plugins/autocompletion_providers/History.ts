@@ -1,6 +1,6 @@
-import ExecutionHistory from "../../History";
-import Job from "../../Job";
-import PluginManager from "../../PluginManager";
+import {History as ExecutionHistory} from "../../History";
+import {Job} from "../../Job";
+import {PluginManager} from "../../PluginManager";
 import {Suggestion} from "./Suggestions";
 
 class History extends Suggestion {
