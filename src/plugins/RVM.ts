@@ -55,7 +55,7 @@ PluginManager.registerEnvironmentObserver({
                 GEM_HOME: gemPaths[0],
             });
         } else {
-            session.environment.path.removeWhere(path => !path.includes(".rvm"));
+            session.environment.path.removeWhere(path => path.includes(".rvm"));
             session.environment.setMany({GEM_HOME: "", GEM_PATH: ""});
         }
     },

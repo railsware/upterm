@@ -44,7 +44,7 @@ class ShellExecutionStrategy extends CommandExecutionStrategy {
     }
 
     private static async isExecutableFromPath(job: Job): Promise<boolean> {
-        return (await executablesInPaths(job.environment.path) ).includes(job.prompt.commandName);
+        return (await executablesInPaths(job.environment.path)).includes(job.prompt.commandName);
     }
 
     private static async isPathOfExecutable(job: Job): Promise<boolean> {

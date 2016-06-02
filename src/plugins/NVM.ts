@@ -4,15 +4,19 @@ import * as Path from "path";
 import {homeDirectory, exists, readFile} from "../utils/Common";
 
 PluginManager.registerEnvironmentObserver({
-    currentWorkingDirectoryWillChange: () => void 0,
-    currentWorkingDirectoryDidChange: async(session: Session) => {
-        const rcPath = Path.join(session.directory, ".nvmrc");
-
-        if (await exists(rcPath)) {
-            const version = (await readFile(rcPath)).trim();
-            session.environment.path.prepend(Path.join(homeDirectory, ".nvm", "versions", "node", version, "bin"));
-        } else {
-            session.environment.path.removeWhere(path => !path.includes(".nvm"));
-        }
+    currentWorkingDirectoryWillChange: async(session: Session) => {
+        withNvmPath(session.directory, path => session.environment.path.remove(path));
+    },
+    currentWorkingDirectoryDidChange: async(session: Session, directory: string) => {
+        withNvmPath(directory, path => session.environment.path.prepend(path));
     },
 });
+
+async function withNvmPath(directory: string, callback: (path: string) => void) {
+    const rcPath = Path.join(directory, ".nvmrc");
+
+    if (await exists(rcPath)) {
+        const version = (await readFile(rcPath)).trim();
+        callback(Path.join(homeDirectory, ".nvm", "versions", "node", version, "bin"));
+    }
+}

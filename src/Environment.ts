@@ -91,11 +91,11 @@ export class EnvironmentPath {
     }
 
     remove(toRemove: string) {
-        this.removeWhere(existing => existing !== toRemove);
+        this.removeWhere(existing => existing === toRemove);
     }
 
-    removeWhere(remover: (existing: string) => boolean) {
-        this.environment.set("PATH", this.split.filter(remover).join(Path.delimiter));
+    removeWhere(removePredicate: (existing: string) => boolean) {
+        this.environment.set("PATH", this.split.filter(path => !removePredicate(path)).join(Path.delimiter));
     }
 
     private has(path: string) {
