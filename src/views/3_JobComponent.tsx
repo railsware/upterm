@@ -11,15 +11,17 @@ interface Props {
 }
 
 interface State {
-    decorate?: boolean;
+    decorate: boolean;
 }
+
+export const decorateByDefault = false;
 
 export default class JobComponent extends React.Component<Props, State> implements KeyDownReceiver {
     constructor(props: Props) {
         super(props);
 
         this.state = {
-            decorate: false,
+            decorate: decorateByDefault,
         };
 
         // FIXME: find a better design to propagate events.
@@ -54,7 +56,11 @@ export default class JobComponent extends React.Component<Props, State> implemen
                 <PromptComponent job={this.props.job}
                                  status={this.props.job.status}
                                  hasLocusOfAttention={this.props.hasLocusOfAttention}
-                                 jobView={this}/>
+                                 decorateToggler={() => {
+                                     const newDecorate = !this.state.decorate;
+                                     this.setState({decorate: newDecorate});
+                                     return newDecorate;
+                                 }}/>
                 {buffer}
             </div>
         );

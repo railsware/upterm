@@ -1,11 +1,11 @@
 import * as React from "react";
 import {stopBubblingUp} from "./ViewUtils";
-import Job from "./3_JobComponent";
 import * as css from "./css/main";
 import {fontAwesome} from "./css/FontAwesome";
+import {decorateByDefault} from "./3_JobComponent";
 
 interface Props {
-    job: Job;
+    decorateToggler: () => boolean;
 }
 
 interface State {
@@ -16,15 +16,12 @@ export default class DecorationToggleComponent extends React.Component<Props, St
     constructor(props: Props) {
         super(props);
 
-        this.state = { enabled: this.props.job.state.decorate };
+        this.state = { enabled: decorateByDefault };
     }
 
     handleClick(event: KeyboardEvent) {
         stopBubblingUp(event);
-
-        const newState = !this.state.enabled;
-        this.setState({ enabled: newState });
-        this.props.job.setState({ decorate: newState });
+        this.setState({ enabled: this.props.decorateToggler() });
     }
 
     render() {

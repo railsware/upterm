@@ -5,7 +5,6 @@ import AutocompleteComponent from "./AutocompleteComponent";
 import DecorationToggleComponent from "./DecorationToggleComponent";
 import History from "../History";
 import {stopBubblingUp, keys, getCaretPosition, setCaretPosition, withModifierKey, isSpecialKey} from "./ViewUtils";
-import JobComponent from "./3_JobComponent";
 import PromptModel from "../Prompt";
 import JobModel from "../Job";
 import {Suggestion} from "../plugins/autocompletion_providers/Suggestions";
@@ -22,7 +21,7 @@ import {Status} from "../Enums";
 interface Props {
     job: JobModel;
     status: e.Status;
-    jobView: JobComponent;
+    decorateToggler: () => boolean;
     hasLocusOfAttention: boolean;
 }
 
@@ -163,7 +162,7 @@ export default class PromptComponent extends React.Component<Props, State> imple
         }
 
         if (this.props.job.canBeDecorated()) {
-            decorationToggle = <DecorationToggleComponent job={this.props.jobView}/>;
+            decorationToggle = <DecorationToggleComponent decorateToggler={this.props.decorateToggler}/>;
         }
 
         if (this.props.status !== e.Status.NotStarted && this.props.job.buffer.size > 100) {
