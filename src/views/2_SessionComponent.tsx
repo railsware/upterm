@@ -14,8 +14,7 @@ interface Props {
 }
 
 interface State {
-    vcsData?: VcsData;
-    jobs?: Job[];
+    vcsData: VcsData;
 }
 
 export default class SessionComponent extends React.Component<Props, State> {
@@ -26,21 +25,20 @@ export default class SessionComponent extends React.Component<Props, State> {
 
         this.state = {
             vcsData: {isRepository: false},
-            jobs: this.props.session.jobs,
         };
     }
 
     componentDidMount() {
         this.props.session
-            .on("job", () => this.setState({jobs: this.props.session.jobs}))
+            .on("job", () => this.forceUpdate())
             .on("vcs-data", (data: VcsData) => this.setState({vcsData: data}));
     }
 
     render() {
-        const jobs = _.takeRight(this.state.jobs, this.RENDER_JOBS_COUNT).map((job: Job, index: number) =>
+        const jobs = _.takeRight(this.props.session.jobs, this.RENDER_JOBS_COUNT).map((job: Job, index: number) =>
             <JobComponent key={job.id}
                           job={job}
-                          hasLocusOfAttention={this.props.isActive && index === this.state.jobs.length - 1}/>
+                          hasLocusOfAttention={this.props.isActive && index === this.props.session.jobs.length - 1}/>
         );
 
         return (
