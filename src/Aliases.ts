@@ -1,7 +1,7 @@
 import {executeCommandWithShellConfig} from "./PTY";
 import {memoize} from "./Decorators";
 
-export default class Aliases {
+export class Aliases {
     static async find(alias: string): Promise<string> {
         return (await this.all())[alias];
     }

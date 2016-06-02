@@ -1,4 +1,4 @@
-import Job from "./Job";
+import {Job} from "./Job";
 import {existsSync, statSync} from "fs";
 import {homeDirectory, pluralize, resolveDirectory, resolveFile} from "./utils/Common";
 import {readFileSync} from "fs";
@@ -60,7 +60,7 @@ const executors: Dictionary<(i: Job, a: string[]) => void> = {
 };
 
 // A class representing built in commands
-export default class Command {
+export class Command {
     static allCommandNames = Object.keys(executors);
 
     static executor(command: string): (i: Job, args: string[]) => void {

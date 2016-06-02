@@ -1,6 +1,6 @@
-import Job from "./Job";
-import Command from "./Command";
-import PTY from "./PTY";
+import {Job} from "./Job";
+import {Command} from "./Command";
+import {PTY} from "./PTY";
 import * as Path from "path";
 import {executablesInPaths, resolveFile, isWindows, filterAsync, exists} from "./utils/Common";
 import {loginShell} from "./utils/Shell";
@@ -88,7 +88,7 @@ class WindowsShellExecutionStrategy extends CommandExecutionStrategy {
     }
 }
 
-export default class CommandExecutor {
+export class CommandExecutor {
     private static executors = [
         BuiltInCommandExecutionStrategy,
         WindowsShellExecutionStrategy,

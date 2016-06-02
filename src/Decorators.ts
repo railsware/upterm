@@ -1,6 +1,6 @@
 import * as _ from "lodash";
 
-export function memoize(resolver: Function = undefined) {
+export function memoize(resolver: Function | undefined = undefined) {
     if (typeof resolver !== "function") {
         resolver = (...args: any[]) => JSON.stringify(args);
     }

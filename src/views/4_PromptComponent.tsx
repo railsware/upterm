@@ -1,13 +1,12 @@
 import * as _ from "lodash";
 import * as e from "../Enums";
 import * as React from "react";
-import AutocompleteComponent from "./AutocompleteComponent";
-import DecorationToggleComponent from "./DecorationToggleComponent";
-import History from "../History";
+import {AutocompleteComponent} from "./AutocompleteComponent";
+import {DecorationToggleComponent} from "./DecorationToggleComponent";
+import {History} from "../History";
 import {stopBubblingUp, keys, getCaretPosition, setCaretPosition, withModifierKey, isSpecialKey} from "./ViewUtils";
-import JobComponent from "./3_JobComponent";
-import PromptModel from "../Prompt";
-import JobModel from "../Job";
+import {Prompt} from "../Prompt";
+import {Job} from "../Job";
 import {Suggestion} from "../plugins/autocompletion_providers/Suggestions";
 import {KeyCode} from "../Enums";
 import {getSuggestions} from "../Autocompletion";
@@ -20,9 +19,9 @@ import {fontAwesome} from "./css/FontAwesome";
 import {Status} from "../Enums";
 
 interface Props {
-    job: JobModel;
+    job: Job;
     status: e.Status;
-    jobView: JobComponent;
+    decorateToggler: () => boolean;
     hasLocusOfAttention: boolean;
 }
 
@@ -35,8 +34,8 @@ interface State {
 
 
 // TODO: Make sure we only update the view when the model changes.
-export default class PromptComponent extends React.Component<Props, State> implements KeyDownReceiver {
-    private prompt: PromptModel;
+export class PromptComponent extends React.Component<Props, State> implements KeyDownReceiver {
+    private prompt: Prompt;
     private handlers: {
         onKeyDown: Function;
     };
@@ -162,8 +161,8 @@ export default class PromptComponent extends React.Component<Props, State> imple
             }
         }
 
-        if (this.props.jobView.state.canBeDecorated) {
-            decorationToggle = <DecorationToggleComponent job={this.props.jobView}/>;
+        if (this.props.job.canBeDecorated()) {
+            decorationToggle = <DecorationToggleComponent decorateToggler={this.props.decorateToggler}/>;
         }
 
         if (this.props.status !== e.Status.NotStarted && this.props.job.buffer.size > 100) {

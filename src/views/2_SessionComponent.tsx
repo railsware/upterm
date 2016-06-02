@@ -1,9 +1,9 @@
 import * as React from "react";
 import * as _ from "lodash";
-import Session from "../Session";
-import Job from "../Job";
-import StatusLineComponent from "./StatusLineComponent";
-import JobComponent from "./3_JobComponent";
+import {Session} from "../Session";
+import {Job} from "../Job";
+import {StatusLineComponent} from "./StatusLineComponent";
+import {JobComponent} from "./3_JobComponent";
 import {KeyCode} from "../Enums";
 import * as css from "./css/main";
 
@@ -14,33 +14,31 @@ interface Props {
 }
 
 interface State {
-    vcsData?: VcsData;
-    jobs?: Job[];
+    vcsData: VcsData | undefined;
 }
 
-export default class SessionComponent extends React.Component<Props, State> {
+export class SessionComponent extends React.Component<Props, State> {
     RENDER_JOBS_COUNT = 25;
 
     constructor(props: Props) {
         super(props);
 
         this.state = {
-            vcsData: {isRepository: false},
-            jobs: this.props.session.jobs,
+            vcsData: undefined,
         };
     }
 
     componentDidMount() {
         this.props.session
-            .on("job", () => this.setState({jobs: this.props.session.jobs}))
+            .on("job", () => this.forceUpdate())
             .on("vcs-data", (data: VcsData) => this.setState({vcsData: data}));
     }
 
     render() {
-        const jobs = _.takeRight(this.state.jobs, this.RENDER_JOBS_COUNT).map((job: Job, index: number) =>
+        const jobs = _.takeRight(this.props.session.jobs, this.RENDER_JOBS_COUNT).map((job: Job, index: number) =>
             <JobComponent key={job.id}
                           job={job}
-                          hasLocusOfAttention={this.props.isActive && index === this.state.jobs.length - 1}/>
+                          hasLocusOfAttention={this.props.isActive && index === this.props.session.jobs.length - 1}/>
         );
 
         return (

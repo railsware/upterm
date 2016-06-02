@@ -1,5 +1,5 @@
 import * as _ from "lodash";
-import Job from "./Job";
+import {Job} from "./Job";
 import {
     choice, token, executable, decorate, sequence, string, many1,
     optionalContinuation, spacesWithoutSuggestion, many, noisySuggestions, InputMethod, Parser,
@@ -10,7 +10,7 @@ import {makeAlias} from "./plugins/autocompletion_providers/Alias";
 import {relativeFilePath} from "./plugins/autocompletion_providers/File";
 import {compose, mapObject} from "./utils/Common";
 import {command} from "./plugins/autocompletion_providers/Command";
-import Aliases from "./Aliases";
+import {Aliases} from "./Aliases";
 import {redirect} from "./plugins/autocompletion_providers/Redirect";
 import {environmentVariable} from "./plugins/autocompletion_providers/EnvironmentVariable";
 

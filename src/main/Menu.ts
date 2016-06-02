@@ -1,6 +1,6 @@
 import {Menu, shell} from "electron";
 
-export default {
+export const menu = {
     setMenu: (app: Electron.App, browserWindow: Electron.BrowserWindow) => {
         if (process.platform === "darwin") {
             const template: Electron.MenuItemOptions[] = [
@@ -98,8 +98,7 @@ export default {
                 },
             ];
 
-            let menu = Menu.buildFromTemplate(template);
-            Menu.setApplicationMenu(menu);
+            Menu.setApplicationMenu(Menu.buildFromTemplate(template));
         } else {
             const template = [
                 {
@@ -141,8 +140,7 @@ export default {
                 },
             ];
 
-            let menu = Menu.buildFromTemplate(template);
-            browserWindow.setMenu(menu);
+            browserWindow.setMenu(Menu.buildFromTemplate(template));
         }
     },
 };

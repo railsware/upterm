@@ -1,23 +1,23 @@
 import * as _ from "lodash";
 import * as i from "./Interfaces";
 import * as React from "react";
-import Session from "./Session";
-import ANSIParser from "./ANSIParser";
-import Prompt from "./Prompt";
-import Buffer from "./Buffer";
-import CommandExecutor from "./CommandExecutor";
-import PTY from "./PTY";
-import PluginManager from "./PluginManager";
-import EmitterWithUniqueID from "./EmitterWithUniqueID";
+import {Session} from "./Session";
+import {ANSIParser} from "./ANSIParser";
+import {Prompt} from "./Prompt";
+import {Buffer} from "./Buffer";
+import {CommandExecutor} from "./CommandExecutor";
+import {PTY} from "./PTY";
+import {PluginManager} from "./PluginManager";
+import {EmitterWithUniqueID} from "./EmitterWithUniqueID";
 import {Status} from "./Enums";
-import Environment from "./Environment";
+import {Environment} from "./Environment";
 import {convertKeyCode} from "./utils/Common";
 
 function makeThrottledDataEmitter(timesPerSecond: number, subject: EmitterWithUniqueID) {
     return _.throttle(() => subject.emit("data"), 1000 / timesPerSecond);
 }
 
-export default class Job extends EmitterWithUniqueID {
+export class Job extends EmitterWithUniqueID {
     public command: PTY;
     public status: Status = Status.NotStarted;
     public readonly parser: ANSIParser;
@@ -128,7 +128,11 @@ export default class Job extends EmitterWithUniqueID {
     }
 
     decorate(): React.ReactElement<any> {
-        return this.firstApplicableDecorator.decorate(this);
+        if (this.firstApplicableDecorator) {
+            return this.firstApplicableDecorator.decorate(this);
+        } else {
+            throw "No applicable decorator found.";
+        }
     }
 
     get environment(): Environment {
@@ -142,7 +146,7 @@ export default class Job extends EmitterWithUniqueID {
         );
     }
 
-    private get firstApplicableDecorator(): i.OutputDecorator {
+    private get firstApplicableDecorator(): i.OutputDecorator | undefined {
         return this.decorators.find(decorator => decorator.isApplicable(this));
     }
 

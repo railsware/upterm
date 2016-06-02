@@ -1,13 +1,13 @@
 import * as events from "events";
-import Char, {attributesFlyweight} from "./Char";
-import Cursor from "./Cursor";
+import {Char, attributesFlyweight} from "./Char";
+import {Cursor} from "./Cursor";
 import * as i from "./Interfaces";
 import * as e from "./Enums";
 import {List} from "immutable";
 import {error, times} from "./utils/Common";
 import {remote} from "electron";
 
-export default class Buffer extends events.EventEmitter {
+export class Buffer extends events.EventEmitter {
     public static hugeOutputThreshold = 300;
     public cursor: Cursor = new Cursor();
     public activeBuffer = e.Buffer.Standard;
@@ -108,7 +108,7 @@ export default class Buffer extends events.EventEmitter {
     }
 
     toLines(): string[] {
-        return this.storage.map(row => row.map(char => char.toString()).join("")).toArray();
+        return this.storage.map(row => row!.map(char => char!.toString()).join("")).toArray();
     }
 
     toString(): string {

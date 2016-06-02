@@ -1,8 +1,8 @@
-import SessionComponent from "./2_SessionComponent";
+import {SessionComponent} from "./2_SessionComponent";
 import {TabComponent, TabProps, Tab} from "./TabComponent";
 import * as React from "react";
 import * as _ from "lodash";
-import Session from "../Session";
+import {Session} from "../Session";
 import {ipcRenderer} from "electron";
 import {KeyCode} from "../Enums";
 import {remote} from "electron";
@@ -13,7 +13,7 @@ interface State {
     sessions: Session[];
 }
 
-export default class ApplicationComponent extends React.Component<{}, State> {
+export class ApplicationComponent extends React.Component<{}, State> {
     private tabs: Tab[] = [];
     private activeTabIndex: number;
 

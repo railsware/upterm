@@ -5,6 +5,7 @@ import * as e from "./../Enums";
 import * as _ from "lodash";
 import * as fs from "fs";
 import {KeyCode} from "./../Enums";
+import {EnvironmentPath} from "../Environment";
 
 interface FSExtraWalkObject {
     path: string;
@@ -160,12 +161,12 @@ export function baseName(path: string): string {
 export const {executablesInPaths} = new class {
     private executables: Array<string> = [];
 
-    executablesInPaths = async (paths: string): Promise<string[]> => {
+    executablesInPaths = async (path: EnvironmentPath): Promise<string[]> => {
         if (this.executables.length) {
             return this.executables;
         }
 
-        const validPaths = await filterAsync(paths.split(Path.delimiter), isDirectory);
+        const validPaths = await filterAsync(path.split, isDirectory);
         const allFiles: string[][] = await Promise.all(validPaths.map(filesIn));
 
         return _.uniq(_.flatten(allFiles));

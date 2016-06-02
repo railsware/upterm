@@ -5,7 +5,7 @@ import * as pty from "pty.js";
 import {loginShell} from "./utils/Shell";
 import {debug} from "./utils/Common";
 
-export default class PTY {
+export class PTY {
     private terminal: pty.Terminal;
 
     // TODO: write proper signatures.

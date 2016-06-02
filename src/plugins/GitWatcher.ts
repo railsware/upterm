@@ -1,5 +1,5 @@
-import Session from "../Session";
-import PluginManager from "../PluginManager";
+import {Session} from "../Session";
+import {PluginManager} from "../PluginManager";
 import {EnvironmentObserverPlugin} from "../Interfaces";
 import {watch, FSWatcher} from "fs";
 import * as Path from "path";
@@ -53,13 +53,14 @@ class GitWatcher extends EventEmitter {
     @debounce(1000 / 60)
     private async updateGitData() {
         let content = await readFile(Path.join(this.gitDirectory, "HEAD"));
+        const headMatch = /ref: refs\/heads\/(.*)/.exec(content);
+        const head = headMatch ? headMatch[1] : "Couldn't parse branch";
 
         executeCommand("git", ["status", "--porcelain"], this.directory).then(changes => {
             const status: VcsStatus = changes.length ? "dirty" : "clean";
 
             const data: VcsData = {
-                isRepository: true,
-                branch: /ref: refs\/heads\/(.*)/.exec(content)[1],
+                branch: head,
                 status: status,
             };
 
@@ -83,7 +84,7 @@ class WatchManager implements EnvironmentObserverPlugin {
             return;
         }
 
-        const details = this.directoryToDetails.get(oldDirectory);
+        const details = this.directoryToDetails.get(oldDirectory)!;
         details.sessions.delete(session);
 
         if (details.sessions.size === 0) {
@@ -94,7 +95,7 @@ class WatchManager implements EnvironmentObserverPlugin {
 
     currentWorkingDirectoryDidChange(session: Session, directory: string) {
         if (this.directoryToDetails.has(directory)) {
-            this.directoryToDetails.get(directory).sessions.add(session);
+            this.directoryToDetails.get(directory)!.sessions.add(session);
         } else {
             const watcher = new GitWatcher(directory);
 

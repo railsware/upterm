@@ -1,5 +1,5 @@
-import Session from "../Session";
-import PluginManager from "../PluginManager";
+import {Session} from "../Session";
+import {PluginManager} from "../PluginManager";
 import * as Path from "path";
 import {homeDirectory, exists, readFile} from "../utils/Common";
 
@@ -48,16 +48,15 @@ PluginManager.registerEnvironmentObserver({
             const rubyVersion = await getRubyVersion(session.directory);
             const gemSetName = await getGemSetName(session.directory);
             const gemPaths = getGemSetPaths(rubyVersion, gemSetName);
-            const path = binPaths(rubyVersion, gemSetName) + Path.delimiter + session.environment.path;
+            session.environment.path.prepend(binPaths(rubyVersion, gemSetName));
 
             session.environment.setMany({
-                PATH: path,
                 GEM_PATH: gemPaths.join(Path.delimiter),
                 GEM_HOME: gemPaths[0],
             });
         } else {
-            const path = session.environment.path.split(Path.delimiter).filter(path => !path.includes(".rvm")).join(Path.delimiter);
-            session.environment.setMany({PATH: path, GEM_HOME: "", GEM_PATH: ""});
+            session.environment.path.removeWhere(path => !path.includes(".rvm"));
+            session.environment.setMany({GEM_HOME: "", GEM_PATH: ""});
         }
     },
 });
