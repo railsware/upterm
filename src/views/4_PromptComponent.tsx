@@ -162,7 +162,7 @@ export default class PromptComponent extends React.Component<Props, State> imple
             }
         }
 
-        if (this.props.jobView.state.canBeDecorated) {
+        if (this.props.job.canBeDecorated()) {
             decorationToggle = <DecorationToggleComponent job={this.props.jobView}/>;
         }
 
