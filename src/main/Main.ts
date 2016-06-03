@@ -27,6 +27,10 @@ app.on("ready", () => {
     };
     const browserWindow = new BrowserWindow(options);
 
+    if (process.env.REACT_EXTENSION_PATH) {
+        BrowserWindow.addDevToolsExtension(process.env.REACT_EXTENSION_PATH);
+    }
+
     browserWindow.loadURL("file://" + __dirname + "/../views/index.html");
     menu.setMenu(app, browserWindow);
 
