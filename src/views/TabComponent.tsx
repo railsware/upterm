@@ -115,7 +115,7 @@ export class Tab {
     private get contentSize(): Size {
         return {
             width: window.innerWidth,
-            height: window.innerHeight - css.titleBarHeight,
+            height: window.innerHeight - css.titleBarHeight - css.infoPanelHeight - css.outputPadding,
         };
     }
 }

@@ -54,7 +54,7 @@ export interface CSSObject {
 }
 
 const fontSize = 14;
-const outputPadding = 10;
+export const outputPadding = 10;
 const promptVerticalPadding = 5;
 const promptHorizontalPadding = 10;
 const promptHeight = 12 + (2 * promptVerticalPadding);
@@ -64,6 +64,7 @@ const suggestionSize = 2 * fontSize;
 const defaultShadow = "0 2px 8px 1px rgba(0, 0, 0, 0.3)";
 export const titleBarHeight = 24;
 export const rowHeight = fontSize + 4;
+export const infoPanelHeight = 2 * fontSize + 4;
 export const letterWidth = fontSize / 2 + 1.5;
 
 const infoPanel = {
@@ -71,17 +72,13 @@ const infoPanel = {
     paddingRight: 0,
     paddingBottom: 6,
     paddingLeft: 0.6 * fontSize,
-    height: 2 * fontSize + 4,
+    height: infoPanelHeight,
     lineHeight: 1.3,
     backgroundColor: panelColor,
 };
 
 const inactiveJobs: CSSObject = {
     pointerEvents: "none",
-};
-
-const commonJobs: CSSObject = {
-    marginBottom: 40,
 };
 
 const icon = {
@@ -135,7 +132,7 @@ export const application = {
 };
 
 export const jobs = (isSessionActive: boolean): CSSObject =>
-    isSessionActive ? commonJobs : Object.assign({}, commonJobs, inactiveJobs);
+    isSessionActive ? {} : Object.assign({}, inactiveJobs);
 
 export const row = (jobStatus: Status, activeBuffer: Buffer) => {
     const style: CSSObject = {
@@ -413,7 +410,7 @@ export const output = (buffer: Buffer, status: Status) => {
         if (status === Status.InProgress) {
             styles.position = "fixed";
             styles.top = titleBarHeight;
-            styles.bottom = 0;
+            styles.bottom = infoPanelHeight;
             styles.left = 0;
             styles.right = 0;
             styles.zIndex = 4;
