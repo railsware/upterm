@@ -83,19 +83,23 @@ export class Buffer extends events.EventEmitter {
         let storage = fromStorage;
 
         if (status === e.Status.InProgress && (this.cursor.show || this.cursor.blink)) {
-            const coordinates = [this.cursorPosition.row, this.cursorPosition.column];
+            const cursorRow = this.cursorPosition.row - (this.storage.size - fromStorage.size);
+            const cursorColumn = this.cursorPosition.column;
 
-            if (!storage.get(this.cursorPosition.row)) {
-                storage = storage.set(this.cursorPosition.row, List<Char>(Array(this.cursorPosition.column).fill(Char.empty)));
+            const cursorCoordinates = [cursorRow, cursorColumn];
+
+            if (!storage.get(cursorRow)) {
+                storage = storage.set(cursorRow, List<Char>(Array(cursorColumn).fill(Char.empty)));
             }
 
-            if (!storage.getIn(coordinates)) {
-                storage = storage.setIn(coordinates, Char.empty);
+
+            if (!storage.getIn(cursorCoordinates)) {
+                storage = storage.setIn(cursorCoordinates, Char.empty);
             }
 
-            let char: Char = storage.getIn(coordinates);
+            let char: Char = storage.getIn(cursorCoordinates);
             storage = storage.setIn(
-                coordinates,
+                cursorCoordinates,
                 Char.flyweight(char.toString(), Object.assign({}, char.attributes, {cursor: true}))
             );
         }
