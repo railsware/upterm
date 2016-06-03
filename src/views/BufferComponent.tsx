@@ -81,7 +81,9 @@ export class BufferComponent extends React.Component<Props, State> {
             <div className="output"
                  style={css.output(this.props.job.screenBuffer.activeScreenBufferType, this.props.job.status)}>
                 {this.shouldCutOutput ? <Cut job={this.props.job} clickHandler={() => this.setState({ expandButtonPressed: true })}/> : undefined}
-                {this.renderableRows.map((row, index) => <RowComponent row={row || List<Char>()} key={index} style={css.row(this.props.job.status, this.props.job.screenBuffer.activeScreenBufferType)}/>)}
+                {this.renderableRows.map((row, index) =>
+                    <RowComponent row={row || List<Char>()} key={index} style={css.row(this.props.job.status, this.props.job.screenBuffer.activeScreenBufferType)}/>
+                )}
             </div>
         );
     }
