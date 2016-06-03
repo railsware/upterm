@@ -33,30 +33,42 @@ function getGemSetPaths(rubyVersion: string, gemSetName: string): string[] {
     return names.map(name => Path.join(rvmDirectory, "gems", `ruby-${rubyVersion}@${name}`));
 }
 
-function binPaths(rubyVersion: string, gemSetName: string): string {
+function binPaths(rubyVersion: string, gemSetName: string): string[] {
     return [
         Path.join(rvmDirectory, "bin"),
         Path.join(rvmDirectory, "rubies", `ruby-${rubyVersion}`, "bin"),
         ...getGemSetPaths(rubyVersion, gemSetName).map(path => Path.join(path, "bin")),
-    ].join(Path.delimiter);
+    ];
+}
+
+async function withRvmData(directory: string, callback: (binPaths: string[], gemPaths: string[]) => void) {
+    if (await isUnderRVM(directory)) {
+        const rubyVersion = await getRubyVersion(directory);
+        const gemSetName = await getGemSetName(directory);
+        const gemPaths = getGemSetPaths(rubyVersion, gemSetName);
+        callback(binPaths(rubyVersion, gemSetName), gemPaths);
+    }
 }
 
 PluginManager.registerEnvironmentObserver({
-    currentWorkingDirectoryWillChange: () => void 0,
-    currentWorkingDirectoryDidChange: async(session: Session) => {
-        if (await isUnderRVM(session.directory)) {
-            const rubyVersion = await getRubyVersion(session.directory);
-            const gemSetName = await getGemSetName(session.directory);
-            const gemPaths = getGemSetPaths(rubyVersion, gemSetName);
-            session.environment.path.prepend(binPaths(rubyVersion, gemSetName));
+    currentWorkingDirectoryWillChange: () => async(session: Session, directory: string) => {
+        withRvmData(directory, binPaths => {
+            binPaths.forEach(path => session.environment.path.remove(path));
+
+            session.environment.setMany({
+                GEM_PATH: "",
+                GEM_HOME: "",
+            });
+        });
+    },
+    currentWorkingDirectoryDidChange: async(session: Session, directory: string) => {
+        withRvmData(directory, (binPaths, gemPaths) => {
+            binPaths.forEach(path => session.environment.path.prepend(path));
 
             session.environment.setMany({
                 GEM_PATH: gemPaths.join(Path.delimiter),
                 GEM_HOME: gemPaths[0],
             });
-        } else {
-            session.environment.path.removeWhere(path => path.includes(".rvm"));
-            session.environment.setMany({GEM_HOME: "", GEM_PATH: ""});
-        }
+        });
     },
 });
