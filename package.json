@@ -38,7 +38,7 @@
   "devDependencies": {
     "chai": "3.5.0",
     "devtron": "1.1.2",
-    "electron-builder": "4.2.1",
+    "electron-builder": "4.2.0",
     "electron-prebuilt": "1.2.1",
     "mocha": "2.5.3",
     "npm-check-updates": "2.6.5",
