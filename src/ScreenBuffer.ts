@@ -7,10 +7,10 @@ import {List} from "immutable";
 import {error, times} from "./utils/Common";
 import {remote} from "electron";
 
-export class Buffer extends events.EventEmitter {
+export class ScreenBuffer extends events.EventEmitter {
     public static hugeOutputThreshold = 300;
     public cursor: Cursor = new Cursor();
-    public activeBuffer = e.Buffer.Standard;
+    public activeScreenBufferType = e.ScreenBufferType.Standard;
     private storage = List<List<Char>>();
     private _attributes: i.Attributes = {color: e.Color.White, weight: e.Weight.Normal};
     private isOriginModeSet = false;
@@ -52,7 +52,7 @@ export class Buffer extends events.EventEmitter {
                     this.moveCursorAbsolute({column: 0});
                     break;
                 default:
-                    error(`Couldn"t write a special char "${charObject}" with char code ${charObject.toString().charCodeAt(0)}.`);
+                    error(`Couldn't write a special char "${charObject}" with char code ${charObject.toString().charCodeAt(0)}.`);
             }
         } else {
             this.set(this.cursorPosition, charObject);
@@ -108,7 +108,7 @@ export class Buffer extends events.EventEmitter {
     }
 
     toCutRenderable(status: e.Status): List<List<Char>> {
-        return this.toRenderable(status, <List<List<Char>>>(this.storage.takeLast(Buffer.hugeOutputThreshold)));
+        return this.toRenderable(status, <List<List<Char>>>(this.storage.takeLast(ScreenBuffer.hugeOutputThreshold)));
     }
 
     toLines(): string[] {

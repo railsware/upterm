@@ -92,20 +92,20 @@ interface Buffer extends NodeBuffer {}
  */
 declare var Buffer: {
     /**
-     * Allocates a new buffer containing the given {str}.
+     * Allocates a new screenBuffer containing the given {str}.
      *
-     * @param str String to store in buffer.
+     * @param str String to store in screenBuffer.
      * @param encoding encoding to use, optional.  Default is 'utf8'
      */
     new (str: string, encoding?: string): Buffer;
     /**
-     * Allocates a new buffer of {size} octets.
+     * Allocates a new screenBuffer of {size} octets.
      *
      * @param size count of octets to allocate.
      */
     new (size: number): Buffer;
     /**
-     * Allocates a new buffer containing the given {array} of octets.
+     * Allocates a new screenBuffer containing the given {array} of octets.
      *
      * @param array The octets to store.
      */
@@ -119,15 +119,15 @@ declare var Buffer: {
      */
     new (arrayBuffer: ArrayBuffer): Buffer;
     /**
-     * Allocates a new buffer containing the given {array} of octets.
+     * Allocates a new screenBuffer containing the given {array} of octets.
      *
      * @param array The octets to store.
      */
     new (array: any[]): Buffer;
     /**
-     * Copies the passed {buffer} data onto a new {Buffer} instance.
+     * Copies the passed {screenBuffer} data onto a new {Buffer} instance.
      *
-     * @param buffer The buffer to copy.
+     * @param buffer The screenBuffer to copy.
      */
     new (buffer: Buffer): Buffer;
     prototype: Buffer;
@@ -138,18 +138,18 @@ declare var Buffer: {
      */
     from(array: any[]): Buffer;
     /**
-     * When passed a reference to the .buffer property of a TypedArray instance,
+     * When passed a reference to the .screenBuffer property of a TypedArray instance,
      * the newly created Buffer will share the same allocated memory as the TypedArray.
      * The optional {byteOffset} and {length} arguments specify a memory range
      * within the {arrayBuffer} that will be shared by the Buffer.
      *
-     * @param arrayBuffer The .buffer property of a TypedArray or a new ArrayBuffer()
+     * @param arrayBuffer The .screenBuffer property of a TypedArray or a new ArrayBuffer()
      * @param byteOffset
      * @param length
      */
     from(arrayBuffer: ArrayBuffer, byteOffset?: number, length?:number): Buffer;
     /**
-     * Copies the passed {buffer} data onto a new Buffer instance.
+     * Copies the passed {screenBuffer} data onto a new Buffer instance.
      *
      * @param buffer
      */
@@ -184,9 +184,9 @@ declare var Buffer: {
      */
     byteLength(string: string, encoding?: string): number;
     /**
-     * Returns a buffer which is the result of concatenating all the buffers in the list together.
+     * Returns a screenBuffer which is the result of concatenating all the buffers in the list together.
      *
-     * If the list has no items, or if the totalLength is 0, then it returns a zero-length buffer.
+     * If the list has no items, or if the totalLength is 0, then it returns a zero-length screenBuffer.
      * If the list has exactly one item, then the first item of the list is returned.
      * If the list has more than one item, then a new Buffer is created.
      *
@@ -481,7 +481,7 @@ interface NodeBuffer extends Uint8Array {
 *                   MODULES                     *
 *                                               *
 ************************************************/
-declare module "buffer" {
+declare module "screenBuffer" {
     export var INSPECT_MAX_BYTES: number;
     var BuffType: typeof Buffer;
     var SlowBuffType: typeof SlowBuffer;
@@ -1798,11 +1798,11 @@ declare module "tls" {
     export interface TlsOptions {
         host?: string;
         port?: number;
-        pfx?: any;   //string or buffer
-        key?: any;   //string or buffer
+        pfx?: any;   //string or screenBuffer
+        key?: any;   //string or screenBuffer
         passphrase?: string;
         cert?: any;
-        ca?: any;    //string or buffer
+        ca?: any;    //string or screenBuffer
         crl?: any;   //string or string array
         ciphers?: string;
         honorCipherOrder?: any;
@@ -1900,13 +1900,13 @@ declare module "crypto" {
     export function createHmac(algorithm: string, key: Buffer): Hmac;
     export interface Hash {
         update(data: any, input_encoding?: string): Hash;
-        digest(encoding: 'buffer'): Buffer;
+        digest(encoding: 'screenBuffer'): Buffer;
         digest(encoding: string): any;
         digest(): Buffer;
     }
     export interface Hmac extends NodeJS.ReadWriteStream {
         update(data: any, input_encoding?: string): Hmac;
-        digest(encoding: 'buffer'): Buffer;
+        digest(encoding: 'screenBuffer'): Buffer;
         digest(encoding: string): any;
         digest(): Buffer;
     }

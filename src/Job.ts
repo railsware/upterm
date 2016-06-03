@@ -4,7 +4,7 @@ import * as React from "react";
 import {Session} from "./Session";
 import {ANSIParser} from "./ANSIParser";
 import {Prompt} from "./Prompt";
-import {Buffer} from "./Buffer";
+import {ScreenBuffer} from "./ScreenBuffer";
 import {CommandExecutor} from "./CommandExecutor";
 import {PTY} from "./PTY";
 import {PluginManager} from "./PluginManager";
@@ -22,7 +22,7 @@ export class Job extends EmitterWithUniqueID {
     public status: Status = Status.NotStarted;
     public readonly parser: ANSIParser;
     private readonly _prompt: Prompt;
-    private readonly _buffer: Buffer;
+    private readonly _screenBuffer: ScreenBuffer;
     private readonly rareDataEmitter: Function;
     private readonly frequentDataEmitter: Function;
 
@@ -35,8 +35,8 @@ export class Job extends EmitterWithUniqueID {
         this.rareDataEmitter = makeThrottledDataEmitter(1, this);
         this.frequentDataEmitter = makeThrottledDataEmitter(60, this);
 
-        this._buffer = new Buffer(this.dimensions);
-        this._buffer.on("data", this.throttledDataEmitter);
+        this._screenBuffer = new ScreenBuffer(this.dimensions);
+        this._screenBuffer.on("data", this.throttledDataEmitter);
         this.parser = new ANSIParser(this);
     }
 
@@ -62,7 +62,7 @@ export class Job extends EmitterWithUniqueID {
     handleError(message: string): void {
         this.setStatus(Status.Failure);
         if (message) {
-            this._buffer.writeMany(message);
+            this._screenBuffer.writeMany(message);
         }
         this.emit("end");
     }
@@ -96,7 +96,7 @@ export class Job extends EmitterWithUniqueID {
     }
 
     hasOutput(): boolean {
-        return !this._buffer.isEmpty();
+        return !this._screenBuffer.isEmpty();
     }
 
     getDimensions(): Dimensions {
@@ -118,7 +118,7 @@ export class Job extends EmitterWithUniqueID {
 
     winch(): void {
         if (this.command && this.status === Status.InProgress) {
-            this._buffer.dimensions = this.dimensions;
+            this._screenBuffer.dimensions = this.dimensions;
             this.command.dimensions = this.dimensions;
         }
     }
@@ -150,8 +150,8 @@ export class Job extends EmitterWithUniqueID {
         return this.decorators.find(decorator => decorator.isApplicable(this));
     }
 
-    get buffer(): Buffer {
-        return this._buffer;
+    get screenBuffer(): ScreenBuffer {
+        return this._screenBuffer;
     }
 
     get prompt(): Prompt {
@@ -164,5 +164,5 @@ export class Job extends EmitterWithUniqueID {
     }
 
     private throttledDataEmitter = () =>
-        this._buffer.size < Buffer.hugeOutputThreshold ? this.frequentDataEmitter() : this.rareDataEmitter();
+        this._screenBuffer.size < ScreenBuffer.hugeOutputThreshold ? this.frequentDataEmitter() : this.rareDataEmitter();
 }

@@ -1,5 +1,5 @@
 import * as React from "react";
-import {Buffer} from "../Buffer";
+import {ScreenBuffer} from "../ScreenBuffer";
 import {Char} from "../Char";
 import {groupWhen} from "../utils/Common";
 import {List} from "immutable";
@@ -33,7 +33,7 @@ class Cut extends React.Component<CutProps, CutState> {
                  onMouseEnter={() => this.setState({isHovered: true})}
                  onMouseLeave={() => this.setState({isHovered: false})}>
                 <i style={css.outputCutIcon} dangerouslySetInnerHTML={{__html: fontAwesome.expand}}/>
-                {`Show all ${this.props.job.buffer.size} rows.`}
+                {`Show all ${this.props.job.screenBuffer.size} rows.`}
             </div>
         );
     }
@@ -79,18 +79,18 @@ export class BufferComponent extends React.Component<Props, State> {
     render() {
         return (
             <div className="output"
-                 style={css.output(this.props.job.buffer.activeBuffer, this.props.job.status)}>
+                 style={css.output(this.props.job.screenBuffer.activeScreenBufferType, this.props.job.status)}>
                 {this.shouldCutOutput ? <Cut job={this.props.job} clickHandler={() => this.setState({ expandButtonPressed: true })}/> : undefined}
-                {this.renderableRows.map((row, index) => <RowComponent row={row || List<Char>()} key={index} style={css.row(this.props.job.status, this.props.job.buffer.activeBuffer)}/>)}
+                {this.renderableRows.map((row, index) => <RowComponent row={row || List<Char>()} key={index} style={css.row(this.props.job.status, this.props.job.screenBuffer.activeScreenBufferType)}/>)}
             </div>
         );
     }
 
     private get shouldCutOutput(): boolean {
-        return this.props.job.buffer.size > Buffer.hugeOutputThreshold && !this.state.expandButtonPressed;
+        return this.props.job.screenBuffer.size > ScreenBuffer.hugeOutputThreshold && !this.state.expandButtonPressed;
     };
 
     private get renderableRows(): List<List<Char>> {
-        return this.shouldCutOutput ? this.props.job.buffer.toCutRenderable(this.props.job.status) : this.props.job.buffer.toRenderable(this.props.job.status);
+        return this.shouldCutOutput ? this.props.job.screenBuffer.toCutRenderable(this.props.job.status) : this.props.job.screenBuffer.toRenderable(this.props.job.status);
     }
 }

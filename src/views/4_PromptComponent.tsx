@@ -165,7 +165,7 @@ export class PromptComponent extends React.Component<Props, State> implements Ke
             decorationToggle = <DecorationToggleComponent decorateToggler={this.props.decorateToggler}/>;
         }
 
-        if (this.props.status !== e.Status.NotStarted && this.props.job.buffer.size > 100) {
+        if (this.props.status !== e.Status.NotStarted && this.props.job.screenBuffer.size > 100) {
             scrollToTop = <span style={css.action}
                              onClick={this.handleScrollToTop.bind(this)}
                              dangerouslySetInnerHTML={{__html: fontAwesome.longArrowUp}}/>;

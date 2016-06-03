@@ -893,7 +893,7 @@ declare namespace Electron {
 		/**
 		 * Captures the snapshot of page within rect, upon completion the callback
 		 * will be called. Omitting the rect would capture the whole visible page.
-		 * Note: Be sure to read documents on remote buffer in remote if you are going
+		 * Note: Be sure to read documents on remote screenBuffer in remote if you are going
 		 * to use this API in renderer process.
 		 * @param callback Supplies the image that stores data of the snapshot.
 		 */
@@ -1472,7 +1472,7 @@ declare namespace Electron {
 		 */
 		captureMonitoringSnapshot(resultFilePath: string, callback: (filePath: string) => void): void;
 		/**
-		 * Get the maximum usage across processes of trace buffer as a percentage of the full state.
+		 * Get the maximum usage across processes of trace screenBuffer as a percentage of the full state.
 		 *
 		 * @param callback Called when the TraceBufferUsage value is determined.
 		 */
@@ -2145,7 +2145,7 @@ declare namespace Electron {
 		 */
 		static createFromPath(path: string): NativeImage;
 		/**
-		 * Creates a new NativeImage instance from buffer.
+		 * Creates a new NativeImage instance from screenBuffer.
 		 * @param scaleFactor 1.0 by default.
 		 */
 		static createFromBuffer(buffer: Buffer, scaleFactor?: number): NativeImage;

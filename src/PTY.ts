@@ -39,7 +39,7 @@ export class PTY {
 
     kill(signal: string): void {
         /**
-         *  The if branch is necessary because pty.js doesn"t handle SIGINT correctly.
+         *  The if branch is necessary because pty.js doesn't handle SIGINT correctly.
          *  You can test whether it works by executing
          *     ruby -e "loop { puts "yes"; sleep 1 }"
          *  and trying to kill it with SIGINT.

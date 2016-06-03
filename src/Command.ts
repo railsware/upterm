@@ -37,7 +37,7 @@ const executors: Dictionary<(i: Job, a: string[]) => void> = {
     },
     export: (job: Job, args: string[]): void => {
         if (args.length === 0) {
-            job.buffer.writeMany(job.environment.map((key, value) => `${key}=${value}`).join("\n"));
+            job.screenBuffer.writeMany(job.environment.map((key, value) => `${key}=${value}`).join("\n"));
             return;
         }
 

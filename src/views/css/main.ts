@@ -1,4 +1,4 @@
-import {Buffer, Status, Weight, Brightness} from "../../Enums";
+import {ScreenBufferType, Status, Weight, Brightness} from "../../Enums";
 import {colors, panel as panelColor, background as backgroundColor} from "./colors";
 import {TabHoverState} from "../TabComponent";
 import {darken, lighten, failurize} from "./functions";
@@ -134,13 +134,13 @@ export const application = {
 export const jobs = (isSessionActive: boolean): CSSObject =>
     isSessionActive ? {} : Object.assign({}, inactiveJobs);
 
-export const row = (jobStatus: Status, activeBuffer: Buffer) => {
+export const row = (jobStatus: Status, activeScreenBufferType: ScreenBufferType) => {
     const style: CSSObject = {
         padding: `0 ${outputPadding}`,
         minHeight: rowHeight,
     };
 
-    if (activeBuffer === Buffer.Alternate) {
+    if (activeScreenBufferType === ScreenBufferType.Alternate) {
         if ([Status.Failure, Status.Interrupted, Status.Success].includes(jobStatus)) {
             style.height = 70;
         } else if (Status.InProgress === jobStatus) {
@@ -334,7 +334,7 @@ export const commandSign = {
 };
 
 // To display even empty rows. The height might need tweaking.
-// TODO: Remove if we always have a fixed buffer width.
+// TODO: Remove if we always have a fixed screenBuffer width.
 export const charGroup = (attributes: Attributes) => {
     const styles: CSSObject = {
         display: "inline-block",
@@ -392,17 +392,17 @@ export const outputCut = (status: Status, isHovered: boolean) => Object.assign(
 
 export const outputCutIcon = Object.assign({marginRight: 10}, icon);
 
-export const output = (buffer: Buffer, status: Status) => {
+export const output = (activeScreenBufferType: ScreenBufferType, status: Status) => {
     const styles: CSSObject = {
         paddingTop: outputPadding,
         paddingBottom: outputPadding,
-        paddingLeft: buffer === Buffer.Alternate ? 0 : outputPadding,
-        paddingRight: buffer === Buffer.Alternate ? 0 : outputPadding,
+        paddingLeft: activeScreenBufferType === ScreenBufferType.Alternate ? 0 : outputPadding,
+        paddingRight: activeScreenBufferType === ScreenBufferType.Alternate ? 0 : outputPadding,
         whiteSpace: "pre-wrap",
         backgroundColor: backgroundColor,
     };
 
-    if (buffer === Buffer.Alternate) {
+    if (activeScreenBufferType === ScreenBufferType.Alternate) {
         if ([Status.Failure, Status.Interrupted, Status.Success].includes(status)) {
             styles.zoom = 0.1;
         }

@@ -5,7 +5,7 @@ import {Job} from "../Job";
 
 PluginManager.registerOutputDecorator({
     decorate: (job: Job): React.ReactElement<any> => {
-        const rows = job.buffer.toLines().map(row => {
+        const rows = job.screenBuffer.toLines().map(row => {
             if (/^\s*\+/.test(row)) {
                 return <div className="git-diff-new">{row.replace(/^\++/, "")}</div>;
             } else if (/^\s*-/.test(row)) {

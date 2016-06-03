@@ -8,7 +8,7 @@ export class Serializer {
         } else if (typeof serializable === "string") {
             return `String:${serializable}`;
         } else {
-            throw `Don"t know how to serialize ${serializable}`;
+            throw `Don't know how to serialize ${serializable}`;
         }
     }
 
@@ -18,7 +18,7 @@ export class Serializer {
         } else if (_.startsWith(serialized, "History:")) {
             return History.deserialize(serialized.slice("History:".length));
         } else {
-            throw `Don"t know how to deserialize ${serialized}`;
+            throw `Don't know how to deserialize ${serialized}`;
         }
     }
 }
