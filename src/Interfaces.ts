@@ -53,6 +53,6 @@ export interface PreexecPlugin {
 
 export interface TerminalLikeDevice {
     screenBuffer: ScreenBuffer;
-    dimensions: Dimensions
+    dimensions: Dimensions;
     write: (input: string | KeyboardEvent) => void;
 }

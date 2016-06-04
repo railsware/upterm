@@ -110,7 +110,19 @@ export class ScreenBuffer extends events.EventEmitter {
     }
 
     toLines(): string[] {
-        return this.storage.map(row => row!.map(char => char!.toString()).join("")).toArray();
+        return this.storage.map(row => {
+            if (row) {
+                return row.map(char => {
+                    if (char) {
+                        return char.toString();
+                    } else {
+                        return " ";
+                    }
+                }).join("");
+            } else {
+                return "";
+            }
+        }).toArray();
     }
 
     toString(): string {
