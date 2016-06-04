@@ -56,6 +56,11 @@ const CSI = {
     },
 };
 
+const colorFormatCodes = {
+    format8bit: 5,
+    formatTrueColor: 2,
+};
+
 export class ANSIParser {
     private parser: AnsiParser;
     private screenBuffer: ScreenBuffer;
@@ -443,20 +448,20 @@ export class ANSIParser {
                     if (!attributeToSet) {
                         error("sgr", sgr, params);
                     } else if (isSetColorExtended(attributeToSet)) {
-                        const next = params.shift();
-                        if (next === 5) {
+                        const colorFormat = params.shift();
+                        if (colorFormat === colorFormatCodes.format8bit) {
                             const color = params.shift();
 
                             if (color) {
                                 this.screenBuffer.setAttributes({[attributeToSet]: color});
                             } else {
-                                error("sgr", sgr, next, params);
+                                error("sgr", sgr, colorFormat, params);
                             }
-                        } else if (next === 2) {
+                        } else if (colorFormat === colorFormatCodes.formatTrueColor) {
                             this.screenBuffer.setAttributes({[attributeToSet]: params});
                             params = [];
                         } else {
-                            error("sgr", sgr, next, params);
+                            error("sgr", sgr, colorFormat, params);
                         }
                     } else {
                         this.screenBuffer.setAttributes(attributeToSet);
