@@ -17,6 +17,12 @@ function makeThrottledDataEmitter(timesPerSecond: number, subject: EmitterWithUn
     return _.throttle(() => subject.emit("data"), 1000 / timesPerSecond);
 }
 
+export interface TerminalDeviceLike {
+    screenBuffer: ScreenBuffer;
+    dimensions: Dimensions
+    write: (input: string | KeyboardEvent) => void;
+}
+
 export class Job extends EmitterWithUniqueID {
     public command: PTY;
     public status: Status = Status.NotStarted;
@@ -95,17 +101,13 @@ export class Job extends EmitterWithUniqueID {
         return this.session.dimensions;
     }
 
-    hasOutput(): boolean {
-        return !this._screenBuffer.isEmpty();
-    }
-
-    getDimensions(): Dimensions {
-        return this.session.dimensions;
-    }
-
-    setDimensions(dimensions: Dimensions) {
+    set dimensions(dimensions: Dimensions) {
         this.session.dimensions = dimensions;
         this.winch();
+    }
+
+    hasOutput(): boolean {
+        return !this._screenBuffer.isEmpty();
     }
 
     interrupt(): void {

@@ -1,4 +1,4 @@
-import {Job} from "./Job";
+import {TerminalDeviceLike} from "./Job";
 import {Char} from "./Char";
 import {Color, Weight, Brightness, KeyCode, LogLevel, ScreenBufferType} from "./Enums";
 import {Attributes} from "./Interfaces";
@@ -81,7 +81,7 @@ const colorFormatCodes = {
 export class ANSIParser {
     private parser: AnsiParser;
 
-    constructor(private job: Job) {
+    constructor(private terminalDevice: TerminalDeviceLike) {
         this.parser = this.initializeAnsiParser();
     }
 
@@ -104,7 +104,7 @@ export class ANSIParser {
                 error("osc", s);
             },
             inst_x: (flag: string) => {
-                const char = Char.flyweight(flag, this.job.screenBuffer.attributes);
+                const char = Char.flyweight(flag, this.terminalDevice.screenBuffer.attributes);
                 const name = KeyCode[char.keyCode];
 
                 print((name ? LogLevel.Log : LogLevel.Error), flag.split("").map((_, index) => flag.charCodeAt(index)));
@@ -173,7 +173,7 @@ export class ANSIParser {
                 short = "DEC Screen Alignment Test (DECALN).";
                 url = "http://www.vt100.net/docs/vt510-rm/DECALN";
 
-                const dimensions = this.job.getDimensions();
+                const dimensions = this.terminalDevice.dimensions;
 
                 for (let i = 0; i !== dimensions.rows; ++i) {
                     this.screenBuffer.moveCursorAbsolute({row: i, column: 0});
@@ -254,11 +254,11 @@ export class ANSIParser {
                 if (shouldSet) {
                     description = "132 Column Mode (DECCOLM).";
 
-                    this.job.setDimensions({columns: 132, rows: this.job.getDimensions().rows});
+                    this.terminalDevice.dimensions = {columns: 132, rows: this.terminalDevice.dimensions.rows};
                 } else {
                     description = "80 Column Mode (DECCOLM).";
 
-                    this.job.setDimensions({columns: 80, rows: this.job.getDimensions().rows});
+                    this.terminalDevice.dimensions = {columns: 80, rows: this.terminalDevice.dimensions.rows};
                 }
                 this.screenBuffer.clear();
                 // TODO
@@ -272,7 +272,7 @@ export class ANSIParser {
                 description = "Origin Mode (DECOM).";
                 url = "http://www.vt100.net/docs/vt510-rm/DECOM";
 
-                this.job.screenBuffer.originMode = shouldSet;
+                this.screenBuffer.originMode = shouldSet;
                 break;
             case 12:
                 if (shouldSet) {
@@ -433,7 +433,8 @@ export class ANSIParser {
                 this.screenBuffer.eraseRight(param || 1);
                 break;
             case "c":
-                this.job.write("\x1b>1;2;");
+                short = "Send Device Attributes (Primary DA)";
+                this.terminalDevice.write("\x1b>1;2;");
                 break;
             case "d":
                 short = "Line Position Absolute [row] (default = [1,column]) (VPA).";
@@ -506,7 +507,7 @@ export class ANSIParser {
     }
 
     private get screenBuffer() {
-        return this.job.screenBuffer;
+        return this.terminalDevice.screenBuffer;
     }
 }
 
