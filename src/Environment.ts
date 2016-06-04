@@ -3,19 +3,24 @@ import {executeCommandWithShellConfig} from "./PTY";
 import {clone} from "lodash";
 import {homeDirectory} from "./utils/Common";
 import * as Path from "path";
+import {AbstractOrderedSet} from "./utils/OrderedSet";
 
-const env: Dictionary<string> = {};
+export const processEnvironment: Dictionary<string> = {};
 export async function loadEnvironment(): Promise<void> {
     const lines = await executeCommandWithShellConfig("env");
 
     lines.forEach(line => {
         let [key, value] = line.trim().split("=");
-        env[key] = value;
+        processEnvironment[key] = value;
     });
 }
 
 export class Environment {
-    private storage: Dictionary<string> = clone(env);
+    private storage: Dictionary<string>;
+
+    constructor(environment: Dictionary<string>) {
+        this.storage = clone(environment);
+    }
 
     set(key: string, value: string): void {
         this.storage[key] = value;
@@ -70,39 +75,19 @@ export class Environment {
     }
 }
 
-export class EnvironmentPath {
+export class EnvironmentPath extends AbstractOrderedSet<string> {
     constructor(private environment: Environment) {
-    }
+        super(
+            () => {
+                const path = this.environment.get("PATH");
 
-    append(path: string) {
-        if (!this.has(path)) {
-            this.environment.set("PATH", this.raw + Path.delimiter + path);
-        }
-    }
-
-    prepend(path: string) {
-        if (!this.has(path)) {
-            this.environment.set("PATH", path + Path.delimiter + this.raw);
-        }
-    }
-
-    get split() {
-        return this.raw.split(Path.delimiter);
-    }
-
-    remove(toRemove: string) {
-        this.removeWhere(existing => existing === toRemove);
-    }
-
-    removeWhere(removePredicate: (existing: string) => boolean) {
-        this.environment.set("PATH", this.split.filter(path => !removePredicate(path)).join(Path.delimiter));
-    }
-
-    private has(path: string) {
-        return this.split.includes(path);
-    }
-
-    private get raw() {
-        return this.environment.get("PATH");
+                if (path) {
+                    return path.split(Path.delimiter);
+                } else {
+                    return [];
+                }
+            },
+            updatedPaths => this.environment.set("PATH", updatedPaths.join(Path.delimiter))
+        );
     }
 }

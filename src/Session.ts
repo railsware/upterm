@@ -7,14 +7,14 @@ import {EmitterWithUniqueID} from "./EmitterWithUniqueID";
 import {PluginManager} from "./PluginManager";
 import {Status} from "./Enums";
 import {ApplicationComponent} from "./views/1_ApplicationComponent";
-import {Environment} from "./Environment";
+import {Environment, processEnvironment} from "./Environment";
 import {homeDirectory, normalizeDirectory, writeFileCreatingParents, stateFilePath} from "./utils/Common";
 import {remote} from "electron";
 import {OrderedSet} from "./utils/OrderedSet";
 
 export class Session extends EmitterWithUniqueID {
     jobs: Array<Job> = [];
-    readonly environment = new Environment();
+    readonly environment = new Environment(processEnvironment);
     history: typeof History;
     historicalCurrentDirectoriesStack = new OrderedSet<string>();
     // The value of the dictionary is the default value used if there is no serialized data.

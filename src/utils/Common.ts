@@ -166,7 +166,7 @@ export const {executablesInPaths} = new class {
             return this.executables;
         }
 
-        const validPaths = await filterAsync(path.split, isDirectory);
+        const validPaths = await filterAsync(path.toArray(), isDirectory);
         const allFiles: string[][] = await Promise.all(validPaths.map(filesIn));
 
         return _.uniq(_.flatten(allFiles));

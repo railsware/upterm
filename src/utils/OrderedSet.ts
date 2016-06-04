@@ -1,9 +1,10 @@
-export class OrderedSet<T> {
-    private storage: T[] = [];
+export abstract class AbstractOrderedSet<T> {
+    constructor(private storageGetter: () => T[], private storageSetter: (t: T[]) => void) {
+    }
 
     prepend(element: T) {
         this.remove(element);
-        this.storage.unshift(element);
+        this.storageSetter([element].concat(this.storageGetter()));
     }
 
     remove(toRemove: T) {
@@ -11,18 +12,29 @@ export class OrderedSet<T> {
     }
 
     removeWhere(removePredicate: (existing: T) => boolean) {
-        this.storage = this.storage.filter(path => !removePredicate(path));
+        this.storageSetter(this.storageGetter().filter(path => !removePredicate(path)));
     }
 
     get size() {
-        return this.storage.length;
+        return this.storageGetter().length;
     }
 
     at(index: number): T | undefined {
-        if (index >= this.storage.length) {
+        if (index >= this.size) {
             return undefined;
         } else {
-            return this.storage[index];
+            return this.storageGetter()[index];
         }
+    }
+
+    toArray() {
+        return this.storageGetter();
+    }
+}
+
+export class OrderedSet<T> extends AbstractOrderedSet<T> {
+    constructor() {
+        let storage: T[] = [];
+        super(() => storage, updatedStorage => storage = updatedStorage);
     }
 }

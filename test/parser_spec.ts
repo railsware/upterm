@@ -10,7 +10,7 @@ async function parse(parser: Parser, input: string) {
         input: input,
         directory: "/",
         historicalCurrentDirectoriesStack: new OrderedSet<string>(),
-        environment: new Environment(),
+        environment: new Environment({}),
         inputMethod: InputMethod.Typed,
     });
 }

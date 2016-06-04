@@ -8,7 +8,7 @@ export const defaultContext: Context = {
     input: "",
     directory: "/",
     historicalCurrentDirectoriesStack: new OrderedSet<string>(),
-    environment: new Environment(),
+    environment: new Environment({}),
     inputMethod: InputMethod.Typed,
 };
 
