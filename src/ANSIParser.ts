@@ -63,10 +63,8 @@ const colorFormatCodes = {
 
 export class ANSIParser {
     private parser: AnsiParser;
-    private screenBuffer: ScreenBuffer;
 
     constructor(private job: Job) {
-        this.screenBuffer = this.job.screenBuffer;
         this.parser = this.initializeAnsiParser();
     }
 
@@ -488,6 +486,10 @@ export class ANSIParser {
             longDescription: long,
             url: url,
         };
+    }
+
+    private get screenBuffer() {
+        return this.job.screenBuffer;
     }
 }
 
