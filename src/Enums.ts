@@ -53,31 +53,15 @@ export enum KeyCode {
     VerticalBar = 220,
 }
 
-export var colorIndex: any[] = [
-    "black", "red", "green", "yellow", "blue", "magenta", "cyan", "white",
-
-    "brightBlack", "brightRed", "brightGreen", "brightYellow",
-    "brightBlue", "brightMagenta", "brightCyan", "brightWhite",
-].concat(<Array<any>>_.range(16, 256));
-
 export enum Color {
-    Black = <Color>colorIndex[0],
-    Red = <Color>colorIndex[1],
-    Green = <Color>colorIndex[2],
-    Yellow = <Color>colorIndex[3],
-    Blue = <Color>colorIndex[4],
-    Magenta = <Color>colorIndex[5],
-    Cyan = <Color>colorIndex[6],
-    White = <Color>colorIndex[7],
-
-    BrightBlack = <Color>colorIndex[8],
-    BrightRed = <Color>colorIndex[9],
-    BrightGreen = <Color>colorIndex[10],
-    BrightYellow = <Color>colorIndex[11],
-    BrightBlue = <Color>colorIndex[12],
-    BrightMagenta = <Color>colorIndex[13],
-    BrightCyan = <Color>colorIndex[14],
-    BrightWhite = <Color>colorIndex[15],
+    Black,
+    Red,
+    Green,
+    Yellow,
+    Blue,
+    Magenta,
+    Cyan,
+    White,
 }
 
 export enum Status {

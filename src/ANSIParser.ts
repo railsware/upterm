@@ -1,6 +1,6 @@
 import {Job} from "./Job";
 import {Char} from "./Char";
-import {Color, Weight, Brightness, KeyCode, LogLevel, ScreenBufferType, colorIndex} from "./Enums";
+import {Color, Weight, Brightness, KeyCode, LogLevel, ScreenBufferType} from "./Enums";
 import {Attributes} from "./Interfaces";
 import {ScreenBuffer} from "./ScreenBuffer";
 import {print, error, info, debug} from "./utils/Common";
@@ -448,10 +448,13 @@ export class ANSIParser {
                             const color = params.shift();
 
                             if (color) {
-                                this.screenBuffer.setAttributes({[<string>attributeToSet]: colorIndex[color]});
+                                this.screenBuffer.setAttributes({[<string>attributeToSet]: color});
                             } else {
                                 error("sgr", sgr, next, params);
                             }
+                        } else if (next === 2) {
+                            this.screenBuffer.setAttributes({[<string>attributeToSet]: params});
+                            params = [];
                         } else {
                             error("sgr", sgr, next, params);
                         }

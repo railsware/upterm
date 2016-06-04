@@ -1,6 +1,7 @@
 import {darken} from "./functions";
+import * as _ from "lodash";
 
-const baseColors = {
+export const colors = {
     black: "#292C33",
     red: "#BF6E7C",
     white: "#95A2BB",
@@ -9,9 +10,7 @@ const baseColors = {
     blue: "#66A5DF",
     magenta: "#C699C5",
     cyan: "#6EC6C6",
-};
 
-const brightColors = {
     brightBlack: "#484c54",
     brightRed: "#dd8494",
     brightWhite: "#adbcd7",
@@ -22,6 +21,29 @@ const brightColors = {
     brightCyan: "#7adada",
 };
 
+const colorIndex =[
+    colors.black,
+    colors.red,
+    colors.green,
+    colors.yellow,
+    colors.blue,
+    colors.magenta,
+    colors.cyan,
+    colors.white,
+
+    colors.brightBlack,
+    colors.brightRed,
+    colors.brightGreen,
+    colors.brightYellow,
+    colors.brightBlue,
+    colors.brightMagenta,
+    colors.brightCyan,
+    colors.brightWhite,
+
+    ...generateIndexedColors(),
+    ...generateGreyScaleColors(),
+];
+
 function toRgb(colorComponent: number) {
     if (colorComponent === 0) {
         return 0;
@@ -30,37 +52,34 @@ function toRgb(colorComponent: number) {
     return 55 + colorComponent * 40;
 }
 
-
 function generateIndexedColors() {
-    const indexedColors: Dictionary<string> = {};
-
-    for (let index = 0; index <= 215; ++index) {
+    return _.range(0, 216).map(index => {
         const red = Math.floor(index / 36);
         const green = Math.floor((index % 36) / 6);
         const blue = Math.floor(index % 6);
 
-        const key = index + 16;
-
-        indexedColors[key] = `rgb(${toRgb(red)}, ${toRgb(green)}, ${toRgb(blue)})`;
-    }
-
-    return indexedColors;
+        return `rgb(${toRgb(red)}, ${toRgb(green)}, ${toRgb(blue)})`;
+    });
 }
 
 function generateGreyScaleColors() {
-    const greyScaleColors: Dictionary<string> = {};
-
-    for (let index = 0; index <= 23; ++index) {
+    return _.range(0, 24).map(index => {
         const color = index * 10 + 8;
-        const key = index + 232;
-
-        greyScaleColors[key] = `rgb(${color}, ${color}, ${color})`;
-    }
-
-    return greyScaleColors;
+        return `rgb(${color}, ${color}, ${color})`;
+    });
 }
 
-export const background = baseColors.black;
-export const panel = darken(background, 3);
+export function colorValue(color: number, options = {isBright: false}) {
+    if (Array.isArray(color)) {
+        return `rgb(${(<any>color).join(",")})`;
+    } else {
+        if (options.isBright && color < 8) {
+            return colorIndex[color + 8];
+        } else {
+            return  colorIndex[color];
+        }
+    }
+}
 
-export const colors = Object.assign({}, brightColors, baseColors, generateIndexedColors(), generateGreyScaleColors());
+export const background = colors.black;
+export const panel = darken(background, 3);

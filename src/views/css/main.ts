@@ -1,9 +1,8 @@
 import {ScreenBufferType, Status, Weight, Brightness} from "../../Enums";
-import {colors, panel as panelColor, background as backgroundColor} from "./colors";
+import {colors, panel as panelColor, background as backgroundColor, colorValue} from "./colors";
 import {TabHoverState} from "../TabComponent";
 import {darken, lighten, failurize} from "./functions";
 import {Attributes} from "../../Interfaces";
-import * as _ from "lodash";
 import {suggestionsLimit} from "../../Autocompletion";
 
 export interface CSSObject {
@@ -339,13 +338,9 @@ export const charGroup = (attributes: Attributes) => {
     const styles: CSSObject = {
         display: "inline-block",
         height: rowHeight,
-        color: colors[attributes.color],
-        backgroundColor: colors[attributes.backgroundColor],
+        color: colorValue(attributes.color, {isBright: attributes.brightness === Brightness.Bright}),
+        backgroundColor: colorValue(attributes.backgroundColor),
     };
-
-    if (attributes.brightness === Brightness.Bright) {
-        styles.color = colors[`bright${_.capitalize(<any>attributes.color)}`] || colors[attributes.color];
-    }
 
     if (attributes.inverse) {
         const color = styles.color;
