@@ -82,7 +82,7 @@ export function expandHistoricalDirectory(alias: string, historicalDirectories: 
     if (alias === "-") {
         alias = "-1";
     }
-    const index = historicalDirectories.size - 1 + parseInt(alias, 10);
+    const index = historicalDirectories.size + parseInt(alias, 10);
 
     if (index < 0) {
         throw new Error(`Error: you only have ${historicalDirectories.size} ${pluralize("directory", historicalDirectories.size)} in the stack.`);

@@ -8,7 +8,7 @@ import {pathIn} from "./Common";
 const historicalDirectory = runtime(async (context) =>
     decorate(
         choice(
-            _.take(["-", "-2", "-3", "-4", "-5", "-6", "-7", "-8", "-9"], context.historicalCurrentDirectoriesStack.size - 1)
+            _.take(["-", "-2", "-3", "-4", "-5", "-6", "-7", "-8", "-9"], context.historicalCurrentDirectoriesStack.size)
                 .map(alias => decorate(string(alias), description(expandHistoricalDirectory(alias, context.historicalCurrentDirectoriesStack))))
         ),
         style(styles.directory)
