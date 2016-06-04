@@ -3,12 +3,13 @@ import * as _ from "lodash";
 import {string, choice, many1, optional, sequence, Parser, InputMethod, Progress, token} from "../src/Parser.ts";
 import {suggestionDisplayValues} from "./helpers";
 import {Environment} from "../src/Environment";
+import {OrderedSet} from "../src/utils/OrderedSet";
 
 async function parse(parser: Parser, input: string) {
     return await parser({
         input: input,
         directory: "/",
-        historicalCurrentDirectoriesStack: [],
+        historicalCurrentDirectoriesStack: new OrderedSet<string>(),
         environment: new Environment(),
         inputMethod: InputMethod.Typed,
     });
