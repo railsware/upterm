@@ -3,6 +3,7 @@ import {existsSync, statSync} from "fs";
 import {homeDirectory, pluralize, resolveDirectory, resolveFile} from "./utils/Common";
 import {readFileSync} from "fs";
 import {EOL} from "os";
+import {Session} from "./Session";
 
 const executors: Dictionary<(i: Job, a: string[]) => void> = {
     cd: (job: Job, args: string[]): void => {
@@ -48,16 +49,20 @@ const executors: Dictionary<(i: Job, a: string[]) => void> = {
     },
     // FIXME: make the implementation more reliable.
     source: (job: Job, args: string[]): void => {
-        const content = readFileSync(resolveFile(job.session.directory, args[0])).toString();
-
-        content.split(EOL).forEach(line => {
-            if (line.startsWith("export ")) {
-                const [key, value] = line.split(" ")[1].split("=");
-                job.session.environment.set(key, value);
-            }
-        });
+        sourceFile(job.session, args[0]);
     },
 };
+
+export function sourceFile(session: Session, fileName: string) {
+    const content = readFileSync(resolveFile(session.directory, fileName)).toString();
+
+    content.split(EOL).forEach(line => {
+        if (line.startsWith("export ")) {
+            const [key, value] = line.split(" ")[1].split("=");
+            session.environment.set(key, value);
+        }
+    });
+}
 
 // A class representing built in commands
 export class Command {
