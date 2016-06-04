@@ -41,7 +41,24 @@ const SGR: { [indexer: string]: Attributes|string } = {
     46: {backgroundColor: Color.Cyan},
     47: {backgroundColor: Color.White},
     48: "backgroundColor",
+    /* 90-97 and 100-107 ranges should have high intensity. */
+    90: {color: Color.Black},
+    91: {color: Color.Red},
+    92: {color: Color.Green},
+    93: {color: Color.Yellow},
+    94: {color: Color.Blue},
+    95: {color: Color.Magenta},
+    96: {color: Color.Cyan},
+    97: {color: Color.White},
     49: {backgroundColor: Color.Black},
+    100: {backgroundColor: Color.Black},
+    101: {backgroundColor: Color.Red},
+    102: {backgroundColor: Color.Green},
+    103: {backgroundColor: Color.Yellow},
+    104: {backgroundColor: Color.Blue},
+    105: {backgroundColor: Color.Magenta},
+    106: {backgroundColor: Color.Cyan},
+    107: {backgroundColor: Color.White},
 };
 
 function isSetColorExtended(sgrValue: any): sgrValue is string {
