@@ -4,6 +4,7 @@ import {ReactElement} from "react";
 import {Job} from "./Job";
 import {Session} from "./Session";
 import {Suggestion} from "./plugins/autocompletion_providers/Suggestions";
+import {ScreenBuffer} from "./ScreenBuffer";
 
 export type ColorCode = number | number[];
 
@@ -48,4 +49,10 @@ export interface EnvironmentObserverPlugin {
 
 export interface PreexecPlugin {
     (job: Job): Promise<void>;
+}
+
+export interface TerminalLikeDevice {
+    screenBuffer: ScreenBuffer;
+    dimensions: Dimensions
+    write: (input: string | KeyboardEvent) => void;
 }

@@ -5,7 +5,6 @@ import * as i from "./Interfaces";
 import * as e from "./Enums";
 import {List} from "immutable";
 import {error, times} from "./utils/Common";
-import {remote} from "electron";
 
 export class ScreenBuffer extends events.EventEmitter {
     public static hugeOutputThreshold = 300;
@@ -16,7 +15,7 @@ export class ScreenBuffer extends events.EventEmitter {
     private isOriginModeSet = false;
     private _margins: Margins = {top: 0, left: 0};
 
-    constructor(private _dimensions: Dimensions) {
+    constructor() {
         super();
     }
 
@@ -32,7 +31,6 @@ export class ScreenBuffer extends events.EventEmitter {
         if (charObject.isSpecial()) {
             switch (charObject.keyCode) {
                 case e.KeyCode.Bell:
-                    remote.shell.beep();
                     break;
                 case e.KeyCode.Backspace:
                     this.moveCursorRelative({horizontal: -1});
@@ -215,10 +213,6 @@ export class ScreenBuffer extends events.EventEmitter {
 
     isEmpty(): boolean {
         return this.storage.size === 0;
-    }
-
-    set dimensions(dimensions: Dimensions) {
-        this._dimensions = dimensions;
     }
 
     set originMode(mode: boolean) {

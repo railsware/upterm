@@ -12,18 +12,13 @@ import {EmitterWithUniqueID} from "./EmitterWithUniqueID";
 import {Status} from "./Enums";
 import {Environment} from "./Environment";
 import {convertKeyCode} from "./utils/Common";
+import {TerminalLikeDevice} from "./Interfaces";
 
 function makeThrottledDataEmitter(timesPerSecond: number, subject: EmitterWithUniqueID) {
     return _.throttle(() => subject.emit("data"), 1000 / timesPerSecond);
 }
 
-export interface TerminalDeviceLike {
-    screenBuffer: ScreenBuffer;
-    dimensions: Dimensions
-    write: (input: string | KeyboardEvent) => void;
-}
-
-export class Job extends EmitterWithUniqueID {
+export class Job extends EmitterWithUniqueID implements TerminalLikeDevice {
     public command: PTY;
     public status: Status = Status.NotStarted;
     public readonly parser: ANSIParser;
@@ -41,7 +36,7 @@ export class Job extends EmitterWithUniqueID {
         this.rareDataEmitter = makeThrottledDataEmitter(1, this);
         this.frequentDataEmitter = makeThrottledDataEmitter(60, this);
 
-        this._screenBuffer = new ScreenBuffer(this.dimensions);
+        this._screenBuffer = new ScreenBuffer();
         this._screenBuffer.on("data", this.throttledDataEmitter);
         this.parser = new ANSIParser(this);
     }
@@ -120,7 +115,6 @@ export class Job extends EmitterWithUniqueID {
 
     winch(): void {
         if (this.command && this.status === Status.InProgress) {
-            this._screenBuffer.dimensions = this.dimensions;
             this.command.dimensions = this.dimensions;
         }
     }

@@ -1,12 +1,10 @@
-import {TerminalDeviceLike} from "./Job";
 import {Char} from "./Char";
 import {Color, Weight, Brightness, KeyCode, LogLevel, ScreenBufferType} from "./Enums";
-import {Attributes} from "./Interfaces";
+import {Attributes, TerminalLikeDevice} from "./Interfaces";
 import {ScreenBuffer} from "./ScreenBuffer";
 import {print, error, info, debug} from "./utils/Common";
 
 const ansiParserConstructor: typeof AnsiParser = require("node-ansiparser");
-
 
 interface HandlerResult {
     status: string;
@@ -81,7 +79,7 @@ const colorFormatCodes = {
 export class ANSIParser {
     private parser: AnsiParser;
 
-    constructor(private terminalDevice: TerminalDeviceLike) {
+    constructor(private terminalDevice: TerminalLikeDevice) {
         this.parser = this.initializeAnsiParser();
     }
 
