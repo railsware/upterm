@@ -1,5 +1,6 @@
 import {darken} from "./functions";
 import * as _ from "lodash";
+import {ColorCode} from "../../Interfaces";
 
 export const colors = {
     black: "#292C33",
@@ -69,9 +70,9 @@ function generateGreyScaleColors() {
     });
 }
 
-export function colorValue(color: number, options = {isBright: false}) {
+export function colorValue(color: ColorCode, options = {isBright: false}) {
     if (Array.isArray(color)) {
-        return `rgb(${(<any>color).join(",")})`;
+        return `rgb(${color.join(", ")})`;
     } else {
         if (options.isBright && color < 8) {
             return colorIndex[color + 8];

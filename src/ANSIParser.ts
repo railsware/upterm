@@ -44,7 +44,7 @@ const SGR: { [indexer: string]: Attributes|string } = {
     49: {backgroundColor: Color.Black},
 };
 
-function isSetColorExtended(sgrValue: any) {
+function isSetColorExtended(sgrValue: any): sgrValue is string {
     return sgrValue === "color" || sgrValue === "backgroundColor";
 }
 
@@ -448,12 +448,12 @@ export class ANSIParser {
                             const color = params.shift();
 
                             if (color) {
-                                this.screenBuffer.setAttributes({[<string>attributeToSet]: color});
+                                this.screenBuffer.setAttributes({[attributeToSet]: color});
                             } else {
                                 error("sgr", sgr, next, params);
                             }
                         } else if (next === 2) {
-                            this.screenBuffer.setAttributes({[<string>attributeToSet]: params});
+                            this.screenBuffer.setAttributes({[attributeToSet]: params});
                             params = [];
                         } else {
                             error("sgr", sgr, next, params);
