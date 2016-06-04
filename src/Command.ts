@@ -4,6 +4,7 @@ import {homeDirectory, pluralize, resolveDirectory, resolveFile} from "./utils/C
 import {readFileSync} from "fs";
 import {EOL} from "os";
 import {Session} from "./Session";
+import {OrderedSet} from "./utils/OrderedSet";
 
 const executors: Dictionary<(i: Job, a: string[]) => void> = {
     cd: (job: Job, args: string[]): void => {
@@ -77,16 +78,22 @@ export class Command {
     }
 }
 
-export function expandHistoricalDirectory(alias: string, stack: string[]): string {
+export function expandHistoricalDirectory(alias: string, historicalDirectories: OrderedSet<string>): string {
     if (alias === "-") {
         alias = "-1";
     }
-    const index = stack.length - 1 + parseInt(alias, 10);
+    const index = historicalDirectories.size - 1 + parseInt(alias, 10);
 
     if (index < 0) {
-        throw new Error(`Error: you only have ${stack.length} ${pluralize("directory", stack.length)} in the stack.`);
+        throw new Error(`Error: you only have ${historicalDirectories.size} ${pluralize("directory", historicalDirectories.size)} in the stack.`);
     } else {
-        return stack[index];
+        const directory = historicalDirectories.at(index);
+
+        if (directory) {
+            return directory;
+        } else {
+            throw `No directory with index ${index}`;
+        }
     }
 }
 

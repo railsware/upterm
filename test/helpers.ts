@@ -2,11 +2,12 @@ import {InputMethod, Context, Result} from "../src/Parser";
 import * as _ from "lodash";
 import {Suggestion} from "../src/plugins/autocompletion_providers/Suggestions";
 import {Environment} from "../src/Environment";
+import {OrderedSet} from "../src/utils/OrderedSet";
 
 export const defaultContext: Context = {
     input: "",
     directory: "/",
-    historicalCurrentDirectoriesStack: [],
+    historicalCurrentDirectoriesStack: new OrderedSet<string>(),
     environment: new Environment(),
     inputMethod: InputMethod.Typed,
 };

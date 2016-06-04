@@ -10,12 +10,13 @@ import {ApplicationComponent} from "./views/1_ApplicationComponent";
 import {Environment} from "./Environment";
 import {homeDirectory, normalizeDirectory, writeFileCreatingParents, stateFilePath} from "./utils/Common";
 import {remote} from "electron";
+import {OrderedSet} from "./utils/OrderedSet";
 
 export class Session extends EmitterWithUniqueID {
     jobs: Array<Job> = [];
     readonly environment = new Environment();
     history: typeof History;
-    historicalCurrentDirectoriesStack: string[] = [];
+    historicalCurrentDirectoriesStack = new OrderedSet<string>();
     // The value of the dictionary is the default value used if there is no serialized data.
     private readonly serializableProperties: Dictionary<string> = {
         directory: `String:${homeDirectory}`,
@@ -85,7 +86,7 @@ export class Session extends EmitterWithUniqueID {
         );
 
         this.environment.pwd = normalizedDirectory;
-        this.historicalCurrentDirectoriesStack.push(normalizedDirectory);
+        this.historicalCurrentDirectoriesStack.prepend(normalizedDirectory);
 
         PluginManager.environmentObservers.forEach(observer =>
             observer.currentWorkingDirectoryDidChange(this, normalizedDirectory)
