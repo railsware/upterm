@@ -21,7 +21,7 @@ export const colors = {
     brightCyan: "#7adada",
 };
 
-const colorIndex =[
+const colorIndex = [
     colors.black,
     colors.red,
     colors.green,
