@@ -181,7 +181,22 @@ export function resolveDirectory(pwd: string, directory: string): string {
 }
 
 export function resolveFile(pwd: string, file: string): string {
-    return Path.resolve(pwd, file.replace(/^~/, homeDirectory));
+    let parsedPath = sanitizeSpecialCharacters(file);
+
+    return Path.resolve(pwd, parsedPath);
+}
+
+/**
+ * Replace any special characters to create a fully qualified path.
+ *
+ * '~' - the user's home directory
+ * '\' - escapes space character in file/directory path
+ */
+export function sanitizeSpecialCharacters(path: string): string {
+    let parsedPath = path.replace(/^~/, homeDirectory);
+    parsedPath = parsedPath.replace(/\\/, "");
+
+    return parsedPath;
 }
 
 export function userFriendlyPath(path: string): string {
