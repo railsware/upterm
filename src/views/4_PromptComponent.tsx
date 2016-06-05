@@ -348,8 +348,8 @@ export class PromptComponent extends React.Component<Props, State> implements Ke
     }
 
     private handleDrop(event: DragEvent) {
-        console.log(event.dataTransfer.files[0].path)
-        this.prompt.setValue(this.prompt.value + (event.dataTransfer.files[0].path))
+        console.log(event.dataTransfer.files[0].path);
+        this.prompt.setValue(this.prompt.value + (event.dataTransfer.files[0].path));
         this.setDOMValueProgrammatically(this.prompt.value);
     }
 }
