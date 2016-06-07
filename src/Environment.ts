@@ -5,13 +5,19 @@ import {homeDirectory} from "./utils/Common";
 import * as Path from "path";
 import {AbstractOrderedSet} from "./utils/OrderedSet";
 
+const ignoredEnvironmentVariables = [
+    "NODE_ENV",
+];
 export const processEnvironment: Dictionary<string> = {};
 export async function loadEnvironment(): Promise<void> {
     const lines = await executeCommandWithShellConfig("env");
 
     lines.forEach(line => {
         let [key, value] = line.trim().split("=");
-        processEnvironment[key] = value;
+
+        if (!ignoredEnvironmentVariables.includes(key)) {
+            processEnvironment[key] = value;
+        }
     });
 }
 

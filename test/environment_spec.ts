@@ -1,7 +1,7 @@
 import {expect} from "chai";
 import {Environment} from "../src/Environment";
 
-describe.only("EnvironmentPath", () => {
+describe("EnvironmentPath", () => {
     describe("input method", () => {
         it("prepend", async() => {
             const environment = new Environment({});
