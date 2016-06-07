@@ -95,6 +95,24 @@ export class PromptComponent extends React.Component<Props, State> implements Ke
         if (this.props.hasLocusOfAttention) {
             window.promptUnderAttention = this;
         }
+
+        document.addEventListener(
+            "dragover",
+            function(event) {
+                event.preventDefault();
+                return false;
+            },
+            false
+        );
+
+        document.addEventListener(
+            "drop",
+            function(event) {
+                event.preventDefault();
+                return false;
+            },
+            false
+        );
     }
 
     handleKeyDown(event: KeyboardEvent): void {
@@ -184,6 +202,7 @@ export class PromptComponent extends React.Component<Props, State> implements Ke
                      onKeyDown={event => this.handlers.onKeyDown(event)}
                      onInput={this.handleInput.bind(this)}
                      onKeyPress={this.handleKeyPress.bind(this)}
+                     onDrop={this.handleDrop.bind(this)}
                      type="text"
                      ref="command"
                      contentEditable={this.props.status === e.Status.NotStarted || this.props.status === e.Status.InProgress}></div>
@@ -326,5 +345,10 @@ export class PromptComponent extends React.Component<Props, State> implements Ke
         if (this.props.status === e.Status.InProgress) {
             stopBubblingUp(event);
         }
+    }
+
+    private handleDrop(event: DragEvent) {
+        this.prompt.setValue(this.prompt.value + (event.dataTransfer.files[0].path));
+        this.setDOMValueProgrammatically(this.prompt.value);
     }
 }
