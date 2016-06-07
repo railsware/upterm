@@ -23,12 +23,12 @@ export class Prompt extends events.EventEmitter {
         return this._value;
     }
 
-    async setValue(value: string): Promise<void> {
+    setValue(value: string): void {
         this._value = value;
 
         this._lexemes = lex(this.value);
         this._historyExpanded = expandHistory(this._lexemes);
-        this._expanded = await expandAliases(this._historyExpanded);
+        this._expanded = expandAliases(this._historyExpanded, this.job.session.aliases);
     }
 
     get commandName(): string {

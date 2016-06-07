@@ -1,6 +1,6 @@
 process.env.NODE_ENV = "production";
 
-import {Aliases} from "../Aliases";
+import {loadAliasesFromConfig} from "../Aliases";
 const reactDOM = require("react-dom");
 /* tslint:disable:no-unused-variable */
 import * as React from "react";
@@ -12,10 +12,8 @@ document.addEventListener(
     "DOMContentLoaded",
     () => {
         // FIXME: Remove loadAllPlugins after switching to Webpack (because all the files will be loaded at start anyway).
-        Promise.all([loadAllPlugins(), loadEnvironment()])
+        Promise.all([loadAllPlugins(), loadEnvironment(), loadAliasesFromConfig()])
             .then(() => reactDOM.render(<ApplicationComponent/>, document.getElementById("black-screen")));
-
-        Aliases.all();
     },
     false
 );

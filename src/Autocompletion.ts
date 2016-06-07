@@ -10,7 +10,6 @@ import {makeAlias} from "./plugins/autocompletion_providers/Alias";
 import {relativeFilePath} from "./plugins/autocompletion_providers/File";
 import {compose, mapObject} from "./utils/Common";
 import {command} from "./plugins/autocompletion_providers/Command";
-import {Aliases} from "./Aliases";
 import {redirect} from "./plugins/autocompletion_providers/Redirect";
 import {environmentVariable} from "./plugins/autocompletion_providers/EnvironmentVariable";
 
@@ -51,8 +50,7 @@ export const {getSuggestions} = new class {
 
     getSuggestions = async (job: Job, inputMethod: InputMethod) => {
         if (!this.grammar) {
-            const aliases = await Aliases.all();
-            this.grammar = makeGrammar(aliases);
+            this.grammar = makeGrammar(job.session.aliases.toObject());
         }
 
         if (window.DEBUG) {

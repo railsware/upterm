@@ -77,7 +77,10 @@ export class PromptComponent extends React.Component<Props, State> implements Ke
         promptKeys
             .filter(keys.enter).forEach((event: KeyboardEvent) => this.execute(event));
         promptKeys
-            .filter(keys.interrupt).forEach(() => this.prompt.setValue("").then(() => this.setDOMValueProgrammatically("")));
+            .filter(keys.interrupt).forEach(() => {
+            this.prompt.setValue("");
+            this.setDOMValueProgrammatically("");
+        });
         promptKeys
             .filter((event: KeyboardEvent) => keys.goDown(event) || keys.goUp(event))
             .filter(() => this.isAutocompleteShown())
@@ -218,7 +221,7 @@ export class PromptComponent extends React.Component<Props, State> implements Ke
     }
 
     private async execute(event: KeyboardEvent): Promise<void> {
-        await this.prompt.setValue((event.target as HTMLElement).innerText);
+        this.prompt.setValue((event.target as HTMLElement).innerText);
 
         if (!this.isEmpty()) {
             this.prompt.execute();
@@ -254,7 +257,7 @@ export class PromptComponent extends React.Component<Props, State> implements Ke
                 current += " ";
             }
 
-            await this.prompt.setValue(current + this.prompt.value.substring(getCaretPosition(this.commandNode)));
+            this.prompt.setValue(current + this.prompt.value.substring(getCaretPosition(this.commandNode)));
             this.setDOMValueProgrammatically(this.prompt.value);
         }
     }
@@ -266,7 +269,7 @@ export class PromptComponent extends React.Component<Props, State> implements Ke
     private async navigateHistory(event: KeyboardEvent): Promise<void> {
         let newValue = keys.goUp(event) ? History.getPrevious() : History.getNext();
 
-        await this.prompt.setValue(newValue);
+        this.prompt.setValue(newValue);
         this.setDOMValueProgrammatically(newValue);
     }
 
@@ -275,7 +278,7 @@ export class PromptComponent extends React.Component<Props, State> implements Ke
         event.preventDefault();
 
         const value = this.prompt.value + History.lastEntry.lastLexeme;
-        await this.prompt.setValue(value);
+        this.prompt.setValue(value);
         this.setDOMValueProgrammatically(value);
     }
 
@@ -295,7 +298,7 @@ export class PromptComponent extends React.Component<Props, State> implements Ke
     }
 
     private async applySuggestion(): Promise<void> {
-        await this.prompt.setValue(this.valueWithCurrentSuggestion);
+        this.prompt.setValue(this.valueWithCurrentSuggestion);
         this.setDOMValueProgrammatically(this.prompt.value);
 
         await this.getSuggestions();
@@ -323,7 +326,7 @@ export class PromptComponent extends React.Component<Props, State> implements Ke
     }
 
     private async handleInput(event: React.SyntheticEvent): Promise<void> {
-        await this.prompt.setValue((event.target as HTMLElement).innerText);
+        this.prompt.setValue((event.target as HTMLElement).innerText);
 
         await this.getSuggestions();
     }

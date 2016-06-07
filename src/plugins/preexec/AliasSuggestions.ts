@@ -1,14 +1,12 @@
 import {PluginManager} from "../../PluginManager";
 import {Job} from "../../Job";
-import {Aliases} from "../../Aliases";
-import * as _ from "lodash";
 
 PluginManager.registerPreexecPlugin(async function (job: Job): Promise<void> {
     const input = job.prompt.value;
-    const key = _.findKey(await Aliases.all(), value => value === input);
+    const alias = job.session.aliases.getNameByValue(input);
 
-    if (key && key.length < input.length) {
+    if (alias && alias.length < input.length) {
         /* tslint:disable:no-unused-expression */
-        new Notification("Alias Reminder", { body: `You have an alias "${key}" for "${input}".` });
+        new Notification("Alias Reminder", { body: `You have an alias "${alias}" for "${input}".` });
     }
 });

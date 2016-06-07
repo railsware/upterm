@@ -11,10 +11,12 @@ import {Environment, processEnvironment} from "./Environment";
 import {homeDirectory, normalizeDirectory, writeFileCreatingParents, stateFilePath} from "./utils/Common";
 import {remote} from "electron";
 import {OrderedSet} from "./utils/OrderedSet";
+import {Aliases, aliasesFromConfig} from "./Aliases";
 
 export class Session extends EmitterWithUniqueID {
     jobs: Array<Job> = [];
     readonly environment = new Environment(processEnvironment);
+    readonly aliases = new Aliases(aliasesFromConfig);
     history: typeof History;
     historicalCurrentDirectoriesStack = new OrderedSet<string>();
     // The value of the dictionary is the default value used if there is no serialized data.
