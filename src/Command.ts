@@ -1,10 +1,11 @@
 import {Job} from "./Job";
 import {existsSync, statSync} from "fs";
-import {homeDirectory, pluralize, resolveDirectory, resolveFile} from "./utils/Common";
+import {homeDirectory, pluralize, resolveDirectory, resolveFile, mapObject} from "./utils/Common";
 import {readFileSync} from "fs";
 import {EOL} from "os";
 import {Session} from "./Session";
 import {OrderedSet} from "./utils/OrderedSet";
+import {parseAlias} from "./Aliases";
 
 const executors: Dictionary<(i: Job, a: string[]) => void> = {
     cd: (job: Job, args: string[]): void => {
@@ -39,18 +40,40 @@ const executors: Dictionary<(i: Job, a: string[]) => void> = {
     },
     export: (job: Job, args: string[]): void => {
         if (args.length === 0) {
-            job.screenBuffer.writeMany(job.environment.map((key, value) => `${key}=${value}`).join("\n"));
-            return;
+            job.screenBuffer.writeMany(job.environment.map((key, value) => `${key}=${value}`).join("\r\n"));
+        } else {
+            args.forEach(argument => {
+                const [key, value] = argument.split("=");
+                job.session.environment.set(key, value);
+            });
         }
-
-        args.forEach(argument => {
-            const [key, value] = argument.split("=");
-            job.session.environment.set(key, value);
-        });
     },
     // FIXME: make the implementation more reliable.
     source: (job: Job, args: string[]): void => {
         sourceFile(job.session, args[0]);
+    },
+    alias: (job: Job, args: string[]): void => {
+        if (args.length === 0) {
+            job.screenBuffer.writeMany(mapObject(job.session.aliases.toObject(), (key, value) => `${key}=${value}`).join("\r\n"));
+        } else if (args.length === 1) {
+            const parsed = parseAlias(args[0]);
+            job.session.aliases.add(parsed.name, parsed.value);
+        } else {
+            throw `Don't know what to do with ${args.length} arguments.`;
+        }
+    },
+    unalias: (job: Job, args: string[]): void => {
+        if (args.length === 1) {
+            const name = args[0];
+
+            if (job.session.aliases.has(name)) {
+                job.session.aliases.remove(args[0]);
+            } else {
+                throw `There is such alias: ${name}.`;
+            }
+        } else {
+            throw `Don't know what to do with ${args.length} arguments.`;
+        }
     },
 };
 

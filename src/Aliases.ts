@@ -6,22 +6,27 @@ export const aliasesFromConfig: Dictionary<string> = {};
 export async function loadAliasesFromConfig(): Promise<void> {
     const lines = await executeCommandWithShellConfig("alias");
 
-    lines.forEach(aliasLine => {
-        let [short, long] = aliasLine.split("=");
+    lines.map(parseAlias).forEach(parsed => aliasesFromConfig[parsed.name] = parsed.value);
+}
 
-        if (short && long) {
-            const nameCapture = /(alias )?(.*)/.exec(short);
-            const valueCapture = /'?([^']*)'?/.exec(long);
+export function parseAlias(line: string) {
+    let [short, long] = line.split("=");
 
-            if (nameCapture && valueCapture) {
-                aliasesFromConfig[nameCapture[2]] = valueCapture[1];
-            } else {
-                throw `Alias line is incorrect: ${aliasLine}`;
-            }
+    if (short && long) {
+        const nameCapture = /(alias )?(.*)/.exec(short);
+        const valueCapture = /'?([^']*)'?/.exec(long);
+
+        if (nameCapture && valueCapture) {
+            return {
+                name: nameCapture[2],
+                value: valueCapture[1],
+            };
         } else {
-            throw `Can't parse alias line: ${aliasLine}`;
+            throw `Alias line is incorrect: ${line}`;
         }
-    });
+    } else {
+        throw `Can't parse alias line: ${line}`;
+    }
 }
 
 
@@ -36,6 +41,10 @@ export class Aliases {
         this.storage[name] = value;
     }
 
+    has(name: string): boolean {
+        return name in this.storage;
+    }
+
     get(name: string): string | undefined {
         return this.storage[name];
     }
@@ -44,7 +53,7 @@ export class Aliases {
         return _.findKey(this.storage, storageValue => storageValue === value);
     }
 
-    remove(name: string, value: string) {
+    remove(name: string) {
         delete this.storage[name];
     }
 
