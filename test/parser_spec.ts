@@ -1,17 +1,20 @@
 import {expect} from "chai";
 import * as _ from "lodash";
-import {string, choice, many1, optional, sequence, Parser, InputMethod, Progress, token} from "../src/Parser.ts";
+import {
+    string, choice, many1, optional, sequence, Parser, InputMethod, Progress, token,
+    noisySuggestions
+} from "../src/Parser.ts";
 import {suggestionDisplayValues} from "./helpers";
 import {Environment} from "../src/Environment";
 import {OrderedSet} from "../src/utils/OrderedSet";
 
-async function parse(parser: Parser, input: string) {
+async function parse(parser: Parser, input: string, inputMethod = InputMethod.Typed) {
     return await parser({
         input: input,
         directory: "/",
         historicalCurrentDirectoriesStack: new OrderedSet<string>(),
         environment: new Environment({}),
-        inputMethod: InputMethod.Typed,
+        inputMethod: inputMethod,
     });
 }
 
@@ -176,6 +179,25 @@ describe("parser", () => {
 
             expect(results.length).to.equal(1);
             expect(suggestionDisplayValues(results)).to.eql(["git"]);
+        });
+    });
+
+
+    describe("noisySuggestions", () => {
+        const suggestions = async (parser: Parser, input: string) => suggestionDisplayValues(
+            await parse(noisySuggestions(parser), input, InputMethod.Autocompleted)
+        );
+
+        it("doesn't show suggestions on empty input", async() => {
+            expect(await suggestions(string("git"), "")).to.eql([]);
+        });
+
+        it("shows suggestions in the middle of input", async() => {
+            expect(await suggestions(string("git"), "g")).to.eql(["git"]);
+        });
+
+        it("shows suggestions at the beginning of a second part of a compound parser", async() => {
+            expect(await suggestions(sequence(string("git "), string("commit")), "git ")).to.eql(["commit"]);
         });
     });
 

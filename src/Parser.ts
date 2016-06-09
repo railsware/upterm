@@ -88,7 +88,7 @@ export const bind = (left: Parser, rightGenerator: (result: Result) => Promise<P
                 if (rightResult.progress !== Progress.Failed) {
                     results.push({
                         parse: leftResult.parse + rightResult.parse,
-                        progress: rightResult.progress,
+                        progress: rightResult.progress === Progress.OnStart ? Progress.InProgress : rightResult.progress,
                         suggestions: rightResult.suggestions,
                     });
                 }

@@ -24,5 +24,4 @@ export const context = (partialContext: PartialContext) => Object.assign({}, def
 
 const suggestionProperties = <A>(getter: (s: Suggestion) => A) => (results: Result[]) => _.flatten(results.map(result => result.suggestions.map(getter)));
 
-export const suggestionValues = suggestionProperties(suggestion => suggestion.value);
 export const suggestionDisplayValues = suggestionProperties(suggestion => suggestion.displayValue);
