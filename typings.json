@@ -1,18 +1,16 @@
 {
-  "ambientDependencies": {
-    "chai": "registry:dt/chai#3.4.0+20160317120654",
-    "github-electron": "registry:dt/github-electron#0.37.8+20160509083739",
+  "globalDependencies": {
+    "github-electron": "registry:dt/github-electron#1.2.1+20160602155650",
     "jquery": "registry:dt/jquery#1.10.0+20160417213236",
-    "mocha": "registry:dt/mocha#2.2.5+20160317120654",
     "node": "registry:dt/node#4.0.0+20160509154515",
     "pty.js": "registry:dt/pty.js#0.0.0+20160316155526",
-    "react": "registry:dt/react#0.14.0+20160423065914"
+    "react": "registry:dt/react#0.14.0+20160602151522"
   },
-  "ambientDevDependencies": {
-    "chai": "registry:dt/chai#3.4.0+20160317120654",
+  "globalDevDependencies": {
     "mocha": "registry:dt/mocha#2.2.5+20160317120654"
   },
   "dependencies": {
+    "chai": "registry:npm/chai#3.5.0+20160415060238",
     "lodash": "registry:npm/lodash#4.0.0+20160416211519"
   }
 }

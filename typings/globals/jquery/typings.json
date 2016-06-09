@@ -1,0 +1,8 @@
+{
+  "resolution": "main",
+  "tree": {
+    "src": "https://raw.githubusercontent.com/DefinitelyTyped/DefinitelyTyped/4cdfbe96b666eec5e1defbb519a62abf04e96764/jquery/jquery.d.ts",
+    "raw": "registry:dt/jquery#1.10.0+20160417213236",
+    "typings": "https://raw.githubusercontent.com/DefinitelyTyped/DefinitelyTyped/4cdfbe96b666eec5e1defbb519a62abf04e96764/jquery/jquery.d.ts"
+  }
+}
