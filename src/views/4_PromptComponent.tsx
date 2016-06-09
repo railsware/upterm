@@ -297,7 +297,7 @@ export class PromptComponent extends React.Component<Props, State> implements Ke
         this.prompt.setValue(this.valueWithCurrentSuggestion);
         this.setDOMValueProgrammatically(this.prompt.value);
 
-        await this.getSuggestions();
+        await this.getSuggestions(InputMethod.Autocompleted);
     }
 
     private get valueWithCurrentSuggestion(): string {
@@ -324,11 +324,10 @@ export class PromptComponent extends React.Component<Props, State> implements Ke
     private async handleInput(event: React.SyntheticEvent): Promise<void> {
         this.prompt.setValue((event.target as HTMLElement).innerText);
 
-        await this.getSuggestions();
+        await this.getSuggestions(InputMethod.Typed);
     }
 
-    private async getSuggestions() {
-        const inputMethod = (this.state.latestKeyCode === KeyCode.Tab) ? InputMethod.Autocompleted : InputMethod.Typed;
+    private async getSuggestions(inputMethod: InputMethod) {
         let suggestions = await getSuggestions(this.props.job, inputMethod);
 
         this.setState({highlightedSuggestionIndex: 0, suggestions: suggestions});
