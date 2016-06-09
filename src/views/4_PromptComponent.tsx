@@ -204,7 +204,7 @@ export class PromptComponent extends React.Component<Props, State> implements Ke
                      style={css.prompt}
                      onKeyDown={event => this.handlers.onKeyDown(event)}
                      onInput={this.handleInput.bind(this)}
-                     onKeyPress={this.handleKeyPress.bind(this)}
+                     onKeyPress={() => this.props.status === e.Status.InProgress && stopBubblingUp(event)}
                      onDrop={this.handleDrop.bind(this)}
                      type="text"
                      ref="command"
@@ -338,12 +338,6 @@ export class PromptComponent extends React.Component<Props, State> implements Ke
         stopBubblingUp(event);
 
         document.location.href = `#${this.props.job.id}`;
-    }
-
-    private handleKeyPress(event: Event) {
-        if (this.props.status === e.Status.InProgress) {
-            stopBubblingUp(event);
-        }
     }
 
     private handleDrop(event: DragEvent) {
