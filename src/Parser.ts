@@ -121,11 +121,6 @@ export const choice = (parsers: Parser[]) => async (context: Context): Promise<A
     return results;
 };
 
-const last = (parser: Parser): Parser => async (context: Context): Promise<Array<Result>> => {
-    const results = await parser(context);
-    return results.slice(results.length - 1);
-};
-
 const shortCircuitOnEmptyInput = (parser: Parser): Parser => async(context: Context): Promise<Array<Result>> => {
     if (context.input.length === 0) {
         return [];
@@ -171,7 +166,7 @@ export const noisySuggestions = (parser: Parser) => shortCircuitOnEmptyInput(dec
         }
     )
 ));
-export const spacesWithoutSuggestion = withoutSuggestions(last(many1(string(" "))));
+export const spacesWithoutSuggestion = withoutSuggestions(string(" "));
 
 export const runtime = (producer: (context: Context) => Promise<Parser>) => async (context: Context): Promise<Array<Result>> => {
     const parser = await producer(context);

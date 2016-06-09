@@ -2,21 +2,21 @@ import * as _ from "lodash";
 import {Job} from "./Job";
 import {
     choice, token, executable, decorate, sequence, string, many1,
-    optionalContinuation, spacesWithoutSuggestion, many, noisySuggestions, InputMethod, Parser,
+    spacesWithoutSuggestion, many, noisySuggestions, InputMethod, Parser, optional,
 } from "./Parser";
 import {commandDescriptions} from "./plugins/autocompletion_providers/Executable";
-import {description, style, styles} from "./plugins/autocompletion_providers/Suggestions";
+import {description} from "./plugins/autocompletion_providers/Suggestions";
 import {makeAlias} from "./plugins/autocompletion_providers/Alias";
 import {relativeFilePath} from "./plugins/autocompletion_providers/File";
-import {compose, mapObject} from "./utils/Common";
+import {mapObject} from "./utils/Common";
 import {command} from "./plugins/autocompletion_providers/Command";
 import {redirect} from "./plugins/autocompletion_providers/Redirect";
 import {environmentVariable} from "./plugins/autocompletion_providers/EnvironmentVariable";
 
 export const makeGrammar = (aliases: Dictionary<string>) => {
     const exec = sequence(
-        choice(mapObject(commandDescriptions, (key, value) => decorate(string(key), compose(description(value), style(styles.executable))))),
-        optionalContinuation(many1(sequence(
+        choice(mapObject(commandDescriptions, (key, value) => decorate(executable(key), description(value)))),
+        optional(many1(sequence(
             choice([
                 relativeFilePath,
                 environmentVariable,

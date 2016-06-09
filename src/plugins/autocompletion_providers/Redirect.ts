@@ -1,9 +1,9 @@
-import {string, token, spacesWithoutSuggestion, many, sequence, noisySuggestions, choice} from "../../Parser";
+import {string, token, sequence, choice, withoutSuggestions} from "../../Parser";
 import {relativeFilePath} from "./File";
 
-const redirectToken = choice([
-    noisySuggestions(sequence(many(spacesWithoutSuggestion), token(string(">")))),
-    noisySuggestions(sequence(many(spacesWithoutSuggestion), token(string(">>")))),
-]);
+const redirectToken = withoutSuggestions(token(choice([
+    string(">"),
+    string(">>"),
+])));
 
 export const redirect = sequence(redirectToken, relativeFilePath);
