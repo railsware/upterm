@@ -38,13 +38,13 @@
   "devDependencies": {
     "chai": "3.5.0",
     "devtron": "1.2.0",
-    "electron-builder": "4.2.6",
-    "electron-prebuilt": "1.2.1",
+    "electron-builder": "5.0.2",
+    "electron-prebuilt": "1.2.2",
     "mocha": "2.5.3",
-    "npm-check-updates": "2.6.5",
+    "npm-check-updates": "2.6.7",
     "spectron": "3.2.3",
     "ts-node": "0.8.0",
-    "tslint": "3.10.2",
+    "tslint": "3.11.0",
     "typescript": "1.9.0-dev.20160601-1.0",
     "typings": "1.0.4"
   },
