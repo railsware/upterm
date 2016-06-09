@@ -178,4 +178,23 @@ describe("parser", () => {
             expect(suggestionDisplayValues(results)).to.eql(["git"]);
         });
     });
+
+    describe("case sensitivity", () => {
+        describe("when user types only lowercase letters", () => {
+            it("is case insensitive", async() => {
+                const results = await parse(sequence(string("./Downloads"), string("/mine")), "./down");
+
+                expect(results.length).to.equal(1);
+                expect(suggestionDisplayValues(results)).to.eql(["./Downloads"]);
+            });
+        });
+
+        describe("when user input contains uppercase letters", () => {
+            it("is case sensitive", async() => {
+                const results = await parse(sequence(string("./documents"), string("/mine")), "./Do");
+
+                expect(results.length).to.equal(0);
+            });
+        });
+    });
 });

@@ -41,15 +41,17 @@ function getProgress(input: string, expected: string) {
         return Progress.OnStart;
     }
 
-    if (input.startsWith(expected)) {
+    const normalizedExpected = input === input.toLowerCase() ? expected.toLowerCase() : expected;
+
+    if (input.startsWith(normalizedExpected)) {
         return Progress.Finished;
     }
 
-    if (expected.length <= input.length) {
+    if (normalizedExpected.length <= input.length) {
         return Progress.Failed;
     }
 
-    if (expected.startsWith(input)) {
+    if (normalizedExpected.startsWith(input)) {
         return Progress.InProgress;
     }
 
