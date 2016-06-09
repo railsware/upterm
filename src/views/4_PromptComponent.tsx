@@ -167,7 +167,7 @@ export class PromptComponent extends React.Component<Props, State> implements Ke
             autocomplete = <AutocompleteComponent suggestions={this.state.suggestions}
                                                   offsetTop={this.state.offsetTop}
                                                   caretPosition={getCaretPosition(this.commandNode)}
-                                                  onSuggestionHover={this.highlightSuggestion.bind(this)}
+                                                  onSuggestionHover={index => this.setState({highlightedSuggestionIndex: index})}
                                                   onSuggestionClick={this.applySuggestion.bind(this)}
                                                   highlightedIndex={this.state.highlightedSuggestionIndex}
                                                   ref="autocomplete"/>;
@@ -282,10 +282,6 @@ export class PromptComponent extends React.Component<Props, State> implements Ke
         this.setDOMValueProgrammatically(value);
     }
 
-    private highlightSuggestion(index: number): void {
-        this.setState({highlightedSuggestionIndex: index});
-    }
-
     private navigateAutocomplete(event: KeyboardEvent): void {
         let index: number;
         if (keys.goUp(event)) {
@@ -294,7 +290,7 @@ export class PromptComponent extends React.Component<Props, State> implements Ke
             index = Math.min(this.state.suggestions.length - 1, this.state.highlightedSuggestionIndex + 1);
         }
 
-        this.highlightSuggestion(index);
+        this.setState({highlightedSuggestionIndex: index});
     }
 
     private async applySuggestion(): Promise<void> {
