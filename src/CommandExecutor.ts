@@ -40,7 +40,8 @@ class ShellExecutionStrategy extends CommandExecutionStrategy {
     static async canExecute(job: Job) {
         return loginShell.preCommandModifiers.includes(job.prompt.commandName) ||
             await this.isExecutableFromPath(job) ||
-            await this.isPathOfExecutable(job);
+            await this.isPathOfExecutable(job) ||
+            this.isValidPath(job.prompt.commandName);
     }
 
     private static async isExecutableFromPath(job: Job): Promise<boolean> {
@@ -49,6 +50,10 @@ class ShellExecutionStrategy extends CommandExecutionStrategy {
 
     private static async isPathOfExecutable(job: Job): Promise<boolean> {
         return await exists(resolveFile(job.session.directory, job.prompt.commandName));
+    }
+    
+    private static isValidPath(commandName: string): boolean {
+        return  !(/[*!?{}(|)[\]]/.test(commandName) || /[@?!+*]\(/.test(commandName) || /[‘“!#$%&+^<=>`]/.test(commandName))
     }
 
     startExecution() {
