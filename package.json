@@ -14,7 +14,8 @@
   },
   "engineStrict": true,
   "engines": {
-    "node": ">= 6.0.0"
+    "node": ">= 6.0.0",
+    "npm": ">= 3.8.6"
   },
   "keywords": [
     "terminal",
@@ -42,6 +43,7 @@
     "electron-prebuilt": "1.2.2",
     "mocha": "2.5.3",
     "npm-check-updates": "2.6.7",
+    "run-parallel": "1.1.6",
     "spectron": "3.2.3",
     "ts-node": "0.8.0",
     "tslint": "3.11.0",
@@ -49,7 +51,7 @@
     "typings": "1.0.4"
   },
   "scripts": {
-    "preinstall": "npm prune",
+    "preinstall": "npm prune && node scripts/preinstall.js",
     "pack": "npm run compile && build",
     "prerelease": "npm prune --production && npm install --global electron-builder",
     "release": "build --publish always",
