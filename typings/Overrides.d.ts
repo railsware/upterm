@@ -11,7 +11,6 @@ interface Window {
     DEBUG: boolean;
     jobUnderAttention: KeyDownReceiver;
     promptUnderAttention: KeyDownReceiver;
-    Notification: typeof Notification;
 }
 
 declare class AnsiParser {
@@ -26,18 +25,6 @@ declare module "fs-extra" {
 
 interface Array<T> {
     includes(value: T): boolean;
-}
-
-declare namespace __React {
-    interface DOMAttributes {
-        onKeyDownCapture?: KeyboardEventHandler;
-        onClickCapture?: KeyboardEventHandler;
-        dataColor?: any;
-    }
-}
-
-interface KeyboardEvent extends UIEvent {
-    keyIdentifier: string;
 }
 
 interface NodeBuffer extends Uint8Array {
