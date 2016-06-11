@@ -51,7 +51,7 @@
     "typings": "1.0.4"
   },
   "scripts": {
-    "preinstall": "npm prune && node scripts/preinstall.js",
+    "preinstall": "npm prune && node housekeeping/check-node.js",
     "pack": "npm run compile && build",
     "prerelease": "npm prune --production && npm install --global electron-builder",
     "release": "build --publish always",

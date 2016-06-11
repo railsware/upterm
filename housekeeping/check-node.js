@@ -2,9 +2,9 @@ var exec = require('child_process').exec
 var semver = require('semver')
 var parallel = require('run-parallel')
 
-const WANTED = require('../package.json').engines
+var WANTED = require('../package.json').engines
 
-function runVersionCommand (command, callback) {
+var runVersionCommand = function (command, callback) {
   exec(command, function (err, stdin, stderr) {
     if (err) {
       callback(err)
@@ -18,7 +18,7 @@ function runVersionCommand (command, callback) {
   })
 }
 
-module.exports = function (callback) {
+var getVersions = function (callback) {
   parallel({
     node: runVersionCommand.bind(null, 'node --version'),
     npm: runVersionCommand.bind(null, 'npm --version')
@@ -37,3 +37,20 @@ module.exports = function (callback) {
     }
   })
 }
+
+var throwError = function (tool, current, wanted) {
+  var message = 'Unsuported version of ' + tool + 'Your current version is ' + current + '. Wanted: ' + wanted
+  throw new Error(message)
+}
+
+getVersions(function (err, versions) {
+  if (err) {
+    throw new Error(err)
+  }
+  if (!versions.npmSatisfied) {
+    throwError('npm', versions.npm.version, versions.npmWanted.range)
+  }
+  if (!versions.nodeSatisfied) {
+    throwError('node', versions.node.version, versions.nodeWanted.range)
+  }
+})
