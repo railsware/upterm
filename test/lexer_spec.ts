@@ -1,5 +1,5 @@
 import {expect} from "chai";
-import {lex} from "../src/CommandExpander";
+import {lex} from "../src/shell/CommandExpander";
 
 describe("lex", () => {
     it("returns an empty array on empty input", () => {

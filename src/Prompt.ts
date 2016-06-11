@@ -1,7 +1,7 @@
 import * as events from "events";
 import {History, HistoryEntry} from "./History";
 import * as _ from "lodash";
-import {expandAliases, expandHistory, lex} from "./CommandExpander";
+import {expandAliases, expandHistory, lex} from "./shell/CommandExpander";
 import {Job} from "./Job";
 
 export class Prompt extends events.EventEmitter {

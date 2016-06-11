@@ -1,4 +1,4 @@
-import {lex} from "./CommandExpander";
+import {lex} from "./shell/CommandExpander";
 import * as _ from "lodash";
 
 export class HistoryEntry {

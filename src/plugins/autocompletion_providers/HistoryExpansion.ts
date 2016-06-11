@@ -1,6 +1,6 @@
 import * as i from "../../Interfaces";
 import {Job} from "../../Job";
-import {isCompleteHistoryCommand, historyReplacement} from "../../CommandExpander";
+import {isCompleteHistoryCommand, historyReplacement} from "../../shell/CommandExpander";
 import {PluginManager} from "../../PluginManager";
 import {Suggestion} from "./Suggestions";
 
