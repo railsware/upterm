@@ -13,11 +13,10 @@ import {getSuggestions} from "../Autocompletion";
 import {Subject} from "rxjs/Subject";
 import "rxjs/add/operator/filter";
 import "rxjs/add/operator/map";
-import {InputMethod} from "../Parser";
 import * as css from "./css/main";
 import {fontAwesome} from "./css/FontAwesome";
 import {Status} from "../Enums";
-import {scan, withoutEndOfInput} from "../shell/Scanner";
+import {scan} from "../shell/Scanner";
 
 interface Props {
     job: Job;
@@ -278,7 +277,7 @@ export class PromptComponent extends React.Component<Props, State> implements Ke
         event.stopPropagation();
         event.preventDefault();
 
-        const value = this.prompt.value + _.last(withoutEndOfInput(scan(History.latest))).value;
+        const value = this.prompt.value + _.last(scan(History.latest)).value;
         this.prompt.setValue(value);
         this.setDOMValueProgrammatically(value);
     }
@@ -298,7 +297,7 @@ export class PromptComponent extends React.Component<Props, State> implements Ke
         this.prompt.setValue(this.valueWithCurrentSuggestion);
         this.setDOMValueProgrammatically(this.prompt.value);
 
-        await this.getSuggestions(InputMethod.Autocompleted);
+        await this.getSuggestions();
     }
 
     private get valueWithCurrentSuggestion(): string {
@@ -325,11 +324,11 @@ export class PromptComponent extends React.Component<Props, State> implements Ke
     private async handleInput(event: React.SyntheticEvent): Promise<void> {
         this.prompt.setValue((event.target as HTMLElement).innerText);
 
-        await this.getSuggestions(InputMethod.Typed);
+        await this.getSuggestions();
     }
 
-    private async getSuggestions(inputMethod: InputMethod) {
-        let suggestions = await getSuggestions(this.props.job, inputMethod);
+    private async getSuggestions() {
+        let suggestions = await getSuggestions(this.props.job);
 
         this.setState({highlightedSuggestionIndex: 0, suggestions: suggestions});
     }

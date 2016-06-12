@@ -1,5 +1,8 @@
 export abstract class Token {
-    constructor(protected raw: string) {
+    readonly raw: string;
+
+    constructor(raw: string) {
+        this.raw = raw;
     }
 
     abstract get value(): string;
@@ -8,6 +11,10 @@ export abstract class Token {
      * @deprecated
      */
     abstract get escapedValue(): EscapedShellWord;
+
+    get isComplete(): boolean {
+        return this.raw.endsWith(" ");
+    }
 }
 
 export class Word extends Token {
@@ -88,27 +95,15 @@ export class Invalid extends Token {
     }
 }
 
-export class EndOfInput extends Token {
-    get value() {
-        return this.raw.trim();
-    }
-
-    get escapedValue(): EscapedShellWord {
-        return <EscapedShellWord>this.value;
-    }
-}
-
 export function scan(input: string): Token[] {
     const tokens: Token[] = [];
 
     while (true) {
-        let match = input.match(/^\s*$/);
-        if (match) {
-            tokens.push(new EndOfInput(input));
+        if (input.length === 0) {
             return tokens;
         }
 
-        match = input.match(/^(\s*\|)/);
+        let match = input.match(/^(\s*\|\s*)/);
         if (match) {
             const token = match[1];
             tokens.push(new Pipe(token));
@@ -116,7 +111,7 @@ export function scan(input: string): Token[] {
             continue;
         }
 
-        match = input.match(/^(\s*>>)/);
+        match = input.match(/^(\s*>>\s*)/);
         if (match) {
             const token = match[1];
             tokens.push(new AppendingOutputRedirectionSymbol(token));
@@ -124,7 +119,7 @@ export function scan(input: string): Token[] {
             continue;
         }
 
-        match = input.match(/^(\s*<)/);
+        match = input.match(/^(\s*<\s*)/);
         if (match) {
             const token = match[1];
             tokens.push(new InputRedirectionSymbol(token));
@@ -132,7 +127,7 @@ export function scan(input: string): Token[] {
             continue;
         }
 
-        match = input.match(/^(\s*>)/);
+        match = input.match(/^(\s*>\s*)/);
         if (match) {
             const token = match[1];
             tokens.push(new OutputRedirectionSymbol(token));
@@ -140,7 +135,7 @@ export function scan(input: string): Token[] {
             continue;
         }
 
-        match = input.match(/^(\s*"(?:\\"|[^"])*")/);
+        match = input.match(/^(\s*"(?:\\"|[^"])*"\s*)/);
         if (match) {
             const token = match[1];
             tokens.push(new DoubleQuotedStringLiteral(token));
@@ -148,7 +143,7 @@ export function scan(input: string): Token[] {
             continue;
         }
 
-        match = input.match(/^(\s*'(?:\\'|[^'])*')/);
+        match = input.match(/^(\s*'(?:\\'|[^'])*'\s*)/);
         if (match) {
             const token = match[1];
             tokens.push(new SingleQuotedStringLiteral(token));
@@ -156,7 +151,7 @@ export function scan(input: string): Token[] {
             continue;
         }
 
-        match = input.match(/^(\s*(?:\\\s|[a-zA-Z0-9-=_/~.])+)/);
+        match = input.match(/^(\s*(?:\\\s|[a-zA-Z0-9-=_/~.])+\s*)/);
         if (match) {
             const token = match[1];
             tokens.push(new Word(token));
@@ -169,10 +164,6 @@ export function scan(input: string): Token[] {
     }
 }
 
-export function withoutEndOfInput(tokens: Token[]) {
-    return tokens.slice(0, -1);
-}
-
 export function concatTokens(left: Token[], right: Token[]): Token[] {
-    return withoutEndOfInput(left).concat(right);
+    return left.concat(right);
 }

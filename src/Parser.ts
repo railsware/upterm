@@ -1,20 +1,51 @@
 import {Suggestion, styles, style} from "./plugins/autocompletion_providers/Suggestions";
 import * as _ from "lodash";
-import {compose} from "./utils/Common";
 import {Environment} from "./Environment";
 import {OrderedSet} from "./utils/OrderedSet";
+import {Token, concatTokens} from "./shell/Scanner";
 
-export enum InputMethod {
-    Typed,
-    Autocompleted,
-}
+export class Context {
+    private _input: Token[];
+    private _directory: string;
+    private _historicalCurrentDirectoriesStack: OrderedSet<string>;
+    private _environment: Environment;
 
-export interface Context {
-    input: string;
-    directory: string;
-    historicalCurrentDirectoriesStack: OrderedSet<string>;
-    environment: Environment;
-    inputMethod: InputMethod;
+    constructor(
+        input: Token[],
+        directory: string,
+        historicalCurrentDirectoriesStack: OrderedSet<string>,
+        environment: Environment
+    ) {
+        this._input = input;
+        this._directory = directory;
+        this._historicalCurrentDirectoriesStack = historicalCurrentDirectoriesStack;
+        this._environment = environment;
+    }
+
+    get historicalCurrentDirectoriesStack(): OrderedSet<string> {
+        return this._historicalCurrentDirectoriesStack;
+    }
+
+    get environment(): Environment {
+        return this._environment;
+    }
+
+    get directory(): string {
+        return this._directory;
+    }
+
+    get input(): Token[] {
+        return this._input;
+    }
+
+    withInput(input: Token[]): Context {
+        return new Context(
+            input,
+            this.directory,
+            this.historicalCurrentDirectoriesStack,
+            this.environment
+        );
+    }
 }
 
 export enum Progress {
@@ -26,32 +57,76 @@ export enum Progress {
 
 export type Parser = (context: Context) => Promise<Array<Result>>;
 
-export interface Result {
-    parse: string;
-    progress: Progress;
-    suggestions: Suggestion[];
-}
+export class Result {
+    private _parse: Token[];
+    private _progress: Progress;
+    private _suggestions: Suggestion[];
 
-function getProgress(input: string, expected: string) {
-    if (expected.length === 0) {
-        return Progress.Finished;
+    constructor(parse: Token[], progress: Progress, suggestions: Suggestion[]) {
+        this._parse = parse;
+        this._progress = progress;
+        this._suggestions = suggestions;
     }
 
-    if (input.length === 0) {
+    get parse(): Token[] {
+        return this._parse;
+    }
+
+    get progress(): Progress {
+        return this._progress;
+    }
+
+    get suggestions(): Suggestion[] {
+        return this._suggestions;
+    }
+
+    withSuggestions(suggestions: Suggestion[]): Result {
+        return new Result(
+            this.parse,
+            this.progress,
+            suggestions
+        );
+    }
+
+    withParse(parse: Token[]): Result {
+        return new Result(
+            parse,
+            this.progress,
+            this.suggestions
+        );
+    }
+}
+
+// FIXME: remove "| undefined".
+function getProgress(inputToken: Token | undefined, expectedValue: string) {
+    if (!inputToken) {
         return Progress.OnStart;
     }
 
-    const normalizedExpected = input === input.toLowerCase() ? expected.toLowerCase() : expected;
-
-    if (input.startsWith(normalizedExpected)) {
+    if (expectedValue.length === 0) {
         return Progress.Finished;
     }
 
-    if (normalizedExpected.length <= input.length) {
+    const inputValue = inputToken.value;
+    const normalizedExpectedValue = inputValue === inputValue.toLowerCase() ? expectedValue.toLowerCase() : expectedValue;
+
+    if (inputToken.isComplete) {
+        return inputValue === normalizedExpectedValue ? Progress.Finished : Progress.Failed;
+    }
+
+    if (inputValue.length === 0) {
+        return Progress.OnStart;
+    }
+
+    if (normalizedExpectedValue.length < inputValue.length) {
         return Progress.Failed;
     }
 
-    if (normalizedExpected.startsWith(input)) {
+    if (inputValue.startsWith(normalizedExpectedValue)) {
+        return Progress.Finished;
+    }
+
+    if (normalizedExpectedValue.startsWith(inputValue)) {
         return Progress.InProgress;
     }
 
@@ -59,44 +134,67 @@ function getProgress(input: string, expected: string) {
 }
 
 export const string = (expected: string) => {
-    const parser = async (context: Context): Promise<Array<Result>> => {
-        const progress = getProgress(context.input, expected);
+    return async (context: Context): Promise<Array<Result>> => {
+        const token = context.input[0];
+        const progress = getProgress(context.input[0], expected);
 
-        return [{
-            parse: progress === Progress.Finished ? expected : "",
-            progress: progress,
-            suggestions: (progress === Progress.Finished)
-                ? (context.inputMethod === InputMethod.Autocompleted ? [] : [new Suggestion().withDisplayValue(expected).withValue("")])
-                : [new Suggestion().withValue(expected)],
-        }];
+        let suggestions: Suggestion[] = [];
+
+        switch (progress) {
+            case Progress.Finished:
+                if (!token.isComplete) {
+                    suggestions.push(new Suggestion().withDisplayValue(expected).withValue(""));
+                }
+                break;
+            case Progress.OnStart:
+            case Progress.InProgress:
+                suggestions.push(new Suggestion().withValue(expected));
+                break;
+            default:
+                break;
+        }
+
+        return [new Result(
+            progress === Progress.Finished ? context.input.slice(0, 1) : [],
+            progress,
+            suggestions
+        )];
     };
-    return parser;
 };
 
 export const bind = (left: Parser, rightGenerator: (result: Result) => Promise<Parser>) => async (context: Context): Promise<Array<Result>> => {
-    const leftResults = await left(context);
     const results: Result[] = [];
+
+    const leftResults = await left(context);
 
     for (const leftResult of leftResults) {
         const rightInput = context.input.slice(leftResult.parse.length);
 
-        if (leftResult.progress === Progress.Finished && (rightInput.length || leftResult.suggestions.length === 0)) {
-            const right = await rightGenerator(leftResult);
-            const rightResults = await right(Object.assign({}, context, { input: rightInput }));
+        switch (leftResult.progress) {
+            case Progress.Failed:
+                break;
+            case Progress.Finished:
+                if (_.last(leftResult.parse).isComplete) {
+                    const right = await rightGenerator(leftResult);
+                    const rightResults = await right(context.withInput(rightInput));
 
-            for (const rightResult of rightResults) {
-                if (rightResult.progress !== Progress.Failed) {
-                    results.push({
-                        parse: leftResult.parse + rightResult.parse,
-                        progress: rightResult.progress === Progress.OnStart ? Progress.InProgress : rightResult.progress,
-                        suggestions: rightResult.suggestions,
-                    });
+                    for (const rightResult of rightResults) {
+                        if (rightResult.progress !== Progress.Failed) {
+                            results.push(new Result(
+                                concatTokens(leftResult.parse, rightResult.parse),
+                                rightResult.progress === Progress.OnStart ? Progress.InProgress : rightResult.progress,
+                                rightResult.suggestions
+                            ));
+                        }
+                    }
+                } else {
+                    results.push(leftResult);
                 }
-            }
-        } else {
-            if (leftResult.progress !== Progress.Failed) {
+
+                break;
+            default:
                 results.push(leftResult);
-            }
+                break;
         }
     }
 
@@ -134,20 +232,15 @@ export const many1 = (parser: Parser): Parser => choice([parser, bind(parser, as
 export const decorate = (parser: Parser, decorator: (s: Suggestion) => Suggestion) => async (context: Context): Promise<Array<Result>> => {
     const results = await parser(context);
 
-    return results.map(result => ({
-        parse: result.parse,
-        progress: result.progress,
-        suggestions: result.suggestions.map(decorator),
-    }));
+    return results.map(result => result.withSuggestions(result.suggestions.map(decorator)));
 };
 
 export const decorateResult = (parser: Parser, decorator: (c: Result) => Result) => async (context: Context): Promise<Array<Result>> => {
     return (await parser(context)).map(decorator);
 };
 
-export const withoutSuggestions = (parser: Parser) => decorateResult(parser, result => Object.assign({}, result, {suggestions: []}));
+export const withoutSuggestions = (parser: Parser) => decorateResult(parser, result => result.withSuggestions([]));
 export const optional = (parser: Parser) => choice([withoutSuggestions(string("")), parser]);
-export const many = compose(many1, optional);
 
 /**
  * Display suggestions only if a person has already input at least one character of the expected value.
@@ -158,23 +251,16 @@ export const many = compose(many1, optional);
  */
 export const noisySuggestions = (parser: Parser) => shortCircuitOnEmptyInput(decorateResult(
     parser,
-    result => Object.assign(
-        {},
-        result,
-        {
-            suggestions: (result.progress !== Progress.OnStart && result.progress !== Progress.Failed) ? result.suggestions : [],
-        }
-    )
+    result => result.withSuggestions((result.progress !== Progress.OnStart && result.progress !== Progress.Failed) ? result.suggestions : [])
 ));
-export const spacesWithoutSuggestion = withoutSuggestions(string(" "));
 
 export const runtime = (producer: (context: Context) => Promise<Parser>) => async (context: Context): Promise<Array<Result>> => {
     const parser = await producer(context);
     return parser(context);
 };
 
-export const optionalContinuation = (parser: Parser) => optional(sequence(spacesWithoutSuggestion, parser));
-export const token = (parser: Parser) => decorate(sequence(parser, spacesWithoutSuggestion), suggestion => suggestion.withValue(suggestion.value + " "));
+export const optionalContinuation = (parser: Parser) => optional(parser);
+export const token = (parser: Parser) => decorate(parser, suggestion => suggestion.withValue(suggestion.value + " "));
 export const executable = (name: string) => decorate(token(string(name)), style(styles.executable));
 export const commandSwitch = (value: string) => decorate(string(`--${value}`), style(styles.option));
 export const option = (value: string) => decorate(string(`--${value}=`), style(styles.option));

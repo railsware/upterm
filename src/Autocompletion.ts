@@ -2,7 +2,7 @@ import * as _ from "lodash";
 import {Job} from "./Job";
 import {
     choice, token, executable, decorate, sequence, string, many1,
-    spacesWithoutSuggestion, many, noisySuggestions, InputMethod, Parser, optional,
+    noisySuggestions, Parser, optional, Context,
 } from "./Parser";
 import {commandDescriptions} from "./plugins/autocompletion_providers/Executable";
 import {description} from "./plugins/autocompletion_providers/Suggestions";
@@ -16,13 +16,12 @@ import {environmentVariable} from "./plugins/autocompletion_providers/Environmen
 export const makeGrammar = (aliases: Dictionary<string>) => {
     const exec = sequence(
         choice(mapObject(commandDescriptions, (key, value) => decorate(executable(key), description(value)))),
-        optional(many1(sequence(
+        optional(many1(
             choice([
                 relativeFilePath,
                 environmentVariable,
-            ]),
-            spacesWithoutSuggestion
-        )))
+            ])
+        ))
     );
 
     const sudo = sequence(executable("sudo"), command);
@@ -36,8 +35,8 @@ export const makeGrammar = (aliases: Dictionary<string>) => {
         redirect
     );
     const separator = choice([
-        noisySuggestions(sequence(many(spacesWithoutSuggestion), token(string("&&")))),
-        noisySuggestions(sequence(many(spacesWithoutSuggestion), token(string(";")))),
+        noisySuggestions(token(string("&&"))),
+        noisySuggestions(token(string(";"))),
     ]);
 
     return sequence(sequence(anyCommand, separator), anyCommand);
@@ -48,7 +47,7 @@ export const suggestionsLimit = 9;
 export const {getSuggestions} = new class {
     private grammar: Parser;
 
-    getSuggestions = async (job: Job, inputMethod: InputMethod) => {
+    getSuggestions = async (job: Job) => {
         if (!this.grammar) {
             this.grammar = makeGrammar(job.session.aliases.toObject());
         }
@@ -58,15 +57,14 @@ export const {getSuggestions} = new class {
             console.time(`suggestion for '${job.prompt.value}'`);
         }
 
-        const results = await this.grammar({
-            input: job.prompt.value,
-            directory: job.session.directory,
-            historicalCurrentDirectoriesStack: job.session.historicalCurrentDirectoriesStack,
-            environment: job.environment,
-            inputMethod: inputMethod,
-        });
+        const results = await this.grammar(new Context(
+            job.prompt.tokens,
+            job.session.directory,
+            job.session.historicalCurrentDirectoriesStack,
+            job.environment
+        ));
 
-        const suggestions = results.map(result => result.suggestions.map(suggestion => suggestion.withPrefix(result.parse)));
+        const suggestions = results.map(result => result.suggestions.map(suggestion => suggestion.withPrefix(result.parse.map(token => token.raw).join(""))));
         const unique = _.uniqBy(_.flatten(suggestions), suggestion => suggestion.value).slice(0, suggestionsLimit);
 
         if (window.DEBUG) {

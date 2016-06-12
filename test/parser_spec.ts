@@ -1,82 +1,74 @@
 import {expect} from "chai";
 import * as _ from "lodash";
 import {
-    string, choice, many1, optional, sequence, Parser, InputMethod, Progress, token,
-    noisySuggestions
+    string, choice, many1, optional, sequence, Parser, Progress, token,
+    noisySuggestions, Context,
 } from "../src/Parser.ts";
 import {suggestionDisplayValues} from "./helpers";
 import {Environment} from "../src/Environment";
 import {OrderedSet} from "../src/utils/OrderedSet";
+import {scan} from "../src/shell/Scanner";
 
-async function parse(parser: Parser, input: string, inputMethod = InputMethod.Typed) {
-    return await parser({
-        input: input,
-        directory: "/",
-        historicalCurrentDirectoriesStack: new OrderedSet<string>(),
-        environment: new Environment({}),
-        inputMethod: inputMethod,
-    });
+async function parse(parser: Parser, input: string) {
+    return await parser(new Context(
+        scan(input),
+        "/",
+        new OrderedSet<string>(),
+        new Environment({})
+    ));
 }
 
-describe("parser", () => {
+describe.only("parser", () => {
     describe("sequence", () => {
         describe("git commit", () => {
-            const git = string("git ");
+            const git = string("git");
             const commit = string("commit");
             const parser = sequence(git, commit);
 
             it("derives the first parser for no input", async() => {
                 const results = await parse(parser, "");
 
-                expect(results.length).to.equal(1);
-                expect(suggestionDisplayValues(results)).to.eql(["git "]);
+                expect(suggestionDisplayValues(results)).to.eql(["git"]);
             });
 
             it("derives the first parser for a part of first parsers' input", async() => {
                 const results = await parse(parser, "gi");
 
-                expect(results.length).to.equal(1);
-                expect(suggestionDisplayValues(results)).to.eql(["git "]);
+                expect(suggestionDisplayValues(results)).to.eql(["git"]);
             });
 
             it("derives the first parser if the input exactly matches the first parser", async() => {
-                const results = await parse(parser, "git ");
+                const results = await parse(parser, "git");
 
-                expect(results.length).to.equal(1);
-                expect(suggestionDisplayValues(results)).to.eql(["git "]);
+                expect(suggestionDisplayValues(results)).to.eql(["git"]);
             });
 
             it("derives the second parser if the input exceeds the first parser", async() => {
                 const results = await parse(parser, "git c");
 
-                expect(results.length).to.equal(1);
                 expect(suggestionDisplayValues(results)).to.eql(["commit"]);
             });
         });
 
         describe("chaining", () => {
-            const commit = string("commit");
             const git = string("git");
-            const space = string(" ");
+            const checkout = string("checkout");
+            const master = string("master");
 
             it("derives when chained to the left", async() => {
-                const parser = sequence(sequence(git, space), commit);
-                const results = await parse(parser, "git ");
+                const parser = sequence(sequence(git, checkout), master);
+                const results = await parse(parser, "git checkout");
 
                 expect(results.length).to.equal(1);
-                expect(results[0]).to.deep.include({
-                    parse: "git ",
-                });
+                expect(results[0].parse.map(token => token.value)).to.eql(["git", "checkout"]);
             });
 
             it("derives when chained to the right", async() => {
-                const parser = sequence(git, sequence(space, commit));
-                const results = await parse(parser, "git ");
+                const parser = sequence(git, sequence(checkout, master));
+                const results = await parse(parser, "git checkout");
 
                 expect(results.length).to.equal(1);
-                expect(results[0]).to.deep.include({
-                    parse: "git ",
-                });
+                expect(results[0].parse.map(token => token.value)).to.eql(["git", "checkout"]);
             });
         });
 
@@ -100,7 +92,6 @@ describe("parser", () => {
             const parser = string("grep");
             const results = await parse(parser, "git c");
 
-            expect(results.length).to.equal(1);
             expect(suggestionDisplayValues(results)).to.eql(["grep"]);
         });
     });
@@ -112,7 +103,6 @@ describe("parser", () => {
 
             const results = await parse(choice([left, right]), "f");
 
-            expect(results.length).to.equal(1);
             expect(suggestionDisplayValues(results)).to.eql(["foo"]);
         });
 
@@ -122,7 +112,6 @@ describe("parser", () => {
 
             const results = await parse(choice([left, right]), "b");
 
-            expect(results.length).to.equal(1);
             expect(suggestionDisplayValues(results)).to.eql(["bar"]);
         });
 
@@ -132,52 +121,45 @@ describe("parser", () => {
 
             const results = await parse(choice([soon, sooner]), "soo");
 
-            expect(results.length).to.equal(2);
             expect(suggestionDisplayValues(results)).to.eql(["soon", "sooner"]);
         });
 
         it("doesn't commit to a branch too early", async() => {
             const commit = string("commit");
-            const results = await parse(sequence(sequence(string("git"), choice([string(" "), string("  ")])), commit), "git  commit");
+            const results = await parse(sequence(sequence(string("cd"), choice([string("/foo"), string("/foo/bar")])), commit), "cd /foo");
 
-            expect(results.length).to.equal(1);
-            expect(suggestionDisplayValues(results)).to.eql(["commit"]);
+            expect(suggestionDisplayValues(results)).to.eql(["/foo", "/foo/bar"]);
         });
     });
 
-    describe("many1", () => {
-        const commit = string("commit");
-        const parser = sequence(sequence(string("git"), many1(string(" "))), commit);
+    describe.skip("many1", () => {
+        const parser = sequence(string("cat"), many1(string("file")));
 
         it("matches one occurrence", async() => {
-            const results = await parse(parser, "git c");
+            const results = await parse(parser, "cat fi");
 
-            expect(results.length).to.equal(1);
-            expect(suggestionDisplayValues(results)).to.eql(["commit"]);
+            expect(suggestionDisplayValues(results)).to.eql(["file"]);
         });
 
         it("matches two occurrences", async() => {
-            const results = await parse(parser, "git  c");
+            const results = await parse(parser, "cat file fi");
 
-            expect(results.length).to.equal(1);
-            expect(suggestionDisplayValues(results)).to.eql(["commit"]);
+            expect(suggestionDisplayValues(results)).to.eql(["file"]);
         });
     });
 
     describe("optional", () => {
-        it("matches no occurrence", async() => {
-            const git = string("git");
-            const results = await parse(sequence(optional(string("sudo ")), git), "g");
+        const parser = sequence(optional(string("sudo")), string("git"));
 
-            expect(results.length).to.equal(1);
+        it("matches no occurrence", async() => {
+            const results = await parse(parser, "g");
+
             expect(suggestionDisplayValues(results)).to.eql(["git"]);
         });
 
         it("matches with an occurrence", async() => {
-            const git = string("git");
-            const results = await parse(sequence(optional(string("sudo ")), git), "sudo g");
+            const results = await parse(parser, "sudo g");
 
-            expect(results.length).to.equal(1);
             expect(suggestionDisplayValues(results)).to.eql(["git"]);
         });
     });
@@ -185,7 +167,7 @@ describe("parser", () => {
 
     describe("noisySuggestions", () => {
         const suggestions = async (parser: Parser, input: string) => suggestionDisplayValues(
-            await parse(noisySuggestions(parser), input, InputMethod.Autocompleted)
+            await parse(noisySuggestions(parser), input)
         );
 
         it("doesn't show suggestions on empty input", async() => {
@@ -197,7 +179,7 @@ describe("parser", () => {
         });
 
         it("shows suggestions at the beginning of a second part of a compound parser", async() => {
-            expect(await suggestions(sequence(string("git "), string("commit")), "git ")).to.eql(["commit"]);
+            expect(await suggestions(sequence(string("git"), string("commit")), "git ")).to.eql(["commit"]);
         });
     });
 
@@ -206,7 +188,6 @@ describe("parser", () => {
             it("is case insensitive", async() => {
                 const results = await parse(sequence(string("./Downloads"), string("/mine")), "./down");
 
-                expect(results.length).to.equal(1);
                 expect(suggestionDisplayValues(results)).to.eql(["./Downloads"]);
             });
         });

@@ -1,6 +1,6 @@
 import * as events from "events";
 import {Job} from "./Job";
-import {scan, Token, withoutEndOfInput} from "./shell/Scanner";
+import {scan, Token} from "./shell/Scanner";
 import {expandAliases} from "./shell/CommandExpander";
 
 export class Prompt extends events.EventEmitter {
@@ -19,7 +19,11 @@ export class Prompt extends events.EventEmitter {
     setValue(value: string): void {
         this._value = value;
         this._tokens = scan(this.value);
-        this._expanded = withoutEndOfInput(expandAliases(this._tokens, this.job.session.aliases));
+        this._expanded = expandAliases(this._tokens, this.job.session.aliases);
+    }
+
+    get tokens(): Token[] {
+        return this._tokens;
     }
 
     get expanded(): Token[] {
