@@ -1,4 +1,4 @@
-abstract class Token {
+export abstract class Token {
     constructor(protected raw: string) {
     }
 
@@ -119,4 +119,12 @@ export function scan(input: string): Token[] {
             continue;
         }
     }
+}
+
+export function withoutEndOfInput(tokens: Token[]) {
+    return tokens.slice(0, -1);
+}
+
+export function concatTokens(left: Token[], right: Token[]): Token[] {
+    return withoutEndOfInput(left).concat(right);
 }

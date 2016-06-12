@@ -13,6 +13,7 @@ import {Status} from "./Enums";
 import {Environment} from "./Environment";
 import {convertKeyCode} from "./utils/Common";
 import {TerminalLikeDevice} from "./Interfaces";
+import {History} from "./History";
 
 function makeThrottledDataEmitter(timesPerSecond: number, subject: EmitterWithUniqueID) {
     return _.throttle(() => subject.emit("data"), 1000 / timesPerSecond);
@@ -42,6 +43,8 @@ export class Job extends EmitterWithUniqueID implements TerminalLikeDevice {
     }
 
     async execute(): Promise<void> {
+        History.add(this.prompt.value);
+
         this.setStatus(Status.InProgress);
 
         await Promise.all(PluginManager.preexecPlugins.map(plugin => plugin(this)));

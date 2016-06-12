@@ -6,14 +6,11 @@ import {executablesInPaths, resolveFile, isWindows, filterAsync, exists} from ".
 import {loginShell} from "./utils/Shell";
 
 abstract class CommandExecutionStrategy {
-    protected args: string[];
-
     static async canExecute(job: Job): Promise<boolean> {
         return false;
     }
 
     constructor(protected job: Job) {
-        this.args = job.prompt.arguments.filter(argument => argument.length > 0);
     }
 
     abstract startExecution(): Promise<{}>;
@@ -27,7 +24,7 @@ class BuiltInCommandExecutionStrategy extends CommandExecutionStrategy {
     startExecution() {
         return new Promise((resolve, reject) => {
             try {
-                Command.executor(this.job.prompt.commandName)(this.job, this.args);
+                Command.executor(this.job.prompt.commandName)(this.job, this.job.prompt.arguments);
                 resolve();
             } catch (error) {
                 reject(error.message);
@@ -54,7 +51,7 @@ class ShellExecutionStrategy extends CommandExecutionStrategy {
     startExecution() {
         return new Promise((resolve, reject) => {
             this.job.command = new PTY(
-                this.job.prompt.commandName, this.args, this.job.environment.toObject(), this.job.dimensions,
+                this.job.prompt.commandName, this.job.prompt.arguments, this.job.environment.toObject(), this.job.dimensions,
                 (data: string) => this.job.parser.parse(data),
                 (exitCode: number) => exitCode === 0 ? resolve() : reject()
             );

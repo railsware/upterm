@@ -17,6 +17,7 @@ import {InputMethod} from "../Parser";
 import * as css from "./css/main";
 import {fontAwesome} from "./css/FontAwesome";
 import {Status} from "../Enums";
+import {scan, withoutEndOfInput} from "../shell/Scanner";
 
 interface Props {
     job: Job;
@@ -224,7 +225,7 @@ export class PromptComponent extends React.Component<Props, State> implements Ke
         this.prompt.setValue((event.target as HTMLElement).innerText);
 
         if (!this.isEmpty()) {
-            this.prompt.execute();
+            this.props.job.execute();
         }
     }
 
@@ -277,7 +278,7 @@ export class PromptComponent extends React.Component<Props, State> implements Ke
         event.stopPropagation();
         event.preventDefault();
 
-        const value = this.prompt.value + History.lastEntry.lastLexeme;
+        const value = this.prompt.value + _.last(withoutEndOfInput(scan(History.latest))).value;
         this.prompt.setValue(value);
         this.setDOMValueProgrammatically(value);
     }

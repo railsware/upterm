@@ -1,49 +1,18 @@
-import {lex} from "./shell/CommandExpander";
-import * as _ from "lodash";
-
-export class HistoryEntry {
-    private _raw: string;
-
-    constructor(raw: string, private _historyExpanded: string[]) {
-        this._raw = raw.trim().replace(/\s+/g, " ");
-    }
-
-    get raw(): string {
-        return this._raw;
-    }
-
-    get historyExpanded(): string[] {
-        return this._historyExpanded;
-    }
-
-    get lastLexeme(): string {
-        return _.last(lex(this.raw));
-    }
-
-    toArray(): any[] {
-        return [this.raw, this.historyExpanded];
-    }
-}
-
 export class History {
     static pointer: number = 0;
     private static maxEntriesCount: number = 100;
-    private static storage: HistoryEntry[] = [];
-    private static defaultEntry: HistoryEntry = new HistoryEntry("", []);
+    private static storage: string[] = [];
+    private static defaultEntry = "";
 
-    static get all(): HistoryEntry[] {
+    static get all(): string[] {
         return this.storage;
     }
 
-    static get lastEntry(): HistoryEntry {
+    static get latest(): string {
         return this.at(-1);
     }
 
-    static lastWithPrefix(prefix: string): HistoryEntry {
-        return this.storage.find(entry => entry.raw.startsWith(prefix)) || this.defaultEntry;
-    }
-
-    static at(position: number): HistoryEntry {
+    static at(position: number): string {
         if (position === 0) {
             return this.defaultEntry;
         }
@@ -55,7 +24,7 @@ export class History {
         return this.storage[this.count - 1] || this.defaultEntry;
     }
 
-    static add(entry: HistoryEntry): void {
+    static add(entry: string): void {
         this.remove(entry);
         this.storage.unshift(entry);
 
@@ -71,7 +40,7 @@ export class History {
             this.pointer += 1;
         }
 
-        return this.at(-this.pointer).raw;
+        return this.at(-this.pointer);
     }
 
     static getNext(): string {
@@ -79,7 +48,7 @@ export class History {
             this.pointer -= 1;
         }
 
-        return this.at(-this.pointer).raw;
+        return this.at(-this.pointer);
     }
 
     private static get count(): number {
@@ -87,20 +56,15 @@ export class History {
     }
 
     static serialize(): string {
-        return `History:${JSON.stringify(History.storage.map(entry => entry.toArray()))}`;
+        return `History:${JSON.stringify(History.storage)}`;
     }
 
     static deserialize(serialized: string): void {
-        this.storage = JSON.parse(serialized).map((entry: any[]) => {
-            let raw: string = entry[0];
-            let historyExpanded: string[] = entry[1];
-
-            return new HistoryEntry(raw, historyExpanded);
-        });
+        this.storage = JSON.parse(serialized);
     }
 
-    private static remove(entry: HistoryEntry): void {
-        const duplicateIndex = this.storage.findIndex(stackedEntry => stackedEntry.raw === entry.raw);
+    private static remove(entry: string): void {
+        const duplicateIndex = this.storage.indexOf(entry);
         if (duplicateIndex !== -1) {
             this.storage.splice(duplicateIndex, 1);
         }

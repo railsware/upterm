@@ -1,22 +1,15 @@
 import * as events from "events";
-import {History, HistoryEntry} from "./History";
-import * as _ from "lodash";
-import {expandAliases, expandHistory, lex} from "./shell/CommandExpander";
 import {Job} from "./Job";
+import {scan, Token, withoutEndOfInput} from "./shell/Scanner";
+import {expandAliases} from "./shell/CommandExpander";
 
 export class Prompt extends events.EventEmitter {
     private _value = "";
+    private _tokens: Token[];
     private _expanded: string[];
-    private _lexemes: string[];
-    private _historyExpanded: string[];
 
     constructor(private job: Job) {
         super();
-    }
-
-    execute(): void {
-        History.add(new HistoryEntry(this.value, this._historyExpanded));
-        this.job.execute();
     }
 
     get value(): string {
@@ -25,10 +18,12 @@ export class Prompt extends events.EventEmitter {
 
     setValue(value: string): void {
         this._value = value;
+        this._tokens = scan(this.value);
+        this._expanded = withoutEndOfInput(expandAliases(this._tokens, this.job.session.aliases)).map(token => token.value);
+    }
 
-        this._lexemes = lex(this.value);
-        this._historyExpanded = expandHistory(this._lexemes);
-        this._expanded = expandAliases(this._historyExpanded, this.job.session.aliases);
+    get expanded(): string[] {
+        return this._expanded;
     }
 
     get commandName(): string {
@@ -37,17 +32,5 @@ export class Prompt extends events.EventEmitter {
 
     get arguments(): string[] {
         return this.expanded.slice(1);
-    }
-
-    get expanded(): string[] {
-        return this._expanded;
-    }
-
-    get lexemes(): string[] {
-        return this._lexemes;
-    }
-
-    get lastLexeme(): string {
-        return _.last(this.lexemes) || "";
     }
 }
