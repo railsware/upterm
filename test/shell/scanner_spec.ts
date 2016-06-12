@@ -1,10 +1,10 @@
 import {expect} from "chai";
 import {
     scan, EndOfInput, Word, DoubleQuotedStringLiteral, SingleQuotedStringLiteral,
-    Pipe, OutputRedirectionSymbol, AppendingOutputRedirectionSymbol, InputRedirectionSymbol,
+    Pipe, OutputRedirectionSymbol, AppendingOutputRedirectionSymbol, InputRedirectionSymbol, Invalid,
 } from "../../src/shell/Scanner";
 
-describe.only("scan", () => {
+describe("scan", () => {
     it("returns end of input on empty input", () => {
         const tokens = scan("");
 
@@ -125,5 +125,18 @@ describe.only("scan", () => {
         expect(tokens[4]).to.be.an.instanceof(EndOfInput);
 
         expect(tokens.map(token => token.value)).to.eql(["cat", "file", ">>", "another_file", ""]);
+    });
+
+    describe("invalid input", () => {
+        it("adds an invalid token", async() => {
+            const tokens = scan("cd '");
+
+            expect(tokens.length).to.eq(3);
+            expect(tokens[0]).to.be.an.instanceof(Word);
+            expect(tokens[1]).to.be.an.instanceof(Invalid);
+            expect(tokens[2]).to.be.an.instanceof(EndOfInput);
+
+            expect(tokens.map(token => token.value)).to.eql(["cd", "'", ""]);
+        });
     });
 });

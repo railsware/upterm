@@ -47,6 +47,12 @@ export class SingleQuotedStringLiteral extends StringLiteral {
 export class DoubleQuotedStringLiteral extends StringLiteral {
 }
 
+export class Invalid extends Token {
+    get value() {
+        return this.raw.trim();
+    }
+}
+
 export class EndOfInput extends Token {
     get value() {
         return this.raw.trim();
@@ -118,6 +124,9 @@ export function scan(input: string): Token[] {
             input = input.slice(token.length);
             continue;
         }
+
+        tokens.push(new Invalid(input));
+        input = "";
     }
 }
 
