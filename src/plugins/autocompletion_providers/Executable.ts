@@ -165,16 +165,3 @@ export const commandDescriptions: Dictionary<string> = {
     yacc: "Yet another compiler compiler",
     zcat: "Expand and concatenate data",
 };
-
-PluginManager.registerAutocompletionProvider({
-
-    getSuggestions: async function (job: Job) {
-        const prompt = job.prompt;
-
-        if (prompt.expanded.length > 1) {
-            return [];
-        }
-
-        return _.map(await executablesInPaths(job.environment.path), (executable: string) => new Executable(executable).withDescription(commandDescriptions[executable]));
-    },
-});

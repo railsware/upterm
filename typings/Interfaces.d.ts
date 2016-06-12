@@ -49,3 +49,5 @@ interface Dictionary<T> {
 interface ProcessEnvironment extends Dictionary<string> {
     PWD: string;
 }
+
+type EscapedShellWord = string & {__isEscapedShellToken: any};

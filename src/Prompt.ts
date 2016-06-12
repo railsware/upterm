@@ -6,7 +6,7 @@ import {expandAliases} from "./shell/CommandExpander";
 export class Prompt extends events.EventEmitter {
     private _value = "";
     private _tokens: Token[];
-    private _expanded: string[];
+    private _expanded: Token[];
 
     constructor(private job: Job) {
         super();
@@ -19,18 +19,18 @@ export class Prompt extends events.EventEmitter {
     setValue(value: string): void {
         this._value = value;
         this._tokens = scan(this.value);
-        this._expanded = withoutEndOfInput(expandAliases(this._tokens, this.job.session.aliases)).map(token => token.value);
+        this._expanded = withoutEndOfInput(expandAliases(this._tokens, this.job.session.aliases));
     }
 
-    get expanded(): string[] {
+    get expanded(): Token[] {
         return this._expanded;
     }
 
-    get commandName(): string {
+    get commandName(): Token {
         return this.expanded[0];
     }
 
-    get arguments(): string[] {
+    get arguments(): Token[] {
         return this.expanded.slice(1);
     }
 }
