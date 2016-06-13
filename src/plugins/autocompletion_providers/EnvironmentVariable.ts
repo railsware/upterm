@@ -1,4 +1,4 @@
-import {choice, runtime, string, decorate, token, noisySuggestions} from "../../Parser";
+import {choice, runtime, string, decorate, token, noisySuggestions} from "../../shell/Parser";
 import {styles, style, description} from "./Suggestions";
 import {compose} from "../../utils/Common";
 

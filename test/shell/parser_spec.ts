@@ -3,11 +3,11 @@ import * as _ from "lodash";
 import {
     string, choice, many1, optional, sequence, Parser, Progress, token,
     noisySuggestions, Context,
-} from "../src/Parser.ts";
-import {suggestionDisplayValues} from "./helpers";
-import {Environment} from "../src/Environment";
-import {OrderedSet} from "../src/utils/OrderedSet";
-import {scan} from "../src/shell/Scanner";
+} from "../../src/shell/Parser.ts";
+import {suggestionDisplayValues} from "../helpers";
+import {Environment} from "../../src/Environment";
+import {OrderedSet} from "../../src/utils/OrderedSet";
+import {scan} from "../../src/shell/Scanner";
 
 async function parse(parser: Parser, input: string) {
     return await parser(new Context(

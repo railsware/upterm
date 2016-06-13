@@ -6,7 +6,7 @@ import {
     noisySuggestions,
     Parser,
     withoutSuggestions, runtime, sequence,
-} from "../../Parser";
+} from "../../shell/Parser";
 import {styles, style} from "./Suggestions";
 import {FileInfo} from "../../Interfaces";
 

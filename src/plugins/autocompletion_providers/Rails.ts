@@ -1,4 +1,4 @@
-import {executable, sequence, string, decorate, choice} from "../../Parser";
+import {executable, sequence, string, decorate, choice} from "../../shell/Parser";
 import {description, command} from "./Suggestions";
 import {compose} from "../../utils/Common";
 import * as _ from "lodash";

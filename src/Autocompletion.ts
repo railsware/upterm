@@ -3,7 +3,7 @@ import {Job} from "./Job";
 import {
     choice, token, executable, decorate, sequence, string, many1,
     noisySuggestions, Parser, optional, Context,
-} from "./Parser";
+} from "./shell/Parser";
 import {commandDescriptions} from "./plugins/autocompletion_providers/Executable";
 import {description} from "./plugins/autocompletion_providers/Suggestions";
 import {makeAlias} from "./plugins/autocompletion_providers/Alias";

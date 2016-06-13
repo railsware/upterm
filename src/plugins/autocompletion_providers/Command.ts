@@ -2,7 +2,7 @@ import {git} from "./Git";
 import {cd} from "./Cd";
 import {npm} from "./NPM";
 import {rails} from "./Rails";
-import {choice, executable} from "../../Parser";
+import {choice, executable} from "../../shell/Parser";
 
 const ls = executable("ls");
 

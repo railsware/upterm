@@ -1,4 +1,4 @@
-import {Context, Result} from "../src/Parser";
+import {Context, Result} from "../src/shell/Parser";
 import * as _ from "lodash";
 import {Suggestion} from "../src/plugins/autocompletion_providers/Suggestions";
 import {Environment} from "../src/Environment";

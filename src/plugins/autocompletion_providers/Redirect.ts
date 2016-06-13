@@ -1,4 +1,4 @@
-import {string, token, sequence, choice, withoutSuggestions} from "../../Parser";
+import {string, token, sequence, choice, withoutSuggestions} from "../../shell/Parser";
 import {relativeFilePath} from "./File";
 
 const redirectToken = withoutSuggestions(token(choice([

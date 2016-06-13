@@ -1,8 +1,8 @@
-import {Suggestion, styles, style} from "./plugins/autocompletion_providers/Suggestions";
+import {Suggestion, styles, style} from "../plugins/autocompletion_providers/Suggestions";
 import * as _ from "lodash";
-import {Environment} from "./Environment";
-import {OrderedSet} from "./utils/OrderedSet";
-import {Token, concatTokens} from "./shell/Scanner";
+import {Environment} from "../Environment";
+import {OrderedSet} from "../utils/OrderedSet";
+import {Token, concatTokens} from "./Scanner";
 
 export class Context {
     private _input: Token[];

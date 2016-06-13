@@ -2,7 +2,7 @@ import * as Git from "../../utils/Git";
 import {
     executable, runtime, choice, string, option, decorate, sequence,
     commandSwitch, token, many1, optionalContinuation,
-} from "../../Parser";
+} from "../../shell/Parser";
 import {description, command, styles, style} from "./Suggestions";
 import {compose} from "../../utils/Common";
 import {relativeFilePath} from "./File";

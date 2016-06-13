@@ -1,4 +1,4 @@
-import {executable, sequence, decorate, string, noisySuggestions, runtime, choice} from "../../Parser";
+import {executable, sequence, decorate, string, noisySuggestions, runtime, choice} from "../../shell/Parser";
 import {expandHistoricalDirectory} from "../../Command";
 import {description, styles, style} from "./Suggestions";
 import * as _ from "lodash";

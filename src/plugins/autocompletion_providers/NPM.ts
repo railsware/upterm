@@ -2,7 +2,7 @@ import * as Path from "path";
 import * as _ from "lodash";
 import {description, command} from "./Suggestions";
 import {exists, readFile, compose} from "../../utils/Common";
-import {string, decorate, token, executable, sequence, choice, runtime} from "../../Parser";
+import {string, decorate, token, executable, sequence, choice, runtime} from "../../shell/Parser";
 
 const npmCommandConfig = [
     {
