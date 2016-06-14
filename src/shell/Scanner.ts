@@ -95,6 +95,37 @@ export class Invalid extends Token {
     }
 }
 
+const patterns = [
+    {
+        regularExpression: /^(\s*\|\s*)/,
+        tokenConstructor: Pipe,
+    },
+    {
+        regularExpression: /^(\s*>>\s*)/,
+        tokenConstructor: AppendingOutputRedirectionSymbol,
+    },
+    {
+        regularExpression: /^(\s*<\s*)/,
+        tokenConstructor: InputRedirectionSymbol,
+    },
+    {
+        regularExpression: /^(\s*>\s*)/,
+        tokenConstructor: OutputRedirectionSymbol,
+    },
+    {
+        regularExpression: /^(\s*"(?:\\"|[^"])*"\s*)/,
+        tokenConstructor: DoubleQuotedStringLiteral,
+    },
+    {
+        regularExpression: /^(\s*'(?:\\'|[^'])*'\s*)/,
+        tokenConstructor : SingleQuotedStringLiteral,
+    },
+    {
+        regularExpression: /^(\s*(?:\\\s|[a-zA-Z0-9-=_/~.])+\s*)/,
+        tokenConstructor : Word,
+    },
+];
+
 export function scan(input: string): Token[] {
     const tokens: Token[] = [];
 
@@ -103,64 +134,23 @@ export function scan(input: string): Token[] {
             return tokens;
         }
 
-        let match = input.match(/^(\s*\|\s*)/);
-        if (match) {
-            const token = match[1];
-            tokens.push(new Pipe(token));
-            input = input.slice(token.length);
-            continue;
+        let foundMatch = false;
+        for (const pattern of patterns) {
+            const match = input.match(pattern.regularExpression);
+
+            if (match) {
+                const token = match[1];
+                tokens.push(new pattern.tokenConstructor(token));
+                input = input.slice(token.length);
+                foundMatch = true;
+                break;
+            }
         }
 
-        match = input.match(/^(\s*>>\s*)/);
-        if (match) {
-            const token = match[1];
-            tokens.push(new AppendingOutputRedirectionSymbol(token));
-            input = input.slice(token.length);
-            continue;
+        if (!foundMatch) {
+            tokens.push(new Invalid(input));
+            return tokens;
         }
-
-        match = input.match(/^(\s*<\s*)/);
-        if (match) {
-            const token = match[1];
-            tokens.push(new InputRedirectionSymbol(token));
-            input = input.slice(token.length);
-            continue;
-        }
-
-        match = input.match(/^(\s*>\s*)/);
-        if (match) {
-            const token = match[1];
-            tokens.push(new OutputRedirectionSymbol(token));
-            input = input.slice(token.length);
-            continue;
-        }
-
-        match = input.match(/^(\s*"(?:\\"|[^"])*"\s*)/);
-        if (match) {
-            const token = match[1];
-            tokens.push(new DoubleQuotedStringLiteral(token));
-            input = input.slice(token.length);
-            continue;
-        }
-
-        match = input.match(/^(\s*'(?:\\'|[^'])*'\s*)/);
-        if (match) {
-            const token = match[1];
-            tokens.push(new SingleQuotedStringLiteral(token));
-            input = input.slice(token.length);
-            continue;
-        }
-
-        match = input.match(/^(\s*(?:\\\s|[a-zA-Z0-9-=_/~.])+\s*)/);
-        if (match) {
-            const token = match[1];
-            tokens.push(new Word(token));
-            input = input.slice(token.length);
-            continue;
-        }
-
-        tokens.push(new Invalid(input));
-        input = "";
     }
 }
 
