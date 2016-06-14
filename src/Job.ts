@@ -11,7 +11,7 @@ import {PluginManager} from "./PluginManager";
 import {EmitterWithUniqueID} from "./EmitterWithUniqueID";
 import {Status} from "./Enums";
 import {Environment} from "./Environment";
-import {convertKeyCode} from "./utils/Common";
+import {normalizeKey} from "./utils/Common";
 import {TerminalLikeDevice} from "./Interfaces";
 
 function makeThrottledDataEmitter(timesPerSecond: number, subject: EmitterWithUniqueID) {
@@ -75,14 +75,7 @@ export class Job extends EmitterWithUniqueID implements TerminalLikeDevice {
         if (typeof input === "string") {
             text = input;
         } else {
-            const event = <KeyboardEvent>(<any>input).nativeEvent;
-            let code = event.keyCode;
-
-            if (event.ctrlKey) {
-                text = String.fromCharCode(code - 64);
-            } else {
-                text = convertKeyCode(code, event.shiftKey);
-            }
+            text = input.ctrlKey ? String.fromCharCode(input.keyCode - 64) : normalizeKey(input.key);
         }
 
         this.command.write(text);
