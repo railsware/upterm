@@ -9,7 +9,7 @@ declare class Notification {
 
 interface IntersectionObserverEntry {
     readonly time: number;
-    readonly rootBounds: any;
+    readonly rootBounds: ClientRect;
     readonly boundingClientRect: ClientRect;
     readonly intersectionRect: ClientRect;
     readonly intersectionRatio: number;
