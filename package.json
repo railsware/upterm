@@ -46,7 +46,7 @@
     "ts-node": "0.8.0",
     "tslint": "3.11.0",
     "typescript": "1.9.0-dev.20160601-1.0",
-    "typings": "1.0.4"
+    "typings": "1.1.0"
   },
   "scripts": {
     "preinstall": "npm prune",
