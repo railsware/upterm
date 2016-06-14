@@ -30,6 +30,7 @@ interface State {
     latestKeyCode?: number;
     offsetTop?: number;
     suggestions?: Suggestion[];
+    isSticky?: boolean;
 }
 
 
@@ -40,6 +41,20 @@ export class PromptComponent extends React.Component<Props, State> implements Ke
         onKeyDown: Function;
     };
 
+    private intersectionObserver = new IntersectionObserver(
+        (entries) => {
+            const entry = entries[0];
+            const nearTop = entry.boundingClientRect.bottom < 100;
+            const isVisible = entry.intersectionRatio === 1;
+
+            this.setState({isSticky: nearTop && !isVisible});
+        },
+        {
+            threshold: 1,
+            rootMargin: css.toDOMString(css.promptWrapperHeight),
+        }
+    );
+
     constructor(props: Props) {
         super(props);
         this.prompt = this.props.job.prompt;
@@ -48,6 +63,7 @@ export class PromptComponent extends React.Component<Props, State> implements Ke
             suggestions: [],
             highlightedSuggestionIndex: 0,
             latestKeyCode: undefined,
+            isSticky: false,
         };
 
         const keyDownSubject: Subject<KeyboardEvent> = new Subject();
@@ -137,7 +153,14 @@ export class PromptComponent extends React.Component<Props, State> implements Ke
             }
         });
 
+        this.intersectionObserver.observe(this.placeholderNode);
+
         this.setDOMValueProgrammatically(this.prompt.value);
+    }
+
+    componentWillUnmount() {
+        this.intersectionObserver.unobserve(this.placeholderNode);
+        this.intersectionObserver.disconnect();
     }
 
     componentDidUpdate(prevProps: Props, prevState: State) {
@@ -186,35 +209,38 @@ export class PromptComponent extends React.Component<Props, State> implements Ke
             decorationToggle = <DecorationToggleComponent decorateToggler={this.props.decorateToggler}/>;
         }
 
-        if (this.props.status !== e.Status.NotStarted && this.props.job.screenBuffer.size > 100) {
+        if (this.state.isSticky) {
             scrollToTop = <span style={css.action}
-                             onClick={this.handleScrollToTop.bind(this)}
-                             dangerouslySetInnerHTML={{__html: fontAwesome.longArrowUp}}/>;
+                                title="Scroll to beginning of output."
+                                onClick={this.handleScrollToTop.bind(this)}
+                                dangerouslySetInnerHTML={{__html: fontAwesome.longArrowUp}}/>;
         }
 
         return (
-            <div className="prompt-wrapper" id={this.props.job.id} style={css.promptWrapper(this.props.status)}>
-                <div style={css.arrow(this.props.status)}>
-                    <div style={css.arrowInner(this.props.status)}></div>
-                </div>
-                <div style={css.promptInfo(this.props.status)}
-                     title={JSON.stringify(this.props.status)}
-                     dangerouslySetInnerHTML={{__html: this.props.status === Status.Interrupted ? fontAwesome.close : ""}}></div>
-                <div className="prompt"
-                     style={css.prompt}
-                     onKeyDown={event => this.handlers.onKeyDown(event)}
-                     onInput={this.handleInput.bind(this)}
-                     onKeyPress={() => this.props.status === e.Status.InProgress && stopBubblingUp(event)}
-                     onDrop={this.handleDrop.bind(this)}
-                     type="text"
-                     ref="command"
-                     contentEditable={this.props.status === e.Status.NotStarted || this.props.status === e.Status.InProgress}></div>
-                {autocompletedPreview}
-                {inlineSynopsis}
-                {autocomplete}
-                <div style={css.actions}>
-                    {decorationToggle}
-                    {scrollToTop}
+            <div className="prompt-placeholder" ref="placeholder" id={this.props.job.id} style={css.promptPlaceholder}>
+                <div className="prompt-wrapper" style={css.promptWrapper(this.props.status, this.state.isSticky)}>
+                    <div style={css.arrow(this.props.status)}>
+                        <div style={css.arrowInner(this.props.status)}></div>
+                    </div>
+                    <div style={css.promptInfo(this.props.status)}
+                         title={JSON.stringify(this.props.status)}
+                         dangerouslySetInnerHTML={{__html: this.props.status === Status.Interrupted ? fontAwesome.close : ""}}></div>
+                    <div className="prompt"
+                         style={css.prompt}
+                         onKeyDown={event => this.handlers.onKeyDown(event)}
+                         onInput={this.handleInput.bind(this)}
+                         onKeyPress={() => this.props.status === e.Status.InProgress && stopBubblingUp(event)}
+                         onDrop={this.handleDrop.bind(this)}
+                         type="text"
+                         ref="command"
+                         contentEditable={this.props.status === e.Status.NotStarted || this.props.status === e.Status.InProgress}></div>
+                    {autocompletedPreview}
+                    {inlineSynopsis}
+                    {autocomplete}
+                    <div style={css.actions}>
+                        {decorationToggle}
+                        {scrollToTop}
+                    </div>
                 </div>
             </div>
         );
@@ -231,6 +257,11 @@ export class PromptComponent extends React.Component<Props, State> implements Ke
     private get commandNode(): HTMLInputElement {
         /* tslint:disable:no-string-literal */
         return this.refs["command"] as HTMLInputElement;
+    }
+
+    private get placeholderNode(): Element {
+        /* tslint:disable:no-string-literal */
+        return this.refs["placeholder"] as Element;
     }
 
     private setDOMValueProgrammatically(text: string): void {

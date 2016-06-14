@@ -11,3 +11,7 @@ export function darken(color: string, percent: number) {
 export function failurize(color: string) {
     return tinyColor(color).spin(140).saturate(20).toHexString();
 }
+
+export function toDOMString(pixels: number) {
+    return `${pixels}px`;
+}
