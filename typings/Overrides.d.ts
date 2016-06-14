@@ -69,3 +69,7 @@ interface NodeBuffer extends Uint8Array {
 interface ObjectConstructor {
     assign<A, B, C, D, E, F>(a: A, b: B, c: C, d: D, e: E, f: F): A & B & C & D & E & F;
 }
+
+interface HTMLElement {
+    scrollIntoViewIfNeeded(top?: boolean): void;
+}
