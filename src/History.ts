@@ -20,7 +20,7 @@ export class HistoryEntry {
         return _.last(lex(this.raw));
     }
 
-    toArray(): any[] {
+    toArray(): [string, string[]] {
         return [this.raw, this.historyExpanded];
     }
 }
@@ -87,13 +87,13 @@ export class History {
     }
 
     static serialize(): string {
-        return `History:${JSON.stringify(History.storage.map(entry => entry.toArray()))}`;
+        return JSON.stringify(History.storage.map(entry => entry.toArray()));
     }
 
-    static deserialize(serialized: string): void {
-        this.storage = JSON.parse(serialized).map((entry: any[]) => {
-            let raw: string = entry[0];
-            let historyExpanded: string[] = entry[1];
+    static deserialize(serialized: [string, string[]][]): void {
+        this.storage = serialized.map(entry => {
+            const raw = entry[0];
+            const historyExpanded = entry[1];
 
             return new HistoryEntry(raw, historyExpanded);
         });
