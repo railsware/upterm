@@ -37,6 +37,16 @@ export class Pipe extends Token {
     }
 }
 
+export class Semicolon extends Token {
+    get value() {
+        return this.raw.trim();
+    }
+
+    get escapedValue(): EscapedShellWord {
+        return <EscapedShellWord>this.value;
+    }
+}
+
 export class InputRedirectionSymbol extends Token {
     get value() {
         return this.raw.trim();
@@ -99,6 +109,10 @@ const patterns = [
     {
         regularExpression: /^(\s*\|\s*)/,
         tokenConstructor: Pipe,
+    },
+    {
+        regularExpression: /^(\s*;\s*)/,
+        tokenConstructor: Semicolon,
     },
     {
         regularExpression: /^(\s*>>\s*)/,

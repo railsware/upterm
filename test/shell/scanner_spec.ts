@@ -1,7 +1,7 @@
 import {expect} from "chai";
 import {
     scan, Word, DoubleQuotedStringLiteral, SingleQuotedStringLiteral,
-    Pipe, OutputRedirectionSymbol, AppendingOutputRedirectionSymbol, InputRedirectionSymbol, Invalid,
+    Pipe, OutputRedirectionSymbol, AppendingOutputRedirectionSymbol, InputRedirectionSymbol, Invalid, Semicolon,
 } from "../../src/shell/Scanner";
 
 describe("scan", () => {
@@ -80,6 +80,19 @@ describe("scan", () => {
         expect(tokens[4]).to.be.an.instanceof(Word);
 
         expect(tokens.map(token => token.value)).to.eql(["cat", "file", "|", "grep", "word"]);
+    });
+
+    it("recognizes a semicolon", () => {
+        const tokens = scan("cd directory; rm file");
+
+        expect(tokens.length).to.eq(5);
+        expect(tokens[0]).to.be.an.instanceof(Word);
+        expect(tokens[1]).to.be.an.instanceof(Word);
+        expect(tokens[2]).to.be.an.instanceof(Semicolon);
+        expect(tokens[3]).to.be.an.instanceof(Word);
+        expect(tokens[4]).to.be.an.instanceof(Word);
+
+        expect(tokens.map(token => token.value)).to.eql(["cd", "directory", ";", "rm", "file"]);
     });
 
     it("recognizes input redirection", () => {
