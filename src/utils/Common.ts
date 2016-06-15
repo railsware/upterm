@@ -241,126 +241,28 @@ export function groupWhen<T>(grouper: (a: T, b: T) => boolean, row: T[]): T[][] 
 
 
 /**
- * @link https://lists.w3.org/Archives/Public/www-dom/2010JulSep/att-0182/keyCode-spec.html
- * @link http://unixpapa.com/js/key.html
- * @link http://www.cambiaresearch.com/articles/15/javascript-key-codes
+ * @link https://www.w3.org/TR/uievents/#widl-KeyboardEvent-key
  */
-export function convertKeyCode(keyCode: number, shift: boolean): string {
-    switch (keyCode) {
-        case KeyCode.Backspace:
+export function normalizeKey(key: string): string {
+    switch (key) {
+        case "Backspace":
             return String.fromCharCode(127);
-        case KeyCode.Tab:
+        case "Tab":
             return String.fromCharCode(KeyCode.Tab);
-        case KeyCode.CarriageReturn:
+        case "Enter":
             return String.fromCharCode(KeyCode.CarriageReturn);
-        case KeyCode.Escape:
+        case "Escape":
             return String.fromCharCode(KeyCode.Escape);
-        case KeyCode.Space:
-            return " ";
-        case KeyCode.Left:
+        case "ArrowLeft":
             return "\x1b[D";
-        case KeyCode.Up:
+        case "ArrowUp":
             return "\x1b[A";
-        case KeyCode.Right:
+        case "ArrowRight":
             return "\x1b[C";
-        case KeyCode.Down:
+        case "ArrowDown":
             return "\x1b[B";
-        case 48:
-            return shift ? ")" : "0";
-        case 49:
-            return shift ? "!" : "1";
-        case 50:
-            return shift ? "@" : "2";
-        case 51:
-            return shift ? "#" : "3";
-        case 52:
-            return shift ? "$" : "4";
-        case 53:
-            return shift ? "%" : "5";
-        case 54:
-            return shift ? "^" : "6";
-        case 55:
-            return shift ? "&" : "7";
-        case 56:
-            return shift ? "*" : "8";
-        case 57:
-            return shift ? "(" : "9";
-        case 65:
-            return shift ? "A" : "a";
-        case 66:
-            return shift ? "B" : "b";
-        case 67:
-            return shift ? "C" : "c";
-        case 68:
-            return shift ? "D" : "d";
-        case 69:
-            return shift ? "E" : "e";
-        case 70:
-            return shift ? "F" : "f";
-        case 71:
-            return shift ? "G" : "g";
-        case 72:
-            return shift ? "H" : "h";
-        case 73:
-            return shift ? "I" : "i";
-        case 74:
-            return shift ? "J" : "j";
-        case 75:
-            return shift ? "K" : "k";
-        case 76:
-            return shift ? "L" : "l";
-        case 77:
-            return shift ? "M" : "m";
-        case 78:
-            return shift ? "N" : "n";
-        case 79:
-            return shift ? "O" : "o";
-        case 80:
-            return shift ? "P" : "p";
-        case 81:
-            return shift ? "Q" : "q";
-        case 82:
-            return shift ? "R" : "r";
-        case 83:
-            return shift ? "S" : "s";
-        case 84:
-            return shift ? "T" : "t";
-        case 85:
-            return shift ? "U" : "u";
-        case 86:
-            return shift ? "V" : "v";
-        case 87:
-            return shift ? "W" : "w";
-        case 88:
-            return shift ? "X" : "x";
-        case 89:
-            return shift ? "Y" : "y";
-        case 90:
-            return shift ? "Z" : "z";
-        case 186:
-            return shift ? ":" : ";";
-        case 187:
-            return shift ? "+" : "=";
-        case 188:
-            return shift ? "<" : ",";
-        case 189:
-            return shift ? "_" : "-";
-        case 190:
-            return shift ? ">" : ".";
-        case 191:
-            return shift ? "?" : "/";
-        case 192:
-            return shift ? "~" : "`";
-        case 219:
-            return shift ? "{" : "[";
-        case 220:
-            return shift ? "|" : "\\";
-        case 221:
-            return shift ? "}" : "]";
-        case 222:
-            return shift ? "\"" : "'";
         default:
-            throw `Unknown key code: ${keyCode}`;
+            return key;
     }
 }
 
@@ -388,5 +290,6 @@ export function mapObject<T, R>(object: Dictionary<T>, mapper: (key: string, val
 }
 
 const baseConfigDirectory = Path.join(homeDirectory, ".black-screen");
-export const stateFilePath = Path.join(baseConfigDirectory, "state");
+export const currentWorkingDirectoryFilePath = Path.join(baseConfigDirectory, "currentWorkingDirectory");
+export const historyFilePath = Path.join(baseConfigDirectory, "history");
 export const windowBoundsFilePath = Path.join(baseConfigDirectory, "windowBounds");

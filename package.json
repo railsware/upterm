@@ -2,7 +2,7 @@
   "name": "black-screen",
   "productName": "Black Screen",
   "description": "A terminal emulator for the 21st century.",
-  "version": "0.0.39",
+  "version": "0.0.41",
   "main": "compiled/src/main/Main.js",
   "author": "Volodymyr Shatskyi <shockone89@gmail.com>",
   "repository": {
@@ -32,21 +32,21 @@
     "pty.js": "shockone/pty.js",
     "react": "15.1.0",
     "react-dom": "15.1.0",
-    "rxjs": "5.0.0-beta.8",
+    "rxjs": "5.0.0-beta.9",
     "tinycolor2": "1.3.0"
   },
   "devDependencies": {
     "chai": "3.5.0",
     "devtron": "1.2.0",
-    "electron-builder": "5.0.2",
+    "electron-builder": "5.3.0",
     "electron-prebuilt": "1.2.2",
     "mocha": "2.5.3",
     "npm-check-updates": "2.6.7",
     "spectron": "3.2.3",
-    "ts-node": "0.8.0",
+    "ts-node": "0.9.1",
     "tslint": "3.11.0",
-    "typescript": "1.9.0-dev.20160601-1.0",
-    "typings": "1.0.4"
+    "typescript": "1.9.0-dev.20160614-1.0",
+    "typings": "1.1.0"
   },
   "scripts": {
     "preinstall": "npm prune",

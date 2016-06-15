@@ -5,6 +5,8 @@ import {darken, lighten, failurize} from "./functions";
 import {Attributes} from "../../Interfaces";
 import {suggestionsLimit} from "../../Autocompletion";
 
+export {toDOMString} from "./functions";
+
 export interface CSSObject {
     pointerEvents?: string;
     marginTop?: number;
@@ -57,7 +59,7 @@ export const outputPadding = 10;
 const promptVerticalPadding = 5;
 const promptHorizontalPadding = 10;
 const promptHeight = 12 + (2 * promptVerticalPadding);
-const promptWrapperHeight = promptHeight + promptVerticalPadding;
+export const promptWrapperHeight = promptHeight + promptVerticalPadding;
 const promptBackgroundColor = lighten(colors.black, 5);
 const suggestionSize = 2 * fontSize;
 const defaultShadow = "0 2px 8px 1px rgba(0, 0, 0, 0.3)";
@@ -85,6 +87,7 @@ const icon = {
 };
 
 const outputCutHeight = fontSize * 2.6;
+const outputCutZIndex = 0;
 
 const decorationWidth = 30;
 const arrowZIndex = 2;
@@ -382,6 +385,7 @@ export const outputCut = (status: Status, isHovered: boolean) => Object.assign(
         paddingTop: (outputCutHeight - fontSize) / 3,
         color: lighten(backgroundColor, isHovered ? 35 : 30),
         cursor: "pointer",
+        zIndex: outputCutZIndex,
     }
 );
 
@@ -494,7 +498,11 @@ export const promptInfo = (status: Status) => {
     return styles;
 };
 
-export const promptWrapper = (status: Status) => {
+export const promptPlaceholder = {
+    height: promptWrapperHeight,
+};
+
+export const promptWrapper = (status: Status, isSticky: boolean) => {
     const styles: CSSObject = {
         top: 0,
         paddingTop: promptVerticalPadding,
@@ -505,7 +513,15 @@ export const promptWrapper = (status: Status) => {
         gridTemplateColumns: `${decorationWidth}px 1fr 150px`,
         backgroundColor: promptBackgroundColor,
         minHeight: promptWrapperHeight,
+        zIndex: outputCutZIndex + 1,
     };
+
+    if (isSticky) {
+        styles.boxShadow = "0 5px 8px -3px rgba(0, 0, 0, 0.3)";
+        styles.width = "100%";
+        styles.position = "fixed";
+        styles.top = titleBarHeight;
+    }
 
     if ([Status.Failure, Status.Interrupted].includes(status)) {
         styles.backgroundColor = failurize(promptBackgroundColor);

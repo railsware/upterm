@@ -43,7 +43,10 @@ const executors: Dictionary<(i: Job, a: string[]) => void> = {
             job.screenBuffer.writeMany(job.environment.map((key, value) => `${key}=${value}`).join("\r\n"));
         } else {
             args.forEach(argument => {
-                const [key, value] = argument.split("=");
+                const firstEqualIndex = argument.indexOf("=");
+                const key = argument.slice(0, firstEqualIndex);
+                const value = argument.slice(firstEqualIndex + 1);
+
                 job.session.environment.set(key, value);
             });
         }

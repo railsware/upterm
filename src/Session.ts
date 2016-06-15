@@ -1,14 +1,15 @@
 import {readFileSync} from "fs";
-import * as _ from "lodash";
 import {Job} from "./Job";
 import {History} from "./History";
-import {Serializer} from "./Serializer";
 import {EmitterWithUniqueID} from "./EmitterWithUniqueID";
 import {PluginManager} from "./PluginManager";
 import {Status} from "./Enums";
 import {ApplicationComponent} from "./views/1_ApplicationComponent";
 import {Environment, processEnvironment} from "./Environment";
-import {homeDirectory, normalizeDirectory, writeFileCreatingParents, stateFilePath} from "./utils/Common";
+import {
+    homeDirectory, normalizeDirectory, writeFileCreatingParents,
+    currentWorkingDirectoryFilePath, historyFilePath,
+} from "./utils/Common";
 import {remote} from "electron";
 import {OrderedSet} from "./utils/OrderedSet";
 import {Aliases, aliasesFromConfig} from "./Aliases";
@@ -17,13 +18,8 @@ export class Session extends EmitterWithUniqueID {
     jobs: Array<Job> = [];
     readonly environment = new Environment(processEnvironment);
     readonly aliases = new Aliases(aliasesFromConfig);
-    history: typeof History;
+    history = History;
     historicalCurrentDirectoriesStack = new OrderedSet<string>();
-    // The value of the dictionary is the default value used if there is no serialized data.
-    private readonly serializableProperties: Dictionary<string> = {
-        directory: `String:${homeDirectory}`,
-        history: `History:[]`,
-    };
 
     constructor(private application: ApplicationComponent, private _dimensions: Dimensions) {
         super();
@@ -31,9 +27,8 @@ export class Session extends EmitterWithUniqueID {
         // TODO: We want to deserialize properties only for the first instance
         // TODO: of Session for the application.
         this.deserialize();
-        this.history = History;
 
-        this.on("job", this.serialize);
+        this.on("job", () => this.serialize());
 
         this.clearJobs();
     }
@@ -95,38 +90,28 @@ export class Session extends EmitterWithUniqueID {
         );
     }
 
-    private serialize = () => {
-        let values: Dictionary<string> = {};
-
-        _.each(this.serializableProperties, (value: string, key: string) =>
-            values[key] = Serializer.serialize((<any>this)[key])
+    private serialize() {
+        writeFileCreatingParents(currentWorkingDirectoryFilePath, this.directory).then(
+            () => void 0,
+            (error: any) => { if (error) throw error; }
         );
 
-        writeFileCreatingParents(stateFilePath, JSON.stringify(values)).then(
+        writeFileCreatingParents(historyFilePath, this.history.serialize()).then(
             () => void 0,
             (error: any) => { if (error) throw error; }
         );
     };
 
     private deserialize(): void {
-        _.each(this.readSerialized(), (value: string, key: string) => {
-            const setterName = `set${_.capitalize(key)}`;
-            const that = (<any>this);
-            const deserializedValue = Serializer.deserialize(value);
-
-            if (that[setterName]) {
-                that[setterName](deserializedValue);
-            } else {
-                that[key] = deserializedValue;
-            }
-        });
+        this.directory = this.readSerialized(currentWorkingDirectoryFilePath, homeDirectory);
+        History.deserialize(this.readSerialized(historyFilePath, []));
     }
 
-    private readSerialized(): Dictionary<any> {
+    private readSerialized<T>(file: string, defaultValue: T): T {
         try {
-            return JSON.parse(readFileSync(stateFilePath).toString());
+            return JSON.parse(readFileSync(file).toString());
         } catch (error) {
-            return this.serializableProperties;
+            return defaultValue;
         }
     };
 }

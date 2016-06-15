@@ -56,11 +56,11 @@ export class History {
     }
 
     static serialize(): string {
-        return `History:${JSON.stringify(History.storage)}`;
+        return JSON.stringify(History.storage);
     }
 
-    static deserialize(serialized: string): void {
-        this.storage = JSON.parse(serialized);
+    static deserialize(serialized: string[]): void {
+        this.storage = serialized;
     }
 
     private static remove(entry: string): void {

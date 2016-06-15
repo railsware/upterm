@@ -58,7 +58,7 @@ class RowComponent extends React.Component<RowProps, {}> {
                                 key={index}/>
         );
 
-        return <div style={this.props.style} ref={(div: HTMLElement | undefined) => div && div.scrollIntoView()}>{charGroups}</div>;
+        return <div style={this.props.style} ref={(div: HTMLElement | undefined) => div && div.scrollIntoViewIfNeeded()}>{charGroups}</div>;
     }
 }
 
