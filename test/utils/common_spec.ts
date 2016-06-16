@@ -1,3 +1,4 @@
+import "mocha";
 import {expect} from "chai";
 import {commonPrefix} from "../../src/utils/Common";
 

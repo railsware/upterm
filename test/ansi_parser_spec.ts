@@ -1,3 +1,4 @@
+import "mocha";
 import {expect} from "chai";
 import {ScreenBuffer} from "../src/ScreenBuffer";
 import {ANSIParser} from "../src/ANSIParser";

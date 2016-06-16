@@ -1,3 +1,4 @@
+import "mocha";
 import {InputMethod, Context, Result} from "../src/Parser";
 import * as _ from "lodash";
 import {Suggestion} from "../src/plugins/autocompletion_providers/Suggestions";

@@ -1,3 +1,4 @@
+import "mocha";
 import {expect} from "chai";
 import {makeGrammar} from "../src/Autocompletion";
 import {context, suggestionDisplayValues} from "./helpers";

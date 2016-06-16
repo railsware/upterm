@@ -1,5 +1,3 @@
-/// <reference path="../typings/index.d.ts" />
-
 /// <reference path="../typings/Overrides.d.ts" />
 /// <reference path="../typings/Interfaces.d.ts" />
 
