@@ -1,3 +1,4 @@
+import "mocha";
 import {expect} from "chai";
 import {OrderedSet} from "../../src/utils/OrderedSet";
 
