@@ -107,11 +107,7 @@ export class ApplicationComponent extends React.Component<{}, State> {
         }
 
         if (event.metaKey && event.keyCode >= KeyCode.One && event.keyCode <= KeyCode.Nine) {
-            let newTabIndex = parseInt(event.key, 10) - 1;
-
-            if (newTabIndex === 8) {
-                newTabIndex = this.tabs.length - 1;
-            }
+            const newTabIndex = (event.keyCode === KeyCode.Nine ? this.tabs.length : parseInt(event.key, 10)) - 1;
 
             if (this.tabs.length > newTabIndex) {
                 this.activeTabIndex = newTabIndex;
