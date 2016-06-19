@@ -481,6 +481,17 @@ export class ANSIParser {
                     }
                 }
                 break;
+            case "n":
+                if (param === 6) {
+                    url = "http://www.vt100.net/docs/vt510-rm/CPR";
+                    short = "Report Cursor Position (CPR) [row;column] as CSI r ; c R";
+                    const {row, column} = this.screenBuffer.cursorPosition;
+                    this.terminalDevice.write(`\x1b[${row + 1};${column + 1}R`);
+                } else {
+                    status = "unhandled";
+                }
+
+                break;
             case "r":
                 url = "http://www.vt100.net/docs/vt510-rm/DECSTBM";
                 short = "Set Scrolling Region [top;bottom] (default = full size of window) (DECSTBM).";

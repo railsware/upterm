@@ -11,7 +11,7 @@ class DummyTerminal implements TerminalLikeDevice {
     write = (input: string) => this.written += input;
 }
 
-type CSIFinalCharacter = "A" | "B" | "C" | "D" | "E" | "F" | "m";
+type CSIFinalCharacter = "A" | "B" | "C" | "D" | "E" | "F" | "R" | "m" | "n";
 
 const csi = (params: number[], final: CSIFinalCharacter) => {
     return `\x1b[${params.join(";")}${final}`;
@@ -24,7 +24,7 @@ const sgr = (params: number[]) => {
 const output = (string: string) => string.slice(1, -1);
 
 describe("ANSI parser", () => {
-    let terminal: TerminalLikeDevice;
+    let terminal: DummyTerminal;
     let parser: ANSIParser;
 
     beforeEach(() => {
@@ -56,6 +56,19 @@ first
             expect(terminal.screenBuffer.toString()).to.eql("A");
             const firstChar = terminal.screenBuffer.at({row: 0, column: 0});
             expect(firstChar.attributes.color).to.eql([255, 100, 0]);
+        });
+    });
+
+    describe("CSI", () => {
+        describe("Device Status Report (DSR)", () => {
+            describe("Report Cursor Position (CPR)", () => {
+                it("report cursor position", async() => {
+                    parser.parse(`some text${csi([6], "n")}`);
+
+                    expect(terminal.screenBuffer.toString()).to.eql("some text");
+                    expect(terminal.written).to.eql(`${csi([1, 10], "R")}`);
+                });
+            });
         });
     });
 });
