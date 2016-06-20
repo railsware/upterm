@@ -50,7 +50,7 @@
     "mocha": "2.5.3",
     "npm-check-updates": "2.6.7",
     "spectron": "3.2.3",
-    "ts-node": "0.9.1",
+    "ts-node": "0.9.2",
     "tslint": "3.11.0",
     "typescript": "1.9.0-dev.20160616-1.0"
   },
