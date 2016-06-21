@@ -101,6 +101,8 @@ class Argument extends LeafNode {
             return ["commit", "checkout"].map(word => new Suggestion().withValue(word));
         } else if (this.command.commandWord.value === "ls") {
             return ["-l", "-h"].map(word => new Suggestion().withValue(word));
+        } else {
+            return [];
         }
     }
 }
