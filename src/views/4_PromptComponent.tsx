@@ -17,6 +17,7 @@ import * as css from "./css/main";
 import {fontAwesome} from "./css/FontAwesome";
 import {Status} from "../Enums";
 import {scan} from "../shell/Scanner";
+import {leafNodeAt, serializeReplacing} from "../shell/Parser2";
 
 interface Props {
     job: Job;
@@ -332,11 +333,12 @@ export class PromptComponent extends React.Component<Props, State> implements Ke
     }
 
     private get valueWithCurrentSuggestion(): string {
-        let state = this.state;
+        const state = this.state;
+        const ast = this.props.job.prompt.ast;
         const suggestion = state.suggestions[state.highlightedSuggestionIndex];
-        const valueFromCaret = this.prompt.value.slice(getCaretPosition(this.commandNode));
+        const node = leafNodeAt(getCaretPosition(this.commandNode), ast);
 
-        return suggestion.prefix + suggestion.value + valueFromCaret;
+        return serializeReplacing(ast, node, suggestion.value);
     }
 
     private showAutocomplete(): boolean {

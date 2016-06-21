@@ -1,6 +1,7 @@
 import {Token, Empty} from "./Scanner";
 import * as _ from "lodash";
 import {Suggestion} from "../plugins/autocompletion_providers/Suggestions";
+import {memoizeAccessor} from "../Decorators";
 
 export abstract class ASTNode {
     abstract get fullStart(): number;
@@ -18,6 +19,14 @@ abstract class LeafNode extends ASTNode {
 
     get fullEnd(): number {
         return this.fullStart + this.token.raw.length;
+    }
+
+    get spaces(): string {
+        return this.token.raw.match(/^(\s*)/)[1];
+    }
+
+    get raw(): string {
+        return this.token.raw;
     }
 
     get value(): string {
@@ -44,6 +53,7 @@ abstract class BranchNode extends ASTNode {
 }
 
 export class CompleteCommand extends BranchNode {
+    @memoizeAccessor
     get children(): ASTNode[] {
         return this.commands;
     }
@@ -54,6 +64,7 @@ export class CompleteCommand extends BranchNode {
 }
 
 class Command extends BranchNode {
+    @memoizeAccessor
     get children(): ASTNode[] {
         const children: ASTNode[] = [this.commandWord];
         if (this.childTokens.length > 1) {
@@ -83,6 +94,7 @@ class ArgumentList extends BranchNode {
         super (childTokens);
     }
 
+    @memoizeAccessor
     get children(): ASTNode[] {
         return this.childTokens.map(token => new Argument(token, this.command));
     }
@@ -133,4 +145,28 @@ export function leafNodeAt(position: number, node: ASTNode): LeafNode {
     } else {
         throw "Should never happen";
     }
+}
+
+function traverse(node: ASTNode, callback: (node: ASTNode) => void) {
+    callback(node);
+
+    if (node instanceof BranchNode) {
+        node.children.forEach(child => traverse(child, callback));
+    }
+}
+
+export function serializeReplacing(tree: ASTNode, focused: LeafNode, replacement: string) {
+    let serialized = "";
+
+    traverse(tree, current => {
+        if (current instanceof LeafNode) {
+            if (current === focused) {
+                serialized += focused.spaces + replacement;
+            } else {
+                serialized += current.raw;
+            }
+        }
+    });
+
+    return serialized;
 }
