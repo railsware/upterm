@@ -359,7 +359,7 @@ export class PromptComponent extends React.Component<Props, State> implements Ke
     }
 
     private async getSuggestions() {
-        let suggestions = await getSuggestions(this.props.job);
+        let suggestions = await getSuggestions(this.props.job, getCaretPosition(this.commandNode));
 
         this.setState({highlightedSuggestionIndex: 0, suggestions: suggestions});
     }
