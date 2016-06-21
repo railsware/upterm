@@ -2,6 +2,7 @@ import * as events from "events";
 import {Job} from "./Job";
 import {scan, Token} from "./shell/Scanner";
 import {expandAliases} from "./shell/CommandExpander";
+import {ASTNode, parse} from "./shell/Parser2";
 
 export class Prompt extends events.EventEmitter {
     private _value = "";
@@ -19,11 +20,15 @@ export class Prompt extends events.EventEmitter {
     setValue(value: string): void {
         this._value = value;
         this._tokens = scan(this.value);
-        this._expanded = expandAliases(this._tokens, this.job.session.aliases);
+        this._expanded = []; // expandAliases(this._tokens, this.job.session.aliases);
     }
 
     get tokens(): Token[] {
         return this._tokens;
+    }
+
+    get ast(): ASTNode {
+        return parse(this.tokens);
     }
 
     get expanded(): Token[] {

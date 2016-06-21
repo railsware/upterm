@@ -78,8 +78,6 @@ export const {getSuggestions} = new class {
     // };
 
     getSuggestions = async (job: Job) => {
-        const leaf = leafNodeAt(job.prompt.value.length, parse(scan(job.prompt.value)));
-        debugger;
-        return leaf.suggestions;
+        return leafNodeAt(job.prompt.value.length, job.prompt.ast).suggestions;
     };
 };

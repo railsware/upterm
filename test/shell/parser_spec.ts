@@ -19,7 +19,7 @@ async function parse(parser: Parser, input: string) {
     ));
 }
 
-describe.only("parser", () => {
+describe("parser", () => {
     describe("sequence", () => {
         describe("git commit", () => {
             const git = string("git");

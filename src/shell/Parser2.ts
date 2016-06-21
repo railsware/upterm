@@ -1,8 +1,8 @@
-import {Token} from "./Scanner";
+import {Token, Empty} from "./Scanner";
 import * as _ from "lodash";
 import {Suggestion} from "../plugins/autocompletion_providers/Suggestions";
 
-abstract class ASTNode {
+export abstract class ASTNode {
     abstract get fullStart(): number;
     abstract get fullEnd(): number;
 }
@@ -17,7 +17,7 @@ abstract class LeafNode extends ASTNode {
     }
 
     get fullEnd(): number {
-        return this.fullStart + this.token.raw.length - 1;
+        return this.fullStart + this.token.raw.length;
     }
 
     get value(): string {
@@ -28,12 +28,10 @@ abstract class LeafNode extends ASTNode {
 }
 
 abstract class BranchNode extends ASTNode {
-    readonly children: ASTNode[];
+    abstract get children(): ASTNode[];
 
-    constructor(children: ASTNode[]) {
+    constructor(protected childTokens: Token[]) {
         super();
-
-        this.children = children;
     }
 
     get fullStart(): number {
@@ -46,21 +44,27 @@ abstract class BranchNode extends ASTNode {
 }
 
 class CompleteCommand extends BranchNode {
+    get children(): ASTNode[] {
+        return [new Command(this.childTokens)];
+    }
 }
 
 class Command extends BranchNode {
-    readonly commandWord: CommandWord;
-    readonly argumentList: ArgumentList;
+    get children(): ASTNode[] {
+        const children: ASTNode[] = [this.commandWord];
+        if (this.childTokens.length > 1) {
+            children.push(this.argumentList);
+        }
 
-    constructor(tokens: Token[]) {
-        const commandWord = new CommandWord(tokens[0]);
+        return children;
+    }
 
-        const argumentList = tokens.length === 1 ? new EmptyArgumentList(() => this) : new ArgumentList(tokens.slice(1).map(token => new Argument(token, this)));
+    get commandWord(): CommandWord {
+        return new CommandWord(this.childTokens[0]);
+    }
 
-        super([commandWord, argumentList]);
-
-        this.commandWord = commandWord;
-        this.argumentList = argumentList;
+    get argumentList(): ArgumentList | undefined {
+        return new ArgumentList(this.childTokens.slice(1), this);
     }
 }
 
@@ -71,6 +75,13 @@ class CommandWord extends LeafNode {
 }
 
 class ArgumentList extends BranchNode {
+    constructor(childTokens: Token[], private command: Command) {
+        super (childTokens);
+    }
+
+    get children(): ASTNode[] {
+        return this.childTokens.map(token => new Argument(token, this.command));
+    }
 }
 
 class Argument extends LeafNode {
@@ -90,10 +101,22 @@ class Argument extends LeafNode {
     }
 }
 
-export function parse(tokens: Token[]): CompleteCommand {
-    return new CompleteCommand([
-        new Command(tokens),
-    ]);
+class EmptyNode extends LeafNode {
+    constructor() {
+        super(new Empty());
+    }
+
+    get suggestions(): Suggestion[] {
+        return [];
+    }
+}
+
+export function parse(tokens: Token[]): ASTNode {
+    if (tokens.length === 0) {
+        return new EmptyNode();
+    }
+
+    return new CompleteCommand(tokens);
 }
 
 export function leafNodeAt(position: number, node: ASTNode): LeafNode {

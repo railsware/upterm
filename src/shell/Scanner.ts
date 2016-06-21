@@ -19,6 +19,20 @@ export abstract class Token {
     }
 }
 
+export class Empty extends Token {
+    constructor() {
+        super("", 0);
+    }
+
+    get value() {
+        return "";
+    }
+
+    get escapedValue() {
+        return <EscapedShellWord>this.raw.trim();
+    }
+}
+
 export class Word extends Token {
     get value() {
         return this.raw.trim().replace(/\\\s/, " ");
