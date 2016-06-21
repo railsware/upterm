@@ -43,8 +43,12 @@ abstract class BranchNode extends ASTNode {
     }
 }
 
-class CompleteCommand extends BranchNode {
+export class CompleteCommand extends BranchNode {
     get children(): ASTNode[] {
+        return this.commands;
+    }
+
+    get commands(): Command[] {
         return [new Command(this.childTokens)];
     }
 }
@@ -101,7 +105,7 @@ class Argument extends LeafNode {
     }
 }
 
-class EmptyNode extends LeafNode {
+export class EmptyNode extends LeafNode {
     constructor() {
         super(new Empty());
     }
@@ -111,7 +115,7 @@ class EmptyNode extends LeafNode {
     }
 }
 
-export function parse(tokens: Token[]): ASTNode {
+export function parse(tokens: Token[]): EmptyNode | CompleteCommand {
     if (tokens.length === 0) {
         return new EmptyNode();
     }
