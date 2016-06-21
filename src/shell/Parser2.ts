@@ -8,10 +8,6 @@ abstract class ASTNode {
 }
 
 abstract class LeafNode extends ASTNode {
-    abstract get suggestions(): Suggestion[];
-}
-
-abstract class LeafNodeWithToken extends LeafNode {
     constructor(private token: Token) {
         super();
     }
@@ -27,20 +23,8 @@ abstract class LeafNodeWithToken extends LeafNode {
     get value(): string {
         return this.token.value;
     }
-}
 
-abstract class LeafNodeWithoutToken extends LeafNode {
-    readonly fullStart: number;
-    readonly value = "";
-
-    constructor(fullStart: number) {
-        super();
-        this.fullStart = fullStart;
-    }
-
-    get fullEnd(): number {
-        return this.fullStart;
-    }
+    abstract get suggestions(): Suggestion[];
 }
 
 abstract class BranchNode extends ASTNode {
@@ -80,7 +64,7 @@ class Command extends BranchNode {
     }
 }
 
-class CommandWord extends LeafNodeWithToken {
+class CommandWord extends LeafNode {
     get suggestions(): Suggestion[] {
         return ["git", "ls"].map(word => new Suggestion().withValue(word));
     }
@@ -89,7 +73,7 @@ class CommandWord extends LeafNodeWithToken {
 class ArgumentList extends BranchNode {
 }
 
-class Argument extends LeafNodeWithToken {
+class Argument extends LeafNode {
     private readonly command: Command;
 
     constructor(token: Token, command: Command) {
