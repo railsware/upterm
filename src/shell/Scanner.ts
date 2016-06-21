@@ -1,8 +1,10 @@
 export abstract class Token {
     readonly raw: string;
+    readonly fullStart: number;
 
-    constructor(raw: string) {
+    constructor(raw: string, fullStart: number) {
         this.raw = raw;
+        this.fullStart = fullStart;
     }
 
     abstract get value(): string;
@@ -143,6 +145,8 @@ const patterns = [
 export function scan(input: string): Token[] {
     const tokens: Token[] = [];
 
+    let position = 0;
+
     while (true) {
         if (input.length === 0) {
             return tokens;
@@ -154,7 +158,8 @@ export function scan(input: string): Token[] {
 
             if (match) {
                 const token = match[1];
-                tokens.push(new pattern.tokenConstructor(token));
+                tokens.push(new pattern.tokenConstructor(token, position));
+                position += token.length;
                 input = input.slice(token.length);
                 foundMatch = true;
                 break;
@@ -162,7 +167,7 @@ export function scan(input: string): Token[] {
         }
 
         if (!foundMatch) {
-            tokens.push(new Invalid(input));
+            tokens.push(new Invalid(input, position));
             return tokens;
         }
     }
