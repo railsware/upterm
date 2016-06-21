@@ -1,18 +1,19 @@
 import {Session} from "../Session";
 import {PluginManager} from "../PluginManager";
 import * as Path from "path";
+import * as fs from "fs";
 import {homeDirectory, exists, readFile} from "../utils/Common";
 
 const rvmDirectory = Path.join(homeDirectory, ".rvm");
 const rubyVersionFileName = ".ruby-version";
 const gemSetNameFileName = ".ruby-gemset";
 
-async function isUnderRVM(directory: string): Promise<boolean> {
-    return await exists(Path.join(directory, rubyVersionFileName));
-}
-
 async function getRubyVersion(directory: string): Promise<string> {
-    return (await readFile(Path.join(directory, rubyVersionFileName))).trim();
+    if (await exists(Path.join(directory, rubyVersionFileName))) {
+        return (await readFile(Path.join(directory, rubyVersionFileName))).trim();
+    } else {
+        return fs.realpathSync(Path.join(rvmDirectory, "rubies", "default")).split("-")[1];
+    }
 }
 
 async function getGemSetName(directory: string): Promise<string> {
@@ -29,8 +30,8 @@ async function getGemSetName(directory: string): Promise<string> {
  * Contract: the non-global path should be first.
  */
 function getGemSetPaths(rubyVersion: string, gemSetName: string): string[] {
-    const names = gemSetName === "global" ? ["global"] : [gemSetName, "global"];
-    return names.map(name => Path.join(rvmDirectory, "gems", `ruby-${rubyVersion}@${name}`));
+    const suffixes = gemSetName === "global" ? ["", "@global"] : [`@${gemSetName}`, "@global"];
+    return suffixes.map(suffix => Path.join(rvmDirectory, "gems", `ruby-${rubyVersion}${suffix}`));
 }
 
 function binPaths(rubyVersion: string, gemSetName: string): string[] {
@@ -42,12 +43,11 @@ function binPaths(rubyVersion: string, gemSetName: string): string[] {
 }
 
 async function withRvmData(directory: string, callback: (binPaths: string[], gemPaths: string[]) => void) {
-    if (await isUnderRVM(directory)) {
-        const rubyVersion = await getRubyVersion(directory);
-        const gemSetName = await getGemSetName(directory);
-        const gemPaths = getGemSetPaths(rubyVersion, gemSetName);
-        callback(binPaths(rubyVersion, gemSetName), gemPaths);
-    }
+    const rubyVersion = await getRubyVersion(directory);
+    const gemSetName = await getGemSetName(directory);
+    const gemPaths = getGemSetPaths(rubyVersion, gemSetName);
+
+    callback(binPaths(rubyVersion, gemSetName), gemPaths);
 }
 
 PluginManager.registerEnvironmentObserver({
