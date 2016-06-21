@@ -24,7 +24,7 @@ abstract class LeafNode extends ASTNode {
         return this.token.value;
     }
 
-    abstract get suggestions(): Suggestion[];
+    abstract async suggestions(): Promise<Suggestion[]>;
 }
 
 abstract class BranchNode extends ASTNode {
@@ -69,7 +69,7 @@ class Command extends BranchNode {
 }
 
 class CommandWord extends LeafNode {
-    get suggestions(): Suggestion[] {
+    async suggestions(): Promise<Suggestion[]> {
         return ["git", "ls"].map(word => new Suggestion().withValue(word));
     }
 }
@@ -92,7 +92,7 @@ class Argument extends LeafNode {
         this.command = command;
     }
 
-    get suggestions(): Suggestion[] {
+    async suggestions(): Promise<Suggestion[]> {
         if (this.command.commandWord.value === "git") {
             return ["commit", "checkout"].map(word => new Suggestion().withValue(word));
         } else if (this.command.commandWord.value === "ls") {
@@ -106,7 +106,7 @@ class EmptyNode extends LeafNode {
         super(new Empty());
     }
 
-    get suggestions(): Suggestion[] {
+    async suggestions(): Promise<Suggestion[]> {
         return [];
     }
 }

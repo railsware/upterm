@@ -12,8 +12,7 @@ import {mapObject} from "./utils/Common";
 import {command} from "./plugins/autocompletion_providers/Command";
 import {redirect} from "./plugins/autocompletion_providers/Redirect";
 import {environmentVariable} from "./plugins/autocompletion_providers/EnvironmentVariable";
-import {scan} from "./shell/Scanner";
-import {parse, leafNodeAt} from "./shell/Parser2";
+import {leafNodeAt} from "./shell/Parser2";
 
 export const makeGrammar = (aliases: Dictionary<string>) => {
     const exec = sequence(
@@ -78,6 +77,9 @@ export const {getSuggestions} = new class {
     // };
 
     getSuggestions = async (job: Job) => {
-        return leafNodeAt(job.prompt.value.length, job.prompt.ast).suggestions;
+        const node = leafNodeAt(job.prompt.value.length, job.prompt.ast);
+        const suggestions = await node.suggestions();
+
+        return suggestions.filter(suggestion => suggestion.value.startsWith(node.value)).slice(0, suggestionsLimit);
     };
 };
