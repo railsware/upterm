@@ -2,6 +2,10 @@ import {Aliases} from "../Aliases";
 import {scan, Token, concatTokens} from "./Scanner";
 
 export function expandAliases(tokens: Token[], aliases: Aliases): Token[] {
+    if (tokens.length === 0) {
+        return [];
+    }
+
     const commandWordToken = tokens[0];
     const argumentTokens = tokens.slice(1);
     const alias: string = aliases.get(commandWordToken.value);
