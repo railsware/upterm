@@ -123,35 +123,35 @@ export class Invalid extends Token {
 
 const patterns = [
     {
-        regularExpression: /^(\s*\|\s*)/,
+        regularExpression: /^(\s*\|)/,
         tokenConstructor: Pipe,
     },
     {
-        regularExpression: /^(\s*;\s*)/,
+        regularExpression: /^(\s*;)/,
         tokenConstructor: Semicolon,
     },
     {
-        regularExpression: /^(\s*>>\s*)/,
+        regularExpression: /^(\s*>>)/,
         tokenConstructor: AppendingOutputRedirectionSymbol,
     },
     {
-        regularExpression: /^(\s*<\s*)/,
+        regularExpression: /^(\s*<)/,
         tokenConstructor: InputRedirectionSymbol,
     },
     {
-        regularExpression: /^(\s*>\s*)/,
+        regularExpression: /^(\s*>)/,
         tokenConstructor: OutputRedirectionSymbol,
     },
     {
-        regularExpression: /^(\s*"(?:\\"|[^"])*"\s*)/,
+        regularExpression: /^(\s*"(?:\\"|[^"])*")/,
         tokenConstructor: DoubleQuotedStringLiteral,
     },
     {
-        regularExpression: /^(\s*'(?:\\'|[^'])*'\s*)/,
+        regularExpression: /^(\s*'(?:\\'|[^'])*')/,
         tokenConstructor : SingleQuotedStringLiteral,
     },
     {
-        regularExpression: /^(\s*(?:\\\s|[a-zA-Z0-9-=_/~.])+\s*)/,
+        regularExpression: /^(\s*(?:\\\s|[a-zA-Z0-9-=_/~.])+)/,
         tokenConstructor : Word,
     },
 ];
