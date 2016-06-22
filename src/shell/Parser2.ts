@@ -112,16 +112,18 @@ class ArgumentList extends BranchNode {
 
     @memoizeAccessor
     get children(): ASTNode[] {
-        return this.childTokens.map(token => new Argument(token, this.command));
+        return this.childTokens.map((token, index) => new Argument(token, this.command, index + 1));
     }
 }
 
 export class Argument extends LeafNode {
+    readonly position: number;
     private readonly command: Command;
 
-    constructor(token: Token, command: Command) {
+    constructor(token: Token, command: Command, position: number) {
         super(token);
         this.command = command;
+        this.position = position;
     }
 
     suggestions(context: PreliminarySuggestionContext): Promise<Suggestion[]> {
