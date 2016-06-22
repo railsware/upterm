@@ -4,6 +4,13 @@ import {Suggestion, styles} from "../plugins/autocompletion_providers/Suggestion
 import {memoizeAccessor} from "../Decorators";
 import {commandDescriptions} from "../plugins/autocompletion_providers/Executable";
 import {mapObject} from "../utils/Common";
+import {OrderedSet} from "../utils/OrderedSet";
+import {Environment} from "../Environment";
+
+interface SuggestionsContext {
+    readonly environment: Environment;
+    readonly historicalCurrentDirectoriesStack: OrderedSet<string>;
+}
 
 export abstract class ASTNode {
     abstract get fullStart(): number;
@@ -35,7 +42,7 @@ abstract class LeafNode extends ASTNode {
         return this.token.value;
     }
 
-    abstract async suggestions(): Promise<Suggestion[]>;
+    abstract async suggestions(context: SuggestionsContext): Promise<Suggestion[]>;
 }
 
 abstract class BranchNode extends ASTNode {
@@ -86,7 +93,7 @@ class Command extends BranchNode {
 }
 
 class CommandWord extends LeafNode {
-    async suggestions(): Promise<Suggestion[]> {
+    async suggestions(context: SuggestionsContext): Promise<Suggestion[]> {
         return mapObject(commandDescriptions, (key, value) => new Suggestion().withValue(`${key} `).withDescription(value).withStyle(styles.executable));
     }
 }
@@ -110,7 +117,7 @@ class Argument extends LeafNode {
         this.command = command;
     }
 
-    async suggestions(): Promise<Suggestion[]> {
+    async suggestions(context: SuggestionsContext): Promise<Suggestion[]> {
         if (this.command.commandWord.value === "git") {
             return ["commit", "checkout"].map(word => new Suggestion().withValue(word));
         } else if (this.command.commandWord.value === "ls") {
@@ -126,7 +133,7 @@ export class EmptyNode extends LeafNode {
         super(new Empty());
     }
 
-    async suggestions(): Promise<Suggestion[]> {
+    async suggestions(context: SuggestionsContext): Promise<Suggestion[]> {
         return [];
     }
 }
