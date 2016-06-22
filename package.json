@@ -52,7 +52,7 @@
     "spectron": "3.2.3",
     "ts-node": "0.9.1",
     "tslint": "3.11.0",
-    "typescript": "1.9.0-dev.20160616-1.0"
+    "typescript": "1.9.0-dev.20160622-1.0"
   },
   "scripts": {
     "preinstall": "npm prune",

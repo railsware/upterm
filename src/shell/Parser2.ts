@@ -6,6 +6,7 @@ import {commandDescriptions} from "../plugins/autocompletion_providers/Executabl
 import {executablesInPaths} from "../utils/Common";
 import {OrderedSet} from "../utils/OrderedSet";
 import {Environment} from "../Environment";
+import {loginShell} from "../utils/Shell";
 
 interface SuggestionsContext {
     readonly environment: Environment;
@@ -94,8 +95,18 @@ class Command extends BranchNode {
 
 class CommandWord extends LeafNode {
     async suggestions(context: SuggestionsContext): Promise<Suggestion[]> {
-        const executables = await executablesInPaths(context.environment.path);
-        return executables.map(executable => new Suggestion().withValue(`${executable} `).withDescription(commandDescriptions[executable] || "").withStyle(styles.executable));
+        const candidates = [
+            ...loginShell.preCommandModifiers.map(modifier => ({
+                value: modifier,
+                style: styles.func,
+            })),
+            ...(await executablesInPaths(context.environment.path)).map(executable => ({
+                value: executable,
+                style: styles.executable,
+            })),
+        ];
+
+        return candidates.map(candidate => new Suggestion().withValue(`${candidate.value} `).withDescription(commandDescriptions[candidate.value] || "").withStyle(candidate.style));
     }
 }
 

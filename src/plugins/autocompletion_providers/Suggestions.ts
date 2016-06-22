@@ -60,6 +60,13 @@ export const styles = {
             color: colors.yellow,
         },
     },
+    func: {
+        value: "f",
+        css: {
+            color: colors.green,
+            fontStyle: "italic",
+        },
+    },
 };
 
 function extensionIcon(extension: string) {
