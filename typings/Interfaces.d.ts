@@ -51,3 +51,5 @@ interface ProcessEnvironment extends Dictionary<string> {
 }
 
 type EscapedShellWord = string & {__isEscapedShellToken: any};
+type FullPath = string & { __isFullPath: boolean };
+

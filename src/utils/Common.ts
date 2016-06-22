@@ -40,7 +40,7 @@ export function times(n: number, action: Function): void {
     }
 }
 
-async function filesIn(directoryPath: string): Promise<string[]> {
+async function filesIn(directoryPath: FullPath): Promise<string[]> {
     if (await exists(directoryPath) && await isDirectory(directoryPath)) {
         return await readDirectory(directoryPath);
     } else {
@@ -70,7 +70,7 @@ export function stat(filePath: string): Promise<fs.Stats> {
     });
 }
 
-export async function statsIn(directoryPath: string): Promise<i.FileInfo[]> {
+export async function statsIn(directoryPath: FullPath): Promise<i.FileInfo[]> {
     return Promise.all((await filesIn(directoryPath)).map(async (fileName) => {
         return {name: fileName, stat: await stat(Path.join(directoryPath, fileName))};
     }));
@@ -168,12 +168,12 @@ export const executablesInPaths = async (path: EnvironmentPath): Promise<string[
 export const isWindows = process.platform === "win32";
 export const homeDirectory = process.env[(isWindows) ? "USERPROFILE" : "HOME"];
 
-export function resolveDirectory(pwd: string, directory: string): string {
-    return normalizeDirectory(resolveFile(pwd, directory));
+export function resolveDirectory(pwd: string, directory: string): FullPath {
+    return <FullPath>normalizeDirectory(resolveFile(pwd, directory));
 }
 
-export function resolveFile(pwd: string, file: string): string {
-    return Path.resolve(pwd, file.replace(/^~/, homeDirectory));
+export function resolveFile(pwd: string, file: string): FullPath {
+    return <FullPath>Path.resolve(pwd, file.replace(/^~/, homeDirectory));
 }
 
 export function userFriendlyPath(path: string): string {
