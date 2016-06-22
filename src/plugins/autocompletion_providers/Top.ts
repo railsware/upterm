@@ -1,4 +1,3 @@
-import {Job} from "../../Job";
 import * as _ from "lodash";
 import {PluginManager} from "../../PluginManager";
 import {ShortOption} from "./Suggestions";
@@ -107,15 +106,4 @@ const options = _.map(
 );
 
 
-PluginManager.registerAutocompletionProvider({
-    forCommand: "top",
-    getSuggestions: async (job: Job) => {
-        const prompt = job.prompt;
-
-        if (prompt.arguments.length) {
-            return options;
-        }
-
-        return [];
-    },
-});
+PluginManager.registerAutocompletionProvider("top", async (context) => options);

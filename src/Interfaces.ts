@@ -5,6 +5,8 @@ import {Job} from "./Job";
 import {Session} from "./Session";
 import {Suggestion} from "./plugins/autocompletion_providers/Suggestions";
 import {ScreenBuffer} from "./ScreenBuffer";
+import {Environment} from "./Environment";
+import {OrderedSet} from "./utils/OrderedSet";
 
 export type ColorCode = number | number[];
 
@@ -20,11 +22,12 @@ export interface Attributes {
     cursor?: boolean;
 }
 
-// FIXME: rename to contributor.
-export interface AutocompletionProvider {
-    forCommand?: string;
-    getSuggestions(job: Job): Promise<Suggestion[]>;
+export interface SuggestionsContext {
+    readonly environment: Environment;
+    readonly historicalCurrentDirectoriesStack: OrderedSet<string>;
 }
+
+export type AutocompletionProvider = (context: SuggestionsContext) => Promise<Suggestion[]>;
 
 export interface FileInfo {
     name: string;
