@@ -158,19 +158,11 @@ export function baseName(path: string): string {
     }
 }
 
-export const {executablesInPaths} = new class {
-    private executables: Array<string> = [];
+export const executablesInPaths = async (path: EnvironmentPath): Promise<string[]> => {
+    const validPaths = await filterAsync(path.toArray(), isDirectory);
+    const allFiles: string[][] = await Promise.all(validPaths.map(filesIn));
 
-    executablesInPaths = async (path: EnvironmentPath): Promise<string[]> => {
-        if (this.executables.length) {
-            return this.executables;
-        }
-
-        const validPaths = await filterAsync(path.toArray(), isDirectory);
-        const allFiles: string[][] = await Promise.all(validPaths.map(filesIn));
-
-        return _.uniq(_.flatten(allFiles));
-    };
+    return _.uniq(_.flatten(allFiles));
 };
 
 export const isWindows = process.platform === "win32";

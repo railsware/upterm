@@ -3,7 +3,7 @@ import * as _ from "lodash";
 import {Suggestion, styles} from "../plugins/autocompletion_providers/Suggestions";
 import {memoizeAccessor} from "../Decorators";
 import {commandDescriptions} from "../plugins/autocompletion_providers/Executable";
-import {mapObject} from "../utils/Common";
+import {executablesInPaths} from "../utils/Common";
 import {OrderedSet} from "../utils/OrderedSet";
 import {Environment} from "../Environment";
 
@@ -94,7 +94,8 @@ class Command extends BranchNode {
 
 class CommandWord extends LeafNode {
     async suggestions(context: SuggestionsContext): Promise<Suggestion[]> {
-        return mapObject(commandDescriptions, (key, value) => new Suggestion().withValue(`${key} `).withDescription(value).withStyle(styles.executable));
+        const executables = await executablesInPaths(context.environment.path);
+        return executables.map(executable => new Suggestion().withValue(`${executable} `).withDescription(commandDescriptions[executable] || "").withStyle(styles.executable));
     }
 }
 
