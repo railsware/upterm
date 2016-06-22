@@ -7,10 +7,8 @@ import {
 import {commandDescriptions} from "./plugins/autocompletion_providers/Executable";
 import {description} from "./plugins/autocompletion_providers/Suggestions";
 import {makeAlias} from "./plugins/autocompletion_providers/Alias";
-import {relativeFilePath} from "./plugins/autocompletion_providers/File";
 import {mapObject} from "./utils/Common";
 import {redirect} from "./plugins/autocompletion_providers/Redirect";
-import {environmentVariable} from "./plugins/autocompletion_providers/EnvironmentVariable";
 import {leafNodeAt} from "./shell/Parser2";
 
 export const makeGrammar = (aliases: Dictionary<string>) => {
@@ -18,8 +16,6 @@ export const makeGrammar = (aliases: Dictionary<string>) => {
         choice(mapObject(commandDescriptions, (key, value) => decorate(executable(key), description(value)))),
         optional(many1(
             choice([
-                relativeFilePath,
-                environmentVariable,
             ])
         ))
     );

@@ -1,34 +1,7 @@
 import {statsIn, resolveDirectory, directoryName} from "../../utils/Common";
-import {
-    string,
-    choice,
-    decorate,
-    noisySuggestions,
-    Parser,
-    withoutSuggestions, runtime, sequence,
-} from "../../shell/Parser";
-import {styles, style, Suggestion} from "./Suggestions";
-import {FileInfo, SuggestionContext} from "../../Interfaces";
+import {styles, Suggestion} from "./Suggestions";
+import {FileInfo, SuggestionContext, AutocompletionProvider} from "../../Interfaces";
 import * as Path from "path";
-
-type FileFilter = (info: FileInfo) => boolean;
-
-const pathParser = (name: string) => {
-    const parser = name.startsWith(".") ? noisySuggestions(string(name)) : string(name);
-    return decorate(parser, suggestion => suggestion.withDisplayValue(name).withValue(suggestion.value.replace(/\s/g, "\\ ")));
-};
-
-const directoryParser = (name: string) => decorate(pathParser(name), style(styles.directory));
-const directoryAlias = (workingDirectory: string, filter: FileFilter) => (name: string) => sequence(
-    withoutSuggestions(directoryParser(name)),
-    pathIn(resolveDirectory(workingDirectory, name), filter)
-);
-
-export function pathIn(directory: string, filter: (info: FileInfo) => boolean): Parser {
-    return runtime(async() => {
-        return choice([]);
-    });
-}
 
 function pathSuggestion(directory: string, path: string) {
     return new Suggestion().withValue(Path.join(directory, path).replace(/\s/g, "\\ ")).withDisplayValue(path);
@@ -51,7 +24,16 @@ export const filesSuggestions = (filter: (info: FileInfo) => boolean) => async (
 export const anyFilesSuggestions = filesSuggestions(() => true);
 export const directoriesSuggestions = filesSuggestions(info => info.stat.isDirectory());
 
-export const pathInCurrentDirectory = (filter: FileFilter) => runtime(async(context) => choice([
-    ...["/", "~/"].map(directoryAlias(context.directory, filter)),
-    pathIn(context.directory, filter),
-]));
+export const environmentVariableSuggestions = async (context: SuggestionContext): Promise<Suggestion[]> => {
+    if (context.argument.value.startsWith("$")) {
+        return context.environment.map((key, value) =>
+            new Suggestion().withValue("$" + key).withDescription(value).withStyle(styles.environmentVariable)
+        );
+    } else {
+        return [];
+    }
+};
+
+export const combineAutocompletionProviders = (providers: AutocompletionProvider[]): AutocompletionProvider => async (context: SuggestionContext): Promise<Suggestion[]> => {
+    return _.flatten(await Promise.all(providers.map(provider => provider(context))));
+};
