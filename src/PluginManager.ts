@@ -1,8 +1,9 @@
 import {OutputDecorator, EnvironmentObserverPlugin, AutocompletionProvider, PreexecPlugin} from "./Interfaces";
 import * as Path from "path";
 import {recursiveFilesIn} from "./utils/Common";
+import {anyFilesSuggestions} from "./plugins/autocompletion_providers/Common";
 
-const defaultAutocompletionProvider: AutocompletionProvider = async () => [];
+const defaultAutocompletionProvider: AutocompletionProvider = anyFilesSuggestions;
 
 // FIXME: Technical debt: register all the plugin types via single method.
 export class PluginManager {

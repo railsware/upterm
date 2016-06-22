@@ -48,6 +48,7 @@ export const filesSuggestions = (filter: (info: FileInfo) => boolean) => async (
     });
 };
 
+export const anyFilesSuggestions = filesSuggestions(() => true);
 export const directoriesSuggestions = filesSuggestions(info => info.stat.isDirectory());
 
 export const pathInCurrentDirectory = (filter: FileFilter) => runtime(async(context) => choice([
