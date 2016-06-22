@@ -7,6 +7,7 @@ import {Suggestion} from "./plugins/autocompletion_providers/Suggestions";
 import {ScreenBuffer} from "./ScreenBuffer";
 import {Environment} from "./Environment";
 import {OrderedSet} from "./utils/OrderedSet";
+import {Argument} from "./shell/Parser2";
 
 export type ColorCode = number | number[];
 
@@ -22,12 +23,16 @@ export interface Attributes {
     cursor?: boolean;
 }
 
-export interface SuggestionsContext {
+export interface PreliminarySuggestionContext {
     readonly environment: Environment;
     readonly historicalCurrentDirectoriesStack: OrderedSet<string>;
 }
 
-export type AutocompletionProvider = (context: SuggestionsContext) => Promise<Suggestion[]>;
+export interface SuggestionContext extends PreliminarySuggestionContext {
+    readonly argument: Argument;
+}
+
+export type AutocompletionProvider = (context: SuggestionContext) => Promise<Suggestion[]>;
 
 export interface FileInfo {
     name: string;
