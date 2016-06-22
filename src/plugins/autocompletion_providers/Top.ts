@@ -1,6 +1,6 @@
 import * as _ from "lodash";
 import {PluginManager} from "../../PluginManager";
-import {ShortOption} from "./Suggestions";
+import {shortOption} from "./Suggestions";
 
 const options = _.map(
     {
@@ -102,7 +102,7 @@ const options = _.map(
             long: "Show library version and the usage prompt, then quit.",
         },
     },
-    (descriptions, option) => new ShortOption(option).withSynopsis(descriptions.short).withDescription(descriptions.long)
+    (descriptions, option) => shortOption(option).withSynopsis(descriptions.short).withDescription(descriptions.long)
 );
 
 

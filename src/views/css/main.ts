@@ -73,7 +73,7 @@ const infoPanel = {
     paddingRight: 0,
     paddingBottom: 6,
     paddingLeft: 0.6 * fontSize,
-    height: infoPanelHeight,
+    minHeight: infoPanelHeight,
     lineHeight: 1.3,
     backgroundColor: panelColor,
 };
@@ -153,7 +153,7 @@ export const row = (jobStatus: Status, activeScreenBufferType: ScreenBufferType)
     return style;
 };
 
-export const description = Object.assign(
+export const autocompletionDescription = Object.assign(
     {
         display: "block",
         boxShadow: "0 4px 8px 1px rgba(0, 0, 0, 0.3)",
@@ -288,7 +288,7 @@ export const activeTabContent = {
     width: "100%",
     top: titleBarHeight,
     backgroundColor: backgroundColor,
-    bottom: statusLine.itself.height,
+    bottom: statusLine.itself.minHeight,
 };
 
 export const tabs = {

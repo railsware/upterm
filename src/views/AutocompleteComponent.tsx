@@ -44,7 +44,7 @@ export class AutocompleteComponent extends React.Component<AutocompleteProps, {}
         let descriptionElement: React.ReactElement<any>;
 
         if (suggestionDescription) {
-            descriptionElement = <div style={css.description}>{suggestionDescription}</div>;
+            descriptionElement = <div style={css.autocompletionDescription}>{suggestionDescription}</div>;
         }
 
         return (

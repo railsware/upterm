@@ -169,38 +169,8 @@ export const style = (value: Style) => <T extends Suggestion>(suggestion: T) => 
 export const command = style(styles.command);
 export const description = (value: string) => <T extends Suggestion>(suggestion: T) => suggestion.withDescription(value);
 
-abstract class BaseOption extends Suggestion {
-}
-
-export class Option extends BaseOption {
-    private _alias: string;
-
-    constructor(protected _name: string) {
-        super();
-    };
-
-    get value() {
-        return `--${this._name}`;
-    }
-
-    get displayValue() {
-        return `${this.alias} ${this.value}`;
-    }
-
-    private get alias(): string {
-        return `-${this._alias || this._name[0]}`;
-    }
-}
-
-export class ShortOption extends BaseOption {
-    constructor(protected _name: string) {
-        super();
-    };
-
-    get value() {
-        return `-${this._name}`;
-    }
-}
+export const shortAndLongOption = (name: string) => new Suggestion().withValue(`--${name}`).withDisplayValue(`-${name[0]} --${name}`).withStyle(styles.option);
+export const shortOption = (char: string) => new Suggestion().withValue(`-${char}`).withStyle(styles.option);
 
 export class Executable extends Suggestion {
     constructor(protected _name: string) {
