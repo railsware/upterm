@@ -1,8 +1,8 @@
-import * as _ from "lodash";
 import {PluginManager} from "../../PluginManager";
 import {shortOption} from "./Suggestions";
+import {mapObject} from "../../utils/Common";
 
-const options = _.map(
+const options = mapObject(
     {
         b: {
             short: "Batch mode operation",
@@ -102,8 +102,8 @@ const options = _.map(
             long: "Show library version and the usage prompt, then quit.",
         },
     },
-    (descriptions, option) => shortOption(option).withSynopsis(descriptions.short).withDescription(descriptions.long)
+    (option, descriptions) => shortOption(option).withSynopsis(descriptions.short).withDescription(descriptions.long)
 );
 
 
-PluginManager.registerAutocompletionProvider("top", async (context) => options);
+PluginManager.registerAutocompletionProvider("top", async(context) => options);
