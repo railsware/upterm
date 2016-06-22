@@ -34,9 +34,9 @@ function pathSuggestion(directory: string, path: string) {
     return new Suggestion().withValue(Path.join(directory, path).replace(/\s/g, "\\ ")).withDisplayValue(path);
 }
 
-export const filesSuggestions = (filter: (info: FileInfo) => boolean) => async (context: SuggestionContext): Promise<Suggestion[]> => {
+export const filesSuggestions = (filter: (info: FileInfo) => boolean) => async (context: SuggestionContext, directory = context.environment.pwd): Promise<Suggestion[]> => {
     const tokenDirectory = directoryName(context.argument.value);
-    const directoryPath = resolveDirectory(context.environment.pwd, tokenDirectory);
+    const directoryPath = resolveDirectory(directory, tokenDirectory);
     const stats = await statsIn(directoryPath);
 
     return stats.filter(filter).map(info => {
@@ -47,6 +47,8 @@ export const filesSuggestions = (filter: (info: FileInfo) => boolean) => async (
         }
     });
 };
+
+export const directoriesSuggestions = filesSuggestions(info => info.stat.isDirectory());
 
 export const pathInCurrentDirectory = (filter: FileFilter) => runtime(async(context) => choice([
     ...["/", "~/"].map(directoryAlias(context.directory, filter)),

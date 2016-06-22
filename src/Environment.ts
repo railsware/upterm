@@ -64,8 +64,8 @@ export class Environment {
         return new EnvironmentPath(this);
     }
 
-    cdpath(pwd: string): string[] {
-        return (this.get("CDPATH") || "").split(delimiter).map(path => path || pwd);
+    get cdpath(): string[] {
+        return (this.get("CDPATH") || "").split(delimiter).map(path => path || this.pwd);
     }
 
     get pwd(): string {
