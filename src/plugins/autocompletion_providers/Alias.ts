@@ -1,7 +1,6 @@
 import {description, styles, style} from "./Suggestions";
 import {choice, decorate, Context, string} from "../../shell/Parser";
 import {compose, mapObject} from "../../utils/Common";
-import {command} from "./Command";
 import {scan, concatTokens} from "../../shell/Scanner";
 
 export const makeAlias = (aliases: Dictionary<string>) => choice(mapObject(aliases, (key, expanded) => choice([

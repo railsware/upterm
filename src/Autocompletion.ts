@@ -9,7 +9,6 @@ import {description} from "./plugins/autocompletion_providers/Suggestions";
 import {makeAlias} from "./plugins/autocompletion_providers/Alias";
 import {relativeFilePath} from "./plugins/autocompletion_providers/File";
 import {mapObject} from "./utils/Common";
-import {command} from "./plugins/autocompletion_providers/Command";
 import {redirect} from "./plugins/autocompletion_providers/Redirect";
 import {environmentVariable} from "./plugins/autocompletion_providers/EnvironmentVariable";
 import {leafNodeAt} from "./shell/Parser2";
@@ -25,11 +24,8 @@ export const makeGrammar = (aliases: Dictionary<string>) => {
         ))
     );
 
-    const sudo = sequence(executable("sudo"), command);
     const anyCommand = sequence(
         choice([
-            sudo,
-            command,
             exec,
             makeAlias(aliases),
         ]),
