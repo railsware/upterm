@@ -37,3 +37,5 @@ export const environmentVariableSuggestions = async (context: SuggestionContext)
 export const combineAutocompletionProviders = (providers: AutocompletionProvider[]): AutocompletionProvider => async (context: SuggestionContext): Promise<Suggestion[]> => {
     return _.flatten(await Promise.all(providers.map(provider => provider(context))));
 };
+
+export const staticProvider = (suggestions: Suggestion[]): AutocompletionProvider => async (context: SuggestionContext): Promise<Suggestion[]> => suggestions;

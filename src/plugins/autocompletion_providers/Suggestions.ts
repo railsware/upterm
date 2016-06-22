@@ -4,8 +4,30 @@ import * as _ from "lodash";
 import {fontAwesome} from "../../views/css/FontAwesome";
 import {colors} from "../../views/css/colors";
 import {CSSObject} from "../../views/css/main";
+import {StatusCode} from "../../utils/Git";
 
 type Style = { value: string; css: CSSObject};
+
+function gitStatusCodeColor(statusCode: StatusCode) {
+    switch (statusCode) {
+        case StatusCode.Added:
+            return colors.green;
+        case StatusCode.Copied:
+            return colors.blue;
+        case StatusCode.Deleted:
+            return colors.red;
+        case StatusCode.Modified:
+            return colors.blue;
+        case StatusCode.Renamed:
+            return colors.blue;
+        case StatusCode.Unmodified:
+            return colors.white;
+        case StatusCode.UpdatedButUnmerged:
+            return colors.blue;
+        default:
+            throw "Should never happen.";
+    }
+}
 
 export const styles = {
     executable: {
@@ -52,6 +74,12 @@ export const styles = {
             css: {},
         };
     },
+    gitFileStatus: (statusCode: StatusCode) => ({
+        value: fontAwesome.file,
+        css: {
+            color: gitStatusCodeColor(statusCode),
+        },
+    }),
     alias: {
         value: fontAwesome.at,
         css: {
@@ -143,5 +171,6 @@ export const style = (value: Style) => <T extends Suggestion>(suggestion: T) => 
 export const command = style(styles.command);
 export const description = (value: string) => <T extends Suggestion>(suggestion: T) => suggestion.withDescription(value);
 
-export const shortAndLongOption = (name: string) => new Suggestion().withValue(`--${name}`).withDisplayValue(`-${name[0]} --${name}`).withStyle(styles.option);
+export const longAndShortOption = (name: string, shortName = name[0]) => new Suggestion().withValue(`--${name}`).withDisplayValue(`-${shortName} --${name}`).withStyle(styles.option);
 export const shortOption = (char: string) => new Suggestion().withValue(`-${char}`).withStyle(styles.option);
+export const longOption = (name: string) => new Suggestion().withValue(`--${name}`).withStyle(styles.option);

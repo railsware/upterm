@@ -79,12 +79,28 @@ class Command extends BranchNode {
         return children;
     }
 
+    @memoizeAccessor
     get commandWord(): CommandWord {
         return new CommandWord(this.childTokens[0]);
     }
 
+    @memoizeAccessor
     get argumentList(): ArgumentList | undefined {
         return new ArgumentList(this.childTokens.slice(1), this);
+    }
+
+    nthArgument(position: OneBasedIndex): Argument | undefined {
+        if (this.argumentList) {
+            return this.argumentList.arguments[position - 1];
+        }
+    }
+
+    hasArgument(value: string): boolean {
+        if (this.argumentList) {
+            return this.argumentList.arguments.map(argument => argument.value).includes(value);
+        } else {
+            return false;
+        }
     }
 }
 
@@ -112,13 +128,18 @@ class ArgumentList extends BranchNode {
 
     @memoizeAccessor
     get children(): ASTNode[] {
+        return this.arguments;
+    }
+
+    @memoizeAccessor
+    get arguments(): Argument[] {
         return this.childTokens.map((token, index) => new Argument(token, this.command, index + 1));
     }
 }
 
 export class Argument extends LeafNode {
     readonly position: number;
-    private readonly command: Command;
+    readonly command: Command;
 
     constructor(token: Token, command: Command, position: number) {
         super(token);
