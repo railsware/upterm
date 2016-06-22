@@ -1,8 +1,6 @@
 import {FileInfo} from "../../Interfaces";
 import * as Path from "path";
 import * as _ from "lodash";
-import {Color} from "../../Enums";
-import {normalizeDirectory} from "../../utils/Common";
 import {fontAwesome} from "../../views/css/FontAwesome";
 import {colors} from "../../views/css/colors";
 import {CSSObject} from "../../views/css/main";
@@ -90,8 +88,6 @@ export class Suggestion {
     private _synopsis = "";
     private _description = "";
     private _style = {value: "", css: {}};
-    private _prefix = "";
-    private _debugTag = "";
 
     get value(): string {
         return this._value;
@@ -109,20 +105,8 @@ export class Suggestion {
         return this._style;
     }
 
-    get prefix(): string {
-        return this._prefix;
-    }
-
-    get iconColor(): Color {
-        return Color.White;
-    }
-
     get displayValue(): string {
         return this._displayValue || this.value;
-    }
-
-    get debugTag(): string {
-        return this._debugTag;
     }
 
     withValue(value: string): this {
@@ -150,16 +134,6 @@ export class Suggestion {
         return this;
     }
 
-    withPrefix(prefix: string): this {
-        this._prefix = prefix;
-        return this;
-    }
-
-    withDebugTag(tag: string): this {
-        this._debugTag = tag;
-        return this;
-    }
-
     private get truncatedDescription(): string {
         return _.truncate(this.description, {length: 50, separator: " "});
     }
@@ -171,64 +145,3 @@ export const description = (value: string) => <T extends Suggestion>(suggestion:
 
 export const shortAndLongOption = (name: string) => new Suggestion().withValue(`--${name}`).withDisplayValue(`-${name[0]} --${name}`).withStyle(styles.option);
 export const shortOption = (char: string) => new Suggestion().withValue(`-${char}`).withStyle(styles.option);
-
-export class Executable extends Suggestion {
-    constructor(protected _name: string) {
-        super();
-    };
-
-    get value() {
-        return this._name;
-    }
-
-    get displayValue() {
-        return this._name;
-    }
-}
-
-export class File extends Suggestion {
-    constructor(protected _info: FileInfo, protected relativeSearchDirectory: string) {
-        super();
-    };
-
-    get value() {
-        return this.escape(Path.join(this.relativeSearchDirectory, this.unescapedFileName));
-    }
-
-    get displayValue() {
-        return this.unescapedFileName;
-    }
-
-    get partial() {
-        return this._info.stat.isDirectory();
-    }
-
-    get info(): FileInfo {
-        return this._info;
-    }
-
-    private escape(path: string): string {
-        return path.replace(/\s/g, "\\ ");
-    }
-
-    private get unescapedFileName(): string {
-        if (this._info.stat.isDirectory()) {
-            return normalizeDirectory(this._info.name);
-        } else {
-            return this._info.name;
-        }
-    }
-
-    private get extension(): string {
-        if (this._info.stat.isDirectory()) {
-            return "directory";
-        }
-
-        let extension = Path.extname(this.unescapedFileName);
-        if (extension) {
-            return extension.slice(1);
-        } else {
-            return "unknown";
-        }
-    }
-}

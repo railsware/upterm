@@ -264,16 +264,3 @@ export const token = (parser: Parser) => decorate(parser, suggestion => suggesti
 export const executable = (name: string) => decorate(token(string(name)), style(styles.executable));
 export const commandSwitch = (value: string) => decorate(string(`--${value}`), style(styles.option));
 export const option = (value: string) => decorate(string(`--${value}=`), style(styles.option));
-
-export const debug = (parser: Parser, tag = "debugged") => async (context: Context) => {
-    window.DEBUG = true;
-
-    const results = await decorate(parser, suggestion => suggestion.withDebugTag(tag))(context);
-
-    if (_.some(results, result => result.suggestions.length !== 0)) {
-        /* tslint:disable:no-debugger */
-        debugger;
-    }
-
-    return results;
-};

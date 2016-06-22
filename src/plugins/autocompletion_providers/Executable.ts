@@ -1,9 +1,3 @@
-import * as _ from "lodash";
-import {Job} from "../../Job";
-import {PluginManager} from "../../PluginManager";
-import {Executable} from "./Suggestions";
-import {executablesInPaths} from "../../utils/Common";
-
 export const commandDescriptions: Dictionary<string> = {
     admin: "Create and administer SCCS files",
     alias: "Define or display aliases",

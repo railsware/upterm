@@ -182,11 +182,6 @@ export const suggestionIcon = Object.assign(
     }
 );
 
-export const debugTag = {
-    color: "red",
-    float: "right",
-};
-
 export const autocomplete = {
     box: (offsetTop: number, caretPosition: number, hasDescription: boolean) => {
         const shouldDisplayAbove = offsetTop + (suggestionsLimit * suggestionSize) > window.innerHeight;
