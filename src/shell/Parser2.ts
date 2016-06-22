@@ -1,7 +1,9 @@
 import {Token, Empty} from "./Scanner";
 import * as _ from "lodash";
-import {Suggestion} from "../plugins/autocompletion_providers/Suggestions";
+import {Suggestion, styles} from "../plugins/autocompletion_providers/Suggestions";
 import {memoizeAccessor} from "../Decorators";
+import {commandDescriptions} from "../plugins/autocompletion_providers/Executable";
+import {mapObject} from "../utils/Common";
 
 export abstract class ASTNode {
     abstract get fullStart(): number;
@@ -85,7 +87,7 @@ class Command extends BranchNode {
 
 class CommandWord extends LeafNode {
     async suggestions(): Promise<Suggestion[]> {
-        return ["git", "ls"].map(word => new Suggestion().withValue(word));
+        return mapObject(commandDescriptions, (key, value) => new Suggestion().withValue(`${key} `).withDescription(value).withStyle(styles.executable));
     }
 }
 
