@@ -32,7 +32,9 @@ export interface SuggestionContext extends PreliminarySuggestionContext {
     readonly argument: Argument;
 }
 
-export type AutocompletionProvider = (context: SuggestionContext) => Promise<Suggestion[]>;
+export type DynamicAutocompletionProvider = (context: SuggestionContext) => Promise<Suggestion[]>;
+export type StaticAutocompletionProvider = Suggestion[];
+export type AutocompletionProvider = DynamicAutocompletionProvider | StaticAutocompletionProvider;
 
 export interface FileInfo {
     name: string;

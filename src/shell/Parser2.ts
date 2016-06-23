@@ -5,7 +5,7 @@ import {memoizeAccessor} from "../Decorators";
 import {commandDescriptions} from "../plugins/autocompletion_providers/Executable";
 import {executablesInPaths} from "../utils/Common";
 import {loginShell} from "../utils/Shell";
-import {PreliminarySuggestionContext} from "../Interfaces";
+import {PreliminarySuggestionContext, AutocompletionProvider} from "../Interfaces";
 import {PluginManager} from "../PluginManager";
 
 export abstract class ASTNode {
@@ -147,8 +147,14 @@ export class Argument extends LeafNode {
         this.position = position;
     }
 
-    suggestions(context: PreliminarySuggestionContext): Promise<Suggestion[]> {
-        return PluginManager.autocompletionProviderFor(this.command.commandWord.value)(Object.assign({argument: this}, context));
+    async suggestions(context: PreliminarySuggestionContext): Promise<Suggestion[]> {
+        const provider = PluginManager.autocompletionProviderFor(this.command.commandWord.value);
+
+        if (Array.isArray(provider)) {
+            return provider;
+        } else {
+            provider(Object.assign({argument: this}, context));
+        }
     }
 }
 

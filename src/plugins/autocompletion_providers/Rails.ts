@@ -1,6 +1,5 @@
 import {styles, Suggestion} from "./Suggestions";
 import {PluginManager} from "../../PluginManager";
-import {staticProvider} from "./Common";
 
 const railsCommandConfig = [
     {
@@ -39,4 +38,4 @@ const railsCommandConfig = [
 
 const railsCommand = railsCommandConfig.map(config => new Suggestion().withValue(config.name).withDescription(config.description).withStyle(styles.command));
 
-PluginManager.registerAutocompletionProvider("rails", staticProvider(railsCommand));
+PluginManager.registerAutocompletionProvider("rails", railsCommand);

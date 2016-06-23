@@ -1,6 +1,9 @@
 import {statsIn, resolveDirectory, directoryName} from "../../utils/Common";
 import {styles, Suggestion} from "./Suggestions";
-import {FileInfo, SuggestionContext, AutocompletionProvider} from "../../Interfaces";
+import {
+    FileInfo, SuggestionContext, AutocompletionProvider, StaticAutocompletionProvider,
+    DynamicAutocompletionProvider,
+} from "../../Interfaces";
 import * as Path from "path";
 
 function pathSuggestion(directory: string, path: string) {
@@ -35,7 +38,16 @@ export const environmentVariableSuggestions = async (context: SuggestionContext)
 };
 
 export const combineAutocompletionProviders = (providers: AutocompletionProvider[]): AutocompletionProvider => async (context: SuggestionContext): Promise<Suggestion[]> => {
-    return _.flatten(await Promise.all(providers.map(provider => provider(context))));
-};
+    const staticProviders: StaticAutocompletionProvider[] = [];
+    const dynamicProviders: DynamicAutocompletionProvider[] = [];
 
-export const staticProvider = (suggestions: Suggestion[]): AutocompletionProvider => async (context: SuggestionContext): Promise<Suggestion[]> => suggestions;
+    for (const provider of providers) {
+        if (Array.isArray(provider)) {
+            staticProviders.push(provider);
+        } else {
+            dynamicProviders.push(provider);
+        }
+    }
+
+    return _.flatten(staticProviders.concat(await Promise.all(dynamicProviders.map(provider => provider(context)))));
+};

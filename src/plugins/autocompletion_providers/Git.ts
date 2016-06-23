@@ -2,7 +2,7 @@ import * as Git from "../../utils/Git";
 import {styles, Suggestion, longAndShortOption, longOption} from "./Suggestions";
 import {PluginManager} from "../../PluginManager";
 import {AutocompletionProvider, SuggestionContext} from "../../Interfaces";
-import {staticProvider, combineAutocompletionProviders} from "./Common";
+import {combineAutocompletionProviders} from "./Common";
 import {linedOutputOf} from "../../PTY";
 
 const addOptions = [
@@ -102,12 +102,12 @@ const notStagedFiles = async(context: SuggestionContext): Promise<Suggestion[]> 
 };
 
 const subCommandProviders: Dictionary<AutocompletionProvider> = {
-    add: combineAutocompletionProviders([notStagedFiles, staticProvider(addOptions)]),
+    add: combineAutocompletionProviders([notStagedFiles, addOptions]),
     checkout: combineAutocompletionProviders([branchesExceptCurrent, branchAlias]),
-    commit: staticProvider(commitOptions),
-    status: staticProvider(statusOptions),
+    commit: commitOptions,
+    status: statusOptions,
     merge: combineAutocompletionProviders([branchesExceptCurrent, branchAlias]),
-    push: staticProvider(pushOptions),
+    push: pushOptions,
 };
 
 const subCommands = [
@@ -267,7 +267,11 @@ PluginManager.registerAutocompletionProvider("git", async(context) => {
     } else {
         const subCommandProvider = subCommandProviders[context.argument.command.nthArgument(1).value];
         if (subCommandProvider) {
-            return subCommandProvider(context);
+            if (Array.isArray(subCommandProvider)) {
+                return subCommandProvider;
+            } else {
+                subCommandProvider(Object.assign({argument: this}, context));
+            }
         } else {
             return [];
         }
