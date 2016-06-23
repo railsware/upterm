@@ -270,7 +270,7 @@ PluginManager.registerAutocompletionProvider("git", async(context) => {
             if (Array.isArray(subCommandProvider)) {
                 return subCommandProvider;
             } else {
-                subCommandProvider(Object.assign({argument: this}, context));
+                return subCommandProvider(Object.assign({argument: this}, context));
             }
         } else {
             return [];

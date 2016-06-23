@@ -153,7 +153,7 @@ export class Argument extends LeafNode {
         if (Array.isArray(provider)) {
             return provider;
         } else {
-            provider(Object.assign({argument: this}, context));
+            return provider(Object.assign({argument: this}, context));
         }
     }
 }
