@@ -5,7 +5,7 @@ import {memoizeAccessor} from "../Decorators";
 import {commandDescriptions} from "../plugins/autocompletion_providers/Executable";
 import {executablesInPaths} from "../utils/Common";
 import {loginShell} from "../utils/Shell";
-import {PreliminarySuggestionContext, AutocompletionProvider} from "../Interfaces";
+import {PreliminarySuggestionContext} from "../Interfaces";
 import {PluginManager} from "../PluginManager";
 
 export abstract class ASTNode {

@@ -17,7 +17,7 @@ import * as css from "./css/main";
 import {fontAwesome} from "./css/FontAwesome";
 import {Status} from "../Enums";
 import {scan} from "../shell/Scanner";
-import {leafNodeAt, serializeReplacing} from "../shell/Parser2";
+import {leafNodeAt, serializeReplacing} from "../shell/Parser";
 
 interface Props {
     job: Job;

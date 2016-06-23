@@ -2,7 +2,7 @@ import * as events from "events";
 import {Job} from "./Job";
 import {scan, Token} from "./shell/Scanner";
 import {expandAliases} from "./shell/CommandExpander";
-import {ASTNode, parse, CompleteCommand, EmptyNode} from "./shell/Parser2";
+import {ASTNode, parse, CompleteCommand, EmptyNode} from "./shell/Parser";
 
 export class Prompt extends events.EventEmitter {
     private _value = "";

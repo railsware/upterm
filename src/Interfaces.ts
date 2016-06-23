@@ -7,7 +7,7 @@ import {Suggestion} from "./plugins/autocompletion_providers/Suggestions";
 import {ScreenBuffer} from "./ScreenBuffer";
 import {Environment} from "./Environment";
 import {OrderedSet} from "./utils/OrderedSet";
-import {Argument} from "./shell/Parser2";
+import {Argument} from "./shell/Parser";
 
 export type ColorCode = number | number[];
 
