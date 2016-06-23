@@ -1,8 +1,9 @@
 import * as Path from "path";
 import * as _ from "lodash";
-import {description, command} from "./Suggestions";
+import {description, command, Suggestion, styles} from "./Suggestions";
 import {exists, readFile, compose} from "../../utils/Common";
 import {string, decorate, token, executable, sequence, choice, runtime} from "../../shell/Parser";
+import {PluginManager} from "../../PluginManager";
 
 const npmCommandConfig = [
     {
@@ -146,6 +147,10 @@ const npmCommandConfig = [
         description: "Display npm root",
     },
     {
+        name: "run",
+        description: "Run arbitrary package scripts",
+    },
+    {
         name: "search",
         description: "Search for packages",
     },
@@ -207,21 +212,21 @@ const npmCommandConfig = [
     },
 ];
 
-const runScript = runtime(async (context) => {
-    const packageFilePath = Path.join(context.directory, "package.json");
+const npmCommand = npmCommandConfig.map(config => new Suggestion().withValue(config.name).withDescription(config.description).withStyle(styles.command));
 
-    if (await exists(packageFilePath)) {
-        const parsed = JSON.parse(await readFile(packageFilePath)).scripts || {};
-        return choice(_.map(parsed, (value: string, key: string) => decorate(string(key), compose(command, description(value)))));
+PluginManager.registerAutocompletionProvider("npm", async (context) => {
+    if (context.argument.position === 1) {
+        return npmCommand;
+    } else if (context.argument.position === 2 && context.argument.command.nthArgument(1).value === "run") {
+        const packageFilePath = Path.join(context.environment.pwd, "package.json");
+
+        if (await exists(packageFilePath)) {
+            const parsed = JSON.parse(await readFile(packageFilePath)).scripts || {};
+            return _.map(parsed, (value: string, key: string) => new Suggestion().withValue(key).withDescription(value).withStyle(styles.command));
+        } else {
+            return [];
+        }
     } else {
-        return string("No package.json file found");
+        return [];
     }
 });
-
-const npmCommand = choice(_.map(npmCommandConfig, config => decorate(string(config.name), compose(command, description(config.description)))));
-const run = decorate(choice([token(string("run")), token(string("run-script"))]), compose(command, description("Run arbitrary package scripts")));
-
-export const npm = sequence(executable("npm"), choice([
-    npmCommand,
-    sequence(run, runScript),
-]));

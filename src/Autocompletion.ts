@@ -6,7 +6,6 @@ import {
 } from "./shell/Parser";
 import {commandDescriptions} from "./plugins/autocompletion_providers/Executable";
 import {description} from "./plugins/autocompletion_providers/Suggestions";
-import {makeAlias} from "./plugins/autocompletion_providers/Alias";
 import {mapObject} from "./utils/Common";
 import {redirect} from "./plugins/autocompletion_providers/Redirect";
 import {leafNodeAt} from "./shell/Parser2";
@@ -23,7 +22,6 @@ export const makeGrammar = (aliases: Dictionary<string>) => {
     const anyCommand = sequence(
         choice([
             exec,
-            makeAlias(aliases),
         ]),
         redirect
     );
