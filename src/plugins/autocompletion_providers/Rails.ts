@@ -1,7 +1,6 @@
-import {executable, sequence, string, decorate, choice} from "../../shell/Parser";
-import {description, command} from "./Suggestions";
-import {compose} from "../../utils/Common";
-import * as _ from "lodash";
+import {styles, Suggestion} from "./Suggestions";
+import {PluginManager} from "../../PluginManager";
+import {staticProvider} from "./Common";
 
 const railsCommandConfig = [
     {
@@ -38,5 +37,6 @@ const railsCommandConfig = [
     },
 ];
 
-const railsCommand = choice(_.map(railsCommandConfig, config => decorate(string(config.name), compose(command, description(config.description)))));
-export const rails = sequence(executable("rails"), railsCommand);
+const railsCommand = railsCommandConfig.map(config => new Suggestion().withValue(config.name).withDescription(config.description).withStyle(styles.command));
+
+PluginManager.registerAutocompletionProvider("rails", staticProvider(railsCommand));

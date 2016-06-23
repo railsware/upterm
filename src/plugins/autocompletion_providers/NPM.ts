@@ -1,8 +1,6 @@
 import * as Path from "path";
-import * as _ from "lodash";
-import {description, command, Suggestion, styles} from "./Suggestions";
-import {exists, readFile, compose} from "../../utils/Common";
-import {string, decorate, token, executable, sequence, choice, runtime} from "../../shell/Parser";
+import {Suggestion, styles} from "./Suggestions";
+import {exists, readFile, mapObject} from "../../utils/Common";
 import {PluginManager} from "../../PluginManager";
 
 const npmCommandConfig = [
@@ -222,7 +220,7 @@ PluginManager.registerAutocompletionProvider("npm", async (context) => {
 
         if (await exists(packageFilePath)) {
             const parsed = JSON.parse(await readFile(packageFilePath)).scripts || {};
-            return _.map(parsed, (value: string, key: string) => new Suggestion().withValue(key).withDescription(value).withStyle(styles.command));
+            return mapObject(parsed, (key: string, value: string) => new Suggestion().withValue(key).withDescription(value).withStyle(styles.command));
         } else {
             return [];
         }
