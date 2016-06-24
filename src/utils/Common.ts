@@ -282,6 +282,6 @@ export function mapObject<T, R>(object: Dictionary<T>, mapper: (key: string, val
 }
 
 const baseConfigDirectory = Path.join(homeDirectory, ".black-screen");
-export const currentWorkingDirectoryFilePath = Path.join(baseConfigDirectory, "currentWorkingDirectory");
+export const presentWorkingDirectoryFilePath = Path.join(baseConfigDirectory, "presentWorkingDirectory");
 export const historyFilePath = Path.join(baseConfigDirectory, "history");
 export const windowBoundsFilePath = Path.join(baseConfigDirectory, "windowBounds");

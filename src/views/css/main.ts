@@ -239,7 +239,7 @@ export const statusLine = {
             zIndex: 3,
         }
     ),
-    currentDirectory: {
+    presentDirectory: {
         display: "inline-block",
     },
     vcsData: {

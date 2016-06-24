@@ -3,10 +3,10 @@ import * as React from "react";
 import * as css from "./css/main";
 import {fontAwesome} from "./css/FontAwesome";
 
-const CurrentDirectory = ({currentWorkingDirectory}: { currentWorkingDirectory: string }) =>
-    <div style={css.statusLine.currentDirectory}>
+const PresentWorkingDirectory = ({presentWorkingDirectory}: { presentWorkingDirectory: string }) =>
+    <div style={css.statusLine.presentDirectory}>
         <span style={css.statusLine.icon} dangerouslySetInnerHTML={{__html: fontAwesome.folderOpen}}/>
-        {currentWorkingDirectory}
+        {presentWorkingDirectory}
     </div>;
 
 const VcsDataComponent = ({data}: { data: VcsData | undefined }) => {
@@ -24,8 +24,8 @@ const VcsDataComponent = ({data}: { data: VcsData | undefined }) => {
     }
 };
 
-export const StatusLineComponent = ({currentWorkingDirectory, vcsData}: { currentWorkingDirectory: string; vcsData: VcsData | undefined }) =>
+export const StatusLineComponent = ({presentWorkingDirectory, vcsData}: { presentWorkingDirectory: string; vcsData: VcsData | undefined }) =>
     <div style={css.statusLine.itself}>
-        <CurrentDirectory currentWorkingDirectory={currentWorkingDirectory}/>
+        <PresentWorkingDirectory presentWorkingDirectory={presentWorkingDirectory}/>
         <VcsDataComponent data={vcsData}/>
     </div>;

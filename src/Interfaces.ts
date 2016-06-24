@@ -26,7 +26,7 @@ export interface Attributes {
 
 export interface PreliminarySuggestionContext {
     readonly environment: Environment;
-    readonly historicalCurrentDirectoriesStack: OrderedSet<string>;
+    readonly historicalPresentDirectoriesStack: OrderedSet<string>;
     readonly aliases: Aliases;
 }
 
@@ -55,8 +55,8 @@ export interface OutputDecorator {
 }
 
 export interface EnvironmentObserverPlugin {
-    currentWorkingDirectoryWillChange: (session: Session, directory: string) => void;
-    currentWorkingDirectoryDidChange: (session: Session, directory: string) => void;
+    presentWorkingDirectoryWillChange: (session: Session, directory: string) => void;
+    presentWorkingDirectoryDidChange: (session: Session, directory: string) => void;
 }
 
 export interface PreexecPlugin {

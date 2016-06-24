@@ -51,7 +51,7 @@ async function withRvmData(directory: string, callback: (binPaths: string[], gem
 }
 
 PluginManager.registerEnvironmentObserver({
-    currentWorkingDirectoryWillChange: () => async(session: Session, directory: string) => {
+    presentWorkingDirectoryWillChange: () => async(session: Session, directory: string) => {
         withRvmData(directory, binPaths => {
             binPaths.forEach(path => session.environment.path.remove(path));
 
@@ -61,7 +61,7 @@ PluginManager.registerEnvironmentObserver({
             });
         });
     },
-    currentWorkingDirectoryDidChange: async(session: Session, directory: string) => {
+    presentWorkingDirectoryDidChange: async(session: Session, directory: string) => {
         withRvmData(directory, (binPaths, gemPaths) => {
             binPaths.forEach(path => session.environment.path.prepend(path));
 

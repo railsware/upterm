@@ -13,10 +13,10 @@ async function withNvmPath(directory: string, callback: (path: string) => void) 
 }
 
 PluginManager.registerEnvironmentObserver({
-    currentWorkingDirectoryWillChange: async(session: Session) => {
+    presentWorkingDirectoryWillChange: async(session: Session) => {
         withNvmPath(session.directory, path => session.environment.path.remove(path));
     },
-    currentWorkingDirectoryDidChange: async(session: Session, directory: string) => {
+    presentWorkingDirectoryDidChange: async(session: Session, directory: string) => {
         withNvmPath(directory, path => session.environment.path.prepend(path));
     },
 });

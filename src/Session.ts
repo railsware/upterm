@@ -8,7 +8,7 @@ import {ApplicationComponent} from "./views/1_ApplicationComponent";
 import {Environment, processEnvironment} from "./Environment";
 import {
     homeDirectory, normalizeDirectory, writeFileCreatingParents,
-    currentWorkingDirectoryFilePath, historyFilePath,
+    presentWorkingDirectoryFilePath, historyFilePath,
 } from "./utils/Common";
 import {remote} from "electron";
 import {OrderedSet} from "./utils/OrderedSet";
@@ -19,7 +19,7 @@ export class Session extends EmitterWithUniqueID {
     readonly environment = new Environment(processEnvironment);
     readonly aliases = new Aliases(aliasesFromConfig);
     history = History;
-    historicalCurrentDirectoriesStack = new OrderedSet<string>();
+    historicalPresentDirectoriesStack = new OrderedSet<string>();
 
     constructor(private application: ApplicationComponent, private _dimensions: Dimensions) {
         super();
@@ -79,19 +79,19 @@ export class Session extends EmitterWithUniqueID {
         }
 
         PluginManager.environmentObservers.forEach(observer =>
-            observer.currentWorkingDirectoryWillChange(this, normalizedDirectory)
+            observer.presentWorkingDirectoryWillChange(this, normalizedDirectory)
         );
 
         this.environment.pwd = normalizedDirectory;
-        this.historicalCurrentDirectoriesStack.prepend(normalizedDirectory);
+        this.historicalPresentDirectoriesStack.prepend(normalizedDirectory);
 
         PluginManager.environmentObservers.forEach(observer =>
-            observer.currentWorkingDirectoryDidChange(this, normalizedDirectory)
+            observer.presentWorkingDirectoryDidChange(this, normalizedDirectory)
         );
     }
 
     private serialize() {
-        writeFileCreatingParents(currentWorkingDirectoryFilePath, JSON.stringify(this.directory)).then(
+        writeFileCreatingParents(presentWorkingDirectoryFilePath, JSON.stringify(this.directory)).then(
             () => void 0,
             (error: any) => { if (error) throw error; }
         );
@@ -103,7 +103,7 @@ export class Session extends EmitterWithUniqueID {
     };
 
     private deserialize(): void {
-        this.directory = this.readSerialized(currentWorkingDirectoryFilePath, homeDirectory);
+        this.directory = this.readSerialized(presentWorkingDirectoryFilePath, homeDirectory);
         History.deserialize(this.readSerialized(historyFilePath, []));
     }
 

@@ -3,9 +3,9 @@ import {PluginManager} from "../PluginManager";
 import {remote} from "electron";
 
 PluginManager.registerEnvironmentObserver({
-    currentWorkingDirectoryWillChange: () => { /* do nothing */ },
+    presentWorkingDirectoryWillChange: () => { /* do nothing */ },
 
-    currentWorkingDirectoryDidChange: (session: Session, directory: string) => {
+    presentWorkingDirectoryDidChange: (session: Session, directory: string) => {
         remote.app.addRecentDocument(directory);
     },
 });

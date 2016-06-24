@@ -7,7 +7,7 @@ export const getSuggestions = async (job: Job, caretPosition: number) => {
     const node = leafNodeAt(caretPosition, job.prompt.ast);
     const suggestions = await node.suggestions({
         environment: job.environment,
-        historicalCurrentDirectoriesStack: job.session.historicalCurrentDirectoriesStack,
+        historicalPresentDirectoriesStack: job.session.historicalPresentDirectoriesStack,
         aliases: job.session.aliases,
     });
 

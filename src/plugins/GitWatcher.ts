@@ -77,7 +77,7 @@ interface WatchesValue {
 class WatchManager implements EnvironmentObserverPlugin {
     directoryToDetails: Map<string, WatchesValue> = new Map();
 
-    currentWorkingDirectoryWillChange(session: Session, newDirectory: string) {
+    presentWorkingDirectoryWillChange(session: Session, newDirectory: string) {
         const oldDirectory = session.directory;
 
         if (!this.directoryToDetails.has(oldDirectory)) {
@@ -93,7 +93,7 @@ class WatchManager implements EnvironmentObserverPlugin {
         }
     }
 
-    currentWorkingDirectoryDidChange(session: Session, directory: string) {
+    presentWorkingDirectoryDidChange(session: Session, directory: string) {
         if (this.directoryToDetails.has(directory)) {
             this.directoryToDetails.get(directory)!.sessions.add(session);
         } else {
