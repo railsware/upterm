@@ -8,9 +8,9 @@ export function expandAliases(tokens: Token[], aliases: Aliases): Token[] {
 
     const commandWordToken = tokens[0];
     const argumentTokens = tokens.slice(1);
-    const alias: string = aliases.get(commandWordToken.value);
 
-    if (alias) {
+    if (aliases.has(commandWordToken.value)) {
+        const alias = aliases.get(commandWordToken.value);
         const aliasTokens = scan(alias);
         const isRecursive = aliasTokens[0].value === commandWordToken.value;
 
