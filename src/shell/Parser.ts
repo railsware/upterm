@@ -66,10 +66,6 @@ abstract class BranchNode extends ASTNode {
 export class CompleteCommand extends BranchNode {
     @memoizeAccessor
     get children(): ASTNode[] {
-        return this.commands;
-    }
-
-    get commands(): Command[] {
         return [new Command(this.childTokens)];
     }
 }
