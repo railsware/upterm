@@ -8,6 +8,7 @@ import {ScreenBuffer} from "./ScreenBuffer";
 import {Environment} from "./Environment";
 import {OrderedSet} from "./utils/OrderedSet";
 import {Argument} from "./shell/Parser";
+import {Aliases} from "./Aliases";
 
 export type ColorCode = number | number[];
 
@@ -26,6 +27,7 @@ export interface Attributes {
 export interface PreliminarySuggestionContext {
     readonly environment: Environment;
     readonly historicalCurrentDirectoriesStack: OrderedSet<string>;
+    readonly aliases: Aliases;
 }
 
 export interface SuggestionContext extends PreliminarySuggestionContext {
