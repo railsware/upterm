@@ -1,4 +1,4 @@
-import {Token, Empty, scan} from "./Scanner";
+import * as Scanner from "./Scanner";
 import * as _ from "lodash";
 import {Suggestion, styles} from "../plugins/autocompletion_providers/Suggestions";
 import {memoizeAccessor} from "../Decorators";
@@ -15,7 +15,7 @@ export abstract class ASTNode {
 }
 
 abstract class LeafNode extends ASTNode {
-    constructor(private token: Token) {
+    constructor(private token: Scanner.Token) {
         super();
     }
 
@@ -45,7 +45,7 @@ abstract class LeafNode extends ASTNode {
 abstract class BranchNode extends ASTNode {
     abstract get children(): ASTNode[];
 
-    constructor(protected childTokens: Token[]) {
+    constructor(protected childTokens: Scanner.Token[]) {
         super();
     }
 
@@ -122,7 +122,7 @@ class CommandWord extends LeafNode {
 }
 
 class ArgumentList extends BranchNode {
-    constructor(childTokens: Token[], private command: Command) {
+    constructor(childTokens: Scanner.Token[], private command: Command) {
         super (childTokens);
     }
 
@@ -141,7 +141,7 @@ export class Argument extends LeafNode {
     readonly position: number;
     readonly command: Command;
 
-    constructor(token: Token, command: Command, position: number) {
+    constructor(token: Scanner.Token, command: Command, position: number) {
         super(token);
         this.command = command;
         this.position = position;
@@ -164,7 +164,7 @@ function argumentOfExpandedAST(argument: Argument, aliases: Aliases) {
     const commandWord = argument.command.commandWord;
 
     if (aliases.has(commandWord.value)) {
-        const tree = parse(scan(serializeReplacing(argument.command, commandWord, aliases.get(commandWord.value))));
+        const tree = parse(Scanner.scan(serializeReplacing(argument.command, commandWord, aliases.get(commandWord.value))));
         let argumentInNewTreeCorrespondingToTheOldOne: Argument;
 
         traverse(tree, current => {
@@ -183,7 +183,7 @@ function argumentOfExpandedAST(argument: Argument, aliases: Aliases) {
 
 export class EmptyNode extends LeafNode {
     constructor() {
-        super(new Empty());
+        super(new Scanner.Empty());
     }
 
     async suggestions(context: PreliminarySuggestionContext): Promise<Suggestion[]> {
@@ -191,7 +191,7 @@ export class EmptyNode extends LeafNode {
     }
 }
 
-export function parse(tokens: Token[]): EmptyNode | CompleteCommand {
+export function parse(tokens: Scanner.Token[]): EmptyNode | CompleteCommand {
     if (tokens.length === 0) {
         return new EmptyNode();
     }
