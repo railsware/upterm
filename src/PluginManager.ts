@@ -1,14 +1,18 @@
 import {OutputDecorator, EnvironmentObserverPlugin, AutocompletionProvider, PreexecPlugin} from "./Interfaces";
 import * as Path from "path";
-import * as _ from "lodash";
 import {recursiveFilesIn} from "./utils/Common";
+import {
+    anyFilesSuggestions, environmentVariableSuggestions,
+    combineAutocompletionProviders,
+} from "./plugins/autocompletion_providers/Common";
+
+const defaultAutocompletionProvider = combineAutocompletionProviders([environmentVariableSuggestions, anyFilesSuggestions]);
 
 // FIXME: Technical debt: register all the plugin types via single method.
 export class PluginManager {
     private static _outputDecorators: OutputDecorator[] = [];
     private static _environmentObservers: EnvironmentObserverPlugin[] = [];
-    private static _genericAutocompletionProviders: AutocompletionProvider[] = [];
-    private static _specializedAutocompletionProviders: Dictionary<AutocompletionProvider[]> = {};
+    private static _autocompletionProviders: Dictionary<AutocompletionProvider> = {};
     private static _preexecPlugins: PreexecPlugin[] = [];
 
     static registerOutputDecorator(decorator: OutputDecorator): void {
@@ -27,32 +31,12 @@ export class PluginManager {
         return this._environmentObservers;
     }
 
-    static registerAutocompletionProvider(plugin: AutocompletionProvider): void {
-        if (plugin.forCommand) {
-            if (!this._specializedAutocompletionProviders[plugin.forCommand]) {
-                this._specializedAutocompletionProviders[plugin.forCommand] = [];
-            }
-            this._specializedAutocompletionProviders[plugin.forCommand].push(plugin);
-        } else {
-            this._genericAutocompletionProviders.push(plugin);
-        }
+    static registerAutocompletionProvider(commandName: string, provider: AutocompletionProvider): void {
+        this._autocompletionProviders[commandName] = provider;
     }
 
-    static get genericAutocompletionProviders(): AutocompletionProvider[] {
-        return this._genericAutocompletionProviders;
-    }
-
-    static specializedAutocompletionProviders(words: string[]): AutocompletionProvider[] {
-        for (let length = words.length; length !== 0; --length) {
-            let subcommand = _.take(words, length).join(" ");
-            let providers = this._specializedAutocompletionProviders[subcommand];
-
-            if (providers) {
-                return providers;
-            }
-        }
-
-        return [];
+    static autocompletionProviderFor(commandName: string): AutocompletionProvider {
+        return this._autocompletionProviders[commandName] || defaultAutocompletionProvider;
     }
 
     static registerPreexecPlugin(plugin: PreexecPlugin): void {

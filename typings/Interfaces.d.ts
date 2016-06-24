@@ -49,3 +49,9 @@ interface Dictionary<T> {
 interface ProcessEnvironment extends Dictionary<string> {
     PWD: string;
 }
+
+type EscapedShellWord = string & {__isEscapedShellToken: any};
+type FullPath = string & { __isFullPath: boolean };
+type ExistingAlias = string & { __isExistingAlias: boolean };
+type OneBasedIndex = number;
+

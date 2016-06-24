@@ -91,7 +91,7 @@ export class Session extends EmitterWithUniqueID {
     }
 
     private serialize() {
-        writeFileCreatingParents(currentWorkingDirectoryFilePath, this.directory).then(
+        writeFileCreatingParents(currentWorkingDirectoryFilePath, JSON.stringify(this.directory)).then(
             () => void 0,
             (error: any) => { if (error) throw error; }
         );

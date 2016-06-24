@@ -1,50 +1,49 @@
-import {statsIn, resolveDirectory} from "../../utils/Common";
-import {
-    string,
-    choice,
-    decorate,
-    noisySuggestions,
-    Parser,
-    withoutSuggestions, runtime, sequence,
-} from "../../Parser";
-import {styles, style} from "./Suggestions";
-import {FileInfo} from "../../Interfaces";
+import {statsIn, resolveDirectory, directoryName} from "../../utils/Common";
+import {styles, Suggestion} from "./Suggestions";
+import {FileInfo, SuggestionContext, AutocompletionProvider} from "../../Interfaces";
+import * as Path from "path";
 
-type FileFilter = (info: FileInfo) => boolean;
-
-const pathParser = (name: string) => {
-    const parser = name.startsWith(".") ? noisySuggestions(string(name)) : string(name);
-    return decorate(parser, suggestion => suggestion.withDisplayValue(name).withValue(suggestion.value.replace(/\s/g, "\\ ")));
-};
-const fileParser = (info: FileInfo) => decorate(pathParser(info.name), style(styles.file(info)));
-
-const directoryParser = (name: string) => decorate(pathParser(name), style(styles.directory));
-const directoryAlias = (workingDirectory: string, filter: FileFilter) => (name: string) => sequence(
-    withoutSuggestions(directoryParser(name)),
-    pathIn(resolveDirectory(workingDirectory, name), filter)
-);
-
-export function pathIn(directory: string, filter: (info: FileInfo) => boolean): Parser {
-    return runtime(async() => {
-        const stats = await statsIn(directory);
-
-        return choice([
-            ...stats.filter(filter).map(info => {
-                if (info.stat.isDirectory()) {
-                    return sequence(
-                        directoryParser(`${info.name}/`),
-                        pathIn(resolveDirectory(directory, info.name), filter)
-                    );
-                } else {
-                    return fileParser(info);
-                }
-            }),
-            ...["./", "../"].map(directoryAlias(directory, filter)),
-        ]);
-    });
+function escapePath(path: string) {
+    return path.replace(/\s/g, "\\ ");
 }
 
-export const pathInCurrentDirectory = (filter: FileFilter) => runtime(async(context) => choice([
-    ...["/", "~/"].map(directoryAlias(context.directory, filter)),
-    pathIn(context.directory, filter),
-]));
+export const filesSuggestions = (filter: (info: FileInfo) => boolean) => async(context: SuggestionContext, directory = context.environment.pwd): Promise<Suggestion[]> => {
+    const tokenDirectory = directoryName(context.argument.value);
+    const directoryPath = resolveDirectory(directory, tokenDirectory);
+    const stats = await statsIn(directoryPath);
+
+    return stats.filter(filter).map(info => {
+        if (info.stat.isDirectory()) {
+            return new Suggestion().withValue(escapePath(Path.join(tokenDirectory, info.name + Path.sep))).withDisplayValue(info.name + Path.sep).withStyle(styles.directory);
+        } else {
+            return new Suggestion().withValue(escapePath(Path.join(tokenDirectory, info.name)) + " ").withDisplayValue(info.name).withStyle(styles.file(info));
+        }
+    });
+};
+
+export const anyFilesSuggestions = filesSuggestions(() => true);
+export const directoriesSuggestions = filesSuggestions(info => info.stat.isDirectory());
+
+export const environmentVariableSuggestions = async(context: SuggestionContext): Promise<Suggestion[]> => {
+    if (context.argument.value.startsWith("$")) {
+        return context.environment.map((key, value) =>
+            new Suggestion().withValue("$" + key).withDescription(value).withStyle(styles.environmentVariable)
+        );
+    } else {
+        return [];
+    }
+};
+
+export const combineAutocompletionProviders = (providers: AutocompletionProvider[]): AutocompletionProvider => async(context: SuggestionContext): Promise<Suggestion[]> => {
+    let suggestions: Suggestion[] = [];
+
+    for (const provider of providers) {
+        if (Array.isArray(provider)) {
+            suggestions = suggestions.concat(provider);
+        } else {
+            suggestions = suggestions.concat(await provider(context));
+        }
+    }
+
+    return suggestions;
+};

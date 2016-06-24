@@ -1,13 +1,33 @@
 import {FileInfo} from "../../Interfaces";
 import * as Path from "path";
 import * as _ from "lodash";
-import {Color} from "../../Enums";
-import {normalizeDirectory} from "../../utils/Common";
 import {fontAwesome} from "../../views/css/FontAwesome";
 import {colors} from "../../views/css/colors";
 import {CSSObject} from "../../views/css/main";
+import {StatusCode} from "../../utils/Git";
 
 type Style = { value: string; css: CSSObject};
+
+function gitStatusCodeColor(statusCode: StatusCode) {
+    switch (statusCode) {
+        case StatusCode.Added:
+            return colors.green;
+        case StatusCode.Copied:
+            return colors.blue;
+        case StatusCode.Deleted:
+            return colors.red;
+        case StatusCode.Modified:
+            return colors.blue;
+        case StatusCode.Renamed:
+            return colors.blue;
+        case StatusCode.Unmodified:
+            return colors.white;
+        case StatusCode.UpdatedButUnmerged:
+            return colors.blue;
+        default:
+            throw "Should never happen.";
+    }
+}
 
 export const styles = {
     executable: {
@@ -54,10 +74,23 @@ export const styles = {
             css: {},
         };
     },
+    gitFileStatus: (statusCode: StatusCode) => ({
+        value: fontAwesome.file,
+        css: {
+            color: gitStatusCodeColor(statusCode),
+        },
+    }),
     alias: {
         value: fontAwesome.at,
         css: {
             color: colors.yellow,
+        },
+    },
+    func: {
+        value: "f",
+        css: {
+            color: colors.green,
+            fontStyle: "italic",
         },
     },
 };
@@ -83,8 +116,6 @@ export class Suggestion {
     private _synopsis = "";
     private _description = "";
     private _style = {value: "", css: {}};
-    private _prefix = "";
-    private _debugTag = "";
 
     get value(): string {
         return this._value;
@@ -102,20 +133,8 @@ export class Suggestion {
         return this._style;
     }
 
-    get prefix(): string {
-        return this._prefix;
-    }
-
-    get iconColor(): Color {
-        return Color.White;
-    }
-
     get displayValue(): string {
         return this._displayValue || this.value;
-    }
-
-    get debugTag(): string {
-        return this._debugTag;
     }
 
     withValue(value: string): this {
@@ -143,16 +162,6 @@ export class Suggestion {
         return this;
     }
 
-    withPrefix(prefix: string): this {
-        this._prefix = prefix;
-        return this;
-    }
-
-    withDebugTag(tag: string): this {
-        this._debugTag = tag;
-        return this;
-    }
-
     private get truncatedDescription(): string {
         return _.truncate(this.description, {length: 50, separator: " "});
     }
@@ -162,96 +171,6 @@ export const style = (value: Style) => <T extends Suggestion>(suggestion: T) => 
 export const command = style(styles.command);
 export const description = (value: string) => <T extends Suggestion>(suggestion: T) => suggestion.withDescription(value);
 
-abstract class BaseOption extends Suggestion {
-}
-
-export class Option extends BaseOption {
-    private _alias: string;
-
-    constructor(protected _name: string) {
-        super();
-    };
-
-    get value() {
-        return `--${this._name}`;
-    }
-
-    get displayValue() {
-        return `${this.alias} ${this.value}`;
-    }
-
-    private get alias(): string {
-        return `-${this._alias || this._name[0]}`;
-    }
-}
-
-export class ShortOption extends BaseOption {
-    constructor(protected _name: string) {
-        super();
-    };
-
-    get value() {
-        return `-${this._name}`;
-    }
-}
-
-export class Executable extends Suggestion {
-    constructor(protected _name: string) {
-        super();
-    };
-
-    get value() {
-        return this._name;
-    }
-
-    get displayValue() {
-        return this._name;
-    }
-}
-
-export class File extends Suggestion {
-    constructor(protected _info: FileInfo, protected relativeSearchDirectory: string) {
-        super();
-    };
-
-    get value() {
-        return this.escape(Path.join(this.relativeSearchDirectory, this.unescapedFileName));
-    }
-
-    get displayValue() {
-        return this.unescapedFileName;
-    }
-
-    get partial() {
-        return this._info.stat.isDirectory();
-    }
-
-    get info(): FileInfo {
-        return this._info;
-    }
-
-    private escape(path: string): string {
-        return path.replace(/\s/g, "\\ ");
-    }
-
-    private get unescapedFileName(): string {
-        if (this._info.stat.isDirectory()) {
-            return normalizeDirectory(this._info.name);
-        } else {
-            return this._info.name;
-        }
-    }
-
-    private get extension(): string {
-        if (this._info.stat.isDirectory()) {
-            return "directory";
-        }
-
-        let extension = Path.extname(this.unescapedFileName);
-        if (extension) {
-            return extension.slice(1);
-        } else {
-            return "unknown";
-        }
-    }
-}
+export const longAndShortOption = (name: string, shortName = name[0]) => new Suggestion().withValue(`--${name}`).withDisplayValue(`-${shortName} --${name}`).withStyle(styles.option);
+export const shortOption = (char: string) => new Suggestion().withValue(`-${char}`).withStyle(styles.option);
+export const longOption = (name: string) => new Suggestion().withValue(`--${name}`).withStyle(styles.option);

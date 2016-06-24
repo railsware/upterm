@@ -19,7 +19,7 @@ const executors: Dictionary<(i: Job, a: string[]) => void> = {
             if (isHistoricalDirectory(enteredPath)) {
                 fullPath = expandHistoricalDirectory(enteredPath, job.session.historicalCurrentDirectoriesStack);
             } else {
-                fullPath = job.environment.cdpath(job.session.directory)
+                fullPath = job.environment.cdpath
                     .map(path => resolveDirectory(path, enteredPath))
                     .filter(resolved => existsSync(resolved))
                     .filter(resolved => statSync(resolved).isDirectory())[0];

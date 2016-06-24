@@ -41,11 +41,11 @@ export class Aliases {
         this.storage[name] = value;
     }
 
-    has(name: string): boolean {
+    has(name: string): name is ExistingAlias {
         return name in this.storage;
     }
 
-    get(name: string): string | undefined {
+    get(name: ExistingAlias): string {
         return this.storage[name];
     }
 

@@ -6,14 +6,11 @@ import {executablesInPaths, resolveFile, isWindows, filterAsync, exists} from ".
 import {loginShell} from "./utils/Shell";
 
 abstract class CommandExecutionStrategy {
-    protected args: string[];
-
     static async canExecute(job: Job): Promise<boolean> {
         return false;
     }
 
     constructor(protected job: Job) {
-        this.args = job.prompt.arguments.filter(argument => argument.length > 0);
     }
 
     abstract startExecution(): Promise<{}>;
@@ -21,13 +18,13 @@ abstract class CommandExecutionStrategy {
 
 class BuiltInCommandExecutionStrategy extends CommandExecutionStrategy {
     static async canExecute(job: Job) {
-        return Command.isBuiltIn(job.prompt.commandName);
+        return Command.isBuiltIn(job.prompt.commandName.value);
     }
 
     startExecution() {
         return new Promise((resolve, reject) => {
             try {
-                Command.executor(this.job.prompt.commandName)(this.job, this.args);
+                Command.executor(this.job.prompt.commandName.value)(this.job, this.job.prompt.arguments.map(token => token.value));
                 resolve();
             } catch (error) {
                 reject(error.message);
@@ -38,23 +35,23 @@ class BuiltInCommandExecutionStrategy extends CommandExecutionStrategy {
 
 class ShellExecutionStrategy extends CommandExecutionStrategy {
     static async canExecute(job: Job) {
-        return loginShell.preCommandModifiers.includes(job.prompt.commandName) ||
+        return loginShell.preCommandModifiers.includes(job.prompt.commandName.value) ||
             await this.isExecutableFromPath(job) ||
             await this.isPathOfExecutable(job);
     }
 
     private static async isExecutableFromPath(job: Job): Promise<boolean> {
-        return (await executablesInPaths(job.environment.path)).includes(job.prompt.commandName);
+        return (await executablesInPaths(job.environment.path)).includes(job.prompt.commandName.value);
     }
 
     private static async isPathOfExecutable(job: Job): Promise<boolean> {
-        return await exists(resolveFile(job.session.directory, job.prompt.commandName));
+        return await exists(resolveFile(job.session.directory, job.prompt.commandName.value));
     }
 
     startExecution() {
         return new Promise((resolve, reject) => {
             this.job.command = new PTY(
-                this.job.prompt.commandName, this.args, this.job.environment.toObject(), this.job.dimensions,
+                this.job.prompt.commandName.escapedValue, this.job.prompt.arguments.map(token => token.escapedValue), this.job.environment.toObject(), this.job.dimensions,
                 (data: string) => this.job.parser.parse(data),
                 (exitCode: number) => exitCode === 0 ? resolve() : reject()
             );
@@ -70,7 +67,13 @@ class WindowsShellExecutionStrategy extends CommandExecutionStrategy {
     startExecution() {
         return new Promise((resolve) => {
             this.job.command = new PTY(
-                this.cmdPath, ["/s", "/c", this.job.prompt.expanded.join(" ")], this.job.environment.toObject(), this.job.dimensions,
+                this.cmdPath,
+                [
+                    <EscapedShellWord>"/s",
+                    <EscapedShellWord>"/c",
+                    ...this.job.prompt.expanded.map(token => token.escapedValue),
+                ],
+                this.job.environment.toObject(), this.job.dimensions,
                 (data: string) => this.job.parser.parse(data),
                 (exitCode: number) => resolve()
             );
@@ -101,7 +104,7 @@ export class CommandExecutor {
         if (applicableExecutors.length) {
             return new applicableExecutors[0](job).startExecution();
         } else {
-            throw `Black Screen: command "${job.prompt.commandName}" not found.\n`;
+            throw `Black Screen: command "${job.prompt.commandName.value}" not found.\n`;
         }
     }
 }

@@ -13,10 +13,11 @@ import {getSuggestions} from "../Autocompletion";
 import {Subject} from "rxjs/Subject";
 import "rxjs/add/operator/filter";
 import "rxjs/add/operator/map";
-import {InputMethod} from "../Parser";
 import * as css from "./css/main";
 import {fontAwesome} from "./css/FontAwesome";
 import {Status} from "../Enums";
+import {scan} from "../shell/Scanner";
+import {leafNodeAt, serializeReplacing} from "../shell/Parser";
 
 interface Props {
     job: Job;
@@ -250,7 +251,7 @@ export class PromptComponent extends React.Component<Props, State> implements Ke
         this.prompt.setValue((event.target as HTMLElement).innerText);
 
         if (!this.isEmpty()) {
-            this.prompt.execute();
+            this.props.job.execute();
         }
     }
 
@@ -308,7 +309,7 @@ export class PromptComponent extends React.Component<Props, State> implements Ke
         event.stopPropagation();
         event.preventDefault();
 
-        const value = this.prompt.value + History.lastEntry.lastLexeme;
+        const value = this.prompt.value + _.last(scan(History.latest)).value;
         this.prompt.setValue(value);
         this.setDOMValueProgrammatically(value);
     }
@@ -328,15 +329,16 @@ export class PromptComponent extends React.Component<Props, State> implements Ke
         this.prompt.setValue(this.valueWithCurrentSuggestion);
         this.setDOMValueProgrammatically(this.prompt.value);
 
-        await this.getSuggestions(InputMethod.Autocompleted);
+        await this.getSuggestions();
     }
 
     private get valueWithCurrentSuggestion(): string {
-        let state = this.state;
+        const state = this.state;
+        const ast = this.props.job.prompt.ast;
         const suggestion = state.suggestions[state.highlightedSuggestionIndex];
-        const valueFromCaret = this.prompt.value.slice(getCaretPosition(this.commandNode));
+        const node = leafNodeAt(getCaretPosition(this.commandNode), ast);
 
-        return suggestion.prefix + suggestion.value + valueFromCaret;
+        return serializeReplacing(ast, node, suggestion.value);
     }
 
     private showAutocomplete(): boolean {
@@ -355,11 +357,11 @@ export class PromptComponent extends React.Component<Props, State> implements Ke
     private async handleInput(event: React.SyntheticEvent): Promise<void> {
         this.prompt.setValue((event.target as HTMLElement).innerText);
 
-        await this.getSuggestions(InputMethod.Typed);
+        await this.getSuggestions();
     }
 
-    private async getSuggestions(inputMethod: InputMethod) {
-        let suggestions = await getSuggestions(this.props.job, inputMethod);
+    private async getSuggestions() {
+        let suggestions = await getSuggestions(this.props.job, getCaretPosition(this.commandNode));
 
         this.setState({highlightedSuggestionIndex: 0, suggestions: suggestions});
     }

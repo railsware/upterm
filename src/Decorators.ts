@@ -12,6 +12,21 @@ export function memoize(resolver: Function | undefined = undefined) {
     };
 }
 
+export const memoizeAccessor = <T>(target: Object, name: string | symbol, descriptor: TypedPropertyDescriptor<T>) => {
+    const memoizedPropertyName = `__memoized_${name}`;
+    const originalGetter = descriptor.get;
+
+    descriptor.get = function () {
+        if (!this[memoizedPropertyName]) {
+            this[memoizedPropertyName] = originalGetter.call(this);
+        }
+
+        return this[memoizedPropertyName];
+    };
+
+    return descriptor;
+};
+
 export function debounce(wait: number = 0) {
     return (target: any, name: string, descriptor: PropertyDescriptor) => {
         descriptor.value = _.debounce(descriptor.value, wait);
