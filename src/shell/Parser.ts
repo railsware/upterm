@@ -3,7 +3,7 @@ import * as _ from "lodash";
 import {Suggestion, styles} from "../plugins/autocompletion_providers/Suggestions";
 import {memoizeAccessor} from "../Decorators";
 import {commandDescriptions} from "../plugins/autocompletion_providers/Executable";
-import {executablesInPaths} from "../utils/Common";
+import {executablesInPaths, mapObject} from "../utils/Common";
 import {loginShell} from "../utils/Shell";
 import {PreliminarySuggestionContext} from "../Interfaces";
 import {PluginManager} from "../PluginManager";
@@ -107,18 +107,13 @@ class Command extends BranchNode {
 
 class CommandWord extends LeafNode {
     async suggestions(context: PreliminarySuggestionContext): Promise<Suggestion[]> {
-        const candidates = [
-            ...loginShell.preCommandModifiers.map(modifier => ({
-                value: modifier,
-                style: styles.func,
-            })),
-            ...(await executablesInPaths(context.environment.path)).map(executable => ({
-                value: executable,
-                style: styles.executable,
-            })),
-        ];
+        const executables = await executablesInPaths(context.environment.path);
 
-        return candidates.map(candidate => new Suggestion().withValue(`${candidate.value} `).withDescription(commandDescriptions[candidate.value] || "").withStyle(candidate.style));
+        return [
+            ...mapObject(context.aliases.toObject(), (key, value) => new Suggestion().withValue(`${key} `).withDescription(value).withStyle(styles.alias)),
+            ...loginShell.preCommandModifiers.map(modifier => new Suggestion().withValue(`${modifier} `).withStyle(styles.func)),
+            ...executables.map(name => new Suggestion().withValue(`${name} `).withDescription(commandDescriptions[name] || "").withStyle(styles.executable)),
+        ];
     }
 }
 
@@ -170,7 +165,7 @@ function argumentOfExpandedAST(argument: Argument, aliases: Aliases) {
 
         traverse(tree, current => {
             if (current instanceof Argument && current.value === argument.value) {
-                argumentInNewTreeCorrespondingToTheOldOne = argument;
+                argumentInNewTreeCorrespondingToTheOldOne = current;
             }
         });
 
