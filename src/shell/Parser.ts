@@ -8,9 +8,14 @@ import {loginShell} from "../utils/Shell";
 import {PreliminarySuggestionContext} from "../Interfaces";
 import {PluginManager} from "../PluginManager";
 import {Aliases} from "../Aliases";
+import {
+    environmentVariableSuggestions,
+    combineAutocompletionProviders,
+} from "../plugins/autocompletion_providers/Common";
 
 export abstract class ASTNode {
     abstract get fullStart(): number;
+
     abstract get fullEnd(): number;
 }
 
@@ -123,7 +128,7 @@ class CommandWord extends LeafNode {
 
 class ArgumentList extends BranchNode {
     constructor(childTokens: Scanner.Token[], private command: Command) {
-        super (childTokens);
+        super(childTokens);
     }
 
     @memoizeAccessor
@@ -149,7 +154,10 @@ export class Argument extends LeafNode {
 
     async suggestions(context: PreliminarySuggestionContext): Promise<Suggestion[]> {
         const argument = argumentOfExpandedAST(this, context.aliases);
-        const provider = PluginManager.autocompletionProviderFor(argument.command.commandWord.value);
+        const provider = combineAutocompletionProviders([
+            environmentVariableSuggestions,
+            PluginManager.autocompletionProviderFor(argument.command.commandWord.value),
+        ]);
 
         if (Array.isArray(provider)) {
             return provider;
