@@ -2,17 +2,18 @@ import {statsIn, resolveDirectory, directoryName} from "../../utils/Common";
 import {styles, Suggestion} from "./Suggestions";
 import {FileInfo, SuggestionContext, AutocompletionProvider} from "../../Interfaces";
 import * as Path from "path";
+import * as modeToPermissions from "mode-to-permissions";
 
 function escapePath(path: string) {
     return path.replace(/\s/g, "\\ ");
 }
 
-export const filesSuggestions = (filter: (info: FileInfo) => boolean) => async(context: SuggestionContext, directory = context.environment.pwd): Promise<Suggestion[]> => {
-    const tokenDirectory = directoryName(context.argument.value);
+const filesSuggestions = (filter: (info: FileInfo) => boolean) => async(tokenValue: string, directory: string): Promise<Suggestion[]> => {
+    const tokenDirectory = directoryName(tokenValue);
     const directoryPath = resolveDirectory(directory, tokenDirectory);
     const stats = await statsIn(directoryPath);
 
-    return stats.filter(filter).map(info => {
+    return stats.filter(info => info.stat.isDirectory() || filter(info)).map(info => {
         if (info.stat.isDirectory()) {
             return new Suggestion().withValue(escapePath(Path.join(tokenDirectory, info.name + Path.sep))).withDisplayValue(info.name + Path.sep).withStyle(styles.directory);
         } else {
@@ -21,8 +22,14 @@ export const filesSuggestions = (filter: (info: FileInfo) => boolean) => async(c
     });
 };
 
-export const anyFilesSuggestions = filesSuggestions(() => true);
-export const directoriesSuggestions = filesSuggestions(info => info.stat.isDirectory());
+const filesSuggestionsProvider =
+    (filter: (info: FileInfo) => boolean) =>
+        (context: SuggestionContext, directory = context.environment.pwd): Promise<Suggestion[]> =>
+            filesSuggestions(filter)(context.argument.value, directory);
+
+export const executableFilesSuggestions = filesSuggestions(info => info.stat.isFile() && modeToPermissions(info.stat.mode).execute.owner);
+export const anyFilesSuggestionsProvider = filesSuggestionsProvider(() => true);
+export const directoriesSuggestionsProvider = filesSuggestionsProvider(info => info.stat.isDirectory());
 
 export const environmentVariableSuggestions = async(context: SuggestionContext): Promise<Suggestion[]> => {
     if (context.argument.value.startsWith("$")) {

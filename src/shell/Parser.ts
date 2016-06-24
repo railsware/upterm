@@ -10,7 +10,7 @@ import {PluginManager} from "../PluginManager";
 import {Aliases} from "../Aliases";
 import {
     environmentVariableSuggestions,
-    combineAutocompletionProviders,
+    combineAutocompletionProviders, executableFilesSuggestions,
 } from "../plugins/autocompletion_providers/Common";
 
 export abstract class ASTNode {
@@ -116,12 +116,14 @@ class CommandWord extends LeafNode {
             return [];
         }
 
+        const relativeExecutablesSuggestions = await executableFilesSuggestions(this.value, context.environment.pwd);
         const executables = await executablesInPaths(context.environment.path);
 
         return [
             ...mapObject(context.aliases.toObject(), (key, value) => new Suggestion().withValue(`${key} `).withDescription(value).withStyle(styles.alias)),
             ...loginShell.preCommandModifiers.map(modifier => new Suggestion().withValue(`${modifier} `).withStyle(styles.func)),
             ...executables.map(name => new Suggestion().withValue(`${name} `).withDescription(commandDescriptions[name] || "").withStyle(styles.executable)),
+            ...relativeExecutablesSuggestions,
         ];
     }
 }

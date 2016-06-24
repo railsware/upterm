@@ -1,7 +1,7 @@
 import {expandHistoricalDirectory} from "../../Command";
 import {styles, Suggestion} from "./Suggestions";
 import * as _ from "lodash";
-import {directoriesSuggestions} from "./Common";
+import {directoriesSuggestionsProvider} from "./Common";
 import {PluginManager} from "../../PluginManager";
 
 PluginManager.registerAutocompletionProvider("cd", async(context) => {
@@ -14,12 +14,12 @@ PluginManager.registerAutocompletionProvider("cd", async(context) => {
         suggestions.push(...historicalDirectoryAliases);
     }
 
-    suggestions.push(...await directoriesSuggestions(context));
+    suggestions.push(...await directoriesSuggestionsProvider(context));
 
     if (context.argument.value.length > 0) {
         const cdpathDirectories = _.flatten(await Promise.all(context.environment.cdpath
             .filter(directory => directory !== context.environment.pwd)
-            .map(async(directory) => (await directoriesSuggestions(context, directory)).map(suggestion => suggestion.withDescription(`In ${directory}`)))));
+            .map(async(directory) => (await directoriesSuggestionsProvider(context, directory)).map(suggestion => suggestion.withDescription(`In ${directory}`)))));
 
         suggestions.push(...cdpathDirectories);
     }

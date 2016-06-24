@@ -2,11 +2,11 @@ import {OutputDecorator, EnvironmentObserverPlugin, AutocompletionProvider, Pree
 import * as Path from "path";
 import {recursiveFilesIn} from "./utils/Common";
 import {
-    anyFilesSuggestions, environmentVariableSuggestions,
+    anyFilesSuggestionsProvider, environmentVariableSuggestions,
     combineAutocompletionProviders,
 } from "./plugins/autocompletion_providers/Common";
 
-const defaultAutocompletionProvider = combineAutocompletionProviders([environmentVariableSuggestions, anyFilesSuggestions]);
+const defaultAutocompletionProvider = combineAutocompletionProviders([environmentVariableSuggestions, anyFilesSuggestionsProvider]);
 
 // FIXME: Technical debt: register all the plugin types via single method.
 export class PluginManager {
