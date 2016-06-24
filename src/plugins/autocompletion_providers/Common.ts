@@ -38,16 +38,15 @@ export const environmentVariableSuggestions = async (context: SuggestionContext)
 };
 
 export const combineAutocompletionProviders = (providers: AutocompletionProvider[]): AutocompletionProvider => async (context: SuggestionContext): Promise<Suggestion[]> => {
-    const staticProviders: StaticAutocompletionProvider[] = [];
-    const dynamicProviders: DynamicAutocompletionProvider[] = [];
+    let suggestions: Suggestion[] = [];
 
     for (const provider of providers) {
         if (Array.isArray(provider)) {
-            staticProviders.push(provider);
+            suggestions = suggestions.concat(provider);
         } else {
-            dynamicProviders.push(provider);
+            suggestions = suggestions.concat(await provider(context));
         }
     }
 
-    return _.flatten(staticProviders.concat(await Promise.all(dynamicProviders.map(provider => provider(context)))));
+    return suggestions;
 };
