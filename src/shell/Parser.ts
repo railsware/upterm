@@ -63,10 +63,16 @@ abstract class BranchNode extends ASTNode {
     }
 }
 
-export class CompleteCommand extends BranchNode {
+class Pipeline extends BranchNode {
     @memoizeAccessor
     get children(): ASTNode[] {
-        return [new Command(this.childTokens)];
+        const pipeIndex = this.childTokens.findIndex(token => token instanceof Scanner.Pipe);
+
+        return [
+            new Command(this.childTokens.slice(0, pipeIndex)),
+            new ShellSyntaxNode(this.childTokens[pipeIndex]),
+            new Command(this.childTokens.slice(pipeIndex + 1))
+        ];
     }
 }
 
@@ -103,6 +109,14 @@ class Command extends BranchNode {
         } else {
             return false;
         }
+    }
+}
+
+export type CompleteCommand = Command | Pipeline;
+
+class ShellSyntaxNode extends LeafNode {
+    async suggestions(context: PreliminarySuggestionContext): Promise<Suggestion[]> {
+        return [];
     }
 }
 
@@ -202,7 +216,13 @@ export function parse(tokens: Scanner.Token[]): EmptyNode | CompleteCommand {
         return new EmptyNode();
     }
 
-    return new CompleteCommand(tokens);
+    const pipeIndex = tokens.findIndex(token => token instanceof Scanner.Pipe);
+
+    if (pipeIndex === -1) {
+        return new Command(tokens);
+    } else {
+        return new Pipeline(tokens);
+    }
 }
 
 export function leafNodeAt(position: number, node: ASTNode): LeafNode {
