@@ -1,4 +1,4 @@
-import {Token, Empty} from "./Scanner";
+import {Token, Empty, scan} from "./Scanner";
 import * as _ from "lodash";
 import {Suggestion, styles} from "../plugins/autocompletion_providers/Suggestions";
 import {memoizeAccessor} from "../Decorators";
@@ -7,6 +7,7 @@ import {executablesInPaths} from "../utils/Common";
 import {loginShell} from "../utils/Shell";
 import {PreliminarySuggestionContext} from "../Interfaces";
 import {PluginManager} from "../PluginManager";
+import {Aliases} from "../Aliases";
 
 export abstract class ASTNode {
     abstract get fullStart(): number;
@@ -148,13 +149,36 @@ export class Argument extends LeafNode {
     }
 
     async suggestions(context: PreliminarySuggestionContext): Promise<Suggestion[]> {
-        const provider = PluginManager.autocompletionProviderFor(this.command.commandWord.value);
+        const argument = argumentOfExpandedAST(this, context.aliases);
+        const provider = PluginManager.autocompletionProviderFor(argument.command.commandWord.value);
 
         if (Array.isArray(provider)) {
             return provider;
         } else {
-            return provider(Object.assign({argument: this}, context));
+            return provider(Object.assign({argument: argument}, context));
         }
+    }
+}
+
+// FIXME: find a better way to search for the argument in the new tree.
+function argumentOfExpandedAST(argument: Argument, aliases: Aliases) {
+    const commandWord = argument.command.commandWord;
+
+    if (aliases.has(commandWord.value)) {
+        const tree = parse(scan(serializeReplacing(argument.command, commandWord, aliases.get(commandWord.value))));
+        let argumentInNewTreeCorrespondingToTheOldOne: Argument;
+
+        traverse(tree, current => {
+            if (current instanceof Argument && current.value === argument.value) {
+                argumentInNewTreeCorrespondingToTheOldOne = argument;
+            }
+        });
+
+        return argumentInNewTreeCorrespondingToTheOldOne;
+
+
+    } else {
+        return argument;
     }
 }
 
