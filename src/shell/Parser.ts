@@ -107,6 +107,10 @@ class Command extends BranchNode {
 
 class CommandWord extends LeafNode {
     async suggestions(context: PreliminarySuggestionContext): Promise<Suggestion[]> {
+        if (this.value.length === 0) {
+            return [];
+        }
+
         const executables = await executablesInPaths(context.environment.path);
 
         return [
