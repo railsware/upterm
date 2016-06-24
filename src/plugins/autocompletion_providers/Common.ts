@@ -3,8 +3,8 @@ import {styles, Suggestion} from "./Suggestions";
 import {FileInfo, SuggestionContext, AutocompletionProvider} from "../../Interfaces";
 import * as Path from "path";
 
-function pathSuggestion(directory: string, path: string) {
-    return new Suggestion().withValue(Path.join(directory, path).replace(/\s/g, "\\ ")).withDisplayValue(path);
+function escapePath(path: string) {
+    return path.replace(/\s/g, "\\ ");
 }
 
 export const filesSuggestions = (filter: (info: FileInfo) => boolean) => async(context: SuggestionContext, directory = context.environment.pwd): Promise<Suggestion[]> => {
@@ -14,9 +14,9 @@ export const filesSuggestions = (filter: (info: FileInfo) => boolean) => async(c
 
     return stats.filter(filter).map(info => {
         if (info.stat.isDirectory()) {
-            return pathSuggestion(tokenDirectory, info.name + Path.sep).withStyle(styles.directory);
+            return new Suggestion().withValue(escapePath(Path.join(tokenDirectory, info.name + Path.sep))).withDisplayValue(info.name + Path.sep).withStyle(styles.directory);
         } else {
-            return pathSuggestion(tokenDirectory, info.name).withStyle(styles.file(info));
+            return new Suggestion().withValue(escapePath(Path.join(tokenDirectory, info.name)) + " ").withDisplayValue(info.name).withStyle(styles.file(info));
         }
     });
 };
