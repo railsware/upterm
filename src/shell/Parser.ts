@@ -71,7 +71,7 @@ class Pipeline extends BranchNode {
         return [
             new Command(this.childTokens.slice(0, pipeIndex)),
             new ShellSyntaxNode(this.childTokens[pipeIndex]),
-            new Command(this.childTokens.slice(pipeIndex + 1))
+            new Command(this.childTokens.slice(pipeIndex + 1)),
         ];
     }
 }
