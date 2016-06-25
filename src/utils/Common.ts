@@ -146,7 +146,7 @@ export function readDirectory(directoryPath: string): Promise<string[]> {
  * Unlike Path.join, doesn't remove ./ and ../ parts.
  */
 export function joinPath(...parts: string[]) {
-    const initialParts = parts.slice(0, -1);
+    const initialParts = parts.slice(0, -1).filter(part => part.length);
     const lastPart = parts[parts.length - 1];
 
     return initialParts.map(normalizeDirectory).join("") + lastPart;
@@ -161,7 +161,13 @@ export function normalizeDirectory(directoryPath: string): string {
 }
 
 export function directoryName(path: string): string {
-    return normalizeDirectory(path.endsWith(Path.sep) ? path : Path.dirname(path));
+    const directoryParts = path.split(Path.sep).slice(0, -1);
+
+    if (directoryParts.length === 0) {
+        return "";
+    } else {
+        return normalizeDirectory(directoryParts.join(Path.sep));
+    }
 }
 
 export function baseName(path: string): string {
