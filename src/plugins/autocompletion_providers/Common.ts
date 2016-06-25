@@ -10,16 +10,20 @@ function escapePath(path: string) {
 
 const filesSuggestions = (filter: (info: FileInfo) => boolean) => async(tokenValue: string, directory: string): Promise<Suggestion[]> => {
     const tokenDirectory = directoryName(tokenValue);
+    const basePath = tokenValue.slice(tokenDirectory.length);
     const directoryPath = resolveDirectory(directory, tokenDirectory);
     const stats = await statsIn(directoryPath);
 
-    return stats.filter(info => info.stat.isDirectory() || filter(info)).map(info => {
-        if (info.stat.isDirectory()) {
-            return new Suggestion().withValue(escapePath(joinPath(tokenDirectory, info.name + Path.sep))).withDisplayValue(info.name + Path.sep).withStyle(styles.directory);
-        } else {
-            return new Suggestion().withValue(escapePath(joinPath(tokenDirectory, info.name)) + " ").withDisplayValue(info.name).withStyle(styles.file(info));
-        }
-    });
+    return stats
+        .filter(info => info.name.startsWith(".") ? basePath.startsWith(".") : true)
+        .filter(info => info.stat.isDirectory() || filter(info))
+        .map(info => {
+            if (info.stat.isDirectory()) {
+                return new Suggestion().withValue(escapePath(joinPath(tokenDirectory, info.name + Path.sep))).withDisplayValue(info.name + Path.sep).withStyle(styles.directory);
+            } else {
+                return new Suggestion().withValue(escapePath(joinPath(tokenDirectory, info.name)) + " ").withDisplayValue(info.name).withStyle(styles.file(info));
+            }
+        });
 };
 
 const filesSuggestionsProvider =
