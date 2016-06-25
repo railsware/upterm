@@ -63,7 +63,7 @@ export function executeCommand(command: string, args: string[] = [], directory: 
 
         ChildProcess.exec(`${command} ${args.join(" ")}`, options, (error, output) => {
             if (error) {
-                reject();
+                reject(error);
             } else {
                 resolve(output);
             }

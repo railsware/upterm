@@ -53,7 +53,7 @@ class ShellExecutionStrategy extends CommandExecutionStrategy {
             this.job.command = new PTY(
                 this.job.prompt.commandName.escapedValue, this.job.prompt.arguments.map(token => token.escapedValue), this.job.environment.toObject(), this.job.dimensions,
                 (data: string) => this.job.parser.parse(data),
-                (exitCode: number) => exitCode === 0 ? resolve() : reject()
+                (exitCode: number) => exitCode === 0 ? resolve() : reject(exitCode)
             );
         });
     }
