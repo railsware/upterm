@@ -6,7 +6,8 @@ import * as Path from "path";
 import {EventEmitter} from "events";
 import {executeCommand} from "../PTY";
 import {debounce} from "../Decorators";
-import {exists, readFile} from "../utils/Common";
+import {readFile} from "../utils/Common";
+import * as Git from "../utils/Git";
 
 const GIT_WATCHER_EVENT_NAME = "git-data-changed";
 
@@ -28,8 +29,8 @@ class GitWatcher extends EventEmitter {
         }
     }
 
-    async watch() {
-        if (await exists(this.gitDirectory)) {
+    watch() {
+        if (Git.isGitDirectory(this.directory)) {
             this.updateGitData();
             this.watcher = watch(this.directory, <any>{
                 recursive: true,

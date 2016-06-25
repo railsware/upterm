@@ -1,4 +1,6 @@
 import {linedOutputOf} from "../PTY";
+import * as Path from "path";
+import * as fs from "fs";
 
 export class Branch {
     constructor(private name: string, private _isCurrent: boolean) {
@@ -12,8 +14,6 @@ export class Branch {
         return this._isCurrent;
     }
 }
-
-
 
 export enum StatusCode {
     Unmodified,
@@ -59,12 +59,18 @@ export class FileStatus {
     }
 }
 
-export async function branches(directory: string): Promise<Branch[]> {
+type GitDirectoryPath = string & { __isGitDirectoryPath: boolean };
+
+export function isGitDirectory(directory: string): directory is GitDirectoryPath {
+    return fs.existsSync(Path.join(directory, ".git") );
+}
+
+export async function branches(directory: GitDirectoryPath): Promise<Branch[]> {
     let lines = await linedOutputOf("git", ["branch", "--no-color"], directory);
     return lines.map(line => new Branch(line.slice(2), line[0] === "*"));
 }
 
-export async function status(directory: string): Promise<FileStatus[]> {
+export async function status(directory: GitDirectoryPath): Promise<FileStatus[]> {
     let lines = await linedOutputOf("git", ["status", "--porcelain"], directory);
     return lines.map(line => new FileStatus(line));
 }

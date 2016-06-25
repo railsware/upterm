@@ -79,8 +79,12 @@ const statusOptions = [
 ];
 
 const branchesExceptCurrent = async(context: SuggestionContext): Promise<Suggestion[]> => {
-    const branches = (await Git.branches(context.environment.pwd)).filter(branch => !branch.isCurrent());
-    return branches.map(branch => new Suggestion().withValue(branch.toString()).withStyle(styles.branch));
+    if (Git.isGitDirectory(context.environment.pwd)) {
+        const branches = (await Git.branches(context.environment.pwd)).filter(branch => !branch.isCurrent());
+        return branches.map(branch => new Suggestion().withValue(branch.toString()).withStyle(styles.branch));
+    } else {
+        return [];
+    }
 };
 
 const branchAlias = async(context: SuggestionContext): Promise<Suggestion[]> => {
@@ -95,10 +99,14 @@ const branchAlias = async(context: SuggestionContext): Promise<Suggestion[]> => 
 };
 
 const notStagedFiles = async(context: SuggestionContext): Promise<Suggestion[]> => {
-    const fileStatuses = await Git.status(context.environment.pwd);
-    return fileStatuses
-        .filter(fileStatus => !context.argument.command.hasArgument(fileStatus.value))
-        .map(fileStatus => new Suggestion().withValue(fileStatus.value).withStyle(styles.gitFileStatus(fileStatus.code)).withSpace());
+    if (Git.isGitDirectory(context.environment.pwd)) {
+        const fileStatuses = await Git.status(context.environment.pwd);
+        return fileStatuses
+            .filter(fileStatus => !context.argument.command.hasArgument(fileStatus.value))
+            .map(fileStatus => new Suggestion().withValue(fileStatus.value).withStyle(styles.gitFileStatus(fileStatus.code)).withSpace());
+    } else {
+        return [];
+    }
 };
 
 const subCommandProviders: Dictionary<AutocompletionProvider> = {
