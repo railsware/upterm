@@ -98,7 +98,7 @@ const notStagedFiles = async(context: SuggestionContext): Promise<Suggestion[]> 
     const fileStatuses = await Git.status(context.environment.pwd);
     return fileStatuses
         .filter(fileStatus => !context.argument.command.hasArgument(fileStatus.value))
-        .map(fileStatus => new Suggestion().withValue(fileStatus.value + " ").withStyle(styles.gitFileStatus(fileStatus.code)));
+        .map(fileStatus => new Suggestion().withValue(fileStatus.value).withStyle(styles.gitFileStatus(fileStatus.code)).withSpace());
 };
 
 const subCommandProviders: Dictionary<AutocompletionProvider> = {
@@ -259,7 +259,7 @@ const subCommands = [
         name: "worktree",
         description: "Manage multiple worktrees.",
     },
-].map(subCommand => new Suggestion().withValue(subCommand.name + " ").withDescription(subCommand.description).withStyle(styles.command));
+].map(subCommand => new Suggestion().withValue(subCommand.name).withDescription(subCommand.description).withStyle(styles.command).withSpace());
 
 PluginManager.registerAutocompletionProvider("git", async(context) => {
     if (context.argument.position === 1) {

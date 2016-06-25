@@ -35,7 +35,7 @@ export class Empty extends Token {
 
 export class Word extends Token {
     get value() {
-        return this.raw.trim().replace(/\\\s/, " ");
+        return this.raw.trim().replace(/\\\s/g, " ");
     }
 
     get escapedValue() {

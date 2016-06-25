@@ -338,7 +338,7 @@ export class PromptComponent extends React.Component<Props, State> implements Ke
         const suggestion = state.suggestions[state.highlightedSuggestionIndex];
         const node = leafNodeAt(getCaretPosition(this.commandNode), ast);
 
-        return serializeReplacing(ast, node, suggestion.value);
+        return serializeReplacing(ast, node, suggestion.value.replace(/\s/g, "\\ ") + (suggestion.shouldAddSpace ? " " : ""));
     }
 
     private showAutocomplete(): boolean {

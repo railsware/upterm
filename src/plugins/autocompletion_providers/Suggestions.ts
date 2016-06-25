@@ -116,6 +116,7 @@ export class Suggestion {
     private _synopsis = "";
     private _description = "";
     private _style = {value: "", css: {}};
+    private _shouldAddSpace = false;
 
     get value(): string {
         return this._value;
@@ -135,6 +136,10 @@ export class Suggestion {
 
     get displayValue(): string {
         return this._displayValue || this.value;
+    }
+
+    get shouldAddSpace(): boolean {
+        return this._shouldAddSpace;
     }
 
     withValue(value: string): this {
@@ -159,6 +164,11 @@ export class Suggestion {
 
     withStyle(style: Style): this {
         this._style = style;
+        return this;
+    }
+
+    withSpace(): this {
+        this._shouldAddSpace = true;
         return this;
     }
 

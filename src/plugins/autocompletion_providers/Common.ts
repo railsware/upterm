@@ -4,10 +4,6 @@ import {FileInfo, SuggestionContext, AutocompletionProvider} from "../../Interfa
 import * as Path from "path";
 import * as modeToPermissions from "mode-to-permissions";
 
-function escapePath(path: string) {
-    return path.replace(/\s/g, "\\ ");
-}
-
 const filesSuggestions = (filter: (info: FileInfo) => boolean) => async(tokenValue: string, directory: string): Promise<Suggestion[]> => {
     const tokenDirectory = directoryName(tokenValue);
     const basePath = tokenValue.slice(tokenDirectory.length);
@@ -19,9 +15,9 @@ const filesSuggestions = (filter: (info: FileInfo) => boolean) => async(tokenVal
         .filter(info => info.stat.isDirectory() || filter(info))
         .map(info => {
             if (info.stat.isDirectory()) {
-                return new Suggestion().withValue(escapePath(joinPath(tokenDirectory, info.name + Path.sep))).withDisplayValue(info.name + Path.sep).withStyle(styles.directory);
+                return new Suggestion().withValue(joinPath(tokenDirectory, info.name + Path.sep)).withDisplayValue(info.name + Path.sep).withStyle(styles.directory);
             } else {
-                return new Suggestion().withValue(escapePath(joinPath(tokenDirectory, info.name)) + " ").withDisplayValue(info.name).withStyle(styles.file(info));
+                return new Suggestion().withValue(joinPath(tokenDirectory, info.name)).withDisplayValue(info.name).withStyle(styles.file(info)).withSpace();
             }
         });
 };

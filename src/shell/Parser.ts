@@ -130,9 +130,9 @@ class CommandWord extends LeafNode {
         const executables = await executablesInPaths(context.environment.path);
 
         return [
-            ...mapObject(context.aliases.toObject(), (key, value) => new Suggestion().withValue(`${key} `).withDescription(value).withStyle(styles.alias)),
-            ...loginShell.preCommandModifiers.map(modifier => new Suggestion().withValue(`${modifier} `).withStyle(styles.func)),
-            ...executables.map(name => new Suggestion().withValue(`${name} `).withDescription(commandDescriptions[name] || "").withStyle(styles.executable)),
+            ...mapObject(context.aliases.toObject(), (key, value) => new Suggestion().withValue(key).withDescription(value).withStyle(styles.alias).withSpace()),
+            ...loginShell.preCommandModifiers.map(modifier => new Suggestion().withValue(modifier).withStyle(styles.func).withSpace()),
+            ...executables.map(name => new Suggestion().withValue(name).withDescription(commandDescriptions[name] || "").withStyle(styles.executable).withSpace()),
             ...relativeExecutablesSuggestions,
         ];
     }
