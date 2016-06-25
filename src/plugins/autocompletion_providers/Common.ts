@@ -1,4 +1,4 @@
-import {statsIn, resolveDirectory, directoryName} from "../../utils/Common";
+import {statsIn, resolveDirectory, directoryName, joinPath} from "../../utils/Common";
 import {styles, Suggestion} from "./Suggestions";
 import {FileInfo, SuggestionContext, AutocompletionProvider} from "../../Interfaces";
 import * as Path from "path";
@@ -15,9 +15,9 @@ const filesSuggestions = (filter: (info: FileInfo) => boolean) => async(tokenVal
 
     return stats.filter(info => info.stat.isDirectory() || filter(info)).map(info => {
         if (info.stat.isDirectory()) {
-            return new Suggestion().withValue(escapePath(Path.join(tokenDirectory, info.name + Path.sep))).withDisplayValue(info.name + Path.sep).withStyle(styles.directory);
+            return new Suggestion().withValue(escapePath(joinPath(tokenDirectory, info.name + Path.sep))).withDisplayValue(info.name + Path.sep).withStyle(styles.directory);
         } else {
-            return new Suggestion().withValue(escapePath(Path.join(tokenDirectory, info.name)) + " ").withDisplayValue(info.name).withStyle(styles.file(info));
+            return new Suggestion().withValue(escapePath(joinPath(tokenDirectory, info.name)) + " ").withDisplayValue(info.name).withStyle(styles.file(info));
         }
     });
 };
