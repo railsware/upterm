@@ -6,17 +6,17 @@ import {combineAutocompletionProviders} from "./Common";
 import {linedOutputOf} from "../../PTY";
 
 const addOptions = [
-    longAndShortOption("dry-run", "n").withDescription("Don't actually add the file(s), just show if they exist and/or will be ignored."),
-    longOption("verbose").withSynopsis("Be verbose"),
-    longOption("interactive").withDescription(`
-        Add modified contents in the working tree interactively to the index. Optional path arguments may be supplied to limit operation to a subset
-        of the working tree. See "Interactive mode" for details.`),
     longAndShortOption("patch").withDescription(
         `Interactively choose hunks of patch between the index and the work tree and add them to the index. This gives the user a chance to review the
          difference before adding modified contents to the index.
          This effectively runs add --interactive, but bypasses the initial command menu and directly jumps to the patch subcommand. See "Interactive
          mode" for details.`),
+    longOption("interactive").withDescription(`
+        Add modified contents in the working tree interactively to the index. Optional path arguments may be supplied to limit operation to a subset
+        of the working tree. See "Interactive mode" for details.`),
     longOption("edit").withDescription(`
+    longAndShortOption("dry-run", "n").withDescription("Don't actually add the file(s), just show if they exist and/or will be ignored."),
+    longOption("verbose").withSynopsis("Be verbose"),
         Open the diff vs. the index in an editor and let the user edit it. After the editor was closed, adjust the hunk headers and apply the patch to the index.
 
         The intent of this option is to pick and choose lines of the patch to apply, or even to modify the contents of lines to be staged. This can be

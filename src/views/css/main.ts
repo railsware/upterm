@@ -332,12 +332,12 @@ export const commandSign = {
 
 // To display even empty rows. The height might need tweaking.
 // TODO: Remove if we always have a fixed screenBuffer width.
-export const charGroup = (attributes: Attributes) => {
+export const charGroup = (attributes: Attributes, status: Status) => {
     const styles: CSSObject = {
         display: "inline-block",
         height: rowHeight,
         color: colorValue(attributes.color, {isBright: attributes.brightness === Brightness.Bright}),
-        backgroundColor: colorValue(attributes.backgroundColor),
+        backgroundColor: [Status.Failure, Status.Interrupted].includes(status) ? failurize(backgroundColor) : colorValue(attributes.backgroundColor),
     };
 
     if (attributes.inverse) {

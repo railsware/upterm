@@ -3,13 +3,13 @@ import {ScreenBuffer} from "../ScreenBuffer";
 import {Char} from "../Char";
 import {groupWhen} from "../utils/Common";
 import {List} from "immutable";
-import {Attributes} from "../Interfaces";
 import * as css from "./css/main";
 import {fontAwesome} from "./css/FontAwesome";
 import {Job} from "../Job";
+import {Status} from "../Enums";
 
-const CharGroupComponent = ({text, attributes}: {text: string, attributes: Attributes}) =>
-    <span style={css.charGroup(attributes)}>{text}</span>;
+const CharGroupComponent = ({job, group}: {job: Job, group: Char[]}) =>
+    <span style={css.charGroup(group[0].attributes, job.status)}>{group.map(char => char.toString()).join("")}</span>;
 
 interface CutProps {
     job: Job;
@@ -40,25 +40,24 @@ class Cut extends React.Component<CutProps, CutState> {
 }
 interface RowProps {
     row: List<Char>;
-    style: css.CSSObject;
+    job: Job;
 }
 
 const charGrouper = (a: Char, b: Char) => a.attributes === b.attributes;
 
 class RowComponent extends React.Component<RowProps, {}> {
     shouldComponentUpdate(nextProps: RowProps) {
-        return this.props.row !== nextProps.row;
+        return this.props.row !== nextProps.row || this.props.job.status !== Status.InProgress;
     }
 
     render() {
         let rowWithoutHoles = this.props.row.toArray().map(char => char || Char.empty);
         let charGroups = groupWhen(charGrouper, rowWithoutHoles).map((charGroup: Char[], index: number) =>
-            <CharGroupComponent text={charGroup.map(char => char.toString()).join("")}
-                                attributes={charGroup[0].attributes}
-                                key={index}/>
+            <CharGroupComponent job={this.props.job} group={charGroup} key={index}/>
         );
 
-        return <div style={this.props.style} ref={(div: HTMLElement | undefined) => div && div.scrollIntoViewIfNeeded()}>{charGroups}</div>;
+        return <div style={css.row(this.props.job.status, this.props.job.screenBuffer.activeScreenBufferType)}
+                    ref={(div: HTMLElement | undefined) => div && div.scrollIntoViewIfNeeded()}>{charGroups}</div>;
     }
 }
 
@@ -82,7 +81,7 @@ export class BufferComponent extends React.Component<Props, State> {
                  style={css.output(this.props.job.screenBuffer.activeScreenBufferType, this.props.job.status)}>
                 {this.shouldCutOutput ? <Cut job={this.props.job} clickHandler={() => this.setState({ expandButtonPressed: true })}/> : undefined}
                 {this.renderableRows.map((row, index) =>
-                    <RowComponent row={row || List<Char>()} key={index} style={css.row(this.props.job.status, this.props.job.screenBuffer.activeScreenBufferType)}/>
+                    <RowComponent row={row || List<Char>()} key={index} job={this.props.job}/>
                 )}
             </div>
         );
