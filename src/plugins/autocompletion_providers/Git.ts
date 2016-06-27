@@ -1,7 +1,7 @@
 import * as Git from "../../utils/Git";
 import {styles, Suggestion, longAndShortFlag, longFlag} from "./Suggestions";
 import {PluginManager} from "../../PluginManager";
-import {AutocompletionProvider, SuggestionContext} from "../../Interfaces";
+import {AutocompletionProvider, AutocompletionContext} from "../../Interfaces";
 import {combineAutocompletionProviders} from "./Common";
 import {linedOutputOf} from "../../PTY";
 
@@ -78,7 +78,7 @@ const statusOptions = [
     longFlag("short"),
 ];
 
-const branchesExceptCurrent = async(context: SuggestionContext): Promise<Suggestion[]> => {
+const branchesExceptCurrent = async(context: AutocompletionContext): Promise<Suggestion[]> => {
     if (Git.isGitDirectory(context.environment.pwd)) {
         const branches = (await Git.branches(context.environment.pwd)).filter(branch => !branch.isCurrent());
         return branches.map(branch => new Suggestion().withValue(branch.toString()).withStyle(styles.branch));
@@ -87,7 +87,7 @@ const branchesExceptCurrent = async(context: SuggestionContext): Promise<Suggest
     }
 };
 
-const branchAlias = async(context: SuggestionContext): Promise<Suggestion[]> => {
+const branchAlias = async(context: AutocompletionContext): Promise<Suggestion[]> => {
     if (doesLookLikeBranchAlias(context.argument.value)) {
         let nameOfAlias = (await linedOutputOf("git", ["name-rev", "--name-only", canonizeBranchAlias(context.argument.value)], context.environment.pwd))[0];
         if (nameOfAlias && !nameOfAlias.startsWith("Could not get")) {
@@ -98,7 +98,7 @@ const branchAlias = async(context: SuggestionContext): Promise<Suggestion[]> => 
     return [];
 };
 
-const notStagedFiles = async(context: SuggestionContext): Promise<Suggestion[]> => {
+const notStagedFiles = async(context: AutocompletionContext): Promise<Suggestion[]> => {
     if (Git.isGitDirectory(context.environment.pwd)) {
         const fileStatuses = await Git.status(context.environment.pwd);
         return fileStatuses

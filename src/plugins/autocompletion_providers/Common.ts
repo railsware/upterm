@@ -1,6 +1,6 @@
 import {statsIn, resolveDirectory, directoryName, joinPath} from "../../utils/Common";
 import {styles, Suggestion} from "./Suggestions";
-import {FileInfo, SuggestionContext, AutocompletionProvider} from "../../Interfaces";
+import {FileInfo, AutocompletionContext, AutocompletionProvider} from "../../Interfaces";
 import * as Path from "path";
 import * as modeToPermissions from "mode-to-permissions";
 
@@ -24,14 +24,14 @@ const filesSuggestions = (filter: (info: FileInfo) => boolean) => async(tokenVal
 
 const filesSuggestionsProvider =
     (filter: (info: FileInfo) => boolean) =>
-        (context: SuggestionContext, directory = context.environment.pwd): Promise<Suggestion[]> =>
+        (context: AutocompletionContext, directory = context.environment.pwd): Promise<Suggestion[]> =>
             filesSuggestions(filter)(context.argument.value, directory);
 
 export const executableFilesSuggestions = filesSuggestions(info => info.stat.isFile() && modeToPermissions(info.stat.mode).execute.owner);
 export const anyFilesSuggestionsProvider = filesSuggestionsProvider(() => true);
 export const directoriesSuggestionsProvider = filesSuggestionsProvider(info => info.stat.isDirectory());
 
-export const environmentVariableSuggestions = async(context: SuggestionContext): Promise<Suggestion[]> => {
+export const environmentVariableSuggestions = async(context: AutocompletionContext): Promise<Suggestion[]> => {
     if (context.argument.value.startsWith("$")) {
         return context.environment.map((key, value) =>
             new Suggestion().withValue("$" + key).withDescription(value).withStyle(styles.environmentVariable)
@@ -41,7 +41,7 @@ export const environmentVariableSuggestions = async(context: SuggestionContext):
     }
 };
 
-export const combineAutocompletionProviders = (providers: AutocompletionProvider[]): AutocompletionProvider => async(context: SuggestionContext): Promise<Suggestion[]> => {
+export const combineAutocompletionProviders = (providers: AutocompletionProvider[]): AutocompletionProvider => async(context: AutocompletionContext): Promise<Suggestion[]> => {
     let suggestions: Suggestion[] = [];
 
     for (const provider of providers) {

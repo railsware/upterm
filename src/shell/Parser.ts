@@ -5,7 +5,7 @@ import {memoizeAccessor} from "../Decorators";
 import {commandDescriptions} from "../plugins/autocompletion_providers/Executable";
 import {executablesInPaths, mapObject} from "../utils/Common";
 import {loginShell} from "../utils/Shell";
-import {PreliminarySuggestionContext} from "../Interfaces";
+import {PreliminaryAutocompletionContext} from "../Interfaces";
 import {PluginManager} from "../PluginManager";
 import {Aliases} from "../Aliases";
 import {
@@ -44,7 +44,7 @@ abstract class LeafNode extends ASTNode {
         return this.token.value;
     }
 
-    abstract suggestions(context: PreliminarySuggestionContext): Promise<Suggestion[]>;
+    abstract suggestions(context: PreliminaryAutocompletionContext): Promise<Suggestion[]>;
 }
 
 abstract class BranchNode extends ASTNode {
@@ -115,13 +115,13 @@ class Command extends BranchNode {
 export type CompleteCommand = Command | Pipeline;
 
 class ShellSyntaxNode extends LeafNode {
-    async suggestions(context: PreliminarySuggestionContext): Promise<Suggestion[]> {
+    async suggestions(context: PreliminaryAutocompletionContext): Promise<Suggestion[]> {
         return [];
     }
 }
 
 class CommandWord extends LeafNode {
-    async suggestions(context: PreliminarySuggestionContext): Promise<Suggestion[]> {
+    async suggestions(context: PreliminaryAutocompletionContext): Promise<Suggestion[]> {
         if (this.value.length === 0) {
             return [];
         }
@@ -164,7 +164,7 @@ export class Argument extends LeafNode {
         this.position = position;
     }
 
-    async suggestions(context: PreliminarySuggestionContext): Promise<Suggestion[]> {
+    async suggestions(context: PreliminaryAutocompletionContext): Promise<Suggestion[]> {
         const argument = argumentOfExpandedAST(this, context.aliases);
         const provider = combineAutocompletionProviders([
             environmentVariableSuggestions,
@@ -206,7 +206,7 @@ export class EmptyNode extends LeafNode {
         super(new Scanner.Empty());
     }
 
-    async suggestions(context: PreliminarySuggestionContext): Promise<Suggestion[]> {
+    async suggestions(context: PreliminaryAutocompletionContext): Promise<Suggestion[]> {
         return [];
     }
 }

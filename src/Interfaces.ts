@@ -24,17 +24,17 @@ export interface Attributes {
     cursor?: boolean;
 }
 
-export interface PreliminarySuggestionContext {
+export interface PreliminaryAutocompletionContext {
     readonly environment: Environment;
     readonly historicalPresentDirectoriesStack: OrderedSet<string>;
     readonly aliases: Aliases;
 }
 
-export interface SuggestionContext extends PreliminarySuggestionContext {
+export interface AutocompletionContext extends PreliminaryAutocompletionContext {
     readonly argument: Argument;
 }
 
-export type DynamicAutocompletionProvider = (context: SuggestionContext) => Promise<Suggestion[]>;
+export type DynamicAutocompletionProvider = (context: AutocompletionContext) => Promise<Suggestion[]>;
 export type StaticAutocompletionProvider = Suggestion[];
 export type AutocompletionProvider = DynamicAutocompletionProvider | StaticAutocompletionProvider;
 
