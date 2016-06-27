@@ -60,7 +60,16 @@ export const combine = (providers: AutocompletionProvider[]): AutocompletionProv
 };
 
 export const mk = (provider: DynamicAutocompletionProvider): DynamicAutocompletionProvider => provider;
-export const unique = (provider: DynamicAutocompletionProvider): DynamicAutocompletionProvider => mk(async (context) => {
-    const suggestions = await provider(context);
-    return suggestions.filter(suggestion => !context.argument.command.hasArgument(suggestion.value));
+export const unique = (provider: AutocompletionProvider): DynamicAutocompletionProvider => mk(async (context) => {
+    let suggestions: Suggestion[] = [];
+
+    if (Array.isArray(provider)) {
+        suggestions = provider;
+    } else if (provider instanceof Suggestion) {
+        suggestions = [provider];
+    } else {
+        suggestions = await provider(context);
+    }
+
+    return suggestions.filter(suggestion => !context.argument.command.hasArgument(suggestion.value, context.argument));
 });

@@ -1,8 +1,9 @@
 import {PluginManager} from "../../PluginManager";
-import {shortFlag} from "./Suggestions";
+import {shortFlag, mapSuggestions} from "./Suggestions";
 import {mapObject} from "../../utils/Common";
+import {combine} from "./Common";
 
-const options = mapObject(
+const options = combine(mapObject(
     {
         b: {
             short: "Batch mode operation",
@@ -102,8 +103,8 @@ const options = mapObject(
             long: "Show library version and the usage prompt, then quit.",
         },
     },
-    (option, descriptions) => shortFlag(option).withSynopsis(descriptions.short).withDescription(descriptions.long)
-);
+    (option, descriptions) => mapSuggestions(shortFlag(option), suggestion => suggestion.withSynopsis(descriptions.short).withDescription(descriptions.long))
+));
 
 
 PluginManager.registerAutocompletionProvider("top", async(context) => options);

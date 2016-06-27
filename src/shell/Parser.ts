@@ -103,9 +103,9 @@ class Command extends BranchNode {
         }
     }
 
-    hasArgument(value: string): boolean {
+    hasArgument(value: string, currentArgument: Argument): boolean {
         if (this.argumentList) {
-            return this.argumentList.arguments.map(argument => argument.value).includes(value);
+            return this.argumentList.arguments.filter(argument => argument !== currentArgument).map(argument => argument.value).includes(value);
         } else {
             return false;
         }

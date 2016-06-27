@@ -1,11 +1,11 @@
-import {FileInfo, DynamicAutocompletionProvider, AutocompletionContext} from "../../Interfaces";
+import {FileInfo, DynamicAutocompletionProvider} from "../../Interfaces";
 import * as Path from "path";
 import * as _ from "lodash";
 import {fontAwesome} from "../../views/css/FontAwesome";
 import {colors} from "../../views/css/colors";
 import {CSSObject} from "../../views/css/main";
 import {StatusCode} from "../../utils/Git";
-import {mk} from "./Common";
+import {mk, unique} from "./Common";
 
 type Style = { value: string; css: CSSObject};
 
@@ -185,12 +185,16 @@ export const longAndShortFlag = (name: string, shortName = name[0]) => mk(contex
     const longValue = `--${name}`;
     const shortValue = `-${shortName}`;
 
+    if (context.argument.command.hasArgument(longValue, context.argument) || context.argument.command.hasArgument(shortValue, context.argument)) {
+        return [];
+    }
+
     const value = context.argument.value === shortValue ? shortValue : longValue;
 
     return [new Suggestion().withValue(value).withDisplayValue(`${shortValue} ${longValue}`).withStyle(styles.option)];
 });
 
-export const shortFlag = (char: string) => new Suggestion().withValue(`-${char}`).withStyle(styles.option);
-export const longFlag = (name: string) => new Suggestion().withValue(`--${name}`).withStyle(styles.option);
+export const shortFlag = (char: string) => unique(new Suggestion().withValue(`-${char}`).withStyle(styles.option));
+export const longFlag = (name: string) => unique(new Suggestion().withValue(`--${name}`).withStyle(styles.option));
 
 export const mapSuggestions = (provider: DynamicAutocompletionProvider, mapper: (suggestion: Suggestion) => Suggestion) => mk(async(context) => (await provider(context)).map(mapper));
