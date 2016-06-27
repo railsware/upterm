@@ -193,4 +193,4 @@ export const longAndShortFlag = (name: string, shortName = name[0]) => mk(contex
 export const shortFlag = (char: string) => new Suggestion().withValue(`-${char}`).withStyle(styles.option);
 export const longFlag = (name: string) => new Suggestion().withValue(`--${name}`).withStyle(styles.option);
 
-export const mapSuggestions = (provider: DynamicAutocompletionProvider, mapper: (suggestion: Suggestion) => Suggestion) => mk(context => provider(context).map(mapper));
+export const mapSuggestions = (provider: DynamicAutocompletionProvider, mapper: (suggestion: Suggestion) => Suggestion) => mk(async(context) => (await provider(context)).map(mapper));
