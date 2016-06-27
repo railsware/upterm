@@ -10,7 +10,7 @@ import {PluginManager} from "../PluginManager";
 import {Aliases} from "../Aliases";
 import {
     environmentVariableSuggestions,
-    combineAutocompletionProviders, executableFilesSuggestions,
+    combine, executableFilesSuggestions,
 } from "../plugins/autocompletion_providers/Common";
 
 export abstract class ASTNode {
@@ -166,13 +166,15 @@ export class Argument extends LeafNode {
 
     async suggestions(context: PreliminaryAutocompletionContext): Promise<Suggestion[]> {
         const argument = argumentOfExpandedAST(this, context.aliases);
-        const provider = combineAutocompletionProviders([
+        const provider = combine([
             environmentVariableSuggestions,
             PluginManager.autocompletionProviderFor(argument.command.commandWord.value),
         ]);
 
         if (Array.isArray(provider)) {
             return provider;
+        } else if (provider instanceof Suggestion) {
+            return [provider];
         } else {
             return provider(Object.assign({argument: argument}, context));
         }

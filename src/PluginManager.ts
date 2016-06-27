@@ -3,10 +3,10 @@ import * as Path from "path";
 import {recursiveFilesIn} from "./utils/Common";
 import {
     anyFilesSuggestionsProvider, environmentVariableSuggestions,
-    combineAutocompletionProviders,
+    combine,
 } from "./plugins/autocompletion_providers/Common";
 
-const defaultAutocompletionProvider = combineAutocompletionProviders([environmentVariableSuggestions, anyFilesSuggestionsProvider]);
+const defaultAutocompletionProvider = combine([environmentVariableSuggestions, anyFilesSuggestionsProvider]);
 
 // FIXME: Technical debt: register all the plugin types via single method.
 export class PluginManager {

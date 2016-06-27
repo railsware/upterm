@@ -1,6 +1,8 @@
 import {statsIn, resolveDirectory, directoryName, joinPath} from "../../utils/Common";
 import {styles, Suggestion} from "./Suggestions";
-import {FileInfo, AutocompletionContext, AutocompletionProvider} from "../../Interfaces";
+import {
+    FileInfo, AutocompletionContext, AutocompletionProvider, DynamicAutocompletionProvider,
+} from "../../Interfaces";
 import * as Path from "path";
 import * as modeToPermissions from "mode-to-permissions";
 
@@ -41,12 +43,14 @@ export const environmentVariableSuggestions = async(context: AutocompletionConte
     }
 };
 
-export const combineAutocompletionProviders = (providers: AutocompletionProvider[]): AutocompletionProvider => async(context: AutocompletionContext): Promise<Suggestion[]> => {
+export const combine = (providers: AutocompletionProvider[]): AutocompletionProvider => async(context: AutocompletionContext): Promise<Suggestion[]> => {
     let suggestions: Suggestion[] = [];
 
     for (const provider of providers) {
         if (Array.isArray(provider)) {
             suggestions = suggestions.concat(provider);
+        } else if (provider instanceof Suggestion) {
+            suggestions.push(provider);
         } else {
             suggestions = suggestions.concat(await provider(context));
         }
@@ -54,3 +58,5 @@ export const combineAutocompletionProviders = (providers: AutocompletionProvider
 
     return suggestions;
 };
+
+export const mk = (provider: DynamicAutocompletionProvider): DynamicAutocompletionProvider => provider;

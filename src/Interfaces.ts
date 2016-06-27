@@ -34,9 +34,11 @@ export interface AutocompletionContext extends PreliminaryAutocompletionContext 
     readonly argument: Argument;
 }
 
-export type DynamicAutocompletionProvider = (context: AutocompletionContext) => Promise<Suggestion[]>;
+export type DynamicAutocompletionProvider = (context: AutocompletionContext) => Suggestion[];
+export type AsyncDynamicAutocompletionProvider = (context: AutocompletionContext) => Promise<Suggestion[]>;
 export type StaticAutocompletionProvider = Suggestion[];
-export type AutocompletionProvider = DynamicAutocompletionProvider | StaticAutocompletionProvider;
+export type StaticSingleAutocompletionProvider = Suggestion;
+export type AutocompletionProvider = DynamicAutocompletionProvider | AsyncDynamicAutocompletionProvider | StaticAutocompletionProvider | StaticSingleAutocompletionProvider;
 
 export interface FileInfo {
     name: string;

@@ -1,8 +1,8 @@
 import {PluginManager} from "../../PluginManager";
-import {longAndShortFlag} from "./Suggestions";
+import {longAndShortFlag, mapSuggestions} from "./Suggestions";
 
 const options = [
-    longAndShortFlag("count").withDescription("Only a count of selected lines is written to standard output."),
+    mapSuggestions(longAndShortFlag("count"), suggestion => suggestion.withDescription("Only a count of selected lines is written to standard output.")),
 ];
 
 PluginManager.registerAutocompletionProvider("grep", async (context) => options);
