@@ -2,7 +2,7 @@ import * as Git from "../../utils/Git";
 import {styles, Suggestion, longAndShortFlag, longFlag, mapSuggestions} from "./Suggestions";
 import {PluginManager} from "../../PluginManager";
 import {AutocompletionProvider, AutocompletionContext} from "../../Interfaces";
-import {combine} from "./Common";
+import {combine, unique} from "./Common";
 import {linedOutputOf} from "../../PTY";
 
 const addOptions = combine([
@@ -102,16 +102,14 @@ const branchAlias = async(context: AutocompletionContext): Promise<Suggestion[]>
 const notStagedFiles = async(context: AutocompletionContext): Promise<Suggestion[]> => {
     if (Git.isGitDirectory(context.environment.pwd)) {
         const fileStatuses = await Git.status(context.environment.pwd);
-        return fileStatuses
-            .filter(fileStatus => !context.argument.command.hasArgument(fileStatus.value))
-            .map(fileStatus => new Suggestion().withValue(fileStatus.value).withStyle(styles.gitFileStatus(fileStatus.code)).withSpace());
+        return fileStatuses.map(fileStatus => new Suggestion().withValue(fileStatus.value).withStyle(styles.gitFileStatus(fileStatus.code)).withSpace());
     } else {
         return [];
     }
 };
 
 const subCommandProviders: Dictionary<AutocompletionProvider> = {
-    add: combine([notStagedFiles, addOptions]),
+    add: combine([unique(notStagedFiles), addOptions]),
     checkout: combine([branchesExceptCurrent, branchAlias]),
     commit: commitOptions,
     status: statusOptions,
