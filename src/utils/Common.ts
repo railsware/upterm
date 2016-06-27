@@ -60,7 +60,7 @@ export function recursiveFilesIn(directoryPath: string): Promise<string[]> {
 
 export function stat(filePath: string): Promise<fs.Stats> {
     return new Promise((resolve, reject) => {
-        fs.stat(filePath, (error: NodeJS.ErrnoException, pathStat: fs.Stats) => {
+        fs.lstat(filePath, (error: NodeJS.ErrnoException, pathStat: fs.Stats) => {
             if (error) {
                 reject(error);
             } else {
