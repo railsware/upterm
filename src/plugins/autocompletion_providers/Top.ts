@@ -1,5 +1,5 @@
 import {PluginManager} from "../../PluginManager";
-import {shortOption} from "./Suggestions";
+import {shortFlag} from "./Suggestions";
 import {mapObject} from "../../utils/Common";
 
 const options = mapObject(
@@ -102,7 +102,7 @@ const options = mapObject(
             long: "Show library version and the usage prompt, then quit.",
         },
     },
-    (option, descriptions) => shortOption(option).withSynopsis(descriptions.short).withDescription(descriptions.long)
+    (option, descriptions) => shortFlag(option).withSynopsis(descriptions.short).withDescription(descriptions.long)
 );
 
 

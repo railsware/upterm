@@ -179,8 +179,7 @@ export class Suggestion {
 
 export const style = (value: Style) => <T extends Suggestion>(suggestion: T) => suggestion.withStyle(value);
 export const command = style(styles.command);
-export const description = (value: string) => <T extends Suggestion>(suggestion: T) => suggestion.withDescription(value);
 
-export const longAndShortOption = (name: string, shortName = name[0]) => new Suggestion().withValue(`--${name}`).withDisplayValue(`-${shortName} --${name}`).withStyle(styles.option);
-export const shortOption = (char: string) => new Suggestion().withValue(`-${char}`).withStyle(styles.option);
-export const longOption = (name: string) => new Suggestion().withValue(`--${name}`).withStyle(styles.option);
+export const longAndShortFlag = (name: string, shortName = name[0]) => new Suggestion().withValue(`--${name}`).withDisplayValue(`-${shortName} --${name}`).withStyle(styles.option);
+export const shortFlag = (char: string) => new Suggestion().withValue(`-${char}`).withStyle(styles.option);
+export const longFlag = (name: string) => new Suggestion().withValue(`--${name}`).withStyle(styles.option);
