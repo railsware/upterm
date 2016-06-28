@@ -7,7 +7,7 @@ import {History} from "../History";
 import {stopBubblingUp, keys, getCaretPosition, setCaretPosition, withModifierKey, isSpecialKey} from "./ViewUtils";
 import {Prompt} from "../Prompt";
 import {Job} from "../Job";
-import {Suggestion} from "../plugins/autocompletion_providers/Suggestions";
+import {Suggestion} from "../plugins/autocompletion_providers/Common";
 import {KeyCode} from "../Enums";
 import {getSuggestions} from "../Autocompletion";
 import {Subject} from "rxjs/Subject";

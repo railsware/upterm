@@ -1,4 +1,4 @@
-import {styles, Suggestion} from "./Suggestions";
+import {styles, Suggestion} from "./Common";
 import {PluginManager} from "../../PluginManager";
 
 const railsCommandConfig = [

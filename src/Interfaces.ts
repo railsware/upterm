@@ -3,7 +3,7 @@ import {Stats} from "fs";
 import {ReactElement} from "react";
 import {Job} from "./Job";
 import {Session} from "./Session";
-import {Suggestion} from "./plugins/autocompletion_providers/Suggestions";
+import {Suggestion} from "./plugins/autocompletion_providers/Common";
 import {ScreenBuffer} from "./ScreenBuffer";
 import {Environment} from "./Environment";
 import {OrderedSet} from "./utils/OrderedSet";

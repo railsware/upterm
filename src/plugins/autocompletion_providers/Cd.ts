@@ -1,7 +1,6 @@
 import {expandHistoricalDirectory} from "../../Command";
-import {styles, Suggestion} from "./Suggestions";
+import {styles, Suggestion, directoriesSuggestionsProvider} from "./Common";
 import * as _ from "lodash";
-import {directoriesSuggestionsProvider} from "./Common";
 import {PluginManager} from "../../PluginManager";
 
 PluginManager.registerAutocompletionProvider("cd", async(context) => {

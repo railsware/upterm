@@ -1,5 +1,5 @@
 import * as Path from "path";
-import {Suggestion, styles} from "./Suggestions";
+import {Suggestion, styles} from "./Common";
 import {exists, readFile, mapObject} from "../../utils/Common";
 import {PluginManager} from "../../PluginManager";
 

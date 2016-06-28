@@ -1,8 +1,7 @@
 import * as Git from "../../utils/Git";
-import {styles, Suggestion, longAndShortFlag, longFlag, mapSuggestions} from "./Suggestions";
+import {styles, Suggestion, longAndShortFlag, longFlag, mapSuggestions, combine, unique} from "./Common";
 import {PluginManager} from "../../PluginManager";
 import {AutocompletionProvider, AutocompletionContext} from "../../Interfaces";
-import {combine, unique} from "./Common";
 import {linedOutputOf} from "../../PTY";
 
 const addOptions = combine([

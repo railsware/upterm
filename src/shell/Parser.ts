@@ -1,6 +1,6 @@
 import * as Scanner from "./Scanner";
 import * as _ from "lodash";
-import {Suggestion, styles} from "../plugins/autocompletion_providers/Suggestions";
+import {Suggestion, styles} from "../plugins/autocompletion_providers/Common";
 import {memoizeAccessor} from "../Decorators";
 import {commandDescriptions} from "../plugins/autocompletion_providers/Executable";
 import {executablesInPaths, mapObject} from "../utils/Common";
