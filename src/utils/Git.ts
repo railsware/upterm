@@ -1,13 +1,14 @@
 import {linedOutputOf} from "../PTY";
 import * as Path from "path";
 import * as fs from "fs";
+import * as _ from "lodash";
 
 export class Branch {
-    constructor(private name: string, private _isCurrent: boolean) {
+    constructor(private refName: string, private _isCurrent: boolean) {
     }
 
     toString(): string {
-        return this.name;
+        return _.last(this.refName.split("/"));
     }
 
     isCurrent(): boolean {
@@ -66,8 +67,12 @@ export function isGitDirectory(directory: string): directory is GitDirectoryPath
 }
 
 export async function branches(directory: GitDirectoryPath): Promise<Branch[]> {
-    let lines = await linedOutputOf("git", ["branch", "--no-color"], directory);
-    return lines.map(line => new Branch(line.slice(2), line[0] === "*"));
+    let lines = await linedOutputOf(
+        "git",
+        ["for-each-ref", "refs/tags", "refs/heads", "refs/remotes", "--format='%(HEAD)%(refname:short)'"],
+        directory
+    );
+    return lines.map(line => new Branch(line.slice(1), line[0] === "*"));
 }
 
 export async function status(directory: GitDirectoryPath): Promise<FileStatus[]> {
