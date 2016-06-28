@@ -58,9 +58,9 @@ export function recursiveFilesIn(directoryPath: string): Promise<string[]> {
     );
 }
 
-export function stat(filePath: string): Promise<fs.Stats> {
+export function lstat(filePath: string): Promise<fs.Stats> {
     return new Promise((resolve, reject) => {
-        fs.stat(filePath, (error: NodeJS.ErrnoException, pathStat: fs.Stats) => {
+        fs.lstat(filePath, (error: NodeJS.ErrnoException, pathStat: fs.Stats) => {
             if (error) {
                 reject(error);
             } else {
@@ -72,7 +72,7 @@ export function stat(filePath: string): Promise<fs.Stats> {
 
 export async function statsIn(directoryPath: FullPath): Promise<i.FileInfo[]> {
     return Promise.all((await filesIn(directoryPath)).map(async (fileName) => {
-        return {name: fileName, stat: await stat(Path.join(directoryPath, fileName))};
+        return {name: fileName, stat: await lstat(Path.join(directoryPath, fileName))};
     }));
 }
 
@@ -86,7 +86,7 @@ export function exists(filePath: string): Promise<boolean> {
 
 export async function isDirectory(directoryPath: string): Promise<boolean> {
     if (await exists(directoryPath)) {
-        return (await stat(directoryPath)).isDirectory();
+        return (await lstat(directoryPath)).isDirectory();
     } else {
         return false;
     }
