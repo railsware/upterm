@@ -1,4 +1,4 @@
-import {FileInfo, DynamicAutocompletionProvider} from "../../Interfaces";
+import {FileInfo, AutocompletionProvider} from "../../Interfaces";
 import * as Path from "path";
 import * as _ from "lodash";
 import {fontAwesome} from "../../views/css/FontAwesome";
@@ -194,7 +194,7 @@ export const longAndShortFlag = (name: string, shortName = name[0]) => mk(contex
     return [new Suggestion().withValue(value).withDisplayValue(`${shortValue} ${longValue}`).withStyle(styles.option)];
 });
 
-export const shortFlag = (char: string) => unique(new Suggestion().withValue(`-${char}`).withStyle(styles.option));
-export const longFlag = (name: string) => unique(new Suggestion().withValue(`--${name}`).withStyle(styles.option));
+export const shortFlag = (char: string) => unique(() => [new Suggestion().withValue(`-${char}`).withStyle(styles.option)]);
+export const longFlag = (name: string) => unique(() => [new Suggestion().withValue(`--${name}`).withStyle(styles.option)]);
 
-export const mapSuggestions = (provider: DynamicAutocompletionProvider, mapper: (suggestion: Suggestion) => Suggestion) => mk(async(context) => (await provider(context)).map(mapper));
+export const mapSuggestions = (provider: AutocompletionProvider, mapper: (suggestion: Suggestion) => Suggestion) => mk(async(context) => (await provider(context)).map(mapper));

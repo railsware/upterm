@@ -107,4 +107,4 @@ const options = combine(mapObject(
 ));
 
 
-PluginManager.registerAutocompletionProvider("top", async(context) => options);
+PluginManager.registerAutocompletionProvider("top", options);

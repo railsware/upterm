@@ -1,7 +1,7 @@
 import {statsIn, resolveDirectory, directoryName, joinPath} from "../../utils/Common";
 import {styles, Suggestion} from "./Suggestions";
 import {
-    FileInfo, AutocompletionContext, AutocompletionProvider, DynamicAutocompletionProvider,
+    FileInfo, AutocompletionContext, AutocompletionProvider,
 } from "../../Interfaces";
 import * as Path from "path";
 import * as modeToPermissions from "mode-to-permissions";
@@ -33,7 +33,7 @@ export const executableFilesSuggestions = filesSuggestions(info => info.stat.isF
 export const anyFilesSuggestionsProvider = filesSuggestionsProvider(() => true);
 export const directoriesSuggestionsProvider = filesSuggestionsProvider(info => info.stat.isDirectory());
 
-export const environmentVariableSuggestions = async(context: AutocompletionContext): Promise<Suggestion[]> => {
+export const environmentVariableSuggestions = mk(context => {
     if (context.argument.value.startsWith("$")) {
         return context.environment.map((key, value) =>
             new Suggestion().withValue("$" + key).withDescription(value).withStyle(styles.environmentVariable)
@@ -41,35 +41,17 @@ export const environmentVariableSuggestions = async(context: AutocompletionConte
     } else {
         return [];
     }
-};
+});
 
 export const combine = (providers: AutocompletionProvider[]): AutocompletionProvider => async(context: AutocompletionContext): Promise<Suggestion[]> => {
-    let suggestions: Suggestion[] = [];
-
-    for (const provider of providers) {
-        if (Array.isArray(provider)) {
-            suggestions = suggestions.concat(provider);
-        } else if (provider instanceof Suggestion) {
-            suggestions.push(provider);
-        } else {
-            suggestions = suggestions.concat(await provider(context));
-        }
-    }
-
-    return suggestions;
+    return _.flatten(await Promise.all(providers.map(provider => provider(context))));
 };
 
-export const mk = (provider: DynamicAutocompletionProvider): DynamicAutocompletionProvider => provider;
-export const unique = (provider: AutocompletionProvider): DynamicAutocompletionProvider => mk(async (context) => {
-    let suggestions: Suggestion[] = [];
+export function mk(provider: AutocompletionProvider) {
+    return provider;
+}
 
-    if (Array.isArray(provider)) {
-        suggestions = provider;
-    } else if (provider instanceof Suggestion) {
-        suggestions = [provider];
-    } else {
-        suggestions = await provider(context);
-    }
-
+export const unique = (provider: AutocompletionProvider): AutocompletionProvider => mk(async (context) => {
+    const suggestions = await provider(context);
     return suggestions.filter(suggestion => !context.argument.command.hasArgument(suggestion.value, context.argument));
 });

@@ -38,4 +38,4 @@ const railsCommandConfig = [
 
 const railsCommand = railsCommandConfig.map(config => new Suggestion().withValue(config.name).withDescription(config.description).withStyle(styles.command));
 
-PluginManager.registerAutocompletionProvider("rails", railsCommand);
+PluginManager.registerAutocompletionProvider("rails", () => railsCommand);

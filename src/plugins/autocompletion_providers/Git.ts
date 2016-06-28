@@ -233,19 +233,13 @@ const subCommands = [
     },
 ].map(subCommand => new Suggestion().withValue(subCommand.name).withDescription(subCommand.description).withStyle(styles.command).withSpace());
 
-PluginManager.registerAutocompletionProvider("git", async(context) => {
+PluginManager.registerAutocompletionProvider("git", context => {
     if (context.argument.position === 1) {
         return subCommands;
     } else {
         const subCommandProvider = subCommandProviders[context.argument.command.nthArgument(1).value];
         if (subCommandProvider) {
-            if (Array.isArray(subCommandProvider)) {
-                return subCommandProvider;
-            } else if (subCommandProvider instanceof Suggestion) {
-                return subCommandProvider;
-            } else {
-                return subCommandProvider(Object.assign({argument: this}, context));
-            }
+            return subCommandProvider(Object.assign({argument: this}, context));
         } else {
             return [];
         }
