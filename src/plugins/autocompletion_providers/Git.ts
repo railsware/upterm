@@ -64,18 +64,18 @@ const branchAlias = async(context: AutocompletionContext): Promise<Suggestion[]>
     return [];
 };
 
-const notStagedFiles = async(context: AutocompletionContext): Promise<Suggestion[]> => {
+const notStagedFiles = unique(async(context: AutocompletionContext): Promise<Suggestion[]> => {
     if (Git.isGitDirectory(context.environment.pwd)) {
         const fileStatuses = await Git.status(context.environment.pwd);
         return fileStatuses.map(fileStatus => new Suggestion().withValue(fileStatus.value).withStyle(styles.gitFileStatus(fileStatus.code)).withSpace());
     } else {
         return [];
     }
-};
+});
 
 const subCommandProviders: Dictionary<AutocompletionProvider> = {
-    add: combine([unique(notStagedFiles), addOptions]),
-    checkout: combine([branchesExceptCurrent, branchAlias]),
+    add: combine([notStagedFiles, addOptions]),
+    checkout: combine([branchesExceptCurrent, branchAlias, notStagedFiles]),
     commit: commitOptions,
     status: statusOptions,
     merge: combine([branchesExceptCurrent, branchAlias]),
