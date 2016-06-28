@@ -1,6 +1,6 @@
 import "mocha";
 import {expect} from "chai";
-import {commonPrefix, stat} from "../../src/utils/Common";
+import {commonPrefix, lstat, resolveFile} from "../../src/utils/Common";
 import * as mockFs from "mock-fs";
 
 
@@ -11,17 +11,15 @@ describe("common utils", () => {
         });
     });
 
-    describe("stat", () => {
+    describe("lstat", () => {
         it("returns stats even if the file is a borken symlink", async() => {
             mockFs({
-                '/broken-symlink': mockFs.symlink({
-                    path: 'non-existing-file'
+                "/broken-symlink": mockFs.symlink({
+                    path: "non-existing-file"
                 })
             });
-            return stat(<FullPath>'/broken-symlink')
-                .then((stats) => {
-                    expect(stats).to.exist;
-                });
+            const stats = await lstat(resolveFile("/", "/broken-symlink"))
+            expect(stats).to.exist;
         });
     });
 });
