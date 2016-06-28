@@ -5,7 +5,7 @@ import {Session} from "./Session";
 import {ANSIParser} from "./ANSIParser";
 import {Prompt} from "./Prompt";
 import {ScreenBuffer} from "./ScreenBuffer";
-import {CommandExecutor} from "./CommandExecutor";
+import {CommandExecutor, NonZeroExitCodeError} from "./CommandExecutor";
 import {PTY} from "./PTY";
 import {PluginManager} from "./PluginManager";
 import {EmitterWithUniqueID} from "./EmitterWithUniqueID";
@@ -63,10 +63,14 @@ export class Job extends EmitterWithUniqueID implements TerminalLikeDevice {
         }
     }
 
-    handleError(message: string): void {
+    handleError(message: NonZeroExitCodeError | string): void {
         this.setStatus(Status.Failure);
         if (message) {
-            this._screenBuffer.writeMany(message);
+            if (message instanceof NonZeroExitCodeError) {
+                // Do nothing.
+            } else {
+                this._screenBuffer.writeMany(message);
+            }
         }
         this.emit("end");
     }

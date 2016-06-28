@@ -5,6 +5,9 @@ import * as Path from "path";
 import {executablesInPaths, resolveFile, isWindows, filterAsync, exists} from "./utils/Common";
 import {loginShell} from "./utils/Shell";
 
+export class NonZeroExitCodeError extends Error {
+}
+
 abstract class CommandExecutionStrategy {
     static async canExecute(job: Job): Promise<boolean> {
         return false;
@@ -53,7 +56,7 @@ class ShellExecutionStrategy extends CommandExecutionStrategy {
             this.job.command = new PTY(
                 this.job.prompt.commandName.escapedValue, this.job.prompt.arguments.map(token => token.escapedValue), this.job.environment.toObject(), this.job.dimensions,
                 (data: string) => this.job.parser.parse(data),
-                (exitCode: number) => exitCode === 0 ? resolve() : reject(exitCode)
+                (exitCode: number) => exitCode === 0 ? resolve() : reject(new NonZeroExitCodeError(exitCode.toString()))
             );
         });
     }
