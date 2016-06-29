@@ -51,7 +51,7 @@
     "electron-prebuilt": "1.2.5",
     "mocha": "2.5.3",
     "mock-fs": "3.9.0",
-    "npm-check-updates": "2.6.7",
+    "npm-check-updates": "2.6.8",
     "spectron": "3.2.3",
     "ts-node": "0.9.3",
     "tslint": "3.12.1",
