@@ -152,8 +152,13 @@ class Command extends BranchNode {
     get children(): ASTNode[] {
         if (this.childTokens.length) {
             const children: ASTNode[] = [this.commandWord];
-            if (this.childTokens.length > 1) {
+
+            if (this.argumentListTokens.length) {
                 children.push(this.argumentList);
+            }
+
+            if (this.ioRedirect) {
+                children.push(this.ioRedirect);
             }
 
             return children;
@@ -169,7 +174,9 @@ class Command extends BranchNode {
 
     @memoizeAccessor
     get argumentList(): ArgumentList | undefined {
-        return new ArgumentList(this.childTokens.slice(1), this);
+        if (this.argumentListTokens.length) {
+            return new ArgumentList(this.argumentListTokens, this);
+        }
     }
 
     nthArgument(position: OneBasedIndex): Argument | undefined {
@@ -184,6 +191,56 @@ class Command extends BranchNode {
         } else {
             return false;
         }
+    }
+
+    @memoizeAccessor
+    private get ioRedirect(): IORedirect | undefined {
+        if (this.ioRedirectTokenIndex !== -1) {
+            return new IORedirect(this.childTokens.slice(this.ioRedirectTokenIndex));
+        }
+    }
+
+    @memoizeAccessor
+    private get ioRedirectTokenIndex(): number {
+        return this.childTokens.findIndex(token => {
+            return (
+                token instanceof Scanner.InputRedirectionSymbol ||
+                token instanceof Scanner.OutputRedirectionSymbol ||
+                token instanceof Scanner.AppendingOutputRedirectionSymbol
+            );
+        });
+    }
+
+    @memoizeAccessor
+    private get argumentListTokens(): Scanner.Token[] {
+        if (this.ioRedirect) {
+            return this.childTokens.slice(1, this.ioRedirectTokenIndex);
+        } else {
+            return this.childTokens.slice(1);
+        }
+    }
+}
+
+class IORedirect extends BranchNode {
+    @memoizeAccessor
+    get children(): ASTNode[] {
+        if (this.childTokens.length === 1) {
+            return [
+                new ShellSyntaxNode(this.childTokens[0]),
+                new EmptyNode(),
+            ];
+        } else {
+            return [
+                new ShellSyntaxNode(this.childTokens[0]),
+                new IOFile(this.childTokens[1]),
+            ];
+        }
+    }
+}
+
+class IOFile extends LeafNode {
+    async suggestions(context: PreliminaryAutocompletionContext): Promise<Suggestion[]> {
+        return [new Suggestion().withValue("fffffff")];
     }
 }
 
