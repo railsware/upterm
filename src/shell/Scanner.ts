@@ -13,10 +13,6 @@ export abstract class Token {
      * @deprecated
      */
     abstract get escapedValue(): EscapedShellWord;
-
-    get isComplete(): boolean {
-        return this.raw.endsWith(" ");
-    }
 }
 
 export class Empty extends Token {
