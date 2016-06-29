@@ -13,6 +13,8 @@ import {
     combine, executableFilesSuggestions,
 } from "../plugins/autocompletion_providers/Common";
 
+export type TopLevelCommand = EmptyNode | Command | Pipeline;
+
 export abstract class ASTNode {
     abstract get fullStart(): number;
 
@@ -63,13 +65,26 @@ abstract class BranchNode extends ASTNode {
     }
 }
 
+class SeparatedCommandList extends BranchNode {
+    @memoizeAccessor
+    get children(): ASTNode[] {
+        const semicolonIndex = this.childTokens.findIndex(token => token instanceof Scanner.Semicolon);
+
+        return [
+            parse(this.childTokens.slice(0, semicolonIndex)),
+            new ShellSyntaxNode(this.childTokens[semicolonIndex]),
+            parse(this.childTokens.slice(semicolonIndex + 1)),
+        ];
+    }
+}
+
 class Pipeline extends BranchNode {
     @memoizeAccessor
     get children(): ASTNode[] {
         const pipeIndex = this.childTokens.findIndex(token => token instanceof Scanner.Pipe);
 
         return [
-            new Command(this.childTokens.slice(0, pipeIndex)),
+            parse(this.childTokens.slice(0, pipeIndex)),
             new ShellSyntaxNode(this.childTokens[pipeIndex]),
             parse(this.childTokens.slice(pipeIndex + 1)),
         ];
@@ -111,8 +126,6 @@ class Command extends BranchNode {
         }
     }
 }
-
-export type CompleteCommand = Command | Pipeline;
 
 class ShellSyntaxNode extends LeafNode {
     async suggestions(context: PreliminaryAutocompletionContext): Promise<Suggestion[]> {
@@ -213,18 +226,22 @@ export class EmptyNode extends LeafNode {
     }
 }
 
-export function parse(tokens: Scanner.Token[]): EmptyNode | CompleteCommand {
+export function parse(tokens: Scanner.Token[]): TopLevelCommand {
     if (tokens.length === 0) {
         return new EmptyNode();
     }
 
-    const pipeIndex = tokens.findIndex(token => token instanceof Scanner.Pipe);
+    const semicolonIndex = tokens.findIndex(token => token instanceof Scanner.Semicolon);
+    if (semicolonIndex !== -1) {
+        return new SeparatedCommandList(tokens);
+    }
 
-    if (pipeIndex === -1) {
-        return new Command(tokens);
-    } else {
+    const pipeIndex = tokens.findIndex(token => token instanceof Scanner.Pipe);
+    if (pipeIndex !== -1) {
         return new Pipeline(tokens);
     }
+
+    return new Command(tokens);
 }
 
 export function leafNodeAt(position: number, node: ASTNode): LeafNode {
