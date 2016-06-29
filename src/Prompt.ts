@@ -2,11 +2,11 @@ import * as events from "events";
 import {Job} from "./Job";
 import {scan, Token} from "./shell/Scanner";
 import {expandAliases} from "./shell/CommandExpander";
-import {ASTNode, parse, TopLevelCommand} from "./shell/Parser";
+import {ASTNode, CompleteCommand} from "./shell/Parser";
 
 export class Prompt extends events.EventEmitter {
     private _value = "";
-    private _ast: TopLevelCommand;
+    private _ast: CompleteCommand;
     private _expanded: Token[];
 
     constructor(private job: Job) {
@@ -21,7 +21,7 @@ export class Prompt extends events.EventEmitter {
         this._value = value;
 
         const tokens = scan(this.value);
-        this._ast = parse(tokens);
+        this._ast = new CompleteCommand(tokens);
         this._expanded = expandAliases(tokens, this.job.session.aliases);
     }
 

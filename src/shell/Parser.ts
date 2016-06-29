@@ -10,10 +10,9 @@ import {PluginManager} from "../PluginManager";
 import {Aliases} from "../Aliases";
 import {
     environmentVariableSuggestions,
-    combine, executableFilesSuggestions,
+    combine,
+    executableFilesSuggestions,
 } from "../plugins/autocompletion_providers/Common";
-
-export type TopLevelCommand = EmptyNode | Command | Pipeline;
 
 export abstract class ASTNode {
     abstract get fullStart(): number;
@@ -65,41 +64,83 @@ abstract class BranchNode extends ASTNode {
     }
 }
 
-class SeparatedCommandList extends BranchNode {
+export class CompleteCommand extends BranchNode {
     @memoizeAccessor
     get children(): ASTNode[] {
-        const semicolonIndex = this.childTokens.findIndex(token => token instanceof Scanner.Semicolon);
+        const lastChild = _.last(this.childTokens);
+        const endsWithSeparator = lastChild instanceof Scanner.Semicolon;
 
-        return [
-            parse(this.childTokens.slice(0, semicolonIndex)),
-            new ShellSyntaxNode(this.childTokens[semicolonIndex]),
-            parse(this.childTokens.slice(semicolonIndex + 1)),
-        ];
+        if (endsWithSeparator) {
+            return [
+                new List(this.childTokens.slice(0, -1)),
+                new ShellSyntaxNode(lastChild),
+            ];
+        } else {
+            return [
+                new List(this.childTokens),
+            ];
+        }
     }
 }
 
-class Pipeline extends BranchNode {
+class List extends BranchNode {
     @memoizeAccessor
     get children(): ASTNode[] {
-        const pipeIndex = this.childTokens.findIndex(token => token instanceof Scanner.Pipe);
+        const separatorOpIndex = _.findLastIndex(this.childTokens, token => token instanceof Scanner.Semicolon);
 
-        return [
-            parse(this.childTokens.slice(0, pipeIndex)),
-            new ShellSyntaxNode(this.childTokens[pipeIndex]),
-            parse(this.childTokens.slice(pipeIndex + 1)),
-        ];
+        if (separatorOpIndex !== -1) {
+            return [
+                new List(this.childTokens.slice(0, separatorOpIndex)),
+                new ShellSyntaxNode(this.childTokens[separatorOpIndex]),
+                new AndOr(this.childTokens.slice(separatorOpIndex + 1)),
+            ];
+        } else {
+            return [
+                new AndOr(this.childTokens),
+            ];
+        }
+    }
+}
+
+class AndOr extends BranchNode {
+    @memoizeAccessor
+    get children(): ASTNode[] {
+        return [new PipeSequence(this.childTokens)];
+    }
+}
+
+class PipeSequence extends BranchNode {
+    @memoizeAccessor
+    get children(): ASTNode[] {
+        const pipeIndex = _.findLastIndex(this.childTokens, token => token instanceof Scanner.Pipe);
+
+        if (pipeIndex !== -1) {
+            return [
+                new PipeSequence(this.childTokens.slice(0, pipeIndex)),
+                new ShellSyntaxNode(this.childTokens[pipeIndex]),
+                new Command(this.childTokens.slice(pipeIndex + 1)),
+            ];
+        } else {
+            return [
+                new Command(this.childTokens),
+            ];
+        }
     }
 }
 
 class Command extends BranchNode {
     @memoizeAccessor
     get children(): ASTNode[] {
-        const children: ASTNode[] = [this.commandWord];
-        if (this.childTokens.length > 1) {
-            children.push(this.argumentList);
-        }
+        if (this.childTokens.length) {
+            const children: ASTNode[] = [this.commandWord];
+            if (this.childTokens.length > 1) {
+                children.push(this.argumentList);
+            }
 
-        return children;
+            return children;
+        } else {
+            return [new EmptyNode()];
+        }
     }
 
     @memoizeAccessor
@@ -199,7 +240,7 @@ function argumentOfExpandedAST(argument: Argument, aliases: Aliases) {
     const commandWord = argument.command.commandWord;
 
     if (aliases.has(commandWord.value)) {
-        const tree = parse(Scanner.scan(serializeReplacing(argument.command, commandWord, aliases.get(commandWord.value))));
+        const tree = new CompleteCommand(Scanner.scan(serializeReplacing(argument.command, commandWord, aliases.get(commandWord.value))));
         let argumentInNewTreeCorrespondingToTheOldOne: Argument;
 
         traverse(tree, current => {
@@ -221,27 +262,14 @@ export class EmptyNode extends LeafNode {
         super(new Scanner.Empty());
     }
 
+    // FIXME: a workaround for leafNodeAt to parse, say, `ls |` correctly.
+    get fullEnd() {
+        return Number.MAX_SAFE_INTEGER;
+    }
+
     async suggestions(context: PreliminaryAutocompletionContext): Promise<Suggestion[]> {
         return [];
     }
-}
-
-export function parse(tokens: Scanner.Token[]): TopLevelCommand {
-    if (tokens.length === 0) {
-        return new EmptyNode();
-    }
-
-    const semicolonIndex = tokens.findIndex(token => token instanceof Scanner.Semicolon);
-    if (semicolonIndex !== -1) {
-        return new SeparatedCommandList(tokens);
-    }
-
-    const pipeIndex = tokens.findIndex(token => token instanceof Scanner.Pipe);
-    if (pipeIndex !== -1) {
-        return new Pipeline(tokens);
-    }
-
-    return new Command(tokens);
 }
 
 export function leafNodeAt(position: number, node: ASTNode): LeafNode {
