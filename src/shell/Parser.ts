@@ -105,6 +105,25 @@ class List extends BranchNode {
 class AndOr extends BranchNode {
     @memoizeAccessor
     get children(): ASTNode[] {
+        const andOrTokenIndex = _.findLastIndex(this.childTokens, token => token instanceof Scanner.And || token instanceof Scanner.Or);
+
+        if (andOrTokenIndex !== -1) {
+            return [
+                new AndOr(this.childTokens.slice(0, andOrTokenIndex)),
+                new ShellSyntaxNode(this.childTokens[andOrTokenIndex]),
+                new Pipeline(this.childTokens.slice(andOrTokenIndex + 1)),
+            ];
+        } else {
+            return [
+                new Pipeline(this.childTokens),
+            ];
+        }
+    }
+}
+
+class Pipeline extends BranchNode {
+    @memoizeAccessor
+    get children(): ASTNode[] {
         return [new PipeSequence(this.childTokens)];
     }
 }

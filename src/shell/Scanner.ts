@@ -63,6 +63,26 @@ export class Semicolon extends Token {
     }
 }
 
+export class And extends Token {
+    get value() {
+        return this.raw.trim();
+    }
+
+    get escapedValue(): EscapedShellWord {
+        return <EscapedShellWord>this.value;
+    }
+}
+
+export class Or extends Token {
+    get value() {
+        return this.raw.trim();
+    }
+
+    get escapedValue(): EscapedShellWord {
+        return <EscapedShellWord>this.value;
+    }
+}
+
 export class InputRedirectionSymbol extends Token {
     get value() {
         return this.raw.trim();
@@ -129,6 +149,14 @@ const patterns = [
     {
         regularExpression: /^(\s*;)/,
         tokenConstructor: Semicolon,
+    },
+    {
+        regularExpression: /^(\s*&&)/,
+        tokenConstructor: And,
+    },
+    {
+        regularExpression: /^(\s*\|\|)/,
+        tokenConstructor: Or,
     },
     {
         regularExpression: /^(\s*>>)/,
