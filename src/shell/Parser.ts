@@ -1,6 +1,6 @@
 import * as Scanner from "./Scanner";
 import * as _ from "lodash";
-import {Suggestion, styles} from "../plugins/autocompletion_providers/Common";
+import {Suggestion, styles, anyFilesSuggestions} from "../plugins/autocompletion_providers/Common";
 import {memoizeAccessor} from "../Decorators";
 import {commandDescriptions} from "../plugins/autocompletion_providers/Executable";
 import {executablesInPaths, mapObject} from "../utils/Common";
@@ -239,8 +239,8 @@ class IORedirect extends BranchNode {
 }
 
 class IOFile extends LeafNode {
-    async suggestions(context: PreliminaryAutocompletionContext): Promise<Suggestion[]> {
-        return [new Suggestion().withValue("fffffff")];
+    suggestions(context: PreliminaryAutocompletionContext): Promise<Suggestion[]> {
+        return anyFilesSuggestions(this.value, context.environment.pwd);
     }
 }
 

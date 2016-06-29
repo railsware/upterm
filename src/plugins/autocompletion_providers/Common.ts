@@ -169,6 +169,7 @@ const filesSuggestionsProvider =
             filesSuggestions(filter)(context.argument.value, directory);
 
 export const executableFilesSuggestions = filesSuggestions(info => info.stat.isFile() && modeToPermissions(info.stat.mode).execute.owner);
+export const anyFilesSuggestions = filesSuggestions(() => true);
 export const anyFilesSuggestionsProvider = filesSuggestionsProvider(() => true);
 export const directoriesSuggestionsProvider = filesSuggestionsProvider(info => info.stat.isDirectory());
 
