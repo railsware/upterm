@@ -1,7 +1,6 @@
 import * as events from "events";
 import {Job} from "./Job";
-import {scan, Token} from "./Scanner";
-import {expandAliases} from "./CommandExpander";
+import {scan, Token, expandAliases} from "./Scanner";
 import {ASTNode, CompleteCommand} from "./Parser";
 
 export class Prompt extends events.EventEmitter {
