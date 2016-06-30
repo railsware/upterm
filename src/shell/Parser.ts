@@ -233,6 +233,7 @@ class IORedirect extends BranchNode {
             return [
                 new ShellSyntaxNode(this.childTokens[0]),
                 new IOFile(this.childTokens[1]),
+                ...this.childTokens.slice(2).map(token => new UnknownNode(token)),
             ];
         }
     }
@@ -330,6 +331,12 @@ function argumentOfExpandedAST(argument: Argument, aliases: Aliases) {
 
     } else {
         return argument;
+    }
+}
+
+export class UnknownNode extends LeafNode {
+    async suggestions(context: PreliminaryAutocompletionContext): Promise<Suggestion[]> {
+        return [];
     }
 }
 
