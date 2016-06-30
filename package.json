@@ -52,7 +52,7 @@
     "mocha": "2.5.3",
     "mock-fs": "3.9.0",
     "npm-check-updates": "2.6.7",
-    "spectron": "3.2.3",
+    "spectron": "3.2.4",
     "ts-node": "0.9.3",
     "tslint": "3.12.1",
     "typescript": "1.9.0-dev.20160622-1.0"
