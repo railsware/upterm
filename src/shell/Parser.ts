@@ -302,13 +302,7 @@ export class Argument extends LeafNode {
             PluginManager.autocompletionProviderFor(argument.command.commandWord.value),
         ]);
 
-        if (Array.isArray(provider)) {
-            return provider;
-        } else if (provider instanceof Suggestion) {
-            return [provider];
-        } else {
-            return provider(Object.assign({argument: argument}, context));
-        }
+        return provider(Object.assign(context, {argument: argument}));
     }
 }
 

@@ -4,7 +4,7 @@ import {Cursor} from "./Cursor";
 import * as i from "./Interfaces";
 import * as e from "./Enums";
 import {List} from "immutable";
-import {error, times} from "./utils/Common";
+import {error, times, assign} from "./utils/Common";
 
 export class ScreenBuffer extends events.EventEmitter {
     public static hugeOutputThreshold = 300;
@@ -74,7 +74,7 @@ export class ScreenBuffer extends events.EventEmitter {
     }
 
     setAttributes(attributes: i.Attributes): void {
-        this._attributes = attributesFlyweight(Object.assign({}, this._attributes, attributes));
+        this._attributes = attributesFlyweight(assign(this._attributes, attributes));
     }
 
     toRenderable(status: e.Status, fromStorage = this.storage): List<List<Char>> {
@@ -98,7 +98,7 @@ export class ScreenBuffer extends events.EventEmitter {
             let char: Char = storage.getIn(cursorCoordinates);
             storage = storage.setIn(
                 cursorCoordinates,
-                Char.flyweight(char.toString(), Object.assign({}, char.attributes, {cursor: true}))
+                Char.flyweight(char.toString(), assign(char.attributes, {cursor: true}))
             );
         }
 
@@ -232,7 +232,7 @@ export class ScreenBuffer extends events.EventEmitter {
     }
 
     set margins(margins: PartialMargins) {
-        this._margins = Object.assign({}, this._margins, margins);
+        this._margins = assign(this._margins, margins);
     }
 
     at(position: RowColumn): Char {

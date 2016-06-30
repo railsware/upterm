@@ -134,7 +134,7 @@ export const application = {
 };
 
 export const jobs = (isSessionActive: boolean): CSSObject =>
-    isSessionActive ? {} : Object.assign({}, inactiveJobs);
+    isSessionActive ? {} : inactiveJobs;
 
 export const row = (jobStatus: Status, activeScreenBufferType: ScreenBufferType) => {
     const style: CSSObject = {

@@ -3,6 +3,7 @@ import {styles, Suggestion, longAndShortFlag, longFlag, mapSuggestions, combine,
 import {PluginManager} from "../../PluginManager";
 import {AutocompletionProvider, AutocompletionContext} from "../../Interfaces";
 import {linedOutputOf} from "../../PTY";
+import {assign} from "../../utils/Common";
 
 const addOptions = combine([
     mapSuggestions(longAndShortFlag("patch"), suggestion => suggestion.withDescription(
@@ -238,7 +239,7 @@ PluginManager.registerAutocompletionProvider("git", context => {
     } else {
         const subCommandProvider = subCommandProviders[context.argument.command.nthArgument(1).value];
         if (subCommandProvider) {
-            return subCommandProvider(Object.assign({argument: this}, context));
+            return subCommandProvider(assign(context, {argument: this}));
         } else {
             return [];
         }

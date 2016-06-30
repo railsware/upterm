@@ -301,6 +301,10 @@ export function mapObject<T, R>(object: Dictionary<T>, mapper: (key: string, val
     return result;
 }
 
+export function assign<A extends B, B extends Object>(source: A, assignments: B): A {
+    return Object.assign({}, source, assignments);
+}
+
 const baseConfigDirectory = Path.join(homeDirectory, ".black-screen");
 export const presentWorkingDirectoryFilePath = Path.join(baseConfigDirectory, "presentWorkingDirectory");
 export const historyFilePath = Path.join(baseConfigDirectory, "history");
