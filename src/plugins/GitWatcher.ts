@@ -1,4 +1,4 @@
-import {Session} from "../Session";
+import {Session} from "../shell/Session";
 import {PluginManager} from "../PluginManager";
 import {EnvironmentObserverPlugin} from "../Interfaces";
 import {watch, FSWatcher} from "fs";

@@ -1,4 +1,4 @@
-import {Session} from "../Session";
+import {Session} from "../shell/Session";
 import {PluginManager} from "../PluginManager";
 import * as Path from "path";
 import * as fs from "fs";

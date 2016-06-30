@@ -1,7 +1,7 @@
 import * as React from "react";
 import * as _ from "lodash";
-import {Session} from "../Session";
-import {Job} from "../Job";
+import {Session} from "../shell/Session";
+import {Job} from "../shell/Job";
 import {StatusLineComponent} from "./StatusLineComponent";
 import {JobComponent} from "./3_JobComponent";
 import {KeyCode} from "../Enums";

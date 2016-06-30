@@ -1,7 +1,7 @@
 import * as _ from "lodash";
 import * as React from "react";
 import {PluginManager} from "../PluginManager";
-import {Job} from "../Job";
+import {Job} from "../shell/Job";
 
 PluginManager.registerOutputDecorator({
     decorate: (job: Job): React.ReactElement<any> => {

@@ -5,7 +5,7 @@ import {groupWhen} from "../utils/Common";
 import {List} from "immutable";
 import * as css from "./css/main";
 import {fontAwesome} from "./css/FontAwesome";
-import {Job} from "../Job";
+import {Job} from "../shell/Job";
 import {Status} from "../Enums";
 
 const CharGroupComponent = ({job, group}: {job: Job, group: Char[]}) =>

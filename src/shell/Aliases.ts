@@ -1,4 +1,4 @@
-import {executeCommandWithShellConfig} from "./PTY";
+import {executeCommandWithShellConfig} from "../PTY";
 import * as _ from "lodash";
 
 export const aliasesFromConfig: Dictionary<string> = {};

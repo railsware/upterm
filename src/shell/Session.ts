@@ -1,17 +1,17 @@
 import {readFileSync} from "fs";
 import {Job} from "./Job";
 import {History} from "./History";
-import {EmitterWithUniqueID} from "./EmitterWithUniqueID";
-import {PluginManager} from "./PluginManager";
-import {Status} from "./Enums";
-import {ApplicationComponent} from "./views/1_ApplicationComponent";
+import {EmitterWithUniqueID} from "../EmitterWithUniqueID";
+import {PluginManager} from "../PluginManager";
+import {Status} from "../Enums";
+import {ApplicationComponent} from "../views/1_ApplicationComponent";
 import {Environment, processEnvironment} from "./Environment";
 import {
     homeDirectory, normalizeDirectory, writeFileCreatingParents,
     presentWorkingDirectoryFilePath, historyFilePath,
-} from "./utils/Common";
+} from "../utils/Common";
 import {remote} from "electron";
-import {OrderedSet} from "./utils/OrderedSet";
+import {OrderedSet} from "../utils/OrderedSet";
 import {Aliases, aliasesFromConfig} from "./Aliases";
 
 export class Session extends EmitterWithUniqueID {

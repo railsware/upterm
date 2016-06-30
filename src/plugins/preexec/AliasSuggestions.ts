@@ -1,5 +1,5 @@
 import {PluginManager} from "../../PluginManager";
-import {Job} from "../../Job";
+import {Job} from "../../shell/Job";
 
 PluginManager.registerPreexecPlugin(async function (job: Job): Promise<void> {
     const input = job.prompt.value;

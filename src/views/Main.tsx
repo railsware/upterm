@@ -1,12 +1,12 @@
 process.env.NODE_ENV = "production";
 
-import {loadAliasesFromConfig} from "../Aliases";
+import {loadAliasesFromConfig} from "../shell/Aliases";
 const reactDOM = require("react-dom");
 /* tslint:disable:no-unused-variable */
 import * as React from "react";
 import {ApplicationComponent} from "./1_ApplicationComponent";
 import {loadAllPlugins} from "../PluginManager";
-import {loadEnvironment} from "../Environment";
+import {loadEnvironment} from "../shell/Environment";
 
 document.addEventListener(
     "DOMContentLoaded",

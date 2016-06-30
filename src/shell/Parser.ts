@@ -7,7 +7,7 @@ import {executablesInPaths, mapObject} from "../utils/Common";
 import {loginShell} from "../utils/Shell";
 import {PreliminaryAutocompletionContext} from "../Interfaces";
 import {PluginManager} from "../PluginManager";
-import {Aliases} from "../Aliases";
+import {Aliases} from "./Aliases";
 import {
     environmentVariableSuggestions,
     combine,

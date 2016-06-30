@@ -1,4 +1,4 @@
-import {Aliases} from "../Aliases";
+import {Aliases} from "./Aliases";
 import {scan, Token, concatTokens} from "./Scanner";
 
 export function expandAliases(tokens: Token[], aliases: Aliases): Token[] {

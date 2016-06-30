@@ -1,6 +1,6 @@
 import * as React from "react";
 import * as e from "../Enums";
-import {Job} from "../Job";
+import {Job} from "../shell/Job";
 import {keys, isModifierKey} from "./ViewUtils";
 import {PromptComponent} from "./4_PromptComponent";
 import {BufferComponent} from "./BufferComponent";

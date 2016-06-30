@@ -1,14 +1,14 @@
 import {Weight, Brightness} from "./Enums";
 import {Stats} from "fs";
 import {ReactElement} from "react";
-import {Job} from "./Job";
-import {Session} from "./Session";
+import {Job} from "./shell/Job";
+import {Session} from "./shell/Session";
 import {Suggestion} from "./plugins/autocompletion_providers/Common";
 import {ScreenBuffer} from "./ScreenBuffer";
-import {Environment} from "./Environment";
+import {Environment} from "./shell/Environment";
 import {OrderedSet} from "./utils/OrderedSet";
 import {Argument} from "./shell/Parser";
-import {Aliases} from "./Aliases";
+import {Aliases} from "./shell/Aliases";
 
 export type ColorCode = number | number[];
 

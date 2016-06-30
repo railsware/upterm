@@ -1,9 +1,9 @@
 import {delimiter} from "path";
-import {executeCommandWithShellConfig} from "./PTY";
+import {executeCommandWithShellConfig} from "../PTY";
 import {clone} from "lodash";
-import {homeDirectory} from "./utils/Common";
+import {homeDirectory} from "../utils/Common";
 import * as Path from "path";
-import {AbstractOrderedSet} from "./utils/OrderedSet";
+import {AbstractOrderedSet} from "../utils/OrderedSet";
 
 const ignoredEnvironmentVariables = [
     "NODE_ENV",

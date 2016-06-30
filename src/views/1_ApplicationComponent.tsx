@@ -2,7 +2,7 @@ import {SessionComponent} from "./2_SessionComponent";
 import {TabComponent, TabProps, Tab} from "./TabComponent";
 import * as React from "react";
 import * as _ from "lodash";
-import {Session} from "../Session";
+import {Session} from "../shell/Session";
 import {ipcRenderer} from "electron";
 import {KeyCode} from "../Enums";
 import {remote} from "electron";

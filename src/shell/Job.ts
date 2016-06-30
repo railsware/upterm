@@ -1,18 +1,18 @@
 import * as _ from "lodash";
-import * as i from "./Interfaces";
+import * as i from "../Interfaces";
 import * as React from "react";
 import {Session} from "./Session";
-import {ANSIParser} from "./ANSIParser";
+import {ANSIParser} from "../ANSIParser";
 import {Prompt} from "./Prompt";
-import {ScreenBuffer} from "./ScreenBuffer";
+import {ScreenBuffer} from "../ScreenBuffer";
 import {CommandExecutor, NonZeroExitCodeError} from "./CommandExecutor";
-import {PTY} from "./PTY";
-import {PluginManager} from "./PluginManager";
-import {EmitterWithUniqueID} from "./EmitterWithUniqueID";
-import {Status} from "./Enums";
+import {PTY} from "../PTY";
+import {PluginManager} from "../PluginManager";
+import {EmitterWithUniqueID} from "../EmitterWithUniqueID";
+import {Status} from "../Enums";
 import {Environment} from "./Environment";
-import {normalizeKey} from "./utils/Common";
-import {TerminalLikeDevice} from "./Interfaces";
+import {normalizeKey} from "../utils/Common";
+import {TerminalLikeDevice} from "../Interfaces";
 import {History} from "./History";
 
 function makeThrottledDataEmitter(timesPerSecond: number, subject: EmitterWithUniqueID) {

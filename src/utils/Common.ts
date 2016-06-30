@@ -5,7 +5,7 @@ import * as e from "./../Enums";
 import * as _ from "lodash";
 import * as fs from "fs";
 import {KeyCode} from "./../Enums";
-import {EnvironmentPath} from "../Environment";
+import {EnvironmentPath} from "../shell/Environment";
 
 interface FSExtraWalkObject {
     path: string;

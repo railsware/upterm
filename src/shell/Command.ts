@@ -1,10 +1,10 @@
 import {Job} from "./Job";
 import {existsSync, statSync} from "fs";
-import {homeDirectory, pluralize, resolveDirectory, resolveFile, mapObject} from "./utils/Common";
+import {homeDirectory, pluralize, resolveDirectory, resolveFile, mapObject} from "../utils/Common";
 import {readFileSync} from "fs";
 import {EOL} from "os";
 import {Session} from "./Session";
-import {OrderedSet} from "./utils/OrderedSet";
+import {OrderedSet} from "../utils/OrderedSet";
 import {parseAlias} from "./Aliases";
 
 const executors: Dictionary<(i: Job, a: string[]) => void> = {

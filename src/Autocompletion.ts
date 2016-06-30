@@ -1,4 +1,4 @@
-import {Job} from "./Job";
+import {Job} from "./shell/Job";
 import {leafNodeAt} from "./shell/Parser";
 
 export const suggestionsLimit = 9;

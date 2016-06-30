@@ -1,6 +1,6 @@
 import "mocha";
 import {expect} from "chai";
-import {Environment} from "../src/Environment";
+import {Environment} from "../src/shell/Environment";
 
 describe("EnvironmentPath", () => {
     describe("input method", () => {
