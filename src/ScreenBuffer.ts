@@ -1,17 +1,18 @@
 import * as events from "events";
-import {Char, attributesFlyweight} from "./Char";
+import {Char, attributesFlyweight, defaultAttributes} from "./Char";
 import {Cursor} from "./Cursor";
 import * as i from "./Interfaces";
 import * as e from "./Enums";
 import {List} from "immutable";
 import {error, times, assign} from "./utils/Common";
+import {ColorCode} from "./Interfaces";
 
 export class ScreenBuffer extends events.EventEmitter {
     public static hugeOutputThreshold = 300;
     public cursor: Cursor = new Cursor();
     public activeScreenBufferType = e.ScreenBufferType.Standard;
     private storage = List<List<Char>>();
-    private _attributes: i.Attributes = {color: e.Color.White, weight: e.Weight.Normal};
+    private _attributes: i.Attributes = assign(defaultAttributes, {color: e.Color.White, weight: e.Weight.Normal});
     private isOriginModeSet = false;
     private _margins: Margins = {top: 0, left: 0};
 
@@ -71,6 +72,10 @@ export class ScreenBuffer extends events.EventEmitter {
 
     get attributes(): i.Attributes {
         return this._attributes;
+    }
+
+    resetAttributes(): void {
+        this._attributes = defaultAttributes;
     }
 
     setAttributes(attributes: i.Attributes): void {

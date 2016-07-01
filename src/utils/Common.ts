@@ -6,6 +6,8 @@ import * as _ from "lodash";
 import * as fs from "fs";
 import {KeyCode} from "./../Enums";
 import {EnvironmentPath} from "../shell/Environment";
+import {Color} from "../Enums";
+import {ColorCode} from "../Interfaces";
 
 interface FSExtraWalkObject {
     path: string;

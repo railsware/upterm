@@ -1,8 +1,8 @@
-import {Char} from "./Char";
+import {Char, defaultAttributes} from "./Char";
 import {Color, Weight, Brightness, KeyCode, LogLevel, ScreenBufferType} from "./Enums";
-import {Attributes, TerminalLikeDevice} from "./Interfaces";
+import {Attributes, TerminalLikeDevice, ColorCode} from "./Interfaces";
 import {ScreenBuffer} from "./ScreenBuffer";
-import {print, error, info, debug} from "./utils/Common";
+import {print, error, info, debug, assign} from "./utils/Common";
 
 const ansiParserConstructor: typeof AnsiParser = require("node-ansiparser");
 
@@ -13,54 +13,48 @@ interface HandlerResult {
     url: string;
 }
 
-const SGR: { [indexer: string]: Attributes|string } = {
-    0: {color: Color.White, weight: Weight.Normal, underline: false, backgroundColor: Color.Black, inverse: false},
-    1: {brightness: Brightness.Bright},
-    2: {weight: Weight.Faint},
-    4: {underline: true},
-    7: {inverse: true},
-    27: {inverse: false},
-    30: {color: Color.Black},
-    31: {color: Color.Red},
-    32: {color: Color.Green},
-    33: {color: Color.Yellow},
-    34: {color: Color.Blue},
-    35: {color: Color.Magenta},
-    36: {color: Color.Cyan},
-    37: {color: Color.White},
-    38: "color",
-    39: {color: Color.White},
-    40: {backgroundColor: Color.Black},
-    41: {backgroundColor: Color.Red},
-    42: {backgroundColor: Color.Green},
-    43: {backgroundColor: Color.Yellow},
-    44: {backgroundColor: Color.Blue},
-    45: {backgroundColor: Color.Magenta},
-    46: {backgroundColor: Color.Cyan},
-    47: {backgroundColor: Color.White},
-    48: "backgroundColor",
-    49: {backgroundColor: Color.Black},
-    90: {brightness: Brightness.Bright, color: Color.Black},
-    91: {brightness: Brightness.Bright, color: Color.Red},
-    92: {brightness: Brightness.Bright, color: Color.Green},
-    93: {brightness: Brightness.Bright, color: Color.Yellow},
-    94: {brightness: Brightness.Bright, color: Color.Blue},
-    95: {brightness: Brightness.Bright, color: Color.Magenta},
-    96: {brightness: Brightness.Bright, color: Color.Cyan},
-    97: {brightness: Brightness.Bright, color: Color.White},
-    100: {brightness: Brightness.Bright, backgroundColor: Color.Black},
-    101: {brightness: Brightness.Bright, backgroundColor: Color.Red},
-    102: {brightness: Brightness.Bright, backgroundColor: Color.Green},
-    103: {brightness: Brightness.Bright, backgroundColor: Color.Yellow},
-    104: {brightness: Brightness.Bright, backgroundColor: Color.Blue},
-    105: {brightness: Brightness.Bright, backgroundColor: Color.Magenta},
-    106: {brightness: Brightness.Bright, backgroundColor: Color.Cyan},
-    107: {brightness: Brightness.Bright, backgroundColor: Color.White},
+const SGR: { [indexer: string]: (attributes: Attributes) => Attributes } = {
+    0: (attributes: Attributes) => defaultAttributes,
+    1: (attributes: Attributes) => assign(attributes, {brightness: Brightness.Bright}),
+    2: (attributes: Attributes) => assign(attributes, {weight: Weight.Faint}),
+    4: (attributes: Attributes) => assign(attributes, {underline: true}),
+    7: (attributes: Attributes) => assign(attributes, {inverse: true}),
+    27: (attributes: Attributes) => assign(attributes, {inverse: false}),
+    30: (attributes: Attributes) => assign(attributes, {color: <ColorCode>Color.Black}),
+    31: (attributes: Attributes) => assign(attributes, {color: <ColorCode>Color.Red}),
+    32: (attributes: Attributes) => assign(attributes, {color: <ColorCode>Color.Green}),
+    33: (attributes: Attributes) => assign(attributes, {color: <ColorCode>Color.Yellow}),
+    34: (attributes: Attributes) => assign(attributes, {color: <ColorCode>Color.Blue}),
+    35: (attributes: Attributes) => assign(attributes, {color: <ColorCode>Color.Magenta}),
+    36: (attributes: Attributes) => assign(attributes, {color: <ColorCode>Color.Cyan}),
+    37: (attributes: Attributes) => assign(attributes, {color: <ColorCode>Color.White}),
+    39: (attributes: Attributes) => assign(attributes, {color: <ColorCode>Color.White}),
+    40: (attributes: Attributes) => assign(attributes, {backgroundColor: <ColorCode>Color.Black}),
+    41: (attributes: Attributes) => assign(attributes, {backgroundColor: <ColorCode>Color.Red}),
+    42: (attributes: Attributes) => assign(attributes, {backgroundColor: <ColorCode>Color.Green}),
+    43: (attributes: Attributes) => assign(attributes, {backgroundColor: <ColorCode>Color.Yellow}),
+    44: (attributes: Attributes) => assign(attributes, {backgroundColor: <ColorCode>Color.Blue}),
+    45: (attributes: Attributes) => assign(attributes, {backgroundColor: <ColorCode>Color.Magenta}),
+    46: (attributes: Attributes) => assign(attributes, {backgroundColor: <ColorCode>Color.Cyan}),
+    47: (attributes: Attributes) => assign(attributes, {backgroundColor: <ColorCode>Color.White}),
+    49: (attributes: Attributes) => assign(attributes, {backgroundColor: <ColorCode>Color.Black}),
+    90: (attributes: Attributes) => assign(attributes, {brightness: <ColorCode>Brightness.Bright, color: <ColorCode>Color.Black}),
+    91: (attributes: Attributes) => assign(attributes, {brightness: <ColorCode>Brightness.Bright, color: <ColorCode>Color.Red}),
+    92: (attributes: Attributes) => assign(attributes, {brightness: <ColorCode>Brightness.Bright, color: <ColorCode>Color.Green}),
+    93: (attributes: Attributes) => assign(attributes, {brightness: <ColorCode>Brightness.Bright, color: <ColorCode>Color.Yellow}),
+    94: (attributes: Attributes) => assign(attributes, {brightness: <ColorCode>Brightness.Bright, color: <ColorCode>Color.Blue}),
+    95: (attributes: Attributes) => assign(attributes, {brightness: <ColorCode>Brightness.Bright, color: <ColorCode>Color.Magenta}),
+    96: (attributes: Attributes) => assign(attributes, {brightness: <ColorCode>Brightness.Bright, color: <ColorCode>Color.Cyan}),
+    97: (attributes: Attributes) => assign(attributes, {brightness: <ColorCode>Brightness.Bright, color: <ColorCode>Color.White}),
+    100: (attributes: Attributes) => assign(attributes, {brightness: <ColorCode>Brightness.Bright, backgroundColor: <ColorCode>Color.Black}),
+    101: (attributes: Attributes) => assign(attributes, {brightness: <ColorCode>Brightness.Bright, backgroundColor: <ColorCode>Color.Red}),
+    102: (attributes: Attributes) => assign(attributes, {brightness: <ColorCode>Brightness.Bright, backgroundColor: <ColorCode>Color.Green}),
+    103: (attributes: Attributes) => assign(attributes, {brightness: <ColorCode>Brightness.Bright, backgroundColor: <ColorCode>Color.Yellow}),
+    104: (attributes: Attributes) => assign(attributes, {brightness: <ColorCode>Brightness.Bright, backgroundColor: <ColorCode>Color.Blue}),
+    105: (attributes: Attributes) => assign(attributes, {brightness: <ColorCode>Brightness.Bright, backgroundColor: <ColorCode>Color.Magenta}),
+    106: (attributes: Attributes) => assign(attributes, {brightness: <ColorCode>Brightness.Bright, backgroundColor: <ColorCode>Color.Cyan}),
+    107: (attributes: Attributes) => assign(attributes, {brightness: <ColorCode>Brightness.Bright, backgroundColor: <ColorCode>Color.White}),
 };
-
-function isSetColorExtended(sgrValue: any): sgrValue is string {
-    return sgrValue === "color" || sgrValue === "backgroundColor";
-}
 
 const CSI = {
     erase: {
@@ -450,36 +444,46 @@ export class ANSIParser {
 
                 if (params.length === 0) {
                     short = "Reset SGR";
-                    this.screenBuffer.setAttributes(SGR[0]);
+                    this.screenBuffer.resetAttributes();
                     break;
                 }
 
                 while (params.length !== 0) {
                     const sgr = params.shift()!;
-                    const attributeToSet = SGR[sgr];
 
-                    if (!attributeToSet) {
-                        error("sgr", sgr, params);
-                    } else if (isSetColorExtended(attributeToSet)) {
+                    if (sgr === 38 || sgr === 48) {
                         const colorFormat = params.shift();
-                        if (colorFormat === colorFormatCodes.format8bit) {
-                            const color = params.shift();
+                        let color: ColorCode;
 
-                            if (color) {
-                                this.screenBuffer.setAttributes({[attributeToSet]: color});
-                            } else {
+                        if (colorFormat === colorFormatCodes.format8bit) {
+                            color = params.shift();
+
+                            if (!color) {
                                 error("sgr", sgr, colorFormat, params);
                             }
                         } else if (colorFormat === colorFormatCodes.formatTrueColor) {
-                            this.screenBuffer.setAttributes({[attributeToSet]: params});
+                            color = params;
                             params = [];
                         } else {
                             error("sgr", sgr, colorFormat, params);
                         }
+
+                        if (sgr === 38) {
+                            this.screenBuffer.setAttributes(assign(this.screenBuffer.attributes, {color: color}));
+                        } else {
+                            this.screenBuffer.setAttributes(assign(this.screenBuffer.attributes, {backgroundColor: color}));
+                        }
                     } else {
-                        this.screenBuffer.setAttributes(attributeToSet);
+                        const attributesUpdater = SGR[sgr];
+
+                        if (attributesUpdater) {
+                            this.screenBuffer.setAttributes(attributesUpdater(this.screenBuffer.attributes));
+                        } else {
+                            error("sgr", sgr, params);
+                        }
                     }
                 }
+
                 break;
             case "n":
                 if (param === 6) {

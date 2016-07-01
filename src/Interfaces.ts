@@ -13,15 +13,15 @@ import {Aliases} from "./shell/Aliases";
 export type ColorCode = number | number[];
 
 export interface Attributes {
-    readonly inverse?: boolean;
-    readonly color?: ColorCode;
-    readonly backgroundColor?: ColorCode;
-    readonly brightness?: Brightness;
-    readonly weight?: Weight;
-    readonly underline?: boolean;
-    readonly crossedOut?: boolean;
-    readonly blinking?: boolean;
-    readonly cursor?: boolean;
+    readonly inverse: boolean;
+    readonly color: ColorCode;
+    readonly backgroundColor: ColorCode;
+    readonly brightness: Brightness;
+    readonly weight: Weight;
+    readonly underline: boolean;
+    readonly crossedOut: boolean;
+    readonly blinking: boolean;
+    readonly cursor: boolean;
 }
 
 export interface PreliminaryAutocompletionContext {

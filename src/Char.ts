@@ -1,7 +1,7 @@
 import * as _ from "lodash";
 import {memoize} from "./Decorators";
 import {Attributes} from "./Interfaces";
-import {KeyCode} from "./Enums";
+import {KeyCode, Brightness, Weight, Color} from "./Enums";
 
 export const attributesFlyweight = _.memoize(
     (attributes: Attributes): Attributes => Object.freeze(Object.assign({}, attributes)),
@@ -12,8 +12,20 @@ export const attributesFlyweight = _.memoize(
     }
 );
 
+export const defaultAttributes = Object.freeze({
+    inverse: false,
+    color: Color.White,
+    backgroundColor: Color.Black,
+    brightness: Brightness.Normal,
+    weight: Weight.Normal,
+    underline: false,
+    crossedOut: false,
+    blinking: false,
+    cursor: false,
+});
+
 export class Char {
-    static empty = Char.flyweight(" ", {});
+    static empty = Char.flyweight(" ", defaultAttributes);
 
     @memoize()
     static flyweight(char: string, attributes: Attributes) {
