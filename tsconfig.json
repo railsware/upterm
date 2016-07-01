@@ -10,7 +10,8 @@
     "noEmitOnError": true,
     "jsx": "react",
     "outDir": "compiled/src",
-    "strictNullChecks": true
+    "strictNullChecks": true,
+    "noImplicitThis": true
   },
   "exclude": [
     "node_modules",

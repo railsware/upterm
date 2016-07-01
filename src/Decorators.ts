@@ -16,7 +16,7 @@ export const memoizeAccessor = <T>(target: Object, name: string | symbol, descri
     const memoizedPropertyName = `__memoized_${name}`;
     const originalGetter = descriptor.get;
 
-    descriptor.get = function () {
+    descriptor.get = function (this: any) {
         if (!this[memoizedPropertyName]) {
             this[memoizedPropertyName] = originalGetter!.call(this);
         }

@@ -242,7 +242,7 @@ PluginManager.registerAutocompletionProvider("git", context => {
         if (firstArgument) {
             const subCommandProvider = subCommandProviders[firstArgument.value];
             if (subCommandProvider) {
-                return subCommandProvider(assign(context, {argument: this}));
+                return subCommandProvider(context);
             } else {
                 return [];
             }
