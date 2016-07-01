@@ -9,7 +9,8 @@
     "noImplicitAny": true,
     "noEmitOnError": true,
     "jsx": "react",
-    "outDir": "compiled/src"
+    "outDir": "compiled/src",
+    "strictNullChecks": true
   },
   "exclude": [
     "node_modules",

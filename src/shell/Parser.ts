@@ -317,17 +317,14 @@ function argumentOfExpandedAST(argument: Argument, aliases: Aliases) {
 
     if (aliases.has(commandWord.value)) {
         const tree = new CompleteCommand(Scanner.scan(serializeReplacing(argument.command, commandWord, aliases.get(commandWord.value))));
-        let argumentInNewTreeCorrespondingToTheOldOne: Argument;
 
-        traverse(tree, current => {
+        for (const current of traverse(tree)) {
             if (current instanceof Argument && current.value === argument.value) {
-                argumentInNewTreeCorrespondingToTheOldOne = current;
+                return current;
             }
-        });
+        }
 
-        return argumentInNewTreeCorrespondingToTheOldOne;
-
-
+        throw "Couldn't find the argument.";
     } else {
         return argument;
     }
@@ -370,18 +367,20 @@ export function leafNodeAt(position: number, node: ASTNode): LeafNode {
     }
 }
 
-function traverse(node: ASTNode, callback: (node: ASTNode) => void) {
-    callback(node);
+function *traverse(node: ASTNode): Iterable<ASTNode> {
+    yield node;
 
     if (node instanceof BranchNode) {
-        node.children.forEach(child => traverse(child, callback));
+        for (const child of node.children) {
+            yield * traverse(child);
+        }
     }
 }
 
 export function serializeReplacing(tree: ASTNode, focused: LeafNode, replacement: string) {
     let serialized = "";
 
-    traverse(tree, current => {
+    for (const current of traverse(tree)) {
         if (current instanceof LeafNode) {
             if (current === focused) {
                 serialized += focused.spaces + replacement;
@@ -389,7 +388,7 @@ export function serializeReplacing(tree: ASTNode, focused: LeafNode, replacement
                 serialized += current.raw;
             }
         }
-    });
+    }
 
     return serialized;
 }
