@@ -237,11 +237,17 @@ PluginManager.registerAutocompletionProvider("git", context => {
     if (context.argument.position === 1) {
         return subCommands;
     } else {
-        const subCommandProvider = subCommandProviders[context.argument.command.nthArgument(1).value];
-        if (subCommandProvider) {
-            return subCommandProvider(assign(context, {argument: this}));
+        const firstArgument = context.argument.command.nthArgument(1);
+
+        if (firstArgument) {
+            const subCommandProvider = subCommandProviders[firstArgument.value];
+            if (subCommandProvider) {
+                return subCommandProvider(assign(context, {argument: this}));
+            } else {
+                return [];
+            }
         } else {
-            return [];
+            throw "Has no first argument.";
         }
     }
 });

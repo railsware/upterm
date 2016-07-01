@@ -34,7 +34,12 @@ abstract class LeafNode extends ASTNode {
     }
 
     get spaces(): string {
-        return this.token.raw.match(/^(\s*)/)[1];
+        const match = this.token.raw.match(/^(\s*)/);
+        if (match) {
+            return match[1];
+        } else {
+            return "";
+        }
     }
 
     get raw(): string {
@@ -153,7 +158,7 @@ class Command extends BranchNode {
         if (this.childTokens.length) {
             const children: ASTNode[] = [this.commandWord];
 
-            if (this.argumentListTokens.length) {
+            if (this.argumentList) {
                 children.push(this.argumentList);
             }
 

@@ -215,14 +215,20 @@ const npmCommand = npmCommandConfig.map(config => new Suggestion().withValue(con
 PluginManager.registerAutocompletionProvider("npm", async (context) => {
     if (context.argument.position === 1) {
         return npmCommand;
-    } else if (context.argument.position === 2 && context.argument.command.nthArgument(1).value === "run") {
-        const packageFilePath = Path.join(context.environment.pwd, "package.json");
+    } else if (context.argument.position === 2) {
+        const firstArgument = context.argument.command.nthArgument(1);
 
-        if (await exists(packageFilePath)) {
-            const parsed = JSON.parse(await readFile(packageFilePath)).scripts || {};
-            return mapObject(parsed, (key: string, value: string) => new Suggestion().withValue(key).withDescription(value).withStyle(styles.command));
+        if (firstArgument && firstArgument.value === "run") {
+            const packageFilePath = Path.join(context.environment.pwd, "package.json");
+
+            if (await exists(packageFilePath)) {
+                const parsed = JSON.parse(await readFile(packageFilePath)).scripts || {};
+                return mapObject(parsed, (key: string, value: string) => new Suggestion().withValue(key).withDescription(value).withStyle(styles.command));
+            } else {
+                return [];
+            }
         } else {
-            return [];
+            throw "Has no first argument.";
         }
     } else {
         return [];

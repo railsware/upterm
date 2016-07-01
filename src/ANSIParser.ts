@@ -453,25 +453,20 @@ export class ANSIParser {
 
                     if (sgr === 38 || sgr === 48) {
                         const colorFormat = params.shift();
-                        let color: ColorCode;
 
                         if (colorFormat === colorFormatCodes.format8bit) {
-                            color = params.shift();
+                            const color = params.shift();
 
-                            if (!color) {
+                            if (color) {
+                                this.setColor(sgr, color);
+                            } else {
                                 error("sgr", sgr, colorFormat, params);
                             }
                         } else if (colorFormat === colorFormatCodes.formatTrueColor) {
-                            color = params;
+                            this.setColor(sgr, params);
                             params = [];
                         } else {
                             error("sgr", sgr, colorFormat, params);
-                        }
-
-                        if (sgr === 38) {
-                            this.screenBuffer.setAttributes(assign(this.screenBuffer.attributes, {color: color}));
-                        } else {
-                            this.screenBuffer.setAttributes(assign(this.screenBuffer.attributes, {backgroundColor: color}));
                         }
                     } else {
                         const attributesUpdater = SGR[sgr];
@@ -520,6 +515,14 @@ export class ANSIParser {
 
     private get screenBuffer() {
         return this.terminalDevice.screenBuffer;
+    }
+
+    private setColor(sgr: number, color: ColorCode): void {
+        if (sgr === 38) {
+            this.screenBuffer.setAttributes(assign(this.screenBuffer.attributes, {color: color}));
+        } else {
+            this.screenBuffer.setAttributes(assign(this.screenBuffer.attributes, {backgroundColor: color}));
+        }
     }
 }
 
