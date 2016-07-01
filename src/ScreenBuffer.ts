@@ -5,7 +5,6 @@ import * as i from "./Interfaces";
 import * as e from "./Enums";
 import {List} from "immutable";
 import {error, times, assign} from "./utils/Common";
-import {ColorCode} from "./Interfaces";
 
 export class ScreenBuffer extends events.EventEmitter {
     public static hugeOutputThreshold = 300;
