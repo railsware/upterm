@@ -353,7 +353,13 @@ export function leafNodeAt(position: number, node: ASTNode): LeafNode {
     if (node instanceof LeafNode) {
         return node;
     } else if (node instanceof BranchNode) {
-        return leafNodeAt(position, node.children.find(child => child.fullStart <= position && child.fullEnd >= position));
+        const childAt = node.children.find(child => child.fullStart <= position && child.fullEnd >= position);
+
+        if (childAt) {
+            return leafNodeAt(position, childAt);
+        } else {
+            throw `Couldn't find a child at position ${position}`;
+        }
     } else {
         throw "Should never happen";
     }

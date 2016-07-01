@@ -121,7 +121,7 @@ export class ApplicationComponent extends React.Component<{}, State> {
     }
 
     render() {
-        let tabs: React.ReactElement<TabProps>[];
+        let tabs: React.ReactElement<TabProps>[] | undefined;
 
         if (this.tabs.length > 1) {
             tabs = this.tabs.map((tab: Tab, index: number) =>
