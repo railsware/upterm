@@ -47,7 +47,7 @@
     "@types/mock-fs": "3.6.22-alpha",
     "chai": "3.5.0",
     "devtron": "1.2.1",
-    "electron-builder": "5.10.1",
+    "electron-builder": "5.10.3",
     "electron-prebuilt": "1.2.5",
     "mocha": "2.5.3",
     "mock-fs": "3.9.0",
