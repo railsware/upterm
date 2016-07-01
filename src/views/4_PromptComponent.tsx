@@ -18,6 +18,7 @@ import {fontAwesome} from "./css/FontAwesome";
 import {Status} from "../Enums";
 import {scan} from "../shell/Scanner";
 import {leafNodeAt, serializeReplacing} from "../shell/Parser";
+import {assign} from "../utils/Common";
 
 interface Props {
     job: Job;
@@ -27,11 +28,11 @@ interface Props {
 }
 
 interface State {
-    highlightedSuggestionIndex?: number;
-    latestKeyCode?: number;
-    offsetTop?: number;
-    suggestions?: Suggestion[];
-    isSticky?: boolean;
+    highlightedSuggestionIndex: number;
+    latestKeyCode: number;
+    offsetTop: number;
+    suggestions: Suggestion[];
+    isSticky: boolean;
 }
 
 
@@ -48,7 +49,7 @@ export class PromptComponent extends React.Component<Props, State> implements Ke
             const nearTop = entry.boundingClientRect.bottom < 100;
             const isVisible = entry.intersectionRatio === 1;
 
-            this.setState({isSticky: nearTop && !isVisible});
+            this.setState(assign(this.state, {isSticky: nearTop && !isVisible}));
         },
         {
             threshold: 1,
@@ -61,9 +62,10 @@ export class PromptComponent extends React.Component<Props, State> implements Ke
         this.prompt = this.props.job.prompt;
 
         this.state = {
-            suggestions: [],
             highlightedSuggestionIndex: 0,
-            latestKeyCode: undefined,
+            latestKeyCode: KeyCode.Escape,
+            offsetTop: 0,
+            suggestions: [],
             isSticky: false,
         };
 
@@ -76,10 +78,10 @@ export class PromptComponent extends React.Component<Props, State> implements Ke
 
         keyDownSubject
             .filter(_.negate(withModifierKey))
-            .forEach((event: KeyboardEvent) => this.setState({
+            .forEach((event: KeyboardEvent) => this.setState(assign(this.state, {
                 latestKeyCode: event.keyCode,
                 offsetTop: (event.target as HTMLDivElement).getBoundingClientRect().top}
-            ));
+            )));
 
 
         const promptKeys = keyDownSubject.filter(() => this.props.status !== e.Status.InProgress)
@@ -191,7 +193,7 @@ export class PromptComponent extends React.Component<Props, State> implements Ke
             autocomplete = <AutocompleteComponent suggestions={this.state.suggestions}
                                                   offsetTop={this.state.offsetTop}
                                                   caretPosition={getCaretPosition(this.commandNode)}
-                                                  onSuggestionHover={index => this.setState({highlightedSuggestionIndex: index})}
+                                                  onSuggestionHover={index => this.setState(assign(this.state, {highlightedSuggestionIndex: index}))}
                                                   onSuggestionClick={this.applySuggestion.bind(this)}
                                                   highlightedIndex={this.state.highlightedSuggestionIndex}
                                                   ref="autocomplete"/>;
@@ -322,7 +324,7 @@ export class PromptComponent extends React.Component<Props, State> implements Ke
             index = Math.min(this.state.suggestions.length - 1, this.state.highlightedSuggestionIndex + 1);
         }
 
-        this.setState({highlightedSuggestionIndex: index});
+        this.setState(assign(this.state, {highlightedSuggestionIndex: index}));
     }
 
     private async applySuggestion(): Promise<void> {
@@ -363,7 +365,7 @@ export class PromptComponent extends React.Component<Props, State> implements Ke
     private async getSuggestions() {
         let suggestions = await getSuggestions(this.props.job, getCaretPosition(this.commandNode));
 
-        this.setState({highlightedSuggestionIndex: 0, suggestions: suggestions});
+        this.setState(assign(this.state, {highlightedSuggestionIndex: 0, suggestions: suggestions}));
     }
 
     private handleScrollToTop(event: Event) {
