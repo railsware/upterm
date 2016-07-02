@@ -268,6 +268,7 @@ export const session = (isActive: boolean) => {
     const styles: CSSObject = {
         overflowY: "scroll",
         gridArea: "session1",
+        position: "relative",
     };
 
     if (isActive) {
@@ -397,9 +398,9 @@ export const output = (activeScreenBufferType: ScreenBufferType, status: Status)
         }
 
         if (status === Status.InProgress) {
-            styles.position = "fixed";
-            styles.top = titleBarHeight;
-            styles.bottom = infoPanelHeight;
+            styles.position = "absolute";
+            styles.top = 0;
+            styles.bottom = 0;
             styles.left = 0;
             styles.right = 0;
             styles.zIndex = 4;
