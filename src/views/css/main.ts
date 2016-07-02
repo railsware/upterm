@@ -72,7 +72,7 @@ const applicationGrid = {
         width: new Fr(1),
     },
     sessions: {
-        name: "sessions",
+        name: "listeners",
         height: new Fr(1),
         width: new Fr(1),
     },

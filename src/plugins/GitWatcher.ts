@@ -47,7 +47,8 @@ class GitWatcher extends EventEmitter {
                 }
             );
         } else {
-            this.emit(GIT_WATCHER_EVENT_NAME, {isRepository: false});
+            const data: VcsData = {kind: "not-repository"};
+            this.emit(GIT_WATCHER_EVENT_NAME, data);
         }
     }
 
@@ -61,6 +62,7 @@ class GitWatcher extends EventEmitter {
             const status: VcsStatus = changes.length ? "dirty" : "clean";
 
             const data: VcsData = {
+                kind: "repository",
                 branch: head,
                 status: status,
             };
@@ -71,8 +73,9 @@ class GitWatcher extends EventEmitter {
 }
 
 interface WatchesValue {
-    sessions: Set<Session>;
+    listeners: Set<Session>;
     watcher: GitWatcher;
+    data: VcsData;
 }
 
 class WatchManager implements EnvironmentObserverPlugin {
@@ -86,38 +89,52 @@ class WatchManager implements EnvironmentObserverPlugin {
         }
 
         const details = this.directoryToDetails.get(oldDirectory)!;
-        details.sessions.delete(session);
+        details.listeners.delete(session);
 
-        if (details.sessions.size === 0) {
+        if (details.listeners.size === 0) {
             details.watcher.stopWatching();
             this.directoryToDetails.delete(oldDirectory);
         }
     }
 
     presentWorkingDirectoryDidChange(session: Session, directory: string) {
-        if (this.directoryToDetails.has(directory)) {
-            this.directoryToDetails.get(directory)!.sessions.add(session);
+        const existingDetails = this.directoryToDetails.get(directory);
+
+        if (existingDetails) {
+            existingDetails.listeners.add(session);
         } else {
             const watcher = new GitWatcher(directory);
 
             this.directoryToDetails.set(directory, {
-                sessions: new Set([session]),
+                listeners: new Set([session]),
                 watcher: watcher,
+                data: {kind: "not-repository"},
             });
 
             watcher.watch();
 
-            watcher.on(GIT_WATCHER_EVENT_NAME, (event: string) => {
+            watcher.on(GIT_WATCHER_EVENT_NAME, (data: VcsData) => {
                 const details = this.directoryToDetails.get(directory);
 
                 if (details) {
-                    details.sessions.forEach(watchedSession =>
-                        watchedSession.emit("vcs-data", event)
-                    );
+                    details.data = data;
+                    details.listeners.forEach(listeningSession => listeningSession.emit("vcs-data"));
                 }
             });
         }
     }
+
+    vcsDataFor(directory: string): VcsData {
+        const details = this.directoryToDetails.get(directory);
+
+        if (details) {
+            return details.data;
+        } else {
+            return {kind: "not-repository"};
+        }
+    }
 }
 
-PluginManager.registerEnvironmentObserver(new WatchManager());
+export const watchManager = new WatchManager();
+
+PluginManager.registerEnvironmentObserver(watchManager);

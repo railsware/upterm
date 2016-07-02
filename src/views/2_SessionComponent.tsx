@@ -10,27 +10,20 @@ interface Props {
     session: Session;
     isActive: boolean;
     activate: () => void;
+    updateStatusBar: (() => void) | undefined; // Only the active session can update the status bar.
 }
 
-interface State {
-    vcsData: VcsData | undefined;
-}
-
-export class SessionComponent extends React.Component<Props, State> {
+export class SessionComponent extends React.Component<Props, {}> {
     RENDER_JOBS_COUNT = 25;
 
     constructor(props: Props) {
         super(props);
-
-        this.state = {
-            vcsData: undefined,
-        };
     }
 
     componentDidMount() {
         this.props.session
-            .on("job", () => this.forceUpdate())
-            .on("vcs-data", (data: VcsData) => this.setState({vcsData: data}));
+            .on("job", () => this.props.updateStatusBar && this.props.updateStatusBar())
+            .on("vcs-data", () => this.props.updateStatusBar && this.props.updateStatusBar());
     }
 
     render() {

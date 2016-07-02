@@ -10,11 +10,7 @@ import * as css from "./css/main";
 import {saveWindowBounds} from "./ViewUtils";
 import {StatusBarComponent} from "./StatusBarComponent";
 
-interface State {
-    sessions: Session[];
-}
-
-export class ApplicationComponent extends React.Component<{}, State> {
+export class ApplicationComponent extends React.Component<{}, {}> {
     private tabs: Tab[] = [];
     private activeTabIndex: number;
 
@@ -23,7 +19,6 @@ export class ApplicationComponent extends React.Component<{}, State> {
         const electronWindow = remote.BrowserWindow.getAllWindows()[0];
 
         this.addTab();
-        this.state = {sessions: this.activeTab.sessions};
 
         electronWindow
             .on("move", () => saveWindowBounds(electronWindow))
@@ -53,8 +48,7 @@ export class ApplicationComponent extends React.Component<{}, State> {
     handleKeyDown(event: KeyboardEvent) {
         if (event.metaKey && event.keyCode === KeyCode.Underscore) {
             this.activeTab.addSession();
-            this.setState({sessions: this.activeTab.sessions});
-
+            this.forceUpdate();
             event.stopPropagation();
         }
 
@@ -67,23 +61,20 @@ export class ApplicationComponent extends React.Component<{}, State> {
         if (event.ctrlKey && event.keyCode === KeyCode.D) {
             this.closeSession(this.activeTab.activeSession());
 
-            this.setState({sessions: this.activeTab.sessions});
-
+            this.forceUpdate();
             event.stopPropagation();
         }
 
         if (event.metaKey && event.keyCode === KeyCode.J) {
             if (this.activeTab.activateNextSession()) {
-                this.setState({sessions: this.activeTab.sessions});
-
+                this.forceUpdate();
                 event.stopPropagation();
             }
         }
 
         if (event.metaKey && event.keyCode === KeyCode.K) {
             if (this.activeTab.activatePreviousSession()) {
-                this.setState({sessions: this.activeTab.sessions});
-
+                this.forceUpdate();
                 event.stopPropagation();
             }
         }
@@ -91,7 +82,7 @@ export class ApplicationComponent extends React.Component<{}, State> {
         if (event.metaKey && event.keyCode === KeyCode.T) {
             if (this.tabs.length < 9) {
                 this.addTab();
-                this.setState({sessions: this.activeTab.sessions});
+                this.forceUpdate();
             } else {
                 remote.shell.beep();
             }
@@ -101,8 +92,7 @@ export class ApplicationComponent extends React.Component<{}, State> {
 
         if (event.metaKey && event.keyCode === KeyCode.W) {
             this.closeTab(this.activeTab);
-            this.setState({sessions: this.activeTab.sessions});
-
+            this.forceUpdate();
             event.stopPropagation();
             event.preventDefault();
         }
@@ -112,7 +102,7 @@ export class ApplicationComponent extends React.Component<{}, State> {
 
             if (this.tabs.length > newTabIndex) {
                 this.activeTabIndex = newTabIndex;
-                this.setState({sessions: this.activeTab.sessions});
+                this.forceUpdate();
             } else {
                 remote.shell.beep();
             }
@@ -138,23 +128,28 @@ export class ApplicationComponent extends React.Component<{}, State> {
             );
         }
 
-        let sessions = this.state.sessions.map(session =>
-            <SessionComponent session={session}
-                              key={session.id}
-                              isActive={session === this.activeTab.activeSession()}
-                              activate={() => {
+        let sessions = this.activeTab.sessions.map(session => {
+                const isActive = session === this.activeTab.activeSession();
+
+                return (
+                    <SessionComponent session={session}
+                                      key={session.id}
+                                      isActive={isActive}
+                                      updateStatusBar={isActive ? () => this.forceUpdate() : undefined}
+                                      activate={() => {
                                    this.activeTab.activateSession(session);
                                    this.setState({ sessions: this.activeTab.sessions });
                               }}>
-            </SessionComponent>
+                    </SessionComponent>
+                );
+            }
         );
 
         return (
             <div style={css.application} onKeyDownCapture={this.handleKeyDown.bind(this)}>
                 <ul style={css.titleBar}>{tabs}</ul>
                 <div style={css.sessions}>{sessions}</div>
-                <StatusBarComponent presentWorkingDirectory={this.activeTab.activeSession().directory}
-                                    vcsData={undefined}/>
+                <StatusBarComponent presentWorkingDirectory={this.activeTab.activeSession().directory}/>
             </div>
         );
     }
@@ -162,7 +157,7 @@ export class ApplicationComponent extends React.Component<{}, State> {
     createCloseTabHandler(index: number) {
         return (event: KeyboardEvent) => {
             this.closeTab(this.tabs[index]);
-            this.setState({sessions: this.activeTab.sessions});
+            this.forceUpdate();
             event.stopPropagation();
             event.preventDefault();
         };
@@ -178,8 +173,7 @@ export class ApplicationComponent extends React.Component<{}, State> {
                         this.closeTab(tab);
                     }
 
-                    this.setState({sessions: this.activeTab.sessions});
-
+                    this.forceUpdate();
                     return;
                 }
             }

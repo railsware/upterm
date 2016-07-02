@@ -2,6 +2,7 @@
 import * as React from "react";
 import * as css from "./css/main";
 import {fontAwesome} from "./css/FontAwesome";
+import {watchManager} from "../plugins/GitWatcher";
 
 const PresentWorkingDirectory = ({presentWorkingDirectory}: { presentWorkingDirectory: string }) =>
     <div style={css.statusBar.presentDirectory}>
@@ -9,8 +10,8 @@ const PresentWorkingDirectory = ({presentWorkingDirectory}: { presentWorkingDire
         {presentWorkingDirectory}
     </div>;
 
-const VcsDataComponent = ({data}: { data: VcsData | undefined }) => {
-    if (data) {
+const VcsDataComponent = ({data}: { data: VcsData }) => {
+    if (data.kind === "repository") {
         return (
             <div style={css.statusBar.vcsData}>
                 <div style={css.statusBar.status(data.status)}>
@@ -24,8 +25,8 @@ const VcsDataComponent = ({data}: { data: VcsData | undefined }) => {
     }
 };
 
-export const StatusBarComponent = ({presentWorkingDirectory, vcsData}: { presentWorkingDirectory: string; vcsData: VcsData | undefined }) =>
+export const StatusBarComponent = ({presentWorkingDirectory}: { presentWorkingDirectory: string }) =>
     <div style={css.statusBar.itself}>
         <PresentWorkingDirectory presentWorkingDirectory={presentWorkingDirectory}/>
-        <VcsDataComponent data={vcsData}/>
+        <VcsDataComponent data={watchManager.vcsDataFor(presentWorkingDirectory)}/>
     </div>;
