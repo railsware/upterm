@@ -185,7 +185,6 @@ export class PromptComponent extends React.Component<Props, State> implements Ke
         // FIXME: write better types.
         let autocomplete: any;
         let autocompletedPreview: any;
-        let inlineSynopsis: any;
         let decorationToggle: any;
         let scrollToTop: any;
 
@@ -200,11 +199,6 @@ export class PromptComponent extends React.Component<Props, State> implements Ke
             const completed = this.valueWithCurrentSuggestion;
             if (completed.trim() !== this.prompt.value && completed.startsWith(this.prompt.value)) {
                 autocompletedPreview = <div style={css.autocompletedPreview}>{completed}</div>;
-            } else {
-                const highlightedSuggestion = this.state.suggestions[this.state.highlightedSuggestionIndex];
-                if (highlightedSuggestion.synopsis) {
-                    inlineSynopsis = <div style={css.inlineSynopsis}>{this.prompt.value} —— {highlightedSuggestion.synopsis}</div>;
-                }
             }
         }
 
@@ -238,7 +232,6 @@ export class PromptComponent extends React.Component<Props, State> implements Ke
                          ref="command"
                          contentEditable={this.props.status === e.Status.NotStarted || this.props.status === e.Status.InProgress}></div>
                     {autocompletedPreview}
-                    {inlineSynopsis}
                     {autocomplete}
                     <div style={css.actions}>
                         {decorationToggle}

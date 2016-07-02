@@ -448,15 +448,6 @@ export const decorationToggle = (isEnabled: boolean) => {
     );
 };
 
-export const inlineSynopsis = Object.assign(
-    {},
-    promptInlineElement,
-    {
-        color: colors.yellow,
-        opacity: 0.4,
-    }
-);
-
 export const autocompletedPreview = Object.assign(
     {},
     promptInlineElement,
