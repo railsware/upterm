@@ -31,6 +31,7 @@ interface State {
     highlightedSuggestionIndex: number;
     latestKeyCode: number;
     offsetTop: number;
+    caretPositionFromPreviousFocus: number;
     suggestions: Suggestion[];
     isSticky: boolean;
 }
@@ -65,6 +66,7 @@ export class PromptComponent extends React.Component<Props, State> implements Ke
             highlightedSuggestionIndex: 0,
             latestKeyCode: KeyCode.Escape,
             offsetTop: 0,
+            caretPositionFromPreviousFocus: 0,
             suggestions: [],
             isSticky: false,
         };
@@ -228,6 +230,8 @@ export class PromptComponent extends React.Component<Props, State> implements Ke
                          onInput={this.handleInput.bind(this)}
                          onKeyPress={() => this.props.status === e.Status.InProgress && stopBubblingUp(event)}
                          onDrop={this.handleDrop.bind(this)}
+                         onBlur={() => this.setState(assign(this.state, {caretPositionFromPreviousFocus: getCaretPosition(this.commandNode)}))}
+                         onFocus={() => setCaretPosition(this.commandNode, this.state.caretPositionFromPreviousFocus)}
                          type="text"
                          ref="command"
                          contentEditable={this.props.status === e.Status.NotStarted || this.props.status === e.Status.InProgress}></div>
