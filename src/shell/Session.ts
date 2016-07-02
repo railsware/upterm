@@ -37,12 +37,15 @@ export class Session extends EmitterWithUniqueID {
         const job = new Job(this);
 
         job.once("end", () => {
-            if (remote.app.dock && !remote.BrowserWindow.getAllWindows().some(window => window.isFocused())) {
+            const electronWindow = remote.BrowserWindow.getAllWindows()[0];
+
+            if (remote.app.dock && !electronWindow.isFocused()) {
                 remote.app.dock.bounce("informational");
                 remote.app.dock.setBadge(job.status === Status.Success ? "1" : "✕");
                 /* tslint:disable:no-unused-expression */
                 new Notification("Command has been completed", { body: job.prompt.value });
             }
+
             this.createJob();
         });
 

@@ -19,15 +19,15 @@ export class ApplicationComponent extends React.Component<{}, State> {
 
     constructor(props: {}) {
         super(props);
-        const focusedWindow = remote.BrowserWindow.getFocusedWindow();
+        const electronWindow = remote.BrowserWindow.getAllWindows()[0];
 
         this.addTab();
         this.state = {sessions: this.activeTab.sessions};
 
-        focusedWindow
-            .on("move", () => saveWindowBounds(focusedWindow))
+        electronWindow
+            .on("move", () => saveWindowBounds(electronWindow))
             .on("resize", () => {
-                saveWindowBounds(focusedWindow);
+                saveWindowBounds(electronWindow);
                 this.recalculateDimensions();
             })
             .webContents
@@ -39,7 +39,7 @@ export class ApplicationComponent extends React.Component<{}, State> {
         );
 
         window.onbeforeunload = () => {
-            focusedWindow
+            electronWindow
                 .removeAllListeners()
                 .webContents
                 .removeAllListeners("devtools-opened")
