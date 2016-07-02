@@ -13,7 +13,7 @@ document.addEventListener(
     () => {
         // FIXME: Remove loadAllPlugins after switching to Webpack (because all the files will be loaded at start anyway).
         Promise.all([loadAllPlugins(), loadEnvironment(), loadAliasesFromConfig()])
-            .then(() => reactDOM.render(<ApplicationComponent/>, document.getElementById("black-screen")));
+            .then(() => reactDOM.render(<ApplicationComponent/>, document.body));
     },
     false
 );

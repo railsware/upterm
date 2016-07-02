@@ -7,7 +7,7 @@ import * as Path from "path";
 import * as _ from "lodash";
 import {fontAwesome} from "../../views/css/FontAwesome";
 import {colors} from "../../views/css/colors";
-import {CSSObject} from "../../views/css/main";
+import {CSSObject} from "../../views/css/definitions";
 import {StatusCode} from "../../utils/Git";
 
 type Style = { value: string; css: CSSObject};

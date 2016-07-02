@@ -8,6 +8,7 @@ import {KeyCode} from "../Enums";
 import {remote} from "electron";
 import * as css from "./css/main";
 import {saveWindowBounds} from "./ViewUtils";
+import {StatusBarComponent} from "./StatusBarComponent";
 
 interface State {
     sessions: Session[];
@@ -150,8 +151,10 @@ export class ApplicationComponent extends React.Component<{}, State> {
 
         return (
             <div style={css.application} onKeyDownCapture={this.handleKeyDown.bind(this)}>
-                <ul style={css.tabs}>{tabs}</ul>
-                <div style={css.activeTabContent}>{sessions}</div>
+                <ul style={css.titleBar}>{tabs}</ul>
+                <div style={css.sessions}>{sessions}</div>
+                <StatusBarComponent presentWorkingDirectory={this.activeTab.activeSession().directory}
+                                    vcsData={undefined}/>
             </div>
         );
     }

@@ -4,17 +4,17 @@ import * as css from "./css/main";
 import {fontAwesome} from "./css/FontAwesome";
 
 const PresentWorkingDirectory = ({presentWorkingDirectory}: { presentWorkingDirectory: string }) =>
-    <div style={css.statusLine.presentDirectory}>
-        <span style={css.statusLine.icon} dangerouslySetInnerHTML={{__html: fontAwesome.folderOpen}}/>
+    <div style={css.statusBar.presentDirectory}>
+        <span style={css.statusBar.icon} dangerouslySetInnerHTML={{__html: fontAwesome.folderOpen}}/>
         {presentWorkingDirectory}
     </div>;
 
 const VcsDataComponent = ({data}: { data: VcsData | undefined }) => {
     if (data) {
         return (
-            <div style={css.statusLine.vcsData}>
-                <div style={css.statusLine.status(data.status)}>
-                    <span style={css.statusLine.icon} dangerouslySetInnerHTML={{__html: fontAwesome.codeFork}}/>
+            <div style={css.statusBar.vcsData}>
+                <div style={css.statusBar.status(data.status)}>
+                    <span style={css.statusBar.icon} dangerouslySetInnerHTML={{__html: fontAwesome.codeFork}}/>
                     {data.branch}
                 </div>
             </div>
@@ -24,8 +24,8 @@ const VcsDataComponent = ({data}: { data: VcsData | undefined }) => {
     }
 };
 
-export const StatusLineComponent = ({presentWorkingDirectory, vcsData}: { presentWorkingDirectory: string; vcsData: VcsData | undefined }) =>
-    <div style={css.statusLine.itself}>
+export const StatusBarComponent = ({presentWorkingDirectory, vcsData}: { presentWorkingDirectory: string; vcsData: VcsData | undefined }) =>
+    <div style={css.statusBar.itself}>
         <PresentWorkingDirectory presentWorkingDirectory={presentWorkingDirectory}/>
         <VcsDataComponent data={vcsData}/>
     </div>;

@@ -4,95 +4,9 @@ import {TabHoverState} from "../TabComponent";
 import {darken, lighten, failurize} from "./functions";
 import {Attributes} from "../../Interfaces";
 import {suggestionsLimit} from "../../Autocompletion";
-import {objectValues} from "../../utils/Common";
+import {CSSObject, Px, Fr} from "./definitions";
 
 export {toDOMString} from "./functions";
-
-export interface CSSObject {
-    pointerEvents?: string;
-    marginTop?: number;
-    marginBottom?: number;
-    padding?: string | number;
-    paddingTop?: number;
-    paddingBottom?: number;
-    paddingLeft?: number;
-    paddingRight?: number;
-    minHeight?: number;
-    height?: number | string;
-    margin?: number | string;
-    listStyleType?: "none";
-    backgroundColor?: string;
-    cursor?: "pointer" | "help" | "progress";
-    color?: string;
-    width?: string | number;
-    flex?: number;
-    overflow?: "hidden";
-    overflowX?: "scroll";
-    outline?: "none";
-    opacity?: number;
-    boxShadow?: string;
-    zoom?: number;
-    position?: "fixed" | "relative" | "absolute";
-    top?: number | "auto";
-    bottom?: number | "auto";
-    left?: number;
-    right?: number;
-    whiteSpace?: "pre-wrap";
-    zIndex?: number;
-    gridArea?: string;
-    display?: "grid" | "inline-block";
-    gridTemplateAreas?: string;
-    gridTemplateRows?: "auto";
-    gridTemplateColumns?: string;
-    transition?: string;
-    animation?: string;
-    backgroundImage?: string;
-    backgroundSize?: string | number;
-    content?: string;
-    transformOrigin?: string;
-    transform?: string;
-    textDecoration?: "underline";
-    fontWeight?: "bold";
-    fontSize?: number;
-    WebkitFontFeatureSettings?: '"liga", "dlig"';
-    WebkitAppearance?: "none";
-}
-
-abstract class Unit {
-    abstract toCSS(): string;
-}
-
-class Px extends Unit {
-    constructor(private number: number) {
-        super();
-    }
-
-    toCSS(): string {
-        return `${this.number}px`;
-    }
-}
-
-class Fr extends Unit {
-    constructor(private number: number) {
-        super();
-    }
-
-    toCSS(): string {
-        return `${this.number}fr`;
-    }
-}
-
-type GridSize = Px | Fr;
-
-interface GridArea {
-    name: string;
-    width: GridSize;
-}
-
-interface Grid {
-    areas: Dictionary<GridArea>;
-    name: string;
-}
 
 const fontSize = 14;
 export const outputPadding = 10;
@@ -113,7 +27,6 @@ const infoPanel = {
     paddingRight: 0,
     paddingBottom: 6,
     paddingLeft: 0.6 * fontSize,
-    minHeight: infoPanelHeight,
     lineHeight: 1.3,
     backgroundColor: panelColor,
 };
@@ -135,20 +48,38 @@ const progressBarStripesSize = 30;
 const arrowColor = lighten(promptBackgroundColor, 10);
 
 const promptGrid = {
-    name: "prompt",
-    areas: {
-        decoration: {
-            name: "decoration",
-            width: new Px(decorationWidth),
-        },
-        prompt: {
-            name: "prompt",
-            width: new Fr(1),
-        },
-        actions: {
-            name: "actions",
-            width: new Px(150),
-        },
+    decoration: {
+        name: "decoration",
+        width: new Px(decorationWidth),
+        height: new Fr(1),
+    },
+    prompt: {
+        name: "prompt",
+        width: new Fr(1),
+        height: new Fr(1),
+    },
+    actions: {
+        name: "actions",
+        width: new Px(150),
+        height: new Fr(1),
+    },
+};
+
+const applicationGrid = {
+    titleBar: {
+        name: "titleBar",
+        height: new Px(24),
+        width: new Fr(1),
+    },
+    sessions: {
+        name: "sessions",
+        height: new Fr(1),
+        width: new Fr(1),
+    },
+    statusBar: {
+        name: "statusBar",
+        height: new Px(infoPanelHeight),
+        width: new Fr(1),
     },
 };
 
@@ -157,21 +88,13 @@ const promptInlineElement: CSSObject = {
     paddingRight: promptHorizontalPadding,
     paddingBottom: 3,
     paddingLeft: promptHorizontalPadding,
-    gridArea: promptGrid.areas.prompt.name,
+    gridArea: promptGrid.prompt.name,
     fontSize: fontSize,
     WebkitFontFeatureSettings: '"liga", "dlig"',
     whiteSpace: "pre-wrap",
     WebkitAppearance: "none",
     outline: "none",
 };
-
-function gridTemplateAreas(grid: Grid) {
-    return `'${objectValues(grid.areas).map(area => area.name).join(" ")}'`;
-}
-
-function gridTemplateColumns(grid: Grid) {
-    return `${objectValues(grid.areas).map(area => area.width.toCSS()).join(" ")}`;
-}
 
 function tabCloseButtonColor(hover: TabHoverState) {
     if (hover === TabHoverState.Close) {
@@ -196,6 +119,19 @@ export const application = {
     color: colors.white,
     fontFamily: "'Hack', 'Fira Code', 'Menlo', monospace",
     fontSize: fontSize,
+    display: "grid",
+    height: "100vh",
+    gridTemplateAreas: `
+    "${applicationGrid.titleBar.name}"
+    "${applicationGrid.sessions.name}"
+    "${applicationGrid.statusBar.name}"
+    `,
+    gridTemplateRows: `
+    ${applicationGrid.titleBar.height.toCSS()}
+    ${applicationGrid.sessions.height.toCSS()}
+    ${applicationGrid.statusBar.height.toCSS()}
+    `,
+    gridTemplateColumns: "auto",
 };
 
 export const jobs = (isSessionActive: boolean): CSSObject =>
@@ -226,6 +162,7 @@ export const autocompletionDescription = Object.assign(
         left: 0,
         right: 0,
         fontSize: "0.8em",
+        minHeight: infoPanelHeight,
     },
     infoPanel
 );
@@ -293,16 +230,12 @@ export const autocomplete = {
     },
 };
 
-export const statusLine = {
+export const statusBar = {
     itself: Object.assign(
-        {},
-        infoPanel,
         {
-            position: "fixed",
-            bottom: 0,
-            width: "100%",
-            zIndex: 3,
-        }
+            gridArea: applicationGrid.statusBar.name,
+        },
+        infoPanel,
     ),
     presentDirectory: {
         display: "inline-block",
@@ -321,12 +254,20 @@ export const statusLine = {
     },
 };
 
+export const sessions: CSSObject = {
+    backgroundColor: backgroundColor,
+    gridArea: applicationGrid.sessions.name,
+    overflowY: "auto",
+    display: "grid",
+    gridTemplateAreas: "'session1'",
+    gridTemplateRows: "auto",
+    gridTemplateColumns: "auto",
+};
+
 export const session = (isActive: boolean) => {
     const styles: CSSObject = {
-        height: "100%",
-        width: "100%",
-        flex: 1,
-        overflowX: "scroll",
+        overflowY: "scroll",
+        gridArea: "session1",
     };
 
     if (isActive) {
@@ -340,19 +281,8 @@ export const session = (isActive: boolean) => {
     return styles;
 };
 
-export const activeTabContent = {
-    display: "flex",
-    flexWrap: "nowrap",
-    flexDirection: "column",
-    position: "absolute",
-    width: "100%",
-    top: titleBarHeight,
-    backgroundColor: backgroundColor,
-    bottom: statusLine.itself.minHeight,
-};
-
-export const tabs = {
-    height: titleBarHeight,
+export const titleBar = {
+    gridArea: applicationGrid.titleBar.name,
     display: "flex",
     justifyContent: "center",
     WebkitAppRegion: "drag",
@@ -492,9 +422,9 @@ export const promptWrapper = (status: Status, isSticky: boolean) => {
         paddingTop: promptVerticalPadding,
         position: "relative", // To position the autocompletion box correctly.
         display: "grid",
-        gridTemplateAreas: gridTemplateAreas(promptGrid),
+        gridTemplateAreas: `'${promptGrid.decoration.name} ${promptGrid.prompt.name} ${promptGrid.actions.name}'`,
         gridTemplateRows: "auto",
-        gridTemplateColumns: gridTemplateColumns(promptGrid),
+        gridTemplateColumns: `${promptGrid.decoration.width.toCSS()} ${promptGrid.prompt.width.toCSS()} ${promptGrid.actions.width.toCSS()}`,
         backgroundColor: promptBackgroundColor,
         minHeight: promptWrapperHeight,
         zIndex: outputCutZIndex + 1,
@@ -516,7 +446,7 @@ export const promptWrapper = (status: Status, isSticky: boolean) => {
 
 export const arrow = (status: Status) => {
     const styles: CSSObject = {
-        gridArea: promptGrid.areas.decoration.name,
+        gridArea: promptGrid.decoration.name,
         position: "relative",
         width: decorationWidth,
         height: promptHeight - promptVerticalPadding,
@@ -536,7 +466,7 @@ export const promptInfo = (status: Status) => {
     const styles: CSSObject = {
         cursor: "help",
         zIndex: 2,
-        gridArea: promptGrid.areas.decoration.name,
+        gridArea: promptGrid.decoration.name,
     };
 
     if (status === Status.Interrupted) {
@@ -552,7 +482,7 @@ export const promptInfo = (status: Status) => {
 };
 
 export const actions = {
-    gridArea: promptGrid.areas.actions.name,
+    gridArea: promptGrid.actions.name,
     marginRight: 15,
     textAlign: "right",
 };

@@ -301,16 +301,6 @@ export function mapObject<T, R>(object: Dictionary<T>, mapper: (key: string, val
     return result;
 }
 
-export function objectValues<T>(object: Dictionary<T>): T[] {
-    const values: T[] = [];
-
-    for (const key of Object.keys(object)) {
-        values.push(object[key]);
-    }
-
-    return values;
-}
-
 export function assign<A extends B, B extends Object>(source: A, assignments: B): A {
     return Object.assign({}, source, assignments);
 }
