@@ -14,7 +14,7 @@ PluginManager.registerAutocompletionProvider("cd", async(context) => {
         const pwdParts = context.environment.pwd.replace(/\/$/, "").split(Path.sep);
 
         return _.range(1, pwdParts.length).map(numberOfParts => {
-            const value = "../".repeat(numberOfParts);
+            const value = `..${Path.sep}`.repeat(numberOfParts);
             const description = pwdParts.slice(0, -numberOfParts).join(Path.sep) || Path.sep;
 
             return new Suggestion().withValue(value).withDescription(description).withStyle(styles.directory);
