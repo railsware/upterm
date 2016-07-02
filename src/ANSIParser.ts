@@ -19,6 +19,8 @@ const SGR: { [indexer: string]: (attributes: Attributes) => Attributes } = {
     2: (attributes: Attributes) => assign(attributes, {weight: Weight.Faint}),
     4: (attributes: Attributes) => assign(attributes, {underline: true}),
     7: (attributes: Attributes) => assign(attributes, {inverse: true}),
+    22: (attributes: Attributes) => assign(attributes, {weight: Weight.Normal}),
+    24: (attributes: Attributes) => assign(attributes, {underline: false}),
     27: (attributes: Attributes) => assign(attributes, {inverse: false}),
     30: (attributes: Attributes) => assign(attributes, {color: <ColorCode>Color.Black}),
     31: (attributes: Attributes) => assign(attributes, {color: <ColorCode>Color.Red}),
