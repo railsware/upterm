@@ -3,6 +3,7 @@ import {PluginManager} from "../PluginManager";
 import {EnvironmentObserverPlugin} from "../Interfaces";
 import {watch, FSWatcher} from "fs";
 import * as Path from "path";
+import * as _ from "lodash";
 import {EventEmitter} from "events";
 import {executeCommand} from "../PTY";
 import {debounce} from "../Decorators";
@@ -116,7 +117,7 @@ class WatchManager implements EnvironmentObserverPlugin {
             watcher.on(GIT_WATCHER_EVENT_NAME, (data: VcsData) => {
                 const details = this.directoryToDetails.get(directory);
 
-                if (details) {
+                if (details && !_.isEqual(data, details.data)) {
                     details.data = data;
                     details.listeners.forEach(listeningSession => listeningSession.emit("vcs-data"));
                 }
