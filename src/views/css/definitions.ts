@@ -8,6 +8,7 @@ export interface CSSObject {
     paddingLeft?: number;
     paddingRight?: number;
     minHeight?: number;
+    minWidth?: number;
     height?: number | string;
     margin?: number | string;
     listStyleType?: "none";
@@ -15,10 +16,13 @@ export interface CSSObject {
     cursor?: "pointer" | "help" | "progress";
     color?: string;
     width?: string | number;
-    flex?: number;
+    flex?: number | "auto" | "none";
+    flexGrow?: number;
+    flexBasis?: number;
+    flexDirection?: "row" | "column";
     overflow?: "hidden";
     overflowX?: "auto" | "scroll";
-    overflowY?: "auto" | "scroll";
+    overflowY?: "auto" | "scroll" | "hidden";
     outline?: "none";
     opacity?: number;
     boxShadow?: string;
@@ -31,9 +35,9 @@ export interface CSSObject {
     whiteSpace?: "pre-wrap";
     zIndex?: number;
     gridArea?: string;
-    display?: "grid" | "inline-block";
+    display?: "grid" | "inline-block" | "flex";
     gridTemplateAreas?: string;
-    gridTemplateRows?: "auto";
+    gridTemplateRows?: "auto" | string;
     gridTemplateColumns?: string;
     transition?: string;
     animation?: string;
