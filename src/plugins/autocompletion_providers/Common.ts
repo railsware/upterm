@@ -146,6 +146,20 @@ export const styles = {
 };
 
 const filesSuggestions = (filter: (info: FileInfo) => boolean) => async(tokenValue: string, directory: string): Promise<Suggestion[]> => {
+    /**
+     * Parent folders.
+     */
+    if (tokenValue.endsWith("..")) {
+        const pwdParts = directory.replace(/\/$/, "").split(Path.sep);
+
+        return _.range(1, pwdParts.length).map(numberOfParts => {
+            const value = `..${Path.sep}`.repeat(numberOfParts);
+            const description = pwdParts.slice(0, -numberOfParts).join(Path.sep) || Path.sep;
+
+            return new Suggestion().withValue(value).withDescription(description).withStyle(styles.directory);
+        });
+    }
+
     const tokenDirectory = directoryName(tokenValue);
     const basePath = tokenValue.slice(tokenDirectory.length);
     const directoryPath = resolveDirectory(directory, tokenDirectory);
