@@ -158,7 +158,7 @@ const filesSuggestions = (filter: (info: FileInfo) => boolean) => async(tokenVal
             if (info.stat.isDirectory()) {
                 return new Suggestion().withValue(joinPath(tokenDirectory, info.name + Path.sep)).withDisplayValue(info.name + Path.sep).withStyle(styles.directory);
             } else {
-                return new Suggestion().withValue(joinPath(tokenDirectory, info.name)).withDisplayValue(info.name).withStyle(styles.file(info)).withSpace();
+                return new Suggestion().withValue(joinPath(tokenDirectory, info.name)).withDisplayValue(info.name).withStyle(styles.file(info));
             }
         });
 };
