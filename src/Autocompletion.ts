@@ -11,7 +11,21 @@ export const getSuggestions = async(job: Job, caretPosition: number) => {
         aliases: job.session.aliases,
     });
 
-    const applicableSuggestions = suggestions.filter(suggestion => suggestion.value.toLowerCase().startsWith(node.value.toLowerCase()));
+    const applicableSuggestions = _.uniqBy(suggestions, suggestion => suggestion.value).filter(suggestion =>
+        suggestion.value.toLowerCase().startsWith(node.value.toLowerCase())
+    );
 
-    return _.uniqBy(applicableSuggestions, suggestion => suggestion.value).slice(0, suggestionsLimit);
+    if (applicableSuggestions.length === 1) {
+        const suggestion = applicableSuggestions[0];
+
+        /**
+         * The suggestion would simply duplicate the prompt value without providing no
+         * additional information. Skipping it for clarity.
+         */
+        if (node.value === suggestion.value && suggestion.description.length === 0 && suggestion.synopsis.length === 0) {
+            return [];
+        }
+    }
+
+    return applicableSuggestions.slice(0, suggestionsLimit);
 };
