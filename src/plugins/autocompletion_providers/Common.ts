@@ -224,6 +224,8 @@ function gitStatusCodeColor(statusCode: StatusCode) {
             return colors.blue;
         case StatusCode.Unmodified:
             return colors.white;
+        case StatusCode.Untracked:
+            return colors.red;
         case StatusCode.UpdatedButUnmerged:
             return colors.blue;
         default:

@@ -17,6 +17,7 @@ export class Branch {
 }
 
 export enum StatusCode {
+    Untracked,
     Unmodified,
     Modified,
     Added,
@@ -26,21 +27,23 @@ export enum StatusCode {
     UpdatedButUnmerged
 }
 
-function letterToStatusCode(letter: string): StatusCode {
-    switch (letter) {
-        case " ":
+function lettersToStatusCode(letters: string): StatusCode {
+    switch (letters) {
+        case "??":
+            return StatusCode.Untracked;
+        case "  ":
             return StatusCode.Unmodified;
-        case "M":
+        case " M":
             return StatusCode.Modified;
-        case "A":
+        case " A":
             return StatusCode.Added;
-        case "D":
+        case " D":
             return StatusCode.Deleted;
-        case "R":
+        case " R":
             return StatusCode.Renamed;
-        case "C":
+        case " C":
             return StatusCode.Copied;
-        case "U":
+        case " U":
             return StatusCode.UpdatedButUnmerged;
         default:
             throw "Should never happen.";
@@ -52,11 +55,11 @@ export class FileStatus {
     }
 
     get value(): string {
-        return this._line.substring(3).trim();
+        return this._line.slice(3).trim();
     }
 
     get code(): StatusCode {
-        return letterToStatusCode(this._line[1]);
+        return lettersToStatusCode(this._line.slice(0, 2));
     }
 }
 
