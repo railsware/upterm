@@ -7,8 +7,8 @@ export interface CSSObject {
     paddingBottom?: number;
     paddingLeft?: number;
     paddingRight?: number;
-    minHeight?: number;
-    minWidth?: number;
+    minHeight?: number | string;
+    minWidth?: number | string;
     height?: number | string;
     margin?: number | string;
     listStyleType?: "none";

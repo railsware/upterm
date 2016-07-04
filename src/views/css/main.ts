@@ -51,36 +51,38 @@ const promptGrid = {
     decoration: {
         name: "decoration",
         width: new Px(decorationWidth),
-        height: new Fr(1),
     },
     prompt: {
         name: "prompt",
         width: new Fr(1),
-        height: new Fr(1),
     },
     actions: {
         name: "actions",
         width: new Px(150),
-        height: new Fr(1),
     },
 };
 
-const applicationFlex = {
+const sessionsHeight = `(100vh - ${titleBarHeight + infoPanelHeight}px)`;
+
+const applicationGrid = {
     container: {
-        display: "flex",
-        flexDirection: "column",
-        height: "100vh",
-    },
-    titleBar: {
-        height: 24,
-        flex: "none",
+        display: "grid",
+        gridTemplateColumns: "100%",
+        gridTemplateRows: `${titleBarHeight}px calc(${sessionsHeight}) ${infoPanelHeight}px`,
     },
     sessions: {
-        flex: "auto",
+        overflowY: "auto",
     },
-    statusBar: {
-        height: infoPanelHeight,
-        flex: "none",
+};
+
+const sessionsGrid = {
+    container: (sessionsCount: number) => ({
+        display: "grid",
+        gridTemplateRows: `calc(${sessionsHeight} / ${sessionsCount}) `.repeat(sessionsCount),
+        gridTemplateColumns: "100%",
+    }),
+    session: {
+        overflowY: "scroll",
     },
 };
 
@@ -117,7 +119,7 @@ function jaggedBorder(color: string, panelColor: string, darkenPercent: number) 
 
 export const application = Object.assign(
     {},
-    applicationFlex.container,
+    applicationGrid.container,
     {
         backgroundColor: backgroundColor,
         color: colors.white,
@@ -223,11 +225,7 @@ export const autocomplete = {
 };
 
 export const statusBar = {
-    itself: Object.assign(
-        {},
-        applicationFlex.statusBar,
-        infoPanel,
-    ),
+    itself: infoPanel,
     presentDirectory: {
         display: "inline-block",
     },
@@ -245,24 +243,16 @@ export const statusBar = {
     },
 };
 
-export const sessions: CSSObject = Object.assign(
-    {},
-    applicationFlex.sessions,
+export const sessions = (sessionsCount: number) => Object.assign(
     {
         backgroundColor: backgroundColor,
-        display: "flex",
-        flexDirection: "column",
-    }
+    },
+    sessionsGrid.container(sessionsCount),
 );
 
 export const session = (isActive: boolean) => {
     const styles: CSSObject = {
-        overflowY: "scroll",
-        flexGrow: 1,
-        flexBasis: 0,
         position: "relative",
-        minHeight: 0,
-        minWidth: 0,
     };
 
     if (isActive) {
@@ -273,22 +263,21 @@ export const session = (isActive: boolean) => {
         styles.margin = "0 0 1px 1px";
     }
 
-    return styles;
+    return Object.assign(
+        styles,
+        sessionsGrid.session
+    );
 };
 
-export const titleBar = Object.assign(
-    {},
-    applicationFlex.titleBar,
-    {
-        display: "flex",
-        justifyContent: "center",
-        WebkitAppRegion: "drag",
-        WebkitMarginBefore: 0,
-        WebkitMarginAfter: 0,
-        WebkitPaddingStart: 0,
-        WebkitUserSelect: "none",
-    }
-);
+export const titleBar = {
+    display: "flex",
+    justifyContent: "center",
+    WebkitAppRegion: "drag",
+    WebkitMarginBefore: 0,
+    WebkitMarginAfter: 0,
+    WebkitPaddingStart: 0,
+    WebkitUserSelect: "none",
+};
 
 export const tab = (isHovered: boolean, isActive: boolean) => {
     return {

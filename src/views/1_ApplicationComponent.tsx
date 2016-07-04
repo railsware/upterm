@@ -148,7 +148,7 @@ export class ApplicationComponent extends React.Component<{}, {}> {
         return (
             <div style={css.application} onKeyDownCapture={this.handleKeyDown.bind(this)}>
                 <ul style={css.titleBar}>{tabs}</ul>
-                <div style={css.sessions}>{sessions}</div>
+                <div style={css.sessions(sessions.length)}>{sessions}</div>
                 <StatusBarComponent presentWorkingDirectory={this.activeTab.activeSession().directory}/>
             </div>
         );
