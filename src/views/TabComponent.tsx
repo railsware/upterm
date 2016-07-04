@@ -87,16 +87,16 @@ export class Tab {
             this.activateSession(this.sessions[this.activeSessionIndex - 1]);
         }
 
-        return isFirst;
+        return !isFirst;
     }
 
     activateNextSession(): boolean {
-        const isLast = this.activeSessionIndex !== this.sessions.length - 1;
-        if (isLast) {
+        const isLast = this.activeSessionIndex === this.sessions.length - 1;
+        if (!isLast) {
             this.activateSession(this.sessions[this.activeSessionIndex + 1]);
         }
 
-        return isLast;
+        return !isLast;
     }
 
     updateAllSessionsDimensions(): void {
