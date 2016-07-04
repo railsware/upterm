@@ -46,7 +46,7 @@ function lettersToStatusCode(letters: string): StatusCode {
         case " U":
             return StatusCode.UpdatedButUnmerged;
         default:
-            throw "Should never happen.";
+            throw `Unknown Git status code: ${letters}`;
     }
 }
 
