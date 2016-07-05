@@ -82,7 +82,7 @@ export class Job extends EmitterWithUniqueID implements TerminalLikeDevice {
         if (typeof input === "string") {
             text = input;
         } else {
-            text = input.ctrlKey ? String.fromCharCode(input.keyCode - 64) : normalizeKey(input.key);
+            text = input.ctrlKey ? String.fromCharCode(input.keyCode - 64) : normalizeKey(input.key, this.screenBuffer.cursorKeysMode);
         }
 
         this.command.write(text);

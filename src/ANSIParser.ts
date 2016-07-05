@@ -239,7 +239,8 @@ export class ANSIParser {
             case 1:
                 description = "Cursor Keys Mode.";
                 url = "http://www.vt100.net/docs/vt510-rm/DECCKM";
-                status = "unhandled";
+
+                this.screenBuffer.cursorKeysMode = shouldSet;
                 break;
             case 3:
                 url = "http://www.vt100.net/docs/vt510-rm/DECCOLM";
@@ -529,7 +530,7 @@ export class ANSIParser {
 }
 
 function or1(value: number | undefined) {
-    if (value === undefined) {
+    if (value === undefined || value === 0) {
         return 1;
     } else {
         return value;

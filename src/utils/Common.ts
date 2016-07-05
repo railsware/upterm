@@ -255,7 +255,7 @@ export function groupWhen<T>(grouper: (a: T, b: T) => boolean, row: T[]): T[][] 
 /**
  * @link https://www.w3.org/TR/uievents/#widl-KeyboardEvent-key
  */
-export function normalizeKey(key: string): string {
+export function normalizeKey(key: string, isCursorKeysModeSet: boolean): string {
     switch (key) {
         case "Backspace":
             return String.fromCharCode(127);
@@ -266,13 +266,13 @@ export function normalizeKey(key: string): string {
         case "Escape":
             return String.fromCharCode(KeyCode.Escape);
         case "ArrowLeft":
-            return "\x1b[D";
+            return isCursorKeysModeSet ? "\x1bOD" : "\x1b[D";
         case "ArrowUp":
-            return "\x1b[A";
+            return isCursorKeysModeSet ? "\x1bOA" : "\x1b[A";
         case "ArrowRight":
-            return "\x1b[C";
+            return isCursorKeysModeSet ? "\x1bOC" : "\x1b[C";
         case "ArrowDown":
-            return "\x1b[B";
+            return isCursorKeysModeSet ? "\x1bOB" : "\x1b[B";
         default:
             return key;
     }

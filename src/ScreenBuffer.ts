@@ -13,6 +13,7 @@ export class ScreenBuffer extends events.EventEmitter {
     private storage = List<List<Char>>();
     private _attributes: i.Attributes = assign(defaultAttributes, {color: e.Color.White, weight: e.Weight.Normal});
     private isOriginModeSet = false;
+    private isCursorKeysModeSet = false;
     private _margins: Margins = {top: 0, left: 0};
 
     constructor() {
@@ -233,6 +234,14 @@ export class ScreenBuffer extends events.EventEmitter {
 
     set originMode(mode: boolean) {
         this.isOriginModeSet = mode;
+    }
+
+    set cursorKeysMode(mode: boolean) {
+        this.isCursorKeysModeSet = mode;
+    }
+
+    get cursorKeysMode(): boolean {
+        return this.isCursorKeysModeSet;
     }
 
     set margins(margins: PartialMargins) {
