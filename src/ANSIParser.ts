@@ -205,7 +205,11 @@ export class ANSIParser {
                     /* tslint:disable:max-line-length */
                     long = "Move the active position to the same horizontal position on the preceding lin If the active position is at the top margin, a scroll down is performed.";
 
-                    this.screenBuffer.moveCursorRelative({vertical: -1});
+                    if (this.screenBuffer.cursor.row === this.screenBuffer.marginTop) {
+                        this.screenBuffer.scrollDown(1);
+                    } else {
+                        this.screenBuffer.moveCursorRelative({vertical: -1});
+                    }
                     break;
                 case "E":
                     short = "Next Line (NEL).";
@@ -412,7 +416,7 @@ export class ANSIParser {
                 url = "http://www.vt100.net/docs/vt510-rm/IL";
                 short = "Inserts one or more blank lines, starting at the cursor. (DL)";
 
-                this.screenBuffer.scrollDown(param || 1, this.screenBuffer.cursor.row);
+                this.screenBuffer.scrollDown(param || 1);
                 break;
             case "M":
                 url = "http://www.vt100.net/docs/vt510-rm/DL";

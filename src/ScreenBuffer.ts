@@ -60,9 +60,9 @@ export class ScreenBuffer extends events.EventEmitter {
         this.emitData();
     }
 
-    scrollDown(count: number, addAtLine: number) {
+    scrollDown(count: number) {
         this.storage = this.storage.splice(this._margins.bottom - count + 1, count).toList();
-        times(count, () => this.storage = this.storage.splice(addAtLine, 0, undefined).toList());
+        times(count, () => this.storage = this.storage.splice(this.cursor.row, 0, undefined).toList());
     }
 
     scrollUp(count: number, deletedLine = this._margins.top) {
@@ -246,6 +246,10 @@ export class ScreenBuffer extends events.EventEmitter {
 
     set margins(margins: PartialMargins) {
         this._margins = assign(this._margins, margins);
+    }
+
+    get marginTop(): number {
+        return this._margins.top;
     }
 
     at(position: RowColumn): Char {
