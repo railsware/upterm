@@ -41,7 +41,7 @@ export class ScreenBuffer extends events.EventEmitter {
                     break;
                 case e.KeyCode.NewLine:
                     if (this.cursor.row === this._margins.bottom) {
-                        this.scrollDown(1);
+                        this.scrollUp(1);
                     } else {
                         this.moveCursorRelative({vertical: 1});
                     }
@@ -60,12 +60,12 @@ export class ScreenBuffer extends events.EventEmitter {
         this.emitData();
     }
 
-    scrollUp(count: number, addAtLine: number) {
+    scrollDown(count: number, addAtLine: number) {
         this.storage = this.storage.splice(this._margins.bottom - count + 1, count).toList();
         times(count, () => this.storage = this.storage.splice(addAtLine, 0, undefined).toList());
     }
 
-    scrollDown(count: number, deletedLine = this._margins.top) {
+    scrollUp(count: number, deletedLine = this._margins.top) {
         times(count, () => this.storage = this.storage.splice(this._margins.bottom + 1, 0, undefined).toList());
         this.storage = this.storage.splice(deletedLine, count).toList();
     }
