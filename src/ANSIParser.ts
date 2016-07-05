@@ -530,7 +530,7 @@ export class ANSIParser {
 }
 
 function or1(value: number | undefined) {
-    if (value === undefined || value === 0) {
+    if (value === undefined) {
         return 1;
     } else {
         return value;
