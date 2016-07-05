@@ -2,7 +2,7 @@ import {Char, defaultAttributes} from "./Char";
 import {Color, Weight, Brightness, KeyCode, LogLevel, ScreenBufferType} from "./Enums";
 import {Attributes, TerminalLikeDevice, ColorCode} from "./Interfaces";
 import {ScreenBuffer} from "./ScreenBuffer";
-import {print, error, info, debug, assign} from "./utils/Common";
+import {print, error, info, debug, assign, csi} from "./utils/Common";
 
 const ansiParserConstructor: typeof AnsiParser = require("node-ansiparser");
 
@@ -492,7 +492,7 @@ export class ANSIParser {
                     url = "http://www.vt100.net/docs/vt510-rm/CPR";
                     short = "Report Cursor Position (CPR) [row;column] as CSI r ; c R";
                     const {row, column} = this.screenBuffer.cursorPosition;
-                    this.terminalDevice.write(`\x1b[${row + 1};${column + 1}R`);
+                    this.terminalDevice.write(csi(`${row + 1};${column + 1}R`));
                 } else {
                     status = "unhandled";
                 }

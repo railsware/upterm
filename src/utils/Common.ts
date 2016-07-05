@@ -251,6 +251,13 @@ export function groupWhen<T>(grouper: (a: T, b: T) => boolean, row: T[]): T[][] 
     return result;
 }
 
+export function csi(char: string) {
+    return `\x1b[${char}`;
+}
+
+export function ss3(char: string) {
+    return `\x1bO${char}`;
+}
 
 /**
  * @link https://www.w3.org/TR/uievents/#widl-KeyboardEvent-key
@@ -266,13 +273,37 @@ export function normalizeKey(key: string, isCursorKeysModeSet: boolean): string 
         case "Escape":
             return String.fromCharCode(KeyCode.Escape);
         case "ArrowLeft":
-            return isCursorKeysModeSet ? "\x1bOD" : "\x1b[D";
+            return isCursorKeysModeSet ? ss3("D") : csi("D");
         case "ArrowUp":
-            return isCursorKeysModeSet ? "\x1bOA" : "\x1b[A";
+            return isCursorKeysModeSet ? ss3("A") : csi("A");
         case "ArrowRight":
-            return isCursorKeysModeSet ? "\x1bOC" : "\x1b[C";
+            return isCursorKeysModeSet ? ss3("C") : csi("C");
         case "ArrowDown":
-            return isCursorKeysModeSet ? "\x1bOB" : "\x1b[B";
+            return isCursorKeysModeSet ? ss3("B") : csi("B");
+        case "F1":
+            return ss3("P");
+        case "F2":
+            return ss3("Q");
+        case "F3":
+            return ss3("R");
+        case "F4":
+            return ss3("S");
+        case "F5":
+            return csi("15~");
+        case "F6":
+            return csi("17~");
+        case "F7":
+            return csi("18~");
+        case "F8":
+            return csi("19~");
+        case "F9":
+            return csi("20~");
+        case "F10":
+            return csi("21~");
+        case "F11":
+            return csi("23~");
+        case "F12":
+            return csi("24~");
         default:
             return key;
     }
