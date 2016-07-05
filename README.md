@@ -26,6 +26,7 @@ Install
 ------------
 
 ```bash
+brew update
 brew cask install black-screen
 ```
 
