@@ -8,6 +8,10 @@ export function darken(color: string, percent: number) {
     return tinyColor(color).darken(percent).toHexString();
 }
 
+export function alpha(color: string, percent: number) {
+    return tinyColor(color).setAlpha(percent).toRgbString();
+}
+
 export function failurize(color: string) {
     return tinyColor(color).spin(140).saturate(20).toHexString();
 }

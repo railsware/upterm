@@ -128,12 +128,13 @@ export class ApplicationComponent extends React.Component<{}, {}> {
             );
         }
 
-        let sessions = this.activeTab.sessions.map(session => {
+        let sessions = _.flatten(this.activeTab.sessions.map((session, index) => {
                 const isActive = session === this.activeTab.activeSession();
 
-                return (
+                const sessionComponent = (
                     <SessionComponent session={session}
                                       key={session.id}
+                                      style={css.session(isActive, index)}
                                       isActive={isActive}
                                       updateStatusBar={isActive ? () => this.forceUpdate() : undefined}
                                       activate={() => {
@@ -142,13 +143,22 @@ export class ApplicationComponent extends React.Component<{}, {}> {
                               }}>
                     </SessionComponent>
                 );
+
+                if (isActive) {
+                    return [sessionComponent];
+                } else {
+                    return [
+                        sessionComponent,
+                        <div className="shutter" style={css.sessionShutter(index)}></div>,
+                    ];
+                }
             }
-        );
+        ));
 
         return (
             <div style={css.application} onKeyDownCapture={this.handleKeyDown.bind(this)}>
                 <ul style={css.titleBar}>{tabs}</ul>
-                <div style={css.sessions(sessions.length)}>{sessions}</div>
+                <div style={css.sessions(this.activeTab.sessions.length)}>{sessions}</div>
                 <StatusBarComponent presentWorkingDirectory={this.activeTab.activeSession().directory}/>
             </div>
         );

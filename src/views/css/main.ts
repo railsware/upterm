@@ -1,10 +1,11 @@
 import {ScreenBufferType, Status, Weight, Brightness} from "../../Enums";
 import {colors, panel as panelColor, background as backgroundColor, colorValue} from "./colors";
 import {TabHoverState} from "../TabComponent";
-import {darken, lighten, failurize} from "./functions";
+import {darken, lighten, failurize, alpha} from "./functions";
 import {Attributes} from "../../Interfaces";
 import {suggestionsLimit} from "../../Autocompletion";
 import {CSSObject, Px, Fr} from "./definitions";
+import * as _ from "lodash";
 
 export {toDOMString} from "./functions";
 
@@ -75,15 +76,24 @@ const applicationGrid = {
     },
 };
 
+function sessionGridArea(index: number) {
+    return `session-${index}-area`;
+}
+
 const sessionsGrid = {
     container: (sessionsCount: number) => ({
         display: "grid",
-        gridTemplateRows: `calc(${sessionsHeight} / ${sessionsCount}) `.repeat(sessionsCount),
+        gridTemplateRows: `repeat(${sessionsCount}, calc(${sessionsHeight} / ${sessionsCount})`,
         gridTemplateColumns: "100%",
+        gridTemplateAreas: _.range(sessionsCount).map(index => `'${sessionGridArea(index)}'`).join("\n"),
     }),
-    session: {
+    session: (index: number) => ({
         overflowY: "scroll",
-    },
+        gridArea: sessionGridArea(index),
+    }),
+    sessionShutter: (index: number) => ({
+        gridArea: sessionGridArea(index),
+    }),
 };
 
 const promptInlineElement: CSSObject = {
@@ -250,24 +260,32 @@ export const sessions = (sessionsCount: number) => Object.assign(
     sessionsGrid.container(sessionsCount),
 );
 
-export const session = (isActive: boolean) => {
+export const session = (isActive: boolean, index: number) => {
     const styles: CSSObject = {
         position: "relative",
+        outline: "none",
     };
 
-    if (isActive) {
-        styles.outline = "none";
-    } else {
-        styles.opacity = 0.4;
-        styles.boxShadow = `0 0 0 1px ${colors.white}`;
-        styles.margin = "0 0 1px 1px";
+    if (!isActive) {
+        styles.boxShadow = `0 0 0 1px ${alpha(colors.white, 0.3)}`;
+        styles.margin = "0 0 1px 0px";
     }
 
     return Object.assign(
         styles,
-        sessionsGrid.session
+        sessionsGrid.session(index),
     );
 };
+
+export const sessionShutter = (index: number) => Object.assign(
+    {
+        backgroundColor: colors.white,
+        zIndex: 1,
+        opacity: 0.2,
+        pointerEvents: "none",
+    },
+    sessionsGrid.sessionShutter(index),
+);
 
 export const titleBar = {
     display: "flex",
