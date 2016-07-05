@@ -4,7 +4,7 @@ import * as React from "react";
 import * as _ from "lodash";
 import {Session} from "../shell/Session";
 import {ipcRenderer} from "electron";
-import {KeyCode} from "../Enums";
+import {KeyCode, Status} from "../Enums";
 import {remote} from "electron";
 import * as css from "./css/main";
 import {saveWindowBounds} from "./ViewUtils";
@@ -59,10 +59,14 @@ export class ApplicationComponent extends React.Component<{}, {}> {
         }
 
         if (event.ctrlKey && event.keyCode === KeyCode.D) {
-            this.closeSession(this.activeTab.activeSession());
+            const activeSession = this.activeTab.activeSession();
 
-            this.forceUpdate();
-            event.stopPropagation();
+            if (activeSession.currentJob.status !== Status.InProgress) {
+                this.closeSession(activeSession);
+
+                this.forceUpdate();
+                event.stopPropagation();
+            }
         }
 
         if (event.metaKey && event.keyCode === KeyCode.J) {

@@ -13,6 +13,7 @@ import {
 import {remote} from "electron";
 import {OrderedSet} from "../utils/OrderedSet";
 import {Aliases, aliasesFromConfig} from "./Aliases";
+import * as _ from "lodash";
 
 export class Session extends EmitterWithUniqueID {
     jobs: Array<Job> = [];
@@ -60,6 +61,10 @@ export class Session extends EmitterWithUniqueID {
     set dimensions(value: Dimensions) {
         this._dimensions = value;
         this.jobs.forEach(job => job.winch());
+    }
+
+    get currentJob(): Job {
+        return _.last(this.jobs);
     }
 
     clearJobs(): void {
