@@ -1,4 +1,5 @@
 process.env.NODE_ENV = "production";
+process.env.LANG = process.env.LANG || "en_US.UTF-8";
 
 import {loadAliasesFromConfig} from "../shell/Aliases";
 const reactDOM = require("react-dom");
