@@ -14,7 +14,7 @@ interface State {
     decorate: boolean;
 }
 
-export const decorateByDefault = false;
+export const decorateByDefault = true;
 
 export class JobComponent extends React.Component<Props, State> implements KeyDownReceiver {
     constructor(props: Props) {
