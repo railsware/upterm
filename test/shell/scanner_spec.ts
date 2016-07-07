@@ -58,6 +58,16 @@ describe("scan", () => {
         expect(tokens.map(token => token.value)).to.eql(["prefix", "single token"]);
     });
 
+    it("doesn't split on a colon", () => {
+        const tokens = scan("curl http://www.example.com");
+
+        expect(tokens.length).to.eq(2);
+        expect(tokens[0]).to.be.an.instanceof(Word);
+        expect(tokens[1]).to.be.an.instanceof(Word);
+
+        expect(tokens.map(token => token.value)).to.eql(["curl", "http://www.example.com"]);
+    });
+
     it("can handle special characters", () => {
         const tokens = scan("ls --color=tty -lh");
 
