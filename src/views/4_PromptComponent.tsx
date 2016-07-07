@@ -266,8 +266,14 @@ export class PromptComponent extends React.Component<Props, State> implements Ke
 
     private setDOMValueProgrammatically(text: string): void {
         this.commandNode.innerText = text;
-        setCaretPosition(this.commandNode, text.length);
+        const newCaretPosition = text.length;
+        /**
+         * Without this line caret position is incorrect when you click on a suggestion
+         * because the prompt temporarily loses focus and then restores the previous position.
+         */
+        this.state.caretPositionFromPreviousFocus = newCaretPosition;
 
+        setCaretPosition(this.commandNode, newCaretPosition);
         this.forceUpdate();
     }
 
