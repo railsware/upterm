@@ -40,6 +40,7 @@ class Cut extends React.Component<CutProps, CutState> {
 }
 interface RowProps {
     row: List<Char>;
+    status: Status;
     job: Job;
 }
 
@@ -47,7 +48,7 @@ const charGrouper = (a: Char, b: Char) => a.attributes === b.attributes;
 
 class RowComponent extends React.Component<RowProps, {}> {
     shouldComponentUpdate(nextProps: RowProps) {
-        return this.props.row !== nextProps.row || this.props.job.status !== Status.InProgress;
+        return this.props.row !== nextProps.row || this.props.status !== nextProps.status;
     }
 
     render() {
@@ -81,7 +82,11 @@ export class BufferComponent extends React.Component<Props, State> {
                  style={css.output(this.props.job.screenBuffer.activeScreenBufferType, this.props.job.status)}>
                 {this.shouldCutOutput ? <Cut job={this.props.job} clickHandler={() => this.setState({ expandButtonPressed: true })}/> : undefined}
                 {this.renderableRows.map((row, index) =>
-                    <RowComponent row={row || List<Char>()} key={index} job={this.props.job}/>
+                    <RowComponent
+                        key={index}
+                        row={row || List<Char>()}
+                        status={this.props.job.status}
+                        job={this.props.job}/>
                 )}
             </div>
         );
