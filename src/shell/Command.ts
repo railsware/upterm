@@ -79,10 +79,7 @@ const executors: Dictionary<(i: Job, a: string[]) => void> = {
         }
     },
     show: (job: Job, args: string[]): void => {
-        let imgs: string[] = [];
-        args.forEach(argument => {
-            imgs.push(resolveDirectory(job.environment.pwd, argument).slice(0, -1));
-        });
+        const imgs = args.map(argument => resolveFile(job.environment.pwd, argument));
         job.screenBuffer.writeMany(imgs.join(EOL));
     },
 };
