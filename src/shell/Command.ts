@@ -78,6 +78,9 @@ const executors: Dictionary<(i: Job, a: string[]) => void> = {
             throw `Don't know what to do with ${args.length} arguments.`;
         }
     },
+    show: (job: Job, args: string[]): void => {
+        job.screenBuffer.writeMany(args.join("\r\n"));
+    }
 };
 
 export function sourceFile(session: Session, fileName: string) {
