@@ -47,15 +47,15 @@ export class ApplicationComponent extends React.Component<{}, {}> {
 
     handleKeyDown(event: KeyboardEvent) {
         if (event.metaKey && event.keyCode === KeyCode.Underscore) {
-            this.activeTab.addSession();
+            this.activeTab.addSessionToPosition('vertical');
             this.forceUpdate();
             event.stopPropagation();
         }
 
         if (event.metaKey && event.keyCode === KeyCode.VerticalBar) {
-            console.log("Split vertically.");
-
-            event.stopPropagation();
+          this.activeTab.addSessionToPosition('horizontal');
+          this.forceUpdate();
+          event.stopPropagation();
         }
 
         if (event.ctrlKey && event.keyCode === KeyCode.D) {
@@ -139,7 +139,7 @@ export class ApplicationComponent extends React.Component<{}, {}> {
                 const sessionComponent = (
                     <SessionComponent session={session}
                                       key={session.id}
-                                      style={css.session(isActive, index)}
+                                      style={css.session(isActive, session.position.left, session.position.top)}
                                       isActive={isActive}
                                       updateStatusBar={isActive ? () => this.forceUpdate() : undefined}
                                       activate={() => {
@@ -156,7 +156,7 @@ export class ApplicationComponent extends React.Component<{}, {}> {
         return (
             <div style={css.application} onKeyDownCapture={this.handleKeyDown.bind(this)}>
                 <ul style={css.titleBar}>{tabs}</ul>
-                <div style={css.sessions(this.activeTab.sessions.length)}>{sessions}</div>
+                <div style={css.sessions(this.activeTab.sessionsCountHorizontal, this.activeTab.sessionsCountVertical, this.activeTab.sessionsViewMap)}>{sessions}</div>
                 <StatusBarComponent presentWorkingDirectory={this.activeTab.activeSession().directory}/>
             </div>
         );

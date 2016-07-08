@@ -6,6 +6,7 @@ import {Attributes} from "../../Interfaces";
 import {suggestionsLimit} from "../../Autocompletion";
 import {CSSObject, Px, Fr} from "./definitions";
 import * as _ from "lodash";
+import { LeastCommonMultiple } from "./../../utils/Math";
 
 export {toDOMString} from "./functions";
 
@@ -76,25 +77,45 @@ const applicationGrid = {
     },
 };
 
-function sessionGridArea(index: number) {
-    return `session-${index}-area`;
+function sessionGridArea(horizontalIndex: number, verticalIndex: number) {
+    return `session-${verticalIndex}-${horizontalIndex}-area`;
 }
 
 const sessionsGrid = {
-    container: (sessionsCount: number) => ({
+    container: (sessionsCountHorizontal: number, sessionsCountVertical: number, sessionsViewMap: number[]) => {
+
+      let columnStepSize = LeastCommonMultiple(sessionsViewMap);
+
+      return {
         display: "grid",
-        gridTemplateRows: `repeat(${sessionsCount}, calc(${sessionsHeight} / ${sessionsCount})`,
-        gridTemplateColumns: "100%",
-        gridTemplateAreas: _.range(sessionsCount).map(index => `'${sessionGridArea(index)}'`).join("\n"),
-    }),
-    session: (index: number) => ({
+        gridTemplateRows: `repeat(${sessionsCountVertical}, calc(${sessionsHeight} / ${sessionsCountVertical}))`,
+        gridTemplateColumns: `repeat(${columnStepSize}, ${100 / columnStepSize}%)`,
+        gridTemplateAreas: generateTemplateAreas(columnStepSize, sessionsViewMap),
+      };
+    },
+    session: (horizontalIndex: number, verticalIndex: number) => ({
         overflowY: "scroll",
-        gridArea: sessionGridArea(index),
-    }),
-    sessionShutter: (index: number) => ({
-        gridArea: sessionGridArea(index),
+        gridArea: sessionGridArea(horizontalIndex, verticalIndex),
     }),
 };
+
+function generateTemplateRow (horizontalBlocksCount: number, verticalIndex: number, columnStepSize: number) {
+  let horizontalUniqueBlocksCount = columnStepSize / horizontalBlocksCount;
+
+  let blocks = _.range(horizontalBlocksCount).map(horizontalIndex =>
+    _.range(horizontalUniqueBlocksCount).map(_unused => sessionGridArea(horizontalIndex, verticalIndex))
+  );
+
+  let row = _.flatten(blocks).join(' ');
+
+  return `"${row}"`;
+}
+
+function generateTemplateAreas (columnStepSize: number, sessionsViewMap: number[]) {
+  return `${sessionsViewMap.map((horizontalBlockCount, index) =>
+    generateTemplateRow(horizontalBlockCount, index, columnStepSize)
+  ).join('\n')}`;
+}
 
 const promptInlineElement: CSSObject = {
     paddingTop: 0,
@@ -253,14 +274,14 @@ export const statusBar = {
     },
 };
 
-export const sessions = (sessionsCount: number) => Object.assign(
+export const sessions = (sessionsCountHorizontal: number, sessionsCountVertical: number, sessionsViewMap: number[]) => Object.assign(
     {
         backgroundColor: backgroundColor,
     },
-    sessionsGrid.container(sessionsCount),
+    sessionsGrid.container(sessionsCountHorizontal, sessionsCountVertical, sessionsViewMap),
 );
 
-export const session = (isActive: boolean, index: number) => {
+export const session = (isActive: boolean, horizontalIndex: number, verticalIndex: number) => {
     const styles: CSSObject = {
         position: "relative",
         outline: "none",
@@ -273,7 +294,7 @@ export const session = (isActive: boolean, index: number) => {
 
     return Object.assign(
         styles,
-        sessionsGrid.session(index),
+        sessionsGrid.session(horizontalIndex, verticalIndex),
     );
 };
 

@@ -47,6 +47,17 @@ export class TabComponent extends React.Component<TabProps, TabState> {
 
 export class Tab {
     public sessions: Session[] = [];
+    /*
+    session view map has containing all sessions positions in format:
+    [ 1 4 5], where each number means count of columns in corresponding row
+     */
+    public sessionsViewMap: number[] = [
+      1
+    ];
+    public sessionActivePosition: Positions = {
+      top: 0,
+      left: 0
+    };
     private activeSessionIndex: number;
 
     constructor(private application: ApplicationComponent) {
@@ -54,7 +65,21 @@ export class Tab {
     }
 
     addSession(): void {
-        this.sessions.push(new Session(this.application, this.contentDimensions));
+        const position: Positions = {
+          left: 0,
+          top: 0
+        };
+        this.sessions.push(new Session(this.application, this.contentDimensions, position));
+        this.activeSessionIndex = this.sessions.length - 1;
+    }
+
+    /*
+    $param {string} positionType - can have two values 'horizontal' or 'vertical'
+    */
+    addSessionToPosition(positionType: string): void {
+        const activePosition = this.updateViewMap(positionType, this.sessionsViewMap, this.sessionActivePosition);
+        this.setActivePosition(activePosition);
+        this.sessions.push(new Session(this.application, this.contentDimensions, activePosition));
         this.activeSessionIndex = this.sessions.length - 1;
     }
 
@@ -105,6 +130,14 @@ export class Tab {
         }
     }
 
+    public get sessionsCountHorizontal(): number {
+      return _.max(this.sessionsViewMap);
+    }
+
+    public get sessionsCountVertical(): number {
+      return this.sessionsViewMap.length;
+    }
+
     private get contentDimensions(): Dimensions {
         return {
             columns: Math.floor(this.contentSize.width / css.letterWidth),
@@ -117,5 +150,47 @@ export class Tab {
             width: window.innerWidth,
             height: window.innerHeight - css.titleBarHeight - css.infoPanelHeight - css.outputPadding,
         };
+    }
+
+    /*
+    $param {string} positionType - can have two values 'horizontal' or 'vertical'
+    */
+    private updateViewMap(positionType: string, sessionsViewMap: number[], activePosition: Positions):Positions {
+      let newActivePosition:Positions = {
+        left: 0,
+        top: 0
+      };
+      const newRowColumnsCount: number = 1;
+
+      if (positionType === 'horizontal') {
+        //add 1 to horizontal count
+        sessionsViewMap[activePosition.top]++;
+
+        newActivePosition = {
+          left: activePosition.left + 1,
+          top: activePosition.top
+        };
+      }
+      else if (positionType === 'vertical') {
+        //check if next row is existing
+        if (sessionsViewMap[activePosition.top + 1])
+        {
+          //if yes - add new row between current and next
+          sessionsViewMap.splice(activePosition.top + 1, 0, newRowColumnsCount);
+        } else {
+          sessionsViewMap.push(newRowColumnsCount);
+        }
+
+        newActivePosition = {
+          left: 0,
+          top: activePosition.top + 1
+        };
+      }
+
+      return newActivePosition;
+    }
+
+    private setActivePosition(position: Positions): void {
+      this.sessionActivePosition = position;
     }
 }
