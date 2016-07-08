@@ -277,15 +277,18 @@ export const session = (isActive: boolean, index: number) => {
     );
 };
 
-export const sessionShutter = (index: number) => Object.assign(
-    {
-        backgroundColor: colors.white,
-        zIndex: 1,
-        opacity: 0.2,
-        pointerEvents: "none",
-    },
-    sessionsGrid.sessionShutter(index),
-);
+export const sessionShutter =
+{
+    backgroundColor: colors.white,
+    zIndex: 1,
+    opacity: 0.2,
+    pointerEvents: "none",
+    position: "absolute",
+    top: 0,
+    bottom: 0,
+    left: 0,
+    right: 0,
+};
 
 export const titleBar = {
     display: "flex",

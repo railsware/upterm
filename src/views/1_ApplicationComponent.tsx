@@ -149,14 +149,7 @@ export class ApplicationComponent extends React.Component<{}, {}> {
                     </SessionComponent>
                 );
 
-                if (isActive) {
-                    return [sessionComponent];
-                } else {
-                    return [
-                        sessionComponent,
-                        <div className="shutter" style={css.sessionShutter(index)}></div>,
-                    ];
-                }
+                return [sessionComponent];
             }
         ));
 
