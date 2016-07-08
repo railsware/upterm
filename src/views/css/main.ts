@@ -106,7 +106,7 @@ function generateTemplateRow (horizontalBlocksCount: number, verticalIndex: numb
     _.range(horizontalUniqueBlocksCount).map(_unused => sessionGridArea(horizontalIndex, verticalIndex))
   );
 
-  let row = _.flatten(blocks).join(' ');
+  let row = _.flatten(blocks).join(" ");
 
   return `"${row}"`;
 }
@@ -114,7 +114,7 @@ function generateTemplateRow (horizontalBlocksCount: number, verticalIndex: numb
 function generateTemplateAreas (columnStepSize: number, sessionsViewMap: number[]) {
   return `${sessionsViewMap.map((horizontalBlockCount, index) =>
     generateTemplateRow(horizontalBlockCount, index, columnStepSize)
-  ).join('\n')}`;
+  ).join("\n")}`;
 }
 
 const promptInlineElement: CSSObject = {
@@ -298,8 +298,7 @@ export const session = (isActive: boolean, horizontalIndex: number, verticalInde
     );
 };
 
-export const sessionShutter =
-{
+export const sessionShutter = {
     backgroundColor: colors.white,
     zIndex: 1,
     opacity: 0.2,

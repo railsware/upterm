@@ -47,13 +47,13 @@ export class ApplicationComponent extends React.Component<{}, {}> {
 
     handleKeyDown(event: KeyboardEvent) {
         if (event.metaKey && event.keyCode === KeyCode.Underscore) {
-            this.activeTab.addSessionToPosition('vertical');
+            this.activeTab.addSessionToPosition("vertical");
             this.forceUpdate();
             event.stopPropagation();
         }
 
         if (event.metaKey && event.keyCode === KeyCode.VerticalBar) {
-          this.activeTab.addSessionToPosition('horizontal');
+          this.activeTab.addSessionToPosition("horizontal");
           this.forceUpdate();
           event.stopPropagation();
         }

@@ -52,11 +52,11 @@ export class Tab {
     [ 1 4 5], where each number means count of columns in corresponding row
      */
     public sessionsViewMap: number[] = [
-      1
+      1,
     ];
     public sessionActivePosition: Positions = {
       top: 0,
-      left: 0
+      left: 0,
     };
     private activeSessionIndex: number;
 
@@ -67,7 +67,7 @@ export class Tab {
     addSession(): void {
         const position: Positions = {
           left: 0,
-          top: 0
+          top: 0,
         };
         this.sessions.push(new Session(this.application, this.contentDimensions, position));
         this.activeSessionIndex = this.sessions.length - 1;
@@ -155,27 +155,25 @@ export class Tab {
     /*
     $param {string} positionType - can have two values 'horizontal' or 'vertical'
     */
-    private updateViewMap(positionType: string, sessionsViewMap: number[], activePosition: Positions):Positions {
-      let newActivePosition:Positions = {
+    private updateViewMap(positionType: string, sessionsViewMap: number[], activePosition: Positions): Positions {
+      let newActivePosition: Positions = {
         left: 0,
-        top: 0
+        top: 0,
       };
       const newRowColumnsCount: number = 1;
 
-      if (positionType === 'horizontal') {
-        //add 1 to horizontal count
+      if (positionType === "horizontal") {
+        // add 1 to horizontal count
         sessionsViewMap[activePosition.top]++;
 
         newActivePosition = {
           left: activePosition.left + 1,
-          top: activePosition.top
+          top: activePosition.top,
         };
-      }
-      else if (positionType === 'vertical') {
-        //check if next row is existing
-        if (sessionsViewMap[activePosition.top + 1])
-        {
-          //if yes - add new row between current and next
+      } else if (positionType === "vertical") {
+        // check if next row is existing
+        if (sessionsViewMap[activePosition.top + 1]) {
+          // if yes - add new row between current and next
           sessionsViewMap.splice(activePosition.top + 1, 0, newRowColumnsCount);
         } else {
           sessionsViewMap.push(newRowColumnsCount);
@@ -183,7 +181,7 @@ export class Tab {
 
         newActivePosition = {
           left: 0,
-          top: activePosition.top + 1
+          top: activePosition.top + 1,
         };
       }
 
