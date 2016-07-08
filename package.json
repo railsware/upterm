@@ -50,7 +50,7 @@
     "electron-builder": "5.10.3",
     "electron-prebuilt": "1.2.5",
     "mocha": "2.5.3",
-    "mock-fs": "3.9.0",
+    "mock-fs": "3.10.0",
     "npm-check-updates": "2.6.8",
     "spectron": "3.2.4",
     "ts-node": "0.9.3",
