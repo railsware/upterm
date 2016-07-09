@@ -12,6 +12,24 @@ export const menu = {
                             role: "about",
                         },
                         {
+                            type: "separator",
+                        },
+                        {
+                            label: "Hide Black Screen",
+                            accelerator: "Command+H",
+                            click: function () {
+                                app.hide();
+                            },
+                        },
+                        {
+                            label: "Hide Others",
+                            accelerator: "Alt+Command+H",
+                            role: "hideothers",
+                        },
+                        {
+                            type: "separator",
+                        },
+                        {
                             label: "Quit",
                             accelerator: "Command+Q",
                             click: function () {
