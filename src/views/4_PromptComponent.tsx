@@ -359,8 +359,8 @@ export class PromptComponent extends React.Component<Props, State> implements Ke
         return !!this.refs["autocomplete"];
     }
 
-    private async handleInput(event: React.SyntheticEvent): Promise<void> {
-        this.prompt.setValue((event.target as HTMLElement).innerText);
+    private async handleInput(event: React.SyntheticEvent<HTMLElement>): Promise<void> {
+        this.prompt.setValue(event.target.innerText);
 
         await this.getSuggestions();
     }

@@ -13,7 +13,7 @@ const CharGroupComponent = ({job, group}: {job: Job, group: Char[]}) =>
 
 interface CutProps {
     job: Job;
-    clickHandler: React.EventHandler<React.MouseEvent>;
+    clickHandler: React.EventHandler<React.MouseEvent<HTMLDivElement>>;
 }
 
 interface CutState {
