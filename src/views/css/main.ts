@@ -565,3 +565,8 @@ export const arrowInner = (status: Status) => {
 
     return styles;
 };
+
+export const image = {
+    maxHeight: "90vh",
+    maxWidth: "100vh",
+}
