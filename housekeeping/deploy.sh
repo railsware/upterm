@@ -21,4 +21,4 @@ echo $BODY
 
 curl --request PATCH "https://$GH_TOKEN:x-oauth-basic@api.github.com/repos/shockone/black-screen/releases/$LAST_DRAFT_ID" \
     -H "Content-Type: application/json" \
-    -d "{\"body\": $BODY, \"draft\": false, \"prerelease\": true, \"tag_name\": \"$TAG_NAME\"}"
+    -d "{\"body\": $BODY, \"tag_name\": \"$TAG_NAME\"}"
