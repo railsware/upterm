@@ -54,8 +54,8 @@
     "npm-check-updates": "2.7.0",
     "spectron": "3.2.6",
     "ts-node": "0.9.3",
-    "tslint": "3.13.0",
-    "typescript": "2.0.0-dev.20160707"
+    "tslint": "3.13.0-dev.0",
+    "typescript": "2.0.0-dev.20160705"
   },
   "scripts": {
     "preinstall": "npm prune",
