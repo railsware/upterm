@@ -83,17 +83,11 @@ function sessionGridArea(horizontalIndex: number, verticalIndex: number) {
 
 const sessionsGrid = {
     container: () => {
-      // return {
-      //   display: "grid",
-      //   gridTemplateRows: `repeat(${sessionsCountVertical}, calc(${sessionsHeight} / ${sessionsCountVertical}))`,
-      //   gridTemplateColumns: `repeat(${columnStepSize}, ${100 / columnStepSize}%)`,
-      //   gridTemplateAreas: generateTemplateAreas(columnStepSize, sessionsViewMap),
-      // };
-    },
-    session: () => ({
+      return {
+        height: `calc(${sessionsHeight})`,
         overflowY: "scroll",
-        // gridArea: sessionGridArea(sessionsViewMap),
-    }),
+      };
+    },
 };
 
 function generateTemplateRow (horizontalBlocksCount: number, verticalIndex: number, columnStepSize: number) {
@@ -290,10 +284,7 @@ export const session = (isActive: boolean) => {
         styles.margin = "0 0 1px 0px";
     }
 
-    return Object.assign(
-        styles,
-        sessionsGrid.session(),
-    );
+    return styles;
 };
 
 export const sessionContainer = (containerType: ContainerType) => ({
