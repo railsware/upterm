@@ -1,12 +1,12 @@
 import {ScreenBufferType, Status, Weight, Brightness} from "../../Enums";
 import {colors, panel as panelColor, background as backgroundColor, colorValue} from "./colors";
 import {TabHoverState} from "../TabComponent";
-import {ContainerType} from "../../utils/ViewMapLeaf";
+import {ViewMapLeaf, ContainerType} from "../../utils/ViewMapLeaf";
+import {Session} from "../../shell/Session";
 import {darken, lighten, failurize, alpha} from "./functions";
 import {Attributes} from "../../Interfaces";
 import {suggestionsLimit} from "../../Autocompletion";
 import {CSSObject, Px, Fr} from "./definitions";
-import * as _ from "lodash";
 
 export {toDOMString} from "./functions";
 
@@ -77,10 +77,6 @@ const applicationGrid = {
     },
 };
 
-function sessionGridArea(horizontalIndex: number, verticalIndex: number) {
-    return `session-${verticalIndex}-${horizontalIndex}-area`;
-}
-
 const sessionsGrid = {
     container: () => {
       return {
@@ -89,24 +85,6 @@ const sessionsGrid = {
       };
     },
 };
-
-function generateTemplateRow (horizontalBlocksCount: number, verticalIndex: number, columnStepSize: number) {
-  let horizontalUniqueBlocksCount = columnStepSize / horizontalBlocksCount;
-
-  let blocks = _.range(horizontalBlocksCount).map(horizontalIndex =>
-    _.range(horizontalUniqueBlocksCount).map(_unused => sessionGridArea(horizontalIndex, verticalIndex))
-  );
-
-  let row = _.flatten(blocks).join(" ");
-
-  return `"${row}"`;
-}
-
-function generateTemplateAreas (columnStepSize: number, sessionsViewMap: number[]) {
-  return `${sessionsViewMap.map((horizontalBlockCount, index) =>
-    generateTemplateRow(horizontalBlockCount, index, columnStepSize)
-  ).join("\n")}`;
-}
 
 const promptInlineElement: CSSObject = {
     paddingTop: 0,
@@ -272,12 +250,21 @@ export const sessions = () => Object.assign(
     sessionsGrid.container(),
 );
 
-export const session = (isActive: boolean) => {
+export const session = (isActive: boolean, containerViewMapLeaf: ViewMapLeaf<Session>) => {
     const styles: CSSObject = {
         position: "relative",
         outline: "none",
-        flex: 1
+        flex: 1,
+        overflowY: "scroll"
     };
+
+    if (containerViewMapLeaf !== undefined) {
+        if (containerViewMapLeaf.containerType === ContainerType.Column) {
+          styles.height = `calc(100% / ${containerViewMapLeaf.childs.length})`;
+        }
+    } else {
+      styles.height = `calc(${sessionsHeight})`;
+    }
 
     if (!isActive) {
         styles.boxShadow = `0 0 0 1px ${alpha(colors.white, 0.3)}`;
@@ -287,11 +274,32 @@ export const session = (isActive: boolean) => {
     return styles;
 };
 
-export const sessionContainer = (containerType: ContainerType) => ({
-  display: "flex",
-  flexDirection: containerType === ContainerType.Row ? "row" : "column",
-  flex: 1
-});
+export const sessionContainer = (viewMapLeaf: ViewMapLeaf<Session>, parentContainerViewMapLeaf: ViewMapLeaf<Session>) => {
+  const styles: CSSObject = {
+    display: "flex",
+    flex: 1,
+    overflowY: "scroll"
+  };
+
+  if (parentContainerViewMapLeaf !== undefined) {
+      if (parentContainerViewMapLeaf.containerType === ContainerType.Column) {
+        styles.height = `calc(${sessionsHeight} / ${parentContainerViewMapLeaf.childs.length})`;
+      } else {
+        styles.height = `calc(${sessionsHeight})`;
+      }
+  } else {
+    styles.height = `calc(${sessionsHeight})`;
+  }
+
+  if (viewMapLeaf.containerType === ContainerType.Column) {
+    styles.flexDirection = "column";
+    styles.height = "100%";
+  } else {
+    styles.flexDirection = "row";
+  }
+
+  return styles;
+};
 
 export const sessionShutter = {
     backgroundColor: colors.white,

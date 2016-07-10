@@ -1,8 +1,9 @@
 class ViewMapLeaf<T> {
-  private value?: T;
   public containerType?: ContainerType;
   public parent: ViewMapLeaf<T>;
   public childs: ViewMapLeaf<T>[];
+
+  private value?: T;
 
   constructor () {
     this.childs = [];
@@ -39,7 +40,7 @@ class ViewMapLeaf<T> {
       return this;
 
     for (let i = 0; i < this.childs.length; i++) {
-      var foundValue = this.childs[i].find(value);
+      const foundValue = this.childs[i].find(value);
       if (foundValue) {
         return foundValue;
       }

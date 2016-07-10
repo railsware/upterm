@@ -58,7 +58,7 @@ export class Tab {
     }
 
     addSession(): void {
-        var session = new Session(this.application, this.contentDimensions);
+        const session = new Session(this.application, this.contentDimensions);
         this.sessions.push(session);
 
         this.sessionsViewMapRoot = new ViewMapLeaf<Session>();
@@ -155,7 +155,7 @@ export class Tab {
         if (parentLeaf.containerType === ContainerType.Row) {
           return parentLeaf.addLeaf(session);
         } else {
-          //change current to row container
+          // change current to row container
           const previousValue = activeLeaf.getValue();
           activeLeaf.removeValue();
           activeLeaf.containerType = ContainerType.Row;
@@ -168,7 +168,7 @@ export class Tab {
         if (parentLeaf.containerType === ContainerType.Column) {
           return parentLeaf.addLeaf(session);
         } else {
-          //change current Leaf to column container
+          // change current Leaf to column container
           const previousValue = activeLeaf.getValue();
           activeLeaf.removeValue();
           activeLeaf.containerType = ContainerType.Column;

@@ -9,7 +9,7 @@ import {remote} from "electron";
 import * as css from "./css/main";
 import {saveWindowBounds} from "./ViewUtils";
 import {StatusBarComponent} from "./StatusBarComponent";
-import {ViewMapLeaf, ContainerType} from "../utils/ViewMapLeaf"
+import {ViewMapLeaf, ContainerType} from "../utils/ViewMapLeaf";
 
 export class ApplicationComponent extends React.Component<{}, {}> {
     private tabs: Tab[] = [];
@@ -134,9 +134,9 @@ export class ApplicationComponent extends React.Component<{}, {}> {
             );
         }
 
-        let renderSessionContainer = (containerType: ContainerType, viewMapLeafs: ViewMapLeaf<Session>[]): any => {
+        let renderSessionContainer = (viewMapLeaf: ViewMapLeaf<Session>, viewMapLeafs: ViewMapLeaf<Session>[], parentViewMapLeaf: ViewMapLeaf<Session>): any => {
           return (
-            <div style={css.sessionContainer(containerType)}>
+            <div style={css.sessionContainer(viewMapLeaf, parentViewMapLeaf)}>
               { viewMapLeafs.map(renderSessionComponent) }
             </div>
           );
@@ -144,18 +144,17 @@ export class ApplicationComponent extends React.Component<{}, {}> {
 
         let renderSessionComponent = (viewMapLeaf: ViewMapLeaf<Session>): any => {
             const session = viewMapLeaf.getValue();
+            const parentViewMapLeaf = viewMapLeaf.getParent();
 
             if (session === undefined) {
-              if (viewMapLeaf.containerType) {
-                return renderSessionContainer(viewMapLeaf.containerType, viewMapLeaf.childs);
-              }
+                return renderSessionContainer(viewMapLeaf, viewMapLeaf.childs, parentViewMapLeaf);
             } else {
               const isActive = session === this.activeTab.activeSession();
 
               return (
                   <SessionComponent session={session}
                                     key={session.id}
-                                    style={css.session(isActive)}
+                                    style={css.session(isActive, parentViewMapLeaf)}
                                     isActive={isActive}
                                     updateStatusBar={isActive ? () => this.forceUpdate() : undefined}
                                     activate={() => {
