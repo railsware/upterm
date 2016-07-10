@@ -1,12 +1,12 @@
 import {ScreenBufferType, Status, Weight, Brightness} from "../../Enums";
 import {colors, panel as panelColor, background as backgroundColor, colorValue} from "./colors";
 import {TabHoverState} from "../TabComponent";
+import {ContainerType} from "../../utils/ViewMapLeaf";
 import {darken, lighten, failurize, alpha} from "./functions";
 import {Attributes} from "../../Interfaces";
 import {suggestionsLimit} from "../../Autocompletion";
 import {CSSObject, Px, Fr} from "./definitions";
 import * as _ from "lodash";
-import { LeastCommonMultiple } from "./../../utils/Math";
 
 export {toDOMString} from "./functions";
 
@@ -82,20 +82,17 @@ function sessionGridArea(horizontalIndex: number, verticalIndex: number) {
 }
 
 const sessionsGrid = {
-    container: (sessionsCountHorizontal: number, sessionsCountVertical: number, sessionsViewMap: number[]) => {
-
-      let columnStepSize = LeastCommonMultiple(sessionsViewMap);
-
-      return {
-        display: "grid",
-        gridTemplateRows: `repeat(${sessionsCountVertical}, calc(${sessionsHeight} / ${sessionsCountVertical}))`,
-        gridTemplateColumns: `repeat(${columnStepSize}, ${100 / columnStepSize}%)`,
-        gridTemplateAreas: generateTemplateAreas(columnStepSize, sessionsViewMap),
-      };
+    container: () => {
+      // return {
+      //   display: "grid",
+      //   gridTemplateRows: `repeat(${sessionsCountVertical}, calc(${sessionsHeight} / ${sessionsCountVertical}))`,
+      //   gridTemplateColumns: `repeat(${columnStepSize}, ${100 / columnStepSize}%)`,
+      //   gridTemplateAreas: generateTemplateAreas(columnStepSize, sessionsViewMap),
+      // };
     },
-    session: (horizontalIndex: number, verticalIndex: number) => ({
+    session: () => ({
         overflowY: "scroll",
-        gridArea: sessionGridArea(horizontalIndex, verticalIndex),
+        // gridArea: sessionGridArea(sessionsViewMap),
     }),
 };
 
@@ -274,17 +271,18 @@ export const statusBar = {
     },
 };
 
-export const sessions = (sessionsCountHorizontal: number, sessionsCountVertical: number, sessionsViewMap: number[]) => Object.assign(
+export const sessions = () => Object.assign(
     {
         backgroundColor: backgroundColor,
     },
-    sessionsGrid.container(sessionsCountHorizontal, sessionsCountVertical, sessionsViewMap),
+    sessionsGrid.container(),
 );
 
-export const session = (isActive: boolean, horizontalIndex: number, verticalIndex: number) => {
+export const session = (isActive: boolean) => {
     const styles: CSSObject = {
         position: "relative",
         outline: "none",
+        flex: 1
     };
 
     if (!isActive) {
@@ -294,9 +292,15 @@ export const session = (isActive: boolean, horizontalIndex: number, verticalInde
 
     return Object.assign(
         styles,
-        sessionsGrid.session(horizontalIndex, verticalIndex),
+        sessionsGrid.session(),
     );
 };
+
+export const sessionContainer = (containerType: ContainerType) => ({
+  display: "flex",
+  flexDirection: containerType === ContainerType.Row ? "row" : "column",
+  flex: 1
+});
 
 export const sessionShutter = {
     backgroundColor: colors.white,

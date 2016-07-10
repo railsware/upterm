@@ -9,6 +9,7 @@ import {remote} from "electron";
 import * as css from "./css/main";
 import {saveWindowBounds} from "./ViewUtils";
 import {StatusBarComponent} from "./StatusBarComponent";
+import {ViewMapLeaf, ContainerType} from "../utils/ViewMapLeaf"
 
 export class ApplicationComponent extends React.Component<{}, {}> {
     private tabs: Tab[] = [];
@@ -133,30 +134,45 @@ export class ApplicationComponent extends React.Component<{}, {}> {
             );
         }
 
-        let sessions = _.flatten(this.activeTab.sessions.map((session, index) => {
-                const isActive = session === this.activeTab.activeSession();
+        let renderSessionContainer = (containerType: ContainerType, viewMapLeafs: ViewMapLeaf<Session>[]): any => {
+          return (
+            <div style={css.sessionContainer(containerType)}>
+              { viewMapLeafs.map(renderSessionComponent) }
+            </div>
+          );
+        };
 
-                const sessionComponent = (
-                    <SessionComponent session={session}
-                                      key={session.id}
-                                      style={css.session(isActive, session.position.left, session.position.top)}
-                                      isActive={isActive}
-                                      updateStatusBar={isActive ? () => this.forceUpdate() : undefined}
-                                      activate={() => {
-                                   this.activeTab.activateSession(session);
-                                   this.setState({ sessions: this.activeTab.sessions });
-                              }}>
-                    </SessionComponent>
-                );
+        let renderSessionComponent = (viewMapLeaf: ViewMapLeaf<Session>): any => {
+            const session = viewMapLeaf.getValue();
 
-                return [sessionComponent];
+            if (session === undefined) {
+              if (viewMapLeaf.containerType) {
+                return renderSessionContainer(viewMapLeaf.containerType, viewMapLeaf.childs);
+              }
+            } else {
+              const isActive = session === this.activeTab.activeSession();
+
+              return (
+                  <SessionComponent session={session}
+                                    key={session.id}
+                                    style={css.session(isActive)}
+                                    isActive={isActive}
+                                    updateStatusBar={isActive ? () => this.forceUpdate() : undefined}
+                                    activate={() => {
+                                 this.activeTab.activateSession(session);
+                                 this.setState({ sessions: this.activeTab.sessions });
+                            }}>
+                  </SessionComponent>
+              );
             }
-        ));
+        };
+
+        const sessions = renderSessionComponent(this.activeTab.sessionsViewMapRoot);
 
         return (
             <div style={css.application} onKeyDownCapture={this.handleKeyDown.bind(this)}>
                 <ul style={css.titleBar}>{tabs}</ul>
-                <div style={css.sessions(this.activeTab.sessionsCountHorizontal, this.activeTab.sessionsCountVertical, this.activeTab.sessionsViewMap)}>{sessions}</div>
+                <div style={css.sessions()}>{sessions}</div>
                 <StatusBarComponent presentWorkingDirectory={this.activeTab.activeSession().directory}/>
             </div>
         );

@@ -5,6 +5,7 @@ import {Session} from "../shell/Session";
 import {ApplicationComponent} from "./1_ApplicationComponent";
 import * as css from "./css/main";
 import {fontAwesome} from "./css/FontAwesome";
+import {ViewMapLeaf, ContainerType} from "../utils/ViewMapLeaf";
 
 export interface TabProps {
     isActive: boolean;
@@ -47,17 +48,9 @@ export class TabComponent extends React.Component<TabProps, TabState> {
 
 export class Tab {
     public sessions: Session[] = [];
-    /*
-    session view map has containing all sessions positions in format:
-    [ 1 4 5], where each number means count of columns in corresponding row
-     */
-    public sessionsViewMap: number[] = [
-      1,
-    ];
-    public sessionActivePosition: Positions = {
-      top: 0,
-      left: 0,
-    };
+
+    public sessionsViewMapRoot: ViewMapLeaf<Session>;
+    public sessionActiveLeaf: ViewMapLeaf<Session>;
     private activeSessionIndex: number;
 
     constructor(private application: ApplicationComponent) {
@@ -65,11 +58,15 @@ export class Tab {
     }
 
     addSession(): void {
-        const position: Positions = {
-          left: 0,
-          top: 0,
-        };
-        this.sessions.push(new Session(this.application, this.contentDimensions, position));
+        var session = new Session(this.application, this.contentDimensions);
+        this.sessions.push(session);
+
+        this.sessionsViewMapRoot = new ViewMapLeaf<Session>();
+        this.sessionsViewMapRoot.setValue(undefined);
+        this.sessionsViewMapRoot.containerType = ContainerType.Row;
+
+        this.sessionActiveLeaf = this.sessionsViewMapRoot.addLeaf(session);
+
         this.activeSessionIndex = this.sessions.length - 1;
     }
 
@@ -77,9 +74,10 @@ export class Tab {
     $param {string} positionType - can have two values 'horizontal' or 'vertical'
     */
     addSessionToPosition(positionType: string): void {
-        const activePosition = this.updateViewMap(positionType, this.sessionsViewMap, this.sessionActivePosition);
+        const session = new Session(this.application, this.contentDimensions);
+        const activePosition = this.updateViewMap(positionType, this.sessionActiveLeaf, session);
         this.setActivePosition(activePosition);
-        this.sessions.push(new Session(this.application, this.contentDimensions, activePosition));
+        this.sessions.push(session);
         this.activeSessionIndex = this.sessions.length - 1;
     }
 
@@ -104,6 +102,10 @@ export class Tab {
 
     activateSession(session: Session): void {
         this.activeSessionIndex = this.sessions.indexOf(session);
+
+        let foundSessionInViewMap = this.sessionsViewMapRoot.find(session);
+        if (foundSessionInViewMap)
+          this.sessionActiveLeaf = foundSessionInViewMap;
     }
 
     activatePreviousSession(): boolean {
@@ -130,14 +132,6 @@ export class Tab {
         }
     }
 
-    public get sessionsCountHorizontal(): number {
-      return _.max(this.sessionsViewMap);
-    }
-
-    public get sessionsCountVertical(): number {
-      return this.sessionsViewMap.length;
-    }
-
     private get contentDimensions(): Dimensions {
         return {
             columns: Math.floor(this.contentSize.width / css.letterWidth),
@@ -155,40 +149,39 @@ export class Tab {
     /*
     $param {string} positionType - can have two values 'horizontal' or 'vertical'
     */
-    private updateViewMap(positionType: string, sessionsViewMap: number[], activePosition: Positions): Positions {
-      let newActivePosition: Positions = {
-        left: 0,
-        top: 0,
-      };
-      const newRowColumnsCount: number = 1;
-
+    private updateViewMap(positionType: string, activeLeaf: ViewMapLeaf<Session>, session: Session): ViewMapLeaf<Session> {
       if (positionType === "horizontal") {
-        // add 1 to horizontal count
-        sessionsViewMap[activePosition.top]++;
-
-        newActivePosition = {
-          left: activePosition.left + 1,
-          top: activePosition.top,
-        };
-      } else if (positionType === "vertical") {
-        // check if next row is existing
-        if (sessionsViewMap[activePosition.top + 1]) {
-          // if yes - add new row between current and next
-          sessionsViewMap.splice(activePosition.top + 1, 0, newRowColumnsCount);
+        const parentLeaf = activeLeaf.getParent();
+        if (parentLeaf.containerType === ContainerType.Row) {
+          return parentLeaf.addLeaf(session);
         } else {
-          sessionsViewMap.push(newRowColumnsCount);
-        }
+          //change current to row container
+          const previousValue = activeLeaf.getValue();
+          activeLeaf.removeValue();
+          activeLeaf.containerType = ContainerType.Row;
+          activeLeaf.addLeaf(previousValue);
 
-        newActivePosition = {
-          left: 0,
-          top: activePosition.top + 1,
-        };
+          return activeLeaf.addLeaf(session);
+        }
+      } else if (positionType === "vertical") {
+        const parentLeaf = activeLeaf.getParent();
+        if (parentLeaf.containerType === ContainerType.Column) {
+          return parentLeaf.addLeaf(session);
+        } else {
+          //change current Leaf to column container
+          const previousValue = activeLeaf.getValue();
+          activeLeaf.removeValue();
+          activeLeaf.containerType = ContainerType.Column;
+          activeLeaf.addLeaf(previousValue);
+
+          return activeLeaf.addLeaf(session);
+        }
       }
 
-      return newActivePosition;
+      throw "Incorrect positionType argument. Only 'horizontal' or 'vertical' are available.";
     }
 
-    private setActivePosition(position: Positions): void {
-      this.sessionActivePosition = position;
+    private setActivePosition(activeLeaf: ViewMapLeaf<Session>): void {
+      this.sessionActiveLeaf = activeLeaf;
     }
 }
