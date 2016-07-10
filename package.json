@@ -61,7 +61,7 @@
     "preinstall": "npm prune",
     "pack": "npm run compile && build",
     "prerelease": "npm prune --production && npm install --global electron-builder",
-    "release": "build --publish always",
+    "release": "build --publish always --prerelease",
     "electron": "electron .",
     "prestart": "npm install && npm run compile",
     "start": "bash housekeeping/start.sh",
