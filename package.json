@@ -80,7 +80,7 @@
     "app": "."
   },
   "build": {
-    "app-bundle-id": "com.github.shockone.black-screen",
+    "appId": "com.github.shockone.black-screen",
     "app-category-type": "public.app-category.developer-tools"
   }
 }
