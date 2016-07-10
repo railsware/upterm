@@ -43,6 +43,8 @@ export interface CSSObject {
     animation?: string;
     backgroundImage?: string;
     backgroundSize?: string | number;
+    backgroundRepeat?: string;
+    backgroundPosition?: string;
     content?: string;
     transformOrigin?: string;
     transform?: string;

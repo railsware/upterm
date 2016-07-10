@@ -1,4 +1,4 @@
-import {statsIn, resolveDirectory, directoryName, joinPath} from "../../utils/Common";
+import {statsIn, resolveDirectory, directoryName, joinPath, isImage} from "../../utils/Common";
 import {
     FileInfo, AutocompletionContext, AutocompletionProvider,
 } from "../../Interfaces";
@@ -118,11 +118,25 @@ export const styles = {
         value: fontAwesome.folder,
         css: {},
     },
-    file: (fileInfo: FileInfo) => {
-        return {
-            value: extensionIcon(Path.extname(fileInfo.name)),
-            css: {},
-        };
+    file: (fileInfo: FileInfo, fullPath: string): Style => {
+        const extension = Path.extname(fileInfo.name);
+
+        if (isImage(extension)) {
+            return {
+                value: "",
+                css: {
+                    backgroundImage: `url("${fullPath}")`,
+                    backgroundSize: "contain",
+                    backgroundRepeat: "no-repeat",
+                    backgroundPosition: "center",
+                },
+            };
+        } else {
+            return {
+                value: extensionIcon(extension),
+                css: {},
+            };
+        }
     },
     gitFileStatus: (statusCode: StatusCode) => ({
         value: fontAwesome.file,
@@ -177,7 +191,7 @@ const filesSuggestions = (filter: (info: FileInfo) => boolean) => async(tokenVal
             if (info.stat.isDirectory()) {
                 return new Suggestion().withValue(joinPath(tokenDirectory, info.name + Path.sep)).withDisplayValue(info.name + Path.sep).withStyle(styles.directory);
             } else {
-                return new Suggestion().withValue(joinPath(tokenDirectory, info.name)).withDisplayValue(info.name).withStyle(styles.file(info));
+                return new Suggestion().withValue(joinPath(tokenDirectory, info.name)).withDisplayValue(info.name).withStyle(styles.file(info, joinPath(directoryPath, info.name)));
             }
         });
 };

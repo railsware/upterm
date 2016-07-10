@@ -219,6 +219,17 @@ export function pluralize(word: string, count = 2) {
     return count === 1 ? word : pluralFormOf(word);
 }
 
+const imageExtensions = [
+    ".jpg",
+    ".jpeg",
+    ".png",
+    ".gif",
+];
+
+export function isImage(extension: string) {
+    return imageExtensions.includes(extension);
+}
+
 function pluralFormOf(word: string) {
     if (word.endsWith("y")) {
         return word.substring(0, word.length - 1) + "ies";
