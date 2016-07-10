@@ -145,6 +145,11 @@ export const styles = {
     },
 };
 
+export const unique = (provider: AutocompletionProvider): AutocompletionProvider => mk(async (context) => {
+    const suggestions = await provider(context);
+    return suggestions.filter(suggestion => !context.argument.command.hasArgument(suggestion.value, context.argument));
+});
+
 const filesSuggestions = (filter: (info: FileInfo) => boolean) => async(tokenValue: string, directory: string): Promise<Suggestion[]> => {
     /**
      * Parent folders.
@@ -184,7 +189,7 @@ const filesSuggestionsProvider =
 
 export const executableFilesSuggestions = filesSuggestions(info => info.stat.isFile() && modeToPermissions(info.stat.mode).execute.owner);
 export const anyFilesSuggestions = filesSuggestions(() => true);
-export const anyFilesSuggestionsProvider = filesSuggestionsProvider(() => true);
+export const anyFilesSuggestionsProvider = unique(filesSuggestionsProvider(() => true));
 export const directoriesSuggestionsProvider = filesSuggestionsProvider(info => info.stat.isDirectory());
 
 export const environmentVariableSuggestions = mk(context => {
@@ -204,11 +209,6 @@ export const combine = (providers: AutocompletionProvider[]): AutocompletionProv
 export function mk(provider: AutocompletionProvider) {
     return provider;
 }
-
-export const unique = (provider: AutocompletionProvider): AutocompletionProvider => mk(async (context) => {
-    const suggestions = await provider(context);
-    return suggestions.filter(suggestion => !context.argument.command.hasArgument(suggestion.value, context.argument));
-});
 
 function gitStatusCodeColor(statusCode: StatusCode) {
     switch (statusCode) {
