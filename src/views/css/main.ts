@@ -569,4 +569,4 @@ export const arrowInner = (status: Status) => {
 export const image = {
     maxHeight: "90vh",
     maxWidth: "100vh",
-}
+};
