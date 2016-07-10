@@ -69,6 +69,14 @@ export class ApplicationComponent extends React.Component<{}, {}> {
             }
         }
 
+        if (event.metaKey && event.keyCode === KeyCode.W) {
+            this.closeSession(this.activeTab.activeSession());
+
+            this.forceUpdate();
+            event.stopPropagation();
+            event.preventDefault();
+        }
+
         if (event.metaKey && event.keyCode === KeyCode.J) {
             if (this.activeTab.activateNextSession()) {
                 this.forceUpdate();
@@ -92,13 +100,6 @@ export class ApplicationComponent extends React.Component<{}, {}> {
             }
 
             event.stopPropagation();
-        }
-
-        if (event.metaKey && event.keyCode === KeyCode.W) {
-            this.closeTab(this.activeTab);
-            this.forceUpdate();
-            event.stopPropagation();
-            event.preventDefault();
         }
 
         if (event.metaKey && event.keyCode >= KeyCode.One && event.keyCode <= KeyCode.Nine) {
