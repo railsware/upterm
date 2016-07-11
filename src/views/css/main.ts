@@ -531,7 +531,7 @@ export const prompt = Object.assign(
 );
 
 export const promptPlaceholder = {
-    height: promptWrapperHeight,
+    "min-height": promptWrapperHeight,
 };
 
 export const arrowInner = (status: Status) => {
