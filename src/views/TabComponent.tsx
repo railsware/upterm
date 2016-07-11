@@ -153,7 +153,7 @@ export class Tab {
       if (positionType === "horizontal") {
         const parentLeaf = activeLeaf.getParent();
         if (parentLeaf.containerType === ContainerType.Row) {
-          return parentLeaf.addLeaf(session);
+          return parentLeaf.addNeighborLeaf(session, activeLeaf);
         } else {
           // change current to row container
           const previousValue = activeLeaf.getValue();
@@ -166,7 +166,7 @@ export class Tab {
       } else if (positionType === "vertical") {
         const parentLeaf = activeLeaf.getParent();
         if (parentLeaf.containerType === ContainerType.Column) {
-          return parentLeaf.addLeaf(session);
+          return parentLeaf.addNeighborLeaf(session, activeLeaf);
         } else {
           // change current Leaf to column container
           const previousValue = activeLeaf.getValue();

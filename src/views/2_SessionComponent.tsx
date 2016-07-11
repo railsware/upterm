@@ -47,7 +47,9 @@ export class SessionComponent extends React.Component<Props, {}> {
                  onClickCapture={this.handleClick.bind(this)}
                  onKeyDownCapture={this.handleKeyDown.bind(this)}>
 
-                <div className="jobs" style={css.jobs(this.props.isActive)}>{jobs}</div>
+                 <div style={css.jobsContainer}>
+                    <div className="jobs" style={css.jobs(this.props.isActive)}>{jobs}</div>
+                 </div>
 
                 {shutter}
             </div>

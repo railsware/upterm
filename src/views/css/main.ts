@@ -255,7 +255,6 @@ export const session = (isActive: boolean, containerViewMapLeaf: ViewMapLeaf<Ses
         position: "relative",
         outline: "none",
         flex: 1,
-        overflowY: "scroll"
     };
 
     if (containerViewMapLeaf !== undefined) {
@@ -278,7 +277,7 @@ export const sessionContainer = (viewMapLeaf: ViewMapLeaf<Session>, parentContai
   const styles: CSSObject = {
     display: "flex",
     flex: 1,
-    overflowY: "scroll"
+    overflowY: "scroll",
   };
 
   if (parentContainerViewMapLeaf !== undefined) {
@@ -311,6 +310,12 @@ export const sessionShutter = {
     bottom: 0,
     left: 0,
     right: 0,
+};
+
+export const jobsContainer = {
+  height: "100%",
+  width: "100%",
+  overflowY: "scroll",
 };
 
 export const titleBar = {

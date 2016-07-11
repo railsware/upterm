@@ -35,6 +35,17 @@ class ViewMapLeaf<T> {
     return newLeaf;
   }
 
+  public addNeighborLeaf (value: T | undefined, currentLeaf: ViewMapLeaf<T>) {
+    const newLeaf = new ViewMapLeaf<T>();
+    newLeaf.setValue(value);
+    newLeaf.parent = this;
+
+    const currentLeafIndex = this.childs.indexOf(currentLeaf);
+    this.childs.splice(currentLeafIndex + 1, 0, newLeaf);
+
+    return newLeaf;
+  }
+
   public find (value: T): (ViewMapLeaf<T> | void) {
     if (this.value === value)
       return this;
