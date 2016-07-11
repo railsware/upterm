@@ -9,7 +9,7 @@ import {remote} from "electron";
 import * as css from "./css/main";
 import {saveWindowBounds} from "./ViewUtils";
 import {StatusBarComponent} from "./StatusBarComponent";
-import {ViewMapLeaf, ContainerType} from "../utils/ViewMapLeaf";
+import {ViewMapLeaf} from "../utils/ViewMapLeaf";
 
 export class ApplicationComponent extends React.Component<{}, {}> {
     private tabs: Tab[] = [];
@@ -134,7 +134,8 @@ export class ApplicationComponent extends React.Component<{}, {}> {
             );
         }
 
-        let renderSessionContainer = (viewMapLeaf: ViewMapLeaf<Session>, viewMapLeafs: ViewMapLeaf<Session>[], parentViewMapLeaf: ViewMapLeaf<Session>): any => {
+        let renderSessionContainer: any, renderSessionComponent: any;
+        renderSessionContainer = (viewMapLeaf: ViewMapLeaf<Session>, viewMapLeafs: ViewMapLeaf<Session>[], parentViewMapLeaf: ViewMapLeaf<Session>): any => {
           return (
             <div style={css.sessionContainer(viewMapLeaf, parentViewMapLeaf)}>
               { viewMapLeafs.map(renderSessionComponent) }
@@ -142,7 +143,7 @@ export class ApplicationComponent extends React.Component<{}, {}> {
           );
         };
 
-        let renderSessionComponent = (viewMapLeaf: ViewMapLeaf<Session>): any => {
+        renderSessionComponent = (viewMapLeaf: ViewMapLeaf<Session>): any => {
             const session = viewMapLeaf.getValue();
             const parentViewMapLeaf = viewMapLeaf.getParent();
 
