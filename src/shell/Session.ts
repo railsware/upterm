@@ -14,7 +14,6 @@ import {remote} from "electron";
 import {OrderedSet} from "../utils/OrderedSet";
 import {Aliases, aliasesFromConfig} from "./Aliases";
 import * as _ from "lodash";
-import {ViewMapLeaf} from "../utils/ViewMapLeaf";
 
 export class Session extends EmitterWithUniqueID {
     jobs: Array<Job> = [];
@@ -22,7 +21,6 @@ export class Session extends EmitterWithUniqueID {
     readonly aliases = new Aliases(aliasesFromConfig);
     history = History;
     historicalPresentDirectoriesStack = new OrderedSet<string>();
-    public currentViewMapLeaf: ViewMapLeaf<Session>;
 
     constructor(private application: ApplicationComponent, private _dimensions: Dimensions) {
         super();

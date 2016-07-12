@@ -5,6 +5,7 @@ import {Session} from "../shell/Session";
 import {ApplicationComponent} from "./1_ApplicationComponent";
 import * as css from "./css/main";
 import {fontAwesome} from "./css/FontAwesome";
+import {SplitDirection} from "../Enums";
 import {ViewMapLeaf, ContainerType} from "../utils/ViewMapLeaf";
 
 export interface TabProps {
@@ -51,6 +52,7 @@ export class Tab {
 
     public sessionsViewMapRoot: ViewMapLeaf<Session>;
     public sessionActiveLeaf: ViewMapLeaf<Session>;
+
     private activeSessionIndex: number;
 
     constructor(private application: ApplicationComponent) {
@@ -61,22 +63,18 @@ export class Tab {
         const session = new Session(this.application, this.contentDimensions);
         this.sessions.push(session);
 
-        this.sessionsViewMapRoot = new ViewMapLeaf<Session>();
-        this.sessionsViewMapRoot.setValue(undefined);
-        this.sessionsViewMapRoot.containerType = ContainerType.Row;
-
-        this.sessionActiveLeaf = this.sessionsViewMapRoot.addLeaf(session);
+        this.sessionsViewMapRoot = this.createRootMapLeaf();
+        this.setActivePosition(this.sessionsViewMapRoot.addLeaf(session));
 
         this.activeSessionIndex = this.sessions.length - 1;
     }
 
-    /*
-    $param {string} positionType - can have two values 'horizontal' or 'vertical'
-    */
-    addSessionToPosition(positionType: string): void {
+    addSessionToPosition(positionType: SplitDirection): void {
         const session = new Session(this.application, this.contentDimensions);
+
         const activePosition = this.updateViewMap(positionType, this.sessionActiveLeaf, session);
         this.setActivePosition(activePosition);
+
         this.sessions.push(session);
         this.activeSessionIndex = this.sessions.length - 1;
     }
@@ -86,7 +84,7 @@ export class Tab {
         if (leafToRemove) {
           const newActiveLeaf = this.sessionsViewMapRoot.remove(leafToRemove);
           if (leafToRemove === this.sessionActiveLeaf) {
-            this.sessionActiveLeaf = newActiveLeaf;
+            this.setActivePosition(newActiveLeaf);
           }
         }
 
@@ -110,9 +108,9 @@ export class Tab {
     activateSession(session: Session): void {
         this.activeSessionIndex = this.sessions.indexOf(session);
 
-        let foundSessionInViewMap = this.sessionsViewMapRoot.find(session);
+        const foundSessionInViewMap = this.sessionsViewMapRoot.find(session);
         if (foundSessionInViewMap)
-          this.sessionActiveLeaf = foundSessionInViewMap;
+          this.setActivePosition(foundSessionInViewMap);
     }
 
     activatePreviousSession(): boolean {
@@ -153,32 +151,31 @@ export class Tab {
         };
     }
 
-    /*
-    $param {string} positionType - can have two values 'horizontal' or 'vertical'
-    */
-    private updateViewMap(positionType: string, activeLeaf: ViewMapLeaf<Session>, session: Session): ViewMapLeaf<Session> {
-      if (positionType === "horizontal") {
+    private createRootMapLeaf (): ViewMapLeaf<Session> {
+      const leaf = new ViewMapLeaf<Session>();
+      leaf.setValue(undefined);
+      leaf.containerType = ContainerType.Row;
+
+      return leaf;
+    }
+
+    private updateViewMap(positionType: SplitDirection, activeLeaf: ViewMapLeaf<Session>, session: Session): ViewMapLeaf<Session> {
+      if (positionType === SplitDirection.Horizontal) {
         const parentLeaf = activeLeaf.getParent();
         if (parentLeaf.containerType === ContainerType.Row) {
           return parentLeaf.addNeighborLeaf(session, activeLeaf);
         } else {
-          // change current to row container
-          const previousValue = activeLeaf.getValue();
-          activeLeaf.removeValue();
-          activeLeaf.containerType = ContainerType.Row;
+          const previousValue = activeLeaf.convertToContainer(ContainerType.Row);
           activeLeaf.addLeaf(previousValue);
 
           return activeLeaf.addLeaf(session);
         }
-      } else if (positionType === "vertical") {
+      } else if (positionType === SplitDirection.Vertical) {
         const parentLeaf = activeLeaf.getParent();
         if (parentLeaf.containerType === ContainerType.Column) {
           return parentLeaf.addNeighborLeaf(session, activeLeaf);
         } else {
-          // change current Leaf to column container
-          const previousValue = activeLeaf.getValue();
-          activeLeaf.removeValue();
-          activeLeaf.containerType = ContainerType.Column;
+          const previousValue = activeLeaf.convertToContainer(ContainerType.Column);
           activeLeaf.addLeaf(previousValue);
 
           return activeLeaf.addLeaf(session);

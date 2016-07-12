@@ -8,11 +8,6 @@ interface Dimensions {
     rows: number;
 }
 
-interface Positions {
-    left: number;
-    top: number;
-}
-
 interface Advancement {
     vertical?: number;
     horizontal?: number;

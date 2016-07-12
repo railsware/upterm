@@ -4,7 +4,7 @@ import * as React from "react";
 import * as _ from "lodash";
 import {Session} from "../shell/Session";
 import {ipcRenderer} from "electron";
-import {KeyCode, Status} from "../Enums";
+import {KeyCode, Status, SplitDirection} from "../Enums";
 import {remote} from "electron";
 import * as css from "./css/main";
 import {saveWindowBounds} from "./ViewUtils";
@@ -48,13 +48,13 @@ export class ApplicationComponent extends React.Component<{}, {}> {
 
     handleKeyDown(event: KeyboardEvent) {
         if (event.metaKey && event.keyCode === KeyCode.Underscore) {
-            this.activeTab.addSessionToPosition("vertical");
+            this.activeTab.addSessionToPosition(SplitDirection.Vertical);
             this.forceUpdate();
             event.stopPropagation();
         }
 
         if (event.metaKey && event.keyCode === KeyCode.VerticalBar) {
-          this.activeTab.addSessionToPosition("horizontal");
+          this.activeTab.addSessionToPosition(SplitDirection.Horizontal);
           this.forceUpdate();
           event.stopPropagation();
         }
@@ -134,40 +134,49 @@ export class ApplicationComponent extends React.Component<{}, {}> {
             );
         }
 
-        let renderSessionContainer: any, renderSessionComponent: any;
-        renderSessionContainer = (viewMapLeaf: ViewMapLeaf<Session>, viewMapLeafs: ViewMapLeaf<Session>[], parentViewMapLeaf: ViewMapLeaf<Session>): any => {
+        let renderSessionContainer: any;
+        let renderSessionRecursively: any;
+        let renderSession: any;
+        renderSessionContainer = (viewMapLeaf: ViewMapLeaf<Session>): any => {
+          const parentViewMapLeaf = viewMapLeaf.getParent();
           return (
             <div style={css.sessionContainer(viewMapLeaf, parentViewMapLeaf)}>
-              { viewMapLeafs.map(renderSessionComponent) }
+              { viewMapLeaf.childs.map(renderSessionRecursively) }
             </div>
           );
         };
 
-        renderSessionComponent = (viewMapLeaf: ViewMapLeaf<Session>): any => {
-            const session = viewMapLeaf.getValue();
-            const parentViewMapLeaf = viewMapLeaf.getParent();
+        renderSession = (viewMapLeaf: ViewMapLeaf<Session>) => {
+          const session = viewMapLeaf.getValue();
+          const parentViewMapLeaf = viewMapLeaf.getParent();
+          const isActive = session === this.activeTab.activeSession();
 
-            if (session === undefined) {
-                return renderSessionContainer(viewMapLeaf, viewMapLeaf.childs, parentViewMapLeaf);
+          if (!session)
+            return;
+
+          return (
+              <SessionComponent session={session}
+                                key={session.id}
+                                style={css.session(isActive, parentViewMapLeaf)}
+                                isActive={isActive}
+                                updateStatusBar={isActive ? () => this.forceUpdate() : undefined}
+                                activate={() => {
+                             this.activeTab.activateSession(session);
+                             this.setState({ sessions: this.activeTab.sessions });
+                        }}>
+              </SessionComponent>
+          );
+        };
+
+        renderSessionRecursively = (viewMapLeaf: ViewMapLeaf<Session>): any => {
+            if (viewMapLeaf.isContainer()) {
+                return renderSessionContainer(viewMapLeaf);
             } else {
-              const isActive = session === this.activeTab.activeSession();
-
-              return (
-                  <SessionComponent session={session}
-                                    key={session.id}
-                                    style={css.session(isActive, parentViewMapLeaf)}
-                                    isActive={isActive}
-                                    updateStatusBar={isActive ? () => this.forceUpdate() : undefined}
-                                    activate={() => {
-                                 this.activeTab.activateSession(session);
-                                 this.setState({ sessions: this.activeTab.sessions });
-                            }}>
-                  </SessionComponent>
-              );
+                return renderSession(viewMapLeaf);
             }
         };
 
-        const sessions = renderSessionComponent(this.activeTab.sessionsViewMapRoot);
+        const sessions = renderSessionRecursively(this.activeTab.sessionsViewMapRoot);
 
         return (
             <div style={css.application} onKeyDownCapture={this.handleKeyDown.bind(this)}>

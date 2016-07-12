@@ -9,6 +9,10 @@ class ViewMapLeaf<T> {
     this.childs = [];
   }
 
+  public isContainer (): boolean {
+    return this.getValue() === undefined;
+  }
+
   public setValue (value: T | undefined) {
     this.value = value;
   }
@@ -74,6 +78,15 @@ class ViewMapLeaf<T> {
 
       return parentLeaf.childs[leafIndex];
     }
+  }
+
+  public convertToContainer (containerType: ContainerType): T | undefined {
+    const previousValue = this.getValue();
+
+    this.removeValue();
+    this.containerType = containerType;
+
+    return previousValue;
   }
 }
 
