@@ -123,6 +123,15 @@ const commonMergeOptions = combine([
     "no-progress",
 ].map(option => longFlag(option)));
 
+const remotes = async(context: AutocompletionContext): Promise<Suggestion[]> => {
+    if (Git.isGitDirectory(context.environment.pwd)) {
+        const names = await Git.remotes(context.environment.pwd);
+        return names.map(name => new Suggestion().withValue(name).withStyle(styles.branch));
+    }
+
+    return [];
+};
+
 const configVariables = unique(async(context: AutocompletionContext): Promise<Suggestion[]> => {
     const variables = await Git.configVariables(context.environment.pwd);
     return variables.map((variable) => new Suggestion().withValue(variable).withStyle(styles.option));
@@ -231,7 +240,7 @@ const subCommandsData: GitCommandData[] = [
     {
         name: "fetch",
         description: "Download objects and refs from another repository.",
-        provider: combine([fetchOptions]),
+        provider: combine([remotes, fetchOptions]),
     },
     {
         name: "format-patch",

@@ -88,6 +88,10 @@ export async function configVariables(directory: string): Promise<string[]> {
     return lines.map(line => line.split("=")[0].trim());
 }
 
+export async function remotes(directory: GitDirectoryPath): Promise<string[]> {
+    return await linedOutputOf("git", ["remote"], directory);
+}
+
 export async function status(directory: GitDirectoryPath): Promise<FileStatus[]> {
     let lines = await linedOutputOf("git", ["status", "--porcelain"], directory);
     return lines.map(line => new FileStatus(line));
