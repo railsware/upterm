@@ -217,8 +217,6 @@ export class PromptComponent extends React.Component<Props, State> implements Ke
                                 dangerouslySetInnerHTML={{__html: fontAwesome.longArrowUp}}/>;
         }
 
-
-
         return (
             <div className="prompt-placeholder" ref="placeholder" id={this.props.job.id} style={css.promptPlaceholder}>
                 <div className="prompt-wrapper" style={css.promptWrapper(this.props.status, this.state.isSticky)}>
