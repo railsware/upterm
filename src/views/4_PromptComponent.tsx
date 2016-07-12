@@ -347,11 +347,18 @@ export class PromptComponent extends React.Component<Props, State> implements Ke
     }
 
     private showAutocomplete(): boolean {
+        const ignoredKeyCodes = [
+            KeyCode.CarriageReturn,
+            KeyCode.Escape,
+            KeyCode.Up,
+            KeyCode.Down
+        ];
+
         // TODO: use streams.
         return this.props.hasLocusOfAttention &&
             this.state.suggestions.length &&
             this.commandNode && !this.isEmpty() &&
-            this.props.status === e.Status.NotStarted && ![KeyCode.CarriageReturn, KeyCode.Escape].includes(this.state.latestKeyCode);
+            this.props.status === e.Status.NotStarted && !ignoredKeyCodes.includes(this.state.latestKeyCode);
     }
 
     private isAutocompleteShown(): boolean {
