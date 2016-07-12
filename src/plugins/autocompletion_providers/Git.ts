@@ -83,6 +83,46 @@ const configOptions = combine([
     longAndShortFlag("edit"),
 ]);
 
+const fetchOptions = combine([
+    "quiet",
+    "verbose",
+    "append",
+    "upload-pack",
+    "force",
+    "keep",
+    "depth=",
+    "tags",
+    "no-tags",
+    "all",
+    "prune",
+    "dry-run",
+    "recurse-submodules=",
+].map(option => longFlag(option)));
+
+const commonMergeOptions = combine([
+    "no-commit",
+    "no-stat",
+    "log",
+    "no-log",
+    "squash",
+    "strategy",
+    "commit",
+    "stat",
+    "no-squash",
+    "ff",
+    "no-ff",
+    "ff-only",
+    "edit",
+    "no-edit",
+    "verify-signatures",
+    "no-verify-signatures",
+    "gpg-sign",
+    "quiet",
+    "verbose",
+    "progress",
+    "no-progress",
+].map(option => longFlag(option)));
+
 const configVariables = unique(async(context: AutocompletionContext): Promise<Suggestion[]> => {
     const variables = await Git.configVariables(context.environment.pwd);
     return variables.map((variable) => new Suggestion().withValue(variable).withStyle(styles.option));
@@ -191,6 +231,7 @@ const subCommandsData: GitCommandData[] = [
     {
         name: "fetch",
         description: "Download objects and refs from another repository.",
+        provider: combine([fetchOptions]),
     },
     {
         name: "format-patch",
@@ -219,7 +260,14 @@ const subCommandsData: GitCommandData[] = [
     {
         name: "merge",
         description: "Join two or more development histories together.",
-        provider: combine([branchesExceptCurrent, branchAlias]),
+        provider: combine([
+            branchesExceptCurrent,
+            branchAlias,
+            commonMergeOptions,
+            longFlag("rerere-autoupdate"),
+            longFlag("no-rerere-autoupdate"),
+            longFlag("abort"),
+        ]),
     },
     {
         name: "mv",
@@ -232,6 +280,12 @@ const subCommandsData: GitCommandData[] = [
     {
         name: "pull",
         description: "Fetch from and integrate with another repository or a local branch.",
+        provider: combine([
+            longFlag("rebase"),
+            longFlag("no-rebase"),
+            commonMergeOptions,
+            fetchOptions,
+        ]),
     },
     {
         name: "push",
