@@ -440,6 +440,7 @@ export const promptWrapper = (status: Status, isSticky: boolean) => {
         styles.width = "100%";
         styles.position = "fixed";
         styles.top = titleBarHeight;
+        styles.height = promptWrapperHeight;
     }
 
     if ([Status.Failure, Status.Interrupted].includes(status)) {

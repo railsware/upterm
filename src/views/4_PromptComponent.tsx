@@ -47,7 +47,7 @@ export class PromptComponent extends React.Component<Props, State> implements Ke
     private intersectionObserver = new IntersectionObserver(
         (entries) => {
             const entry = entries[0];
-            const nearTop = entry.boundingClientRect.bottom < 100;
+            const nearTop = entry.boundingClientRect.top < 50;
             const isVisible = entry.intersectionRatio === 1;
 
             this.setState(assign(this.state, {isSticky: nearTop && !isVisible}));
@@ -208,12 +208,16 @@ export class PromptComponent extends React.Component<Props, State> implements Ke
             decorationToggle = <DecorationToggleComponent decorateToggler={this.props.decorateToggler}/>;
         }
 
+        let promptCss = Object.assign({}, css.prompt);
         if (this.state.isSticky) {
+            promptCss.whiteSpace = "nowrap";
             scrollToTop = <span style={css.action}
                                 title="Scroll to beginning of output."
                                 onClick={this.handleScrollToTop.bind(this)}
                                 dangerouslySetInnerHTML={{__html: fontAwesome.longArrowUp}}/>;
         }
+
+
 
         return (
             <div className="prompt-placeholder" ref="placeholder" id={this.props.job.id} style={css.promptPlaceholder}>
@@ -225,7 +229,7 @@ export class PromptComponent extends React.Component<Props, State> implements Ke
                          title={JSON.stringify(this.props.status)}
                          dangerouslySetInnerHTML={{__html: this.props.status === Status.Interrupted ? fontAwesome.close : ""}}></div>
                     <div className="prompt"
-                         style={css.prompt}
+                         style={promptCss}
                          onKeyDown={event => this.handlers.onKeyDown(event)}
                          onInput={this.handleInput.bind(this)}
                          onKeyPress={() => this.props.status === e.Status.InProgress && stopBubblingUp(event)}
