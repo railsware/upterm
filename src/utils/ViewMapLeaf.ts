@@ -57,6 +57,24 @@ class ViewMapLeaf<T> {
       }
     }
   }
+
+  public remove (leaf: ViewMapLeaf<T>): ViewMapLeaf<T> {
+    const parentLeaf = leaf.getParent();
+
+    if (parentLeaf === undefined) { // root
+      return leaf;
+    } else {
+
+      const leafIndex = parentLeaf.childs.indexOf(leaf);
+      parentLeaf.childs.splice(leafIndex, 1);
+
+      if (parentLeaf.childs.length === 0) {
+        return this.remove(parentLeaf);
+      }
+
+      return parentLeaf.childs[leafIndex];
+    }
+  }
 }
 
 enum ContainerType {

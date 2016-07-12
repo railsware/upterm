@@ -267,7 +267,7 @@ export const session = (isActive: boolean, containerViewMapLeaf: ViewMapLeaf<Ses
 
     if (!isActive) {
         styles.boxShadow = `0 0 0 1px ${alpha(colors.white, 0.3)}`;
-        styles.margin = "0 0 1px 0px";
+        styles.margin = "0 1px 0 0";
     }
 
     return styles;

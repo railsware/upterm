@@ -82,6 +82,14 @@ export class Tab {
     }
 
     closeSession(session: Session): void {
+        const leafToRemove = this.sessionsViewMapRoot.find(session);
+        if (leafToRemove) {
+          const newActiveLeaf = this.sessionsViewMapRoot.remove(leafToRemove);
+          if (leafToRemove === this.sessionActiveLeaf) {
+            this.sessionActiveLeaf = newActiveLeaf;
+          }
+        }
+
         session.jobs.forEach(job => {
             job.removeAllListeners();
             job.interrupt();
@@ -93,7 +101,6 @@ export class Tab {
         if (this.activeSessionIndex >= this.sessions.length) {
             this.activeSessionIndex = this.sessions.length - 1;
         }
-
     }
 
     activeSession(): Session {
