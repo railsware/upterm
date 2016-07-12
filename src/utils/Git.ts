@@ -78,6 +78,16 @@ export async function branches(directory: GitDirectoryPath): Promise<Branch[]> {
     return lines.map(line => new Branch(line.slice(1), line[0] === "*"));
 }
 
+export async function configVariables(directory: string): Promise<string[]> {
+    const lines = await linedOutputOf(
+        "git",
+        ["config", "--list"],
+        directory
+    );
+
+    return lines.map(line => line.split("=")[0].trim());
+}
+
 export async function status(directory: GitDirectoryPath): Promise<FileStatus[]> {
     let lines = await linedOutputOf("git", ["status", "--porcelain"], directory);
     return lines.map(line => new FileStatus(line));
