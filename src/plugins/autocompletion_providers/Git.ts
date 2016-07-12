@@ -43,6 +43,18 @@ const statusOptions = combine([
     longFlag("short"),
 ]);
 
+const configOptions = combine([
+    longFlag("global"),
+    longFlag("system"),
+    longAndShortFlag("list"),
+    longAndShortFlag("edit"),
+]);
+
+const configVariables = unique(async(context: AutocompletionContext): Promise<Suggestion[]> => {
+    const variables = await Git.configVariables(context.environment.pwd);
+    return variables.map((variable) => new Suggestion().withValue(variable).withStyle(styles.option));
+});
+
 const branchesExceptCurrent = async(context: AutocompletionContext): Promise<Suggestion[]> => {
     if (Git.isGitDirectory(context.environment.pwd)) {
         const branches = (await Git.branches(context.environment.pwd)).filter(branch => !branch.isCurrent());
@@ -79,6 +91,7 @@ const subCommandProviders: Dictionary<AutocompletionProvider> = {
     status: statusOptions,
     merge: combine([branchesExceptCurrent, branchAlias]),
     push: pushOptions,
+    config: combine([configVariables, configOptions]),
 };
 
 const subCommands = [
@@ -129,6 +142,10 @@ const subCommands = [
     {
         name: "commit",
         description: "Record changes to the repository.",
+    },
+    {
+        name: "config",
+        description: "Get and set repository or global options",
     },
     {
         name: "describe",
