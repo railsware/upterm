@@ -351,7 +351,7 @@ export class PromptComponent extends React.Component<Props, State> implements Ke
             KeyCode.CarriageReturn,
             KeyCode.Escape,
             KeyCode.Up,
-            KeyCode.Down
+            KeyCode.Down,
         ];
 
         // TODO: use streams.
