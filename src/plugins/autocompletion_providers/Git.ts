@@ -2,7 +2,40 @@ import * as Git from "../../utils/Git";
 import {styles, Suggestion, longAndShortFlag, longFlag, mapSuggestions, combine, unique} from "./Common";
 import {PluginManager} from "../../PluginManager";
 import {AutocompletionProvider, AutocompletionContext} from "../../Interfaces";
-import {linedOutputOf} from "../../PTY";
+import {linedOutputOf, executeCommand} from "../../PTY";
+import {find} from 'lodash';
+
+const subCommands: Suggestion[] = [];
+
+async function loadAllSubcommands() {
+    const text = await executeCommand("git", ["help", "-a"], process.env.HOME);
+    const matches = text.match(/  ([\-a-zA-Z0-9]+)/gm);
+
+    if (matches) {
+        matches
+            .filter((match) => match.indexOf('--') === -1)
+            .forEach(async(match) => {
+                const name = match.trim();
+                const suggestion = new Suggestion()
+                    .withValue(name)
+                    .withStyle(styles.command)
+                    .withSpace();
+
+                const data = find(subCommandsData, {name});
+
+                if (data) {
+                    suggestion.withDescription(data.description);
+                }
+
+                subCommands.push(suggestion);
+            });
+    }
+
+    return text;
+}
+
+loadAllSubcommands();
+
 
 const addOptions = combine([
     mapSuggestions(longAndShortFlag("patch"), suggestion => suggestion.withDescription(
@@ -84,20 +117,17 @@ const notStagedFiles = unique(async(context: AutocompletionContext): Promise<Sug
     }
 });
 
-const subCommandProviders: Dictionary<AutocompletionProvider> = {
-    add: combine([notStagedFiles, addOptions]),
-    checkout: combine([branchesExceptCurrent, branchAlias, notStagedFiles]),
-    commit: commitOptions,
-    status: statusOptions,
-    merge: combine([branchesExceptCurrent, branchAlias]),
-    push: pushOptions,
-    config: combine([configVariables, configOptions]),
-};
+interface GitCommandData {
+    name: string;
+    description: string;
+    provider?: AutocompletionProvider
+}
 
-const subCommands = [
+const subCommandsData: GitCommandData[] = [
     {
         name: "add",
         description: "Add file contents to the index.",
+        provider: combine([notStagedFiles, addOptions]),
     },
     {
         name: "am",
@@ -122,6 +152,7 @@ const subCommands = [
     {
         name: "checkout",
         description: "Switch branches or restore working tree files.",
+        provider: combine([branchesExceptCurrent, branchAlias, notStagedFiles]),
     },
     {
         name: "cherry-pick",
@@ -142,10 +173,12 @@ const subCommands = [
     {
         name: "commit",
         description: "Record changes to the repository.",
+        provider: commitOptions,
     },
     {
         name: "config",
         description: "Get and set repository or global options",
+        provider: combine([configVariables, configOptions]),
     },
     {
         name: "describe",
@@ -186,6 +219,7 @@ const subCommands = [
     {
         name: "merge",
         description: "Join two or more development histories together.",
+        provider: combine([branchesExceptCurrent, branchAlias]),
     },
     {
         name: "mv",
@@ -202,6 +236,7 @@ const subCommands = [
     {
         name: "push",
         description: "Update remote refs along with associated objects.",
+        provider: pushOptions,
     },
     {
         name: "rebase",
@@ -234,6 +269,7 @@ const subCommands = [
     {
         name: "status",
         description: "Show the working tree status.",
+        provider: statusOptions,
     },
     {
         name: "submodule",
@@ -247,7 +283,7 @@ const subCommands = [
         name: "worktree",
         description: "Manage multiple worktrees.",
     },
-].map(subCommand => new Suggestion().withValue(subCommand.name).withDescription(subCommand.description).withStyle(styles.command).withSpace());
+];
 
 PluginManager.registerAutocompletionProvider("git", context => {
     if (context.argument.position === 1) {
@@ -256,9 +292,10 @@ PluginManager.registerAutocompletionProvider("git", context => {
         const firstArgument = context.argument.command.nthArgument(1);
 
         if (firstArgument) {
-            const subCommandProvider = subCommandProviders[firstArgument.value];
-            if (subCommandProvider) {
-                return subCommandProvider(context);
+            const data = find(subCommandsData, {name: firstArgument.value});
+
+            if (data && data.provider) {
+                return data.provider(context);
             } else {
                 return [];
             }
