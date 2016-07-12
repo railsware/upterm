@@ -34,7 +34,7 @@
     "immutable": "3.8.1",
     "lodash": "4.13.1",
     "mode-to-permissions": "0.0.2",
-    "node-ansiparser": "2.1.0",
+    "node-ansiparser": "2.2.0",
     "pty.js": "shockone/pty.js",
     "react": "15.2.1",
     "react-dom": "15.2.1",
