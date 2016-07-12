@@ -1,4 +1,4 @@
-class ViewMapLeaf<T> {
+export class ViewMapLeaf<T> {
   public containerType?: ContainerType;
   public parent: ViewMapLeaf<T>;
   public childs: ViewMapLeaf<T>[];
@@ -90,9 +90,7 @@ class ViewMapLeaf<T> {
   }
 }
 
-enum ContainerType {
+export enum ContainerType {
   Row = 1,
   Column = 2
 }
-
-export { ViewMapLeaf, ContainerType };
