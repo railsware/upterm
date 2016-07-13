@@ -95,7 +95,7 @@ export async function configVariables(directory: string): Promise<ConfigVariable
 
         return {
             name: parts[0].trim(),
-            value: parts[1] ? parts[1].trim() : '',
+            value: parts[1] ? parts[1].trim() : "",
         };
     });
 }

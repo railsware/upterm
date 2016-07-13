@@ -3,54 +3,7 @@ import {styles, Suggestion, longAndShortFlag, longFlag, mapSuggestions, combine,
 import {PluginManager} from "../../PluginManager";
 import {AutocompletionProvider, AutocompletionContext} from "../../Interfaces";
 import {linedOutputOf, executeCommand} from "../../PTY";
-import {find, flatMap} from 'lodash';
-
-async function loadAllSubcommands() {
-    const text = await executeCommand("git", ["help", "-a"], process.env.HOME);
-    const matches = text.match(/  ([\-a-zA-Z0-9]+)/gm);
-
-    if (matches) {
-        matches
-            .filter((match) => match.indexOf("--") === -1)
-            .forEach(async(match) => {
-                const name = match.trim();
-                const data = find(subCommandsData, {name});
-
-                if (!data) {
-                    subCommandsData.push({
-                        name,
-                        description: '',
-                        aliases: [],
-                    });
-                }
-            });
-    }
-}
-
-async function loadAliases() {
-    const variables = await Git.configVariables(process.env.HOME);
-
-    variables
-        .filter(variable => variable.name.indexOf("alias.") === 0)
-        .forEach(variable => {
-            const name = variable.name.replace("alias.", "");
-            const data = find(subCommandsData, {name: variable.value});
-
-            if (data) {
-                data.aliases.push(name);
-            } else {
-                subCommandsData.push({
-                    name: name,
-                    description: variable.value,
-                    aliases: [],
-                });
-            }
-        });
-}
-
-loadAllSubcommands();
-loadAliases();
-
+import {find, flatMap} from "lodash";
 
 const addOptions = combine([
     mapSuggestions(longAndShortFlag("patch"), suggestion => suggestion.withDescription(
@@ -63,12 +16,12 @@ const addOptions = combine([
         of the working tree. See "Interactive mode" for details.`)),
 ]);
 
-function doesLookLikeBranchAlias(word:string) {
+function doesLookLikeBranchAlias(word: string) {
     if (!word) return false;
     return word.startsWith("-") || word.includes("@") || word.includes("HEAD") || /\d/.test(word);
 }
 
-function canonizeBranchAlias(alias:string) {
+function canonizeBranchAlias(alias: string) {
     if (alias[0] === "-") {
         const steps = parseInt(alias.slice(1), 10) || 1;
         alias = `@{-${steps}}`;
@@ -138,7 +91,7 @@ const commonMergeOptions = combine([
     "no-progress",
 ].map(option => longFlag(option)));
 
-const remotes = async(context:AutocompletionContext):Promise<Suggestion[]> => {
+const remotes = async(context: AutocompletionContext): Promise<Suggestion[]> => {
     if (Git.isGitDirectory(context.environment.pwd)) {
         const names = await Git.remotes(context.environment.pwd);
         return names.map(name => new Suggestion().withValue(name).withStyle(styles.branch));
@@ -147,7 +100,7 @@ const remotes = async(context:AutocompletionContext):Promise<Suggestion[]> => {
     return [];
 };
 
-const configVariables = unique(async(context:AutocompletionContext):Promise<Suggestion[]> => {
+const configVariables = unique(async(context: AutocompletionContext): Promise<Suggestion[]> => {
     const variables = await Git.configVariables(context.environment.pwd);
 
     return variables.map((variable) => {
@@ -159,7 +112,7 @@ const configVariables = unique(async(context:AutocompletionContext):Promise<Sugg
     );
 });
 
-const branchesExceptCurrent = async(context:AutocompletionContext):Promise<Suggestion[]> => {
+const branchesExceptCurrent = async(context: AutocompletionContext): Promise<Suggestion[]> => {
     if (Git.isGitDirectory(context.environment.pwd)) {
         const branches = (await Git.branches(context.environment.pwd)).filter(branch => !branch.isCurrent());
         return branches.map(branch => new Suggestion().withValue(branch.toString()).withStyle(styles.branch));
@@ -168,7 +121,7 @@ const branchesExceptCurrent = async(context:AutocompletionContext):Promise<Sugge
     }
 };
 
-const branchAlias = async(context:AutocompletionContext):Promise<Suggestion[]> => {
+const branchAlias = async(context: AutocompletionContext): Promise<Suggestion[]> => {
     if (doesLookLikeBranchAlias(context.argument.value)) {
         let nameOfAlias = (await linedOutputOf("git", ["name-rev", "--name-only", canonizeBranchAlias(context.argument.value)], context.environment.pwd))[0];
         if (nameOfAlias && !nameOfAlias.startsWith("Could not get")) {
@@ -179,7 +132,7 @@ const branchAlias = async(context:AutocompletionContext):Promise<Suggestion[]> =
     return [];
 };
 
-const notStagedFiles = unique(async(context:AutocompletionContext):Promise<Suggestion[]> => {
+const notStagedFiles = unique(async(context: AutocompletionContext): Promise<Suggestion[]> => {
     if (Git.isGitDirectory(context.environment.pwd)) {
         const fileStatuses = await Git.status(context.environment.pwd);
         return fileStatuses.map(fileStatus => new Suggestion().withValue(fileStatus.value).withStyle(styles.gitFileStatus(fileStatus.code)));
@@ -189,13 +142,13 @@ const notStagedFiles = unique(async(context:AutocompletionContext):Promise<Sugge
 });
 
 interface GitCommandData {
-    name:string;
-    description:string;
-    provider?:AutocompletionProvider;
-    aliases:string[];
+    name: string;
+    description: string;
+    provider?: AutocompletionProvider;
+    aliases: string[];
 }
 
-const subCommandsData:GitCommandData[] = [
+const subCommandsData: GitCommandData[] = [
     {
         name: "add",
         description: "Add file contents to the index.",
@@ -409,6 +362,52 @@ const subCommandsData:GitCommandData[] = [
     },
 ];
 
+async function loadAllSubcommands() {
+    const text = await executeCommand("git", ["help", "-a"], process.env.HOME);
+    const matches = text.match(/  ([\-a-zA-Z0-9]+)/gm);
+
+    if (matches) {
+        matches
+            .filter((match) => match.indexOf("--") === -1)
+            .forEach(async(match) => {
+                const name = match.trim();
+                const data = find(subCommandsData, {name});
+
+                if (!data) {
+                    subCommandsData.push({
+                        name,
+                        description: "",
+                        aliases: [],
+                    });
+                }
+            });
+    }
+}
+
+async function loadAliases() {
+    const variables = await Git.configVariables(process.env.HOME);
+
+    variables
+        .filter(variable => variable.name.indexOf("alias.") === 0)
+        .forEach(variable => {
+            const name = variable.name.replace("alias.", "");
+            const data = find(subCommandsData, {name: variable.value});
+
+            if (data) {
+                data.aliases.push(name);
+            } else {
+                subCommandsData.push({
+                    name: name,
+                    description: variable.value,
+                    aliases: [],
+                });
+            }
+        });
+}
+
+loadAllSubcommands();
+loadAliases();
+
 PluginManager.registerAutocompletionProvider("git", context => {
     if (context.argument.position === 1) {
         return flatMap(subCommandsData, data => {
@@ -417,7 +416,7 @@ PluginManager.registerAutocompletionProvider("git", context => {
                     .withValue(data.name)
                     .withDescription(data.description)
                     .withStyle(styles.command)
-                    .withSpace()
+                    .withSpace(),
             ];
 
             data.aliases.forEach(name => {
