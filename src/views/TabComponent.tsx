@@ -69,10 +69,10 @@ export class Tab {
         this.activeSessionIndex = this.sessions.length - 1;
     }
 
-    addSessionToPosition(positionType: SplitDirection): void {
+    addSessionToPosition(splitDirection: SplitDirection): void {
         const session = new Session(this.application, this.contentDimensions);
 
-        const activePosition = this.updateViewMap(positionType, this.sessionActiveLeaf, session);
+        const activePosition = this.updateViewMap(splitDirection, this.sessionActiveLeaf, session);
         this.setActivePosition(activePosition);
 
         this.sessions.push(session);
@@ -159,8 +159,8 @@ export class Tab {
         return leaf;
     }
 
-    private updateViewMap(positionType: SplitDirection, activeLeaf: ViewMapLeaf<Session>, session: Session): ViewMapLeaf<Session> {
-        if (positionType === SplitDirection.Horizontal) {
+    private updateViewMap(splitDirection: SplitDirection, activeLeaf: ViewMapLeaf<Session>, session: Session): ViewMapLeaf<Session> {
+        if (splitDirection === SplitDirection.Horizontal) {
             const parentLeaf = activeLeaf.getParent();
             if (parentLeaf.containerType === ContainerType.Row) {
                 return parentLeaf.addNeighborLeaf(session, activeLeaf);
@@ -170,7 +170,7 @@ export class Tab {
 
                 return activeLeaf.addLeaf(session);
             }
-        } else if (positionType === SplitDirection.Vertical) {
+        } else {
             const parentLeaf = activeLeaf.getParent();
             if (parentLeaf.containerType === ContainerType.Column) {
                 return parentLeaf.addNeighborLeaf(session, activeLeaf);
@@ -181,8 +181,6 @@ export class Tab {
                 return activeLeaf.addLeaf(session);
             }
         }
-
-        throw "Incorrect positionType argument. Only 'horizontal' or 'vertical' are available.";
     }
 
     private setActivePosition(activeLeaf: ViewMapLeaf<Session>): void {
