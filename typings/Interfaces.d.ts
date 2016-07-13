@@ -51,4 +51,3 @@ type EscapedShellWord = string & {__isEscapedShellToken: any};
 type FullPath = string & { __isFullPath: boolean };
 type ExistingAlias = string & { __isExistingAlias: boolean };
 type OneBasedIndex = number;
-

@@ -92,3 +92,8 @@ export enum LogLevel {
     Log = <LogLevel><any>"log",
     Error = <LogLevel><any>"error",
 }
+
+export enum SplitDirection {
+    Vertical,
+    Horizontal,
+}

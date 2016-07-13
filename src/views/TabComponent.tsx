@@ -5,6 +5,8 @@ import {Session} from "../shell/Session";
 import {ApplicationComponent} from "./1_ApplicationComponent";
 import * as css from "./css/main";
 import {fontAwesome} from "./css/FontAwesome";
+import {SplitDirection} from "../Enums";
+import {ViewMapLeaf, ContainerType} from "../utils/ViewMapLeaf";
 
 export interface TabProps {
     isActive: boolean;
@@ -47,6 +49,10 @@ export class TabComponent extends React.Component<TabProps, TabState> {
 
 export class Tab {
     public sessions: Session[] = [];
+
+    public sessionsViewMapRoot: ViewMapLeaf<Session>;
+    public sessionActiveLeaf: ViewMapLeaf<Session>;
+
     private activeSessionIndex: number;
 
     constructor(private application: ApplicationComponent) {
@@ -54,11 +60,34 @@ export class Tab {
     }
 
     addSession(): void {
-        this.sessions.push(new Session(this.application, this.contentDimensions));
+        const session = new Session(this.application, this.contentDimensions);
+        this.sessions.push(session);
+
+        this.sessionsViewMapRoot = this.createRootMapLeaf();
+        this.setActivePosition(this.sessionsViewMapRoot.addLeaf(session));
+
+        this.activeSessionIndex = this.sessions.length - 1;
+    }
+
+    addSessionToPosition(positionType: SplitDirection): void {
+        const session = new Session(this.application, this.contentDimensions);
+
+        const activePosition = this.updateViewMap(positionType, this.sessionActiveLeaf, session);
+        this.setActivePosition(activePosition);
+
+        this.sessions.push(session);
         this.activeSessionIndex = this.sessions.length - 1;
     }
 
     closeSession(session: Session): void {
+        const leafToRemove = this.sessionsViewMapRoot.find(session);
+        if (leafToRemove) {
+          const newActiveLeaf = this.sessionsViewMapRoot.remove(leafToRemove);
+          if (leafToRemove === this.sessionActiveLeaf) {
+            this.setActivePosition(newActiveLeaf);
+          }
+        }
+
         session.jobs.forEach(job => {
             job.removeAllListeners();
             job.interrupt();
@@ -70,7 +99,6 @@ export class Tab {
         if (this.activeSessionIndex >= this.sessions.length) {
             this.activeSessionIndex = this.sessions.length - 1;
         }
-
     }
 
     activeSession(): Session {
@@ -79,6 +107,10 @@ export class Tab {
 
     activateSession(session: Session): void {
         this.activeSessionIndex = this.sessions.indexOf(session);
+
+        const foundSessionInViewMap = this.sessionsViewMapRoot.find(session);
+        if (foundSessionInViewMap)
+          this.setActivePosition(foundSessionInViewMap);
     }
 
     activatePreviousSession(): boolean {
@@ -117,5 +149,43 @@ export class Tab {
             width: window.innerWidth,
             height: window.innerHeight - css.titleBarHeight - css.infoPanelHeight - css.outputPadding,
         };
+    }
+
+    private createRootMapLeaf (): ViewMapLeaf<Session> {
+      const leaf = new ViewMapLeaf<Session>();
+      leaf.setValue(undefined);
+      leaf.containerType = ContainerType.Row;
+
+      return leaf;
+    }
+
+    private updateViewMap(positionType: SplitDirection, activeLeaf: ViewMapLeaf<Session>, session: Session): ViewMapLeaf<Session> {
+      if (positionType === SplitDirection.Horizontal) {
+        const parentLeaf = activeLeaf.getParent();
+        if (parentLeaf.containerType === ContainerType.Row) {
+          return parentLeaf.addNeighborLeaf(session, activeLeaf);
+        } else {
+          const previousValue = activeLeaf.convertToContainer(ContainerType.Row);
+          activeLeaf.addLeaf(previousValue);
+
+          return activeLeaf.addLeaf(session);
+        }
+      } else if (positionType === SplitDirection.Vertical) {
+        const parentLeaf = activeLeaf.getParent();
+        if (parentLeaf.containerType === ContainerType.Column) {
+          return parentLeaf.addNeighborLeaf(session, activeLeaf);
+        } else {
+          const previousValue = activeLeaf.convertToContainer(ContainerType.Column);
+          activeLeaf.addLeaf(previousValue);
+
+          return activeLeaf.addLeaf(session);
+        }
+      }
+
+      throw "Incorrect positionType argument. Only 'horizontal' or 'vertical' are available.";
+    }
+
+    private setActivePosition(activeLeaf: ViewMapLeaf<Session>): void {
+      this.sessionActiveLeaf = activeLeaf;
     }
 }

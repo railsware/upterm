@@ -1,11 +1,12 @@
 import {ScreenBufferType, Status, Weight, Brightness} from "../../Enums";
 import {colors, panel as panelColor, background as backgroundColor, colorValue} from "./colors";
 import {TabHoverState} from "../TabComponent";
+import {ViewMapLeaf, ContainerType} from "../../utils/ViewMapLeaf";
+import {Session} from "../../shell/Session";
 import {darken, lighten, failurize, alpha} from "./functions";
 import {Attributes} from "../../Interfaces";
 import {suggestionsLimit} from "../../Autocompletion";
 import {CSSObject, Px, Fr} from "./definitions";
-import * as _ from "lodash";
 
 export {toDOMString} from "./functions";
 
@@ -76,24 +77,13 @@ const applicationGrid = {
     },
 };
 
-function sessionGridArea(index: number) {
-    return `session-${index}-area`;
-}
-
 const sessionsGrid = {
-    container: (sessionsCount: number) => ({
-        display: "grid",
-        gridTemplateRows: `repeat(${sessionsCount}, calc(${sessionsHeight} / ${sessionsCount})`,
-        gridTemplateColumns: "100%",
-        gridTemplateAreas: _.range(sessionsCount).map(index => `'${sessionGridArea(index)}'`).join("\n"),
-    }),
-    session: (index: number) => ({
+    container: () => {
+      return {
+        height: `calc(${sessionsHeight})`,
         overflowY: "scroll",
-        gridArea: sessionGridArea(index),
-    }),
-    sessionShutter: (index: number) => ({
-        gridArea: sessionGridArea(index),
-    }),
+      };
+    },
 };
 
 const promptInlineElement: CSSObject = {
@@ -253,39 +243,80 @@ export const statusBar = {
     },
 };
 
-export const sessions = (sessionsCount: number) => Object.assign(
+export const sessions = () => Object.assign(
     {
         backgroundColor: backgroundColor,
     },
-    sessionsGrid.container(sessionsCount),
+    sessionsGrid.container(),
 );
 
-export const session = (isActive: boolean, index: number) => {
+export const session = (isActive: boolean, containerViewMapLeaf: ViewMapLeaf<Session>) => {
     const styles: CSSObject = {
         position: "relative",
         outline: "none",
+        flex: 1,
     };
+
+    if (containerViewMapLeaf !== undefined) {
+        if (containerViewMapLeaf.containerType === ContainerType.Column) {
+          styles.height = `calc(100% / ${containerViewMapLeaf.childs.length})`;
+        }
+    } else {
+      styles.height = `calc(${sessionsHeight})`;
+    }
 
     if (!isActive) {
         styles.boxShadow = `0 0 0 1px ${alpha(colors.white, 0.3)}`;
-        styles.margin = "0 0 1px 0px";
+        styles.margin = "0 1px 0 0";
     }
 
-    return Object.assign(
-        styles,
-        sessionsGrid.session(index),
-    );
+    return styles;
 };
 
-export const sessionShutter = (index: number) => Object.assign(
-    {
-        backgroundColor: colors.white,
-        zIndex: 1,
-        opacity: 0.2,
-        pointerEvents: "none",
-    },
-    sessionsGrid.sessionShutter(index),
-);
+export const sessionContainer = (viewMapLeaf: ViewMapLeaf<Session>, parentContainerViewMapLeaf: ViewMapLeaf<Session>) => {
+  const styles: CSSObject = {
+    display: "flex",
+    flex: 1,
+    overflowY: "scroll",
+  };
+
+  if (parentContainerViewMapLeaf !== undefined) {
+      if (parentContainerViewMapLeaf.containerType === ContainerType.Column) {
+        styles.height = `calc(${sessionsHeight} / ${parentContainerViewMapLeaf.childs.length})`;
+      } else {
+        styles.height = `calc(${sessionsHeight})`;
+      }
+  } else {
+    styles.height = `calc(${sessionsHeight})`;
+  }
+
+  if (viewMapLeaf.containerType === ContainerType.Column) {
+    styles.flexDirection = "column";
+    styles.height = "100%";
+  } else {
+    styles.flexDirection = "row";
+  }
+
+  return styles;
+};
+
+export const sessionShutter = (isActive: boolean) => ({
+    backgroundColor: colors.white,
+    zIndex: 1,
+    opacity: isActive ? 0 : 0.2,
+    pointerEvents: "none",
+    position: "absolute",
+    top: 0,
+    bottom: 0,
+    left: 0,
+    right: 0,
+});
+
+export const jobsContainer = {
+  height: "100%",
+  width: "100%",
+  overflowY: "scroll",
+};
 
 export const titleBar = {
     display: "flex",
