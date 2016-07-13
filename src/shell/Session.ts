@@ -113,7 +113,6 @@ export class Session extends EmitterWithUniqueID {
     };
 
     private deserialize(): void {
-        debugger;
         this.directory = this.readSerialized(presentWorkingDirectoryFilePath, homeDirectory);
         let bashHistoryModifiedTime = new Date(0);
         let bashHistory: string[] = [];
