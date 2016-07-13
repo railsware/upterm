@@ -13,7 +13,7 @@ async function loadAllSubcommands() {
 
     if (matches) {
         matches
-            .filter((match) => match.indexOf('--') === -1)
+            .filter((match) => match.indexOf("--") === -1)
             .forEach(async(match) => {
                 const name = match.trim();
                 const suggestion = new Suggestion()
@@ -30,11 +30,25 @@ async function loadAllSubcommands() {
                 subCommands.push(suggestion);
             });
     }
+}
 
-    return text;
+async function loadAliases() {
+    const variables = await Git.configVariables(process.env.HOME);
+    variables
+        .filter(variable => variable.name.indexOf("alias.") === 0)
+        .forEach(variable => {
+            const suggestion = new Suggestion()
+                .withValue(variable.name.replace("alias.", ""))
+                .withSynopsis(variable.value)
+                .withStyle(styles.command)
+                .withSpace();
+
+            subCommands.push(suggestion);
+        });
 }
 
 loadAllSubcommands();
+loadAliases();
 
 
 const addOptions = combine([
