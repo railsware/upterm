@@ -79,10 +79,10 @@ const applicationGrid = {
 
 const sessionsGrid = {
     container: () => {
-      return {
-        height: `calc(${sessionsHeight})`,
-        overflowY: "scroll",
-      };
+        return {
+            height: `calc(${sessionsHeight})`,
+            overflowY: "scroll",
+        };
     },
 };
 
@@ -259,10 +259,10 @@ export const session = (isActive: boolean, containerViewMapLeaf: ViewMapLeaf<Ses
 
     if (containerViewMapLeaf !== undefined) {
         if (containerViewMapLeaf.containerType === ContainerType.Column) {
-          styles.height = `calc(100% / ${containerViewMapLeaf.childs.length})`;
+            styles.height = `calc(100% / ${containerViewMapLeaf.childs.length})`;
         }
     } else {
-      styles.height = `calc(${sessionsHeight})`;
+        styles.height = `calc(${sessionsHeight})`;
     }
 
     if (!isActive) {
@@ -274,30 +274,30 @@ export const session = (isActive: boolean, containerViewMapLeaf: ViewMapLeaf<Ses
 };
 
 export const sessionContainer = (viewMapLeaf: ViewMapLeaf<Session>, parentContainerViewMapLeaf: ViewMapLeaf<Session>) => {
-  const styles: CSSObject = {
-    display: "flex",
-    flex: 1,
-    overflowY: "scroll",
-  };
+    const styles: CSSObject = {
+        display: "flex",
+        flex: 1,
+        overflowY: "scroll",
+    };
 
-  if (parentContainerViewMapLeaf !== undefined) {
-      if (parentContainerViewMapLeaf.containerType === ContainerType.Column) {
-        styles.height = `calc(${sessionsHeight} / ${parentContainerViewMapLeaf.childs.length})`;
-      } else {
+    if (parentContainerViewMapLeaf !== undefined) {
+        if (parentContainerViewMapLeaf.containerType === ContainerType.Column) {
+            styles.height = `calc(${sessionsHeight} / ${parentContainerViewMapLeaf.childs.length})`;
+        } else {
+            styles.height = `calc(${sessionsHeight})`;
+        }
+    } else {
         styles.height = `calc(${sessionsHeight})`;
-      }
-  } else {
-    styles.height = `calc(${sessionsHeight})`;
-  }
+    }
 
-  if (viewMapLeaf.containerType === ContainerType.Column) {
-    styles.flexDirection = "column";
-    styles.height = "100%";
-  } else {
-    styles.flexDirection = "row";
-  }
+    if (viewMapLeaf.containerType === ContainerType.Column) {
+        styles.flexDirection = "column";
+        styles.height = "100%";
+    } else {
+        styles.flexDirection = "row";
+    }
 
-  return styles;
+    return styles;
 };
 
 export const sessionShutter = (isActive: boolean) => ({
@@ -313,9 +313,9 @@ export const sessionShutter = (isActive: boolean) => ({
 });
 
 export const jobsContainer = {
-  height: "100%",
-  width: "100%",
-  overflowY: "scroll",
+    height: "100%",
+    width: "100%",
+    overflowY: "scroll",
 };
 
 export const titleBar = {

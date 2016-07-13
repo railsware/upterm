@@ -82,10 +82,10 @@ export class Tab {
     closeSession(session: Session): void {
         const leafToRemove = this.sessionsViewMapRoot.find(session);
         if (leafToRemove) {
-          const newActiveLeaf = this.sessionsViewMapRoot.remove(leafToRemove);
-          if (leafToRemove === this.sessionActiveLeaf) {
-            this.setActivePosition(newActiveLeaf);
-          }
+            const newActiveLeaf = this.sessionsViewMapRoot.remove(leafToRemove);
+            if (leafToRemove === this.sessionActiveLeaf) {
+                this.setActivePosition(newActiveLeaf);
+            }
         }
 
         session.jobs.forEach(job => {
@@ -110,7 +110,7 @@ export class Tab {
 
         const foundSessionInViewMap = this.sessionsViewMapRoot.find(session);
         if (foundSessionInViewMap)
-          this.setActivePosition(foundSessionInViewMap);
+            this.setActivePosition(foundSessionInViewMap);
     }
 
     activatePreviousSession(): boolean {
@@ -151,41 +151,41 @@ export class Tab {
         };
     }
 
-    private createRootMapLeaf (): ViewMapLeaf<Session> {
-      const leaf = new ViewMapLeaf<Session>();
-      leaf.setValue(undefined);
-      leaf.containerType = ContainerType.Row;
+    private createRootMapLeaf(): ViewMapLeaf<Session> {
+        const leaf = new ViewMapLeaf<Session>();
+        leaf.setValue(undefined);
+        leaf.containerType = ContainerType.Row;
 
-      return leaf;
+        return leaf;
     }
 
     private updateViewMap(positionType: SplitDirection, activeLeaf: ViewMapLeaf<Session>, session: Session): ViewMapLeaf<Session> {
-      if (positionType === SplitDirection.Horizontal) {
-        const parentLeaf = activeLeaf.getParent();
-        if (parentLeaf.containerType === ContainerType.Row) {
-          return parentLeaf.addNeighborLeaf(session, activeLeaf);
-        } else {
-          const previousValue = activeLeaf.convertToContainer(ContainerType.Row);
-          activeLeaf.addLeaf(previousValue);
+        if (positionType === SplitDirection.Horizontal) {
+            const parentLeaf = activeLeaf.getParent();
+            if (parentLeaf.containerType === ContainerType.Row) {
+                return parentLeaf.addNeighborLeaf(session, activeLeaf);
+            } else {
+                const previousValue = activeLeaf.convertToContainer(ContainerType.Row);
+                activeLeaf.addLeaf(previousValue);
 
-          return activeLeaf.addLeaf(session);
+                return activeLeaf.addLeaf(session);
+            }
+        } else if (positionType === SplitDirection.Vertical) {
+            const parentLeaf = activeLeaf.getParent();
+            if (parentLeaf.containerType === ContainerType.Column) {
+                return parentLeaf.addNeighborLeaf(session, activeLeaf);
+            } else {
+                const previousValue = activeLeaf.convertToContainer(ContainerType.Column);
+                activeLeaf.addLeaf(previousValue);
+
+                return activeLeaf.addLeaf(session);
+            }
         }
-      } else if (positionType === SplitDirection.Vertical) {
-        const parentLeaf = activeLeaf.getParent();
-        if (parentLeaf.containerType === ContainerType.Column) {
-          return parentLeaf.addNeighborLeaf(session, activeLeaf);
-        } else {
-          const previousValue = activeLeaf.convertToContainer(ContainerType.Column);
-          activeLeaf.addLeaf(previousValue);
 
-          return activeLeaf.addLeaf(session);
-        }
-      }
-
-      throw "Incorrect positionType argument. Only 'horizontal' or 'vertical' are available.";
+        throw "Incorrect positionType argument. Only 'horizontal' or 'vertical' are available.";
     }
 
     private setActivePosition(activeLeaf: ViewMapLeaf<Session>): void {
-      this.sessionActiveLeaf = activeLeaf;
+        this.sessionActiveLeaf = activeLeaf;
     }
 }
