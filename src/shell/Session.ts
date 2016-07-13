@@ -118,7 +118,7 @@ export class Session extends EmitterWithUniqueID {
         let bashHistory: string[] = [];
         try {
             bashHistoryModifiedTime = statSync(bashHistoryFilePath).mtime;
-            bashHistory = readFileSync(bashHistoryFilePath).toString().trim().split('\n').reverse();
+            bashHistory = readFileSync(bashHistoryFilePath).toString().trim().split("\n").reverse();
         } catch (error) {
             // File was missing or something. Ignore.
         }
@@ -132,7 +132,7 @@ export class Session extends EmitterWithUniqueID {
             // File was missing or something. Ignore.
         }
 
-        let mergedHistory: string[] = []
+        let mergedHistory: string[] = [];
         if (blackScreenHistoryModifiedTime > bashHistoryModifiedTime) {
             mergedHistory = [...bashHistory, ...blackScreenHistory];
         } else {
