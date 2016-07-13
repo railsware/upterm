@@ -25,7 +25,7 @@
   "dependencies": {
     "@types/electron": "0.37.12-alpha",
     "@types/lodash": "4.0.26-alpha",
-    "@types/node": "4.0.27-alpha",
+    "@types/node": "4.0.28-alpha",
     "@types/pty.js": "0.2.26-alpha",
     "@types/react": "0.14.26-alpha",
     "font-awesome": "4.6.3",
@@ -48,7 +48,7 @@
     "chai": "3.5.0",
     "devtron": "1.2.1",
     "electron-builder": "5.12.1",
-    "electron-prebuilt": "1.2.6",
+    "electron-prebuilt": "1.2.7",
     "mocha": "2.5.3",
     "mock-fs": "3.11.0",
     "npm-check-updates": "2.7.0",
