@@ -1,4 +1,4 @@
-import {readFileSync} from "fs";
+import {readFileSync, statSync} from "fs";
 import {Job} from "./Job";
 import {History} from "./History";
 import {EmitterWithUniqueID} from "../EmitterWithUniqueID";
@@ -9,6 +9,7 @@ import {Environment, processEnvironment} from "./Environment";
 import {
     homeDirectory, normalizeDirectory, writeFileCreatingParents,
     presentWorkingDirectoryFilePath, historyFilePath,
+    bashHistoryFilePath,
 } from "../utils/Common";
 import {remote} from "electron";
 import {OrderedSet} from "../utils/OrderedSet";
@@ -112,8 +113,34 @@ export class Session extends EmitterWithUniqueID {
     };
 
     private deserialize(): void {
+        debugger;
         this.directory = this.readSerialized(presentWorkingDirectoryFilePath, homeDirectory);
-        History.deserialize(this.readSerialized(historyFilePath, []));
+        let bashHistoryModifiedTime = new Date(0);
+        let bashHistory: string[] = [];
+        try {
+            bashHistoryModifiedTime = statSync(bashHistoryFilePath).mtime;
+            bashHistory = readFileSync(bashHistoryFilePath).toString().trim().split('\n').reverse();
+        } catch (error) {
+            // File was missing or something. Ignore.
+        }
+
+        let blackScreenHistoryModifiedTime = new Date(0);
+        let blackScreenHistory: string[] = [];
+        try {
+            blackScreenHistoryModifiedTime = statSync(historyFilePath).mtime;
+            blackScreenHistory = this.readSerialized(historyFilePath, []);
+        } catch (error) {
+            // File was missing or something. Ignore.
+        }
+
+        let mergedHistory: string[] = []
+        if (blackScreenHistoryModifiedTime > bashHistoryModifiedTime) {
+            mergedHistory = [...bashHistory, ...blackScreenHistory];
+        } else {
+            mergedHistory = [...blackScreenHistory, ...bashHistory];
+        }
+
+        History.deserialize(mergedHistory);
     }
 
     private readSerialized<T>(file: string, defaultValue: T): T {

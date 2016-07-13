@@ -342,4 +342,6 @@ export function assign<A extends B, B extends Object>(source: A, assignments: B)
 const baseConfigDirectory = Path.join(homeDirectory, ".black-screen");
 export const presentWorkingDirectoryFilePath = Path.join(baseConfigDirectory, "presentWorkingDirectory");
 export const historyFilePath = Path.join(baseConfigDirectory, "history");
+// We can't use HISTFILE to get the path, so just check the default location
+export const bashHistoryFilePath = Path.join(homeDirectory, ".bash_history");
 export const windowBoundsFilePath = Path.join(baseConfigDirectory, "windowBounds");
