@@ -35,11 +35,6 @@ export class SessionComponent extends React.Component<Props, {}> {
                           hasLocusOfAttention={this.props.isActive && index === this.props.session.jobs.length - 1}/>
         );
 
-        let shutter: any;
-        if (!this.props.isActive) {
-          shutter = <div className="shutter" style={css.sessionShutter}></div>;
-        }
-
         return (
             <div className="session"
                  style={this.props.style}
@@ -51,7 +46,7 @@ export class SessionComponent extends React.Component<Props, {}> {
                     <div className="jobs" style={css.jobs(this.props.isActive)}>{jobs}</div>
                  </div>
 
-                {shutter}
+                <div className="shutter" style={css.sessionShutter(this.props.isActive)}></div>
             </div>
         );
     }
