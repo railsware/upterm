@@ -16,6 +16,11 @@ export class Branch {
     }
 }
 
+export interface ConfigVariable {
+    name: string;
+    value: string;
+}
+
 export enum StatusCode {
     Untracked,
     Unmodified,
@@ -78,14 +83,21 @@ export async function branches(directory: GitDirectoryPath): Promise<Branch[]> {
     return lines.map(line => new Branch(line.slice(1), line[0] === "*"));
 }
 
-export async function configVariables(directory: string): Promise<string[]> {
+export async function configVariables(directory: string): Promise<ConfigVariable[]> {
     const lines = await linedOutputOf(
         "git",
         ["config", "--list"],
         directory
     );
 
-    return lines.map(line => line.split("=")[0].trim());
+    return lines.map(line => {
+        const parts = line.split("=");
+
+        return {
+            name: parts[0].trim(),
+            value: parts[1] ? parts[1].trim() : '',
+        };
+    });
 }
 
 export async function remotes(directory: GitDirectoryPath): Promise<string[]> {

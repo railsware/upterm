@@ -134,7 +134,14 @@ const remotes = async(context: AutocompletionContext): Promise<Suggestion[]> => 
 
 const configVariables = unique(async(context: AutocompletionContext): Promise<Suggestion[]> => {
     const variables = await Git.configVariables(context.environment.pwd);
-    return variables.map((variable) => new Suggestion().withValue(variable).withStyle(styles.option));
+
+    return variables.map((variable) => {
+        return new Suggestion()
+            .withValue(variable.name)
+            .withSynopsis(variable.value)
+            .withStyle(styles.option);
+        }
+    );
 });
 
 const branchesExceptCurrent = async(context: AutocompletionContext): Promise<Suggestion[]> => {
