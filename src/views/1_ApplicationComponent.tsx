@@ -162,8 +162,9 @@ export class ApplicationComponent extends React.Component<{}, {}> {
 
     private renderPanes(tree: PaneTree): JSX.Element {
         if (tree instanceof Pane) {
-            const session = tree.session;
-            const isActive = session === this.activeTab.activeSession;
+            const pane = tree;
+            const session = pane.session;
+            const isActive = pane === this.activeTab.activePane;
 
             return (
                 <SessionComponent session={session}
@@ -171,7 +172,7 @@ export class ApplicationComponent extends React.Component<{}, {}> {
                                   isActive={isActive}
                                   updateStatusBar={isActive ? () => this.forceUpdate() : undefined}
                                   activate={() => {
-                                      this.activeTab.activateSession(session);
+                                      this.activeTab.activatePane(pane);
                                       this.forceUpdate();
                                   }}>
                 </SessionComponent>

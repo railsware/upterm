@@ -25,29 +25,29 @@ export abstract class PaneList {
         this.children = children;
     }
 
-    abstract addBelowCurrent(session: Session): PaneList;
+    abstract addBelowCurrent(pane: Pane): PaneList;
 
-    abstract addNextToCurrent(session: Session): PaneList;
+    abstract addNextToCurrent(pane: Pane): PaneList;
 }
 
 export class ColumnList extends PaneList {
-    addBelowCurrent(session: Session): PaneList {
-        return new RowList([this, new Pane(session)]);
+    addBelowCurrent(pane: Pane): PaneList {
+        return new RowList([this, pane]);
     }
 
-    addNextToCurrent(session: Session): PaneList {
-        this.children.push(new Pane(session));
+    addNextToCurrent(pane: Pane): PaneList {
+        this.children.push(pane);
         return this;
     }
 }
 
 export class RowList extends PaneList {
-    addBelowCurrent(session: Session): PaneList {
-        this.children.push(new Pane(session));
+    addBelowCurrent(pane: Pane): PaneList {
+        this.children.push(pane);
         return this;
     }
 
-    addNextToCurrent(session: Session): PaneList {
-        return new ColumnList([this, new Pane(session)]);
+    addNextToCurrent(pane: Pane): PaneList {
+        return new ColumnList([this, pane]);
     }
 }

@@ -49,17 +49,26 @@ export class TabComponent extends React.Component<TabProps, TabState> {
 
 export class Tab {
     panes: PaneList;
+    /**
+     * @deprecated
+     */
     private sessions: Session[] = [];
 
+    /**
+     * @deprecated
+     */
     private activeSessionIndex: number;
+    private _activePane: Pane;
 
     constructor(private application: ApplicationComponent) {
         const session = new Session(this.application, this.contentDimensions);
-        this.sessions = [session];
+        const pane = new Pane(session);
 
-        this.panes = new RowList([new Pane(session)]);
+        this.sessions = [session];
+        this.panes = new RowList([pane]);
 
         this.activeSessionIndex = 0;
+        this._activePane = pane;
     }
 
     get panesCount(): number {
@@ -68,15 +77,17 @@ export class Tab {
 
     addPane(direction: SplitDirection): void {
         const session = new Session(this.application, this.contentDimensions);
+        const pane = new Pane(session);
         this.sessions.push(session);
 
         if (direction === SplitDirection.Horizontal) {
-            this.panes = this.panes.addNextToCurrent(session);
+            this.panes = this.panes.addNextToCurrent(pane);
         } else {
-            this.panes = this.panes.addBelowCurrent(session);
+            this.panes = this.panes.addBelowCurrent(pane);
         }
 
         this.activeSessionIndex = this.sessions.length - 1;
+        this._activePane = pane;
     }
 
     closePane(session: Session): void {
@@ -100,14 +111,31 @@ export class Tab {
         }
     }
 
+    get activePane(): Pane {
+        return this._activePane;
+    }
+
+    /**
+     * @deprecated
+     */
     get activeSession(): Session {
         return this.sessions[this.activeSessionIndex];
     }
 
+    activatePane(pane: Pane): void {
+        this._activePane = pane;
+    }
+
+    /**
+     * @deprecated
+     */
     activateSession(session: Session): void {
         this.activeSessionIndex = this.sessions.indexOf(session);
     }
 
+    /**
+     * @deprecated
+     */
     activatePreviousSession(): boolean {
         const isFirst = this.activeSessionIndex === 0;
         if (!isFirst) {
@@ -117,6 +145,9 @@ export class Tab {
         return !isFirst;
     }
 
+    /**
+     * @deprecated
+     */
     activateNextSession(): boolean {
         const isLast = this.activeSessionIndex === this.sessions.length - 1;
         if (!isLast) {
