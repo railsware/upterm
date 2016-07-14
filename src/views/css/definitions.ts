@@ -32,7 +32,7 @@ export interface CSSObject {
     bottom?: number | "auto";
     left?: number;
     right?: number;
-    whiteSpace?: "pre-wrap";
+    whiteSpace?: "pre-wrap" | "nowrap";
     zIndex?: number;
     gridArea?: string;
     display?: "grid" | "inline-block" | "flex";
