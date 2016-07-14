@@ -522,12 +522,13 @@ export const autocompletedPreview = Object.assign(
     }
 );
 
-export const prompt = Object.assign(
+export const prompt = (isSticky: boolean) => Object.assign(
     {},
     promptInlineElement,
     {
         color: colors.white,
         zIndex: 2,
+        whiteSpace: isSticky ? "nowrap" : "pre-wrap",
     }
 );
 

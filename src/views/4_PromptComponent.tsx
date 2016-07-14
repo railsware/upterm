@@ -208,9 +208,7 @@ export class PromptComponent extends React.Component<Props, State> implements Ke
             decorationToggle = <DecorationToggleComponent decorateToggler={this.props.decorateToggler}/>;
         }
 
-        let promptCss = Object.assign({}, css.prompt);
         if (this.state.isSticky) {
-            promptCss.whiteSpace = "nowrap";
             scrollToTop = <span style={css.action}
                                 title="Scroll to beginning of output."
                                 onClick={this.handleScrollToTop.bind(this)}
@@ -227,7 +225,7 @@ export class PromptComponent extends React.Component<Props, State> implements Ke
                          title={JSON.stringify(this.props.status)}
                          dangerouslySetInnerHTML={{__html: this.props.status === Status.Interrupted ? fontAwesome.close : ""}}></div>
                     <div className="prompt"
-                         style={promptCss}
+                         style={css.prompt(this.state.isSticky)}
                          onKeyDown={event => this.handlers.onKeyDown(event)}
                          onInput={this.handleInput.bind(this)}
                          onKeyPress={() => this.props.status === e.Status.InProgress && stopBubblingUp(event)}
