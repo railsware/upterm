@@ -3,7 +3,7 @@ import {styles, Suggestion, longAndShortFlag, longFlag, mapSuggestions, combine,
 import {PluginManager} from "../../PluginManager";
 import {AutocompletionProvider, AutocompletionContext} from "../../Interfaces";
 import {linedOutputOf, executeCommand} from "../../PTY";
-import {find, memoize} from "lodash";
+import {find, memoize, sortBy} from "lodash";
 
 const addOptions = combine([
     mapSuggestions(longAndShortFlag("patch"), suggestion => suggestion.withDescription(
@@ -358,7 +358,7 @@ const commands = memoize(async(): Promise<Suggestion[]> => {
     const matches = text.match(/  ([\-a-zA-Z0-9]+)/gm);
 
     if (matches) {
-        return matches
+        const suggestions = matches
             .filter((match) => match.indexOf("--") === -1)
             .map(match => {
                 const name = match.trim();
@@ -374,6 +374,8 @@ const commands = memoize(async(): Promise<Suggestion[]> => {
 
                 return suggestion;
             });
+
+        return sortBy(suggestions, suggestion => !suggestion.description);
     }
 
     return [];
@@ -401,8 +403,8 @@ const aliases = memoize(async(): Promise<Suggestion[]> => {
 });
 
 const expandAlias = async(name: string): Promise<string> => {
-    const aliases = await Git.aliases(process.env.HOME);
-    const alias = find(aliases, {name});
+    const allAliases = await Git.aliases(process.env.HOME);
+    const alias = find(allAliases, {name});
 
     return alias ? alias.value : name;
 };
