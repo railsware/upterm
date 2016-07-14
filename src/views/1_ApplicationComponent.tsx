@@ -117,6 +117,17 @@ export class ApplicationComponent extends React.Component<{}, {}> {
         }
     }
 
+    // FIXME: this method should be private.
+    closePane(sessionToClose: Session) {
+        this.activeTab.closePane(sessionToClose);
+
+        if (this.activeTab.panesCount === 0) {
+            this.closeTab(this.activeTab);
+        }
+
+        this.forceUpdate();
+    }
+
     render() {
         let tabs: React.ReactElement<TabProps>[] | undefined;
 
@@ -129,7 +140,13 @@ export class ApplicationComponent extends React.Component<{}, {}> {
                                 this.activeTabIndex = index;
                                 this.forceUpdate();
                               }}
-                              closeHandler={this.createCloseTabHandler(index)}>
+                              closeHandler={(event: KeyboardEvent) => {
+                                  this.closeTab(this.tabs[index]);
+                                  this.forceUpdate();
+
+                                  event.stopPropagation();
+                                  event.preventDefault();
+                              }}>
                 </TabComponent>
             );
         }
@@ -143,7 +160,7 @@ export class ApplicationComponent extends React.Component<{}, {}> {
         );
     }
 
-    renderPanes(tree: PaneTree): JSX.Element {
+    private renderPanes(tree: PaneTree): JSX.Element {
         if (tree instanceof Pane) {
             const session = tree.session;
             const isActive = session === this.activeTab.activeSession;
@@ -164,33 +181,10 @@ export class ApplicationComponent extends React.Component<{}, {}> {
         }
     }
 
-    createCloseTabHandler(index: number) {
-        return (event: KeyboardEvent) => {
-            this.closeTab(this.tabs[index]);
-            this.forceUpdate();
-            event.stopPropagation();
-            event.preventDefault();
-        };
-    }
-
-    closePane(sessionToClose: Session) {
-        this.activeTab.closePane(sessionToClose);
-
-        if (this.activeTab.panesCount === 0) {
-            this.closeTab(this.activeTab);
-        }
-
-        this.forceUpdate();
-    }
-
     private recalculateDimensions() {
         for (const tab of this.tabs) {
             tab.updateAllSessionsDimensions();
         }
-    }
-
-    private get activeTab(): Tab {
-        return this.tabs[this.activeTabIndex];
     }
 
     private addTab(): void {
@@ -198,11 +192,8 @@ export class ApplicationComponent extends React.Component<{}, {}> {
         this.activeTabIndex = this.tabs.length - 1;
     }
 
-    private closeAllTabs(): void {
-        // Can't use forEach here because closeTab changes the array being iterated.
-        while (this.tabs.length) {
-            this.closeTab(this.tabs[0], false);
-        }
+    private get activeTab(): Tab {
+        return this.tabs[this.activeTabIndex];
     }
 
     private closeTab(tab: Tab, quit = true): void {
@@ -213,6 +204,13 @@ export class ApplicationComponent extends React.Component<{}, {}> {
             ipcRenderer.send("quit");
         } else if (this.tabs.length === this.activeTabIndex) {
             this.activeTabIndex -= 1;
+        }
+    }
+
+    private closeAllTabs(): void {
+        // Can't use forEach here because closeTab changes the array being iterated.
+        while (this.tabs.length) {
+            this.closeTab(this.tabs[0], false);
         }
     }
 }
