@@ -3,7 +3,7 @@ import {styles, Suggestion, longAndShortFlag, longFlag, mapSuggestions, combine,
 import {PluginManager} from "../../PluginManager";
 import {AutocompletionProvider, AutocompletionContext} from "../../Interfaces";
 import {linedOutputOf, executeCommand} from "../../PTY";
-import {find} from "lodash";
+import {find, memoize} from "lodash";
 
 const addOptions = combine([
     mapSuggestions(longAndShortFlag("patch"), suggestion => suggestion.withDescription(
@@ -353,7 +353,7 @@ const commandsData: GitCommandData[] = [
     },
 ];
 
-const commands = async(): Promise<Suggestion[]> => {
+const commands = memoize(async(): Promise<Suggestion[]> => {
     const text = await executeCommand("git", ["help", "-a"], process.env.HOME);
     const matches = text.match(/  ([\-a-zA-Z0-9]+)/gm);
 
@@ -377,9 +377,9 @@ const commands = async(): Promise<Suggestion[]> => {
     }
 
     return [];
-};
+});
 
-const aliases = async(): Promise<Suggestion[]> => {
+const aliases = memoize(async(): Promise<Suggestion[]> => {
     const variables = await Git.aliases(process.env.HOME);
 
     return variables
@@ -398,7 +398,7 @@ const aliases = async(): Promise<Suggestion[]> => {
 
             return suggestion;
         });
-};
+});
 
 const expandAlias = async(name: string): Promise<string> => {
     const aliases = await Git.aliases(process.env.HOME);
@@ -407,7 +407,11 @@ const expandAlias = async(name: string): Promise<string> => {
     return alias ? alias.value : name;
 };
 
-const allCommands = combine([commands, aliases]);
+const allCommands = combine([
+    // prevent params for memoized functions
+    () => commands(),
+    () => aliases(),
+]);
 
 PluginManager.registerAutocompletionProvider("git", async context => {
     if (context.argument.position === 1) {
