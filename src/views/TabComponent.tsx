@@ -62,6 +62,10 @@ export class Tab {
         this.activeSessionIndex = 0;
     }
 
+    get panesCount(): number {
+        return this.sessions.length;
+    }
+
     addSession(direction: SplitDirection): void {
         const session = new Session(this.application, this.contentDimensions);
         this.sessions.push(session);

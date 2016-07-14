@@ -253,6 +253,7 @@ export const sessions = (list: PaneList) => Object.assign(
         display: "grid",
     },
     sessionsGridTemplate(list),
+    applicationGrid.sessions
 );
 
 export const session = (isActive: boolean) => {

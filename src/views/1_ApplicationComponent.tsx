@@ -174,22 +174,13 @@ export class ApplicationComponent extends React.Component<{}, {}> {
     }
 
     closeSession(sessionToClose: Session) {
-        for (const tab of this.tabs) {
-            for (const session of tab.sessions) {
-                if (session === sessionToClose) {
-                    tab.closeSession(session);
+        this.activeTab.closeSession(sessionToClose);
 
-                    if (tab.sessions.length === 0) {
-                        this.closeTab(tab);
-                    }
-
-                    this.forceUpdate();
-                    return;
-                }
-            }
+        if (this.activeTab.panesCount === 0) {
+            this.closeTab(this.activeTab);
         }
 
-        throw "Couldn't find the session you asked me to remove.";
+        this.forceUpdate();
     }
 
     private recalculateDimensions() {
