@@ -1,4 +1,5 @@
 import {Session} from "../shell/Session";
+import {SplitDirection} from "../Enums";
 
 export type PaneTree = Pane | PaneList;
 
@@ -7,14 +8,6 @@ export class Pane {
 
     constructor(session: Session) {
         this.session = session;
-    }
-
-    addBelowCurrent(session: Session): PaneTree {
-        return new RowList([this, new Pane(session)]);
-    }
-
-    addNextToCurrent(session: Session): PaneTree {
-        return new ColumnList([this, new Pane(session)]);
     }
 }
 
@@ -25,29 +18,59 @@ export abstract class PaneList {
         this.children = children;
     }
 
-    abstract addBelowCurrent(pane: Pane): PaneList;
+    add(newPane: Pane, existingPane: Pane, direction: SplitDirection) {
+        const list = this.findListContaining(existingPane);
 
-    abstract addNextToCurrent(pane: Pane): PaneList;
+        if (!list) {
+            throw `Couldn't find a list containing the pane.`;
+        }
+
+        const insertIndex = list.children.indexOf(existingPane);
+
+        if (direction === SplitDirection.Horizontal) {
+            list.insertBelow(insertIndex, newPane);
+        } else {
+            list.insertNextTo(insertIndex, newPane);
+        }
+    }
+
+    protected abstract insertBelow(position: number, pane: Pane): void;
+    protected abstract insertNextTo(position: number, pane: Pane): void;
+
+    private findListContaining(pane: Pane): PaneList | undefined {
+        const childContaining = this.children.find(child => child === pane);
+
+        if (childContaining) {
+            return this;
+        }
+
+        for (const child of this.children) {
+            if (child instanceof PaneList) {
+                const childListContaining = child.findListContaining(pane);
+                if (childListContaining) {
+                    return childListContaining;
+                }
+            }
+        }
+    }
 }
 
 export class ColumnList extends PaneList {
-    addBelowCurrent(pane: Pane): PaneList {
-        return new RowList([this, pane]);
+    protected insertBelow(position: number, pane: Pane) {
+        this.children.splice(position, 1, new RowList([this.children[position], pane]));
     }
 
-    addNextToCurrent(pane: Pane): PaneList {
-        this.children.push(pane);
-        return this;
+    protected insertNextTo(position: number, pane: Pane) {
+        this.children.splice(position + 1, 0, pane);
     }
 }
 
 export class RowList extends PaneList {
-    addBelowCurrent(pane: Pane): PaneList {
-        this.children.push(pane);
-        return this;
+    protected insertBelow(position: number, pane: Pane) {
+        this.children.splice(position + 1, 0, pane);
     }
 
-    addNextToCurrent(pane: Pane): PaneList {
-        return new ColumnList([this, pane]);
+    protected insertNextTo(position: number, pane: Pane) {
+        this.children.splice(position, 1, new ColumnList([this.children[position], pane]));
     }
 }

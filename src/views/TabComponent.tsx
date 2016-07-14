@@ -80,11 +80,7 @@ export class Tab {
         const pane = new Pane(session);
         this.sessions.push(session);
 
-        if (direction === SplitDirection.Horizontal) {
-            this.panes = this.panes.addNextToCurrent(pane);
-        } else {
-            this.panes = this.panes.addBelowCurrent(pane);
-        }
+        this.panes.add(pane, this.activePane, direction);
 
         this.activeSessionIndex = this.sessions.length - 1;
         this._activePane = pane;

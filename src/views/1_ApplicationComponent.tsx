@@ -48,13 +48,13 @@ export class ApplicationComponent extends React.Component<{}, {}> {
 
     handleKeyDown(event: KeyboardEvent) {
         if (event.metaKey && event.keyCode === KeyCode.Underscore) {
-            this.activeTab.addPane(SplitDirection.Vertical);
+            this.activeTab.addPane(SplitDirection.Horizontal);
             this.forceUpdate();
             event.stopPropagation();
         }
 
         if (event.metaKey && event.keyCode === KeyCode.VerticalBar) {
-            this.activeTab.addPane(SplitDirection.Horizontal);
+            this.activeTab.addPane(SplitDirection.Vertical);
             this.forceUpdate();
             event.stopPropagation();
         }
