@@ -3,7 +3,7 @@ import {styles, Suggestion, longAndShortFlag, longFlag, mapSuggestions, combine,
 import {PluginManager} from "../../PluginManager";
 import {AutocompletionProvider, AutocompletionContext} from "../../Interfaces";
 import {linedOutputOf, executeCommand} from "../../PTY";
-import {find, flatMap} from "lodash";
+import {find} from "lodash";
 
 const addOptions = combine([
     mapSuggestions(longAndShortFlag("patch"), suggestion => suggestion.withDescription(
@@ -144,143 +144,120 @@ interface GitCommandData {
     name: string;
     description: string;
     provider: AutocompletionProvider;
-    aliases: string[];
 }
 
 const emptyProvider = () => [];
 
-const subCommandsData: GitCommandData[] = [
+const commandsData: GitCommandData[] = [
     {
         name: "add",
         description: "Add file contents to the index.",
         provider: combine([notStagedFiles, addOptions]),
-        aliases: [],
     },
     {
         name: "am",
         description: "Apply a series of patches from a mailbox.",
         provider: emptyProvider,
-        aliases: [],
     },
     {
         name: "archive",
         description: "Create an archive of files from a named tree.",
         provider: emptyProvider,
-        aliases: [],
     },
     {
         name: "bisect",
         description: "Find by binary search the change that introduced a bug.",
         provider: emptyProvider,
-        aliases: [],
     },
     {
         name: "branch",
         description: "List, create, or delete branches.",
         provider: emptyProvider,
-        aliases: [],
     },
     {
         name: "bundle",
         description: "Move objects and refs by archive.",
         provider: emptyProvider,
-        aliases: [],
     },
     {
         name: "checkout",
         description: "Switch branches or restore working tree files.",
         provider: combine([branchesExceptCurrent, branchAlias, notStagedFiles]),
-        aliases: [],
     },
     {
         name: "cherry-pick",
         description: "Apply the changes introduced by some existing commits.",
         provider: emptyProvider,
-        aliases: [],
     },
     {
         name: "citool",
         description: "Graphical alternative to git-commit.",
         provider: emptyProvider,
-        aliases: [],
     },
     {
         name: "clean",
         description: "Remove untracked files from the working tree.",
         provider: emptyProvider,
-        aliases: [],
     },
     {
         name: "clone",
         description: "Clone a repository into a new directory.",
         provider: emptyProvider,
-        aliases: [],
     },
     {
         name: "commit",
         description: "Record changes to the repository.",
         provider: commitOptions,
-        aliases: [],
     },
     {
         name: "config",
         description: "Get and set repository or global options",
         provider: combine([configVariables, configOptions]),
-        aliases: [],
     },
     {
         name: "describe",
         description: "Describe a commit using the most recent tag reachable from it.",
         provider: emptyProvider,
-        aliases: [],
     },
     {
         name: "diff",
         description: "Show changes between commits, commit and working tree, etc.",
         provider: emptyProvider,
-        aliases: [],
     },
     {
         name: "fetch",
         description: "Download objects and refs from another repository.",
         provider: combine([remotes, fetchOptions]),
-        aliases: [],
     },
     {
         name: "format-patch",
         description: "Prepare patches for e-mail submission.",
         provider: emptyProvider,
-        aliases: [],
     },
     {
         name: "gc",
         description: "Cleanup unnecessary files and optimize the local repository.",
         provider: emptyProvider,
-        aliases: [],
     },
     {
         name: "grep",
         description: "Print lines matching a pattern.",
         provider: emptyProvider,
-        aliases: [],
     },
     {
         name: "gui",
         description: "A portable graphical interface to Git.",
         provider: emptyProvider,
-        aliases: [],
     },
     {
         name: "init",
         description: "Create an empty Git repository or reinitialize an existing one.",
         provider: emptyProvider,
-        aliases: [],
     },
     {
         name: "log",
         description: "Show commit logs.",
         provider: emptyProvider,
-        aliases: [],
     },
     {
         name: "merge",
@@ -293,19 +270,16 @@ const subCommandsData: GitCommandData[] = [
             longFlag("no-rerere-autoupdate"),
             longFlag("abort"),
         ]),
-        aliases: [],
     },
     {
         name: "mv",
         description: "Move or rename a file, a directory, or a symlink.",
         provider: emptyProvider,
-        aliases: [],
     },
     {
         name: "notes",
         description: "Add or inspect object notes.",
         provider: emptyProvider,
-        aliases: [],
     },
     {
         name: "pull",
@@ -316,168 +290,142 @@ const subCommandsData: GitCommandData[] = [
             commonMergeOptions,
             fetchOptions,
         ]),
-        aliases: [],
     },
     {
         name: "push",
         description: "Update remote refs along with associated objects.",
         provider: pushOptions,
-        aliases: [],
     },
     {
         name: "rebase",
         description: "Forward-port local commits to the updated upstream head.",
         provider: emptyProvider,
-        aliases: [],
     },
     {
         name: "reset",
         description: "Reset current HEAD to the specified state.",
         provider: emptyProvider,
-        aliases: [],
     },
     {
         name: "revert",
         description: "Revert some existing commits.",
         provider: emptyProvider,
-        aliases: [],
     },
     {
         name: "rm",
         description: "Remove files from the working tree and from the index.",
         provider: emptyProvider,
-        aliases: [],
     },
     {
         name: "shortlog",
         description: "Summarize git log output.",
         provider: emptyProvider,
-        aliases: [],
     },
     {
         name: "show",
         description: "Show various types of objects.",
         provider: emptyProvider,
-        aliases: [],
     },
     {
         name: "stash",
         description: "Stash the changes in a dirty working directory away.",
         provider: emptyProvider,
-        aliases: [],
     },
     {
         name: "status",
         description: "Show the working tree status.",
         provider: statusOptions,
-        aliases: [],
     },
     {
         name: "submodule",
         description: "Initialize, update or inspect submodules.",
         provider: emptyProvider,
-        aliases: [],
     },
     {
         name: "tag",
         description: "Create, list, delete or verify a tag object signed with GPG.",
         provider: emptyProvider,
-        aliases: [],
     },
     {
         name: "worktree",
         description: "Manage multiple worktrees.",
         provider: emptyProvider,
-        aliases: [],
     },
 ];
 
-async function loadAllSubcommands() {
+const commands = async(): Promise<Suggestion[]> => {
     const text = await executeCommand("git", ["help", "-a"], process.env.HOME);
     const matches = text.match(/  ([\-a-zA-Z0-9]+)/gm);
 
     if (matches) {
-        matches
+        return matches
             .filter((match) => match.indexOf("--") === -1)
-            .forEach(async(match) => {
+            .map(match => {
                 const name = match.trim();
-                const data = find(subCommandsData, {name});
-
-                if (!data) {
-                    subCommandsData.push({
-                        name,
-                        description: "",
-                        provider: emptyProvider,
-                        aliases: [],
-                    });
-                }
-            });
-    }
-}
-
-async function loadAliases() {
-    const variables = await Git.configVariables(process.env.HOME);
-
-    variables
-        .filter(variable => variable.name.indexOf("alias.") === 0)
-        .forEach(variable => {
-            const name = variable.name.replace("alias.", "");
-            const data = find(subCommandsData, {name: variable.value});
-
-            if (data) {
-                data.aliases.push(name);
-            } else {
-                subCommandsData.push({
-                    name: name,
-                    description: variable.value,
-                    provider: emptyProvider,
-                    aliases: [],
-                });
-            }
-        });
-}
-
-loadAllSubcommands();
-loadAliases();
-
-PluginManager.registerAutocompletionProvider("git", context => {
-    if (context.argument.position === 1) {
-        return flatMap(subCommandsData, data => {
-            const result = [
-                new Suggestion()
-                    .withValue(data.name)
-                    .withDescription(data.description)
-                    .withStyle(styles.command)
-                    .withSpace(),
-            ];
-
-            data.aliases.forEach(name => {
-                const aliasSuggestion = new Suggestion()
+                const data = find(commandsData, {name});
+                const suggestion = new Suggestion()
                     .withValue(name)
-                    .withDescription(data.description)
                     .withStyle(styles.command)
                     .withSpace();
 
-                result.push(aliasSuggestion);
-            });
-
-            return result;
-        });
-    } else {
-        const firstArgument = context.argument.command.nthArgument(1);
-
-        if (firstArgument) {
-            const data = find(subCommandsData, (data) => {
-                if (data.name === firstArgument.value) {
-                    return true;
+                if (data) {
+                    suggestion.withDescription(data.description);
                 }
 
-                return data.aliases.indexOf(firstArgument.value) !== -1;
+                return suggestion;
             });
-
-            return data.provider(context);
-        } else {
-            throw "Has no first argument.";
-        }
     }
+
+    return [];
+};
+
+const aliases = async(): Promise<Suggestion[]> => {
+    const variables = await Git.aliases(process.env.HOME);
+
+    return variables
+        .map(variable => {
+            const data = find(commandsData, {name: variable.value});
+            const suggestion = new Suggestion()
+                .withValue(variable.name)
+                .withStyle(styles.command)
+                .withSpace();
+
+            if (data) {
+                suggestion.withDescription(data.description);
+            } else {
+                suggestion.withDescription(variable.value);
+            }
+
+            return suggestion;
+        });
+};
+
+const expandAlias = async(name: string): Promise<string> => {
+    const aliases = await Git.aliases(process.env.HOME);
+    const alias = find(aliases, {name});
+
+    return alias ? alias.value : name;
+};
+
+const allCommands = combine([commands, aliases]);
+
+PluginManager.registerAutocompletionProvider("git", async context => {
+    if (context.argument.position === 1) {
+        return allCommands(context);
+    }
+
+    const firstArgument = context.argument.command.nthArgument(1);
+
+    if (!firstArgument) {
+        return [];
+    }
+
+    const name = await expandAlias(firstArgument.value);
+    const data = find(commandsData, {name});
+
+    if (data) {
+        return data.provider(context);
+    }
+
+    return [];
 });

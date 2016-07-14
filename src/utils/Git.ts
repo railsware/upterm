@@ -100,6 +100,19 @@ export async function configVariables(directory: string): Promise<ConfigVariable
     });
 }
 
+export async function aliases(directory: string): Promise<ConfigVariable[]> {
+    const variables = await configVariables(directory);
+
+    return variables
+        .filter(variable => variable.name.indexOf("alias.") === 0)
+        .map(variable => {
+            return {
+                name: variable.name.replace("alias.", ""),
+                value: variable.value,
+            };
+        });
+}
+
 export async function remotes(directory: GitDirectoryPath): Promise<string[]> {
     return await linedOutputOf("git", ["remote"], directory);
 }
