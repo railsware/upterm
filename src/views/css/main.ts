@@ -533,7 +533,7 @@ export const prompt = (isSticky: boolean) => Object.assign(
 );
 
 export const promptPlaceholder = {
-    "min-height": promptWrapperHeight,
+    minHeight: promptWrapperHeight,
 };
 
 export const arrowInner = (status: Status) => {
