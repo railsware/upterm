@@ -206,10 +206,7 @@ export class ApplicationComponent extends React.Component<{}, {}> {
     }
 
     private closeTab(tab: Tab, quit = true): void {
-        // Can't use forEach here because closeSession changes the array being iterated.
-        while (tab.sessions.length) {
-            tab.closeSession(tab.sessions[0]);
-        }
+        tab.closeAllSessions();
         _.pull(this.tabs, tab);
 
         if (this.tabs.length === 0 && quit) {

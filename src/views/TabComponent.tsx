@@ -48,8 +48,8 @@ export class TabComponent extends React.Component<TabProps, TabState> {
 }
 
 export class Tab {
-    public sessions: Session[] = [];
     panes: PaneList;
+    private sessions: Session[] = [];
 
     private activeSessionIndex: number;
 
@@ -77,6 +77,13 @@ export class Tab {
         }
 
         this.activeSessionIndex = this.sessions.length - 1;
+    }
+
+    closeAllSessions(): void {
+        // Can't use forEach here because closeSession changes the array being iterated.
+        while (this.panesCount) {
+            this.closeSession(this.sessions[0]);
+        }
     }
 
     closeSession(session: Session): void {
