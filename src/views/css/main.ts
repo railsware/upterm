@@ -1,12 +1,11 @@
 import {ScreenBufferType, Status, Weight, Brightness} from "../../Enums";
 import {colors, panel as panelColor, background as backgroundColor, colorValue} from "./colors";
 import {TabHoverState} from "../TabComponent";
-import {ViewMapLeaf, ContainerType} from "../../utils/ViewMapLeaf";
-import {Session} from "../../shell/Session";
 import {darken, lighten, failurize, alpha} from "./functions";
 import {Attributes} from "../../Interfaces";
 import {suggestionsLimit} from "../../Autocompletion";
 import {CSSObject, Px, Fr} from "./definitions";
+import {ColumnList, PaneList} from "../../utils/PaneTree";
 
 export {toDOMString} from "./functions";
 
@@ -77,14 +76,19 @@ const applicationGrid = {
     },
 };
 
-const sessionsGrid = {
-    container: () => {
+function sessionsGridTemplate(list: PaneList): CSSObject {
+    if (list instanceof ColumnList) {
         return {
-            height: `calc(${sessionsHeight})`,
-            overflowY: "scroll",
+            gridTemplateColumns: `repeat(${list.children.length}, 1fr)`,
+            gridTemplateRows: "100%",
         };
-    },
-};
+    } else {
+        return {
+            gridTemplateRows: `repeat(${list.children.length}, 1fr)`,
+            gridTemplateColumns: "100%",
+        };
+    }
+}
 
 const promptInlineElement: CSSObject = {
     paddingTop: 0,
@@ -243,58 +247,24 @@ export const statusBar = {
     },
 };
 
-export const sessions = () => Object.assign(
+export const sessions = (list: PaneList) => Object.assign(
     {
         backgroundColor: backgroundColor,
+        display: "grid",
     },
-    sessionsGrid.container(),
+    sessionsGridTemplate(list),
 );
 
-export const session = (isActive: boolean, containerViewMapLeaf: ViewMapLeaf<Session>) => {
+export const session = (isActive: boolean) => {
     const styles: CSSObject = {
         position: "relative",
         outline: "none",
-        flex: 1,
+        overflowY: "scroll",
     };
-
-    if (containerViewMapLeaf !== undefined) {
-        if (containerViewMapLeaf.containerType === ContainerType.Column) {
-            styles.height = `calc(100% / ${containerViewMapLeaf.childs.length})`;
-        }
-    } else {
-        styles.height = `calc(${sessionsHeight})`;
-    }
 
     if (!isActive) {
         styles.boxShadow = `0 0 0 1px ${alpha(colors.white, 0.3)}`;
         styles.margin = "0 1px 0 0";
-    }
-
-    return styles;
-};
-
-export const sessionContainer = (viewMapLeaf: ViewMapLeaf<Session>, parentContainerViewMapLeaf: ViewMapLeaf<Session>) => {
-    const styles: CSSObject = {
-        display: "flex",
-        flex: 1,
-        overflowY: "scroll",
-    };
-
-    if (parentContainerViewMapLeaf !== undefined) {
-        if (parentContainerViewMapLeaf.containerType === ContainerType.Column) {
-            styles.height = `calc(${sessionsHeight} / ${parentContainerViewMapLeaf.childs.length})`;
-        } else {
-            styles.height = `calc(${sessionsHeight})`;
-        }
-    } else {
-        styles.height = `calc(${sessionsHeight})`;
-    }
-
-    if (viewMapLeaf.containerType === ContainerType.Column) {
-        styles.flexDirection = "column";
-        styles.height = "100%";
-    } else {
-        styles.flexDirection = "row";
     }
 
     return styles;
@@ -311,12 +281,6 @@ export const sessionShutter = (isActive: boolean) => ({
     left: 0,
     right: 0,
 });
-
-export const jobsContainer = {
-    height: "100%",
-    width: "100%",
-    overflowY: "scroll",
-};
 
 export const titleBar = {
     display: "flex",

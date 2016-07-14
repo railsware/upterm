@@ -5,11 +5,9 @@ import {Job} from "../shell/Job";
 import {JobComponent} from "./3_JobComponent";
 import {KeyCode} from "../Enums";
 import * as css from "./css/main";
-import {CSSObject} from "./css/definitions";
 
 interface Props {
     session: Session;
-    style: CSSObject;
     isActive: boolean;
     activate: () => void;
     updateStatusBar: (() => void) | undefined; // Only the active session can update the status bar.
@@ -37,14 +35,12 @@ export class SessionComponent extends React.Component<Props, {}> {
 
         return (
             <div className="session"
-                 style={this.props.style}
+                 style={css.session(this.props.isActive)}
                  tabIndex={0}
                  onClickCapture={this.handleClick.bind(this)}
                  onKeyDownCapture={this.handleKeyDown.bind(this)}>
 
-                <div style={css.jobsContainer}>
-                    <div className="jobs" style={css.jobs(this.props.isActive)}>{jobs}</div>
-                </div>
+                <div className="jobs" style={css.jobs(this.props.isActive)}>{jobs}</div>
 
                 <div className="shutter" style={css.sessionShutter(this.props.isActive)}></div>
             </div>
