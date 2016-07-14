@@ -66,7 +66,7 @@ export class Tab {
         return this.sessions.length;
     }
 
-    addSession(direction: SplitDirection): void {
+    addPane(direction: SplitDirection): void {
         const session = new Session(this.application, this.contentDimensions);
         this.sessions.push(session);
 
@@ -79,14 +79,7 @@ export class Tab {
         this.activeSessionIndex = this.sessions.length - 1;
     }
 
-    closeAllSessions(): void {
-        // Can't use forEach here because closeSession changes the array being iterated.
-        while (this.panesCount) {
-            this.closeSession(this.sessions[0]);
-        }
-    }
-
-    closeSession(session: Session): void {
+    closePane(session: Session): void {
         session.jobs.forEach(job => {
             job.removeAllListeners();
             job.interrupt();
@@ -100,7 +93,14 @@ export class Tab {
         }
     }
 
-    activeSession(): Session {
+    closeAllPanes(): void {
+        // Can't use forEach here because closePane changes the array being iterated.
+        while (this.panesCount) {
+            this.closePane(this.sessions[0]);
+        }
+    }
+
+    get activeSession(): Session {
         return this.sessions[this.activeSessionIndex];
     }
 

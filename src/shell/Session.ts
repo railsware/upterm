@@ -73,7 +73,7 @@ export class Session extends EmitterWithUniqueID {
     }
 
     close(): void {
-        this.application.closeSession(this);
+        this.application.closePane(this);
     }
 
     get directory(): string {

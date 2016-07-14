@@ -32,7 +32,7 @@ export class ApplicationComponent extends React.Component<{}, {}> {
             .on("devtools-closed", () => this.recalculateDimensions());
 
         ipcRenderer.on("change-working-directory", (event: Electron.IpcRendererEvent, directory: string) =>
-            this.activeTab.activeSession().directory = directory
+            this.activeTab.activeSession.directory = directory
         );
 
         window.onbeforeunload = () => {
@@ -48,22 +48,22 @@ export class ApplicationComponent extends React.Component<{}, {}> {
 
     handleKeyDown(event: KeyboardEvent) {
         if (event.metaKey && event.keyCode === KeyCode.Underscore) {
-            this.activeTab.addSession(SplitDirection.Vertical);
+            this.activeTab.addPane(SplitDirection.Vertical);
             this.forceUpdate();
             event.stopPropagation();
         }
 
         if (event.metaKey && event.keyCode === KeyCode.VerticalBar) {
-            this.activeTab.addSession(SplitDirection.Horizontal);
+            this.activeTab.addPane(SplitDirection.Horizontal);
             this.forceUpdate();
             event.stopPropagation();
         }
 
         if (event.ctrlKey && event.keyCode === KeyCode.D) {
-            const activeSession = this.activeTab.activeSession();
+            const activeSession = this.activeTab.activeSession;
 
             if (activeSession.currentJob.status !== Status.InProgress) {
-                this.closeSession(activeSession);
+                this.closePane(activeSession);
 
                 this.forceUpdate();
                 event.stopPropagation();
@@ -71,7 +71,7 @@ export class ApplicationComponent extends React.Component<{}, {}> {
         }
 
         if (event.metaKey && event.keyCode === KeyCode.W) {
-            this.closeSession(this.activeTab.activeSession());
+            this.closePane(this.activeTab.activeSession);
 
             this.forceUpdate();
             event.stopPropagation();
@@ -138,7 +138,7 @@ export class ApplicationComponent extends React.Component<{}, {}> {
             <div style={css.application} onKeyDownCapture={this.handleKeyDown.bind(this)}>
                 <ul style={css.titleBar}>{tabs}</ul>
                 {this.renderPanes(this.activeTab.panes)}
-                <StatusBarComponent presentWorkingDirectory={this.activeTab.activeSession().directory}/>
+                <StatusBarComponent presentWorkingDirectory={this.activeTab.activeSession.directory}/>
             </div>
         );
     }
@@ -146,7 +146,7 @@ export class ApplicationComponent extends React.Component<{}, {}> {
     renderPanes(tree: PaneTree): JSX.Element {
         if (tree instanceof Pane) {
             const session = tree.session;
-            const isActive = session === this.activeTab.activeSession();
+            const isActive = session === this.activeTab.activeSession;
 
             return (
                 <SessionComponent session={session}
@@ -173,8 +173,8 @@ export class ApplicationComponent extends React.Component<{}, {}> {
         };
     }
 
-    closeSession(sessionToClose: Session) {
-        this.activeTab.closeSession(sessionToClose);
+    closePane(sessionToClose: Session) {
+        this.activeTab.closePane(sessionToClose);
 
         if (this.activeTab.panesCount === 0) {
             this.closeTab(this.activeTab);
@@ -206,7 +206,7 @@ export class ApplicationComponent extends React.Component<{}, {}> {
     }
 
     private closeTab(tab: Tab, quit = true): void {
-        tab.closeAllSessions();
+        tab.closeAllPanes();
         _.pull(this.tabs, tab);
 
         if (this.tabs.length === 0 && quit) {
