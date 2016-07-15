@@ -72,7 +72,7 @@ const applicationGrid = {
         gridTemplateRows: `${titleBarHeight}px calc(${sessionsHeight}) ${infoPanelHeight}px`,
     },
     sessions: {
-        overflowY: "auto",
+        height: "100%",
     },
 };
 
@@ -84,7 +84,7 @@ function sessionsGridTemplate(list: PaneList): CSSObject {
         };
     } else {
         return {
-            gridTemplateRows: `repeat(${list.children.length}, calc(${sessionsHeight} / ${list.children.length}))`,
+            gridTemplateRows: `repeat(${list.children.length}, calc(100% / ${list.children.length}))`,
             gridTemplateColumns: "100%",
         };
     }
