@@ -53,7 +53,10 @@ export abstract class PaneList {
                 callback(child, counter);
                 ++counter;
             } else {
-                child.forEach(callback, counter);
+                child.forEach((pane) => {
+                    callback(pane, counter);
+                    ++counter;
+                });
             }
         }
     }
