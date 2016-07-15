@@ -1,3 +1,8 @@
+import {readFileSync, statSync} from "fs";
+import {flatten, orderBy} from "lodash";
+import {loadAllHistories} from "../utils/Shell";
+import {historyFilePath} from "../utils/Common";
+
 export class History {
     static pointer: number = 0;
     private static maxEntriesCount: number = 100;
@@ -59,8 +64,17 @@ export class History {
         return JSON.stringify(History.storage);
     }
 
-    static deserialize(serialized: string[]): void {
-        this.storage = serialized;
+    static deserialize(): void {
+        const histories = loadAllHistories();
+        try {
+            histories.push({
+                lastModified: statSync(historyFilePath).mtime,
+                commands: JSON.parse(readFileSync(historyFilePath).toString()),
+            });
+        } catch (e) {
+            // black screen history file doesn't exist
+        }
+        this.storage = flatten(orderBy(histories, "lastModified").map(h => h.commands));
     }
 
     private static remove(entry: string): void {
