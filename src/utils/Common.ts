@@ -170,14 +170,6 @@ export function directoryName(path: string): string {
     }
 }
 
-export function baseName(path: string): string {
-    if (path.split(Path.sep).length === 1) {
-        return path;
-    } else {
-        return path.substring(directoryName(path).length);
-    }
-}
-
 export const executablesInPaths = async (path: EnvironmentPath): Promise<string[]> => {
     const validPaths = await filterAsync(path.toArray(), isDirectory);
     const allFiles: string[][] = await Promise.all(validPaths.map(filesIn));
