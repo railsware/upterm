@@ -1,9 +1,12 @@
 import * as Git from "../../utils/Git";
-import {styles, Suggestion, longAndShortFlag, longFlag, mapSuggestions, combine, unique} from "./Common";
+import {
+    styles, Suggestion, longAndShortFlag, longFlag, mapSuggestions, combine, unique,
+    contextIndependent, emptyProvider,
+} from "./Common";
 import {PluginManager} from "../../PluginManager";
 import {AutocompletionProvider, AutocompletionContext} from "../../Interfaces";
 import {linedOutputOf, executeCommand} from "../../PTY";
-import {find, memoize, sortBy} from "lodash";
+import {find, sortBy} from "lodash";
 
 const addOptions = combine([
     mapSuggestions(longAndShortFlag("patch"), suggestion => suggestion.withDescription(
@@ -145,8 +148,6 @@ interface GitCommandData {
     description: string;
     provider: AutocompletionProvider;
 }
-
-const emptyProvider = () => [];
 
 const commandsData: GitCommandData[] = [
     {
@@ -353,7 +354,7 @@ const commandsData: GitCommandData[] = [
     },
 ];
 
-const commands = memoize(async(): Promise<Suggestion[]> => {
+const commands = contextIndependent(async(): Promise<Suggestion[]> => {
     const text = await executeCommand("git", ["help", "-a"], process.env.HOME);
     const matches = text.match(/  ([\-a-zA-Z0-9]+)/gm);
 
@@ -381,25 +382,15 @@ const commands = memoize(async(): Promise<Suggestion[]> => {
     return [];
 });
 
-const aliases = memoize(async(): Promise<Suggestion[]> => {
+const aliases = contextIndependent(async(): Promise<Suggestion[]> => {
     const variables = await Git.aliases(process.env.HOME);
 
-    return variables
-        .map(variable => {
-            const data = find(commandsData, {name: variable.value});
-            const suggestion = new Suggestion()
-                .withValue(variable.name)
-                .withStyle(styles.command)
-                .withSpace();
-
-            if (data) {
-                suggestion.withDescription(data.description);
-            } else {
-                suggestion.withDescription(variable.value);
-            }
-
-            return suggestion;
-        });
+    return variables.map(variable => new Suggestion()
+        .withValue(variable.name)
+        .withSynopsis(variable.value)
+        .withStyle(styles.alias)
+        .withSpace()
+    );
 });
 
 const expandAlias = async(name: string): Promise<string> => {
@@ -409,11 +400,7 @@ const expandAlias = async(name: string): Promise<string> => {
     return alias ? alias.value : name;
 };
 
-const allCommands = combine([
-    // prevent params for memoized functions
-    () => commands(),
-    () => aliases(),
-]);
+const allCommands = combine([aliases, commands]);
 
 PluginManager.registerAutocompletionProvider("git", async context => {
     if (context.argument.position === 1) {
