@@ -1,6 +1,5 @@
 /* tslint:disable:no-unused-variable */
 import * as React from "react";
-import * as _ from "lodash";
 import {Session} from "../shell/Session";
 import {ApplicationComponent} from "./1_ApplicationComponent";
 import * as css from "./css/main";
@@ -67,13 +66,12 @@ export class Tab {
         this._activePane = pane;
     }
 
-    // TODO: should take a Pane.
-    closePane(session: Session): void {
-        session.jobs.forEach(job => {
+    closeActivePane(): void {
+        this.activePane.session.jobs.forEach(job => {
             job.removeAllListeners();
             job.interrupt();
         });
-        session.removeAllListeners();
+        this.activePane.session.removeAllListeners();
 
         const active = this.activePane;
         this._activePane = this.panes.previous(active);
@@ -81,9 +79,8 @@ export class Tab {
     }
 
     closeAllPanes(): void {
-        // Can't use forEach here because closePane changes the array being iterated.
         while (this.panes.size) {
-            this.closePane(this.activePane.session);
+            this.closeActivePane();
         }
     }
 

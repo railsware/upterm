@@ -73,7 +73,8 @@ export class Session extends EmitterWithUniqueID {
     }
 
     close(): void {
-        this.application.closePane(this);
+        // FIXME: executing `sleep 5 && exit` and switching to another pane will close an incorrect one.
+        this.application.closeActivePane();
     }
 
     get directory(): string {

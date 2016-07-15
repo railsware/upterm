@@ -2,7 +2,6 @@ import {SessionComponent} from "./2_SessionComponent";
 import {TabComponent, TabProps, Tab} from "./TabComponent";
 import * as React from "react";
 import * as _ from "lodash";
-import {Session} from "../shell/Session";
 import {ipcRenderer} from "electron";
 import {KeyCode, Status, SplitDirection} from "../Enums";
 import {remote} from "electron";
@@ -63,7 +62,7 @@ export class ApplicationComponent extends React.Component<{}, {}> {
             const activeSession = this.activeTab.activePane.session;
 
             if (activeSession.currentJob.status !== Status.InProgress) {
-                this.closePane(activeSession);
+                this.closeActivePane();
 
                 this.forceUpdate();
                 event.stopPropagation();
@@ -71,7 +70,7 @@ export class ApplicationComponent extends React.Component<{}, {}> {
         }
 
         if (event.metaKey && event.keyCode === KeyCode.W) {
-            this.closePane(this.activeTab.activePane.session);
+            this.closeActivePane();
 
             this.forceUpdate();
             event.stopPropagation();
@@ -118,8 +117,8 @@ export class ApplicationComponent extends React.Component<{}, {}> {
     }
 
     // FIXME: this method should be private.
-    closePane(sessionToClose: Session) {
-        this.activeTab.closePane(sessionToClose);
+    closeActivePane() {
+        this.activeTab.closeActivePane();
 
         if (this.activeTab.panes.size === 0) {
             this.closeTab(this.activeTab);
