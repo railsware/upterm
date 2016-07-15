@@ -11,6 +11,6 @@ PluginManager.registerOutputDecorator({
     },
 
     isApplicable: (job: Job): boolean => {
-        return job.hasOutput() && (job.prompt.commandName.value === "show");
+        return job.hasOutput() && (job.prompt.commandName === "show");
     },
 });

@@ -6,7 +6,7 @@ import {ASTNode, CompleteCommand} from "./Parser";
 export class Prompt extends events.EventEmitter {
     private _value = "";
     private _ast: CompleteCommand;
-    private _expanded: Token[];
+    private _expandedAst: CompleteCommand;
 
     constructor(private job: Job) {
         super();
@@ -21,21 +21,29 @@ export class Prompt extends events.EventEmitter {
 
         const tokens = scan(this.value);
         this._ast = new CompleteCommand(tokens);
-        this._expanded = expandAliases(tokens, this.job.session.aliases);
+        this._expandedAst = new CompleteCommand(expandAliases(tokens, this.job.session.aliases));
     }
 
     get ast(): ASTNode {
         return this._ast;
     }
 
+    // FIXME: Rename to expandedTokens.
     get expanded(): Token[] {
-        return this._expanded;
+        return this._expandedAst.childTokens;
     }
 
-    get commandName(): Token {
-        return this.expanded[0];
+    get commandName(): string {
+        const commandWord = this._expandedAst.firstCommand.commandWord;
+
+        if (commandWord) {
+            return commandWord.value;
+        } else {
+            return "";
+        }
     }
 
+    // FIXME: Return arguments.
     get arguments(): Token[] {
         return this.expanded.slice(1);
     }

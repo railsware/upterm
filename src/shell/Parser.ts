@@ -54,10 +54,13 @@ abstract class LeafNode extends ASTNode {
 }
 
 abstract class BranchNode extends ASTNode {
+    readonly childTokens: Scanner.Token[];
     abstract get children(): ASTNode[];
 
-    constructor(protected childTokens: Scanner.Token[]) {
+    // FIXME: Rename to tokens.
+    constructor(childTokens: Scanner.Token[]) {
         super();
+        this.childTokens = childTokens;
     }
 
     get fullStart(): number {
@@ -84,6 +87,14 @@ export class CompleteCommand extends BranchNode {
             return [
                 new List(this.childTokens),
             ];
+        }
+    }
+
+    get firstCommand(): Command {
+        for (const current of traverse(this)) {
+            if (current instanceof Command) {
+                return current;
+            }
         }
     }
 }
@@ -155,32 +166,49 @@ class PipeSequence extends BranchNode {
 class Command extends BranchNode {
     @memoizeAccessor
     get children(): ASTNode[] {
-        if (this.childTokens.length) {
-            const children: ASTNode[] = [this.commandWord];
-
-            if (this.argumentList) {
-                children.push(this.argumentList);
-            }
-
-            if (this.ioRedirect) {
-                children.push(this.ioRedirect);
-            }
-
-            return children;
-        } else {
+        if (!this.childTokens.length) {
             return [new EmptyNode()];
+        }
+
+        const children: ASTNode[] = [];
+
+        if (this.parameterAssignments) {
+            children.push(this.parameterAssignments);
+        }
+
+        if (this.commandWord) {
+            children.push(this.commandWord);
+        }
+
+        if (this.argumentList) {
+            children.push(this.argumentList);
+        }
+
+        if (this.ioRedirect) {
+            children.push(this.ioRedirect);
+        }
+
+        return children;
+    }
+
+    @memoizeAccessor
+    get commandWord(): CommandWord | undefined {
+        if (this.categorizedTokens.commandWord) {
+            return new CommandWord(this.categorizedTokens.commandWord);
         }
     }
 
     @memoizeAccessor
-    get commandWord(): CommandWord {
-        return new CommandWord(this.childTokens[0]);
+    get parameterAssignments(): ParameterAssignmentList | undefined {
+        if (this.categorizedTokens.parameterAssignment.length) {
+            return new ParameterAssignmentList(this.categorizedTokens.parameterAssignment);
+        }
     }
 
     @memoizeAccessor
     get argumentList(): ArgumentList | undefined {
-        if (this.argumentListTokens.length) {
-            return new ArgumentList(this.argumentListTokens, this);
+        if (this.categorizedTokens.argumentList.length) {
+            return new ArgumentList(this.categorizedTokens.argumentList, this);
         }
     }
 
@@ -200,29 +228,35 @@ class Command extends BranchNode {
 
     @memoizeAccessor
     private get ioRedirect(): IORedirect | undefined {
-        if (this.ioRedirectTokenIndex !== -1) {
-            return new IORedirect(this.childTokens.slice(this.ioRedirectTokenIndex));
+        if (this.categorizedTokens.ioRedirect.length) {
+            return new IORedirect(this.categorizedTokens.ioRedirect);
         }
     }
 
     @memoizeAccessor
-    private get ioRedirectTokenIndex(): number {
-        return this.childTokens.findIndex(token => {
-            return (
-                token instanceof Scanner.InputRedirectionSymbol ||
-                token instanceof Scanner.OutputRedirectionSymbol ||
-                token instanceof Scanner.AppendingOutputRedirectionSymbol
-            );
-        });
-    }
+    private get categorizedTokens() {
+        /**
+         * @link http://stackoverflow.com/a/10939280/1149074
+         */
+        const parameterAssignmentTokens = _.takeWhile(this.childTokens, token => token.value.includes("="));
 
-    @memoizeAccessor
-    private get argumentListTokens(): Scanner.Token[] {
-        if (this.ioRedirect) {
-            return this.childTokens.slice(1, this.ioRedirectTokenIndex);
-        } else {
-            return this.childTokens.slice(1);
-        }
+        const commandWordToken = this.childTokens[parameterAssignmentTokens.length];
+
+        const beforeArgumentListTokensCount = parameterAssignmentTokens.length + 1;
+        const argumentListTokens = _.takeWhile(this.childTokens.slice(beforeArgumentListTokensCount), token => !(
+            token instanceof Scanner.InputRedirectionSymbol ||
+            token instanceof Scanner.OutputRedirectionSymbol ||
+            token instanceof Scanner.AppendingOutputRedirectionSymbol
+        ));
+
+        const ioRedirectTokens = this.childTokens.slice(beforeArgumentListTokensCount + argumentListTokens.length);
+
+        return {
+            parameterAssignment: parameterAssignmentTokens,
+            commandWord: commandWordToken,
+            argumentList: argumentListTokens,
+            ioRedirect: ioRedirectTokens,
+        };
     }
 }
 
@@ -256,7 +290,20 @@ class ShellSyntaxNode extends LeafNode {
     }
 }
 
-class CommandWord extends LeafNode {
+class ParameterAssignmentList extends BranchNode {
+    @memoizeAccessor
+    get children(): ASTNode[] {
+        return this.childTokens.map(token => new ParameterAssignment(token));
+    }
+}
+
+export class ParameterAssignment extends LeafNode {
+    async suggestions(context: PreliminaryAutocompletionContext): Promise<Suggestion[]> {
+        return [];
+    }
+}
+
+export class CommandWord extends LeafNode {
     async suggestions(context: PreliminaryAutocompletionContext): Promise<Suggestion[]> {
         if (this.value.length === 0) {
             return [];
@@ -304,7 +351,7 @@ export class Argument extends LeafNode {
         const argument = argumentOfExpandedAST(this, context.aliases);
         const provider = combine([
             environmentVariableSuggestions,
-            PluginManager.autocompletionProviderFor(argument.command.commandWord.value),
+            PluginManager.autocompletionProviderFor(argument.command.commandWord!.value),
         ]);
 
         return provider(Object.assign(context, {argument: argument}));
@@ -313,7 +360,7 @@ export class Argument extends LeafNode {
 
 // FIXME: find a better way to search for the argument in the new tree.
 function argumentOfExpandedAST(argument: Argument, aliases: Aliases) {
-    const commandWord = argument.command.commandWord;
+    const commandWord = argument.command.commandWord!;
 
     if (aliases.has(commandWord.value)) {
         const tree = new CompleteCommand(Scanner.scan(serializeReplacing(argument.command, commandWord, aliases.get(commandWord.value))));

@@ -11,6 +11,7 @@ export class PTY {
     // TODO: write proper signatures.
     // TODO: use generators.
     // TODO: terminate. https://github.com/atom/atom/blob/v1.0.15/src/task.coffee#L151
+    // FIXME: take an array of tokens.
     constructor(command: string, args: EscapedShellWord[], env: ProcessEnvironment, dimensions: Dimensions, dataHandler: (d: string) => void, exitHandler: (c: number) => void) {
         const shellArguments = [...loginShell.noConfigSwitches, "-c", `${command} ${args.join(" ")}`];
 
