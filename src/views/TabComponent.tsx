@@ -48,44 +48,26 @@ export class TabComponent extends React.Component<TabProps, TabState> {
 }
 
 export class Tab {
-    panes: PaneList;
-    /**
-     * @deprecated
-     */
-    private sessions: Session[] = [];
-
-    /**
-     * @deprecated
-     */
-    private activeSessionIndex: number;
+    readonly panes: PaneList;
     private _activePane: Pane;
 
     constructor(private application: ApplicationComponent) {
-        const session = new Session(this.application, this.contentDimensions);
-        const pane = new Pane(session);
+        const pane = new Pane(new Session(this.application, this.contentDimensions));
 
-        this.sessions = [session];
         this.panes = new RowList([pane]);
-
-        this.activeSessionIndex = 0;
         this._activePane = pane;
-    }
-
-    get panesCount(): number {
-        return this.sessions.length;
     }
 
     addPane(direction: SplitDirection): void {
         const session = new Session(this.application, this.contentDimensions);
         const pane = new Pane(session);
-        this.sessions.push(session);
 
         this.panes.add(pane, this.activePane, direction);
 
-        this.activeSessionIndex = this.sessions.length - 1;
         this._activePane = pane;
     }
 
+    // TODO: should take a Pane.
     closePane(session: Session): void {
         session.jobs.forEach(job => {
             job.removeAllListeners();
@@ -93,20 +75,15 @@ export class Tab {
         });
         session.removeAllListeners();
 
-        _.pull(this.sessions, session);
         const active = this.activePane;
         this._activePane = this.panes.previous(active);
         this.panes.remove(active);
-
-        if (this.activeSessionIndex >= this.sessions.length) {
-            this.activeSessionIndex = this.sessions.length - 1;
-        }
     }
 
     closeAllPanes(): void {
         // Can't use forEach here because closePane changes the array being iterated.
-        while (this.panesCount) {
-            this.closePane(this.sessions[0]);
+        while (this.panes.size) {
+            this.closePane(this.activePane.session);
         }
     }
 
@@ -114,55 +91,20 @@ export class Tab {
         return this._activePane;
     }
 
-    /**
-     * @deprecated
-     */
-    get activeSession(): Session {
-        return this.sessions[this.activeSessionIndex];
-    }
-
     activatePane(pane: Pane): void {
         this._activePane = pane;
     }
 
-    /**
-     * @deprecated
-     */
-    activateSession(session: Session): void {
-        this.activeSessionIndex = this.sessions.indexOf(session);
-    }
-
-    /**
-     * @deprecated
-     */
-    activatePreviousSession(): boolean {
-        const isFirst = this.activeSessionIndex === 0;
-        if (!isFirst) {
-            this.activateSession(this.sessions[this.activeSessionIndex - 1]);
-        }
+    activatePreviousPane(): void {
         this._activePane = this.panes.previous(this.activePane);
-
-        return !isFirst;
     }
 
-    /**
-     * @deprecated
-     */
-    activateNextSession(): boolean {
-        const isLast = this.activeSessionIndex === this.sessions.length - 1;
-        if (!isLast) {
-            this.activateSession(this.sessions[this.activeSessionIndex + 1]);
-        }
-
+    activateNextPane(): void {
         this._activePane = this.panes.next(this.activePane);
-
-        return !isLast;
     }
 
-    updateAllSessionsDimensions(): void {
-        for (const session of this.sessions) {
-            session.dimensions = this.contentDimensions;
-        }
+    updateAllPanesDimensions(): void {
+        this.panes.forEach(pane => pane.session.dimensions = this.contentDimensions);
     }
 
     private get contentDimensions(): Dimensions {

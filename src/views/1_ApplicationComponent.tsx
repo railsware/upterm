@@ -32,7 +32,7 @@ export class ApplicationComponent extends React.Component<{}, {}> {
             .on("devtools-closed", () => this.recalculateDimensions());
 
         ipcRenderer.on("change-working-directory", (event: Electron.IpcRendererEvent, directory: string) =>
-            this.activeTab.activeSession.directory = directory
+            this.activeTab.activePane.session.directory = directory
         );
 
         window.onbeforeunload = () => {
@@ -60,7 +60,7 @@ export class ApplicationComponent extends React.Component<{}, {}> {
         }
 
         if (event.ctrlKey && event.keyCode === KeyCode.D) {
-            const activeSession = this.activeTab.activeSession;
+            const activeSession = this.activeTab.activePane.session;
 
             if (activeSession.currentJob.status !== Status.InProgress) {
                 this.closePane(activeSession);
@@ -71,7 +71,7 @@ export class ApplicationComponent extends React.Component<{}, {}> {
         }
 
         if (event.metaKey && event.keyCode === KeyCode.W) {
-            this.closePane(this.activeTab.activeSession);
+            this.closePane(this.activeTab.activePane.session);
 
             this.forceUpdate();
             event.stopPropagation();
@@ -79,17 +79,17 @@ export class ApplicationComponent extends React.Component<{}, {}> {
         }
 
         if (event.metaKey && event.keyCode === KeyCode.J) {
-            if (this.activeTab.activateNextSession()) {
-                this.forceUpdate();
-                event.stopPropagation();
-            }
+            this.activeTab.activateNextPane();
+
+            this.forceUpdate();
+            event.stopPropagation();
         }
 
         if (event.metaKey && event.keyCode === KeyCode.K) {
-            if (this.activeTab.activatePreviousSession()) {
-                this.forceUpdate();
-                event.stopPropagation();
-            }
+            this.activeTab.activatePreviousPane();
+
+            this.forceUpdate();
+            event.stopPropagation();
         }
 
         if (event.metaKey && event.keyCode === KeyCode.T) {
@@ -121,7 +121,7 @@ export class ApplicationComponent extends React.Component<{}, {}> {
     closePane(sessionToClose: Session) {
         this.activeTab.closePane(sessionToClose);
 
-        if (this.activeTab.panesCount === 0) {
+        if (this.activeTab.panes.size === 0) {
             this.closeTab(this.activeTab);
         }
 
@@ -155,7 +155,7 @@ export class ApplicationComponent extends React.Component<{}, {}> {
             <div style={css.application} onKeyDownCapture={this.handleKeyDown.bind(this)}>
                 <ul style={css.titleBar}>{tabs}</ul>
                 {this.renderPanes(this.activeTab.panes)}
-                <StatusBarComponent presentWorkingDirectory={this.activeTab.activeSession.directory}/>
+                <StatusBarComponent presentWorkingDirectory={this.activeTab.activePane.session.directory}/>
             </div>
         );
     }
@@ -184,7 +184,7 @@ export class ApplicationComponent extends React.Component<{}, {}> {
 
     private recalculateDimensions() {
         for (const tab of this.tabs) {
-            tab.updateAllSessionsDimensions();
+            tab.updateAllPanesDimensions();
         }
     }
 

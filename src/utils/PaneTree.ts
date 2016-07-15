@@ -5,6 +5,7 @@ export type PaneTree = Pane | PaneList;
 
 export class Pane {
     readonly session: Session;
+    readonly size = 1;
 
     constructor(session: Session) {
         this.session = session;
@@ -45,6 +46,10 @@ export abstract class PaneList {
         }
 
         list.children.splice(list.children.indexOf(pane), 1);
+    }
+
+    get size(): number {
+        return _.sum(this.children.map(child => child.size));
     }
 
     forEach(callback: (pane: Pane, index: number) => void, counter = 0): void {
