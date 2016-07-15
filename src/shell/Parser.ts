@@ -54,13 +54,12 @@ abstract class LeafNode extends ASTNode {
 }
 
 abstract class BranchNode extends ASTNode {
-    readonly childTokens: Scanner.Token[];
+    readonly tokens: Scanner.Token[];
     abstract get children(): ASTNode[];
 
-    // FIXME: Rename to tokens.
-    constructor(childTokens: Scanner.Token[]) {
+    constructor(tokens: Scanner.Token[]) {
         super();
-        this.childTokens = childTokens;
+        this.tokens = tokens;
     }
 
     get fullStart(): number {
@@ -75,17 +74,17 @@ abstract class BranchNode extends ASTNode {
 export class CompleteCommand extends BranchNode {
     @memoizeAccessor
     get children(): ASTNode[] {
-        const lastChild = _.last(this.childTokens);
+        const lastChild = _.last(this.tokens);
         const endsWithSeparator = lastChild instanceof Scanner.Semicolon;
 
         if (endsWithSeparator) {
             return [
-                new List(this.childTokens.slice(0, -1)),
+                new List(this.tokens.slice(0, -1)),
                 new ShellSyntaxNode(lastChild),
             ];
         } else {
             return [
-                new List(this.childTokens),
+                new List(this.tokens),
             ];
         }
     }
@@ -102,17 +101,17 @@ export class CompleteCommand extends BranchNode {
 class List extends BranchNode {
     @memoizeAccessor
     get children(): ASTNode[] {
-        const separatorOpIndex = _.findLastIndex(this.childTokens, token => token instanceof Scanner.Semicolon);
+        const separatorOpIndex = _.findLastIndex(this.tokens, token => token instanceof Scanner.Semicolon);
 
         if (separatorOpIndex !== -1) {
             return [
-                new List(this.childTokens.slice(0, separatorOpIndex)),
-                new ShellSyntaxNode(this.childTokens[separatorOpIndex]),
-                new AndOr(this.childTokens.slice(separatorOpIndex + 1)),
+                new List(this.tokens.slice(0, separatorOpIndex)),
+                new ShellSyntaxNode(this.tokens[separatorOpIndex]),
+                new AndOr(this.tokens.slice(separatorOpIndex + 1)),
             ];
         } else {
             return [
-                new AndOr(this.childTokens),
+                new AndOr(this.tokens),
             ];
         }
     }
@@ -121,17 +120,17 @@ class List extends BranchNode {
 class AndOr extends BranchNode {
     @memoizeAccessor
     get children(): ASTNode[] {
-        const andOrTokenIndex = _.findLastIndex(this.childTokens, token => token instanceof Scanner.And || token instanceof Scanner.Or);
+        const andOrTokenIndex = _.findLastIndex(this.tokens, token => token instanceof Scanner.And || token instanceof Scanner.Or);
 
         if (andOrTokenIndex !== -1) {
             return [
-                new AndOr(this.childTokens.slice(0, andOrTokenIndex)),
-                new ShellSyntaxNode(this.childTokens[andOrTokenIndex]),
-                new Pipeline(this.childTokens.slice(andOrTokenIndex + 1)),
+                new AndOr(this.tokens.slice(0, andOrTokenIndex)),
+                new ShellSyntaxNode(this.tokens[andOrTokenIndex]),
+                new Pipeline(this.tokens.slice(andOrTokenIndex + 1)),
             ];
         } else {
             return [
-                new Pipeline(this.childTokens),
+                new Pipeline(this.tokens),
             ];
         }
     }
@@ -140,24 +139,24 @@ class AndOr extends BranchNode {
 class Pipeline extends BranchNode {
     @memoizeAccessor
     get children(): ASTNode[] {
-        return [new PipeSequence(this.childTokens)];
+        return [new PipeSequence(this.tokens)];
     }
 }
 
 class PipeSequence extends BranchNode {
     @memoizeAccessor
     get children(): ASTNode[] {
-        const pipeIndex = _.findLastIndex(this.childTokens, token => token instanceof Scanner.Pipe);
+        const pipeIndex = _.findLastIndex(this.tokens, token => token instanceof Scanner.Pipe);
 
         if (pipeIndex !== -1) {
             return [
-                new PipeSequence(this.childTokens.slice(0, pipeIndex)),
-                new ShellSyntaxNode(this.childTokens[pipeIndex]),
-                new Command(this.childTokens.slice(pipeIndex + 1)),
+                new PipeSequence(this.tokens.slice(0, pipeIndex)),
+                new ShellSyntaxNode(this.tokens[pipeIndex]),
+                new Command(this.tokens.slice(pipeIndex + 1)),
             ];
         } else {
             return [
-                new Command(this.childTokens),
+                new Command(this.tokens),
             ];
         }
     }
@@ -166,7 +165,7 @@ class PipeSequence extends BranchNode {
 class Command extends BranchNode {
     @memoizeAccessor
     get children(): ASTNode[] {
-        if (!this.childTokens.length) {
+        if (!this.tokens.length) {
             return [new EmptyNode()];
         }
 
@@ -238,18 +237,18 @@ class Command extends BranchNode {
         /**
          * @link http://stackoverflow.com/a/10939280/1149074
          */
-        const parameterAssignmentTokens = _.takeWhile(this.childTokens, token => token.value.includes("="));
+        const parameterAssignmentTokens = _.takeWhile(this.tokens, token => token.value.includes("="));
 
-        const commandWordToken = this.childTokens[parameterAssignmentTokens.length];
+        const commandWordToken = this.tokens[parameterAssignmentTokens.length];
 
         const beforeArgumentListTokensCount = parameterAssignmentTokens.length + 1;
-        const argumentListTokens = _.takeWhile(this.childTokens.slice(beforeArgumentListTokensCount), token => !(
+        const argumentListTokens = _.takeWhile(this.tokens.slice(beforeArgumentListTokensCount), token => !(
             token instanceof Scanner.InputRedirectionSymbol ||
             token instanceof Scanner.OutputRedirectionSymbol ||
             token instanceof Scanner.AppendingOutputRedirectionSymbol
         ));
 
-        const ioRedirectTokens = this.childTokens.slice(beforeArgumentListTokensCount + argumentListTokens.length);
+        const ioRedirectTokens = this.tokens.slice(beforeArgumentListTokensCount + argumentListTokens.length);
 
         return {
             parameterAssignment: parameterAssignmentTokens,
@@ -263,16 +262,16 @@ class Command extends BranchNode {
 class IORedirect extends BranchNode {
     @memoizeAccessor
     get children(): ASTNode[] {
-        if (this.childTokens.length === 1) {
+        if (this.tokens.length === 1) {
             return [
-                new ShellSyntaxNode(this.childTokens[0]),
+                new ShellSyntaxNode(this.tokens[0]),
                 new EmptyNode(),
             ];
         } else {
             return [
-                new ShellSyntaxNode(this.childTokens[0]),
-                new IOFile(this.childTokens[1]),
-                ...this.childTokens.slice(2).map(token => new UnknownNode(token)),
+                new ShellSyntaxNode(this.tokens[0]),
+                new IOFile(this.tokens[1]),
+                ...this.tokens.slice(2).map(token => new UnknownNode(token)),
             ];
         }
     }
@@ -293,7 +292,7 @@ class ShellSyntaxNode extends LeafNode {
 class ParameterAssignmentList extends BranchNode {
     @memoizeAccessor
     get children(): ASTNode[] {
-        return this.childTokens.map(token => new ParameterAssignment(token));
+        return this.tokens.map(token => new ParameterAssignment(token));
     }
 }
 
@@ -333,7 +332,7 @@ class ArgumentList extends BranchNode {
 
     @memoizeAccessor
     get arguments(): Argument[] {
-        return this.childTokens.map((token, index) => new Argument(token, this.command, index + 1));
+        return this.tokens.map((token, index) => new Argument(token, this.command, index + 1));
     }
 }
 

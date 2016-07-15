@@ -9,7 +9,9 @@ describe("PTY", () => {
         const tokens = scan("echo '$('");
 
         new PTY(
-            tokens[0].value, tokens.slice(1).map(token => token.escapedValue), process.env, {columns: 80, rows: 30},
+            tokens.map(token => token.escapedValue),
+            process.env,
+            {columns: 80, rows: 30},
             (data: string) => output += data,
             (exitCode: number) => {
                 expect(exitCode).to.eq(0);

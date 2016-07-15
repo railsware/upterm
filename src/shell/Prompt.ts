@@ -28,9 +28,8 @@ export class Prompt extends events.EventEmitter {
         return this._ast;
     }
 
-    // FIXME: Rename to expandedTokens.
-    get expanded(): Token[] {
-        return this._expandedAst.childTokens;
+    get expandedTokens(): Token[] {
+        return this._expandedAst.tokens;
     }
 
     get commandName(): string {
@@ -43,8 +42,13 @@ export class Prompt extends events.EventEmitter {
         }
     }
 
-    // FIXME: Return arguments.
     get arguments(): Token[] {
-        return this.expanded.slice(1);
+        const argumentList = this._expandedAst.firstCommand.argumentList;
+
+        if (argumentList) {
+            return argumentList.tokens;
+        } else {
+            return [];
+        }
     }
 }

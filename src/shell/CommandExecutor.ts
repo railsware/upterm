@@ -54,7 +54,9 @@ class ShellExecutionStrategy extends CommandExecutionStrategy {
     startExecution() {
         return new Promise((resolve, reject) => {
             this.job.command = new PTY(
-                this.job.prompt.expanded[0].escapedValue, this.job.prompt.expanded.slice(1).map(token => token.escapedValue), this.job.environment.toObject(), this.job.dimensions,
+                this.job.prompt.expandedTokens.map(token => token.escapedValue),
+                this.job.environment.toObject(),
+                this.job.dimensions,
                 (data: string) => this.job.parser.parse(data),
                 (exitCode: number) => exitCode === 0 ? resolve() : reject(new NonZeroExitCodeError(exitCode.toString()))
             );
@@ -70,11 +72,11 @@ class WindowsShellExecutionStrategy extends CommandExecutionStrategy {
     startExecution() {
         return new Promise((resolve) => {
             this.job.command = new PTY(
-                this.cmdPath,
                 [
+                    this.cmdPath,
                     <EscapedShellWord>"/s",
                     <EscapedShellWord>"/c",
-                    ...this.job.prompt.expanded.map(token => token.escapedValue),
+                    ...this.job.prompt.expandedTokens.map(token => token.escapedValue),
                 ],
                 this.job.environment.toObject(), this.job.dimensions,
                 (data: string) => this.job.parser.parse(data),
@@ -83,13 +85,13 @@ class WindowsShellExecutionStrategy extends CommandExecutionStrategy {
         });
     }
 
-    private get cmdPath(): string {
+    private get cmdPath(): EscapedShellWord {
         if (this.job.environment.has("comspec")) {
-            return this.job.environment.get("comspec");
+            return <EscapedShellWord>this.job.environment.get("comspec");
         } else if (this.job.environment.has("SystemRoot")) {
-            return Path.join(this.job.environment.get("SystemRoot"), "System32", "cmd.exe");
+            return <EscapedShellWord>Path.join(this.job.environment.get("SystemRoot"), "System32", "cmd.exe");
         } else {
-            return "cmd.exe";
+            return <EscapedShellWord>"cmd.exe";
         }
     }
 }
