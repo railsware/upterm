@@ -12,65 +12,71 @@ import {StatusCode} from "../../utils/Git";
 
 type Style = { value: string; css: CSSObject};
 
+interface SuggestionAttributes {
+    value?: string;
+    displayValue?: string;
+    synopsis?: string;
+    description?: string;
+    style?: Style;
+    space?: boolean;
+}
+
 export class Suggestion {
-    protected _value = "";
-    private _displayValue = "";
-    private _synopsis = "";
-    private _description = "";
-    private _style = {value: "", css: {}};
-    private _shouldAddSpace = false;
+    constructor(private attributes: SuggestionAttributes = {}) {
+        this.attributes = attributes;
+    }
 
     get value(): string {
-        return this._value;
+        return this.attributes.value || "";
     }
 
     get synopsis(): string {
-        return this._synopsis || this.truncatedDescription;
+        return this.attributes.synopsis || this.truncatedDescription;
     }
 
     get description(): string {
-        return this._description;
+        return this.attributes.description || "";
     }
 
     get style(): Style {
-        return this._style;
+        return this.attributes.style || {value: "", css: {}};
     }
 
     get displayValue(): string {
-        return this._displayValue || this.value;
+        return this.attributes.displayValue || this.value;
     }
 
     get shouldAddSpace(): boolean {
-        return this._shouldAddSpace;
+        return this.attributes.space || false;
     }
 
     withValue(value: string): this {
-        this._value = value;
+        this.attributes.value = value;
         return this;
     }
 
     withDisplayValue(value: string): this {
-        this._displayValue = value;
+        this.attributes.displayValue = value;
         return this;
     }
 
     withSynopsis(synopsis: string): this {
-        this._synopsis = synopsis;
+        this.attributes.synopsis = synopsis;
         return this;
     }
 
     withDescription(description: string): this {
-        this._description = description;
+        this.attributes.description = description;
         return this;
     }
 
     withStyle(style: Style): this {
-        this._style = style;
+        this.attributes.style = style;
         return this;
     }
 
     withSpace(): this {
-        this._shouldAddSpace = true;
+        this.attributes.space = true;
         return this;
     }
 

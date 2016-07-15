@@ -382,16 +382,9 @@ const commands = contextIndependent(async(): Promise<Suggestion[]> => {
     return [];
 });
 
-const aliases = contextIndependent(async(): Promise<Suggestion[]> => {
-    const variables = await Git.aliases(process.env.HOME);
-
-    return variables.map(variable => new Suggestion()
-        .withValue(variable.name)
-        .withSynopsis(variable.value)
-        .withStyle(styles.alias)
-        .withSpace()
-    );
-});
+const aliases = contextIndependent(() => Git.aliases(process.env.HOME).then(variables => variables.map(variable =>
+    new Suggestion().withValue(variable.name).withSynopsis(variable.value).withStyle(styles.alias).withSpace()
+)));
 
 const expandAlias = async(name: string): Promise<string> => {
     const allAliases = await Git.aliases(process.env.HOME);
