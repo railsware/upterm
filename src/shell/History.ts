@@ -74,7 +74,7 @@ export class History {
         } catch (e) {
             // black screen history file doesn't exist
         }
-        this.storage = flatten(orderBy(histories, "lastModified").map(h => h.commands));
+        this.storage = flatten(orderBy(histories, "lastModified", "desc").map(h => h.commands));
     }
 
     private static remove(entry: string): void {

@@ -45,19 +45,19 @@ class Bash extends Shell {
             return {
                 lastModified: new Date(0),
                 commands: [],
-            }
+            };
         }
         const path = process.env.HISTFILE || Path.join(homeDirectory, ".bash_history");
         try {
             return {
                 lastModified: statSync(path).mtime,
                 commands: readFileSync(path).toString().trim().split(EOL).reverse(),
-            }
+            };
         } catch (error) {
             return {
                 lastModified: new Date(0),
                 commands: [],
-            }
+            };
         }
     }
 }
@@ -110,7 +110,7 @@ const shell = () => {
 };
 
 export function loadAllHistories(): { lastModified: Date, commands: string[] }[] {
-    return values(supportedShells).map((shell: Shell) => shell.loadHistory());
+    return values(supportedShells).map((supportedShell: Shell) => supportedShell.loadHistory());
 }
 
 export const loginShell: Shell = supportedShells[baseName(shell())];
