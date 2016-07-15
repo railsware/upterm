@@ -220,6 +220,12 @@ export const combine = (providers: AutocompletionProvider[]): AutocompletionProv
     return _.flatten(await Promise.all(providers.map(provider => provider(context))));
 };
 
+export function contextIndependent(provider: () => Promise<Suggestion[]>) {
+    return _.memoize(provider, () => "");
+}
+
+export const emptyProvider = () => [];
+
 export function mk(provider: AutocompletionProvider) {
     return provider;
 }
