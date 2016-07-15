@@ -210,7 +210,7 @@ const npmCommandConfig = [
     },
 ];
 
-const npmCommand = npmCommandConfig.map(config => new Suggestion().withValue(config.name).withDescription(config.description).withStyle(styles.command));
+const npmCommand = npmCommandConfig.map(config => new Suggestion({value: config.name, description: config.description, style: styles.command}));
 
 PluginManager.registerAutocompletionProvider("npm", async (context) => {
     if (context.argument.position === 1) {
@@ -223,7 +223,7 @@ PluginManager.registerAutocompletionProvider("npm", async (context) => {
 
             if (await exists(packageFilePath)) {
                 const parsed = JSON.parse(await readFile(packageFilePath)).scripts || {};
-                return mapObject(parsed, (key: string, value: string) => new Suggestion().withValue(key).withDescription(value).withStyle(styles.command));
+                return mapObject(parsed, (key: string, value: string) => new Suggestion({value: key, description: value, style: styles.command}));
             } else {
                 return [];
             }

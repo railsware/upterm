@@ -97,7 +97,7 @@ const commonMergeOptions = combine([
 const remotes = async(context: AutocompletionContext): Promise<Suggestion[]> => {
     if (Git.isGitDirectory(context.environment.pwd)) {
         const names = await Git.remotes(context.environment.pwd);
-        return names.map(name => new Suggestion().withValue(name).withStyle(styles.branch));
+        return names.map(name => new Suggestion({value: name, style: styles.branch}));
     }
 
     return [];
@@ -106,18 +106,13 @@ const remotes = async(context: AutocompletionContext): Promise<Suggestion[]> => 
 const configVariables = unique(async(context: AutocompletionContext): Promise<Suggestion[]> => {
     const variables = await Git.configVariables(context.environment.pwd);
 
-    return variables.map(variable =>
-        new Suggestion()
-            .withValue(variable.name)
-            .withDescription(variable.value)
-            .withStyle(styles.option)
-    );
+    return variables.map(variable => new Suggestion({value: variable.name, description: variable.value, style: styles.option}));
 });
 
 const branchesExceptCurrent = async(context: AutocompletionContext): Promise<Suggestion[]> => {
     if (Git.isGitDirectory(context.environment.pwd)) {
         const branches = (await Git.branches(context.environment.pwd)).filter(branch => !branch.isCurrent());
-        return branches.map(branch => new Suggestion().withValue(branch.toString()).withStyle(styles.branch));
+        return branches.map(branch => new Suggestion({value: branch.toString(), style: styles.branch}));
     } else {
         return [];
     }
@@ -127,7 +122,7 @@ const branchAlias = async(context: AutocompletionContext): Promise<Suggestion[]>
     if (doesLookLikeBranchAlias(context.argument.value)) {
         let nameOfAlias = (await linedOutputOf("git", ["name-rev", "--name-only", canonizeBranchAlias(context.argument.value)], context.environment.pwd))[0];
         if (nameOfAlias && !nameOfAlias.startsWith("Could not get")) {
-            return [new Suggestion().withValue(context.argument.value).withSynopsis(nameOfAlias).withStyle(styles.branch)];
+            return [new Suggestion({value: context.argument.value, synopsis: nameOfAlias, style: styles.branch})];
         }
     }
 
@@ -137,7 +132,7 @@ const branchAlias = async(context: AutocompletionContext): Promise<Suggestion[]>
 const notStagedFiles = unique(async(context: AutocompletionContext): Promise<Suggestion[]> => {
     if (Git.isGitDirectory(context.environment.pwd)) {
         const fileStatuses = await Git.status(context.environment.pwd);
-        return fileStatuses.map(fileStatus => new Suggestion().withValue(fileStatus.value).withStyle(styles.gitFileStatus(fileStatus.code)));
+        return fileStatuses.map(fileStatus => new Suggestion({value: fileStatus.value, style: styles.gitFileStatus(fileStatus.code)}));
     } else {
         return [];
     }
@@ -364,16 +359,13 @@ const commands = contextIndependent(async(): Promise<Suggestion[]> => {
             .map(match => {
                 const name = match.trim();
                 const data = find(commandsData, {name});
-                const suggestion = new Suggestion()
-                    .withValue(name)
-                    .withStyle(styles.command)
-                    .withSpace();
 
-                if (data) {
-                    suggestion.withDescription(data.description);
-                }
-
-                return suggestion;
+                return new Suggestion({
+                    value: name,
+                    description: data ? data.description : "",
+                    style: styles.command,
+                    space: true,
+                });
             });
 
         return sortBy(suggestions, suggestion => !suggestion.description);
@@ -382,9 +374,14 @@ const commands = contextIndependent(async(): Promise<Suggestion[]> => {
     return [];
 });
 
-const aliases = contextIndependent(() => Git.aliases(process.env.HOME).then(variables => variables.map(variable =>
-    new Suggestion().withValue(variable.name).withSynopsis(variable.value).withStyle(styles.alias).withSpace()
-)));
+const aliases = contextIndependent(() => Git.aliases(process.env.HOME).then(variables =>
+    variables.map(variable => new Suggestion({
+        value: variable.name,
+        synopsis: variable.value,
+        style: styles.alias,
+        space: true,
+    }))
+));
 
 const expandAlias = async(name: string): Promise<string> => {
     const allAliases = await Git.aliases(process.env.HOME);

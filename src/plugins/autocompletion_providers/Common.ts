@@ -181,7 +181,7 @@ const filesSuggestions = (filter: (info: FileInfo) => boolean) => async(tokenVal
             const value = `..${Path.sep}`.repeat(numberOfParts);
             const description = pwdParts.slice(0, -numberOfParts).join(Path.sep) || Path.sep;
 
-            return new Suggestion().withValue(value).withDescription(description).withStyle(styles.directory);
+            return new Suggestion({value: value, description: description, style: styles.directory});
         });
     }
 
@@ -195,9 +195,9 @@ const filesSuggestions = (filter: (info: FileInfo) => boolean) => async(tokenVal
         .filter(info => info.stat.isDirectory() || filter(info))
         .map(info => {
             if (info.stat.isDirectory()) {
-                return new Suggestion().withValue(joinPath(tokenDirectory, info.name + Path.sep)).withDisplayValue(info.name + Path.sep).withStyle(styles.directory);
+                return new Suggestion({value: joinPath(tokenDirectory, info.name + Path.sep), displayValue: info.name + Path.sep, style: styles.directory});
             } else {
-                return new Suggestion().withValue(joinPath(tokenDirectory, info.name)).withDisplayValue(info.name).withStyle(styles.file(info, joinPath(directoryPath, info.name)));
+                return new Suggestion({value: joinPath(tokenDirectory, info.name), displayValue: info.name, style: styles.file(info, joinPath(directoryPath, info.name))});
             }
         });
 };
@@ -215,7 +215,7 @@ export const directoriesSuggestionsProvider = filesSuggestionsProvider(info => i
 export const environmentVariableSuggestions = mk(context => {
     if (context.argument.value.startsWith("$")) {
         return context.environment.map((key, value) =>
-            new Suggestion().withValue("$" + key).withDescription(value).withStyle(styles.environmentVariable)
+            new Suggestion({value: "$" + key, description: value, style: styles.environmentVariable})
         );
     } else {
         return [];
@@ -274,9 +274,6 @@ function extensionIcon(extension: string) {
     }
 }
 
-export const style = (value: Style) => <T extends Suggestion>(suggestion: T) => suggestion.withStyle(value);
-export const command = style(styles.command);
-
 export const longAndShortFlag = (name: string, shortName = name[0]) => mk(context => {
     const longValue = `--${name}`;
     const shortValue = `-${shortName}`;
@@ -287,10 +284,10 @@ export const longAndShortFlag = (name: string, shortName = name[0]) => mk(contex
 
     const value = context.argument.value === shortValue ? shortValue : longValue;
 
-    return [new Suggestion().withValue(value).withDisplayValue(`${shortValue} ${longValue}`).withStyle(styles.option)];
+    return [new Suggestion({value: value, displayValue: `${shortValue} ${longValue}`, style: styles.option})];
 });
 
-export const shortFlag = (char: string) => unique(() => [new Suggestion().withValue(`-${char}`).withStyle(styles.option)]);
-export const longFlag = (name: string) => unique(() => [new Suggestion().withValue(`--${name}`).withStyle(styles.option)]);
+export const shortFlag = (char: string) => unique(() => [new Suggestion({value: `-${char}`, style: styles.option})]);
+export const longFlag = (name: string) => unique(() => [new Suggestion({value: `--${name}`, style: styles.option})]);
 
 export const mapSuggestions = (provider: AutocompletionProvider, mapper: (suggestion: Suggestion) => Suggestion) => mk(async(context) => (await provider(context)).map(mapper));
