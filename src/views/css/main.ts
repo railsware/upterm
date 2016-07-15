@@ -79,12 +79,12 @@ const applicationGrid = {
 function sessionsGridTemplate(list: PaneList): CSSObject {
     if (list instanceof ColumnList) {
         return {
-            gridTemplateColumns: `repeat(${list.children.length}, 1fr)`,
+            gridTemplateColumns: `repeat(${list.children.length}, calc(100% / ${list.children.length}))`,
             gridTemplateRows: "100%",
         };
     } else {
         return {
-            gridTemplateRows: `repeat(${list.children.length}, 1fr)`,
+            gridTemplateRows: `repeat(${list.children.length}, calc(${sessionsHeight} / ${list.children.length}))`,
             gridTemplateColumns: "100%",
         };
     }

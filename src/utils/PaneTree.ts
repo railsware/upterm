@@ -18,8 +18,11 @@ export abstract class PaneList {
         this.children = children;
     }
 
+    /**
+     * Add a new pane after the existing one.
+     */
     add(newPane: Pane, existingPane: Pane, direction: SplitDirection) {
-        const list = this.findListContaining(existingPane);
+        const list = this.findListWithDirectChild(existingPane);
 
         if (!list) {
             throw `Couldn't find a list containing the pane.`;
@@ -34,11 +37,72 @@ export abstract class PaneList {
         }
     }
 
+    remove(pane: Pane) {
+        const list = this.findListWithDirectChild(pane);
+
+        if (!list) {
+            throw `Couldn't find a list containing the pane.`;
+        }
+
+        list.children.splice(list.children.indexOf(pane), 1);
+    }
+
+    forEach(callback: (pane: Pane, index: number) => void, counter = 0): void {
+        for (const child of this.children) {
+            if (child instanceof Pane) {
+                callback(child, counter);
+                ++counter;
+            } else {
+                child.forEach(callback, counter);
+            }
+        }
+    }
+
+    previous(pane: Pane): Pane {
+        let paneIndex = 0;
+
+        this.forEach((current, index) => {
+            if (pane === current) {
+                paneIndex = index;
+            }
+        });
+
+        let previous = pane;
+
+        this.forEach((current, index) => {
+            if (index === paneIndex - 1) {
+                previous = current;
+            }
+        });
+
+        return previous;
+    }
+
+    next(pane: Pane): Pane {
+        let paneIndex = 0;
+
+        this.forEach((current, index) => {
+            if (pane === current) {
+                paneIndex = index;
+            }
+        });
+
+        let next = pane;
+
+        this.forEach((current, index) => {
+            if (index === paneIndex + 1) {
+                next = current;
+            }
+        });
+
+        return next;
+    }
+
     protected abstract insertBelow(position: number, pane: Pane): void;
     protected abstract insertNextTo(position: number, pane: Pane): void;
 
-    private findListContaining(pane: Pane): PaneList | undefined {
-        const childContaining = this.children.find(child => child === pane);
+    private findListWithDirectChild(tree: PaneTree): PaneList | undefined {
+        const childContaining = this.children.find(child => child === tree);
 
         if (childContaining) {
             return this;
@@ -46,7 +110,7 @@ export abstract class PaneList {
 
         for (const child of this.children) {
             if (child instanceof PaneList) {
-                const childListContaining = child.findListContaining(pane);
+                const childListContaining = child.findListWithDirectChild(tree);
                 if (childListContaining) {
                     return childListContaining;
                 }

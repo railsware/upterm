@@ -94,6 +94,9 @@ export class Tab {
         session.removeAllListeners();
 
         _.pull(this.sessions, session);
+        const active = this.activePane;
+        this._activePane = this.panes.previous(active);
+        this.panes.remove(active);
 
         if (this.activeSessionIndex >= this.sessions.length) {
             this.activeSessionIndex = this.sessions.length - 1;
@@ -137,6 +140,7 @@ export class Tab {
         if (!isFirst) {
             this.activateSession(this.sessions[this.activeSessionIndex - 1]);
         }
+        this._activePane = this.panes.previous(this.activePane);
 
         return !isFirst;
     }
@@ -149,6 +153,8 @@ export class Tab {
         if (!isLast) {
             this.activateSession(this.sessions[this.activeSessionIndex + 1]);
         }
+
+        this._activePane = this.panes.next(this.activePane);
 
         return !isLast;
     }
