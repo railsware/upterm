@@ -47,7 +47,7 @@ export class PromptComponent extends React.Component<Props, State> implements Ke
     private intersectionObserver = new IntersectionObserver(
         (entries) => {
             const entry = entries[0];
-            const nearTop = entry.boundingClientRect.bottom < 100;
+            const nearTop = entry.boundingClientRect.top < 50;
             const isVisible = entry.intersectionRatio === 1;
 
             this.setState(assign(this.state, {isSticky: nearTop && !isVisible}));
@@ -225,7 +225,7 @@ export class PromptComponent extends React.Component<Props, State> implements Ke
                          title={JSON.stringify(this.props.status)}
                          dangerouslySetInnerHTML={{__html: this.props.status === Status.Interrupted ? fontAwesome.close : ""}}></div>
                     <div className="prompt"
-                         style={css.prompt}
+                         style={css.prompt(this.state.isSticky)}
                          onKeyDown={event => this.handlers.onKeyDown(event)}
                          onInput={this.handleInput.bind(this)}
                          onKeyPress={() => this.props.status === e.Status.InProgress && stopBubblingUp(event)}

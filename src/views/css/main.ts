@@ -436,6 +436,7 @@ export const promptWrapper = (status: Status, isSticky: boolean) => {
         styles.width = "100%";
         styles.position = "fixed";
         styles.top = titleBarHeight;
+        styles.height = promptWrapperHeight;
     }
 
     if ([Status.Failure, Status.Interrupted].includes(status)) {
@@ -517,17 +518,18 @@ export const autocompletedPreview = Object.assign(
     }
 );
 
-export const prompt = Object.assign(
+export const prompt = (isSticky: boolean) => Object.assign(
     {},
     promptInlineElement,
     {
         color: colors.white,
         zIndex: 2,
+        whiteSpace: isSticky ? "nowrap" : "pre-wrap",
     }
 );
 
 export const promptPlaceholder = {
-    height: promptWrapperHeight,
+    minHeight: promptWrapperHeight,
 };
 
 export const arrowInner = (status: Status) => {
