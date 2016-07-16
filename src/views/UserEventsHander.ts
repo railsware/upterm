@@ -103,6 +103,12 @@ export const handleUserEvent = (application: ApplicationComponent, tab: Tab, ses
         return;
     }
 
+    if (event.metaKey) {
+        event.stopPropagation();
+        // Don't prevent default to be able to open developer tools and such.
+        return;
+    }
+
     if (isInProgress(job) && !isModifierKey(event)) {
         if (keys.interrupt(event)) {
             job.props.job.interrupt();
