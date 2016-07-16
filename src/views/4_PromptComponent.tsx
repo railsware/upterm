@@ -53,15 +53,16 @@ export class PromptComponent extends React.Component<Props, State> {
     );
 
     private pasteEventListener = (event: ClipboardEvent) => {
-        event.preventDefault();
-
         const text = event.clipboardData.getData("text/plain");
 
         if (this.props.status === e.Status.InProgress) {
             this.props.job.write(text);
         } else {
-            document.execCommand("insertHTML", false, text);
+            this.setText(text);
         }
+
+        event.stopPropagation();
+        event.preventDefault();
     };
 
     /* tslint:disable:member-ordering */
@@ -104,7 +105,7 @@ export class PromptComponent extends React.Component<Props, State> {
         }
 
         if (!prevProps.isFocused && this.props.isFocused) {
-            this.commandNode.focus();
+            this.focus();
         }
 
         // FIXME: find a better design to propagate events.
@@ -190,9 +191,7 @@ export class PromptComponent extends React.Component<Props, State> {
     }
 
     async appendLastLexemeOfPreviousJob(): Promise<void> {
-        const value = this.prompt.value + _.last(scan(History.latest)).value;
-        this.prompt.setValue(value);
-        this.setDOMValueProgrammatically(value);
+        this.setText(this.prompt.value + _.last(scan(History.latest)).value);
     }
 
     async execute(promptText: string): Promise<void> {
@@ -286,9 +285,8 @@ export class PromptComponent extends React.Component<Props, State> {
     }
 
     private get valueWithCurrentSuggestion(): string {
-        const state = this.state;
         const ast = this.props.job.prompt.ast;
-        const suggestion = state.suggestions[state.highlightedSuggestionIndex];
+        const suggestion = this.state.suggestions[this.state.highlightedSuggestionIndex];
         const node = leafNodeAt(getCaretPosition(this.commandNode), ast);
 
         return serializeReplacing(ast, node, suggestion.value.replace(/\s/g, "\\ ") + (suggestion.shouldAddSpace ? " " : ""));
@@ -327,7 +325,6 @@ export class PromptComponent extends React.Component<Props, State> {
     }
 
     private handleDrop(event: DragEvent) {
-        this.prompt.setValue(this.prompt.value + (event.dataTransfer.files[0].path));
-        this.setDOMValueProgrammatically(this.prompt.value);
+        this.setText(this.prompt.value + (event.dataTransfer.files[0].path));
     }
 }
