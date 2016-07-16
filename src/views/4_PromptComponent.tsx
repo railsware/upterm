@@ -52,6 +52,19 @@ export class PromptComponent extends React.Component<Props, State> {
         }
     );
 
+    private pasteEventListener = (event: ClipboardEvent) => {
+        event.preventDefault();
+
+        const text = event.clipboardData.getData("text/plain");
+
+        if (this.props.status === e.Status.InProgress) {
+            this.props.job.write(text);
+        } else {
+            document.execCommand("insertHTML", false, text);
+        }
+    };
+
+    /* tslint:disable:member-ordering */
     constructor(props: Props) {
         super(props);
         this.prompt = this.props.job.prompt;
@@ -69,52 +82,23 @@ export class PromptComponent extends React.Component<Props, State> {
         if (this.props.isFocused) {
             window.focusedPrompt = this;
         }
-
-        document.addEventListener(
-            "dragover",
-            function(event) {
-                event.preventDefault();
-                return false;
-            },
-            false
-        );
-
-        document.addEventListener(
-            "drop",
-            function(event) {
-                event.preventDefault();
-                return false;
-            },
-            false
-        );
     }
 
     componentDidMount() {
-        const node = this.commandNode;
-        node.focus();
-        node.addEventListener("paste", (event: ClipboardEvent) => {
-            event.preventDefault();
-
-            const text = event.clipboardData.getData("text/plain");
-
-            if (this.props.status === e.Status.InProgress) {
-                this.props.job.write(text);
-            } else {
-                document.execCommand("insertHTML", false, text);
-            }
-        });
+        this.focus();
+        this.setDOMValueProgrammatically(this.prompt.value);
 
         this.intersectionObserver.observe(this.placeholderNode);
-
-        this.setDOMValueProgrammatically(this.prompt.value);
+        this.commandNode.addEventListener("paste", this.pasteEventListener);
     }
 
     componentWillUnmount() {
         this.intersectionObserver.unobserve(this.placeholderNode);
         this.intersectionObserver.disconnect();
+        this.commandNode.removeEventListener("paste", this.pasteEventListener);
     }
 
-    componentDidUpdate(prevProps: Props, prevState: State) {
+    componentDidUpdate(prevProps: Props) {
         if (this.props.status !== e.Status.NotStarted) {
             return;
         }
@@ -173,7 +157,6 @@ export class PromptComponent extends React.Component<Props, State> {
                     <div className="prompt"
                          style={css.prompt(this.state.isSticky)}
                          onInput={this.handleInput.bind(this)}
-                         onKeyPress={() => this.props.status === e.Status.InProgress && stopBubblingUp(event)}
                          onDrop={this.handleDrop.bind(this)}
                          onBlur={() => this.setState(assign(this.state, {caretPositionFromPreviousFocus: getCaretPosition(this.commandNode)}))}
                          onFocus={() => setCaretPosition(this.commandNode, this.state.caretPositionFromPreviousFocus)}
