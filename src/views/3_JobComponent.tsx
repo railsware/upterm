@@ -2,7 +2,6 @@ import * as React from "react";
 import {Job} from "../shell/Job";
 import {PromptComponent} from "./4_PromptComponent";
 import {BufferComponent} from "./BufferComponent";
-import {Status} from "../Enums";
 
 interface Props {
     job: Job;

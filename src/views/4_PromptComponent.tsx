@@ -4,15 +4,12 @@ import * as React from "react";
 import {AutocompleteComponent} from "./AutocompleteComponent";
 import {DecorationToggleComponent} from "./DecorationToggleComponent";
 import {History} from "../shell/History";
-import {stopBubblingUp, keys, getCaretPosition, setCaretPosition, withModifierKey, isSpecialKey} from "./ViewUtils";
+import {stopBubblingUp, getCaretPosition, setCaretPosition} from "./ViewUtils";
 import {Prompt} from "../shell/Prompt";
 import {Job} from "../shell/Job";
 import {Suggestion} from "../plugins/autocompletion_providers/Common";
 import {KeyCode} from "../Enums";
 import {getSuggestions} from "../Autocompletion";
-import {Subject} from "rxjs/Subject";
-import "rxjs/add/operator/filter";
-import "rxjs/add/operator/map";
 import * as css from "./css/main";
 import {fontAwesome} from "./css/FontAwesome";
 import {Status} from "../Enums";
@@ -29,7 +26,7 @@ interface Props {
 
 interface State {
     highlightedSuggestionIndex: number;
-    latestKeyCode: number;
+    previousKeyCode: number;
     offsetTop: number;
     caretPositionFromPreviousFocus: number;
     suggestions: Suggestion[];
@@ -40,9 +37,6 @@ interface State {
 // TODO: Make sure we only update the view when the model changes.
 export class PromptComponent extends React.Component<Props, State> {
     private prompt: Prompt;
-    private handlers: {
-        onKeyDown: Function;
-    };
 
     private intersectionObserver = new IntersectionObserver(
         (entries) => {
@@ -64,55 +58,11 @@ export class PromptComponent extends React.Component<Props, State> {
 
         this.state = {
             highlightedSuggestionIndex: 0,
-            latestKeyCode: KeyCode.Escape,
+            previousKeyCode: KeyCode.Escape,
             offsetTop: 0,
             caretPositionFromPreviousFocus: 0,
             suggestions: [],
             isSticky: false,
-        };
-
-        const keyDownSubject: Subject<KeyboardEvent> = new Subject();
-
-
-        keyDownSubject // Should be before setting latestKeyCode.
-            .filter((event: KeyboardEvent) => event.keyCode === KeyCode.Period && (event.altKey || this.state.latestKeyCode === KeyCode.Escape))
-            .forEach((event: KeyboardEvent) => this.appendLastLexemeOfPreviousJob(event));
-
-        keyDownSubject
-            .filter(_.negate(withModifierKey))
-            .forEach((event: KeyboardEvent) => this.setState(assign(this.state, {
-                latestKeyCode: event.keyCode,
-                offsetTop: (event.target as HTMLDivElement).getBoundingClientRect().top}
-            )));
-
-
-        const promptKeys = keyDownSubject.filter(() => this.props.status !== e.Status.InProgress)
-            .filter(isSpecialKey)
-            .map(stopBubblingUp);
-        promptKeys
-            .filter(() => this.isAutocompleteShown())
-            .filter(keys.tab)
-            .forEach(() => this.applySuggestion());
-        promptKeys
-            .filter(keys.deleteWord).forEach(() => this.deleteWord());
-        promptKeys
-            .filter(keys.enter).forEach((event: KeyboardEvent) => this.execute(event));
-        promptKeys
-            .filter(keys.interrupt).forEach(() => {
-            this.prompt.setValue("");
-            this.setDOMValueProgrammatically("");
-        });
-        promptKeys
-            .filter((event: KeyboardEvent) => keys.goDown(event) || keys.goUp(event))
-            .filter(() => this.isAutocompleteShown())
-            .forEach((event: KeyboardEvent) => this.navigateAutocomplete(event));
-        promptKeys
-            .filter((event: KeyboardEvent) => keys.goDown(event) || keys.goUp(event))
-            .filter(() => !this.isAutocompleteShown())
-            .forEach((event: KeyboardEvent) => this.navigateHistory(event));
-
-        this.handlers = {
-            onKeyDown: (event: KeyboardEvent) => keyDownSubject.next(event),
         };
 
         // FIXME: find a better design to propagate events.
@@ -222,7 +172,6 @@ export class PromptComponent extends React.Component<Props, State> {
                          dangerouslySetInnerHTML={{__html: this.props.status === Status.Interrupted ? fontAwesome.close : ""}}></div>
                     <div className="prompt"
                          style={css.prompt(this.state.isSticky)}
-                         onKeyDown={event => this.handlers.onKeyDown(event)}
                          onInput={this.handleInput.bind(this)}
                          onKeyPress={() => this.props.status === e.Status.InProgress && stopBubblingUp(event)}
                          onDrop={this.handleDrop.bind(this)}
@@ -246,12 +195,84 @@ export class PromptComponent extends React.Component<Props, State> {
         this.commandNode.focus();
     }
 
-    private async execute(event: KeyboardEvent): Promise<void> {
-        this.prompt.setValue((event.target as HTMLElement).innerText);
+    clear(): void {
+        this.setText("");
+    }
+
+    setPreviousKeyCode(event: KeyboardEvent) {
+        this.setState(assign(this.state, {
+            previousKeyCode: event.keyCode,
+            offsetTop: (event.target as HTMLDivElement).getBoundingClientRect().top}
+        ));
+    }
+
+    async appendLastLexemeOfPreviousJob(): Promise<void> {
+        const value = this.prompt.value + _.last(scan(History.latest)).value;
+        this.prompt.setValue(value);
+        this.setDOMValueProgrammatically(value);
+    }
+
+    async execute(promptText: string): Promise<void> {
+        this.prompt.setValue(promptText);
 
         if (!this.isEmpty()) {
             this.props.job.execute();
         }
+    }
+
+    async deleteWord(current = this.prompt.value, position = getCaretPosition(this.commandNode)): Promise<void> {
+        if (!current.length) {
+            return;
+        }
+
+        const lastIndex = current.substring(0, position).lastIndexOf(" ");
+        const endsWithASpace = lastIndex === current.length - 1;
+
+        current = current.substring(0, lastIndex);
+
+        if (endsWithASpace) {
+            this.deleteWord(current, position);
+        } else {
+            if (current.length) {
+                current += " ";
+            }
+
+            this.prompt.setValue(current + this.prompt.value.substring(getCaretPosition(this.commandNode)));
+            this.setDOMValueProgrammatically(this.prompt.value);
+        }
+    }
+
+    setPreviousHistoryItem(): void {
+        this.setText(History.getPrevious());
+    }
+
+    setNextHistoryItem(): void {
+        this.setText(History.getNext());
+    }
+
+    focusPreviousSuggestion(): void {
+        const index = Math.max(0, this.state.highlightedSuggestionIndex - 1);
+        this.setState(assign(this.state, {highlightedSuggestionIndex: index}));
+    }
+
+    focusNextSuggestion(): void {
+        const index = Math.min(this.state.suggestions.length - 1, this.state.highlightedSuggestionIndex + 1);
+        this.setState(assign(this.state, {highlightedSuggestionIndex: index}));
+    }
+
+    isAutocompleteShown(): boolean {
+        /* tslint:disable:no-string-literal */
+        return !!this.refs["autocomplete"];
+    }
+
+    async applySuggestion(): Promise<void> {
+        this.setText(this.valueWithCurrentSuggestion);
+        await this.getSuggestions();
+    }
+
+    private setText(text: string): void {
+        this.prompt.setValue(text);
+        this.setDOMValueProgrammatically(text);
     }
 
     private get commandNode(): HTMLInputElement {
@@ -277,64 +298,8 @@ export class PromptComponent extends React.Component<Props, State> {
         this.forceUpdate();
     }
 
-    private async deleteWord(current = this.prompt.value, position = getCaretPosition(this.commandNode)): Promise<void> {
-        if (!current.length) {
-            return;
-        }
-
-        const lastIndex = current.substring(0, position).lastIndexOf(" ");
-        const endsWithASpace = lastIndex === current.length - 1;
-
-        current = current.substring(0, lastIndex);
-
-        if (endsWithASpace) {
-            this.deleteWord(current, position);
-        } else {
-            if (current.length) {
-                current += " ";
-            }
-
-            this.prompt.setValue(current + this.prompt.value.substring(getCaretPosition(this.commandNode)));
-            this.setDOMValueProgrammatically(this.prompt.value);
-        }
-    }
-
     private isEmpty(): boolean {
         return this.prompt.value.replace(/\s/g, "").length === 0;
-    }
-
-    private async navigateHistory(event: KeyboardEvent): Promise<void> {
-        let newValue = keys.goUp(event) ? History.getPrevious() : History.getNext();
-
-        this.prompt.setValue(newValue);
-        this.setDOMValueProgrammatically(newValue);
-    }
-
-    private async appendLastLexemeOfPreviousJob(event: KeyboardEvent): Promise<void> {
-        event.stopPropagation();
-        event.preventDefault();
-
-        const value = this.prompt.value + _.last(scan(History.latest)).value;
-        this.prompt.setValue(value);
-        this.setDOMValueProgrammatically(value);
-    }
-
-    private navigateAutocomplete(event: KeyboardEvent): void {
-        let index: number;
-        if (keys.goUp(event)) {
-            index = Math.max(0, this.state.highlightedSuggestionIndex - 1);
-        } else {
-            index = Math.min(this.state.suggestions.length - 1, this.state.highlightedSuggestionIndex + 1);
-        }
-
-        this.setState(assign(this.state, {highlightedSuggestionIndex: index}));
-    }
-
-    private async applySuggestion(): Promise<void> {
-        this.prompt.setValue(this.valueWithCurrentSuggestion);
-        this.setDOMValueProgrammatically(this.prompt.value);
-
-        await this.getSuggestions();
     }
 
     private get valueWithCurrentSuggestion(): string {
@@ -354,16 +319,10 @@ export class PromptComponent extends React.Component<Props, State> {
             KeyCode.Down,
         ];
 
-        // TODO: use streams.
         return this.props.isFocused &&
             this.state.suggestions.length &&
             this.commandNode && !this.isEmpty() &&
-            this.props.status === e.Status.NotStarted && !ignoredKeyCodes.includes(this.state.latestKeyCode);
-    }
-
-    private isAutocompleteShown(): boolean {
-        /* tslint:disable:no-string-literal */
-        return !!this.refs["autocomplete"];
+            this.props.status === e.Status.NotStarted && !ignoredKeyCodes.includes(this.state.previousKeyCode);
     }
 
     private async handleInput(event: React.SyntheticEvent<HTMLElement>): Promise<void> {

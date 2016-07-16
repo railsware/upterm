@@ -4,7 +4,7 @@ import {PromptComponent} from "./4_PromptComponent";
 import {JobComponent} from "./3_JobComponent";
 import {Tab} from "./TabComponent";
 import {KeyCode, SplitDirection, Status} from "../Enums";
-import {isModifierKey, keys} from "./ViewUtils";
+import {isModifierKey} from "./ViewUtils";
 
 export const handleUserEvent = (application: ApplicationComponent, tab: Tab, session: SessionComponent, job: JobComponent, prompt: PromptComponent) => (event: KeyboardEvent) => {
     if (event.metaKey && event.keyCode === KeyCode.Underscore) {
@@ -110,7 +110,7 @@ export const handleUserEvent = (application: ApplicationComponent, tab: Tab, ses
     }
 
     if (isInProgress(job) && !isModifierKey(event)) {
-        if (keys.interrupt(event)) {
+        if (event.ctrlKey && event.keyCode === KeyCode.C) {
             job.props.job.interrupt();
         } else {
             job.props.job.write(event);
@@ -122,6 +122,84 @@ export const handleUserEvent = (application: ApplicationComponent, tab: Tab, ses
     }
 
     prompt.focus();
+
+    if (event.keyCode === KeyCode.Period && event.altKey) {
+        prompt.appendLastLexemeOfPreviousJob();
+
+        event.stopPropagation();
+        event.preventDefault();
+        return;
+    }
+
+    if (!isInProgress(job)) {
+        if (event.ctrlKey && event.keyCode === KeyCode.W) {
+            prompt.deleteWord();
+
+            event.stopPropagation();
+            event.preventDefault();
+            return;
+        }
+
+        if (event.keyCode === KeyCode.CarriageReturn) {
+            prompt.execute((event.target as HTMLElement).innerText);
+
+            event.stopPropagation();
+            event.preventDefault();
+            return;
+        }
+
+        if (event.ctrlKey && event.keyCode === KeyCode.C) {
+            prompt.clear();
+
+            event.stopPropagation();
+            event.preventDefault();
+            return;
+        }
+
+        if (prompt.isAutocompleteShown()) {
+            if (event.keyCode === KeyCode.Tab) {
+                prompt.applySuggestion();
+
+                event.stopPropagation();
+                event.preventDefault();
+                return;
+            }
+
+            if ((event.ctrlKey && event.keyCode === KeyCode.P) || event.keyCode === KeyCode.Up) {
+                prompt.focusPreviousSuggestion();
+
+                event.stopPropagation();
+                event.preventDefault();
+                return;
+            }
+
+            if ((event.ctrlKey && event.keyCode === KeyCode.N) || event.keyCode === KeyCode.Down) {
+                prompt.focusNextSuggestion();
+
+                event.stopPropagation();
+                event.preventDefault();
+                return;
+            }
+        } else {
+            if ((event.ctrlKey && event.keyCode === KeyCode.P) || event.keyCode === KeyCode.Up) {
+                prompt.setPreviousHistoryItem();
+
+                event.stopPropagation();
+                event.preventDefault();
+                return;
+            }
+
+            if ((event.ctrlKey && event.keyCode === KeyCode.N) || event.keyCode === KeyCode.Down) {
+                prompt.setNextHistoryItem();
+
+                event.stopPropagation();
+                event.preventDefault();
+                return;
+            }
+        }
+    }
+
+    prompt.setPreviousKeyCode(event);
 };
 
 function isInProgress(job: JobComponent): boolean {
