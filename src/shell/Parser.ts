@@ -211,7 +211,7 @@ class Command extends BranchNode {
         }
     }
 
-    nthArgument(position: OneBasedIndex): Argument | undefined {
+    nthArgument(position: OneBasedPosition): Argument | undefined {
         if (this.argumentList) {
             return this.argumentList.arguments[position - 1];
         }

@@ -3,12 +3,12 @@ import {TabComponent, TabProps, Tab} from "./TabComponent";
 import * as React from "react";
 import * as _ from "lodash";
 import {ipcRenderer} from "electron";
-import {KeyCode, Status, SplitDirection} from "../Enums";
 import {remote} from "electron";
 import * as css from "./css/main";
 import {saveWindowBounds} from "./ViewUtils";
 import {StatusBarComponent} from "./StatusBarComponent";
 import {PaneTree, Pane} from "../utils/PaneTree";
+import {handleUserEvent} from "./UserEventsHander";
 
 export class ApplicationComponent extends React.Component<{}, {}> {
     private tabs: Tab[] = [];
@@ -45,74 +45,24 @@ export class ApplicationComponent extends React.Component<{}, {}> {
         };
     }
 
-    handleKeyDown(event: KeyboardEvent) {
-        if (event.metaKey && event.keyCode === KeyCode.Underscore) {
-            this.focusedTab.addPane(SplitDirection.Horizontal);
+    addTab(): void {
+        if (this.tabs.length < 9) {
+            this.tabs.push(new Tab(this));
+            this.focusedTabIndex = this.tabs.length - 1;
             this.forceUpdate();
-            event.stopPropagation();
+        } else {
+            remote.shell.beep();
         }
+    }
 
-        if (event.metaKey && event.keyCode === KeyCode.VerticalBar) {
-            this.focusedTab.addPane(SplitDirection.Vertical);
+    focusTab(position: OneBasedPosition): void {
+        const index = position === 9 ? this.tabs.length : position - 1;
+
+        if (this.tabs.length > index) {
+            this.focusedTabIndex = index;
             this.forceUpdate();
-            event.stopPropagation();
-        }
-
-        if (event.ctrlKey && event.keyCode === KeyCode.D) {
-            const focusedSession = this.focusedTab.focusedPane.session;
-
-            if (focusedSession.currentJob.status !== Status.InProgress) {
-                this.closeFocusedPane();
-
-                this.forceUpdate();
-                event.stopPropagation();
-            }
-        }
-
-        if (event.metaKey && event.keyCode === KeyCode.W) {
-            this.closeFocusedPane();
-
-            this.forceUpdate();
-            event.stopPropagation();
-            event.preventDefault();
-        }
-
-        if (event.metaKey && event.keyCode === KeyCode.J) {
-            this.focusedTab.activateNextPane();
-
-            this.forceUpdate();
-            event.stopPropagation();
-        }
-
-        if (event.metaKey && event.keyCode === KeyCode.K) {
-            this.focusedTab.activatePreviousPane();
-
-            this.forceUpdate();
-            event.stopPropagation();
-        }
-
-        if (event.metaKey && event.keyCode === KeyCode.T) {
-            if (this.tabs.length < 9) {
-                this.addTab();
-                this.forceUpdate();
-            } else {
-                remote.shell.beep();
-            }
-
-            event.stopPropagation();
-        }
-
-        if (event.metaKey && event.keyCode >= KeyCode.One && event.keyCode <= KeyCode.Nine) {
-            const newTabIndex = (event.keyCode === KeyCode.Nine ? this.tabs.length : parseInt(event.key, 10)) - 1;
-
-            if (this.tabs.length > newTabIndex) {
-                this.focusedTabIndex = newTabIndex;
-                this.forceUpdate();
-            } else {
-                remote.shell.beep();
-            }
-
-            event.stopPropagation();
+        } else {
+            remote.shell.beep();
         }
     }
 
@@ -151,7 +101,8 @@ export class ApplicationComponent extends React.Component<{}, {}> {
         }
 
         return (
-            <div style={css.application} onKeyDownCapture={this.handleKeyDown.bind(this)}>
+            <div style={css.application}
+                 onKeyDownCapture={(event: KeyboardEvent) => handleUserEvent(this, this.focusedTab, window.focusedSession, window.focusedJob, window.focusedPrompt)(event)}>
                 <ul style={css.titleBar}>{tabs}</ul>
                 {this.renderPanes(this.focusedTab.panes)}
                 <StatusBarComponent presentWorkingDirectory={this.focusedTab.focusedPane.session.directory}/>
@@ -185,11 +136,6 @@ export class ApplicationComponent extends React.Component<{}, {}> {
         for (const tab of this.tabs) {
             tab.updateAllPanesDimensions();
         }
-    }
-
-    private addTab(): void {
-        this.tabs.push(new Tab(this));
-        this.focusedTabIndex = this.tabs.length - 1;
     }
 
     private get focusedTab(): Tab {

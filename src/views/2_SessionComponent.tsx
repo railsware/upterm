@@ -18,12 +18,24 @@ export class SessionComponent extends React.Component<Props, {}> {
 
     constructor(props: Props) {
         super(props);
+
+        // FIXME: find a better design to propagate events.
+        if (this.props.isFocused) {
+            window.focusedSession = this;
+        }
     }
 
     componentDidMount() {
         this.props.session
             .on("job", () => this.props.updateStatusBar && this.props.updateStatusBar())
             .on("vcs-data", () => this.props.updateStatusBar && this.props.updateStatusBar());
+    }
+
+    componentDidUpdate() {
+        // FIXME: find a better design to propagate events.
+        if (this.props.isFocused) {
+            window.focusedSession = this;
+        }
     }
 
     render() {
