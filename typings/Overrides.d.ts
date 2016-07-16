@@ -1,7 +1,3 @@
-interface KeyDownReceiver {
-    handleKeyDown(event: KeyboardEvent): void;
-}
-
 declare class Notification {
     constructor(str: string);
     constructor(title: string, options: { body: string });

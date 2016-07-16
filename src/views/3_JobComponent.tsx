@@ -1,9 +1,8 @@
 import * as React from "react";
-import * as e from "../Enums";
 import {Job} from "../shell/Job";
-import {keys, isModifierKey} from "./ViewUtils";
 import {PromptComponent} from "./4_PromptComponent";
 import {BufferComponent} from "./BufferComponent";
+import {Status} from "../Enums";
 
 interface Props {
     job: Job;
@@ -16,7 +15,7 @@ interface State {
 
 export const decorateByDefault = true;
 
-export class JobComponent extends React.Component<Props, State> implements KeyDownReceiver {
+export class JobComponent extends React.Component<Props, State> {
     constructor(props: Props) {
         super(props);
 
@@ -64,27 +63,5 @@ export class JobComponent extends React.Component<Props, State> implements KeyDo
                 {buffer}
             </div>
         );
-    }
-
-    handleKeyDown(event: KeyboardEvent): void {
-        if (event.metaKey) {
-            event.stopPropagation();
-            return;
-        }
-
-        if (this.props.job.status === e.Status.InProgress && !event.metaKey && !isModifierKey(event)) {
-            if (keys.interrupt(event)) {
-                this.props.job.interrupt();
-            } else {
-                this.props.job.write(event);
-            }
-
-            event.stopPropagation();
-            event.preventDefault();
-            return;
-        }
-
-        // FIXME: find a better design to propagate events.
-        window.focusedPrompt.handleKeyDown(event);
     }
 }

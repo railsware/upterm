@@ -38,7 +38,7 @@ interface State {
 
 
 // TODO: Make sure we only update the view when the model changes.
-export class PromptComponent extends React.Component<Props, State> implements KeyDownReceiver {
+export class PromptComponent extends React.Component<Props, State> {
     private prompt: Prompt;
     private handlers: {
         onKeyDown: Function;
@@ -137,10 +137,6 @@ export class PromptComponent extends React.Component<Props, State> implements Ke
             },
             false
         );
-    }
-
-    handleKeyDown(event: KeyboardEvent): void {
-        this.commandNode.focus();
     }
 
     componentDidMount() {
@@ -244,6 +240,10 @@ export class PromptComponent extends React.Component<Props, State> implements Ke
                 </div>
             </div>
         );
+    }
+
+    focus(): void {
+        this.commandNode.focus();
     }
 
     private async execute(event: KeyboardEvent): Promise<void> {

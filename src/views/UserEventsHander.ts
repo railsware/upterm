@@ -4,6 +4,7 @@ import {PromptComponent} from "./4_PromptComponent";
 import {JobComponent} from "./3_JobComponent";
 import {Tab} from "./TabComponent";
 import {KeyCode, SplitDirection, Status} from "../Enums";
+import {isModifierKey, keys} from "./ViewUtils";
 
 export const handleUserEvent = (application: ApplicationComponent, tab: Tab, session: SessionComponent, job: JobComponent, prompt: PromptComponent) => (event: KeyboardEvent) => {
     if (event.metaKey && event.keyCode === KeyCode.Underscore) {
@@ -24,18 +25,14 @@ export const handleUserEvent = (application: ApplicationComponent, tab: Tab, ses
         return;
     }
 
-    if (event.ctrlKey && event.keyCode === KeyCode.D) {
-        const focusedSession = tab.focusedPane.session;
+    if (event.ctrlKey && event.keyCode === KeyCode.D && !isInProgress(job)) {
+        application.closeFocusedPane();
 
-        if (focusedSession.currentJob.status !== Status.InProgress) {
-            application.closeFocusedPane();
+        application.forceUpdate();
 
-            application.forceUpdate();
-
-            event.stopPropagation();
-            event.preventDefault();
-            return;
-        }
+        event.stopPropagation();
+        event.preventDefault();
+        return;
     }
 
     if (event.metaKey && event.keyCode === KeyCode.W) {
@@ -84,4 +81,43 @@ export const handleUserEvent = (application: ApplicationComponent, tab: Tab, ses
         event.preventDefault();
         return;
     }
+
+    if (event.metaKey && event.keyCode === KeyCode.D) {
+        window.DEBUG = !window.DEBUG;
+
+        require("devtron").install();
+        console.log(`Debugging mode has been ${window.DEBUG ? "enabled" : "disabled"}.`);
+
+        application.forceUpdate();
+
+        event.stopPropagation();
+        event.preventDefault();
+        return;
+    }
+
+    if (event.ctrlKey && event.keyCode === KeyCode.L && !isInProgress(job)) {
+        session.props.session.clearJobs();
+
+        event.stopPropagation();
+        event.preventDefault();
+        return;
+    }
+
+    if (isInProgress(job) && !isModifierKey(event)) {
+        if (keys.interrupt(event)) {
+            job.props.job.interrupt();
+        } else {
+            job.props.job.write(event);
+        }
+
+        event.stopPropagation();
+        event.preventDefault();
+        return;
+    }
+
+    prompt.focus();
 };
+
+function isInProgress(job: JobComponent): boolean {
+    return job.props.job.status === Status.InProgress;
+}
