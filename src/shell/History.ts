@@ -13,9 +13,9 @@ const readHistoryFileData = () => {
         return {
             lastModified: new Date(0),
             commands: [],
-        }
+        };
     }
-}
+};
 
 export class History {
     static pointer: number = 0;

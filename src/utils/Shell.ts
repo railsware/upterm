@@ -1,14 +1,8 @@
-<<<<<<< 83e01401fc66ab88e538286f6ab69fb450592643
 import {basename} from "path";
-import {resolveFile, exists, filterAsync} from "./Common";
-=======
 import {readFileSync, statSync} from "fs";
 import * as Path from "path";
 import {EOL} from "os";
-import {baseName, resolveFile, exists, filterAsync, homeDirectory} from "./Common";
-import {values} from "lodash";
-
->>>>>>> Clean up code for loading bash history
+import {resolveFile, exists, filterAsync, homeDirectory} from "./Common";
 
 abstract class Shell {
     abstract get executableName(): string;
@@ -103,8 +97,9 @@ const shell = () => {
     }
 };
 
+export const loginShell: Shell = supportedShells[basename(shell())];
+
 export function loadHistory(): { lastModified: Date, commands: string[] } {
     return loginShell.loadHistory();
 }
 
-export const loginShell: Shell = supportedShells[baseName(shell())];
