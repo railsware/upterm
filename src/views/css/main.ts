@@ -32,7 +32,7 @@ const infoPanel = {
     backgroundColor: panelColor,
 };
 
-const inactiveJobs: CSSObject = {
+const unfocusedJobs: CSSObject = {
     pointerEvents: "none",
 };
 
@@ -132,8 +132,8 @@ export const application = Object.assign(
     }
 );
 
-export const jobs = (isSessionActive: boolean): CSSObject =>
-    isSessionActive ? {} : inactiveJobs;
+export const jobs = (isSessionFocused: boolean): CSSObject =>
+    isSessionFocused ? {} : unfocusedJobs;
 
 export const row = (jobStatus: Status, activeScreenBufferType: ScreenBufferType) => {
     const style: CSSObject = {
@@ -256,14 +256,14 @@ export const sessions = (list: PaneList) => Object.assign(
     applicationGrid.sessions
 );
 
-export const session = (isActive: boolean) => {
+export const session = (isFocused: boolean) => {
     const styles: CSSObject = {
         position: "relative",
         outline: "none",
         overflowY: "scroll",
     };
 
-    if (!isActive) {
+    if (!isFocused) {
         styles.boxShadow = `0 0 0 1px ${alpha(colors.white, 0.3)}`;
         styles.margin = "0 1px 0 0";
     }
@@ -271,10 +271,10 @@ export const session = (isActive: boolean) => {
     return styles;
 };
 
-export const sessionShutter = (isActive: boolean) => ({
+export const sessionShutter = (isFocused: boolean) => ({
     backgroundColor: colors.white,
     zIndex: 1,
-    opacity: isActive ? 0 : 0.2,
+    opacity: isFocused ? 0 : 0.2,
     pointerEvents: "none",
     position: "absolute",
     top: 0,
@@ -293,10 +293,10 @@ export const titleBar = {
     WebkitUserSelect: "none",
 };
 
-export const tab = (isHovered: boolean, isActive: boolean) => {
+export const tab = (isHovered: boolean, isFocused: boolean) => {
     return {
         backgroundColor: isHovered ? panelColor : colors.black,
-        opacity: (isHovered || isActive) ? 1 : 0.3,
+        opacity: (isHovered || isFocused) ? 1 : 0.3,
         position: "relative",
         height: titleBarHeight,
         width: 150,

@@ -8,7 +8,7 @@ import {SplitDirection} from "../Enums";
 import {Pane, RowList, PaneList} from "../utils/PaneTree";
 
 export interface TabProps {
-    isActive: boolean;
+    isFocused: boolean;
     activate: () => void;
     position: number;
     closeHandler: (event: KeyboardEvent) => void;
@@ -31,7 +31,7 @@ export class TabComponent extends React.Component<TabProps, TabState> {
     }
 
     render() {
-        return <li style={css.tab(this.state.hover !== TabHoverState.Nothing, this.props.isActive)}
+        return <li style={css.tab(this.state.hover !== TabHoverState.Nothing, this.props.isFocused)}
                    onClick={this.props.activate}
                    onMouseEnter={() => this.setState({hover: TabHoverState.Tab})}
                    onMouseLeave={() => this.setState({hover: TabHoverState.Nothing})}>
@@ -48,56 +48,56 @@ export class TabComponent extends React.Component<TabProps, TabState> {
 
 export class Tab {
     readonly panes: PaneList;
-    private _activePane: Pane;
+    private _focusedPane: Pane;
 
     constructor(private application: ApplicationComponent) {
         const pane = new Pane(new Session(this.application, this.contentDimensions));
 
         this.panes = new RowList([pane]);
-        this._activePane = pane;
+        this._focusedPane = pane;
     }
 
     addPane(direction: SplitDirection): void {
         const session = new Session(this.application, this.contentDimensions);
         const pane = new Pane(session);
 
-        this.panes.add(pane, this.activePane, direction);
+        this.panes.add(pane, this.focusedPane, direction);
 
-        this._activePane = pane;
+        this._focusedPane = pane;
     }
 
-    closeActivePane(): void {
-        this.activePane.session.jobs.forEach(job => {
+    closeFocusedPane(): void {
+        this.focusedPane.session.jobs.forEach(job => {
             job.removeAllListeners();
             job.interrupt();
         });
-        this.activePane.session.removeAllListeners();
+        this.focusedPane.session.removeAllListeners();
 
-        const active = this.activePane;
-        this._activePane = this.panes.previous(active);
-        this.panes.remove(active);
+        const focused = this.focusedPane;
+        this._focusedPane = this.panes.previous(focused);
+        this.panes.remove(focused);
     }
 
     closeAllPanes(): void {
         while (this.panes.size) {
-            this.closeActivePane();
+            this.closeFocusedPane();
         }
     }
 
-    get activePane(): Pane {
-        return this._activePane;
+    get focusedPane(): Pane {
+        return this._focusedPane;
     }
 
     activatePane(pane: Pane): void {
-        this._activePane = pane;
+        this._focusedPane = pane;
     }
 
     activatePreviousPane(): void {
-        this._activePane = this.panes.previous(this.activePane);
+        this._focusedPane = this.panes.previous(this.focusedPane);
     }
 
     activateNextPane(): void {
-        this._activePane = this.panes.next(this.activePane);
+        this._focusedPane = this.panes.next(this.focusedPane);
     }
 
     updateAllPanesDimensions(): void {

@@ -24,7 +24,7 @@ interface Props {
     job: Job;
     status: e.Status;
     decorateToggler: () => boolean;
-    hasLocusOfAttention: boolean;
+    isFocused: boolean;
 }
 
 interface State {
@@ -116,8 +116,8 @@ export class PromptComponent extends React.Component<Props, State> implements Ke
         };
 
         // FIXME: find a better design to propagate events.
-        if (this.props.hasLocusOfAttention) {
-            window.promptUnderAttention = this;
+        if (this.props.isFocused) {
+            window.focusedPrompt = this;
         }
 
         document.addEventListener(
@@ -173,13 +173,13 @@ export class PromptComponent extends React.Component<Props, State> implements Ke
             return;
         }
 
-        if (!prevProps.hasLocusOfAttention && this.props.hasLocusOfAttention) {
+        if (!prevProps.isFocused && this.props.isFocused) {
             this.commandNode.focus();
         }
 
         // FIXME: find a better design to propagate events.
-        if (this.props.hasLocusOfAttention) {
-            window.promptUnderAttention = this;
+        if (this.props.isFocused) {
+            window.focusedPrompt = this;
         }
     }
 
@@ -355,7 +355,7 @@ export class PromptComponent extends React.Component<Props, State> implements Ke
         ];
 
         // TODO: use streams.
-        return this.props.hasLocusOfAttention &&
+        return this.props.isFocused &&
             this.state.suggestions.length &&
             this.commandNode && !this.isEmpty() &&
             this.props.status === e.Status.NotStarted && !ignoredKeyCodes.includes(this.state.latestKeyCode);

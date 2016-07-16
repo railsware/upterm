@@ -7,7 +7,7 @@ import {BufferComponent} from "./BufferComponent";
 
 interface Props {
     job: Job;
-    hasLocusOfAttention: boolean;
+    isFocused: boolean;
 }
 
 interface State {
@@ -25,8 +25,8 @@ export class JobComponent extends React.Component<Props, State> implements KeyDo
         };
 
         // FIXME: find a better design to propagate events.
-        if (this.props.hasLocusOfAttention) {
-            window.jobUnderAttention = this;
+        if (this.props.isFocused) {
+            window.focusedJob = this;
         }
     }
 
@@ -38,8 +38,8 @@ export class JobComponent extends React.Component<Props, State> implements KeyDo
 
     componentDidUpdate() {
         // FIXME: find a better design to propagate events.
-        if (this.props.hasLocusOfAttention) {
-            window.jobUnderAttention = this;
+        if (this.props.isFocused) {
+            window.focusedJob = this;
         }
     }
 
@@ -55,7 +55,7 @@ export class JobComponent extends React.Component<Props, State> implements KeyDo
             <div className={"job"}>
                 <PromptComponent job={this.props.job}
                                  status={this.props.job.status}
-                                 hasLocusOfAttention={this.props.hasLocusOfAttention}
+                                 isFocused={this.props.isFocused}
                                  decorateToggler={() => {
                                      const newDecorate = !this.state.decorate;
                                      this.setState({decorate: newDecorate});
@@ -85,6 +85,6 @@ export class JobComponent extends React.Component<Props, State> implements KeyDo
         }
 
         // FIXME: find a better design to propagate events.
-        window.promptUnderAttention.handleKeyDown(event);
+        window.focusedPrompt.handleKeyDown(event);
     }
 }

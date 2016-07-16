@@ -8,9 +8,9 @@ import * as css from "./css/main";
 
 interface Props {
     session: Session;
-    isActive: boolean;
-    activate: () => void;
-    updateStatusBar: (() => void) | undefined; // Only the active session can update the status bar.
+    isFocused: boolean;
+    focus: () => void;
+    updateStatusBar: (() => void) | undefined; // Only the focused session can update the status bar.
 }
 
 export class SessionComponent extends React.Component<Props, {}> {
@@ -30,26 +30,26 @@ export class SessionComponent extends React.Component<Props, {}> {
         const jobs = _.takeRight(this.props.session.jobs, this.RENDER_JOBS_COUNT).map((job: Job, index: number) =>
             <JobComponent key={job.id}
                           job={job}
-                          hasLocusOfAttention={this.props.isActive && index === this.props.session.jobs.length - 1}/>
+                          isFocused={this.props.isFocused && index === this.props.session.jobs.length - 1}/>
         );
 
         return (
             <div className="session"
-                 style={css.session(this.props.isActive)}
+                 style={css.session(this.props.isFocused)}
                  tabIndex={0}
                  onClickCapture={this.handleClick.bind(this)}
                  onKeyDownCapture={this.handleKeyDown.bind(this)}>
 
-                <div className="jobs" style={css.jobs(this.props.isActive)}>{jobs}</div>
+                <div className="jobs" style={css.jobs(this.props.isFocused)}>{jobs}</div>
 
-                <div className="shutter" style={css.sessionShutter(this.props.isActive)}></div>
+                <div className="shutter" style={css.sessionShutter(this.props.isFocused)}></div>
             </div>
         );
     }
 
     private handleClick() {
-        if (!this.props.isActive) {
-            this.props.activate();
+        if (!this.props.isFocused) {
+            this.props.focus();
         }
     }
 
@@ -75,6 +75,6 @@ export class SessionComponent extends React.Component<Props, {}> {
         }
 
         // FIXME: find a better design to propagate events.
-        window.jobUnderAttention.handleKeyDown(event);
+        window.focusedJob.handleKeyDown(event);
     }
 }

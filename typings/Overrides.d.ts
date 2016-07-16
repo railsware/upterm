@@ -44,8 +44,8 @@ declare class IntersectionObserver {
 
 interface Window {
     DEBUG: boolean;
-    jobUnderAttention: KeyDownReceiver;
-    promptUnderAttention: KeyDownReceiver;
+    focusedJob: KeyDownReceiver;
+    focusedPrompt: KeyDownReceiver;
 }
 
 declare class AnsiParser {

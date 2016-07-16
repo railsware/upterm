@@ -12,7 +12,7 @@ import {PaneTree, Pane} from "../utils/PaneTree";
 
 export class ApplicationComponent extends React.Component<{}, {}> {
     private tabs: Tab[] = [];
-    private activeTabIndex: number;
+    private focusedTabIndex: number;
 
     constructor(props: {}) {
         super(props);
@@ -31,7 +31,7 @@ export class ApplicationComponent extends React.Component<{}, {}> {
             .on("devtools-closed", () => this.recalculateDimensions());
 
         ipcRenderer.on("change-working-directory", (event: Electron.IpcRendererEvent, directory: string) =>
-            this.activeTab.activePane.session.directory = directory
+            this.focusedTab.focusedPane.session.directory = directory
         );
 
         window.onbeforeunload = () => {
@@ -47,22 +47,22 @@ export class ApplicationComponent extends React.Component<{}, {}> {
 
     handleKeyDown(event: KeyboardEvent) {
         if (event.metaKey && event.keyCode === KeyCode.Underscore) {
-            this.activeTab.addPane(SplitDirection.Horizontal);
+            this.focusedTab.addPane(SplitDirection.Horizontal);
             this.forceUpdate();
             event.stopPropagation();
         }
 
         if (event.metaKey && event.keyCode === KeyCode.VerticalBar) {
-            this.activeTab.addPane(SplitDirection.Vertical);
+            this.focusedTab.addPane(SplitDirection.Vertical);
             this.forceUpdate();
             event.stopPropagation();
         }
 
         if (event.ctrlKey && event.keyCode === KeyCode.D) {
-            const activeSession = this.activeTab.activePane.session;
+            const focusedSession = this.focusedTab.focusedPane.session;
 
-            if (activeSession.currentJob.status !== Status.InProgress) {
-                this.closeActivePane();
+            if (focusedSession.currentJob.status !== Status.InProgress) {
+                this.closeFocusedPane();
 
                 this.forceUpdate();
                 event.stopPropagation();
@@ -70,7 +70,7 @@ export class ApplicationComponent extends React.Component<{}, {}> {
         }
 
         if (event.metaKey && event.keyCode === KeyCode.W) {
-            this.closeActivePane();
+            this.closeFocusedPane();
 
             this.forceUpdate();
             event.stopPropagation();
@@ -78,14 +78,14 @@ export class ApplicationComponent extends React.Component<{}, {}> {
         }
 
         if (event.metaKey && event.keyCode === KeyCode.J) {
-            this.activeTab.activateNextPane();
+            this.focusedTab.activateNextPane();
 
             this.forceUpdate();
             event.stopPropagation();
         }
 
         if (event.metaKey && event.keyCode === KeyCode.K) {
-            this.activeTab.activatePreviousPane();
+            this.focusedTab.activatePreviousPane();
 
             this.forceUpdate();
             event.stopPropagation();
@@ -106,7 +106,7 @@ export class ApplicationComponent extends React.Component<{}, {}> {
             const newTabIndex = (event.keyCode === KeyCode.Nine ? this.tabs.length : parseInt(event.key, 10)) - 1;
 
             if (this.tabs.length > newTabIndex) {
-                this.activeTabIndex = newTabIndex;
+                this.focusedTabIndex = newTabIndex;
                 this.forceUpdate();
             } else {
                 remote.shell.beep();
@@ -117,11 +117,11 @@ export class ApplicationComponent extends React.Component<{}, {}> {
     }
 
     // FIXME: this method should be private.
-    closeActivePane() {
-        this.activeTab.closeActivePane();
+    closeFocusedPane() {
+        this.focusedTab.closeFocusedPane();
 
-        if (this.activeTab.panes.size === 0) {
-            this.closeTab(this.activeTab);
+        if (this.focusedTab.panes.size === 0) {
+            this.closeTab(this.focusedTab);
         }
 
         this.forceUpdate();
@@ -132,11 +132,11 @@ export class ApplicationComponent extends React.Component<{}, {}> {
 
         if (this.tabs.length > 1) {
             tabs = this.tabs.map((tab: Tab, index: number) =>
-                <TabComponent isActive={index === this.activeTabIndex}
+                <TabComponent isFocused={index === this.focusedTabIndex}
                               key={index}
                               position={index + 1}
                               activate={() => {
-                                this.activeTabIndex = index;
+                                this.focusedTabIndex = index;
                                 this.forceUpdate();
                               }}
                               closeHandler={(event: KeyboardEvent) => {
@@ -153,8 +153,8 @@ export class ApplicationComponent extends React.Component<{}, {}> {
         return (
             <div style={css.application} onKeyDownCapture={this.handleKeyDown.bind(this)}>
                 <ul style={css.titleBar}>{tabs}</ul>
-                {this.renderPanes(this.activeTab.panes)}
-                <StatusBarComponent presentWorkingDirectory={this.activeTab.activePane.session.directory}/>
+                {this.renderPanes(this.focusedTab.panes)}
+                <StatusBarComponent presentWorkingDirectory={this.focusedTab.focusedPane.session.directory}/>
             </div>
         );
     }
@@ -163,15 +163,15 @@ export class ApplicationComponent extends React.Component<{}, {}> {
         if (tree instanceof Pane) {
             const pane = tree;
             const session = pane.session;
-            const isActive = pane === this.activeTab.activePane;
+            const isFocused = pane === this.focusedTab.focusedPane;
 
             return (
                 <SessionComponent session={session}
                                   key={session.id}
-                                  isActive={isActive}
-                                  updateStatusBar={isActive ? () => this.forceUpdate() : undefined}
-                                  activate={() => {
-                                      this.activeTab.activatePane(pane);
+                                  isFocused={isFocused}
+                                  updateStatusBar={isFocused ? () => this.forceUpdate() : undefined}
+                                  focus={() => {
+                                      this.focusedTab.activatePane(pane);
                                       this.forceUpdate();
                                   }}>
                 </SessionComponent>
@@ -189,11 +189,11 @@ export class ApplicationComponent extends React.Component<{}, {}> {
 
     private addTab(): void {
         this.tabs.push(new Tab(this));
-        this.activeTabIndex = this.tabs.length - 1;
+        this.focusedTabIndex = this.tabs.length - 1;
     }
 
-    private get activeTab(): Tab {
-        return this.tabs[this.activeTabIndex];
+    private get focusedTab(): Tab {
+        return this.tabs[this.focusedTabIndex];
     }
 
     private closeTab(tab: Tab, quit = true): void {
@@ -202,8 +202,8 @@ export class ApplicationComponent extends React.Component<{}, {}> {
 
         if (this.tabs.length === 0 && quit) {
             ipcRenderer.send("quit");
-        } else if (this.tabs.length === this.activeTabIndex) {
-            this.activeTabIndex -= 1;
+        } else if (this.tabs.length === this.focusedTabIndex) {
+            this.focusedTabIndex -= 1;
         }
     }
 
