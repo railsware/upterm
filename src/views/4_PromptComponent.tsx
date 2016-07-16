@@ -190,7 +190,7 @@ export class PromptComponent extends React.Component<Props, State> {
         ));
     }
 
-    async appendLastLexemeOfPreviousJob(): Promise<void> {
+    async appendLastLArgumentOfPreviousCommand(): Promise<void> {
         this.setText(this.prompt.value + _.last(scan(History.latest)).value);
     }
 

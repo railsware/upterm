@@ -124,7 +124,7 @@ export const handleUserEvent = (application: ApplicationComponent, tab: Tab, ses
     prompt.focus();
 
     if (event.keyCode === KeyCode.Period && event.altKey) {
-        prompt.appendLastLexemeOfPreviousJob();
+        prompt.appendLastLArgumentOfPreviousCommand();
 
         event.stopPropagation();
         event.preventDefault();
