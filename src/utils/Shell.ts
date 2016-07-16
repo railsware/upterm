@@ -41,12 +41,6 @@ class Bash extends Shell {
     }
 
     loadHistory(): { lastModified: Date, commands: string[] } {
-        if (process.env.HISTTIMEFORMAT) {
-            return {
-                lastModified: new Date(0),
-                commands: [],
-            };
-        }
         const path = process.env.HISTFILE || Path.join(homeDirectory, ".bash_history");
         try {
             return {
@@ -109,8 +103,8 @@ const shell = () => {
     }
 };
 
-export function loadAllHistories(): { lastModified: Date, commands: string[] }[] {
-    return values(supportedShells).map((supportedShell: Shell) => supportedShell.loadHistory());
+export function loadHistory(): { lastModified: Date, commands: string[] } {
+    return loginShell.loadHistory();
 }
 
 export const loginShell: Shell = supportedShells[baseName(shell())];

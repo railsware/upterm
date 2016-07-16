@@ -1,7 +1,21 @@
 import {readFileSync, statSync} from "fs";
 import {flatten, orderBy} from "lodash";
-import {loadAllHistories} from "../utils/Shell";
+import {loadHistory} from "../utils/Shell";
 import {historyFilePath} from "../utils/Common";
+
+const readHistoryFileData = () => {
+    try {
+        return {
+            lastModified: statSync(historyFilePath).mtime,
+            commands: JSON.parse(readFileSync(historyFilePath).toString()),
+        };
+    } catch (e) {
+        return {
+            lastModified: new Date(0),
+            commands: [],
+        }
+    }
+}
 
 export class History {
     static pointer: number = 0;
@@ -65,16 +79,9 @@ export class History {
     }
 
     static deserialize(): void {
-        const histories = loadAllHistories();
-        try {
-            histories.push({
-                lastModified: statSync(historyFilePath).mtime,
-                commands: JSON.parse(readFileSync(historyFilePath).toString()),
-            });
-        } catch (e) {
-            // black screen history file doesn't exist
-        }
-        this.storage = flatten(orderBy(histories, "lastModified", "desc").map(h => h.commands));
+        const shellHistory = loadHistory();
+        const blackScreenHistory = readHistoryFileData();
+        this.storage = flatten(orderBy([shellHistory, blackScreenHistory], "lastModified", "desc").map(h => h.commands));
     }
 
     private static remove(entry: string): void {
