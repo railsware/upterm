@@ -1,13 +1,11 @@
 import * as React from "react";
-import * as e from "../Enums";
 import {Job} from "../shell/Job";
-import {keys, isModifierKey} from "./ViewUtils";
 import {PromptComponent} from "./4_PromptComponent";
 import {BufferComponent} from "./BufferComponent";
 
 interface Props {
     job: Job;
-    hasLocusOfAttention: boolean;
+    isFocused: boolean;
 }
 
 interface State {
@@ -16,7 +14,7 @@ interface State {
 
 export const decorateByDefault = true;
 
-export class JobComponent extends React.Component<Props, State> implements KeyDownReceiver {
+export class JobComponent extends React.Component<Props, State> {
     constructor(props: Props) {
         super(props);
 
@@ -25,8 +23,8 @@ export class JobComponent extends React.Component<Props, State> implements KeyDo
         };
 
         // FIXME: find a better design to propagate events.
-        if (this.props.hasLocusOfAttention) {
-            window.jobUnderAttention = this;
+        if (this.props.isFocused) {
+            window.focusedJob = this;
         }
     }
 
@@ -38,8 +36,8 @@ export class JobComponent extends React.Component<Props, State> implements KeyDo
 
     componentDidUpdate() {
         // FIXME: find a better design to propagate events.
-        if (this.props.hasLocusOfAttention) {
-            window.jobUnderAttention = this;
+        if (this.props.isFocused) {
+            window.focusedJob = this;
         }
     }
 
@@ -55,7 +53,7 @@ export class JobComponent extends React.Component<Props, State> implements KeyDo
             <div className={"job"}>
                 <PromptComponent job={this.props.job}
                                  status={this.props.job.status}
-                                 hasLocusOfAttention={this.props.hasLocusOfAttention}
+                                 isFocused={this.props.isFocused}
                                  decorateToggler={() => {
                                      const newDecorate = !this.state.decorate;
                                      this.setState({decorate: newDecorate});
@@ -64,27 +62,5 @@ export class JobComponent extends React.Component<Props, State> implements KeyDo
                 {buffer}
             </div>
         );
-    }
-
-    handleKeyDown(event: KeyboardEvent): void {
-        if (event.metaKey) {
-            event.stopPropagation();
-            return;
-        }
-
-        if (this.props.job.status === e.Status.InProgress && !event.metaKey && !isModifierKey(event)) {
-            if (keys.interrupt(event)) {
-                this.props.job.interrupt();
-            } else {
-                this.props.job.write(event);
-            }
-
-            event.stopPropagation();
-            event.preventDefault();
-            return;
-        }
-
-        // FIXME: find a better design to propagate events.
-        window.promptUnderAttention.handleKeyDown(event);
     }
 }

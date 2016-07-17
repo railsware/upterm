@@ -1,7 +1,3 @@
-interface KeyDownReceiver {
-    handleKeyDown(event: KeyboardEvent): void;
-}
-
 declare class Notification {
     constructor(str: string);
     constructor(title: string, options: { body: string });
@@ -44,8 +40,10 @@ declare class IntersectionObserver {
 
 interface Window {
     DEBUG: boolean;
-    jobUnderAttention: KeyDownReceiver;
-    promptUnderAttention: KeyDownReceiver;
+    focusedSession: any;
+    focusedJob: any;
+    focusedPrompt: any;
+    search: any;
 }
 
 declare class AnsiParser {

@@ -1,13 +1,14 @@
 /* tslint:disable:no-unused-variable */
 import * as React from "react";
-import * as _ from "lodash";
 import {Session} from "../shell/Session";
 import {ApplicationComponent} from "./1_ApplicationComponent";
 import * as css from "./css/main";
 import {fontAwesome} from "./css/FontAwesome";
+import {SplitDirection} from "../Enums";
+import {Pane, RowList, PaneList} from "../utils/PaneTree";
 
 export interface TabProps {
-    isActive: boolean;
+    isFocused: boolean;
     activate: () => void;
     position: number;
     closeHandler: (event: KeyboardEvent) => void;
@@ -30,7 +31,7 @@ export class TabComponent extends React.Component<TabProps, TabState> {
     }
 
     render() {
-        return <li style={css.tab(this.state.hover !== TabHoverState.Nothing, this.props.isActive)}
+        return <li style={css.tab(this.state.hover !== TabHoverState.Nothing, this.props.isFocused)}
                    onClick={this.props.activate}
                    onMouseEnter={() => this.setState({hover: TabHoverState.Tab})}
                    onMouseLeave={() => this.setState({hover: TabHoverState.Nothing})}>
@@ -46,63 +47,61 @@ export class TabComponent extends React.Component<TabProps, TabState> {
 }
 
 export class Tab {
-    public sessions: Session[] = [];
-    private activeSessionIndex: number;
+    readonly panes: PaneList;
+    private _focusedPane: Pane;
 
     constructor(private application: ApplicationComponent) {
-        this.addSession();
+        const pane = new Pane(new Session(this.application, this.contentDimensions));
+
+        this.panes = new RowList([pane]);
+        this._focusedPane = pane;
     }
 
-    addSession(): void {
-        this.sessions.push(new Session(this.application, this.contentDimensions));
-        this.activeSessionIndex = this.sessions.length - 1;
+    addPane(direction: SplitDirection): void {
+        const session = new Session(this.application, this.contentDimensions);
+        const pane = new Pane(session);
+
+        this.panes.add(pane, this.focusedPane, direction);
+
+        this._focusedPane = pane;
     }
 
-    closeSession(session: Session): void {
-        session.jobs.forEach(job => {
+    closeFocusedPane(): void {
+        this.focusedPane.session.jobs.forEach(job => {
             job.removeAllListeners();
             job.interrupt();
         });
-        session.removeAllListeners();
+        this.focusedPane.session.removeAllListeners();
 
-        _.pull(this.sessions, session);
+        const focused = this.focusedPane;
+        this._focusedPane = this.panes.previous(focused);
+        this.panes.remove(focused);
+    }
 
-        if (this.activeSessionIndex >= this.sessions.length) {
-            this.activeSessionIndex = this.sessions.length - 1;
+    closeAllPanes(): void {
+        while (this.panes.size) {
+            this.closeFocusedPane();
         }
-
     }
 
-    activeSession(): Session {
-        return this.sessions[this.activeSessionIndex];
+    get focusedPane(): Pane {
+        return this._focusedPane;
     }
 
-    activateSession(session: Session): void {
-        this.activeSessionIndex = this.sessions.indexOf(session);
+    activatePane(pane: Pane): void {
+        this._focusedPane = pane;
     }
 
-    activatePreviousSession(): boolean {
-        const isFirst = this.activeSessionIndex === 0;
-        if (!isFirst) {
-            this.activateSession(this.sessions[this.activeSessionIndex - 1]);
-        }
-
-        return !isFirst;
+    activatePreviousPane(): void {
+        this._focusedPane = this.panes.previous(this.focusedPane);
     }
 
-    activateNextSession(): boolean {
-        const isLast = this.activeSessionIndex === this.sessions.length - 1;
-        if (!isLast) {
-            this.activateSession(this.sessions[this.activeSessionIndex + 1]);
-        }
-
-        return !isLast;
+    activateNextPane(): void {
+        this._focusedPane = this.panes.next(this.focusedPane);
     }
 
-    updateAllSessionsDimensions(): void {
-        for (const session of this.sessions) {
-            session.dimensions = this.contentDimensions;
-        }
+    updateAllPanesDimensions(): void {
+        this.panes.forEach(pane => pane.session.dimensions = this.contentDimensions);
     }
 
     private get contentDimensions(): Dimensions {

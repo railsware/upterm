@@ -2,17 +2,18 @@ import {SessionComponent} from "./2_SessionComponent";
 import {TabComponent, TabProps, Tab} from "./TabComponent";
 import * as React from "react";
 import * as _ from "lodash";
-import {Session} from "../shell/Session";
 import {ipcRenderer} from "electron";
-import {KeyCode, Status} from "../Enums";
 import {remote} from "electron";
 import * as css from "./css/main";
 import {saveWindowBounds} from "./ViewUtils";
 import {StatusBarComponent} from "./StatusBarComponent";
+import {PaneTree, Pane} from "../utils/PaneTree";
+import {handleUserEvent} from "./UserEventsHander";
+import {SearchComponent} from "./SearchComponent";
 
 export class ApplicationComponent extends React.Component<{}, {}> {
     private tabs: Tab[] = [];
-    private activeTabIndex: number;
+    private focusedTabIndex: number;
 
     constructor(props: {}) {
         super(props);
@@ -31,7 +32,7 @@ export class ApplicationComponent extends React.Component<{}, {}> {
             .on("devtools-closed", () => this.recalculateDimensions());
 
         ipcRenderer.on("change-working-directory", (event: Electron.IpcRendererEvent, directory: string) =>
-            this.activeTab.activeSession().directory = directory
+            this.focusedTab.focusedPane.session.directory = directory
         );
 
         window.onbeforeunload = () => {
@@ -39,81 +40,43 @@ export class ApplicationComponent extends React.Component<{}, {}> {
                 .removeAllListeners()
                 .webContents
                 .removeAllListeners("devtools-opened")
-                .removeAllListeners("devtools-closed");
+                .removeAllListeners("devtools-closed")
+                .removeAllListeners("found-in-page");
 
             this.closeAllTabs();
         };
     }
 
-    handleKeyDown(event: KeyboardEvent) {
-        if (event.metaKey && event.keyCode === KeyCode.Underscore) {
-            this.activeTab.addSession();
+    addTab(): void {
+        if (this.tabs.length < 9) {
+            this.tabs.push(new Tab(this));
+            this.focusedTabIndex = this.tabs.length - 1;
             this.forceUpdate();
-            event.stopPropagation();
+        } else {
+            remote.shell.beep();
         }
+    }
 
-        if (event.metaKey && event.keyCode === KeyCode.VerticalBar) {
-            console.log("Split vertically.");
+    focusTab(position: OneBasedPosition): void {
+        const index = position === 9 ? this.tabs.length : position - 1;
 
-            event.stopPropagation();
-        }
-
-        if (event.ctrlKey && event.keyCode === KeyCode.D) {
-            const activeSession = this.activeTab.activeSession();
-
-            if (activeSession.currentJob.status !== Status.InProgress) {
-                this.closeSession(activeSession);
-
-                this.forceUpdate();
-                event.stopPropagation();
-            }
-        }
-
-        if (event.metaKey && event.keyCode === KeyCode.W) {
-            this.closeSession(this.activeTab.activeSession());
-
+        if (this.tabs.length > index) {
+            this.focusedTabIndex = index;
             this.forceUpdate();
-            event.stopPropagation();
-            event.preventDefault();
+        } else {
+            remote.shell.beep();
+        }
+    }
+
+    // FIXME: this method should be private.
+    closeFocusedPane() {
+        this.focusedTab.closeFocusedPane();
+
+        if (this.focusedTab.panes.size === 0) {
+            this.closeTab(this.focusedTab);
         }
 
-        if (event.metaKey && event.keyCode === KeyCode.J) {
-            if (this.activeTab.activateNextSession()) {
-                this.forceUpdate();
-                event.stopPropagation();
-            }
-        }
-
-        if (event.metaKey && event.keyCode === KeyCode.K) {
-            if (this.activeTab.activatePreviousSession()) {
-                this.forceUpdate();
-                event.stopPropagation();
-            }
-        }
-
-        if (event.metaKey && event.keyCode === KeyCode.T) {
-            if (this.tabs.length < 9) {
-                this.addTab();
-                this.forceUpdate();
-            } else {
-                remote.shell.beep();
-            }
-
-            event.stopPropagation();
-        }
-
-        if (event.metaKey && event.keyCode >= KeyCode.One && event.keyCode <= KeyCode.Nine) {
-            const newTabIndex = (event.keyCode === KeyCode.Nine ? this.tabs.length : parseInt(event.key, 10)) - 1;
-
-            if (this.tabs.length > newTabIndex) {
-                this.activeTabIndex = newTabIndex;
-                this.forceUpdate();
-            } else {
-                remote.shell.beep();
-            }
-
-            event.stopPropagation();
-        }
+        this.forceUpdate();
     }
 
     render() {
@@ -121,115 +84,84 @@ export class ApplicationComponent extends React.Component<{}, {}> {
 
         if (this.tabs.length > 1) {
             tabs = this.tabs.map((tab: Tab, index: number) =>
-                <TabComponent isActive={index === this.activeTabIndex}
+                <TabComponent isFocused={index === this.focusedTabIndex}
                               key={index}
                               position={index + 1}
                               activate={() => {
-                                this.activeTabIndex = index;
-                                this.setState({ sessions: this.activeTab.sessions });
+                                this.focusedTabIndex = index;
+                                this.forceUpdate();
                               }}
-                              closeHandler={this.createCloseTabHandler(index)}>
+                              closeHandler={(event: KeyboardEvent) => {
+                                  this.closeTab(this.tabs[index]);
+                                  this.forceUpdate();
+
+                                  event.stopPropagation();
+                                  event.preventDefault();
+                              }}>
                 </TabComponent>
             );
         }
 
-        let sessions = _.flatten(this.activeTab.sessions.map((session, index) => {
-                const isActive = session === this.activeTab.activeSession();
-
-                const sessionComponent = (
-                    <SessionComponent session={session}
-                                      key={session.id}
-                                      style={css.session(isActive, index)}
-                                      isActive={isActive}
-                                      updateStatusBar={isActive ? () => this.forceUpdate() : undefined}
-                                      activate={() => {
-                                   this.activeTab.activateSession(session);
-                                   this.setState({ sessions: this.activeTab.sessions });
-                              }}>
-                    </SessionComponent>
-                );
-
-                if (isActive) {
-                    return [sessionComponent];
-                } else {
-                    return [
-                        sessionComponent,
-                        <div className="shutter" style={css.sessionShutter(index)}></div>,
-                    ];
-                }
-            }
-        ));
-
         return (
-            <div style={css.application} onKeyDownCapture={this.handleKeyDown.bind(this)}>
-                <ul style={css.titleBar}>{tabs}</ul>
-                <div style={css.sessions(this.activeTab.sessions.length)}>{sessions}</div>
-                <StatusBarComponent presentWorkingDirectory={this.activeTab.activeSession().directory}/>
+            <div style={css.application}
+                 onKeyDownCapture={(event: KeyboardEvent) => handleUserEvent(this, this.focusedTab, window.focusedSession, window.focusedJob, window.focusedPrompt, window.search)(event)}>
+                <div>
+                    <ul style={css.titleBar}>{tabs}</ul>
+                    <SearchComponent/>
+                </div>
+                {this.renderPanes(this.focusedTab.panes)}
+                <StatusBarComponent presentWorkingDirectory={this.focusedTab.focusedPane.session.directory}/>
             </div>
         );
     }
 
-    createCloseTabHandler(index: number) {
-        return (event: KeyboardEvent) => {
-            this.closeTab(this.tabs[index]);
-            this.forceUpdate();
-            event.stopPropagation();
-            event.preventDefault();
-        };
-    }
+    private renderPanes(tree: PaneTree): JSX.Element {
+        if (tree instanceof Pane) {
+            const pane = tree;
+            const session = pane.session;
+            const isFocused = pane === this.focusedTab.focusedPane;
 
-    closeSession(sessionToClose: Session) {
-        for (const tab of this.tabs) {
-            for (const session of tab.sessions) {
-                if (session === sessionToClose) {
-                    tab.closeSession(session);
-
-                    if (tab.sessions.length === 0) {
-                        this.closeTab(tab);
-                    }
-
-                    this.forceUpdate();
-                    return;
-                }
-            }
+            return (
+                <SessionComponent session={session}
+                                  key={session.id}
+                                  isFocused={isFocused}
+                                  updateStatusBar={isFocused ? () => this.forceUpdate() : undefined}
+                                  focus={() => {
+                                      this.focusedTab.activatePane(pane);
+                                      this.forceUpdate();
+                                  }}>
+                </SessionComponent>
+            );
+        } else {
+            return <div style={css.sessions(tree)}>{tree.children.map(child => this.renderPanes(child))}</div>;
         }
-
-        throw "Couldn't find the session you asked me to remove.";
     }
 
     private recalculateDimensions() {
         for (const tab of this.tabs) {
-            tab.updateAllSessionsDimensions();
+            tab.updateAllPanesDimensions();
         }
     }
 
-    private get activeTab(): Tab {
-        return this.tabs[this.activeTabIndex];
+    private get focusedTab(): Tab {
+        return this.tabs[this.focusedTabIndex];
     }
 
-    private addTab(): void {
-        this.tabs.push(new Tab(this));
-        this.activeTabIndex = this.tabs.length - 1;
+    private closeTab(tab: Tab, quit = true): void {
+        tab.closeAllPanes();
+        _.pull(this.tabs, tab);
+
+        if (this.tabs.length === 0 && quit) {
+            ipcRenderer.send("quit");
+        } else if (this.tabs.length === this.focusedTabIndex) {
+            this.focusedTabIndex -= 1;
+        }
     }
 
     private closeAllTabs(): void {
         // Can't use forEach here because closeTab changes the array being iterated.
         while (this.tabs.length) {
             this.closeTab(this.tabs[0], false);
-        }
-    }
-
-    private closeTab(tab: Tab, quit = true): void {
-        // Can't use forEach here because closeSession changes the array being iterated.
-        while (tab.sessions.length) {
-            tab.closeSession(tab.sessions[0]);
-        }
-        _.pull(this.tabs, tab);
-
-        if (this.tabs.length === 0 && quit) {
-            ipcRenderer.send("quit");
-        } else if (this.tabs.length === this.activeTabIndex) {
-            this.activeTabIndex -= 1;
         }
     }
 }

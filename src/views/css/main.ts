@@ -5,7 +5,7 @@ import {darken, lighten, failurize, alpha} from "./functions";
 import {Attributes} from "../../Interfaces";
 import {suggestionsLimit} from "../../Autocompletion";
 import {CSSObject, Px, Fr} from "./definitions";
-import * as _ from "lodash";
+import {ColumnList, PaneList} from "../../utils/PaneTree";
 
 export {toDOMString} from "./functions";
 
@@ -32,7 +32,7 @@ const infoPanel = {
     backgroundColor: panelColor,
 };
 
-const inactiveJobs: CSSObject = {
+const unfocusedJobs: CSSObject = {
     pointerEvents: "none",
 };
 
@@ -47,6 +47,7 @@ const decorationWidth = 30;
 const arrowZIndex = 2;
 const progressBarStripesSize = 30;
 const arrowColor = lighten(promptBackgroundColor, 10);
+const searchInputColor = lighten(panelColor, 15);
 
 const promptGrid = {
     decoration: {
@@ -72,29 +73,23 @@ const applicationGrid = {
         gridTemplateRows: `${titleBarHeight}px calc(${sessionsHeight}) ${infoPanelHeight}px`,
     },
     sessions: {
-        overflowY: "auto",
+        height: "100%",
     },
 };
 
-function sessionGridArea(index: number) {
-    return `session-${index}-area`;
+function sessionsGridTemplate(list: PaneList): CSSObject {
+    if (list instanceof ColumnList) {
+        return {
+            gridTemplateColumns: `repeat(${list.children.length}, calc(100% / ${list.children.length}))`,
+            gridTemplateRows: "100%",
+        };
+    } else {
+        return {
+            gridTemplateRows: `repeat(${list.children.length}, calc(100% / ${list.children.length}))`,
+            gridTemplateColumns: "100%",
+        };
+    }
 }
-
-const sessionsGrid = {
-    container: (sessionsCount: number) => ({
-        display: "grid",
-        gridTemplateRows: `repeat(${sessionsCount}, calc(${sessionsHeight} / ${sessionsCount})`,
-        gridTemplateColumns: "100%",
-        gridTemplateAreas: _.range(sessionsCount).map(index => `'${sessionGridArea(index)}'`).join("\n"),
-    }),
-    session: (index: number) => ({
-        overflowY: "scroll",
-        gridArea: sessionGridArea(index),
-    }),
-    sessionShutter: (index: number) => ({
-        gridArea: sessionGridArea(index),
-    }),
-};
 
 const promptInlineElement: CSSObject = {
     paddingTop: 0,
@@ -138,8 +133,8 @@ export const application = Object.assign(
     }
 );
 
-export const jobs = (isSessionActive: boolean): CSSObject =>
-    isSessionActive ? {} : inactiveJobs;
+export const jobs = (isSessionFocused: boolean): CSSObject =>
+    isSessionFocused ? {} : unfocusedJobs;
 
 export const row = (jobStatus: Status, activeScreenBufferType: ScreenBufferType) => {
     const style: CSSObject = {
@@ -253,39 +248,41 @@ export const statusBar = {
     },
 };
 
-export const sessions = (sessionsCount: number) => Object.assign(
+export const sessions = (list: PaneList) => Object.assign(
     {
         backgroundColor: backgroundColor,
+        display: "grid",
     },
-    sessionsGrid.container(sessionsCount),
+    sessionsGridTemplate(list),
+    applicationGrid.sessions
 );
 
-export const session = (isActive: boolean, index: number) => {
+export const session = (isFocused: boolean) => {
     const styles: CSSObject = {
         position: "relative",
         outline: "none",
+        overflowY: "scroll",
     };
 
-    if (!isActive) {
+    if (!isFocused) {
         styles.boxShadow = `0 0 0 1px ${alpha(colors.white, 0.3)}`;
-        styles.margin = "0 0 1px 0px";
+        styles.margin = "0 1px 0 0";
     }
 
-    return Object.assign(
-        styles,
-        sessionsGrid.session(index),
-    );
+    return styles;
 };
 
-export const sessionShutter = (index: number) => Object.assign(
-    {
-        backgroundColor: colors.white,
-        zIndex: 1,
-        opacity: 0.2,
-        pointerEvents: "none",
-    },
-    sessionsGrid.sessionShutter(index),
-);
+export const sessionShutter = (isFocused: boolean) => ({
+    backgroundColor: colors.white,
+    zIndex: 1,
+    opacity: isFocused ? 0 : 0.2,
+    pointerEvents: "none",
+    position: "absolute",
+    top: 0,
+    bottom: 0,
+    left: 0,
+    right: 0,
+});
 
 export const titleBar = {
     display: "flex",
@@ -297,10 +294,39 @@ export const titleBar = {
     WebkitUserSelect: "none",
 };
 
-export const tab = (isHovered: boolean, isActive: boolean) => {
+const searchInputHeight = titleBarHeight - 6;
+export const search = {
+    position: "absolute",
+    right: 4,
+    top: (titleBarHeight - searchInputHeight) / 2,
+};
+
+export const searchIcon = Object.assign(
+    {
+        position: "relative",
+        left: fontSize,
+        top: -1,
+        fontSize: fontSize - 4,
+    },
+    icon
+);
+
+export const searchInput = {
+    backgroundColor: searchInputColor,
+    border: 0,
+    borderRadius: 3,
+    WebkitAppearance: "none",
+    outline: "none",
+    height: searchInputHeight,
+    width: 120,
+    paddingLeft: fontSize,
+    color: colors.white,
+};
+
+export const tab = (isHovered: boolean, isFocused: boolean) => {
     return {
         backgroundColor: isHovered ? panelColor : colors.black,
-        opacity: (isHovered || isActive) ? 1 : 0.3,
+        opacity: (isHovered || isFocused) ? 1 : 0.3,
         position: "relative",
         height: titleBarHeight,
         width: 150,
@@ -440,6 +466,7 @@ export const promptWrapper = (status: Status, isSticky: boolean) => {
         styles.width = "100%";
         styles.position = "fixed";
         styles.top = titleBarHeight;
+        styles.height = promptWrapperHeight;
     }
 
     if ([Status.Failure, Status.Interrupted].includes(status)) {
@@ -521,17 +548,18 @@ export const autocompletedPreview = Object.assign(
     }
 );
 
-export const prompt = Object.assign(
+export const prompt = (isSticky: boolean) => Object.assign(
     {},
     promptInlineElement,
     {
         color: colors.white,
         zIndex: 2,
+        whiteSpace: isSticky ? "nowrap" : "pre-wrap",
     }
 );
 
 export const promptPlaceholder = {
-    height: promptWrapperHeight,
+    minHeight: promptWrapperHeight,
 };
 
 export const arrowInner = (status: Status) => {

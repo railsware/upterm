@@ -1,5 +1,4 @@
 import {KeyCode} from "../Enums";
-import * as _ from "lodash";
 import {writeFileCreatingParents, windowBoundsFilePath} from "../utils/Common";
 
 export function stopBubblingUp(event: Event): Event {
@@ -9,26 +8,8 @@ export function stopBubblingUp(event: Event): Event {
     return event;
 }
 
-export const keys = {
-    goUp: (event: KeyboardEvent) => (event.ctrlKey && event.keyCode === KeyCode.P) || event.keyCode === KeyCode.Up,
-    goDown: (event: KeyboardEvent) => (event.ctrlKey && event.keyCode === KeyCode.N) || event.keyCode === KeyCode.Down,
-    enter: (event: KeyboardEvent) => event.keyCode === KeyCode.CarriageReturn,
-    tab: (event: KeyboardEvent) => event.keyCode === KeyCode.Tab,
-    deleteWord: (event: KeyboardEvent) => event.ctrlKey && event.keyCode === KeyCode.W,
-    interrupt: (event: KeyboardEvent) => event.ctrlKey && event.keyCode === KeyCode.C,
-};
-
-
 export function isModifierKey(event: KeyboardEvent) {
     return [KeyCode.Shift, KeyCode.Ctrl, KeyCode.Alt].includes(event.keyCode);
-}
-
-export function withModifierKey(event: KeyboardEvent) {
-    return isModifierKey(event) || event.ctrlKey || event.altKey || event.metaKey;
-}
-
-export function isSpecialKey(event: KeyboardEvent): boolean {
-  return _.values(keys).some((matcher: (event: KeyboardEvent) => boolean) => matcher(event));
 }
 
 export function setCaretPosition(node: Node, position: number) {

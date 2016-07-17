@@ -12,65 +12,71 @@ import {StatusCode} from "../../utils/Git";
 
 type Style = { value: string; css: CSSObject};
 
+interface SuggestionAttributes {
+    value?: string;
+    displayValue?: string;
+    synopsis?: string;
+    description?: string;
+    style?: Style;
+    space?: boolean;
+}
+
 export class Suggestion {
-    protected _value = "";
-    private _displayValue = "";
-    private _synopsis = "";
-    private _description = "";
-    private _style = {value: "", css: {}};
-    private _shouldAddSpace = false;
+    constructor(private attributes: SuggestionAttributes = {}) {
+        this.attributes = attributes;
+    }
 
     get value(): string {
-        return this._value;
+        return this.attributes.value || "";
     }
 
     get synopsis(): string {
-        return this._synopsis || this.truncatedDescription;
+        return this.attributes.synopsis || this.truncatedDescription;
     }
 
     get description(): string {
-        return this._description;
+        return this.attributes.description || "";
     }
 
     get style(): Style {
-        return this._style;
+        return this.attributes.style || {value: "", css: {}};
     }
 
     get displayValue(): string {
-        return this._displayValue || this.value;
+        return this.attributes.displayValue || this.value;
     }
 
     get shouldAddSpace(): boolean {
-        return this._shouldAddSpace;
+        return this.attributes.space || false;
     }
 
     withValue(value: string): this {
-        this._value = value;
+        this.attributes.value = value;
         return this;
     }
 
     withDisplayValue(value: string): this {
-        this._displayValue = value;
+        this.attributes.displayValue = value;
         return this;
     }
 
     withSynopsis(synopsis: string): this {
-        this._synopsis = synopsis;
+        this.attributes.synopsis = synopsis;
         return this;
     }
 
     withDescription(description: string): this {
-        this._description = description;
+        this.attributes.description = description;
         return this;
     }
 
     withStyle(style: Style): this {
-        this._style = style;
+        this.attributes.style = style;
         return this;
     }
 
     withSpace(): this {
-        this._shouldAddSpace = true;
+        this.attributes.space = true;
         return this;
     }
 
@@ -175,7 +181,7 @@ const filesSuggestions = (filter: (info: FileInfo) => boolean) => async(tokenVal
             const value = `..${Path.sep}`.repeat(numberOfParts);
             const description = pwdParts.slice(0, -numberOfParts).join(Path.sep) || Path.sep;
 
-            return new Suggestion().withValue(value).withDescription(description).withStyle(styles.directory);
+            return new Suggestion({value: value, description: description, style: styles.directory});
         });
     }
 
@@ -189,9 +195,9 @@ const filesSuggestions = (filter: (info: FileInfo) => boolean) => async(tokenVal
         .filter(info => info.stat.isDirectory() || filter(info))
         .map(info => {
             if (info.stat.isDirectory()) {
-                return new Suggestion().withValue(joinPath(tokenDirectory, info.name + Path.sep)).withDisplayValue(info.name + Path.sep).withStyle(styles.directory);
+                return new Suggestion({value: joinPath(tokenDirectory, info.name + Path.sep), displayValue: info.name + Path.sep, style: styles.directory});
             } else {
-                return new Suggestion().withValue(joinPath(tokenDirectory, info.name)).withDisplayValue(info.name).withStyle(styles.file(info, joinPath(directoryPath, info.name)));
+                return new Suggestion({value: joinPath(tokenDirectory, info.name), displayValue: info.name, style: styles.file(info, joinPath(directoryPath, info.name))});
             }
         });
 };
@@ -209,7 +215,7 @@ export const directoriesSuggestionsProvider = filesSuggestionsProvider(info => i
 export const environmentVariableSuggestions = mk(context => {
     if (context.argument.value.startsWith("$")) {
         return context.environment.map((key, value) =>
-            new Suggestion().withValue("$" + key).withDescription(value).withStyle(styles.environmentVariable)
+            new Suggestion({value: "$" + key, description: value, style: styles.environmentVariable})
         );
     } else {
         return [];
@@ -219,6 +225,12 @@ export const environmentVariableSuggestions = mk(context => {
 export const combine = (providers: AutocompletionProvider[]): AutocompletionProvider => async(context: AutocompletionContext): Promise<Suggestion[]> => {
     return _.flatten(await Promise.all(providers.map(provider => provider(context))));
 };
+
+export function contextIndependent(provider: () => Promise<Suggestion[]>) {
+    return _.memoize(provider, () => "");
+}
+
+export const emptyProvider = () => [];
 
 export function mk(provider: AutocompletionProvider) {
     return provider;
@@ -262,9 +274,6 @@ function extensionIcon(extension: string) {
     }
 }
 
-export const style = (value: Style) => <T extends Suggestion>(suggestion: T) => suggestion.withStyle(value);
-export const command = style(styles.command);
-
 export const longAndShortFlag = (name: string, shortName = name[0]) => mk(context => {
     const longValue = `--${name}`;
     const shortValue = `-${shortName}`;
@@ -275,10 +284,10 @@ export const longAndShortFlag = (name: string, shortName = name[0]) => mk(contex
 
     const value = context.argument.value === shortValue ? shortValue : longValue;
 
-    return [new Suggestion().withValue(value).withDisplayValue(`${shortValue} ${longValue}`).withStyle(styles.option)];
+    return [new Suggestion({value: value, displayValue: `${shortValue} ${longValue}`, style: styles.option})];
 });
 
-export const shortFlag = (char: string) => unique(() => [new Suggestion().withValue(`-${char}`).withStyle(styles.option)]);
-export const longFlag = (name: string) => unique(() => [new Suggestion().withValue(`--${name}`).withStyle(styles.option)]);
+export const shortFlag = (char: string) => unique(() => [new Suggestion({value: `-${char}`, style: styles.option})]);
+export const longFlag = (name: string) => unique(() => [new Suggestion({value: `--${name}`, style: styles.option})]);
 
 export const mapSuggestions = (provider: AutocompletionProvider, mapper: (suggestion: Suggestion) => Suggestion) => mk(async(context) => (await provider(context)).map(mapper));

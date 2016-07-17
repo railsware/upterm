@@ -10,6 +10,24 @@ import {loadAllPlugins} from "../PluginManager";
 import {loadEnvironment} from "../shell/Environment";
 
 document.addEventListener(
+    "dragover",
+    function(event) {
+        event.preventDefault();
+        return false;
+    },
+    false
+);
+
+document.addEventListener(
+    "drop",
+    function(event) {
+        event.preventDefault();
+        return false;
+    },
+    false
+);
+
+document.addEventListener(
     "DOMContentLoaded",
     () => {
         // FIXME: Remove loadAllPlugins after switching to Webpack (because all the files will be loaded at start anyway).
