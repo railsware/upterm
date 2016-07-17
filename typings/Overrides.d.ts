@@ -43,6 +43,7 @@ interface Window {
     focusedSession: any;
     focusedJob: any;
     focusedPrompt: any;
+    search: any;
 }
 
 declare class AnsiParser {

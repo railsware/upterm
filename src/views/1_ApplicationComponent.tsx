@@ -9,6 +9,7 @@ import {saveWindowBounds} from "./ViewUtils";
 import {StatusBarComponent} from "./StatusBarComponent";
 import {PaneTree, Pane} from "../utils/PaneTree";
 import {handleUserEvent} from "./UserEventsHander";
+import {SearchComponent} from "./SearchComponent";
 
 export class ApplicationComponent extends React.Component<{}, {}> {
     private tabs: Tab[] = [];
@@ -39,7 +40,8 @@ export class ApplicationComponent extends React.Component<{}, {}> {
                 .removeAllListeners()
                 .webContents
                 .removeAllListeners("devtools-opened")
-                .removeAllListeners("devtools-closed");
+                .removeAllListeners("devtools-closed")
+                .removeAllListeners("found-in-page");
 
             this.closeAllTabs();
         };
@@ -102,8 +104,11 @@ export class ApplicationComponent extends React.Component<{}, {}> {
 
         return (
             <div style={css.application}
-                 onKeyDownCapture={(event: KeyboardEvent) => handleUserEvent(this, this.focusedTab, window.focusedSession, window.focusedJob, window.focusedPrompt)(event)}>
-                <ul style={css.titleBar}>{tabs}</ul>
+                 onKeyDownCapture={(event: KeyboardEvent) => handleUserEvent(this, this.focusedTab, window.focusedSession, window.focusedJob, window.focusedPrompt, window.search)(event)}>
+                <div>
+                    <ul style={css.titleBar}>{tabs}</ul>
+                    <SearchComponent/>
+                </div>
                 {this.renderPanes(this.focusedTab.panes)}
                 <StatusBarComponent presentWorkingDirectory={this.focusedTab.focusedPane.session.directory}/>
             </div>

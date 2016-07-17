@@ -47,6 +47,7 @@ const decorationWidth = 30;
 const arrowZIndex = 2;
 const progressBarStripesSize = 30;
 const arrowColor = lighten(promptBackgroundColor, 10);
+const searchInputColor = lighten(panelColor, 15);
 
 const promptGrid = {
     decoration: {
@@ -291,6 +292,35 @@ export const titleBar = {
     WebkitMarginAfter: 0,
     WebkitPaddingStart: 0,
     WebkitUserSelect: "none",
+};
+
+const searchInputHeight = titleBarHeight - 6;
+export const search = {
+    position: "absolute",
+    right: 4,
+    top: (titleBarHeight - searchInputHeight) / 2,
+};
+
+export const searchIcon = Object.assign(
+    {
+        position: "relative",
+        left: fontSize,
+        top: -1,
+        fontSize: fontSize - 4,
+    },
+    icon
+);
+
+export const searchInput = {
+    backgroundColor: searchInputColor,
+    border: 0,
+    borderRadius: 3,
+    WebkitAppearance: "none",
+    outline: "none",
+    height: searchInputHeight,
+    width: 120,
+    paddingLeft: fontSize,
+    color: colors.white,
 };
 
 export const tab = (isHovered: boolean, isFocused: boolean) => {

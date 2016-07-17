@@ -5,8 +5,18 @@ import {JobComponent} from "./3_JobComponent";
 import {Tab} from "./TabComponent";
 import {KeyCode, SplitDirection, Status} from "../Enums";
 import {isModifierKey} from "./ViewUtils";
+import {SearchComponent} from "./SearchComponent";
 
-export const handleUserEvent = (application: ApplicationComponent, tab: Tab, session: SessionComponent, job: JobComponent, prompt: PromptComponent) => (event: KeyboardEvent) => {
+export const handleUserEvent = (application: ApplicationComponent,
+                                tab: Tab,
+                                session: SessionComponent,
+                                job: JobComponent,
+                                prompt: PromptComponent,
+                                search: SearchComponent) => (event: KeyboardEvent) => {
+    if (event.metaKey && event.keyCode === KeyCode.F) {
+        (document.querySelector("input[type=search]") as HTMLInputElement).select();
+    }
+
     if (event.metaKey && event.keyCode === KeyCode.Underscore) {
         tab.addPane(SplitDirection.Horizontal);
         application.forceUpdate();
@@ -106,6 +116,19 @@ export const handleUserEvent = (application: ApplicationComponent, tab: Tab, ses
     if (event.metaKey) {
         event.stopPropagation();
         // Don't prevent default to be able to open developer tools and such.
+        return;
+    }
+
+    if (search.isFocused) {
+        if (event.keyCode === KeyCode.Escape) {
+            search.clearSelection();
+            setTimeout(() => prompt.focus(), 0);
+
+            event.stopPropagation();
+            event.preventDefault();
+            return;
+        }
+
         return;
     }
 
