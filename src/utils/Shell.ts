@@ -9,11 +9,26 @@ abstract class Shell {
     abstract get configFiles(): string[];
     abstract get noConfigSwitches(): string[];
     abstract get preCommandModifiers(): string[];
-    abstract loadHistory(): { lastModified: Date, commands: string[] };
+    abstract get historyFileName(): string;
 
     async existingConfigFiles(): Promise<string[]> {
         const resolvedConfigFiles = this.configFiles.map(fileName => resolveFile(process.env.HOME, fileName));
         return await filterAsync(resolvedConfigFiles, exists);
+    }
+
+    loadHistory(): { lastModified: Date, commands: string[] } {
+        const path = process.env.HISTFILE || Path.join(homeDirectory, this.historyFileName);
+        try {
+            return {
+                lastModified: statSync(path).mtime,
+                commands: readFileSync(path).toString().trim().split(EOL).reverse().map(line => _.last(line.split(";"))),
+            };
+        } catch (error) {
+            return {
+                lastModified: new Date(0),
+                commands: [],
+            };
+        }
     }
 }
 
@@ -34,19 +49,8 @@ class Bash extends Shell {
         return [];
     }
 
-    loadHistory(): { lastModified: Date, commands: string[] } {
-        const path = process.env.HISTFILE || Path.join(homeDirectory, ".bash_history");
-        try {
-            return {
-                lastModified: statSync(path).mtime,
-                commands: readFileSync(path).toString().trim().split(EOL).reverse(),
-            };
-        } catch (error) {
-            return {
-                lastModified: new Date(0),
-                commands: [],
-            };
-        }
+    get historyFileName(): string {
+        return ".bash_history";
     }
 }
 
@@ -73,12 +77,8 @@ class ZSH extends Shell {
         ];
     }
 
-    loadHistory(): { lastModified: Date, commands: string[] } {
-        // TODO: Read the zsh history as well
-        return {
-            lastModified: new Date(0),
-            commands: [],
-        };
+    get historyFileName(): string {
+        return ".zsh_history";
     }
 }
 
@@ -98,8 +98,3 @@ const shell = () => {
 };
 
 export const loginShell: Shell = supportedShells[basename(shell())];
-
-export function loadHistory(): { lastModified: Date, commands: string[] } {
-    return loginShell.loadHistory();
-}
-

@@ -1,6 +1,6 @@
 import {readFileSync, statSync} from "fs";
 import {flatten, orderBy} from "lodash";
-import {loadHistory} from "../utils/Shell";
+import {loginShell} from "../utils/Shell";
 import {historyFilePath} from "../utils/Common";
 
 const readHistoryFileData = () => {
@@ -79,9 +79,7 @@ export class History {
     }
 
     static deserialize(): void {
-        const shellHistory = loadHistory();
-        const blackScreenHistory = readHistoryFileData();
-        this.storage = flatten(orderBy([shellHistory, blackScreenHistory], "lastModified", "desc").map(h => h.commands));
+        this.storage = flatten(orderBy([loginShell.loadHistory(), readHistoryFileData()], history => history.lastModified, "desc").map(history => history.commands));
     }
 
     private static remove(entry: string): void {
