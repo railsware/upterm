@@ -51,7 +51,6 @@ export interface CSSObject {
     textDecoration?: "underline";
     fontWeight?: "bold";
     fontSize?: number;
-    WebkitFontFeatureSettings?: '"liga", "dlig"';
     WebkitAppearance?: "none";
 }
 
