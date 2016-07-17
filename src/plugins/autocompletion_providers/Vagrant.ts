@@ -1,14 +1,14 @@
 import {PluginManager} from "../../PluginManager";
-import {linedOutputOf} from '../../PTY';
-import {styles, Suggestion} from "./Common";
-import {memoize} from 'lodash';
+import {linedOutputOf} from "../../PTY";
+import {styles, Suggestion, contextIndependent} from "./Common";
 
-const commands = memoize(async() => {
+const commands = contextIndependent(async() => {
     let lines: string[] = [];
 
     try {
         lines = await linedOutputOf("vagrant", ["list-commands"], process.env.HOME);
     } catch (e) {
+        // skip if command is not exist
     }
 
     return lines
@@ -26,7 +26,7 @@ const commands = memoize(async() => {
                     .withSpace();
             }
 
-            return null;
+            return undefined;
         })
         .filter(suggestion => suggestion);
 });
