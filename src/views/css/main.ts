@@ -98,7 +98,6 @@ const promptInlineElement: CSSObject = {
     paddingLeft: promptHorizontalPadding,
     gridArea: promptGrid.prompt.name,
     fontSize: fontSize,
-    WebkitFontFeatureSettings: '"liga", "dlig"',
     whiteSpace: "pre-wrap",
     WebkitAppearance: "none",
     outline: "none",
