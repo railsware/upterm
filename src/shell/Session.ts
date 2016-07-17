@@ -113,7 +113,7 @@ export class Session extends EmitterWithUniqueID {
 
     private deserialize(): void {
         this.directory = this.readSerialized(presentWorkingDirectoryFilePath, homeDirectory);
-        History.deserialize(this.readSerialized(historyFilePath, []));
+        History.deserialize();
     }
 
     private readSerialized<T>(file: string, defaultValue: T): T {
