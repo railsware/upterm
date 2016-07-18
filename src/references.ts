@@ -2,5 +2,6 @@
 /// <reference path="../typings/Interfaces.d.ts" />
 
 /// <reference path="../typings/mode-to-permissions.d.ts" />
+/// <reference path="../typings/manolo.d.ts" />
 
 /// <reference path="../node_modules/immutable/dist/immutable.d.ts" />
