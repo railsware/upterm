@@ -1,8 +1,7 @@
 import {PluginManager} from "../../PluginManager";
 import {shortFlag, mapSuggestions, combine, directoriesSuggestionsProvider} from "./Common";
-import {mapObject, readFile} from "../../utils/Common";
+import {mapObject} from "../../utils/Common";
 import {exec} from "child_process";
-import {flatten} from "lodash";
 
 exec("man mkdir", {}, (error: any, stdout: string, stderr: string) => {
     // "Apply" backspace literals
@@ -23,14 +22,19 @@ exec("man mkdir", {}, (error: any, stdout: string, stderr: string) => {
         }
     });
 
-    let manDescriptionSections = manSections["DESCRIPTION"].reduce((memo, next) => {
-        if (next === "") {
-            memo.push([]);
-        } else {
-            memo[memo.length - 1].push(next);
-        }
-        return memo;
-    }, <string[][]>[[]]);
+    /* tslint:disable:no-string-literal */
+    let manDescriptionSections = manSections["DESCRIPTION"].reduce(
+    /* tslint:enable:no-string-literal */
+        (memo, next) => {
+            if (next === "") {
+                memo.push([]);
+            } else {
+                memo[memo.length - 1].push(next);
+            }
+            return memo;
+        },
+        <string[][]>[[]]
+    );
 
     let flagDescriptions = manDescriptionSections.filter(lines => lines.length > 0);
     let flagMap: { [flag: string]: string } = {};
@@ -41,23 +45,29 @@ exec("man mkdir", {}, (error: any, stdout: string, stderr: string) => {
             flagMap[shortFlagWithArgument[1]] = description
                 .slice(1)
                 .map(line => line.trim())
-                .reduce((memo, next) => {
-                    if (next.endsWith("-")) {
-                        return memo.concat(next.slice(0, -1));
-                    } else {
-                        return memo.concat(next, " ");
-                    }
-                }, "");
+                .reduce(
+                    (memo, next) => {
+                        if (next.endsWith("-")) {
+                            return memo.concat(next.slice(0, -1));
+                        } else {
+                            return memo.concat(next, " ");
+                        }
+                    },
+                    ""
+                );
         } else if (shortFlagWithoutArgument) {
             flagMap[shortFlagWithoutArgument[1]] = [shortFlagWithoutArgument[2], ...description.slice(1)]
                 .map(line => line.trim())
-                .reduce((memo, next) => {
-                    if (next.endsWith("-")) {
-                        return memo.concat(next.slice(0, -1));
-                    } else {
-                        return memo.concat(next, " ");
-                    }
-                }, "");
+                .reduce(
+                    (memo, next) => {
+                        if (next.endsWith("-")) {
+                            return memo.concat(next.slice(0, -1));
+                        } else {
+                            return memo.concat(next, " ");
+                        }
+                    },
+                    ""
+                );
         }
     });
     const optionsProvider = mapObject(flagMap, (option, descriptions) => mapSuggestions(shortFlag(option), suggestion => suggestion.withDescription(descriptions)));
