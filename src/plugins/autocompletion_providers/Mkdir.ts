@@ -35,8 +35,9 @@ exec("man mkdir", {}, (error: any, stdout: string, stderr: string) => {
         }
     });
 
+    // Split the description section (which contains the flags) into paragraphs
     /* tslint:disable:no-string-literal */
-    let manDescriptionSections = manSections["DESCRIPTION"].reduce(
+    let manDescriptionParagraphs = manSections["DESCRIPTION"].reduce(
     /* tslint:enable:no-string-literal */
         (memo, next) => {
             if (next === "") {
@@ -49,7 +50,8 @@ exec("man mkdir", {}, (error: any, stdout: string, stderr: string) => {
         <string[][]>[[]]
     );
 
-    let flagDescriptions = manDescriptionSections.filter(lines => lines.length > 0);
+    // Extract the paragraphs that describe flags, and parse out the flag data
+    let flagDescriptions = manDescriptionParagraphs.filter(lines => lines.length > 0);
     let flagMap: { [flag: string]: string } = {};
     flagDescriptions.forEach(description => {
         let shortFlagWithArgument = description[0].match(/^ *-(\w \w*)$/);
