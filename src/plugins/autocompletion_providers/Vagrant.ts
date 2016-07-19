@@ -1,17 +1,10 @@
 import {PluginManager} from "../../PluginManager";
 import {linedOutputOf} from "../../PTY";
 import {styles, Suggestion, contextIndependent} from "./Common";
+import {executablesInPaths} from "../../utils/Common";
 
 const commands = contextIndependent(async() => {
-    let lines: string[] = [];
-
-    try {
-        lines = await linedOutputOf("vagrant", ["list-commands"], process.env.HOME);
-    } catch (e) {
-        // skip if command is not exist
-    }
-
-    return lines
+    return (await linedOutputOf("vagrant", ["list-commands"], process.env.HOME))
         .map(line => {
             const matches = line.match(/([\-a-zA-Z0-9]+)  /);
 
@@ -19,19 +12,24 @@ const commands = contextIndependent(async() => {
                 const name = matches[1];
                 const description = line.replace(matches[1], "").trim();
 
-                return new Suggestion()
-                    .withValue(name)
-                    .withDescription(description)
-                    .withStyle(styles.command)
-                    .withSpace();
+                return new Suggestion({
+                    value: name,
+                    description,
+                    style: styles.command,
+                    space: true,
+                });
             }
-
-            return undefined;
         })
         .filter(suggestion => suggestion);
 });
 
-PluginManager.registerAutocompletionProvider("vagrant", context => {
+PluginManager.registerAutocompletionProvider("vagrant", async (context) => {
+    const executables = await executablesInPaths(context.environment.path);
+
+    if (!executables.includes("vagrant")) {
+        return [];
+    }
+
     if (context.argument.position === 1) {
         return commands();
     }
