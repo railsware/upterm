@@ -1,6 +1,6 @@
+import {AutocompletionProvider} from "../../Interfaces";
 import {PluginManager} from "../../PluginManager";
-import {shortFlag, mapSuggestions, combine, directoriesSuggestionsProvider} from "./Common";
-import {mapObject} from "../../utils/Common";
+import {Suggestion, combine, directoriesSuggestionsProvider, styles} from "./Common";
 import {exec} from "child_process";
 
 const combineManPageLines = (lines: string[]) => lines
@@ -52,16 +52,40 @@ exec("man mkdir", {}, (error: any, stdout: string, stderr: string) => {
 
     // Extract the paragraphs that describe flags, and parse out the flag data
     let flagDescriptions = manDescriptionParagraphs.filter(lines => lines.length > 0);
-    let flagMap: { [flag: string]: string } = {};
-    flagDescriptions.forEach(description => {
-        let shortFlagWithArgument = description[0].match(/^ *-(\w \w*)$/);
-        let shortFlagWithoutArgument = description[0].match(/^ *-(\w) *(.*)$/);
-        if (shortFlagWithArgument) {
-            flagMap[shortFlagWithArgument[1]] = combineManPageLines(description.slice(1));
-        } else if (shortFlagWithoutArgument) {
-            flagMap[shortFlagWithoutArgument[1]] = combineManPageLines([shortFlagWithoutArgument[2], ...description.slice(1)]);
-        }
-    });
-    const optionsProvider = mapObject(flagMap, (option, descriptions) => mapSuggestions(shortFlag(option), suggestion => suggestion.withDescription(descriptions)));
-    PluginManager.registerAutocompletionProvider("mkdir", combine([...optionsProvider, directoriesSuggestionsProvider]));
+    const optionsProvider: AutocompletionProvider = () => {
+        const results: (Suggestion|undefined)[] = flagDescriptions.map(descriptions => {
+            let shortFlagWithArgument = descriptions[0].match(/^ *-(\w) (\w*)$/);
+            let shortFlagWithoutArgument = descriptions[0].match(/^ *-(\w) *(.*)$/);
+            if (shortFlagWithArgument) {
+                const flag = shortFlagWithArgument[1];
+                const argument = shortFlagWithArgument[2];
+                const description = combineManPageLines(descriptions.slice(1));
+
+                return new Suggestion({
+                    value: `-${flag}`,
+                    style: styles.option,
+                    description,
+                    displayValue: `-${flag} ${argument}`,
+                });
+            } else if (shortFlagWithoutArgument) {
+                const flag = shortFlagWithoutArgument[1];
+                const description = combineManPageLines([shortFlagWithoutArgument[2], ...descriptions.slice(1)]);
+
+                return new Suggestion({
+                    value: `-${flag}`,
+                    style: styles.option,
+                    description,
+                });
+            }
+        });
+        const filteredResults: Suggestion[] = [];
+        results.forEach(result => {
+            if (result) {
+                filteredResults.push(result);
+            }
+        });
+        return filteredResults;
+    };
+    const allOptions = [optionsProvider, directoriesSuggestionsProvider];
+    PluginManager.registerAutocompletionProvider("mkdir", combine(allOptions));
 });
