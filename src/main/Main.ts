@@ -1,5 +1,4 @@
 import {app, ipcMain, nativeImage, BrowserWindow, screen} from "electron";
-import {menu} from "./Menu";
 import {readFileSync} from "fs";
 import {windowBoundsFilePath} from "../utils/Common";
 
@@ -32,7 +31,6 @@ app.on("ready", () => {
     }
 
     browserWindow.loadURL("file://" + __dirname + "/../views/index.html");
-    menu.setMenu(app, browserWindow);
 
     browserWindow.on("focus", () => app.dock && app.dock.setBadge(""));
 

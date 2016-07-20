@@ -45,6 +45,8 @@ export class ApplicationComponent extends React.Component<{}, {}> {
 
             this.closeAllTabs();
         };
+
+        window.application = this;
     }
 
     addTab(): void {
@@ -55,6 +57,8 @@ export class ApplicationComponent extends React.Component<{}, {}> {
         } else {
             remote.shell.beep();
         }
+
+        window.focusedTab = this.focusedTab;
     }
 
     focusTab(position: OneBasedPosition): void {
@@ -66,6 +70,8 @@ export class ApplicationComponent extends React.Component<{}, {}> {
         } else {
             remote.shell.beep();
         }
+
+        window.focusedTab = this.focusedTab;
     }
 
     // FIXME: this method should be private.
@@ -156,6 +162,8 @@ export class ApplicationComponent extends React.Component<{}, {}> {
         } else if (this.tabs.length === this.focusedTabIndex) {
             this.focusedTabIndex -= 1;
         }
+
+        window.focusedTab = this.focusedTab;
     }
 
     private closeAllTabs(): void {
