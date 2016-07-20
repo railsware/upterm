@@ -1,4 +1,3 @@
-import {AutocompletionProvider} from "../../Interfaces";
 import {PluginManager} from "../../PluginManager";
 import {Suggestion, combine, directoriesSuggestionsProvider, styles, unique} from "./Common";
 import {exec} from "child_process";
@@ -37,7 +36,7 @@ exec("man mkdir", {}, (error: any, stdout: string, stderr: string) => {
 
     // Split the description section (which contains the flags) into paragraphs
     /* tslint:disable:no-string-literal */
-    let manDescriptionParagraphs = manSections["DESCRIPTION"].reduce(
+    const manDescriptionParagraphs = manSections["DESCRIPTION"].reduce(
         /* tslint:enable:no-string-literal */
         (memo, next) => {
             if (next === "") {
@@ -51,11 +50,11 @@ exec("man mkdir", {}, (error: any, stdout: string, stderr: string) => {
     );
 
     // Extract the paragraphs that describe flags, and parse out the flag data
-    let flagDescriptions = manDescriptionParagraphs.filter(lines => lines.length > 0);
+    const flagDescriptions = manDescriptionParagraphs.filter(lines => lines.length > 0);
     const optionsProvider = unique(async() => {
         return flagDescriptions.map(descriptions => {
-            let shortFlagWithArgument = descriptions[0].match(/^ *-(\w) (\w*)$/);
-            let shortFlagWithoutArgument = descriptions[0].match(/^ *-(\w) *(.*)$/);
+            const shortFlagWithArgument = descriptions[0].match(/^ *-(\w) (\w*)$/);
+            const shortFlagWithoutArgument = descriptions[0].match(/^ *-(\w) *(.*)$/);
             if (shortFlagWithArgument) {
                 const flag = shortFlagWithArgument[1];
                 const argument = shortFlagWithArgument[2];
