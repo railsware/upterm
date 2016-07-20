@@ -212,7 +212,7 @@ export const anyFilesSuggestions = filesSuggestions(() => true);
 export const anyFilesSuggestionsProvider = unique(filesSuggestionsProvider(() => true));
 export const directoriesSuggestionsProvider = filesSuggestionsProvider(info => info.stat.isDirectory());
 
-export const environmentVariableSuggestions = mk(context => {
+export const environmentVariableSuggestions = mk(async context => {
     if (context.argument.value.startsWith("$")) {
         return context.environment.map((key, value) =>
             new Suggestion({value: "$" + key, description: value, style: styles.environmentVariable})
@@ -230,11 +230,11 @@ export function contextIndependent(provider: () => Promise<Suggestion[]>) {
     return _.memoize(provider, () => "");
 }
 
-export const emptyProvider = () => [];
-
 export function mk(provider: AutocompletionProvider) {
     return provider;
 }
+
+export const emptyProvider = mk(async() => []);
 
 function gitStatusCodeColor(statusCode: StatusCode) {
     switch (statusCode) {
@@ -274,7 +274,7 @@ function extensionIcon(extension: string) {
     }
 }
 
-export const longAndShortFlag = (name: string, shortName = name[0]) => mk(context => {
+export const longAndShortFlag = (name: string, shortName = name[0]) => mk(async context => {
     const longValue = `--${name}`;
     const shortValue = `-${shortName}`;
 
@@ -287,7 +287,7 @@ export const longAndShortFlag = (name: string, shortName = name[0]) => mk(contex
     return [new Suggestion({value: value, displayValue: `${shortValue} ${longValue}`, style: styles.option})];
 });
 
-export const shortFlag = (char: string) => unique(() => [new Suggestion({value: `-${char}`, style: styles.option})]);
-export const longFlag = (name: string) => unique(() => [new Suggestion({value: `--${name}`, style: styles.option})]);
+export const shortFlag = (char: string) => unique(async() => [new Suggestion({value: `-${char}`, style: styles.option})]);
+export const longFlag = (name: string) => unique(async() => [new Suggestion({value: `--${name}`, style: styles.option})]);
 
 export const mapSuggestions = (provider: AutocompletionProvider, mapper: (suggestion: Suggestion) => Suggestion) => mk(async(context) => (await provider(context)).map(mapper));
