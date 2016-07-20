@@ -38,7 +38,7 @@ exec("man mkdir", {}, (error: any, stdout: string, stderr: string) => {
     // Split the description section (which contains the flags) into paragraphs
     /* tslint:disable:no-string-literal */
     let manDescriptionParagraphs = manSections["DESCRIPTION"].reduce(
-    /* tslint:enable:no-string-literal */
+        /* tslint:enable:no-string-literal */
         (memo, next) => {
             if (next === "") {
                 memo.push([]);
@@ -52,8 +52,8 @@ exec("man mkdir", {}, (error: any, stdout: string, stderr: string) => {
 
     // Extract the paragraphs that describe flags, and parse out the flag data
     let flagDescriptions = manDescriptionParagraphs.filter(lines => lines.length > 0);
-    const optionsProvider: AutocompletionProvider = () => {
-        const results: (Suggestion|undefined)[] = flagDescriptions.map(descriptions => {
+    const optionsProvider: AutocompletionProvider = async() => {
+        return flagDescriptions.map(descriptions => {
             let shortFlagWithArgument = descriptions[0].match(/^ *-(\w) (\w*)$/);
             let shortFlagWithoutArgument = descriptions[0].match(/^ *-(\w) *(.*)$/);
             if (shortFlagWithArgument) {
@@ -77,14 +77,7 @@ exec("man mkdir", {}, (error: any, stdout: string, stderr: string) => {
                     description,
                 });
             }
-        });
-        const filteredResults: Suggestion[] = [];
-        results.forEach(result => {
-            if (result) {
-                filteredResults.push(result);
-            }
-        });
-        return filteredResults;
+        }).filter(suggestion => suggestion);
     };
     const allOptions = [optionsProvider, directoriesSuggestionsProvider];
     PluginManager.registerAutocompletionProvider("mkdir", combine(allOptions));
