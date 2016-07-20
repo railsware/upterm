@@ -105,8 +105,8 @@ export class ApplicationComponent extends React.Component<{}, {}> {
         return (
             <div style={css.application}
                  onKeyDownCapture={(event: KeyboardEvent) => handleUserEvent(this, this.focusedTab, window.focusedSession, window.focusedJob, window.focusedPrompt, window.search)(event)}>
-                <div>
-                    <ul style={css.titleBar}>{tabs}</ul>
+                <div style={css.titleBar}>
+                    <ul style={css.tabs}>{tabs}</ul>
                     <SearchComponent/>
                 </div>
                 {this.renderPanes(this.focusedTab.panes)}

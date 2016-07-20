@@ -284,9 +284,12 @@ export const sessionShutter = (isFocused: boolean) => ({
 });
 
 export const titleBar = {
-    display: "flex",
-    justifyContent: "center",
     WebkitAppRegion: "drag",
+};
+
+export const tabs = {
+    justifyContent: "center",
+    display: "flex",
     WebkitMarginBefore: 0,
     WebkitMarginAfter: 0,
     WebkitPaddingStart: 0,
