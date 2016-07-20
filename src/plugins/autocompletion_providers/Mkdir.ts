@@ -1,6 +1,6 @@
 import {AutocompletionProvider} from "../../Interfaces";
 import {PluginManager} from "../../PluginManager";
-import {Suggestion, combine, directoriesSuggestionsProvider, styles} from "./Common";
+import {Suggestion, combine, directoriesSuggestionsProvider, styles, unique} from "./Common";
 import {exec} from "child_process";
 
 const combineManPageLines = (lines: string[]) => lines
@@ -52,7 +52,7 @@ exec("man mkdir", {}, (error: any, stdout: string, stderr: string) => {
 
     // Extract the paragraphs that describe flags, and parse out the flag data
     let flagDescriptions = manDescriptionParagraphs.filter(lines => lines.length > 0);
-    const optionsProvider: AutocompletionProvider = async() => {
+    const optionsProvider = unique(async() => {
         return flagDescriptions.map(descriptions => {
             let shortFlagWithArgument = descriptions[0].match(/^ *-(\w) (\w*)$/);
             let shortFlagWithoutArgument = descriptions[0].match(/^ *-(\w) *(.*)$/);
@@ -66,6 +66,7 @@ exec("man mkdir", {}, (error: any, stdout: string, stderr: string) => {
                     style: styles.option,
                     description,
                     displayValue: `-${flag} ${argument}`,
+                    space: true,
                 });
             } else if (shortFlagWithoutArgument) {
                 const flag = shortFlagWithoutArgument[1];
@@ -78,7 +79,7 @@ exec("man mkdir", {}, (error: any, stdout: string, stderr: string) => {
                 });
             }
         }).filter(suggestion => suggestion);
-    };
+    });
     const allOptions = [optionsProvider, directoriesSuggestionsProvider];
     PluginManager.registerAutocompletionProvider("mkdir", combine(allOptions));
 });
