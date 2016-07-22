@@ -38,7 +38,17 @@ class Bash extends Shell {
     }
 
     get configFiles() {
-        return ["~/.bashrc", "~/.bash_profile", "~/.profile"];
+        return [
+            // List drawn from GNU bash 4.3 man page INVOCATION section.
+            // ~/.bashrc is only supposed to be used for non-login shells
+            // and ~/.bash_profile is only supposed to be used for login
+            // shells, but load both anyway because that's what people expect.
+            "/etc/profile",
+            "~/.bash_profile",
+            "~/.bash_login",
+            "~/.profile",
+            "~/.bashrc",
+        ];
     }
 
     get noConfigSwitches() {
@@ -60,7 +70,19 @@ class ZSH extends Shell {
     }
 
     get configFiles() {
-        return ["~/.zshrc", "~/.zsh_profile"];
+        return [
+            // List drawn from zhs 5.0.8 man page STARTUP/SHUTDOWN FILES section.
+            "/etc/zshenv",
+            Path.join(process.env.ZDOTDIR || "~", ".zshenv"),
+            "/etc/zprofile",
+            Path.join(process.env.ZDOTDIR || "~", ".zprofile"),
+            "/etc/zshrc",
+            Path.join(process.env.ZDOTDIR || "~", ".zshrc"),
+            "/etc/zlogin",
+            Path.join(process.env.ZDOTDIR || "~", ".zlogin"),
+            // This one is not listed in the man pages, but some zsh installations do use it.
+            "~/.zsh_profile",
+        ];
     }
 
     get noConfigSwitches() {
