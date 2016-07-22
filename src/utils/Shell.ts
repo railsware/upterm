@@ -38,7 +38,7 @@ class Bash extends Shell {
     }
 
     get configFiles() {
-        return ["~/.bashrc", "~/.bash_profile"];
+        return ["~/.bashrc", "~/.bash_profile", "~/.profile"];
     }
 
     get noConfigSwitches() {
