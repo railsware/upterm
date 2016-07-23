@@ -57,12 +57,9 @@ export class PromptComponent extends React.Component<Props, State> {
 
         if (this.props.status === e.Status.InProgress) {
             this.props.job.write(text);
-        } else {
-            this.setText(text);
+            event.stopPropagation();
+            event.preventDefault();
         }
-
-        event.stopPropagation();
-        event.preventDefault();
     };
 
     /* tslint:disable:member-ordering */
