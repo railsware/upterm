@@ -15,7 +15,9 @@ export async function loadEnvironment(): Promise<void> {
     lines.forEach(line => {
         let [key, value] = line.trim().split("=");
 
-        if (!ignoredEnvironmentVariables.includes(key)) {
+        // Strip bash functions from environment, as they cause issues.
+        // TODO: put the code for stripping bash functions in a better place.
+        if (!ignoredEnvironmentVariables.includes(key) && !/^BASH_FUNC\w+%%$/.test(key)) {
             processEnvironment[key] = value;
         }
     });
