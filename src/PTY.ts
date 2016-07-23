@@ -23,9 +23,7 @@ export class PTY {
             env: env,
         });
 
-        this.terminal.on("data", (data: string) => {
-            dataHandler(data)
-        });
+        this.terminal.on("data", (data: string) => dataHandler(data));
         this.terminal.on("exit", (code: number) => {
             exitHandler(code);
         });
