@@ -48,7 +48,7 @@
     "chai": "3.5.0",
     "devtron": "1.2.1",
     "electron-builder": "5.14.1",
-    "electron-prebuilt": "1.2.7",
+    "electron-prebuilt": "1.2.8",
     "mocha": "2.5.3",
     "mock-fs": "3.11.0",
     "npm-check-updates": "2.7.2",
