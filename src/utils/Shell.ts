@@ -3,6 +3,7 @@ import {readFileSync, statSync} from "fs";
 import * as Path from "path";
 import {EOL} from "os";
 import {resolveFile, exists, filterAsync, homeDirectory} from "./Common";
+import * as _ from "lodash";
 
 abstract class Shell {
     abstract get executableName(): string;

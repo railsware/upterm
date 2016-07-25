@@ -1,5 +1,6 @@
 import {Session} from "../shell/Session";
 import {SplitDirection} from "../Enums";
+import * as _ from "lodash";
 
 export type PaneTree = Pane | PaneList;
 
