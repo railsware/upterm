@@ -1,7 +1,5 @@
 import {PluginManager} from "../../PluginManager";
 import {combine, anyFilesSuggestionsProvider} from "./Common";
-import {manPageToOptions} from "../../utils/ManPages";
+import {manPageOptions} from "../../utils/ManPages";
 
-manPageToOptions("cat").then(manPageOptions => {
-    PluginManager.registerAutocompletionProvider("cat", combine([anyFilesSuggestionsProvider, manPageOptions]));
-});
+PluginManager.registerAutocompletionProvider("cat", combine([anyFilesSuggestionsProvider, manPageOptions("cat")]));

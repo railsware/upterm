@@ -1,6 +1,5 @@
 import {execFile} from "child-process-promise";
-import {Suggestion, styles, unique} from "../plugins/autocompletion_providers/Common";
-import {AutocompletionProvider} from "../Interfaces";
+import {Suggestion, styles, contextIndependent, unique} from "../plugins/autocompletion_providers/Common";
 
 const combineManPageLines = (lines: string[]) => lines
     .map(line => line.trim())
@@ -25,11 +24,11 @@ const combineManPageLines = (lines: string[]) => lines
 // TODO: Handle nested options. Unblocks:
 // dd
 
-export const manPageToOptions = async (command: string): Promise<AutocompletionProvider> => {
+const manPageToOptions = async (command: string): Promise<Suggestion[]> => {
     // use execFile to prevent a command like "; echo test" from running the "echo test"
     const {stdout, stderr} =  await execFile("man", [command], {});
     if (stderr) {
-        throw `Error in retreiving man page: ${command}`;
+        throw `Error in retrieving man page: ${command}`;
     }
     // "Apply" backspace literals
     const manContents = stdout.replace(/.\x08/g, "");
@@ -37,7 +36,7 @@ export const manPageToOptions = async (command: string): Promise<AutocompletionP
     // Split into lines, skipping starting and ending newlines
     const manLines = manContents.trim().split("\n");
 
-    // Sepearate sections
+    // Separate sections
     let currentSection = "";
     let manSections: { [section: string]: string[] } = {};
     manLines.forEach((line: string) => {
@@ -68,33 +67,37 @@ export const manPageToOptions = async (command: string): Promise<AutocompletionP
 
     // Extract the paragraphs that describe flags, and parse out the flag data
     const flagDescriptions = manDescriptionParagraphs.filter(lines => lines.length > 0);
-    const optionsProvider = unique(async() => {
-        return flagDescriptions.map(descriptions => {
-            const shortFlagWithArgument = descriptions[0].match(/^ *-(\w) (\w*)$/);
-            const shortFlagWithoutArgument = descriptions[0].match(/^ *-(\w) *(.*)$/);
-            if (shortFlagWithArgument) {
-                const flag = shortFlagWithArgument[1];
-                const argument = shortFlagWithArgument[2];
-                const description = combineManPageLines(descriptions.slice(1));
 
-                return new Suggestion({
-                    value: `-${flag}`,
-                    style: styles.option,
-                    description,
-                    displayValue: `-${flag} ${argument}`,
-                    space: true,
-                });
-            } else if (shortFlagWithoutArgument) {
-                const flag = shortFlagWithoutArgument[1];
-                const description = combineManPageLines([shortFlagWithoutArgument[2], ...descriptions.slice(1)]);
+    const suggestions: Suggestion[] = [];
 
-                return new Suggestion({
-                    value: `-${flag}`,
-                    style: styles.option,
-                    description,
-                });
-            }
-        }).filter(suggestion => suggestion);
+    flagDescriptions.forEach(descriptions => {
+        const shortFlagWithArgument = descriptions[0].match(/^ *-(\w) (\w*)$/);
+        const shortFlagWithoutArgument = descriptions[0].match(/^ *-(\w) *(.*)$/);
+        if (shortFlagWithArgument) {
+            const flag = shortFlagWithArgument[1];
+            const argument = shortFlagWithArgument[2];
+            const description = combineManPageLines(descriptions.slice(1));
+
+            suggestions.push(new Suggestion({
+                value: `-${flag}`,
+                style: styles.option,
+                description,
+                displayValue: `-${flag} ${argument}`,
+                space: true,
+            }));
+        } else if (shortFlagWithoutArgument) {
+            const flag = shortFlagWithoutArgument[1];
+            const description = combineManPageLines([shortFlagWithoutArgument[2], ...descriptions.slice(1)]);
+
+            suggestions.push(new Suggestion({
+                value: `-${flag}`,
+                style: styles.option,
+                description,
+            }));
+        }
     });
-    return optionsProvider;
+
+    return suggestions;
 };
+
+export const manPageOptions = (command: string) => unique(contextIndependent(() => manPageToOptions(command)));

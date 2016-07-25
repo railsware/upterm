@@ -1,7 +1,5 @@
 import {PluginManager} from "../../PluginManager";
 import {combine, directoriesSuggestionsProvider} from "./Common";
-import {manPageToOptions} from "../../utils/ManPages";
+import {manPageOptions} from "../../utils/ManPages";
 
-manPageToOptions("mkdir").then(manPageOptions => {
-    PluginManager.registerAutocompletionProvider("mkdir", combine([manPageOptions, directoriesSuggestionsProvider]));
-});
+PluginManager.registerAutocompletionProvider("mkdir", combine([manPageOptions("mkdir"), directoriesSuggestionsProvider]));

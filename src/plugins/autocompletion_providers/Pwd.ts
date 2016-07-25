@@ -1,6 +1,4 @@
 import {PluginManager} from "../../PluginManager";
-import {manPageToOptions} from "../../utils/ManPages";
+import {manPageOptions} from "../../utils/ManPages";
 
-manPageToOptions("pwd").then(manPageOptions => {
-    PluginManager.registerAutocompletionProvider("pwd", manPageOptions);
-});
+PluginManager.registerAutocompletionProvider("pwd", manPageOptions("pwd"));
