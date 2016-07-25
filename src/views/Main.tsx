@@ -1,3 +1,4 @@
+import {handleUserEvent, UserEvent} from "./UserEventsHander";
 process.env.NODE_ENV = "production";
 process.env.LANG = process.env.LANG || "en_US.UTF-8";
 
@@ -32,7 +33,14 @@ document.addEventListener(
     () => {
         // FIXME: Remove loadAllPlugins after switching to Webpack (because all the files will be loaded at start anyway).
         Promise.all([loadAllPlugins(), loadEnvironment(), loadAliasesFromConfig()])
-            .then(() => reactDOM.render(<ApplicationComponent/>, document.body));
+            .then(() => {
+                const application: ApplicationComponent = reactDOM.render(<ApplicationComponent/>, document.body);
+
+                const userEventHandler = (event: UserEvent) => handleUserEvent(application, window.focusedTab, window.focusedSession, window.focusedJob, window.focusedPrompt, window.search)(event);
+
+                document.body.addEventListener("keydown", userEventHandler, true);
+                document.body.addEventListener("paste", userEventHandler, true);
+            });
     },
     false
 );
