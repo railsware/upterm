@@ -8,6 +8,17 @@ import {AbstractOrderedSet} from "../utils/OrderedSet";
 const ignoredEnvironmentVariables = [
     "NODE_ENV",
 ];
+
+const isIgnoredEnvironmentVariable = (varName: string) => {
+    if (ignoredEnvironmentVariables.includes(varName)) {
+        return true;
+    } else if (/^BASH_FUNC\w+%%$/.test(varName)) {
+        return true;
+    } else {
+        return false;
+    }
+};
+
 export const processEnvironment: Dictionary<string> = {};
 export async function loadEnvironment(): Promise<void> {
     const lines = await executeCommandWithShellConfig("env");
@@ -15,7 +26,9 @@ export async function loadEnvironment(): Promise<void> {
     lines.forEach(line => {
         let [key, value] = line.trim().split("=");
 
-        if (!ignoredEnvironmentVariables.includes(key)) {
+        // Strip bash functions from environment, as they cause issues.
+        // TODO: actually support bash functions
+        if (!isIgnoredEnvironmentVariable(key)) {
             processEnvironment[key] = value;
         }
     });
