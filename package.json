@@ -51,7 +51,7 @@
     "electron-rebuild": "1.1.5",
     "mocha": "2.5.3",
     "npm-check-updates": "2.7.2",
-    "spectron": "3.2.6",
+    "spectron": "3.3.0",
     "ts-node": "1.2.1",
     "tslint": "3.13.0",
     "typescript": "2.0.0"
