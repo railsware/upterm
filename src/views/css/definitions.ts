@@ -1,4 +1,5 @@
 export interface CSSObject {
+    contain?: "strict" | "paint";
     pointerEvents?: string;
     marginTop?: number;
     marginBottom?: number;
