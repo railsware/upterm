@@ -2,7 +2,6 @@ import {execFile} from "child-process-promise";
 import {Suggestion, styles, unique} from "../plugins/autocompletion_providers/Common";
 import {AutocompletionProvider} from "../Interfaces";
 
-
 const combineManPageLines = (lines: string[]) => lines
     .map(line => line.trim())
     .reduce(
@@ -18,6 +17,14 @@ const combineManPageLines = (lines: string[]) => lines
 
 // Note: this is still pretty experimental. If you want to do man page parsing
 // for a new command, expect to have to make some changes here.
+
+// TODO: Handle option descriptions that have empty lines. Unblocks:
+// -p and -R in cp
+// df
+// locate
+// TODO: Handle nested options. Unblocks:
+// dd
+
 export const manPageToOptions = async (command: string): Promise<AutocompletionProvider> => {
     // use execFile to prevent a command like "; echo test" from running the "echo test"
     const {stdout, stderr} =  await execFile("man", [command], {});
