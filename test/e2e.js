@@ -25,6 +25,7 @@ describe("application launch", function () {
         waitForExist(".prompt", timeout).
         setValue(".prompt", "ls /\n").
         waitForExist(".prompt[contenteditable=false]").
+        waitForExist(".prompt[contenteditable=true]").
         getText(".job .output").
         then((output) => {
             expect(output[0]).to.contain("usr").and.to.contain("var");

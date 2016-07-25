@@ -8,7 +8,6 @@ import * as css from "./css/main";
 import {saveWindowBounds} from "./ViewUtils";
 import {StatusBarComponent} from "./StatusBarComponent";
 import {PaneTree, Pane} from "../utils/PaneTree";
-import {handleUserEvent} from "./UserEventsHander";
 import {SearchComponent} from "./SearchComponent";
 
 export class ApplicationComponent extends React.Component<{}, {}> {
@@ -33,12 +32,6 @@ export class ApplicationComponent extends React.Component<{}, {}> {
 
         ipcRenderer.on("change-working-directory", (event: Electron.IpcRendererEvent, directory: string) =>
             this.focusedTab.focusedPane.session.directory = directory
-        );
-
-        document.addEventListener(
-            "keydown",
-            event => handleUserEvent(this, window.focusedTab, window.focusedSession, window.focusedJob, window.focusedPrompt, window.search)(event),
-            true,
         );
 
         window.onbeforeunload = () => {
