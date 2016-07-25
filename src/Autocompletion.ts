@@ -1,5 +1,6 @@
 import {Job} from "./shell/Job";
 import {leafNodeAt} from "./shell/Parser";
+import * as _ from "lodash";
 
 export const suggestionsLimit = 9;
 
