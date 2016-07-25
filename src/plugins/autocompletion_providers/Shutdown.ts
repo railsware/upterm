@@ -1,6 +1,4 @@
 import {PluginManager} from "../../PluginManager";
-import {manPageToOptions} from "../../utils/ManPages";
+import {manPageOptions} from "../../utils/ManPages";
 
-manPageToOptions("shutdown").then(manPageOptions => {
-    PluginManager.registerAutocompletionProvider("shutdown", manPageOptions);
-});
+PluginManager.registerAutocompletionProvider("shutdown", manPageOptions("shutdown"));
