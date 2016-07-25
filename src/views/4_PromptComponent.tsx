@@ -52,16 +52,6 @@ export class PromptComponent extends React.Component<Props, State> {
         }
     );
 
-    private pasteEventListener = (event: ClipboardEvent) => {
-        const text = event.clipboardData.getData("text/plain");
-
-        if (this.props.status === e.Status.InProgress) {
-            this.props.job.write(text);
-            event.stopPropagation();
-            event.preventDefault();
-        }
-    };
-
     /* tslint:disable:member-ordering */
     constructor(props: Props) {
         super(props);
@@ -87,13 +77,11 @@ export class PromptComponent extends React.Component<Props, State> {
         this.setDOMValueProgrammatically(this.prompt.value);
 
         this.intersectionObserver.observe(this.placeholderNode);
-        this.commandNode.addEventListener("paste", this.pasteEventListener);
     }
 
     componentWillUnmount() {
         this.intersectionObserver.unobserve(this.placeholderNode);
         this.intersectionObserver.disconnect();
-        this.commandNode.removeEventListener("paste", this.pasteEventListener);
     }
 
     componentDidUpdate(prevProps: Props) {

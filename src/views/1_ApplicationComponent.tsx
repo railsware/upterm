@@ -8,7 +8,7 @@ import * as css from "./css/main";
 import {saveWindowBounds} from "./ViewUtils";
 import {StatusBarComponent} from "./StatusBarComponent";
 import {PaneTree, Pane} from "../utils/PaneTree";
-import {handleUserEvent} from "./UserEventsHander";
+import {handleUserEvent, UserEvent} from "./UserEventsHander";
 import {SearchComponent} from "./SearchComponent";
 
 export class ApplicationComponent extends React.Component<{}, {}> {
@@ -35,11 +35,10 @@ export class ApplicationComponent extends React.Component<{}, {}> {
             this.focusedTab.focusedPane.session.directory = directory
         );
 
-        document.addEventListener(
-            "keydown",
-            event => handleUserEvent(this, window.focusedTab, window.focusedSession, window.focusedJob, window.focusedPrompt, window.search)(event),
-            true,
-        );
+        const userEventHandler = (event: UserEvent) => handleUserEvent(this, window.focusedTab, window.focusedSession, window.focusedJob, window.focusedPrompt, window.search)(event);
+
+        document.body.addEventListener("keydown", userEventHandler, true);
+        document.body.addEventListener("paste", userEventHandler, true);
 
         window.onbeforeunload = () => {
             electronWindow

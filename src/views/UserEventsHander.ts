@@ -8,12 +8,32 @@ import {isModifierKey} from "./ViewUtils";
 import {SearchComponent} from "./SearchComponent";
 import {remote} from "electron";
 
+export type UserEvent = KeyboardEvent | ClipboardEvent;
+
 export const handleUserEvent = (application: ApplicationComponent,
                                 tab: Tab,
                                 session: SessionComponent,
                                 job: JobComponent,
                                 prompt: PromptComponent,
-                                search: SearchComponent) => (event: KeyboardEvent) => {
+                                search: SearchComponent) => (event: UserEvent) => {
+    if (event instanceof ClipboardEvent) {
+        if (search.isFocused) {
+            return;
+        }
+
+        if (!isInProgress(job)) {
+            prompt.focus();
+            return;
+        }
+
+        job.props.job.write(event.clipboardData.getData("text/plain"));
+
+        event.stopPropagation();
+        event.preventDefault();
+
+        return;
+    }
+
     if (event.ctrlKey && event.keyCode === KeyCode.D && !isInProgress(job)) {
         application.closeFocusedPane();
 
