@@ -35,6 +35,12 @@ export class ApplicationComponent extends React.Component<{}, {}> {
             this.focusedTab.focusedPane.session.directory = directory
         );
 
+        document.addEventListener(
+            "keydown",
+            event => handleUserEvent(this, window.focusedTab, window.focusedSession, window.focusedJob, window.focusedPrompt, window.search)(event),
+            true,
+        );
+
         window.onbeforeunload = () => {
             electronWindow
                 .removeAllListeners()
@@ -109,8 +115,7 @@ export class ApplicationComponent extends React.Component<{}, {}> {
         }
 
         return (
-            <div style={css.application}
-                 onKeyDownCapture={(event: KeyboardEvent) => handleUserEvent(this, this.focusedTab, window.focusedSession, window.focusedJob, window.focusedPrompt, window.search)(event)}>
+            <div style={css.application}>
                 <div style={css.titleBar}>
                     <ul style={css.tabs}>{tabs}</ul>
                     <SearchComponent/>
