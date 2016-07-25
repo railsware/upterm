@@ -19,6 +19,7 @@ interface SuggestionAttributes {
     description?: string;
     style?: Style;
     space?: boolean;
+    shouldEscapeSpaces?: boolean;
 }
 
 export class Suggestion {
@@ -46,8 +47,18 @@ export class Suggestion {
         return this.attributes.displayValue || this.value;
     }
 
+    valueForPrompt(): string {
+        const escaped = this.shouldEscapeSpaces ? this.value.replace(/\s/g, "\\ ") : this.value;
+        const spaceAdded = this.shouldAddSpace ? escaped + " " : escaped;
+        return spaceAdded;
+    }
+
     get shouldAddSpace(): boolean {
         return this.attributes.space || false;
+    }
+
+    get shouldEscapeSpaces(): boolean {
+        return !!this.attributes.shouldEscapeSpaces;
     }
 
     withValue(value: string): this {

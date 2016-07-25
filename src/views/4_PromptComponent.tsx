@@ -273,8 +273,7 @@ export class PromptComponent extends React.Component<Props, State> {
         const ast = this.props.job.prompt.ast;
         const suggestion = this.state.suggestions[this.state.highlightedSuggestionIndex];
         const node = leafNodeAt(getCaretPosition(this.commandNode), ast);
-
-        return serializeReplacing(ast, node, suggestion.value.replace(/\s/g, "\\ ") + (suggestion.shouldAddSpace ? " " : ""));
+        return serializeReplacing(ast, node, suggestion.valueForPrompt());
     }
 
     private showAutocomplete(): boolean {
