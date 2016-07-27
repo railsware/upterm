@@ -2,7 +2,7 @@ import {Job} from "./shell/Job";
 import {leafNodeAt} from "./shell/Parser";
 import * as _ from "lodash";
 import {History} from "./shell/History";
-import {Suggestion, styles} from "./plugins/autocompletion_providers/Common";
+import {Suggestion, styles, replaceAllPromptSerializer} from "./plugins/autocompletion_providers/Common";
 
 export const suggestionsLimit = 9;
 
@@ -10,7 +10,7 @@ export const getSuggestions = async(job: Job, caretPosition: number) => {
     const prefixMatchesInHistory = History.all.filter(line => line.startsWith(job.prompt.value));
     const suggestionsFromHistory = prefixMatchesInHistory.map(match => new Suggestion({
         value: match,
-        shouldEscapeSpaces: false,
+        promptSerializer: replaceAllPromptSerializer,
         style: styles.history,
     }));
 

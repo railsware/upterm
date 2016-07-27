@@ -9,8 +9,17 @@ import {fontAwesome} from "../../views/css/FontAwesome";
 import {colors} from "../../views/css/colors";
 import {CSSObject} from "../../views/css/definitions";
 import {StatusCode} from "../../utils/Git";
+import {ASTNode, leafNodeAt, serializeReplacing} from "../../shell/Parser";
 
 type Style = { value: string; css: CSSObject};
+
+interface PromptSerializerContext {
+    ast: ASTNode;
+    caretPosition: number;
+    suggestion: Suggestion;
+}
+
+type PromptSerializer = (context: PromptSerializerContext) => string;
 
 interface SuggestionAttributes {
     value?: string;
@@ -19,8 +28,15 @@ interface SuggestionAttributes {
     description?: string;
     style?: Style;
     space?: boolean;
-    shouldEscapeSpaces?: boolean;
+    promptSerializer?: PromptSerializer;
 }
+
+const defaultPromptSerializer: PromptSerializer = (context: PromptSerializerContext): string => {
+    const node = leafNodeAt(context.caretPosition, context.ast);
+    return serializeReplacing(context.ast, node, context.suggestion.value.replace(/\s/g, "\\ ") + (context.suggestion.shouldAddSpace ? " " : ""));
+};
+
+export const replaceAllPromptSerializer: PromptSerializer = (context: PromptSerializerContext) =>  context.suggestion.value;
 
 export class Suggestion {
     constructor(private attributes: SuggestionAttributes = {}) {
@@ -47,18 +63,12 @@ export class Suggestion {
         return this.attributes.displayValue || this.value;
     }
 
-    valueForPrompt(): string {
-        const escaped = this.shouldEscapeSpaces ? this.value.replace(/\s/g, "\\ ") : this.value;
-        const spaceAdded = this.shouldAddSpace ? escaped + " " : escaped;
-        return spaceAdded;
+    get promptSerializer(): PromptSerializer {
+        return this.attributes.promptSerializer || defaultPromptSerializer;
     }
 
     get shouldAddSpace(): boolean {
         return this.attributes.space || false;
-    }
-
-    get shouldEscapeSpaces(): boolean {
-        return !!this.attributes.shouldEscapeSpaces;
     }
 
     withValue(value: string): this {

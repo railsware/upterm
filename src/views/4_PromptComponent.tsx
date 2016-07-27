@@ -14,7 +14,6 @@ import * as css from "./css/main";
 import {fontAwesome} from "./css/FontAwesome";
 import {Status} from "../Enums";
 import {scan} from "../shell/Scanner";
-import {leafNodeAt, serializeReplacing} from "../shell/Parser";
 import {assign} from "../utils/Common";
 
 interface Props {
@@ -270,10 +269,13 @@ export class PromptComponent extends React.Component<Props, State> {
     }
 
     private get valueWithCurrentSuggestion(): string {
-        const ast = this.props.job.prompt.ast;
         const suggestion = this.state.suggestions[this.state.highlightedSuggestionIndex];
-        const node = leafNodeAt(getCaretPosition(this.commandNode), ast);
-        return serializeReplacing(ast, node, suggestion.valueForPrompt());
+
+        return suggestion.promptSerializer({
+            ast: this.props.job.prompt.ast,
+            caretPosition: getCaretPosition(this.commandNode),
+            suggestion: suggestion,
+        });
     }
 
     private showAutocomplete(): boolean {
