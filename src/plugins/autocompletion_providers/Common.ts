@@ -174,6 +174,12 @@ export const styles = {
             fontStyle: "italic",
         },
     },
+    history: {
+        value: fontAwesome.history,
+        css: {
+            color: colors.blue,
+        },
+    },
 };
 
 export const unique = (provider: AutocompletionProvider): AutocompletionProvider => mk(async (context) => {

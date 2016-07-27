@@ -11,8 +11,11 @@ export const getSuggestions = async(job: Job, caretPosition: number) => {
     const suggestionsFromHistory = prefixMatchesInHistory.map(match => new Suggestion({
         value: match,
         shouldEscapeSpaces: false,
-        style: styles.command,
+        style: styles.history,
     }));
+
+    const firstThreeFromHistory = suggestionsFromHistory.slice(0, 3);
+    const remainderFromHistory = suggestionsFromHistory.slice(3);
 
     const node = leafNodeAt(caretPosition, job.prompt.ast);
     const suggestions = await node.suggestions({
@@ -21,7 +24,7 @@ export const getSuggestions = async(job: Job, caretPosition: number) => {
         aliases: job.session.aliases,
     });
 
-    const applicableSuggestions = _.uniqBy([...suggestionsFromHistory, ...suggestions], suggestion => suggestion.value).filter(suggestion =>
+    const applicableSuggestions = _.uniqBy([...firstThreeFromHistory, ...suggestions, ...remainderFromHistory], suggestion => suggestion.value).filter(suggestion =>
         suggestion.value.toLowerCase().startsWith(node.value.toLowerCase())
     );
 
