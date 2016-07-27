@@ -1,10 +1,22 @@
 import {Job} from "./shell/Job";
 import {leafNodeAt} from "./shell/Parser";
 import * as _ from "lodash";
+import {History} from "./shell/History";
+import {Suggestion, styles} from "./plugins/autocompletion_providers/Common";
 
 export const suggestionsLimit = 9;
 
 export const getSuggestions = async(job: Job, caretPosition: number) => {
+    const prefixMatchesInHistory = History.all.filter(line => line.startsWith(job.prompt.value));
+    const suggestionsFromHistory = prefixMatchesInHistory.map(match => new Suggestion({
+        value: match,
+        shouldEscapeSpaces: false,
+        style: styles.history,
+    }));
+
+    const firstThreeFromHistory = suggestionsFromHistory.slice(0, 3);
+    const remainderFromHistory = suggestionsFromHistory.slice(3);
+
     const node = leafNodeAt(caretPosition, job.prompt.ast);
     const suggestions = await node.suggestions({
         environment: job.environment,
@@ -12,7 +24,7 @@ export const getSuggestions = async(job: Job, caretPosition: number) => {
         aliases: job.session.aliases,
     });
 
-    const applicableSuggestions = _.uniqBy(suggestions, suggestion => suggestion.value).filter(suggestion =>
+    const applicableSuggestions = _.uniqBy([...firstThreeFromHistory, ...suggestions, ...remainderFromHistory], suggestion => suggestion.value).filter(suggestion =>
         suggestion.value.toLowerCase().startsWith(node.value.toLowerCase())
     );
 
