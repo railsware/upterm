@@ -297,7 +297,7 @@ export const tabs = {
     WebkitUserSelect: "none",
     listStyle: "none",
     paddingLeft: 68,
-    paddingRight: 120,
+    paddingRight: 129,
 };
 
 const searchInputHeight = titleBarHeight - 6;
