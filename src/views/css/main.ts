@@ -335,7 +335,7 @@ export const tab = (isHovered: boolean, isFocused: boolean) => {
         opacity: (isHovered || isFocused) ? 1 : 0.3,
         position: "relative",
         height: titleBarHeight,
-        width: 150,
+        flex: "auto",
         display: "inline-block",
         textAlign: "center",
         paddingTop: 2,
