@@ -295,6 +295,9 @@ export const tabs = {
     WebkitMarginAfter: 0,
     WebkitPaddingStart: 0,
     WebkitUserSelect: "none",
+    listStyle: "none",
+    paddingLeft: 68,
+    paddingRight: 129,
 };
 
 const searchInputHeight = titleBarHeight - 6;
@@ -332,7 +335,7 @@ export const tab = (isHovered: boolean, isFocused: boolean) => {
         opacity: (isHovered || isFocused) ? 1 : 0.3,
         position: "relative",
         height: titleBarHeight,
-        width: 150,
+        flex: "auto",
         display: "inline-block",
         textAlign: "center",
         paddingTop: 2,
