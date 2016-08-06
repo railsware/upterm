@@ -237,6 +237,7 @@ const filesSuggestionsProvider =
 export const executableFilesSuggestions = filesSuggestions(info => info.stat.isFile() && modeToPermissions(info.stat.mode).execute.owner);
 export const anyFilesSuggestions = filesSuggestions(() => true);
 export const anyFilesSuggestionsProvider = unique(filesSuggestionsProvider(() => true));
+export const directoriesSuggestions = filesSuggestions(info => info.stat.isDirectory());
 export const directoriesSuggestionsProvider = filesSuggestionsProvider(info => info.stat.isDirectory());
 
 export const environmentVariableSuggestions = mk(async context => {
