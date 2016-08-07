@@ -27,8 +27,7 @@ export class SessionComponent extends React.Component<Props, {}> {
     componentDidMount() {
         this.session.onscroll = () => {
             const shutterOffset = this.session.scrollTop;
-            this.shutter.style.top = `${shutterOffset}px`;
-            this.shutter.style.bottom = `-${shutterOffset}px`;
+            this.shutter.style.transform = `translateY(${shutterOffset}px)`;
         };
         this.props.session
             .on("job", () => this.props.updateStatusBar && this.props.updateStatusBar())
