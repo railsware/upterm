@@ -26,7 +26,7 @@ export class SessionComponent extends React.Component<Props, {}> {
 
     componentDidMount() {
         this.session.onscroll = () => {
-            const shutterOffset = this.session.scrollTop
+            const shutterOffset = this.session.scrollTop;
             this.shutter.style.top = `${shutterOffset}px`;
             this.shutter.style.bottom = `-${shutterOffset}px`;
         };
