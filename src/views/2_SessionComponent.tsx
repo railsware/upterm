@@ -25,6 +25,11 @@ export class SessionComponent extends React.Component<Props, {}> {
     }
 
     componentDidMount() {
+        this.session.onscroll = () => {
+            const shutterOffset = this.session.scrollTop
+            this.shutter.style.top = `${shutterOffset}px`;
+            this.shutter.style.bottom = `-${shutterOffset}px`;
+        };
         this.props.session
             .on("job", () => this.props.updateStatusBar && this.props.updateStatusBar())
             .on("vcs-data", () => this.props.updateStatusBar && this.props.updateStatusBar());
@@ -48,11 +53,12 @@ export class SessionComponent extends React.Component<Props, {}> {
             <div className="session"
                  style={css.session(this.props.isFocused)}
                  tabIndex={0}
+                 ref="session"
                  onClickCapture={this.handleClick.bind(this)}>
 
                 <div className="jobs" style={css.jobs(this.props.isFocused)}>{jobs}</div>
 
-                <div className="shutter" style={css.sessionShutter(this.props.isFocused)}></div>
+                <div className="shutter" ref="shutter" style={css.sessionShutter(this.props.isFocused)}></div>
             </div>
         );
     }
@@ -61,5 +67,15 @@ export class SessionComponent extends React.Component<Props, {}> {
         if (!this.props.isFocused) {
             this.props.focus();
         }
+    }
+
+    private get session(): HTMLInputElement {
+        /* tslint:disable:no-string-literal */
+        return this.refs["session"] as HTMLInputElement;
+    }
+
+    private get shutter(): HTMLInputElement {
+        /* tslint:disable:no-string-literal */
+        return this.refs["shutter"] as HTMLInputElement;
     }
 }
