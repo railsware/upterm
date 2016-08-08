@@ -2,7 +2,7 @@ import {Job} from "./shell/Job";
 import {leafNodeAt} from "./shell/Parser";
 import * as _ from "lodash";
 import {History} from "./shell/History";
-import {Suggestion, styles, replaceAllPromptSerializer} from "./plugins/autocompletion_providers/Common";
+import {Suggestion, styles, replaceAllPromptSerializer} from "./plugins/autocompletion_utils/Common";
 
 export const suggestionsLimit = 9;
 
@@ -23,13 +23,13 @@ export const getSuggestions = async(job: Job, caretPosition: number) => {
         historicalPresentDirectoriesStack: job.session.historicalPresentDirectoriesStack,
         aliases: job.session.aliases,
     });
+    const applicableSuggestions = suggestions.filter(suggestion => suggestion.value.toLowerCase().startsWith(node.value.toLowerCase()));
 
-    const applicableSuggestions = _.uniqBy([...firstThreeFromHistory, ...suggestions, ...remainderFromHistory], suggestion => suggestion.value).filter(suggestion =>
-        suggestion.value.toLowerCase().startsWith(node.value.toLowerCase())
-    );
+    const combinedSuggestions = [...firstThreeFromHistory, ...applicableSuggestions, ...remainderFromHistory];
+    const uniqueSuggestions = _.uniqBy(combinedSuggestions, suggestion => suggestion.value);
 
-    if (applicableSuggestions.length === 1) {
-        const suggestion = applicableSuggestions[0];
+    if (uniqueSuggestions.length === 1) {
+        const suggestion = uniqueSuggestions[0];
 
         /**
          * The suggestion would simply duplicate the prompt value without providing no
@@ -40,5 +40,5 @@ export const getSuggestions = async(job: Job, caretPosition: number) => {
         }
     }
 
-    return applicableSuggestions.slice(0, suggestionsLimit);
+    return uniqueSuggestions.slice(0, suggestionsLimit);
 };
