@@ -23,13 +23,13 @@ export const getSuggestions = async(job: Job, caretPosition: number) => {
         historicalPresentDirectoriesStack: job.session.historicalPresentDirectoriesStack,
         aliases: job.session.aliases,
     });
-    const applicableSuggestions = suggestions.filter(suggestion => suggestion.value.toLowerCase().startsWith(node.value.toLowerCase()));
 
-    const combinedSuggestions = [...firstThreeFromHistory, ...applicableSuggestions, ...remainderFromHistory];
-    const uniqueSuggestions = _.uniqBy(combinedSuggestions, suggestion => suggestion.value);
+    const applicableSuggestions = _.uniqBy([...firstThreeFromHistory, ...suggestions, ...remainderFromHistory], suggestion => suggestion.value).filter(suggestion =>
+            suggestion.value.toLowerCase().startsWith(node.value.toLowerCase())
+        );
 
-    if (uniqueSuggestions.length === 1) {
-        const suggestion = uniqueSuggestions[0];
+    if (applicableSuggestions.length === 1) {
+        const suggestion = applicableSuggestions[0];
 
         /**
          * The suggestion would simply duplicate the prompt value without providing no
@@ -40,5 +40,5 @@ export const getSuggestions = async(job: Job, caretPosition: number) => {
         }
     }
 
-    return uniqueSuggestions.slice(0, suggestionsLimit);
+    return applicableSuggestions.slice(0, suggestionsLimit);
 };
