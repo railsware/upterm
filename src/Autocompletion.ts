@@ -25,8 +25,8 @@ export const getSuggestions = async(job: Job, caretPosition: number) => {
     });
 
     const applicableSuggestions = _.uniqBy([...firstThreeFromHistory, ...suggestions, ...remainderFromHistory], suggestion => suggestion.value).filter(suggestion =>
-            suggestion.value.toLowerCase().startsWith(node.value.toLowerCase())
-        );
+        suggestion.value.toLowerCase().startsWith(node.value.toLowerCase())
+    );
 
     if (applicableSuggestions.length === 1) {
         const suggestion = applicableSuggestions[0];
