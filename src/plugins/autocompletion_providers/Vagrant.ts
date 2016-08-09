@@ -1,6 +1,6 @@
 import {PluginManager} from "../../PluginManager";
 import {linedOutputOf} from "../../PTY";
-import {styles, Suggestion, contextIndependent} from "./Common";
+import {styles, Suggestion, contextIndependent} from "../autocompletion_utils/Common";
 import {executablesInPaths} from "../../utils/Common";
 
 const commands = contextIndependent(async() => {
