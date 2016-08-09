@@ -98,4 +98,12 @@ describe("suggestion parser", () => {
       space: true,
     }));
   });
+
+  // Happens if the description of a flag is spilt across multiples lines.
+  // TODO: actually parse those flags and use them in autocomplete
+  it("returns undefined if attempting to parse paragraph with no flag", () => {
+    expect(suggestionFromFlagParagraph([
+      "        no flag",
+    ])).to.eql(undefined);
+  });
 });

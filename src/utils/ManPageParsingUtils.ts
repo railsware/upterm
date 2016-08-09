@@ -52,7 +52,7 @@ export const extractManPageSectionParagraphs = (contents: string[]) => {
     .filter(lines => lines.length > 0);
 };
 
-export const suggestionFromFlagParagraph = (paragraph: string[]) => {
+export const suggestionFromFlagParagraph = (paragraph: string[]): Suggestion | undefined => {
     const shortFlagWithArgument = paragraph[0].match(/^ *-(\w) (\w*)$/);
     const shortFlagWithoutArgument = paragraph[0].match(/^ *-(\w) *(.*)$/);
     if (shortFlagWithArgument) {
@@ -77,6 +77,6 @@ export const suggestionFromFlagParagraph = (paragraph: string[]) => {
             description,
         });
     } else {
-        throw "Could not parse man page paragraph as a short flag";
+        return undefined;
     }
 };
