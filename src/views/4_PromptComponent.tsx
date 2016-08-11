@@ -7,7 +7,7 @@ import {History} from "../shell/History";
 import {stopBubblingUp, getCaretPosition, setCaretPosition} from "./ViewUtils";
 import {Prompt} from "../shell/Prompt";
 import {Job} from "../shell/Job";
-import {Suggestion} from "../plugins/autocompletion_providers/Common";
+import {Suggestion} from "../plugins/autocompletion_utils/Common";
 import {KeyCode} from "../Enums";
 import {getSuggestions} from "../Autocompletion";
 import * as css from "./css/main";
