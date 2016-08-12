@@ -249,10 +249,6 @@ export const environmentVariableSuggestions = mk(async context => {
     }
 });
 
-export const combine = (providers: AutocompletionProvider[]): AutocompletionProvider => async(context: AutocompletionContext): Promise<Suggestion[]> => {
-    return _.flatten(await Promise.all(providers.map(provider => provider(context))));
-};
-
 export function contextIndependent(provider: () => Promise<Suggestion[]>) {
     return _.memoize(provider, () => "");
 }

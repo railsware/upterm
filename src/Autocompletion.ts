@@ -2,7 +2,7 @@ import {Job} from "./shell/Job";
 import {leafNodeAt} from "./shell/Parser";
 import * as _ from "lodash";
 import {History} from "./shell/History";
-import {Suggestion, styles, replaceAllPromptSerializer} from "./plugins/autocompletion_providers/Common";
+import {Suggestion, styles, replaceAllPromptSerializer} from "./plugins/autocompletion_utils/Common";
 
 export const suggestionsLimit = 9;
 

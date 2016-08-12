@@ -1,5 +1,5 @@
 import * as Path from "path";
-import {Suggestion, styles} from "./Common";
+import {Suggestion, styles} from "../autocompletion_utils/Common";
 import {exists, readFile, mapObject} from "../../utils/Common";
 import {PluginManager} from "../../PluginManager";
 

@@ -1,4 +1,4 @@
-import {styles, Suggestion} from "./Common";
+import {styles, Suggestion} from "../autocompletion_utils/Common";
 import {PluginManager} from "../../PluginManager";
 
 const railsCommandConfig = [

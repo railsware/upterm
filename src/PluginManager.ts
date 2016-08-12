@@ -1,10 +1,8 @@
 import {OutputDecorator, EnvironmentObserverPlugin, AutocompletionProvider, PreexecPlugin} from "./Interfaces";
 import * as Path from "path";
 import {recursiveFilesIn} from "./utils/Common";
-import {
-    anyFilesSuggestionsProvider, environmentVariableSuggestions,
-    combine,
-} from "./plugins/autocompletion_providers/Common";
+import {environmentVariableSuggestions, anyFilesSuggestionsProvider} from "../src/plugins/autocompletion_utils/Common";
+import combine from "../src/plugins/autocompletion_utils/Combine";
 
 const defaultAutocompletionProvider = combine([environmentVariableSuggestions, anyFilesSuggestionsProvider]);
 
