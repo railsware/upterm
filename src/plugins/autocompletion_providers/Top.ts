@@ -1,5 +1,6 @@
 import {PluginManager} from "../../PluginManager";
-import {shortFlag, mapSuggestions, combine} from "./Common";
+import {shortFlag, mapSuggestions} from "../autocompletion_utils/Common";
+import combine from "../autocompletion_utils/Combine";
 import {mapObject} from "../../utils/Common";
 
 const options = combine(mapObject(

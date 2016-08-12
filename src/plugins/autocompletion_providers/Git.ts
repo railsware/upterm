@@ -1,8 +1,9 @@
 import * as Git from "../../utils/Git";
 import {
-    styles, Suggestion, longAndShortFlag, longFlag, mapSuggestions, combine, unique,
+    styles, Suggestion, longAndShortFlag, longFlag, mapSuggestions, unique,
     contextIndependent, emptyProvider,
-} from "./Common";
+} from "../autocompletion_utils/Common";
+import combine from "../autocompletion_utils/Combine";
 import {PluginManager} from "../../PluginManager";
 import {AutocompletionProvider, AutocompletionContext} from "../../Interfaces";
 import {linedOutputOf, executeCommand} from "../../PTY";
