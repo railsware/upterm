@@ -140,6 +140,11 @@ describe("scan", () => {
         expect(tokens.map(token => token.value)).to.eql(["cat", "file", ">>", "another_file"]);
     });
 
+    it("can handle unicode é", () => {
+        const tokens = scan("cd é/");
+        expect(tokens.map(token => token.value)).to.eql(["cd", "é/"]);
+    });
+
     describe("invalid input", () => {
         it("adds an invalid token", async() => {
             const tokens = scan("cd '");
