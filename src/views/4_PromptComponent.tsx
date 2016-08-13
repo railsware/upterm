@@ -131,7 +131,7 @@ export class PromptComponent extends React.Component<Props, State> {
         }
 
         return (
-            <div className="prompt-placeholder" ref="placeholder" id={this.props.job.id} style={css.promptPlaceholder}>
+            <div className="prompt-placeholder" ref="placeholder" id={this.props.job.id.toString()} style={css.promptPlaceholder}>
                 <div className="prompt-wrapper" style={css.promptWrapper(this.props.status, this.state.isSticky)}>
                     <div style={css.arrow(this.props.status)}>
                         <div style={css.arrowInner(this.props.status)}></div>

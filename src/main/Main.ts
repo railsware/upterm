@@ -46,7 +46,7 @@ app.on("mainWindow-all-closed", () => process.platform === "darwin" || app.quit(
 
 ipcMain.on("quit", app.quit);
 
-function windowBounds(): Electron.Bounds {
+function windowBounds(): Electron.Rectangle {
     try {
         return JSON.parse(readFileSync(windowBoundsFilePath).toString());
     } catch (error) {
