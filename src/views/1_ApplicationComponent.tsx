@@ -96,7 +96,7 @@ export class ApplicationComponent extends React.Component<{}, {}> {
                                 this.focusedTabIndex = index;
                                 this.forceUpdate();
                               }}
-                              closeHandler={(event: KeyboardEvent) => {
+                              closeHandler={(event: React.MouseEvent<HTMLSpanElement>) => {
                                   this.closeTab(this.tabs[index]);
                                   this.forceUpdate();
 

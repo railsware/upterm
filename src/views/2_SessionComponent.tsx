@@ -47,11 +47,9 @@ export class SessionComponent extends React.Component<Props, {}> {
         return (
             <div className="session"
                  style={css.session(this.props.isFocused)}
-                 tabIndex={0}
-                 onClickCapture={this.handleClick.bind(this)}>
+                 onClick={this.handleClick.bind(this)}>
 
                 <div className="jobs" style={css.jobs(this.props.isFocused)}>{jobs}</div>
-
                 <div className="shutter" style={css.sessionShutter(this.props.isFocused)}></div>
             </div>
         );

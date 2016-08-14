@@ -71,6 +71,24 @@ describe("man page paragraph extraction", () => {
       ["p2", "p2"],
     ]);
   });
+
+  it("can handle flag descriptions that have blank lines in the middle", () => {
+    expect(extractManPageSectionParagraphs([
+      "     -f1   line one",
+      "           line two",
+      "",
+      "           line three",
+      "",
+      "     -f2   line one",
+    ])).to.eql([
+      [
+        "     -f1   line one",
+        "           line two",
+        "           line three",
+      ],
+      ["     -f2   line one"]
+    ]);
+  });
 });
 
 describe("suggestion parser", () => {
@@ -99,8 +117,7 @@ describe("suggestion parser", () => {
     }));
   });
 
-  // Happens if the description of a flag is spilt across multiples lines.
-  // TODO: actually parse those flags and use them in autocomplete
+  // DESCRIPTION section can contain things other than flags
   it("returns undefined if attempting to parse paragraph with no flag", () => {
     expect(suggestionFromFlagParagraph([
       "        no flag",

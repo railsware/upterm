@@ -37,7 +37,21 @@ export const extractManPageSections = (contents: string) => {
 };
 
 export const extractManPageSectionParagraphs = (contents: string[]) => {
-    return contents
+    const filteredContents = contents.filter((line, index, array) => {
+        if (index === 0 || index === array.length - 1) {
+            return true;
+        }
+        if (
+            line === "" &&
+            array[index - 1].startsWith("           ") &&
+            array[index + 1].startsWith("           ")
+        ) {
+            return false;
+        }
+        return true;
+    });
+
+    return filteredContents
     .reduce(
         (memo, next) => {
             if (next === "") {

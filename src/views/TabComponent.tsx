@@ -11,7 +11,7 @@ export interface TabProps {
     isFocused: boolean;
     activate: () => void;
     position: number;
-    closeHandler: (event: KeyboardEvent) => void;
+    closeHandler: React.EventHandler<React.MouseEvent<HTMLSpanElement>>;
 }
 
 export enum TabHoverState {

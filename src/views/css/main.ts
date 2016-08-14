@@ -77,6 +77,16 @@ const applicationGrid = {
     },
 };
 
+const sessionGrid = {
+    container: {
+        display: "grid",
+        gridTemplateAreas: "'all'",
+    },
+    child: {
+        gridArea: "all",
+    },
+};
+
 function sessionsGridTemplate(list: PaneList): CSSObject {
     if (list instanceof ColumnList) {
         return {
@@ -132,8 +142,12 @@ export const application = Object.assign(
     }
 );
 
-export const jobs = (isSessionFocused: boolean): CSSObject =>
-    isSessionFocused ? {} : unfocusedJobs;
+export const jobs = (isSessionFocused: boolean): CSSObject => Object.assign(
+    {},
+    sessionGrid.child,
+    isSessionFocused ? {} : unfocusedJobs,
+);
+
 
 export const row = (jobStatus: Status, activeScreenBufferType: ScreenBufferType) => {
     const style: CSSObject = {
@@ -269,20 +283,18 @@ export const session = (isFocused: boolean) => {
         styles.margin = "0 1px 0 0";
     }
 
-    return styles;
+    return Object.assign(styles, sessionGrid.container);
 };
 
-export const sessionShutter = (isFocused: boolean) => ({
-    backgroundColor: colors.white,
-    zIndex: 1,
-    opacity: isFocused ? 0 : 0.2,
-    pointerEvents: "none",
-    position: "absolute",
-    top: 0,
-    bottom: 0,
-    left: 0,
-    right: 0,
-});
+export const sessionShutter = (isFocused: boolean) => Object.assign(
+    {
+        backgroundColor: colors.white,
+        zIndex: 1,
+        opacity: isFocused ? 0 : 0.2,
+        pointerEvents: "none",
+    },
+    sessionGrid.child,
+);
 
 export const titleBar = {
     WebkitAppRegion: "drag",
