@@ -36,15 +36,20 @@ export const extractManPageSections = (contents: string) => {
     return sections;
 };
 
+const isShortFlagWithoutArgument = (manPageLine: string) => /^ *-(\w) *(.*)$/.test(manPageLine);
+
 export const extractManPageSectionParagraphs = (contents: string[]) => {
+    const firstFlag = contents.find(isShortFlagWithoutArgument) as string;
+    const flagMatch = firstFlag.match(/^( *-\w *)/);
+    const flagIndentation = " ".repeat(((flagMatch || [""])[0]).length);
     const filteredContents = contents.filter((line, index, array) => {
         if (index === 0 || index === array.length - 1) {
             return true;
         }
         if (
             line === "" &&
-            array[index - 1].startsWith("           ") &&
-            array[index + 1].startsWith("           ")
+            array[index - 1].startsWith(flagIndentation) &&
+            array[index + 1].startsWith(flagIndentation)
         ) {
             return false;
         }
