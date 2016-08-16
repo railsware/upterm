@@ -10,12 +10,7 @@ import {
 // Note: this is still pretty experimental. If you want to do man page parsing
 // for a new command, expect to have to make some changes here.
 
-// TODO: Handle option descriptions that have empty lines,
-// when the spacing for flag descriptions isn't exactly 11
-// characters
-// Unblocks:
-// df
-// locate
+// TODO: Fix -l option for locate
 // TODO: Handle nested options. Unblocks:
 // dd
 
