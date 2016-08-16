@@ -38,28 +38,29 @@ export const extractManPageSections = (contents: string) => {
 
 const isShortFlagWithoutArgument = (manPageLine: string) => /^ *-(\w) *(.*)$/.test(manPageLine);
 
-export const extractManPageSectionParagraphs = (contents: string[]): string[][] => {
-    let filteredContents: string[] = [];
-    const firstFlag = contents.find(isShortFlagWithoutArgument) as string;
-    const flagMatch = firstFlag.match(/^( *-\w *)/);
-    const flagIndentation = " ".repeat(((flagMatch || [""])[0]).length);
-    filteredContents = contents.filter((line, index, array) => {
-        if (index === 0 || index === array.length - 1) {
+export const extractManPageSectionParagraphs = (contents: string[]) => {
+    let filteredContents: string[] | undefined = undefined;
+    const firstFlag = contents.find(isShortFlagWithoutArgument);
+    if (firstFlag) {
+        const flagMatch = firstFlag.match(/^( *-\w *)/);
+        const flagIndentation = " ".repeat(((flagMatch || [""])[0]).length);
+        filteredContents = contents.filter((line, index, array) => {
+            if (index === 0 || index === array.length - 1) {
+                return true;
+            }
+            if (
+                line === "" &&
+                array[index - 1].startsWith(flagIndentation) &&
+                array[index + 1].startsWith(flagIndentation)
+            ) {
+                return false;
+            }
             return true;
-        }
-        if (
-            line === "" &&
-            array[index - 1].startsWith(flagIndentation) &&
-            array[index + 1].startsWith(flagIndentation)
-        ) {
-            return false;
-        }
-        return true;
-    });
+        });
+    }
 
-    const realContents: string[] = filteredContents !== undefined ? filteredContents : contents;
-
-    const paragraphs: string[][] = realContents.reduce(
+    return (filteredContents ? filteredContents : contents)
+    .reduce(
         (memo, next) => {
             if (next === "") {
                 memo.push([]);
@@ -69,9 +70,8 @@ export const extractManPageSectionParagraphs = (contents: string[]): string[][] 
             return memo;
         },
         <string[][]>[[]]
-    );
-
-    return paragraphs.filter(lines => lines.length > 0);
+    )
+    .filter(lines => lines.length > 0);
 };
 
 export const suggestionFromFlagParagraph = (paragraph: string[]): Suggestion | undefined => {
