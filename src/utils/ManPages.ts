@@ -32,11 +32,11 @@ const manPageToOptions = async (command: string): Promise<Suggestion[]> => {
 
     // Split the description section (which contains the flags) into paragraphs
     /* tslint:disable:no-string-literal */
-    const manDescriptionParagraphs = extractManPageSectionParagraphs(manSections["DESCRIPTION"]);
+    const manDescriptionParagraphs: string[][] = extractManPageSectionParagraphs(manSections["DESCRIPTION"]);
     /* tslint:enable:no-string-literal */
 
     // Extract the paragraphs that describe flags, and parse out the flag data
-    return manDescriptionParagraphs.map(suggestionFromFlagParagraph).filter(s => s !== undefined) as Suggestion[];
+    return manDescriptionParagraphs.map(suggestionFromFlagParagraph).filter((s: Suggestion | undefined) => s !== undefined) as Suggestion[];
 };
 
 export const manPageOptions = (command: string) => unique(contextIndependent(() => manPageToOptions(command)));

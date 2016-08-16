@@ -38,11 +38,12 @@ export const extractManPageSections = (contents: string) => {
 
 const isShortFlagWithoutArgument = (manPageLine: string) => /^ *-(\w) *(.*)$/.test(manPageLine);
 
-export const extractManPageSectionParagraphs = (contents: string[]) => {
+export const extractManPageSectionParagraphs = (contents: string[]): string[][] => {
+    let filteredContents: string[] = [];
     const firstFlag = contents.find(isShortFlagWithoutArgument) as string;
     const flagMatch = firstFlag.match(/^( *-\w *)/);
     const flagIndentation = " ".repeat(((flagMatch || [""])[0]).length);
-    const filteredContents = contents.filter((line, index, array) => {
+    filteredContents = contents.filter((line, index, array) => {
         if (index === 0 || index === array.length - 1) {
             return true;
         }
@@ -56,8 +57,9 @@ export const extractManPageSectionParagraphs = (contents: string[]) => {
         return true;
     });
 
-    return filteredContents
-    .reduce(
+    const realContents: string[] = filteredContents !== undefined ? filteredContents : contents;
+
+    const paragraphs: string[][] = realContents.reduce(
         (memo, next) => {
             if (next === "") {
                 memo.push([]);
@@ -67,8 +69,9 @@ export const extractManPageSectionParagraphs = (contents: string[]) => {
             return memo;
         },
         <string[][]>[[]]
-    )
-    .filter(lines => lines.length > 0);
+    );
+
+    return paragraphs.filter(lines => lines.length > 0);
 };
 
 export const suggestionFromFlagParagraph = (paragraph: string[]): Suggestion | undefined => {
