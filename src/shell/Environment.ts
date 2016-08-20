@@ -17,14 +17,11 @@ const isIgnoredEnvironmentVariable = (varName: string) => {
     }
 };
 
-export const processEnvironment: Dictionary<string> = {};
-export async function loadEnvironment(): Promise<void> {
-    const lines = await executeCommandWithShellConfig("env");
-
+export const preprocessEnv = (lines: string[]) => {
+    // Bash functions in the env have newlines in them, which need to be removed
     const joinedFunctionLines: string[] = [];
     for (let i = 0; i < lines.length; i++) {
         if (/^BASH_FUNC\w+%%/.test(lines[i])) {
-            console.log(lines[i]);
             const finalLineOfFunction = lines.indexOf("}", i);
             joinedFunctionLines.push(lines.slice(i, finalLineOfFunction + 1).join("\n"));
             i = finalLineOfFunction;
@@ -32,8 +29,14 @@ export async function loadEnvironment(): Promise<void> {
             joinedFunctionLines.push(lines[i]);
         }
     }
+    return joinedFunctionLines;
+};
 
-    joinedFunctionLines.forEach(line => {
+export const processEnvironment: Dictionary<string> = {};
+export async function loadEnvironment(): Promise<void> {
+    const lines = preprocessEnv(await executeCommandWithShellConfig("env"));
+
+    lines.forEach(line => {
         const [key, ...valueComponents] = line.trim().split("=");
         const value = valueComponents.join("=");
 
