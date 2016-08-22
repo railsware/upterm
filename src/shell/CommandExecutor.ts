@@ -40,7 +40,12 @@ class ShellExecutionStrategy extends CommandExecutionStrategy {
     static async canExecute(job: Job) {
         return loginShell.preCommandModifiers.includes(job.prompt.commandName) ||
             await this.isExecutableFromPath(job) ||
-            await this.isPathOfExecutable(job);
+            await this.isPathOfExecutable(job) ||
+            this.isBashFunc(job);
+    }
+
+    private static isBashFunc(job: Job): boolean {
+        return job.environment.has(`BASH_FUNC_${job.prompt.commandName}%%`);
     }
 
     private static async isExecutableFromPath(job: Job): Promise<boolean> {
