@@ -1,4 +1,5 @@
 import * as React from 'react';
+import {colors} from '../views/css/colors';
 
 /*
  =========================
@@ -8,6 +9,23 @@ import * as React from 'react';
  * MIT Licence
  =========================
  */
+
+const listStyle = {
+    padding: '2px 0',
+    listStyleType: 'none',
+};
+
+const labelStyle = {
+    display: 'inline-block',
+    marginRight: '0.5em',
+    color: colors.magenta,
+};
+
+const childrenCount = {
+    WebkitUserSelect: 'none',
+    userSelect: 'none',
+    cursor: 'default',
+};
 
 type JSONProps = {
     data: any,
@@ -82,10 +100,15 @@ class JSONArrayNode extends React.Component<JSONProps, JSONState> {
     constructor(props: JSONProps) {
         super(props);
 
+        this.renderedChildren = [];
+        this.needsChildNodes = [];
+        this.itemString = false;
+
         this.state = {
             expanded: props.initialExpanded,
             createdChildNodes: false
         };
+
     }
 
     getDefaultProps() {
@@ -130,14 +153,14 @@ class JSONArrayNode extends React.Component<JSONProps, JSONState> {
         var childListStyle = {
             display: (this.state.expanded) ? 'block' : 'none'
         };
-        var cls = "array parentNode";
+        var cls = "array jsonTreeParentNode";
         cls += (this.state.expanded) ? " expanded" : '';
-        return <li className={cls} onClick={e => {
+        return <li style={listStyle} className={cls} onClick={e => {
             e.stopPropagation();
             this.setState({expanded: !this.state.expanded});
         }}>
-            <label>{this.props.keyName}: </label>
-            <span className='children-count'>{this.getItemString()}</span>
+            <label style={labelStyle}>{this.props.keyName}: </label>{"[...] "}
+            <span style={childrenCount}>{this.getItemString()}</span>
             <ol style={childListStyle}>{childNodes}</ol>
         </li>
     }
@@ -216,25 +239,21 @@ class JSONObjectNode extends React.Component<JSONProps, any> {
     }
 
     render():JSX.Element {
-        try {
-            var childListStyle = {
-                display: (this.state.expanded) ? 'block' : 'none'
-            };
-            var cls = "object parentNode";
-            cls += (this.state.expanded) ? " expanded" : '';
-            return (
-                <li className={cls} onClick={e => {
-                    e.stopPropagation();
-                    this.setState({expanded: !this.state.expanded});
-                }}>
-                    <label>{this.props.keyName}: </label>
-                    <span className="children-count">{this.getItemString()}</span>
-                    <ul style={childListStyle}>{this.getChildNodes()}</ul>
-                </li>
-            );
-        } catch (e) {
-            return <span>wat</span>
-        }
+        var childListStyle = {
+            display: (this.state.expanded) ? 'block' : 'none'
+        };
+        var cls = "object jsonTreeParentNode";
+        cls += (this.state.expanded) ? " expanded" : '';
+        return (
+            <li style={listStyle} className={cls} onClick={e => {
+                e.stopPropagation();
+                this.setState({expanded: !this.state.expanded});
+            }}>
+                <label style={labelStyle}>{this.props.keyName}: </label>{"{...} "}
+                <span style={childrenCount}>{this.getItemString()}</span>
+                <ul style={childListStyle}>{this.getChildNodes()}</ul>
+            </li>
+        );
     }
 };
 
@@ -244,9 +263,9 @@ class JSONObjectNode extends React.Component<JSONProps, any> {
 class JSONStringNode extends React.Component<JSONValueProps, any> {
     render():JSX.Element {
         return (
-            <li className="string itemNode" onClick={squashClick}>
-                <label>{this.props.keyName} ":"</label>
-                <span>{this.props.value}</span>
+            <li style={listStyle} className="string" onClick={squashClick}>
+                <label style={labelStyle}>{this.props.keyName}: </label>
+                <span style={{color: colors.green}}>"{this.props.value}"</span>
             </li>
         );
     }
@@ -258,10 +277,10 @@ class JSONStringNode extends React.Component<JSONValueProps, any> {
 class JSONNumberNode extends React.Component<JSONValueProps, any> {
     render():JSX.Element {
         return (
-            React.DOM.li({className: "number itemNode", onClick: squashClick},
-                React.DOM.label(null as any, this.props.keyName, ":"),
-                React.DOM.span(null as any, this.props.value)
-            )
+            <li style={listStyle} className="" onClick={squashClick}>
+                <label style={labelStyle}>{this.props.keyName}: </label>
+                <span style={{color: colors.blue}}>{this.props.value}</span>
+            </li>
         );
     }
 };
@@ -273,10 +292,10 @@ class JSONNumberNode extends React.Component<JSONValueProps, any> {
 class JSONNullNode extends React.Component<JSONValueProps, any> {
     render():JSX.Element {
         return (
-            React.DOM.li({className: "null itemNode", onClick: squashClick},
-                React.DOM.label(null as any, this.props.keyName, ":"),
-                React.DOM.span(null as any, "null")
-            )
+            <li style={listStyle} className="" onClick={squashClick}>
+                <label style={labelStyle}>{this.props.keyName}: </label>
+                <span style={{color: colors.red}}>null</span>
+            </li>
         );
     }
 };
@@ -287,9 +306,9 @@ class JSONNullNode extends React.Component<JSONValueProps, any> {
 class JSONBooleanNode extends React.Component<JSONValueProps, any> {
     render(): JSX.Element {
         var truthString = (this.props.value) ? 'true' : 'false';
-        return <li className={"boolean itemNode " + truthString} onClick={squashClick}>
-            <label>{this.props.keyName}: </label>
-            <span>{truthString}</span>
+        return <li style={listStyle} className={"boolean " + truthString} onClick={squashClick}>
+            <label style={labelStyle}>{this.props.keyName}: </label>
+            <span style={{color: colors.cyan}}>{truthString}</span>
         </li>
     }
 };
@@ -303,21 +322,16 @@ class JSONBooleanNode extends React.Component<JSONValueProps, any> {
  */
 class JSONTree extends React.Component<JSONProps, any>{
     render(): JSX.Element {
-        try {
-            var nodeType = objType(this.props.data);
-            var rootNode: JSX.Element;
-            if (nodeType === 'Object') {
-                rootNode = <JSONObjectNode data={this.props.data} keyName="(root)" initialExpanded={true} />;
-            } else if (nodeType === 'Array') {
-                rootNode = <JSONArrayNode data={this.props.data} initialExpanded={true} keyName="(root)" />;
-            } else {
-                return <span>How did you manage that?</span>;
-            }
-            return <ul className="json-tree">{rootNode}</ul>;
-        } catch (e) {
-            debugger;
-            return <span>wat</span>
+        var nodeType = objType(this.props.data);
+        var rootNode: JSX.Element;
+        if (nodeType === 'Object') {
+            rootNode = <JSONObjectNode data={this.props.data} keyName="(root)" initialExpanded={true} />;
+        } else if (nodeType === 'Array') {
+            rootNode = <JSONArrayNode data={this.props.data} initialExpanded={true} keyName="(root)" />;
+        } else {
+            return <span>How did you manage that?</span>;
         }
+        return <ul>{rootNode}</ul>;
     }
 };
 
