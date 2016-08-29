@@ -54,12 +54,21 @@ export class PTY {
     }
 }
 
-export function executeCommand(command: string, args: string[] = [], directory: string): Promise<string> {
+export function executeCommand(
+    command: string,
+    args: string[] = [],
+    directory: string,
+    execOptions?: any
+): Promise<string> {
     return new Promise((resolve, reject) => {
-        const options = {
-            env: _.extend({PWD: directory}, process.env),
-            cwd: directory,
-        };
+        const options = Object.assign(
+            {},
+            execOptions,
+            {
+                env: _.extend({PWD: directory}, process.env),
+                cwd: directory,
+            }
+        );
 
         ChildProcess.exec(`${command} ${args.join(" ")}`, options, (error, output) => {
             if (error) {
