@@ -12,22 +12,34 @@ const ignoredEnvironmentVariables = [
 const isIgnoredEnvironmentVariable = (varName: string) => {
     if (ignoredEnvironmentVariables.includes(varName)) {
         return true;
-    } else if (/^BASH_FUNC\w+%%$/.test(varName)) {
-        return true;
     } else {
         return false;
     }
 };
 
+export const preprocessEnv = (lines: string[]) => {
+    // Bash functions in the env have newlines in them, which need to be removed
+    const joinedFunctionLines: string[] = [];
+    for (let i = 0; i < lines.length; i++) {
+        if (/^BASH_FUNC\w+%%/.test(lines[i])) {
+            const finalLineOfFunction = lines.indexOf("}", i);
+            joinedFunctionLines.push(lines.slice(i, finalLineOfFunction + 1).join("\n"));
+            i = finalLineOfFunction;
+        } else {
+            joinedFunctionLines.push(lines[i]);
+        }
+    }
+    return joinedFunctionLines;
+};
+
 export const processEnvironment: Dictionary<string> = {};
 export async function loadEnvironment(): Promise<void> {
-    const lines = await executeCommandWithShellConfig("env");
+    const lines = preprocessEnv(await executeCommandWithShellConfig("env"));
 
     lines.forEach(line => {
-        let [key, value] = line.trim().split("=");
+        const [key, ...valueComponents] = line.trim().split("=");
+        const value = valueComponents.join("=");
 
-        // Strip bash functions from environment, as they cause issues.
-        // TODO: actually support bash functions
         if (!isIgnoredEnvironmentVariable(key)) {
             processEnvironment[key] = value;
         }

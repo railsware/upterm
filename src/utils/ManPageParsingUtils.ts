@@ -36,22 +36,30 @@ export const extractManPageSections = (contents: string) => {
     return sections;
 };
 
-export const extractManPageSectionParagraphs = (contents: string[]) => {
-    const filteredContents = contents.filter((line, index, array) => {
-        if (index === 0 || index === array.length - 1) {
-            return true;
-        }
-        if (
-            line === "" &&
-            array[index - 1].startsWith("           ") &&
-            array[index + 1].startsWith("           ")
-        ) {
-            return false;
-        }
-        return true;
-    });
+const isShortFlagWithoutArgument = (manPageLine: string) => /^ *-(\w) *(.*)$/.test(manPageLine);
 
-    return filteredContents
+export const extractManPageSectionParagraphs = (contents: string[]) => {
+    let filteredContents: string[] | undefined = undefined;
+    const firstFlag = contents.find(isShortFlagWithoutArgument);
+    if (firstFlag) {
+        const flagMatch = firstFlag.match(/^( *-\w *)/);
+        const flagIndentation = " ".repeat(((flagMatch || [""])[0]).length);
+        filteredContents = contents.filter((line, index, array) => {
+            if (index === 0 || index === array.length - 1) {
+                return true;
+            }
+            if (
+                line === "" &&
+                array[index - 1].startsWith(flagIndentation) &&
+                array[index + 1].startsWith(flagIndentation)
+            ) {
+                return false;
+            }
+            return true;
+        });
+    }
+
+    return (filteredContents ? filteredContents : contents)
     .reduce(
         (memo, next) => {
             if (next === "") {
