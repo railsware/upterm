@@ -89,6 +89,27 @@ describe("man page paragraph extraction", () => {
       ["     -f2   line one"]
     ]);
   });
+
+  it("can handle flag descriptions that have indentation like df's -T option", () => {
+    expect(extractManPageSectionParagraphs([
+      "     -f        line one",
+      "               line two",
+      "",
+      "                      indented",
+      "",
+      "               line three",
+      "",
+      "     -g        line one",
+    ])).to.eql([
+      [
+        "     -f        line one",
+        "               line two",
+        "                      indented",
+        "               line three",
+      ],
+      ["     -g        line one"]
+    ]);
+  });
 });
 
 describe("suggestion parser", () => {
