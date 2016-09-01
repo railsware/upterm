@@ -97,3 +97,47 @@ export enum SplitDirection {
     Vertical,
     Horizontal,
 }
+
+export enum KeyboardAction {
+    // CLI commands
+    cliRunCommand,
+    cliInterrupt,
+    cliClearJobs,
+    cliDeleteWord,
+    cliClearText,
+    cliAppendLastArgumentOfPreviousCommand,
+    cliHistoryPrevious,
+    cliHistoryNext,
+    // autocomplete commands
+    autocompleteInsertCompletion,
+    autocompletePreviousSuggestion,
+    autocompleteNextSuggestion,
+    // tab commands
+    tabNew,
+    tabFocus,
+    tabPrevious,
+    tabNext,
+    tabClose,
+    // edit/clipboard commands
+    clipboardCopy,
+    clipboardCut,
+    clipboardPaste,
+    editUndo,
+    editRedo,
+    editSelectAll,
+    editFind,
+    editFindClose,
+    // window commands
+    windowSplitHorizontally,
+    windowSplitVertically,
+    // view commands
+    viewReload,
+    viewToggleFullScreen,
+    // black screen commands
+    blackScreenHide,
+    blackScreenQuit,
+    blackScreenHideOthers,
+    // developer
+    developerToggleTools,
+    developerToggleDebugMode,
+}
