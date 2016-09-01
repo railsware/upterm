@@ -11,7 +11,7 @@ PluginManager.registerOutputDecorator({
     isApplicable: (job: Job): boolean => {
         try {
             const parseResult = JSON.parse(job.screenBuffer.toString());
-            return parseResult !== null && typeof parseResult === "object";
+            return parseResult && typeof parseResult === "object";
         } catch (exception) {
             return false;
         }
