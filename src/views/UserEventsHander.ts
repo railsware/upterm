@@ -8,7 +8,7 @@ import {isModifierKey} from "./ViewUtils";
 import {SearchComponent} from "./SearchComponent";
 import {remote} from "electron";
 import {buildMenuTemplate} from "./menu/Menu";
-import {isKeybidingForEvent} from "./keyevents/Keybindings";
+import {isKeybindingForEvent} from "./keyevents/Keybindings";
 
 export type UserEvent = KeyboardEvent | ClipboardEvent;
 
@@ -37,7 +37,7 @@ export const handleUserEvent = (application: ApplicationComponent,
         }
 
         // Close focused pane
-        if (isKeybidingForEvent(event, KeyboardAction.tabClose) && !isInProgress(job)) {
+        if (isKeybindingForEvent(event, KeyboardAction.tabClose) && !isInProgress(job)) {
             application.closeFocusedPane();
 
             application.forceUpdate();
@@ -48,7 +48,7 @@ export const handleUserEvent = (application: ApplicationComponent,
         }
 
         // Change tab action
-        if (isKeybidingForEvent(event, KeyboardAction.tabFocus)) {
+        if (isKeybindingForEvent(event, KeyboardAction.tabFocus)) {
             const position = parseInt(event.key, 10);
             application.focusTab(position);
 
@@ -58,7 +58,7 @@ export const handleUserEvent = (application: ApplicationComponent,
         }
 
         // Enable debug mode
-        if (isKeybidingForEvent(event, KeyboardAction.developerToggleDebugMode)) {
+        if (isKeybindingForEvent(event, KeyboardAction.developerToggleDebugMode)) {
             window.DEBUG = !window.DEBUG;
 
             require("devtron").install();
@@ -72,7 +72,7 @@ export const handleUserEvent = (application: ApplicationComponent,
         }
 
         // Console clear
-        if (isKeybidingForEvent(event, KeyboardAction.cliClearJobs) && !isInProgress(job)) {
+        if (isKeybindingForEvent(event, KeyboardAction.cliClearJobs) && !isInProgress(job)) {
             session.props.session.clearJobs();
 
             event.stopPropagation();
@@ -88,7 +88,7 @@ export const handleUserEvent = (application: ApplicationComponent,
 
         if (search.isFocused) {
             // Search close
-            if (isKeybidingForEvent(event, KeyboardAction.editFindClose)) {
+            if (isKeybindingForEvent(event, KeyboardAction.editFindClose)) {
                 search.clearSelection();
                 setTimeout(() => prompt.focus(), 0);
 
@@ -103,7 +103,7 @@ export const handleUserEvent = (application: ApplicationComponent,
 
         if (isInProgress(job) && !isModifierKey(event)) {
             // CLI interrupt
-            if (isKeybidingForEvent(event, KeyboardAction.cliInterrupt)) {
+            if (isKeybindingForEvent(event, KeyboardAction.cliInterrupt)) {
                 job.props.job.interrupt();
             } else {
                 job.props.job.write(event);
@@ -117,7 +117,7 @@ export const handleUserEvent = (application: ApplicationComponent,
         prompt.focus();
 
         // Append last argument to prompt
-        if (isKeybidingForEvent(event, KeyboardAction.cliAppendLastArgumentOfPreviousCommand)) {
+        if (isKeybindingForEvent(event, KeyboardAction.cliAppendLastArgumentOfPreviousCommand)) {
             prompt.appendLastLArgumentOfPreviousCommand();
 
             event.stopPropagation();
@@ -127,7 +127,7 @@ export const handleUserEvent = (application: ApplicationComponent,
 
         if (!isInProgress(job)) {
             // CLI Delete word
-            if (isKeybidingForEvent(event, KeyboardAction.cliDeleteWord)) {
+            if (isKeybindingForEvent(event, KeyboardAction.cliDeleteWord)) {
                 prompt.deleteWord();
 
                 event.stopPropagation();
@@ -136,7 +136,7 @@ export const handleUserEvent = (application: ApplicationComponent,
             }
 
             // CLI execute command
-            if (isKeybidingForEvent(event, KeyboardAction.cliRunCommand)) {
+            if (isKeybindingForEvent(event, KeyboardAction.cliRunCommand)) {
                 prompt.execute((event.target as HTMLElement).innerText);
 
                 event.stopPropagation();
@@ -145,7 +145,7 @@ export const handleUserEvent = (application: ApplicationComponent,
             }
 
             // CLI clear
-            if (isKeybidingForEvent(event, KeyboardAction.cliClearText)) {
+            if (isKeybindingForEvent(event, KeyboardAction.cliClearText)) {
                 prompt.clear();
 
                 event.stopPropagation();
@@ -154,7 +154,7 @@ export const handleUserEvent = (application: ApplicationComponent,
             }
 
             if (prompt.isAutocompleteShown()) {
-                if (isKeybidingForEvent(event, KeyboardAction.autocompleteInsertCompletion)) {
+                if (isKeybindingForEvent(event, KeyboardAction.autocompleteInsertCompletion)) {
                     prompt.applySuggestion();
 
                     event.stopPropagation();
@@ -162,7 +162,7 @@ export const handleUserEvent = (application: ApplicationComponent,
                     return;
                 }
 
-                if (isKeybidingForEvent(event, KeyboardAction.autocompletePreviousSuggestion)) {
+                if (isKeybindingForEvent(event, KeyboardAction.autocompletePreviousSuggestion)) {
                     prompt.focusPreviousSuggestion();
 
                     event.stopPropagation();
@@ -170,7 +170,7 @@ export const handleUserEvent = (application: ApplicationComponent,
                     return;
                 }
 
-                if (isKeybidingForEvent(event, KeyboardAction.autocompleteNextSuggestion)) {
+                if (isKeybindingForEvent(event, KeyboardAction.autocompleteNextSuggestion)) {
                     prompt.focusNextSuggestion();
 
                     event.stopPropagation();
@@ -178,7 +178,7 @@ export const handleUserEvent = (application: ApplicationComponent,
                     return;
                 }
             } else {
-                if (isKeybidingForEvent(event, KeyboardAction.cliHistoryPrevious)) {
+                if (isKeybindingForEvent(event, KeyboardAction.cliHistoryPrevious)) {
                     prompt.setPreviousHistoryItem();
 
                     event.stopPropagation();
@@ -186,7 +186,7 @@ export const handleUserEvent = (application: ApplicationComponent,
                     return;
                 }
 
-                if (isKeybidingForEvent(event, KeyboardAction.cliHistoryNext)) {
+                if (isKeybindingForEvent(event, KeyboardAction.cliHistoryNext)) {
                     prompt.setNextHistoryItem();
 
                     event.stopPropagation();

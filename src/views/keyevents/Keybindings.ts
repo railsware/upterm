@@ -94,18 +94,18 @@ export const KeybindingsForActions: KeybindingType[] = [
     },
 ];
 
-export function isKeybidingForEvent(event: KeyboardEvent, action: KeyboardAction): boolean {
+export function isKeybindingForEvent(event: KeyboardEvent, action: KeyboardAction): boolean {
     /**
      * Finds the keybinding for the given action and returns the result of the keybinding function
      */
-    let matchingKeyboardAction = KeybindingsForActions.filter((keybinding) => {
+    let matchingKeyboardAction = KeybindingsForActions.find((keybinding) => {
         return keybinding.action === action;
     });
-    if (matchingKeyboardAction.length === 0) {
+    if (!matchingKeyboardAction) {
         error("No matching keybinding for action: " + KeyboardAction[action]);
         return false;
     }
-    return matchingKeyboardAction[0].keybinding(event);
+    return matchingKeyboardAction.keybinding(event);
 }
 
 // Menu Stuff
@@ -210,7 +210,7 @@ export const KeybindingsForMenu: KeybindingMenuType[] = [
 ];
 
 
-export function getAccleratorForAction(action: KeyboardAction): string {
+export function getAcceleratorForAction(action: KeyboardAction): string {
     /**
      * Returns the accelerator for a given keyboard action
      */

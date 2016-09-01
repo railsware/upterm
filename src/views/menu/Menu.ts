@@ -1,6 +1,6 @@
 import {KeyboardAction, SplitDirection} from "../../Enums";
 import {remote} from "electron";
-import {getAccleratorForAction} from "../keyevents/Keybindings";
+import {getAcceleratorForAction} from "../keyevents/Keybindings";
 
 
 
@@ -18,14 +18,14 @@ export function buildMenuTemplate(app: Electron.App, browserWindow: Electron.Bro
                 },
                 {
                     label: "Hide Black Screen",
-                    accelerator: getAccleratorForAction(KeyboardAction.blackScreenHide),
+                    accelerator: getAcceleratorForAction(KeyboardAction.blackScreenHide),
                     click: () => {
                         app.hide();
                     },
                 },
                 {
                     label: "Hide Others",
-                    accelerator: getAccleratorForAction(KeyboardAction.blackScreenHideOthers),
+                    accelerator: getAcceleratorForAction(KeyboardAction.blackScreenHideOthers),
                     role: "hideothers",
                 },
                 {
@@ -33,7 +33,7 @@ export function buildMenuTemplate(app: Electron.App, browserWindow: Electron.Bro
                 },
                 {
                     label: "Quit",
-                    accelerator: getAccleratorForAction(KeyboardAction.blackScreenQuit),
+                    accelerator: getAcceleratorForAction(KeyboardAction.blackScreenQuit),
                     click: () => {
                         app.quit();
                     },
@@ -45,17 +45,17 @@ export function buildMenuTemplate(app: Electron.App, browserWindow: Electron.Bro
             submenu: [
                 {
                     label: "Undo",
-                    accelerator: getAccleratorForAction(KeyboardAction.editUndo),
+                    accelerator: getAcceleratorForAction(KeyboardAction.editUndo),
                     role: "undo",
                 },
                 {
                     label: "Redo",
-                    accelerator: getAccleratorForAction(KeyboardAction.editRedo),
+                    accelerator: getAcceleratorForAction(KeyboardAction.editRedo),
                     role: "redo",
                 },
                 {
                     label: "Find",
-                    accelerator: getAccleratorForAction(KeyboardAction.editFind),
+                    accelerator: getAcceleratorForAction(KeyboardAction.editFind),
                     click: () => {
                         (document.querySelector("input[type=search]") as HTMLInputElement).select();
                     },
@@ -65,22 +65,22 @@ export function buildMenuTemplate(app: Electron.App, browserWindow: Electron.Bro
                 },
                 {
                     label: "Cut",
-                    accelerator: getAccleratorForAction(KeyboardAction.clipboardCut),
+                    accelerator: getAcceleratorForAction(KeyboardAction.clipboardCut),
                     role: "cut",
                 },
                 {
                     label: "Copy",
-                    accelerator: getAccleratorForAction(KeyboardAction.clipboardCopy),
+                    accelerator: getAcceleratorForAction(KeyboardAction.clipboardCopy),
                     role: "copy",
                 },
                 {
                     label: "Paste",
-                    accelerator: getAccleratorForAction(KeyboardAction.clipboardPaste),
+                    accelerator: getAcceleratorForAction(KeyboardAction.clipboardPaste),
                     role: "paste",
                 },
                 {
                     label: "Select All",
-                    accelerator: getAccleratorForAction(KeyboardAction.editSelectAll),
+                    accelerator: getAcceleratorForAction(KeyboardAction.editSelectAll),
                     role: "selectall",
                 },
             ],
@@ -90,21 +90,21 @@ export function buildMenuTemplate(app: Electron.App, browserWindow: Electron.Bro
             submenu: [
                 {
                     label: "Reload",
-                    accelerator: getAccleratorForAction(KeyboardAction.viewReload),
+                    accelerator: getAcceleratorForAction(KeyboardAction.viewReload),
                     click: () => {
                         browserWindow.reload();
                     },
                 },
                 {
                     label: "Toggle Full Screen",
-                    accelerator: getAccleratorForAction(KeyboardAction.viewToggleFullScreen),
+                    accelerator: getAcceleratorForAction(KeyboardAction.viewToggleFullScreen),
                     click: () => {
                         browserWindow.setFullScreen(!browserWindow.isFullScreen());
                     },
                 },
                 {
                     label: "Toggle Developer Tools",
-                    accelerator: getAccleratorForAction(KeyboardAction.developerToggleTools),
+                    accelerator: getAcceleratorForAction(KeyboardAction.developerToggleTools),
                     click: () => {
                         browserWindow.webContents.toggleDevTools();
                     },
@@ -116,14 +116,14 @@ export function buildMenuTemplate(app: Electron.App, browserWindow: Electron.Bro
             submenu: [
                 {
                     label: "Add Tab",
-                    accelerator: getAccleratorForAction(KeyboardAction.tabNew),
+                    accelerator: getAcceleratorForAction(KeyboardAction.tabNew),
                     click: () => {
                         window.application.addTab();
                     },
                 },
                 {
                     label: "Split Horizontally",
-                    accelerator: getAccleratorForAction(KeyboardAction.windowSplitHorizontally),
+                    accelerator: getAcceleratorForAction(KeyboardAction.windowSplitHorizontally),
                     click: () => {
                         window.focusedTab.addPane(SplitDirection.Horizontal);
                         window.application.forceUpdate();
@@ -131,7 +131,7 @@ export function buildMenuTemplate(app: Electron.App, browserWindow: Electron.Bro
                 },
                 {
                     label: "Split Vertically",
-                    accelerator: getAccleratorForAction(KeyboardAction.windowSplitVertically),
+                    accelerator: getAcceleratorForAction(KeyboardAction.windowSplitVertically),
                     click: () => {
                         window.focusedTab.addPane(SplitDirection.Vertical);
                         window.application.forceUpdate();
@@ -144,7 +144,7 @@ export function buildMenuTemplate(app: Electron.App, browserWindow: Electron.Bro
             submenu: [
                 {
                     label: "Previous",
-                    accelerator: getAccleratorForAction(KeyboardAction.tabPrevious),
+                    accelerator: getAcceleratorForAction(KeyboardAction.tabPrevious),
                     click: () => {
                         window.focusedTab.activatePreviousPane();
                         window.application.forceUpdate();
@@ -152,7 +152,7 @@ export function buildMenuTemplate(app: Electron.App, browserWindow: Electron.Bro
                 },
                 {
                     label: "Next",
-                    accelerator: getAccleratorForAction(KeyboardAction.tabNext),
+                    accelerator: getAcceleratorForAction(KeyboardAction.tabNext),
                     click: () => {
                         window.focusedTab.activateNextPane();
                         window.application.forceUpdate();
@@ -160,7 +160,7 @@ export function buildMenuTemplate(app: Electron.App, browserWindow: Electron.Bro
                 },
                 {
                     label: "Close",
-                    accelerator: getAccleratorForAction(KeyboardAction.tabClose),
+                    accelerator: getAcceleratorForAction(KeyboardAction.tabClose),
                     click: () => {
                         window.application.closeFocusedPane();
                         window.application.forceUpdate();
