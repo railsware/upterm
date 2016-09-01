@@ -36,6 +36,15 @@
         background-position: 30px 0;
       }
     }
+
+    /* inline styles can't really handle pseudo elements, so they still need classes */
+    .jsonTreeParentNode:before {
+      content: "\0025B8 \0000a0";
+      margin-left: -1.2em;
+    }
+    .jsonTreeParentNode.expanded:before {
+      content: "\0025BE \0000a0";
+    }
   </style>
 </head>
 <body></body>
