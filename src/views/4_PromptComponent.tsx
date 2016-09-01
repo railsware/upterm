@@ -293,7 +293,7 @@ export class PromptComponent extends React.Component<Props, State> {
     }
 
     private async handleInput(event: React.SyntheticEvent<HTMLElement>): Promise<void> {
-        this.prompt.setValue(event.target.innerText);
+        this.prompt.setValue((event.target as HTMLElement).innerText);
 
         await this.getSuggestions();
     }

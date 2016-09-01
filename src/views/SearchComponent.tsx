@@ -35,7 +35,7 @@ export class SearchComponent extends React.Component<{}, {}> {
     }
 
     private handleInput(event: React.KeyboardEvent<HTMLInputElement>) {
-        const text = event.target.value;
+        const text = (event.target as HTMLInputElement).value;
 
         if (text) {
             this.webContents.findInPage(text);
