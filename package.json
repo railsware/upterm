@@ -52,7 +52,7 @@
     "mocha": "3.0.2",
     "npm-check-updates": "2.8.0",
     "spectron": "3.3.0",
-    "ts-node": "1.2.2",
+    "ts-node": "1.2.3",
     "tslint": "3.14.0",
     "typescript": "2.0.0"
   },
