@@ -28,7 +28,7 @@
     "@types/node": "6.0.33",
     "@types/pty.js": "0.2.28",
     "@types/react": "0.14.29",
-    "child-process-promise": "2.1.0",
+    "child-process-promise": "2.1.2",
     "font-awesome": "4.6.3",
     "fs-extra": "0.30.0",
     "fuzzaldrin": "2.1.0",
