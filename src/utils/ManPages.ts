@@ -10,12 +10,7 @@ import {
 // Note: this is still pretty experimental. If you want to do man page parsing
 // for a new command, expect to have to make some changes here.
 
-// TODO: Handle option descriptions that have empty lines,
-// when the spacing for flag descriptions isn't exactly 11
-// characters
-// Unblocks:
-// df
-// locate
+// TODO: Fix -l option for locate
 // TODO: Handle nested options. Unblocks:
 // dd
 
@@ -32,11 +27,11 @@ const manPageToOptions = async (command: string): Promise<Suggestion[]> => {
 
     // Split the description section (which contains the flags) into paragraphs
     /* tslint:disable:no-string-literal */
-    const manDescriptionParagraphs = extractManPageSectionParagraphs(manSections["DESCRIPTION"]);
+    const manDescriptionParagraphs: string[][] = extractManPageSectionParagraphs(manSections["DESCRIPTION"]);
     /* tslint:enable:no-string-literal */
 
     // Extract the paragraphs that describe flags, and parse out the flag data
-    return manDescriptionParagraphs.map(suggestionFromFlagParagraph).filter(s => s !== undefined) as Suggestion[];
+    return manDescriptionParagraphs.map(suggestionFromFlagParagraph).filter((s: Suggestion | undefined) => s !== undefined) as Suggestion[];
 };
 
 export const manPageOptions = (command: string) => unique(contextIndependent(() => manPageToOptions(command)));
