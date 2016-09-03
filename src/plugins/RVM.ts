@@ -12,7 +12,15 @@ async function getRubyVersion(directory: string): Promise<string> {
     if (await exists(Path.join(directory, rubyVersionFileName))) {
         return (await readFile(Path.join(directory, rubyVersionFileName))).trim();
     } else {
-        return fs.realpathSync(Path.join(rvmDirectory, "rubies", "default")).split("-")[1];
+        return new Promise<string>((resolve, reject) => {
+            fs.realpath(Path.join(rvmDirectory, "rubies", "default"), (err, resolvedPath) => {
+                if (err) {
+                    reject(err);
+                } else {
+                    resolve(resolvedPath.split("-")[1]);
+                }
+            });
+        });
     }
 }
 
@@ -43,11 +51,19 @@ function binPaths(rubyVersion: string, gemSetName: string): string[] {
 }
 
 async function withRvmData(directory: string, callback: (binPaths: string[], gemPaths: string[]) => void) {
-    const rubyVersion = await getRubyVersion(directory);
-    const gemSetName = await getGemSetName(directory);
-    const gemPaths = getGemSetPaths(rubyVersion, gemSetName);
+    try {
+        const rubyVersion = await getRubyVersion(directory);
+        const gemSetName = await getGemSetName(directory);
+        const gemPaths = getGemSetPaths(rubyVersion, gemSetName);
 
-    callback(binPaths(rubyVersion, gemSetName), gemPaths);
+        callback(binPaths(rubyVersion, gemSetName), gemPaths);
+    } catch (e) {
+        if (e.code === "ENOENT") {
+            // No RVM installed. Ignore exception.
+        } else {
+            throw e;
+        }
+    }
 }
 
 PluginManager.registerEnvironmentObserver({
