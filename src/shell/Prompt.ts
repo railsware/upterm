@@ -33,13 +33,10 @@ export class Prompt extends events.EventEmitter {
     }
 
     get commandName(): string {
-        const commandWord = this._expandedAst.firstCommand.commandWord;
-
-        if (commandWord) {
-            return commandWord.value;
-        } else {
+        if (!this._expandedAst || !this._expandedAst.firstCommand.commandWord) {
             return "";
         }
+        return this._expandedAst.firstCommand.commandWord.value;
     }
 
     get arguments(): Token[] {

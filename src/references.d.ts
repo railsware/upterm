@@ -3,5 +3,6 @@
 
 /// <reference path="../typings/mode-to-permissions.d.ts" />
 /// <reference path="../typings/child-process-promise.d.ts" />
+/// <reference path="../typings/uuid.d.ts" />
 
 /// <reference path="../node_modules/immutable/dist/immutable.d.ts" />
