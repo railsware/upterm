@@ -11,7 +11,8 @@
     "jsx": "react",
     "outDir": "compiled/src",
     "strictNullChecks": true,
-    "noImplicitThis": true
+    "noImplicitThis": true,
+    "inlineSourceMap": true
   },
   "exclude": [
     "node_modules",
