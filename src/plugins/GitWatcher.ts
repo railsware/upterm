@@ -59,23 +59,27 @@ class GitWatcher extends EventEmitter {
         executeCommand("git", ["status", "-b", "--porcelain"], this.directory).then(changes => {
             const status: VcsStatus = changes.length ? "dirty" : "clean";
             let head: string = changes.split(" ")[1];
-
-            let rawPushPull: string = changes.split("[")[1].slice(0, -2);
-            let separatedPushPull: Array<string> = rawPushPull.split(", ");
             let push: string = "0";
             let pull: string = "0";
 
-            if (separatedPushPull.length > 0) {
-                for (let i in separatedPushPull) {
-                    if (separatedPushPull.hasOwnProperty(i)) {
-                        let splitAgain: Array<string> = separatedPushPull[i].split(" ");
-                        switch (splitAgain[0]) {
-                            case 'ahead':
-                                push = splitAgain[1];
-                                break;
-                            case 'behind':
-                                pull = splitAgain[1];
-                                break
+            let secondSplit: Array<string> = changes.split("[");
+            if (secondSplit.length > 1) {
+                let rawPushPull: string = secondSplit[1].slice(0, -2);
+                let separatedPushPull: Array<string> = rawPushPull.split(", ");
+
+
+                if (separatedPushPull.length > 0) {
+                    for (let i in separatedPushPull) {
+                        if (separatedPushPull.hasOwnProperty(i)) {
+                            let splitAgain: Array<string> = separatedPushPull[i].split(" ");
+                            switch (splitAgain[0]) {
+                                case 'ahead':
+                                    push = splitAgain[1];
+                                    break;
+                                case 'behind':
+                                    pull = splitAgain[1];
+                                    break
+                            }
                         }
                     }
                 }
