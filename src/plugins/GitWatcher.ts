@@ -7,7 +7,6 @@ import * as _ from "lodash";
 import {EventEmitter} from "events";
 import {executeCommand} from "../PTY";
 import {debounce} from "../Decorators";
-import {readFile} from "../utils/Common";
 import * as Git from "../utils/Git";
 
 const GIT_WATCHER_EVENT_NAME = "git-data-changed";
@@ -73,12 +72,14 @@ class GitWatcher extends EventEmitter {
                         if (separatedPushPull.hasOwnProperty(i)) {
                             let splitAgain: Array<string> = separatedPushPull[i].split(" ");
                             switch (splitAgain[0]) {
-                                case 'ahead':
+                                case "ahead":
                                     push = splitAgain[1];
                                     break;
-                                case 'behind':
+                                case "behind":
                                     pull = splitAgain[1];
-                                    break
+                                    break;
+                                default:
+                                    break;
                             }
                         }
                     }
