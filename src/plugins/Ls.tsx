@@ -19,18 +19,19 @@ type State = {
 }
 
 const renderFile = (file: any, itemWidth = 0) => {
-    const style: CSSObject = {display: 'inline-block'};
+    const style: CSSObject = {display: "inline-block"};
     if (itemWidth) {
+        // TODO: respect LSCOLORS env var
         style.width = `${itemWidth}px`;
         style.cursor = "pointer";
         style.margin = "2px 4px";
-        // TODO: respect LSCOLORS env var
-        style.color = file.isDirectory() ? colors.blue : colors.white;
     }
     return <span
         style={style}
-        onClick={() => e.shell.openExternal(`file://${file.filePath}`)}
-    >{file.fileName}{file.isDirectory() ? "/" : ""}</span>
+        onClick={() => e.shell.openExternal(`file://${file.filePath}`)}>
+        <span style={{color: file.isDirectory() ? colors.blue : colors.white}}>{file.fileName}</span>
+        <span>{file.isDirectory() ? "/" : ""}</span>
+    </span>;
 };
 
 class LSComponent extends React.Component<Props, State> {
@@ -62,7 +63,7 @@ class LSComponent extends React.Component<Props, State> {
     render() {
         if (this.state.success === false) {
             return <div>Failed</div>;
-        } else if (this.state.success == true) {
+        } else if (this.state.success === true) {
             return <div
                 style={{padding: "10px"}}
                 ref={element => {
