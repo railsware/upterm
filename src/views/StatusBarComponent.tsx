@@ -15,6 +15,10 @@ const VcsDataComponent = ({data}: { data: VcsData }) => {
         return (
             <div style={css.statusBar.vcsData}>
                 <div style={css.statusBar.status(data.status)}>
+                    <span style={css.statusBar.icon} dangerouslySetInnerHTML={{__html: fontAwesome.longArrowDown}}/>
+                    {data.pull}
+                    <span style={css.statusBar.icon} dangerouslySetInnerHTML={{__html: fontAwesome.longArrowUp}}/>
+                    {data.push}
                     <span style={css.statusBar.icon} dangerouslySetInnerHTML={{__html: fontAwesome.codeFork}}/>
                     {data.branch}
                 </div>
