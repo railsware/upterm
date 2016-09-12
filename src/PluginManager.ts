@@ -46,7 +46,7 @@ export class PluginManager {
         return this._preexecPlugins;
     }
 
-    static registerAfterexecPlugin(plugin: PreexecPlugin): void {
+    static registerAfterexecPlugin(plugin: AfterexecPlugin): void {
         this._afterexecPlugins.push(plugin);
     }
 
