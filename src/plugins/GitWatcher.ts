@@ -8,6 +8,7 @@ import {EventEmitter} from "events";
 import {executeCommand} from "../PTY";
 import {debounce} from "../Decorators";
 import * as Git from "../utils/Git";
+import {Job} from "../shell/Job";
 
 const GIT_WATCHER_EVENT_NAME = "git-data-changed";
 
@@ -165,3 +166,8 @@ class WatchManager implements EnvironmentObserverPlugin {
 export const watchManager = new WatchManager();
 
 PluginManager.registerEnvironmentObserver(watchManager);
+
+PluginManager.registerAfterexecPlugin(async function (job: Job): Promise<void> {
+    const watchManager = new WatchManager();
+    watchManager.presentWorkingDirectoryDidChange(job.session, job.session.directory);
+});
