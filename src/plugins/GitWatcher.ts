@@ -58,7 +58,7 @@ class GitWatcher extends EventEmitter {
 
         executeCommand("git", ["status", "-b", "--porcelain"], this.directory).then(changes => {
             const status: VcsStatus = changes.length ? "dirty" : "clean";
-            let head: string = changes.split(" ")[1];
+            let head: string = changes.split(" ")[1].replace(new RegExp("/\r?\n|\r/g"), "");
             let push: string = "0";
             let pull: string = "0";
 
