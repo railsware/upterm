@@ -170,6 +170,5 @@ export const watchManager = new WatchManager();
 PluginManager.registerEnvironmentObserver(watchManager);
 
 PluginManager.registerAfterexecPlugin(async function (job: Job): Promise<void> {
-    const watchManager = new WatchManager();
     watchManager.presentWorkingDirectoryDidChange(job.session, job.session.directory);
 });
