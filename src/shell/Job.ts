@@ -57,6 +57,7 @@ export class Job extends EmitterWithUniqueID implements TerminalLikeDevice {
             if (this.status === Status.InProgress) {
                 this.setStatus(Status.Success);
             }
+            await Promise.all(PluginManager.afterexecPlugins.map(plugin => plugin(this)));
             this.emit("end");
         } catch (exception) {
             this.handleError(exception);

@@ -1,4 +1,4 @@
-import {OutputDecorator, EnvironmentObserverPlugin, AutocompletionProvider, PreexecPlugin} from "./Interfaces";
+import {OutputDecorator, EnvironmentObserverPlugin, AutocompletionProvider, PreexecPlugin, AfterexecPlugin} from "./Interfaces";
 import * as Path from "path";
 import {recursiveFilesIn} from "./utils/Common";
 import {environmentVariableSuggestions, anyFilesSuggestionsProvider} from "../src/plugins/autocompletion_utils/Common";
@@ -12,6 +12,7 @@ export class PluginManager {
     private static _environmentObservers: EnvironmentObserverPlugin[] = [];
     private static _autocompletionProviders: Dictionary<AutocompletionProvider> = {};
     private static _preexecPlugins: PreexecPlugin[] = [];
+    private static _afterexecPlugins: AfterexecPlugin[] = [];
 
     static registerOutputDecorator(decorator: OutputDecorator): void {
         this._outputDecorators.push(decorator);
@@ -43,6 +44,14 @@ export class PluginManager {
 
     static get preexecPlugins(): PreexecPlugin[] {
         return this._preexecPlugins;
+    }
+
+    static registerAfterexecPlugin(plugin: PreexecPlugin): void {
+        this._afterexecPlugins.push(plugin);
+    }
+
+    static get afterexecPlugins(): PreexecPlugin[] {
+        return this._afterexecPlugins;
     }
 }
 
