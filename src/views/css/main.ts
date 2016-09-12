@@ -253,7 +253,7 @@ export const statusBar = {
         float: "right",
         marginRight: 10,
     },
-    icon: Object.assign({}, icon, {marginRight: 5}),
+    icon: Object.assign({}, icon, {marginRight: 5, marginLeft: 5}),
     status: (status: VcsStatus) => {
         return {
             color: status === "dirty" ? colors.blue : colors.white,
