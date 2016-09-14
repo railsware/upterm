@@ -7,7 +7,6 @@ import * as _ from "lodash";
 import {EventEmitter} from "events";
 import {executeCommand} from "../PTY";
 import {debounce} from "../Decorators";
-import {readFile} from "../utils/Common";
 import * as Git from "../utils/Git";
 
 const GIT_WATCHER_EVENT_NAME = "git-data-changed";
@@ -48,23 +47,50 @@ class GitWatcher extends EventEmitter {
                 }
             );
         } else {
-            const data: VcsData = {kind: "not-repository"};
+            const data: VcsData = { kind: "not-repository" };
             this.emit(GIT_WATCHER_EVENT_NAME, data);
         }
     }
 
     @debounce(1000 / 60)
     private async updateGitData() {
-        let content = await readFile(Path.join(this.gitDirectory, "HEAD"));
-        const headMatch = /ref: refs\/heads\/(.*)/.exec(content);
-        const head = headMatch ? headMatch[1] : "Couldn't parse branch";
 
-        executeCommand("git", ["status", "--porcelain"], this.directory).then(changes => {
+        executeCommand("git", ["status", "-b", "--porcelain"], this.directory).then(changes => {
             const status: VcsStatus = changes.length ? "dirty" : "clean";
+            let head: string = changes.split(" ")[1];
+            let push: string = "0";
+            let pull: string = "0";
+
+            let secondSplit: Array<string> = changes.split("[");
+            if (secondSplit.length > 1) {
+                let rawPushPull: string = secondSplit[1].slice(0, -2);
+                let separatedPushPull: Array<string> = rawPushPull.split(", ");
+
+
+                if (separatedPushPull.length > 0) {
+                    for (let i in separatedPushPull) {
+                        if (separatedPushPull.hasOwnProperty(i)) {
+                            let splitAgain: Array<string> = separatedPushPull[i].split(" ");
+                            switch (splitAgain[0]) {
+                                case "ahead":
+                                    push = splitAgain[1];
+                                    break;
+                                case "behind":
+                                    pull = splitAgain[1];
+                                    break;
+                                default:
+                                    break;
+                            }
+                        }
+                    }
+                }
+            }
 
             const data: VcsData = {
                 kind: "repository",
                 branch: head,
+                push: push,
+                pull: pull,
                 status: status,
             };
 
@@ -109,7 +135,7 @@ class WatchManager implements EnvironmentObserverPlugin {
             this.directoryToDetails.set(directory, {
                 listeners: new Set([session]),
                 watcher: watcher,
-                data: {kind: "not-repository"},
+                data: { kind: "not-repository" },
             });
 
             watcher.watch();
@@ -131,7 +157,7 @@ class WatchManager implements EnvironmentObserverPlugin {
         if (details) {
             return details.data;
         } else {
-            return {kind: "not-repository"};
+            return { kind: "not-repository" };
         }
     }
 }
