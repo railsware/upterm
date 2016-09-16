@@ -39,6 +39,7 @@ function lettersToStatusCode(letters: string): StatusCode {
         case "  ":
             return StatusCode.Unmodified;
         case " M":
+        case "M ":
             return StatusCode.Modified;
         case "AM":
             return StatusCode.Added;
