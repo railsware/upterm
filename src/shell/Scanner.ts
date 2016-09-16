@@ -177,7 +177,7 @@ const patterns = [
         tokenConstructor : SingleQuotedStringLiteral,
     },
     {
-        regularExpression: /^(\s*(?:\\\s|[a-zA-Z0-9\u0080-\uFFFF~!@#%^&*_=,.:/?\\-])+)/,
+        regularExpression: /^(\s*(?:\\\s|[a-zA-Z0-9\u0080-\uFFFF+~!@#%^&*_=,.:/?\\-])+)/,
         tokenConstructor : Word,
     },
 ];
