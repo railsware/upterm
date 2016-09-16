@@ -228,7 +228,9 @@ PluginManager.registerAutocompletionProvider("npm", async (context) => {
                 return [];
             }
         } else {
-            throw "Has no first argument.";
+            // TODO: handle npm sub commands other than "run" that can be
+            // further auto-completed
+            return [];
         }
     } else {
         return [];
