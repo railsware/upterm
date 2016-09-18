@@ -2,7 +2,7 @@
   "name": "black-screen",
   "productName": "Black Screen",
   "description": "A terminal emulator for the 21st century.",
-  "version": "0.2.38",
+  "version": "0.2.40",
   "main": "compiled/src/main/Main.js",
   "author": "Volodymyr Shatskyi <shockone89@gmail.com>",
   "repository": {
@@ -41,7 +41,7 @@
     "react": "15.3.1",
     "react-dom": "15.3.1",
     "tinycolor2": "1.4.1",
-    "uuid": "2.0.2"
+    "uuid": "2.0.3"
   },
   "devDependencies": {
     "@types/chai": "3.4.32",
