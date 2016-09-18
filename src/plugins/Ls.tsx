@@ -29,7 +29,7 @@ const renderFile = (file: any, itemWidth = 0) => {
     return <span
         style={style}
         onClick={() => e.shell.openExternal(`file://${file.filePath}`)}>
-        <span style={{color: file.isDirectory() ? colors.blue : colors.white}}>{file.fileName}</span>
+        <span className="underlineOnHover" style={{color: file.isDirectory() ? colors.blue : colors.white}}>{file.fileName}</span>
         <span>{file.isDirectory() ? "/" : ""}</span>
     </span>;
 };
