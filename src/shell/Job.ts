@@ -27,6 +27,7 @@ export class Job extends EmitterWithUniqueID implements TerminalLikeDevice {
     private readonly _screenBuffer: ScreenBuffer;
     private readonly rareDataEmitter: Function;
     private readonly frequentDataEmitter: Function;
+    public interceptionResult: React.ReactElement<any> | undefined;
 
     constructor(private _session: Session) {
         super();
@@ -47,19 +48,38 @@ export class Job extends EmitterWithUniqueID implements TerminalLikeDevice {
 
         this.setStatus(Status.InProgress);
 
-        await Promise.all(PluginManager.preexecPlugins.map(plugin => plugin(this)));
+        const commandWords: string[] = this.prompt.expandedTokens.map(token => token.escapedValue);
+        const interceptorOptions = {
+            command: commandWords,
+            presentWorkingDirectory: this.environment.pwd,
+        };
+        const interceptor = PluginManager.commandInterceptorPlugins.find(
+            interceptor => interceptor.isApplicable(interceptorOptions)
+        );
 
-        try {
-            await CommandExecutor.execute(this);
-
-            // Need to check the status here because it's
-            // executed even after the process was interrupted.
-            if (this.status === Status.InProgress) {
+        if (interceptor) {
+            try {
+                this.interceptionResult = await interceptor.intercept(interceptorOptions);
                 this.setStatus(Status.Success);
+            } catch (e) {
+                this.setStatus(Status.Failure);
             }
             this.emit("end");
-        } catch (exception) {
-            this.handleError(exception);
+        } else {
+            await Promise.all(PluginManager.preexecPlugins.map(plugin => plugin(this)));
+
+            try {
+                await CommandExecutor.execute(this);
+
+                // Need to check the status here because it's
+                // executed even after the process was interrupted.
+                if (this.status === Status.InProgress) {
+                    this.setStatus(Status.Success);
+                }
+                this.emit("end");
+            } catch (exception) {
+                this.handleError(exception);
+            }
         }
     }
 
