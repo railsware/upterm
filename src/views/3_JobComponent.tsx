@@ -13,7 +13,6 @@ interface State {
 }
 
 export const decorateByDefault = true;
-
 export class JobComponent extends React.Component<Props, State> {
     constructor(props: Props) {
         super(props);
@@ -43,7 +42,9 @@ export class JobComponent extends React.Component<Props, State> {
 
     render() {
         let buffer: React.ReactElement<any>;
-        if (this.props.job.canBeDecorated() && this.state.decorate) {
+        if (this.props.job.interceptionResult) {
+            buffer = this.props.job.interceptionResult;
+        } else if (this.props.job.canBeDecorated() && this.state.decorate) {
             buffer = this.props.job.decorate();
         } else {
             buffer = <BufferComponent job={this.props.job}/>;
