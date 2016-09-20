@@ -29,7 +29,9 @@ export enum StatusCode {
     Deleted,
     Renamed,
     Copied,
-    UpdatedButUnmerged
+    UpdatedButUnmerged,
+    StagedChanges,
+    StagedAndUnstagedChanges
 }
 
 function lettersToStatusCode(letters: string): StatusCode {
@@ -38,8 +40,9 @@ function lettersToStatusCode(letters: string): StatusCode {
             return StatusCode.Untracked;
         case "  ":
             return StatusCode.Unmodified;
-        case " M":
         case "M ":
+            return StatusCode.StagedChanges;
+        case " M":
             return StatusCode.Modified;
         case "AM":
             return StatusCode.Added;
@@ -53,6 +56,8 @@ function lettersToStatusCode(letters: string): StatusCode {
             return StatusCode.Copied;
         case " U":
             return StatusCode.UpdatedButUnmerged;
+        case "MM":
+            return StatusCode.StagedAndUnstagedChanges;
         default:
             throw `Unknown Git status code: ${letters}`;
     }
