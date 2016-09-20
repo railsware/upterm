@@ -112,15 +112,50 @@ export function buildMenuTemplate(app: Electron.App, browserWindow: Electron.Bro
             ],
         },
         {
-            label: "Window",
+            label: "Tab",
             submenu: [
                 {
-                    label: "Add Tab",
+                    label: "New Tab",
                     accelerator: getAcceleratorForAction(KeyboardAction.tabNew),
                     click: () => {
                         window.application.addTab();
                     },
                 },
+                {
+                    type: "separator",
+                },
+                {
+                    label: "Previous",
+                    accelerator: getAcceleratorForAction(KeyboardAction.tabPrevious),
+                    click: () => {
+                        window.application.activatePreviousTab();
+                        window.application.forceUpdate();
+                    },
+                },
+                {
+                    label: "Next",
+                    accelerator: getAcceleratorForAction(KeyboardAction.tabNext),
+                    click: () => {
+                        window.application.activateNextTab();
+                        window.application.forceUpdate();
+                    },
+                },
+                {
+                    type: "separator",
+                },
+                {
+                    label: "Close",
+                    accelerator: getAcceleratorForAction(KeyboardAction.tabClose),
+                    click: () => {
+                        window.application.closeFocusedTab();
+                        window.application.forceUpdate();
+                    },
+                },
+            ],
+        },
+        {
+            label: "Pane",
+            submenu: [
                 {
                     label: "Split Horizontally",
                     accelerator: getAcceleratorForAction(KeyboardAction.windowSplitHorizontally),
@@ -137,11 +172,9 @@ export function buildMenuTemplate(app: Electron.App, browserWindow: Electron.Bro
                         window.application.forceUpdate();
                     },
                 },
-            ],
-        },
-        {
-            label: "Pane",
-            submenu: [
+                {
+                    type: "separator",
+                },
                 {
                     label: "Previous",
                     accelerator: getAcceleratorForAction(KeyboardAction.panePrevious),
@@ -157,6 +190,9 @@ export function buildMenuTemplate(app: Electron.App, browserWindow: Electron.Bro
                         window.focusedTab.activateNextPane();
                         window.application.forceUpdate();
                     },
+                },
+                {
+                    type: "separator",
                 },
                 {
                     label: "Close",

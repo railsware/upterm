@@ -115,6 +115,10 @@ export enum KeyboardAction {
     // tab commands
     tabNew,
     tabFocus,
+    tabPrevious,
+    tabNext,
+    tabClose,
+    // pane commands
     panePrevious,
     paneNext,
     paneClose,

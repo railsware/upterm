@@ -73,6 +73,32 @@ export class ApplicationComponent extends React.Component<{}, {}> {
         window.focusedTab = this.focusedTab;
     }
 
+    closeFocusedTab() {
+        this.closeTab(this.focusedTab);
+
+        this.forceUpdate();
+    }
+
+    activatePreviousTab() {
+        let newPosition = this.focusedTabIndex - 1;
+        
+        if (newPosition < 0) {
+            newPosition = this.tabs.length - 1;
+        }
+        
+        this.focusTab(newPosition + 1);
+    }
+
+    activateNextTab() {
+        let newPosition = this.focusedTabIndex + 1;
+        
+        if (newPosition >= this.tabs.length) {
+            newPosition = 0;
+        }
+        
+        this.focusTab(newPosition + 1);
+    }
+
     // FIXME: this method should be private.
     closeFocusedPane() {
         this.focusedTab.closeFocusedPane();
