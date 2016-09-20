@@ -28,6 +28,7 @@ export class Job extends EmitterWithUniqueID implements TerminalLikeDevice {
     private readonly rareDataEmitter: Function;
     private readonly frequentDataEmitter: Function;
     public interceptionResult: React.ReactElement<any> | undefined;
+    private executedWithoutInterceptor: boolean = false;
 
     constructor(private _session: Session) {
         super();
@@ -43,10 +44,12 @@ export class Job extends EmitterWithUniqueID implements TerminalLikeDevice {
         this.parser = new ANSIParser(this);
     }
 
-    async execute(): Promise<void> {
+    async execute({allowInterception = true} = {}): Promise<void> {
         History.add(this.prompt.value);
 
-        this.setStatus(Status.InProgress);
+        if (this.status === Status.NotStarted) {
+            this.setStatus(Status.InProgress);
+        }
 
         const commandWords: string[] = this.prompt.expandedTokens.map(token => token.escapedValue);
         const interceptorOptions = {
@@ -57,28 +60,32 @@ export class Job extends EmitterWithUniqueID implements TerminalLikeDevice {
             interceptor => interceptor.isApplicable(interceptorOptions)
         );
 
-        if (interceptor) {
-            try {
-                this.interceptionResult = await interceptor.intercept(interceptorOptions);
-                this.setStatus(Status.Success);
-            } catch (e) {
-                this.setStatus(Status.Failure);
-            }
-            this.emit("end");
-        } else {
-            await Promise.all(PluginManager.preexecPlugins.map(plugin => plugin(this)));
-
-            try {
-                await CommandExecutor.execute(this);
-
-                // Need to check the status here because it's
-                // executed even after the process was interrupted.
-                if (this.status === Status.InProgress) {
+        await Promise.all(PluginManager.preexecPlugins.map(plugin => plugin(this)));
+        if (interceptor && allowInterception) {
+            if (!this.interceptionResult) {
+                try {
+                    this.interceptionResult = await interceptor.intercept(interceptorOptions);
                     this.setStatus(Status.Success);
+                } catch (e) {
+                    this.setStatus(Status.Failure);
                 }
                 this.emit("end");
-            } catch (exception) {
-                this.handleError(exception);
+            }
+        } else {
+            if (!this.executedWithoutInterceptor) {
+                this.executedWithoutInterceptor = true;
+                try {
+                    await CommandExecutor.execute(this);
+
+                    // Need to check the status here because it's
+                    // executed even after the process was interrupted.
+                    if (this.status === Status.InProgress) {
+                        this.setStatus(Status.Success);
+                    }
+                    this.emit("end");
+                } catch (exception) {
+                    this.handleError(exception);
+                }
             }
         }
     }
