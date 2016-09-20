@@ -12,13 +12,12 @@ interface State {
     decorate: boolean;
 }
 
-export const decorateByDefault = true;
 export class JobComponent extends React.Component<Props, State> {
     constructor(props: Props) {
         super(props);
 
         this.state = {
-            decorate: decorateByDefault,
+            decorate: true,
         };
 
         // FIXME: find a better design to propagate events.
@@ -42,9 +41,10 @@ export class JobComponent extends React.Component<Props, State> {
 
     render() {
         let buffer: React.ReactElement<any>;
-        if (this.props.job.interceptionResult) {
+        let canBeDecorated = this.props.job.canBeDecorated();
+        if (this.props.job.interceptionResult && this.state.decorate) {
             buffer = this.props.job.interceptionResult;
-        } else if (this.props.job.canBeDecorated() && this.state.decorate) {
+        } else if (canBeDecorated && this.state.decorate) {
             buffer = this.props.job.decorate();
         } else {
             buffer = <BufferComponent job={this.props.job}/>;
@@ -55,11 +55,16 @@ export class JobComponent extends React.Component<Props, State> {
                 <PromptComponent job={this.props.job}
                                  status={this.props.job.status}
                                  isFocused={this.props.isFocused}
+                                 showDecorationToggle={!!this.props.job.interceptionResult || canBeDecorated}
                                  decorateToggler={() => {
-                                     const newDecorate = !this.state.decorate;
-                                     this.setState({decorate: newDecorate});
-                                     return newDecorate;
-                                 }}/>
+                                     if (this.props.job.interceptionResult) {
+                                         // Re-execute without intercepting
+                                         this.props.job.execute({ allowInterception: false });
+                                     }
+                                     // Show non-decorated output
+                                     this.setState({decorate: !this.state.decorate});
+                                 }}
+                                 isDecorated={this.state.decorate} />
                 {buffer}
             </div>
         );
