@@ -133,7 +133,7 @@ export const KeybindingsForMenu: KeybindingMenuType[] = [
     },
     {
         action: KeyboardAction.tabClose,
-        accelerator: "CmdOrCtrl+Shift++W",
+        accelerator: "CmdOrCtrl+W",
     },
     {
         action: KeyboardAction.panePrevious,
@@ -145,7 +145,7 @@ export const KeybindingsForMenu: KeybindingMenuType[] = [
     },
     {
         action: KeyboardAction.paneClose,
-        accelerator: "CmdOrCtrl+W",
+        accelerator: "CmdOrCtrl+P",
     },
     // edit/clipboard commands
     {
