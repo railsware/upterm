@@ -84,7 +84,7 @@ export const KeybindingsForActions: KeybindingType[] = [
     {
         action: KeyboardAction.tabFocus,
         keybinding: (e: KeyboardEvent) => {
-            return (e.ctrlKey && e.keyCode >= KeyCode.One && e.keyCode <= KeyCode.Nine);
+            return ((e.ctrlKey || isMeta(e)) && e.keyCode >= KeyCode.One && e.keyCode <= KeyCode.Nine);
         },
     },
     // search commands
