@@ -76,11 +76,12 @@ export const KeybindingsForActions: KeybindingType[] = [
             return (e.ctrlKey && e.keyCode === KeyCode.N) || (e.keyCode === KeyCode.Down);
         },
     },
-    // tab commands
+    // pane command
     {
-        action: KeyboardAction.tabClose,
+        action: KeyboardAction.paneClose,
         keybinding: (e: KeyboardEvent) => isMeta(e) && e.keyCode === KeyCode.D,
     },
+    // tab commands
     {
         action: KeyboardAction.tabFocus,
         keybinding: (e: KeyboardEvent) => {
@@ -123,15 +124,15 @@ export const KeybindingsForMenu: KeybindingMenuType[] = [
         accelerator: "CmdOrCtrl+T",
     },
     {
-        action: KeyboardAction.tabPrevious,
+        action: KeyboardAction.panePrevious,
         accelerator: "CmdOrCtrl+K",
     },
     {
-        action: KeyboardAction.tabNext,
+        action: KeyboardAction.paneNext,
         accelerator: "CmdOrCtrl+J",
     },
     {
-        action: KeyboardAction.tabClose,
+        action: KeyboardAction.paneClose,
         accelerator: "CmdOrCtrl+W",
     },
     // edit/clipboard commands

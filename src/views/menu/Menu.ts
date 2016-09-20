@@ -144,7 +144,7 @@ export function buildMenuTemplate(app: Electron.App, browserWindow: Electron.Bro
             submenu: [
                 {
                     label: "Previous",
-                    accelerator: getAcceleratorForAction(KeyboardAction.tabPrevious),
+                    accelerator: getAcceleratorForAction(KeyboardAction.panePrevious),
                     click: () => {
                         window.focusedTab.activatePreviousPane();
                         window.application.forceUpdate();
@@ -152,7 +152,7 @@ export function buildMenuTemplate(app: Electron.App, browserWindow: Electron.Bro
                 },
                 {
                     label: "Next",
-                    accelerator: getAcceleratorForAction(KeyboardAction.tabNext),
+                    accelerator: getAcceleratorForAction(KeyboardAction.paneNext),
                     click: () => {
                         window.focusedTab.activateNextPane();
                         window.application.forceUpdate();
@@ -160,7 +160,7 @@ export function buildMenuTemplate(app: Electron.App, browserWindow: Electron.Bro
                 },
                 {
                     label: "Close",
-                    accelerator: getAcceleratorForAction(KeyboardAction.tabClose),
+                    accelerator: getAcceleratorForAction(KeyboardAction.paneClose),
                     click: () => {
                         window.application.closeFocusedPane();
                         window.application.forceUpdate();
