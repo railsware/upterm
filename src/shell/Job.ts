@@ -66,10 +66,10 @@ export class Job extends EmitterWithUniqueID implements TerminalLikeDevice {
                 try {
                     this.interceptionResult = await interceptor.intercept(interceptorOptions);
                     this.setStatus(Status.Success);
-                } catch (e) {
-                    this.setStatus(Status.Failure);
+                    this.emit("end");
+                } catch (exception) {
+                    this.handleError(exception.toString());
                 }
-                this.emit("end");
             }
         } else {
             if (!this.executedWithoutInterceptor) {
