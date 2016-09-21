@@ -9,12 +9,10 @@ import {isEqual} from "lodash";
 import {colors} from "../views/css/colors";
 
 type Props = {
-    path: string,
+    files: any[],
 }
 
 type State = {
-    success: boolean | undefined,
-    dirStat: any,
     itemWidth: number | undefined,
 }
 
@@ -40,21 +38,8 @@ class LSComponent extends React.Component<Props, State> {
         super(props);
 
         this.state = {
-            dirStat: undefined,
-            success: undefined,
             itemWidth: undefined,
         };
-
-        dirStat(props.path, (err, results) => {
-            if (err) {
-                this.setState({ success: false } as State);
-            } else {
-                this.setState({
-                    success: true,
-                    dirStat: results,
-                } as State);
-            }
-        });
     }
 
     shouldComponentUpdate(nextProps: Props, nextState: State) {
@@ -62,23 +47,17 @@ class LSComponent extends React.Component<Props, State> {
     }
 
     render() {
-        if (this.state.success === false) {
-            return <div>Failed</div>;
-        } else if (this.state.success === true) {
-            return <div
-                style={{padding: "10px"}}
-                ref={element => {
-                    if (element) {
-                        const children = Array.prototype.slice.call(element.children);
-                        this.setState({
-                            itemWidth: Math.max(...children.map((child: any) => child.offsetWidth)),
-                        } as State);
-                    }
-                }}
-            >{this.state.dirStat.map((file: any) => renderFile(file, this.state.itemWidth))}</div>;
-        } else {
-            return <div>Loading...</div>;
-        }
+        return <div
+            style={{padding: "10px"}}
+            ref={element => {
+                if (element) {
+                    const children = Array.prototype.slice.call(element.children);
+                    this.setState({
+                        itemWidth: Math.max(...children.map((child: any) => child.offsetWidth)),
+                    } as State);
+                }
+            }}
+        >{this.props.files.map((file: any) => renderFile(file, this.state.itemWidth))}</div>;
     }
 }
 
@@ -89,7 +68,16 @@ PluginManager.registerCommandInterceptorPlugin({
     }): Promise<React.ReactElement<any>> => {
         const inputDir = command[1] || ".";
         const dir = isAbsolute(inputDir) ? inputDir : join(presentWorkingDirectory, inputDir);
-        return <LSComponent path={dir} />;
+        const files: any[] = await new Promise<any[]>((resolve, reject) => {
+            dirStat(dir, (err, results) => {
+                if (err) {
+                    reject(err);
+                } else {
+                    resolve(results);
+                }
+            });
+        });
+        return <LSComponent files={files} />;
     },
 
     isApplicable: ({
