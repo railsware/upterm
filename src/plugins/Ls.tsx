@@ -82,16 +82,21 @@ class LSComponent extends React.Component<Props, State> {
     }
 }
 
-PluginManager.registerOutputDecorator({
-    decorate: (job: Job): React.ReactElement<any> => {
-        const match = job.prompt.value.match(/^ls(?:\s+([/\w]*))\s*$/);
-        const inputDir = match ? match[1] : ".";
-        const dir = isAbsolute(inputDir) ? inputDir : join(job.environment.pwd, inputDir);
+PluginManager.registerCommandInterceptorPlugin({
+    intercept: async({
+        command,
+        presentWorkingDirectory,
+    }): Promise<React.ReactElement<any>> => {
+        const inputDir = command[1] || ".";
+        const dir = isAbsolute(inputDir) ? inputDir : join(presentWorkingDirectory, inputDir);
         return <LSComponent path={dir} />;
     },
 
-    isApplicable: (job: Job): boolean => {
-        // Matches ls page with an optional single arg
-        return /^ls(\s+[/\w]*)?\s*$/.test(job.prompt.value);
+    isApplicable: ({
+        command,
+        presentWorkingDirectory,
+    }): boolean => {
+        const hasFlags = command.length === 2 && command[1].startsWith("-");
+        return [1,2].includes(command.length) && !hasFlags && command[0] === "ls";
     },
 });
