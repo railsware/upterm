@@ -12,7 +12,7 @@ export class PTY {
     // TODO: use generators.
     // TODO: terminate. https://github.com/atom/atom/blob/v1.0.15/src/task.coffee#L151
     constructor(words: EscapedShellWord[], env: ProcessEnvironment, dimensions: Dimensions, dataHandler: (d: string) => void, exitHandler: (c: number) => void) {
-        const shellArguments = [...loginShell.noConfigSwitches, "-c", words.join(" ")];
+        const shellArguments = [...loginShell.noConfigSwitches, "-i", "-c", words.join(" ")];
 
         debug(`PTY: ${loginShell.executableName} ${JSON.stringify(shellArguments)}`);
 
