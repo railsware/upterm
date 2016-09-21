@@ -118,6 +118,10 @@ export enum KeyboardAction {
     tabPrevious,
     tabNext,
     tabClose,
+    // pane commands
+    panePrevious,
+    paneNext,
+    paneClose,
     // edit/clipboard commands
     clipboardCopy,
     clipboardCut,
