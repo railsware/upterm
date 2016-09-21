@@ -1,4 +1,4 @@
-import * as React from "react";
+/*import * as React from "react";
 import {PluginManager} from "../PluginManager";
 import {isEqual} from "lodash";
 import {Status} from "../Enums";
@@ -125,3 +125,4 @@ PluginManager.registerCommandInterceptorPlugin({
     return isEqual(command, ["git", "status"]);
   },
 });
+*/
