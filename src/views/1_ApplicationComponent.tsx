@@ -136,7 +136,7 @@ export class ApplicationComponent extends React.Component<{}, {}> {
         return (
             <div style={css.application}>
                 <div style={css.titleBar}>
-                    <ul style={css.tabs}>{tabs}</ul>
+                    <ul style={css.tabs as any}>{tabs}</ul>
                     <SearchComponent/>
                 </div>
                 {this.renderPanes(this.focusedTab.panes)}
