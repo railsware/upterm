@@ -14,7 +14,7 @@
   },
   "engineStrict": true,
   "engines": {
-    "node": ">= 6.0.0"
+    "node": ">= 6.6.0"
   },
   "keywords": [
     "terminal",
