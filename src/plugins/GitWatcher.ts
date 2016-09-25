@@ -8,6 +8,7 @@ import {EventEmitter} from "events";
 import {executeCommand} from "../PTY";
 import {debounce} from "../Decorators";
 import * as Git from "../utils/Git";
+import {Job} from "../shell/Job";
 
 const GIT_WATCHER_EVENT_NAME = "git-data-changed";
 
@@ -57,7 +58,9 @@ class GitWatcher extends EventEmitter {
 
         executeCommand("git", ["status", "-b", "--porcelain"], this.directory).then(changes => {
             const status: VcsStatus = changes.length ? "dirty" : "clean";
-            let head: string = changes.split(" ")[1];
+            let newLineChanges = changes.match(/[^\n]*\n[^\n]*/gi);
+            let fileChanges: string = (newLineChanges && newLineChanges.length > 1) ? "*" : "";
+            let head: string = changes.split(" ")[1].replace( new RegExp("/\r?\n|\r/g"), "") + fileChanges;
             let push: string = "0";
             let pull: string = "0";
 
@@ -165,3 +168,7 @@ class WatchManager implements EnvironmentObserverPlugin {
 export const watchManager = new WatchManager();
 
 PluginManager.registerEnvironmentObserver(watchManager);
+
+PluginManager.registerAfterexecPlugin(async function (job: Job): Promise<void> {
+    watchManager.presentWorkingDirectoryDidChange(job.session, job.session.directory);
+});

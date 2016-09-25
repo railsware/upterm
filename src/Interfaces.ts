@@ -61,6 +61,10 @@ export interface PreexecPlugin {
     (job: Job): Promise<void>;
 }
 
+export interface AfterexecPlugin {
+    (job: Job): Promise<void>;
+}
+
 export interface TerminalLikeDevice {
     screenBuffer: ScreenBuffer;
     dimensions: Dimensions;
