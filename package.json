@@ -34,7 +34,7 @@
     "fs-extra": "0.30.0",
     "fuzzaldrin": "2.1.0",
     "immutable": "3.8.1",
-    "lodash": "4.16.1",
+    "lodash": "4.16.2",
     "mode-to-permissions": "0.0.2",
     "node-ansiparser": "2.2.0",
     "pty.js": "shockone/pty.js",
