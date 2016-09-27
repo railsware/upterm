@@ -66,7 +66,7 @@
     "electron": "electron .",
     "prestart": "npm install && npm run compile",
     "start": "bash housekeeping/start.sh",
-    "test": "npm run lint && npm run unit-tests && npm run integration-tests",
+    "test": "npm run lint && npm run unit-tests && npm run integration-tests && npm rebuild && electron-rebuild && build",
     "unit-tests": "ELECTRON_RUN_AS_NODE=1 electron $(which mocha) --require ts-node/register $(find test -name '*_spec.ts')",
     "integration-tests": "npm run compile && mocha",
     "update-dependencies": "ncu -u",
