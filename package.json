@@ -2,7 +2,7 @@
   "name": "black-screen",
   "productName": "Black Screen",
   "description": "A terminal emulator for the 21st century.",
-  "version": "0.2.51",
+  "version": "0.2.53",
   "main": "compiled/src/main/Main.js",
   "author": "Volodymyr Shatskyi <shockone89@gmail.com>",
   "repository": {
@@ -48,7 +48,7 @@
     "@types/mocha": "2.2.32",
     "chai": "3.5.0",
     "devtron": "1.3.0",
-    "electron-builder": "7.3.0",
+    "electron-builder": "7.9.0",
     "electron-prebuilt": "1.4.1",
     "electron-rebuild": "1.2.1",
     "mocha": "3.0.2",
