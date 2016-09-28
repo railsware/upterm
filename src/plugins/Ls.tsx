@@ -1,4 +1,4 @@
-import * as React from "React";
+import * as React from "react";
 import {PluginManager} from "../PluginManager";
 import {Job} from "../shell/Job";
 import {join, isAbsolute} from "path";

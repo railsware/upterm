@@ -37,7 +37,7 @@ export const handleUserEvent = (application: ApplicationComponent,
         }
 
         // Close focused pane
-        if (isKeybindingForEvent(event, KeyboardAction.tabClose) && !isInProgress(job)) {
+        if (isKeybindingForEvent(event, KeyboardAction.paneClose) && !isInProgress(job)) {
             application.closeFocusedPane();
 
             application.forceUpdate();
