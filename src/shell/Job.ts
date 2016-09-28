@@ -28,6 +28,7 @@ export class Job extends EmitterWithUniqueID implements TerminalLikeDevice {
     private readonly _screenBuffer: ScreenBuffer;
     private readonly rareDataEmitter: Function;
     private readonly frequentDataEmitter: Function;
+    public interceptionResult: React.ReactElement<any> | undefined;
     private executedWithoutInterceptor: boolean = false;
 
     constructor(private _session: Session) {
@@ -66,10 +67,10 @@ export class Job extends EmitterWithUniqueID implements TerminalLikeDevice {
                 try {
                     this.interceptionResult = await interceptor.intercept(interceptorOptions);
                     this.setStatus(Status.Success);
-                    this.emit("end");
-                } catch (exception) {
-                    this.handleError(exception.toString());
+                } catch (e) {
+                    this.setStatus(Status.Failure);
                 }
+                this.emit("end");
             }
         } else {
             if (!this.executedWithoutInterceptor) {

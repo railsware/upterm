@@ -76,15 +76,16 @@ export const KeybindingsForActions: KeybindingType[] = [
             return (e.ctrlKey && e.keyCode === KeyCode.N) || (e.keyCode === KeyCode.Down);
         },
     },
-    // tab commands
+    // pane command
     {
-        action: KeyboardAction.tabClose,
+        action: KeyboardAction.paneClose,
         keybinding: (e: KeyboardEvent) => isMeta(e) && e.keyCode === KeyCode.D,
     },
+    // tab commands
     {
         action: KeyboardAction.tabFocus,
         keybinding: (e: KeyboardEvent) => {
-            return (e.ctrlKey && e.keyCode >= KeyCode.One && e.keyCode <= KeyCode.Nine);
+            return ((e.ctrlKey || isMeta(e)) && e.keyCode >= KeyCode.One && e.keyCode <= KeyCode.Nine);
         },
     },
     // search commands
@@ -124,15 +125,27 @@ export const KeybindingsForMenu: KeybindingMenuType[] = [
     },
     {
         action: KeyboardAction.tabPrevious,
-        accelerator: "CmdOrCtrl+K",
+        accelerator: "Ctrl+Shift+Tab",
     },
     {
         action: KeyboardAction.tabNext,
-        accelerator: "CmdOrCtrl+J",
+        accelerator: "Ctrl+Tab",
     },
     {
         action: KeyboardAction.tabClose,
         accelerator: "CmdOrCtrl+W",
+    },
+    {
+        action: KeyboardAction.panePrevious,
+        accelerator: "CmdOrCtrl+K",
+    },
+    {
+        action: KeyboardAction.paneNext,
+        accelerator: "CmdOrCtrl+J",
+    },
+    {
+        action: KeyboardAction.paneClose,
+        accelerator: "CmdOrCtrl+P",
     },
     // edit/clipboard commands
     {

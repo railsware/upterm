@@ -1,4 +1,4 @@
-import * as React from "React";
+import * as React from "react";
 import {PluginManager} from "../PluginManager";
 import {join, isAbsolute} from "path";
 import {dirStat} from "dirStat";
@@ -79,8 +79,11 @@ PluginManager.registerCommandInterceptorPlugin({
         return <LSComponent files={files} />;
     },
 
-    isApplicable: ({ command }): boolean => {
+    isApplicable: ({
+        command,
+        presentWorkingDirectory,
+    }): boolean => {
         const hasFlags = command.length === 2 && command[1].startsWith("-");
-        return [1, 2].includes(command.length) && !hasFlags && command[0] === "ls";
+        return [1,2].includes(command.length) && !hasFlags && command[0] === "ls";
     },
 });
