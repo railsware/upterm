@@ -23,11 +23,11 @@ export class Job extends EmitterWithUniqueID implements TerminalLikeDevice {
     public command: PTY;
     public status: Status = Status.NotStarted;
     public readonly parser: ANSIParser;
+    public interceptionResult: React.ReactElement<any> | undefined;
     private readonly _prompt: Prompt;
     private readonly _screenBuffer: ScreenBuffer;
     private readonly rareDataEmitter: Function;
     private readonly frequentDataEmitter: Function;
-    public interceptionResult: React.ReactElement<any> | undefined;
     private executedWithoutInterceptor: boolean = false;
 
     constructor(private _session: Session) {
@@ -57,7 +57,7 @@ export class Job extends EmitterWithUniqueID implements TerminalLikeDevice {
             presentWorkingDirectory: this.environment.pwd,
         };
         const interceptor = PluginManager.commandInterceptorPlugins.find(
-            interceptor => interceptor.isApplicable(interceptorOptions)
+            potentialInterceptor => potentialInterceptor.isApplicable(interceptorOptions)
         );
 
         await Promise.all(PluginManager.preexecPlugins.map(plugin => plugin(this)));

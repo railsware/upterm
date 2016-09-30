@@ -1,5 +1,4 @@
 import * as React from "react";
-import {stopBubblingUp} from "./ViewUtils";
 import * as css from "./css/main";
 import {fontAwesome} from "./css/FontAwesome";
 
