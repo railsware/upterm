@@ -28,7 +28,6 @@ export class Job extends EmitterWithUniqueID implements TerminalLikeDevice {
     private readonly _screenBuffer: ScreenBuffer;
     private readonly rareDataEmitter: Function;
     private readonly frequentDataEmitter: Function;
-    public interceptionResult: React.ReactElement<any> | undefined;
     private executedWithoutInterceptor: boolean = false;
 
     constructor(private _session: Session) {
