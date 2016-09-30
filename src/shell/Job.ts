@@ -44,6 +44,24 @@ export class Job extends EmitterWithUniqueID implements TerminalLikeDevice {
         this.parser = new ANSIParser(this);
     }
 
+    async executeWithoutInterceptor(): Promise<void> {
+        if (!this.executedWithoutInterceptor) {
+            this.executedWithoutInterceptor = true;
+            try {
+                await CommandExecutor.execute(this);
+
+                // Need to check the status here because it's
+                // executed even after the process was interrupted.
+                if (this.status === Status.InProgress) {
+                    this.setStatus(Status.Success);
+                }
+                this.emit("end");
+            } catch (exception) {
+                this.handleError(exception);
+            }
+        }
+    }
+
     async execute({allowInterception = true} = {}): Promise<void> {
         History.add(this.prompt.value);
 
@@ -67,27 +85,13 @@ export class Job extends EmitterWithUniqueID implements TerminalLikeDevice {
                     this.interceptionResult = await interceptor.intercept(interceptorOptions);
                     this.setStatus(Status.Success);
                 } catch (e) {
-                    this.setStatus(Status.Failure);
+                    await this.executeWithoutInterceptor();
                 }
-                this.emit("end");
             }
         } else {
-            if (!this.executedWithoutInterceptor) {
-                this.executedWithoutInterceptor = true;
-                try {
-                    await CommandExecutor.execute(this);
-
-                    // Need to check the status here because it's
-                    // executed even after the process was interrupted.
-                    if (this.status === Status.InProgress) {
-                        this.setStatus(Status.Success);
-                    }
-                    this.emit("end");
-                } catch (exception) {
-                    this.handleError(exception);
-                }
-            }
+            await this.executeWithoutInterceptor();
         }
+        this.emit("end");
     }
 
     handleError(message: NonZeroExitCodeError | string): void {
