@@ -76,6 +76,7 @@ PluginManager.registerCommandInterceptorPlugin({
                 }
             });
         });
+
         return <LSComponent files={files} />;
     },
 
