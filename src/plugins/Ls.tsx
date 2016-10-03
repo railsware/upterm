@@ -79,11 +79,8 @@ PluginManager.registerCommandInterceptorPlugin({
         return <LSComponent files={files} />;
     },
 
-    isApplicable: ({
-        command,
-        presentWorkingDirectory,
-    }): boolean => {
+    isApplicable: ({ command }): boolean => {
         const hasFlags = command.length === 2 && command[1].startsWith("-");
-        return [1,2].includes(command.length) && !hasFlags && command[0] === "ls";
+        return [1, 2].includes(command.length) && !hasFlags && command[0] === "ls";
     },
 });
