@@ -292,7 +292,7 @@ export class PromptComponent extends React.Component<Props, State> {
         ];
 
         return this.props.isFocused &&
-            this.state.suggestions.length &&
+            this.state.suggestions.length > 0 &&
             this.commandNode && !this.isEmpty() &&
             this.props.status === e.Status.NotStarted && !ignoredKeyCodes.includes(this.state.previousKeyCode);
     }
