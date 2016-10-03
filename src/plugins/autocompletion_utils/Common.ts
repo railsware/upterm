@@ -297,6 +297,9 @@ function gitStatusCodeColor(statusCode: StatusCode) {
 
         case StatusCode.Unmodified:
             return colors.white;
+        default:
+            console.error(`Unhandled git status code: ${statusCode}`);
+            return colors.white;
     }
 }
 

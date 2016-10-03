@@ -87,7 +87,7 @@ function lettersToStatusCode(letters: string): StatusCode {
         case "??": return StatusCode.Untracked;
         case "!!": return StatusCode.Ignored;
 
-        default: return StatusCode.Invalid
+        default: return StatusCode.Invalid;
     }
 }
 
