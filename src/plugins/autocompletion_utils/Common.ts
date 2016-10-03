@@ -260,26 +260,46 @@ export function mk(provider: AutocompletionProvider) {
 
 export const emptyProvider = mk(async() => []);
 
+
+
 function gitStatusCodeColor(statusCode: StatusCode) {
     switch (statusCode) {
-        case StatusCode.Added:
+        case StatusCode.StagedModified:
+        case StatusCode.StagedAdded:
+        case StatusCode.StagedDeleted:
+        case StatusCode.StagedRenamed:
+        case StatusCode.StagedCopied:
             return colors.green;
-        case StatusCode.Copied:
+
+        case StatusCode.StagedCopiedUnstagedModified:
+        case StatusCode.StagedCopiedUnstagedDeleted:
+        case StatusCode.StagedRenamedUnstagedModified:
+        case StatusCode.StagedRenamedUnstagedDeleted:
+        case StatusCode.StagedDeletedUnstagedModified:
+        case StatusCode.StagedAddedUnstagedModified:
+        case StatusCode.StagedAddedUnstagedDeleted:
+        case StatusCode.StagedModifiedUnstagedModified:
+        case StatusCode.StagedModifiedUnstagedDeleted:
             return colors.blue;
-        case StatusCode.Deleted:
+
+        case StatusCode.Untracked:
+        case StatusCode.Invalid:
+
+        case StatusCode.UnstagedDeleted:
+        case StatusCode.UnmergedBothDeleted:
+        case StatusCode.UnmergedAddedByUs:
+        case StatusCode.UnmergedDeletedByThem:
+        case StatusCode.UnmergedAddedByThem:
+        case StatusCode.UnmergedDeletedByUs:
+        case StatusCode.UnmergedBothAdded:
+        case StatusCode.UnmergedBothModified:
+        case StatusCode.Untracked:
+        case StatusCode.Ignored:
+        case StatusCode.Invalid:
             return colors.red;
-        case StatusCode.Modified:
-            return colors.blue;
-        case StatusCode.Renamed:
-            return colors.blue;
+
         case StatusCode.Unmodified:
             return colors.white;
-        case StatusCode.Untracked:
-            return colors.red;
-        case StatusCode.UpdatedButUnmerged:
-            return colors.blue;
-        default:
-            throw "Should never happen.";
     }
 }
 
