@@ -126,41 +126,22 @@ interface GitStatus {
 
 interface GitStatusProps {
   currentBranch: Branch | undefined;
-  gitStatus: GitStatus;
+  gitStatus: FileStatus[][];
   presentWorkingDirectory: string;
 }
 
 interface GitStatusState {
   currentBranch: Branch | undefined;
-  gitStatus: GitStatus;
+  gitStatus: FileStatus[][];
 }
 
-const groupStatusesByType = (statuses: FileStatus[]): GitStatus => {
-  const result: GitStatus = {
-    modified: [] as FileStatus[],
-    staged: [] as FileStatus[],
-    untracked: [] as FileStatus[],
-    other: [] as FileStatus[],
-  };
+const groupStatusesByType = (statuses: FileStatus[]): FileStatus[][] => {
+  const result: FileStatus[][] = [] as FileStatus[][];
   statuses.forEach(status => {
-    switch (status.code) {
-      case StatusCode.Modified:
-        result.modified.push(status);
-        break;
-      case StatusCode.StagedAndUnstagedChanges:
-        result.modified.push(status);
-        result.staged.push(status);
-        break;
-      case StatusCode.StagedChanges:
-        result.staged.push(status);
-        break;
-      case StatusCode.Untracked:
-        result.untracked.push(status);
-        break;
-      default:
-        debugger;
-        result.other.push(status);
-        break;
+    if (status.code in result) {
+      result[status.code].push(status);
+    } else {
+      result[status.code] = [status];
     }
   });
   return result;
@@ -188,10 +169,10 @@ class GitStatusComponent extends React.Component<GitStatusProps, GitStatusState>
 
   render(): any {
     const branchText = this.state.currentBranch ? `On branch ${this.state.currentBranch.toString()}` : "Not on a branch";
-    return <div style={{ padding: "10px" }}>
-      <div>{branchText}</div>
+
+    const indexComponent = <div>
       <div>Changes to be committed:</div>
-      <div style={gitStatusStyle}>{this.state.gitStatus.staged.map((file, index) => <StagedFile
+      <div style={gitStatusStyle}>{this.state.gitStatus[StatusCode.StagedAdded].map((file, index) => <StagedFile
         path={file.value}
         gitReset={async (path) => {
           await executeCommand("git", ["reset", path], this.props.presentWorkingDirectory);
@@ -199,8 +180,11 @@ class GitStatusComponent extends React.Component<GitStatusProps, GitStatusState>
         }}
         key={file.value}
       />)}</div>
+    </div>;
+
+    const workingDirectoryComponent = <div>
       <div>Changes not staged for commit:</div>
-      <div style={gitStatusStyle}>{this.state.gitStatus.modified.map((file, index) => <ModifiedFile
+      <div style={gitStatusStyle}>{this.state.gitStatus[StatusCode.UnstagedModified].map((file, index) => <ModifiedFile
         path={file.value}
         gitAdd={async (path) => {
           await executeCommand("git", ["add", path], this.props.presentWorkingDirectory);
@@ -208,10 +192,24 @@ class GitStatusComponent extends React.Component<GitStatusProps, GitStatusState>
         }}
         key={file.value}
       />)}</div>
+    </div>;
+
+    const untrackedFilesComponent = <div>
       <div>Untracked files:</div>
-      <div style={gitStatusStyle}>{this.state.gitStatus.untracked.map(file => <UntrackedFile path={file.value} />)}</div>
+      <div style={gitStatusStyle}>{this.state.gitStatus[StatusCode.Untracked].map(file => <UntrackedFile path={file.value} />)}</div>
+    </div>
+
+    const unknownFilesComponent = <div>
       <div>Unknown state:</div>
-      <div style={gitStatusStyle}>{this.state.gitStatus.other.map(file => <OtherFile path={file.value} />)}</div>
+      <div style={gitStatusStyle}>{this.state.gitStatus[StatusCode.Invalid].map(file => <OtherFile path={file.value} />)}</div>
+    </div>
+
+    return <div style={{ padding: "10px" }}>
+      <div>{branchText}</div>
+      {indexComponent}
+      {workingDirectoryComponent}
+      {untrackedFilesComponent}
+      {unknownFilesComponent}
     </div>
   }
 }
