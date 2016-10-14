@@ -2,5 +2,5 @@
 
 node_modules/.bin/tsc --watch > /dev/tty &
 WATCH_PID=$!
-npm run electron
+NODE_ENV=development npm run electron
 kill $WATCH_PID
