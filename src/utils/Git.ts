@@ -21,73 +21,72 @@ export interface ConfigVariable {
     value: string;
 }
 
-export enum StatusCode {
-    Unmodified,
+export type StatusCode =
+    "Unmodified" |
 
-    UnstagedModified,
-    UnstagedDeleted,
-    StagedModified,
-    StagedModifiedUnstagedModified,
-    StagedModifiedUnstagedDeleted,
-    StagedAdded,
-    StagedAddedUnstagedModified,
-    StagedAddedUnstagedDeleted,
-    StagedDeleted,
-    StagedDeletedUnstagedModified,
-    StagedRenamed,
-    StagedRenamedUnstagedModified,
-    StagedRenamedUnstagedDeleted,
-    StagedCopied,
-    StagedCopiedUnstagedModified,
-    StagedCopiedUnstagedDeleted,
+    "UnstagedModified" |
+    "UnstagedDeleted" |
+    "StagedModified" |
+    "StagedModifiedUnstagedModified" |
+    "StagedModifiedUnstagedDeleted" |
+    "StagedAdded" |
+    "StagedAddedUnstagedModified" |
+    "StagedAddedUnstagedDeleted" |
+    "StagedDeleted" |
+    "StagedDeletedUnstagedModified" |
+    "StagedRenamed" |
+    "StagedRenamedUnstagedModified" |
+    "StagedRenamedUnstagedDeleted" |
+    "StagedCopied" |
+    "StagedCopiedUnstagedModified" |
+    "StagedCopiedUnstagedDeleted" |
 
-    UnmergedBothDeleted,
-    UnmergedAddedByUs,
-    UnmergedDeletedByThem,
-    UnmergedAddedByThem,
-    UnmergedDeletedByUs,
-    UnmergedBothAdded,
-    UnmergedBothModified,
+    "UnmergedBothDeleted" |
+    "UnmergedAddedByUs" |
+    "UnmergedDeletedByThem" |
+    "UnmergedAddedByThem" |
+    "UnmergedDeletedByUs" |
+    "UnmergedBothAdded" |
+    "UnmergedBothModified" |
 
-    Untracked,
-    Ignored,
+    "Untracked" |
+    "Ignored" |
 
-    Invalid,
-}
+    "Invalid"
 
 function lettersToStatusCode(letters: string): StatusCode {
     switch (letters) {
-        case "  ": return StatusCode.Unmodified;
+        case "  ": return "Unmodified";
 
-        case " M": return StatusCode.UnstagedModified;
-        case " D": return StatusCode.UnstagedDeleted;
-        case "M ": return StatusCode.StagedModified;
-        case "MM": return StatusCode.StagedModifiedUnstagedModified;
-        case "MD": return StatusCode.StagedModifiedUnstagedDeleted;
-        case "A ": return StatusCode.StagedAdded;
-        case "AM": return StatusCode.StagedAddedUnstagedModified;
-        case "AD": return StatusCode.StagedAddedUnstagedDeleted;
-        case "D ": return StatusCode.StagedDeleted;
-        case "DM": return StatusCode.StagedDeletedUnstagedModified;
-        case "R ": return StatusCode.StagedRenamed;
-        case "RM": return StatusCode.StagedRenamedUnstagedModified;
-        case "RD": return StatusCode.StagedRenamedUnstagedDeleted;
-        case "C ": return StatusCode.StagedCopied;
-        case "CM": return StatusCode.StagedCopiedUnstagedModified;
-        case "CD": return StatusCode.StagedCopiedUnstagedDeleted;
+        case " M": return "UnstagedModified";
+        case " D": return "UnstagedDeleted";
+        case "M ": return "StagedModified";
+        case "MM": return "StagedModifiedUnstagedModified";
+        case "MD": return "StagedModifiedUnstagedDeleted";
+        case "A ": return "StagedAdded";
+        case "AM": return "StagedAddedUnstagedModified";
+        case "AD": return "StagedAddedUnstagedDeleted";
+        case "D ": return "StagedDeleted";
+        case "DM": return "StagedDeletedUnstagedModified";
+        case "R ": return "StagedRenamed";
+        case "RM": return "StagedRenamedUnstagedModified";
+        case "RD": return "StagedRenamedUnstagedDeleted";
+        case "C ": return "StagedCopied";
+        case "CM": return "StagedCopiedUnstagedModified";
+        case "CD": return "StagedCopiedUnstagedDeleted";
 
-        case "DD": return StatusCode.UnmergedBothDeleted;
-        case "AU": return StatusCode.UnmergedAddedByUs;
-        case "UD": return StatusCode.UnmergedDeletedByThem;
-        case "UA": return StatusCode.UnmergedAddedByThem;
-        case "DU": return StatusCode.UnmergedDeletedByUs;
-        case "AA": return StatusCode.UnmergedBothAdded;
-        case "UU": return StatusCode.UnmergedBothModified;
+        case "DD": return "UnmergedBothDeleted";
+        case "AU": return "UnmergedAddedByUs";
+        case "UD": return "UnmergedDeletedByThem";
+        case "UA": return "UnmergedAddedByThem";
+        case "DU": return "UnmergedDeletedByUs";
+        case "AA": return "UnmergedBothAdded";
+        case "UU": return "UnmergedBothModified";
 
-        case "??": return StatusCode.Untracked;
-        case "!!": return StatusCode.Ignored;
+        case "??": return "Untracked";
+        case "!!": return "Ignored";
 
-        default: return StatusCode.Invalid;
+        default: return "Invalid";
     }
 }
 

@@ -264,38 +264,38 @@ export const emptyProvider = mk(async() => []);
 
 function gitStatusCodeColor(statusCode: StatusCode) {
     switch (statusCode) {
-        case StatusCode.StagedModified:
-        case StatusCode.StagedAdded:
-        case StatusCode.StagedDeleted:
-        case StatusCode.StagedRenamed:
-        case StatusCode.StagedCopied:
+        case "StagedModified":
+        case "StagedAdded":
+        case "StagedDeleted":
+        case "StagedRenamed":
+        case "StagedCopied":
             return colors.green;
 
-        case StatusCode.StagedCopiedUnstagedModified:
-        case StatusCode.StagedCopiedUnstagedDeleted:
-        case StatusCode.StagedRenamedUnstagedModified:
-        case StatusCode.StagedRenamedUnstagedDeleted:
-        case StatusCode.StagedDeletedUnstagedModified:
-        case StatusCode.StagedAddedUnstagedModified:
-        case StatusCode.StagedAddedUnstagedDeleted:
-        case StatusCode.StagedModifiedUnstagedModified:
-        case StatusCode.StagedModifiedUnstagedDeleted:
+        case "StagedCopiedUnstagedModified":
+        case "StagedCopiedUnstagedDeleted":
+        case "StagedRenamedUnstagedModified":
+        case "StagedRenamedUnstagedDeleted":
+        case "StagedDeletedUnstagedModified":
+        case "StagedAddedUnstagedModified":
+        case "StagedAddedUnstagedDeleted":
+        case "StagedModifiedUnstagedModified":
+        case "StagedModifiedUnstagedDeleted":
             return colors.blue;
 
-        case StatusCode.UnstagedDeleted:
-        case StatusCode.UnmergedBothDeleted:
-        case StatusCode.UnmergedAddedByUs:
-        case StatusCode.UnmergedDeletedByThem:
-        case StatusCode.UnmergedAddedByThem:
-        case StatusCode.UnmergedDeletedByUs:
-        case StatusCode.UnmergedBothAdded:
-        case StatusCode.UnmergedBothModified:
-        case StatusCode.Untracked:
-        case StatusCode.Ignored:
-        case StatusCode.Invalid:
+        case "UnstagedDeleted":
+        case "UnmergedBothDeleted":
+        case "UnmergedAddedByUs":
+        case "UnmergedDeletedByThem":
+        case "UnmergedAddedByThem":
+        case "UnmergedDeletedByUs":
+        case "UnmergedBothAdded":
+        case "UnmergedBothModified":
+        case "Untracked":
+        case "Ignored":
+        case "Invalid":
             return colors.red;
 
-        case StatusCode.Unmodified:
+        case "Unmodified":
             return colors.white;
         default:
             console.error(`Unhandled git status code: ${statusCode}`);
