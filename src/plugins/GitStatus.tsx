@@ -117,6 +117,8 @@ class OtherFile extends React.Component<{path: string}, {}> {
   }
 }
 
+type StatusMap = {[key:string]: FileStatus[]};
+
 interface GitStatus {
   modified: FileStatus[];
   staged: FileStatus[];
@@ -126,17 +128,17 @@ interface GitStatus {
 
 interface GitStatusProps {
   currentBranch: Branch | undefined;
-  gitStatus: FileStatus[][];
+  gitStatus: StatusMap;
   presentWorkingDirectory: string;
 }
 
 interface GitStatusState {
   currentBranch: Branch | undefined;
-  gitStatus: FileStatus[][];
+  gitStatus: StatusMap;
 }
 
-const groupStatusesByType = (statuses: FileStatus[]): FileStatus[][] => {
-  const result: FileStatus[][] = [] as FileStatus[][];
+const groupStatusesByType = (statuses: FileStatus[]): StatusMap => {
+  const result: StatusMap = {}
   statuses.forEach(status => {
     if (status.code in result) {
       result[status.code].push(status);
@@ -160,11 +162,10 @@ const GitStatusSection: React.StatelessComponent<GitStatusSectionProps> = ({
   sectionType,
   files
 }) => {
-  debugger;
   return <div>
     <div>{sectionType}</div>
     <div style={gitStatusStyle}>{
-      files.map((file, i) => <div key={i.toString()}>File here</div>)
+      files.map((file, i) => <div key={i.toString()}>{file.path}</div>)
     }</div>
   </div>;
 }
@@ -190,17 +191,35 @@ class GitStatusComponent extends React.Component<GitStatusProps, GitStatusState>
   }
 
   render(): any {
-    debugger;
-    const stagedFilesDescriptions = this.state.gitStatus[StatusCode.StagedAdded].map(file => ({
+    const branchText = this.state.currentBranch ? `On branch ${this.state.currentBranch.toString()}` : "Not on a branch";
+
+    const stagedFilesDescriptions = (this.state.gitStatus["StagedAdded"] || []).map((file: FileStatus) => ({
       path: file.value
     }));
-    debugger;
-    return <GitStatusSection
-      sectionType="Changes to be committed:"
-      files={[{ path: "test" }]}
-    />;
+
+    const unstagedFilesDescriptions = (this.state.gitStatus["UnstagedModified"] || []).map((file: FileStatus) => ({
+      path: file.value
+    }));
+    return <div style={{ padding: "10px" }}>
+      <div>{branchText}</div>
+      <GitStatusSection
+        sectionType="Changes to be committed:"
+        files={[{ path: "test" }]}
+      />
+      <GitStatusSection
+        sectionType="Changes not staged for commit:"
+        files={unstagedFilesDescriptions}
+      />
+      <GitStatusSection
+        sectionType="Untracked files:"
+        files={[]}
+      />
+      <GitStatusSection
+        sectionType="Other files:"
+        files={[]}
+      />
+    </div>;
     /*
-    const branchText = this.state.currentBranch ? `On branch ${this.state.currentBranch.toString()}` : "Not on a branch";
 
     const indexComponent = <div>
       <div>Changes to be committed:</div>
@@ -235,13 +254,11 @@ class GitStatusComponent extends React.Component<GitStatusProps, GitStatusState>
       <div>Unknown state:</div>
       <div style={gitStatusStyle}>{this.state.gitStatus[StatusCode.Invalid].map(file => <OtherFile path={file.value} />)}</div>
     </div>
-    return <div style={{ padding: "10px" }}>
-      <div>{branchText}</div>
       {indexComponent}
       {workingDirectoryComponent}
       {untrackedFilesComponent}
       {unknownFilesComponent}
-    </div>*/
+    */
   }
 }
 
@@ -253,7 +270,6 @@ PluginManager.registerCommandInterceptorPlugin({
     const gitBranches: Branch[] = await branches(presentWorkingDirectory as any);
     const currentBranch = gitBranches.find(branch => branch.isCurrent());
     const gitStatus = await status(presentWorkingDirectory as any);
-    debugger;
     return <GitStatusComponent
       currentBranch={currentBranch}
       gitStatus={groupStatusesByType(gitStatus)}
