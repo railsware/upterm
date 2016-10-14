@@ -147,6 +147,28 @@ const groupStatusesByType = (statuses: FileStatus[]): FileStatus[][] => {
   return result;
 }
 
+interface GitStatusFileDescription {
+  path: string;
+}
+
+interface GitStatusSectionProps {
+  sectionType: string,
+  files: GitStatusFileDescription[],
+}
+
+const GitStatusSection: React.StatelessComponent<GitStatusSectionProps> = ({
+  sectionType,
+  files
+}) => {
+  debugger;
+  return <div>
+    <div>{sectionType}</div>
+    <div style={gitStatusStyle}>{
+      files.map((file, i) => <div key={i.toString()}>File here</div>)
+    }</div>
+  </div>;
+}
+
 class GitStatusComponent extends React.Component<GitStatusProps, GitStatusState> {
   constructor(props: GitStatusProps) {
     super(props);
@@ -168,6 +190,16 @@ class GitStatusComponent extends React.Component<GitStatusProps, GitStatusState>
   }
 
   render(): any {
+    debugger;
+    const stagedFilesDescriptions = this.state.gitStatus[StatusCode.StagedAdded].map(file => ({
+      path: file.value
+    }));
+    debugger;
+    return <GitStatusSection
+      sectionType="Changes to be committed:"
+      files={[{ path: "test" }]}
+    />;
+    /*
     const branchText = this.state.currentBranch ? `On branch ${this.state.currentBranch.toString()}` : "Not on a branch";
 
     const indexComponent = <div>
@@ -203,14 +235,13 @@ class GitStatusComponent extends React.Component<GitStatusProps, GitStatusState>
       <div>Unknown state:</div>
       <div style={gitStatusStyle}>{this.state.gitStatus[StatusCode.Invalid].map(file => <OtherFile path={file.value} />)}</div>
     </div>
-
     return <div style={{ padding: "10px" }}>
       <div>{branchText}</div>
       {indexComponent}
       {workingDirectoryComponent}
       {untrackedFilesComponent}
       {unknownFilesComponent}
-    </div>
+    </div>*/
   }
 }
 
@@ -221,9 +252,11 @@ PluginManager.registerCommandInterceptorPlugin({
    }): Promise<React.ReactElement<any>> => {
     const gitBranches: Branch[] = await branches(presentWorkingDirectory as any);
     const currentBranch = gitBranches.find(branch => branch.isCurrent());
+    const gitStatus = await status(presentWorkingDirectory as any);
+    debugger;
     return <GitStatusComponent
       currentBranch={currentBranch}
-      gitStatus={groupStatusesByType(await status(presentWorkingDirectory as any))}
+      gitStatus={groupStatusesByType(gitStatus)}
       presentWorkingDirectory={presentWorkingDirectory}
     />;
   },
