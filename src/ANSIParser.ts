@@ -63,7 +63,7 @@ const CSI = {
         toEnd: 0,
         toBeginning: 1,
         entire: 2,
-        entireSsh: 2
+        entireSsh: 3
     },
 };
 
