@@ -98,6 +98,7 @@ export class CompleteCommand extends BranchNode {
                 return current;
             }
         }
+        return undefined as any as Command;
     }
 }
 

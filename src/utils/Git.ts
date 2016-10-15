@@ -22,39 +22,72 @@ export interface ConfigVariable {
 }
 
 export enum StatusCode {
-    Untracked,
     Unmodified,
-    Modified,
-    Added,
-    Deleted,
-    Renamed,
-    Copied,
-    UpdatedButUnmerged
+
+    UnstagedModified,
+    UnstagedDeleted,
+    StagedModified,
+    StagedModifiedUnstagedModified,
+    StagedModifiedUnstagedDeleted,
+    StagedAdded,
+    StagedAddedUnstagedModified,
+    StagedAddedUnstagedDeleted,
+    StagedDeleted,
+    StagedDeletedUnstagedModified,
+    StagedRenamed,
+    StagedRenamedUnstagedModified,
+    StagedRenamedUnstagedDeleted,
+    StagedCopied,
+    StagedCopiedUnstagedModified,
+    StagedCopiedUnstagedDeleted,
+
+    UnmergedBothDeleted,
+    UnmergedAddedByUs,
+    UnmergedDeletedByThem,
+    UnmergedAddedByThem,
+    UnmergedDeletedByUs,
+    UnmergedBothAdded,
+    UnmergedBothModified,
+
+    Untracked,
+    Ignored,
+
+    Invalid,
 }
 
 function lettersToStatusCode(letters: string): StatusCode {
     switch (letters) {
-        case "??":
-            return StatusCode.Untracked;
-        case "  ":
-            return StatusCode.Unmodified;
-        case " M":
-        case "M ":
-            return StatusCode.Modified;
-        case "AM":
-            return StatusCode.Added;
-        case " A":
-            return StatusCode.Added;
-        case " D":
-            return StatusCode.Deleted;
-        case " R":
-            return StatusCode.Renamed;
-        case " C":
-            return StatusCode.Copied;
-        case " U":
-            return StatusCode.UpdatedButUnmerged;
-        default:
-            throw `Unknown Git status code: ${letters}`;
+        case "  ": return StatusCode.Unmodified;
+
+        case " M": return StatusCode.UnstagedModified;
+        case " D": return StatusCode.UnstagedDeleted;
+        case "M ": return StatusCode.StagedModified;
+        case "MM": return StatusCode.StagedModifiedUnstagedModified;
+        case "MD": return StatusCode.StagedModifiedUnstagedDeleted;
+        case "A ": return StatusCode.StagedAdded;
+        case "AM": return StatusCode.StagedAddedUnstagedModified;
+        case "AD": return StatusCode.StagedAddedUnstagedDeleted;
+        case "D ": return StatusCode.StagedDeleted;
+        case "DM": return StatusCode.StagedDeletedUnstagedModified;
+        case "R ": return StatusCode.StagedRenamed;
+        case "RM": return StatusCode.StagedRenamedUnstagedModified;
+        case "RD": return StatusCode.StagedRenamedUnstagedDeleted;
+        case "C ": return StatusCode.StagedCopied;
+        case "CM": return StatusCode.StagedCopiedUnstagedModified;
+        case "CD": return StatusCode.StagedCopiedUnstagedDeleted;
+
+        case "DD": return StatusCode.UnmergedBothDeleted;
+        case "AU": return StatusCode.UnmergedAddedByUs;
+        case "UD": return StatusCode.UnmergedDeletedByThem;
+        case "UA": return StatusCode.UnmergedAddedByThem;
+        case "DU": return StatusCode.UnmergedDeletedByUs;
+        case "AA": return StatusCode.UnmergedBothAdded;
+        case "UU": return StatusCode.UnmergedBothModified;
+
+        case "??": return StatusCode.Untracked;
+        case "!!": return StatusCode.Ignored;
+
+        default: return StatusCode.Invalid;
     }
 }
 

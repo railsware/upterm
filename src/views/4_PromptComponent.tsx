@@ -19,7 +19,9 @@ import {assign} from "../utils/Common";
 interface Props {
     job: Job;
     status: e.Status;
-    decorateToggler: () => boolean;
+    decorateToggler: () => void;
+    isDecorated: boolean;
+    showDecorationToggle: boolean;
     isFocused: boolean;
 }
 
@@ -119,8 +121,11 @@ export class PromptComponent extends React.Component<Props, State> {
             }
         }
 
-        if (this.props.job.canBeDecorated()) {
-            decorationToggle = <DecorationToggleComponent decorateToggler={this.props.decorateToggler}/>;
+        if (this.props.showDecorationToggle) {
+            decorationToggle = <DecorationToggleComponent
+                decorateToggler={this.props.decorateToggler}
+                isDecorated={this.props.isDecorated}
+            />;
         }
 
         if (this.state.isSticky) {
@@ -287,7 +292,7 @@ export class PromptComponent extends React.Component<Props, State> {
         ];
 
         return this.props.isFocused &&
-            this.state.suggestions.length &&
+            this.state.suggestions.length > 0 &&
             this.commandNode && !this.isEmpty() &&
             this.props.status === e.Status.NotStarted && !ignoredKeyCodes.includes(this.state.previousKeyCode);
     }

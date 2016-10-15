@@ -301,7 +301,7 @@ export const titleBar = {
 };
 
 export const tabs = {
-    justifyContent: "center",
+    justifyContent: "center" as "center",
     display: "flex",
     WebkitMarginBefore: 0,
     WebkitMarginAfter: 0,
