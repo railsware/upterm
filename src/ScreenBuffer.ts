@@ -175,8 +175,8 @@ export class ScreenBuffer extends events.EventEmitter {
 
     insertSpaceRight(n: number) {
         if (this.storage.get(this.cursorPosition.row)) {
-            let nSpace = '';
-            for (let i=0; i < n; i++) { nSpace+= ' ' };
+            let nSpace = "";
+            for (let i = 0; i < n; i++) { nSpace += " "; };
             this.storage = this.storage.update(
                 this.cursorPosition.row,
                 List<Char>(),
