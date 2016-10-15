@@ -63,6 +63,7 @@ const CSI = {
         toEnd: 0,
         toBeginning: 1,
         entire: 2,
+        entireSsh: 2
     },
 };
 
@@ -374,6 +375,7 @@ export class ANSIParser {
                 url = "http://www.vt100.net/docs/vt510-rm/ED";
                 switch (param) {
                     case CSI.erase.entire:
+                    case CSI.erase.entireSsh:
                         short = "Erase Entire Display (ED).";
 
                         this.screenBuffer.clear();
