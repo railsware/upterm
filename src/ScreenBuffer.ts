@@ -162,6 +162,30 @@ export class ScreenBuffer extends events.EventEmitter {
         return this;
     }
 
+    deleteRight(n: number) {
+        if (this.storage.get(this.cursorPosition.row)) {
+            this.storage = this.storage.update(
+                this.cursorPosition.row,
+                List<Char>(),
+                (row: List<Char>) => row.splice(this.cursorPosition.column, n).toList()
+            );
+        }
+        this.emitData();
+    }
+
+    insertSpaceRight(n: number) {
+        if (this.storage.get(this.cursorPosition.row)) {
+            let nSpace = '';
+            for (let i=0; i < n; i++) { nSpace+= ' ' };
+            this.storage = this.storage.update(
+                this.cursorPosition.row,
+                List<Char>(),
+                (row: List<Char>) => row.splice(this.cursorPosition.column, 0, nSpace).toList()
+            );
+        }
+        this.emitData();
+    }
+
     eraseRight(n: number) {
         if (this.storage.get(this.cursorPosition.row)) {
             this.storage = this.storage.update(

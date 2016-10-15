@@ -426,6 +426,12 @@ export class ANSIParser {
 
                 this.screenBuffer.scrollUp(param || 1, this.screenBuffer.cursor.row);
                 break;
+            case "P":
+                url = "http://www.vt100.net/docs/vt510-rm/DCH.html";
+                short = "Deletes one or more characters from the cursor position to the right.";
+
+                this.screenBuffer.deleteRight(param);
+                break;
             case "X":
                 short = "Erase P s Character(s) (default = 1) (ECH)";
                 url = "http://www.vt100.net/docs/vt510-rm/ECH";
@@ -509,6 +515,12 @@ export class ANSIParser {
 
                 this.screenBuffer.margins = {top: top, bottom: bottom};
                 this.screenBuffer.moveCursorAbsolute({row: 0, column: 0});
+                break;
+            case "@":
+                url = "http://www.vt100.net/docs/vt510-rm/ICH.html";
+                short = "Inserts one or more space (SP) characters starting at the cursor position.";
+
+                this.screenBuffer.insertSpaceRight(param);
                 break;
             default:
                 status = "unhandled";
