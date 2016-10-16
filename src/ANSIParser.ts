@@ -63,6 +63,7 @@ const CSI = {
         toEnd: 0,
         toBeginning: 1,
         entire: 2,
+        entireSsh: 3,
     },
 };
 
@@ -374,6 +375,7 @@ export class ANSIParser {
                 url = "http://www.vt100.net/docs/vt510-rm/ED";
                 switch (param) {
                     case CSI.erase.entire:
+                    case CSI.erase.entireSsh:
                         short = "Erase Entire Display (ED).";
 
                         this.screenBuffer.clear();
@@ -423,6 +425,12 @@ export class ANSIParser {
                 short = "Deletes one or more lines in the scrolling region, starting with the line that has the cursor. (DL)";
 
                 this.screenBuffer.scrollUp(param || 1, this.screenBuffer.cursor.row);
+                break;
+            case "P":
+                url = "http://www.vt100.net/docs/vt510-rm/DCH.html";
+                short = "Deletes one or more characters from the cursor position to the right.";
+
+                this.screenBuffer.deleteRight(param);
                 break;
             case "X":
                 short = "Erase P s Character(s) (default = 1) (ECH)";
@@ -507,6 +515,12 @@ export class ANSIParser {
 
                 this.screenBuffer.margins = {top: top, bottom: bottom};
                 this.screenBuffer.moveCursorAbsolute({row: 0, column: 0});
+                break;
+            case "@":
+                url = "http://www.vt100.net/docs/vt510-rm/ICH.html";
+                short = "Inserts one or more space (SP) characters starting at the cursor position.";
+
+                this.screenBuffer.insertSpaceRight(param);
                 break;
             default:
                 status = "unhandled";
