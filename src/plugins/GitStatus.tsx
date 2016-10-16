@@ -81,7 +81,6 @@ class StagedFile extends React.Component<StagedFileProps, StagedFileState> {
 
   render() {
     return <div>
-      <span style={gitStagedFileStyles}>modified: {this.props.path}</span>
       <span
        style={buttonStyles}
        onClick={async() => {
@@ -93,38 +92,7 @@ class StagedFile extends React.Component<StagedFileProps, StagedFileState> {
   }
 }
 
-class UntrackedFile extends React.Component<{path: string}, {}> {
-  constructor(props: {path: string}) {
-    super(props);
-  }
-
-  render() {
-    return <div>
-      <span style={gitFileStyles}>{this.props.path}</span>
-    </div>
-  }
-}
-
-class OtherFile extends React.Component<{path: string}, {}> {
-  constructor(props: {path: string}) {
-    super(props);
-  }
-
-  render() {
-    return <div>
-      <span style={gitFileStyles}>state unknown: {this.props.path}</span>
-    </div>
-  }
-}
-
 type StatusMap = {[key:string]: FileStatus[]};
-
-interface GitStatus {
-  modified: FileStatus[];
-  staged: FileStatus[];
-  untracked: FileStatus[];
-  other: FileStatus[];
-}
 
 interface GitStatusProps {
   currentBranch: Branch | undefined;
@@ -149,23 +117,49 @@ const groupStatusesByType = (statuses: FileStatus[]): StatusMap => {
   return result;
 }
 
-interface GitStatusFileDescription {
-  path: string;
+interface GitStatusFileButton {
+  buttonText: string;
+  action: () => Promise<{}>;
 }
+
+interface GitStatusFileProps {
+  path: string;
+  state: string;
+  buttons: GitStatusFileButton[];
+}
+
+const GitStatusFile: React.StatelessComponent<GitStatusFileProps> = ({
+  path,
+  state,
+  buttons,
+}) => {
+  return <div>
+    <span style={{paddingLeft: '70px'}}>{state}: {path}</span>
+    {buttons.map(({buttonText, action}, index) => <span
+      style={buttonStyles}
+      onClick={action}
+    >
+      {buttonText}
+    </span>)}
+  </div>;
+};
 
 interface GitStatusSectionProps {
   sectionType: string,
-  files: GitStatusFileDescription[],
+  files: GitStatusFileProps[],
 }
 
 const GitStatusSection: React.StatelessComponent<GitStatusSectionProps> = ({
   sectionType,
   files
 }) => {
+  if (files.length === 0) {
+    return <span style={{ display: "none" }}></span>;
+  }
   return <div>
     <div>{sectionType}</div>
     <div style={gitStatusStyle}>{
-      files.map((file, i) => <div key={i.toString()}>{file.path}</div>)
+      files.map((file, i) => <GitStatusFile key={i.toString()} {...file} />)
     }</div>
   </div>;
 }
@@ -194,17 +188,40 @@ class GitStatusComponent extends React.Component<GitStatusProps, GitStatusState>
     const branchText = this.state.currentBranch ? `On branch ${this.state.currentBranch.toString()}` : "Not on a branch";
 
     const stagedFilesDescriptions = (this.state.gitStatus["StagedAdded"] || []).map((file: FileStatus) => ({
-      path: file.value
+      path: file.value,
+      state: "added",
+      buttons: [],
     }));
 
     const unstagedFilesDescriptions = (this.state.gitStatus["UnstagedModified"] || []).map((file: FileStatus) => ({
-      path: file.value
+      path: file.value,
+      state: "modified",
+      buttons: [{
+        buttonText: "Add",
+        action: async () => {
+          await executeCommand("git", ["add", file.value], this.props.presentWorkingDirectory);
+          this.reload();
+        }
+      }],
     }));
+
+    const untrackedFileDescriptions = (this.state.gitStatus["Untracked"] || []).map((file: FileStatus) => ({
+      path:file.value,
+      state: "",
+      buttons: [],
+    }));
+
+    const unknownFileDescriptions = (this.state.gitStatus["Invalid"] || []).map((file: FileStatus) => ({
+      path: file.value,
+      state: "unknown state",
+      buttons: [],
+    }));
+
     return <div style={{ padding: "10px" }}>
       <div>{branchText}</div>
       <GitStatusSection
         sectionType="Changes to be committed:"
-        files={[{ path: "test" }]}
+        files={stagedFilesDescriptions}
       />
       <GitStatusSection
         sectionType="Changes not staged for commit:"
@@ -212,52 +229,25 @@ class GitStatusComponent extends React.Component<GitStatusProps, GitStatusState>
       />
       <GitStatusSection
         sectionType="Untracked files:"
-        files={[]}
+        files={untrackedFileDescriptions}
       />
       <GitStatusSection
-        sectionType="Other files:"
-        files={[]}
+        sectionType="Unknown state:"
+        files={unknownFileDescriptions}
       />
     </div>;
     /*
 
-    const indexComponent = <div>
-      <div>Changes to be committed:</div>
-      <div style={gitStatusStyle}>{this.state.gitStatus[StatusCode.StagedAdded].map((file, index) => <StagedFile
-        path={file.value}
+      <div>{this.state.gitStatus[StatusCode.StagedAdded].map((file, index) => <StagedFile
         gitReset={async (path) => {
           await executeCommand("git", ["reset", path], this.props.presentWorkingDirectory);
           this.reload();
         }}
-        key={file.value}
       />)}</div>
-    </div>;
 
-    const workingDirectoryComponent = <div>
-      <div>Changes not staged for commit:</div>
-      <div style={gitStatusStyle}>{this.state.gitStatus[StatusCode.UnstagedModified].map((file, index) => <ModifiedFile
-        path={file.value}
-        gitAdd={async (path) => {
-          await executeCommand("git", ["add", path], this.props.presentWorkingDirectory);
-          this.reload();
-        }}
-        key={file.value}
+      <div>{this.state.gitStatus[StatusCode.UnstagedModified].map((file, index) => <ModifiedFile
+        gitAdd={}
       />)}</div>
-    </div>;
-
-    const untrackedFilesComponent = <div>
-      <div>Untracked files:</div>
-      <div style={gitStatusStyle}>{this.state.gitStatus[StatusCode.Untracked].map(file => <UntrackedFile path={file.value} />)}</div>
-    </div>
-
-    const unknownFilesComponent = <div>
-      <div>Unknown state:</div>
-      <div style={gitStatusStyle}>{this.state.gitStatus[StatusCode.Invalid].map(file => <OtherFile path={file.value} />)}</div>
-    </div>
-      {indexComponent}
-      {workingDirectoryComponent}
-      {untrackedFilesComponent}
-      {unknownFilesComponent}
     */
   }
 }
