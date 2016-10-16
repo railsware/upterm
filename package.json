@@ -51,7 +51,7 @@
     "electron-builder": "6.3.4",
     "electron-prebuilt": "1.2.8",
     "electron-rebuild": "1.2.0",
-    "mocha": "3.1.0",
+    "mocha": "3.1.1",
     "npm-check-updates": "2.8.0",
     "spectron": "3.4.0",
     "ts-node": "1.6.0",
