@@ -33,88 +33,15 @@ const buttonStyles = {
   cursor: "pointer",
 }
 
-interface ModifiedFileProps {
-  path: string;
-  gitAdd: (path: string) => Promise<void>;
-}
-
-interface ModifiedFileState {
-  status: Status;
-}
-
-class ModifiedFile extends React.Component<ModifiedFileProps, ModifiedFileState> {
-  constructor(props: ModifiedFileProps) {
-    super(props);
-
-    this.state = {status: Status.NotStarted};
-  }
-
-  render() {
-    return <div>
-      <span style={gitFileStyles}>modified: {this.props.path}</span>
-      <span
-       style={buttonStyles}
-       onClick={async() => {
-         this.setState({status: Status.InProgress});
-         await this.props.gitAdd(this.props.path);
-       }}
-     >{this.state.status === Status.NotStarted ? "Add" : "Adding..."}</span>
-   </div>
-  }
-}
-
-interface StagedFileProps {
-  path: string;
-  gitReset: (path: string) => Promise<void>;
-}
-
-interface StagedFileState {
-  status: Status;
-}
-
-class StagedFile extends React.Component<StagedFileProps, StagedFileState> {
-  constructor(props: StagedFileProps) {
-    super(props);
-
-    this.state = {status: Status.NotStarted};
-  }
-
-  render() {
-    return <div>
-      <span
-       style={buttonStyles}
-       onClick={async() => {
-         this.setState({status: Status.InProgress});
-         await this.props.gitReset(this.props.path);
-       }}
-     >{this.state.status === Status.NotStarted ? "Reset" : "Resetting..."}</span>
-   </div>
-  }
-}
-
-type StatusMap = {[key:string]: FileStatus[]};
-
 interface GitStatusProps {
   currentBranch: Branch | undefined;
-  gitStatus: StatusMap;
+  gitStatus: FileStatus[];
   presentWorkingDirectory: string;
 }
 
 interface GitStatusState {
   currentBranch: Branch | undefined;
-  gitStatus: StatusMap;
-}
-
-const groupStatusesByType = (statuses: FileStatus[]): StatusMap => {
-  const result: StatusMap = {}
-  statuses.forEach(status => {
-    if (status.code in result) {
-      result[status.code].push(status);
-    } else {
-      result[status.code] = [status];
-    }
-  });
-  return result;
+  gitStatus: FileStatus[];
 }
 
 interface GitStatusFileButton {
@@ -175,7 +102,7 @@ class GitStatusComponent extends React.Component<GitStatusProps, GitStatusState>
   }
 
   async reload() {
-    const gitStatus = groupStatusesByType(await status(this.props.presentWorkingDirectory as any));
+    const gitStatus = await status(this.props.presentWorkingDirectory as any);
     const gitBranches: Branch[] = await branches(this.props.presentWorkingDirectory as any);
     const currentBranch = gitBranches.find(branch => branch.isCurrent());
     this.setState({
@@ -186,36 +113,95 @@ class GitStatusComponent extends React.Component<GitStatusProps, GitStatusState>
 
   render(): any {
     const branchText = this.state.currentBranch ? `On branch ${this.state.currentBranch.toString()}` : "Not on a branch";
+    const stagedFilesDescriptions: GitStatusFileProps[] = [];
+    const unstagedFilesDescriptions: GitStatusFileProps[] = [];
+    const untrackedFileDescriptions: GitStatusFileProps[] = [];
+    const unknownFileDescriptions: GitStatusFileProps[] = [];
 
-    const stagedFilesDescriptions = (this.state.gitStatus["StagedAdded"] || []).map((file: FileStatus) => ({
-      path: file.value,
-      state: "added",
-      buttons: [],
-    }));
+    this.state.gitStatus.forEach((file: FileStatus) => {
+      switch (file.code) {
+        case "Unmodified":
+          // Don't show
+          break;
+        case "UnstagedModified":
+          unstagedFilesDescriptions.push({
+            path: file.value,
+            state: "modified",
+            buttons: [{
+              buttonText: "Add",
+              action: async () => {
+                await executeCommand("git", ["add", file.value], this.props.presentWorkingDirectory);
+                this.reload();
+              }
+            }],
+          });
+          break;
+        case "UnstagedDeleted":
+          unstagedFilesDescriptions.push({
+            path: file.value,
+            state: "deleted",
+            buttons: [{
+              buttonText: "Add",
+              action: async () => {
+                await executeCommand("git", ["add", file.value], this.props.presentWorkingDirectory);
+                this.reload();
+              }
+            }]
+          });
+          break;
+        case "StagedModified":
+          stagedFilesDescriptions.push({
+            path: file.value,
+            state: "modified",
+            buttons: [{
+              buttonText: "Reset",
+              action: async() => {
+                await executeCommand("git", ["reset", file.value], this.props.presentWorkingDirectory);
+                this.reload();
+              }
+            }]
+          });
 
-    const unstagedFilesDescriptions = (this.state.gitStatus["UnstagedModified"] || []).map((file: FileStatus) => ({
-      path: file.value,
-      state: "modified",
-      buttons: [{
-        buttonText: "Add",
-        action: async () => {
-          await executeCommand("git", ["add", file.value], this.props.presentWorkingDirectory);
-          this.reload();
-        }
-      }],
-    }));
 
-    const untrackedFileDescriptions = (this.state.gitStatus["Untracked"] || []).map((file: FileStatus) => ({
-      path:file.value,
-      state: "",
-      buttons: [],
-    }));
 
-    const unknownFileDescriptions = (this.state.gitStatus["Invalid"] || []).map((file: FileStatus) => ({
-      path: file.value,
-      state: "unknown state",
-      buttons: [],
-    }));
+        case "StagedAdded":
+          stagedFilesDescriptions.push({
+            path: file.value,
+            state: "added",
+            buttons: [{
+              buttonText: "Reset",
+              action: async() => {
+                await executeCommand("git", ["reset", file.value], this.props.presentWorkingDirectory);
+                this.reload();
+              }
+            }],
+          });
+
+
+        case "Untracked":
+          untrackedFileDescriptions.push({
+            path: file.value,
+            state: "",
+            buttons: [{
+              buttonText: "Add",
+              action: async() => {
+                await executeCommand("git", ["add", file.value], this.props.presentWorkingDirectory);
+                this.reload();
+              }
+            }],
+          });
+          break;
+
+
+        case "Invalid":
+          unknownFileDescriptions.push({
+            path: file.value,
+            state: "unknown state",
+            buttons: [],
+          });
+          break;
+      }
+    });
 
     return <div style={{ padding: "10px" }}>
       <div>{branchText}</div>
@@ -236,19 +222,6 @@ class GitStatusComponent extends React.Component<GitStatusProps, GitStatusState>
         files={unknownFileDescriptions}
       />
     </div>;
-    /*
-
-      <div>{this.state.gitStatus[StatusCode.StagedAdded].map((file, index) => <StagedFile
-        gitReset={async (path) => {
-          await executeCommand("git", ["reset", path], this.props.presentWorkingDirectory);
-          this.reload();
-        }}
-      />)}</div>
-
-      <div>{this.state.gitStatus[StatusCode.UnstagedModified].map((file, index) => <ModifiedFile
-        gitAdd={}
-      />)}</div>
-    */
   }
 }
 
@@ -262,7 +235,7 @@ PluginManager.registerCommandInterceptorPlugin({
     const gitStatus = await status(presentWorkingDirectory as any);
     return <GitStatusComponent
       currentBranch={currentBranch}
-      gitStatus={groupStatusesByType(gitStatus)}
+      gitStatus={gitStatus}
       presentWorkingDirectory={presentWorkingDirectory}
     />;
   },
