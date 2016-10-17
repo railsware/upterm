@@ -2,7 +2,7 @@
   "name": "black-screen",
   "productName": "Black Screen",
   "description": "A terminal emulator for the 21st century.",
-  "version": "0.2.61",
+  "version": "0.2.63",
   "main": "compiled/src/main/Main.js",
   "author": "Volodymyr Shatskyi <shockone89@gmail.com>",
   "repository": {
@@ -54,7 +54,7 @@
     "mocha": "3.1.0",
     "npm-check-updates": "2.8.0",
     "spectron": "3.4.0",
-    "ts-node": "1.5.2",
+    "ts-node": "1.6.0",
     "tslint": "3.15.1",
     "typescript": "2.0.3"
   },
