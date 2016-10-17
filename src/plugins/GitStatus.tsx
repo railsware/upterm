@@ -118,6 +118,16 @@ class GitStatusComponent extends React.Component<GitStatusProps, GitStatusState>
     const untrackedFileDescriptions: GitStatusFileProps[] = [];
     const unknownFileDescriptions: GitStatusFileProps[] = [];
 
+    const addFile = (path: string) => async () => {
+      await executeCommand("git", ["add", path], this.props.presentWorkingDirectory);
+      this.reload();
+    }
+
+    const resetFile = (path: string) => async () => {
+      await executeCommand("git", ["reset", path], this.props.presentWorkingDirectory);
+      this.reload();
+    }
+
     this.state.gitStatus.forEach((file: FileStatus) => {
       switch (file.code) {
         case "Unmodified":
@@ -129,10 +139,7 @@ class GitStatusComponent extends React.Component<GitStatusProps, GitStatusState>
             state: "modified",
             buttons: [{
               buttonText: "Add",
-              action: async () => {
-                await executeCommand("git", ["add", file.value], this.props.presentWorkingDirectory);
-                this.reload();
-              }
+              action: addFile(file.value)
             }],
           });
           break;
@@ -142,10 +149,7 @@ class GitStatusComponent extends React.Component<GitStatusProps, GitStatusState>
             state: "deleted",
             buttons: [{
               buttonText: "Add",
-              action: async () => {
-                await executeCommand("git", ["add", file.value], this.props.presentWorkingDirectory);
-                this.reload();
-              }
+              action: addFile(file.value),
             }]
           });
           break;
@@ -155,13 +159,28 @@ class GitStatusComponent extends React.Component<GitStatusProps, GitStatusState>
             state: "modified",
             buttons: [{
               buttonText: "Reset",
-              action: async() => {
-                await executeCommand("git", ["reset", file.value], this.props.presentWorkingDirectory);
-                this.reload();
-              }
+              action: resetFile(file.value),
             }]
           });
-
+          break;
+        case "StagedModifiedUnstagedModified":
+          unstagedFilesDescriptions.push({
+            path: file.value,
+            state: "modified",
+            buttons: [{
+              buttonText: "Add",
+              action: addFile(file.value),
+            }],
+          });
+          stagedFilesDescriptions.push({
+            path: file.value,
+            state: "modified",
+            buttons: [{
+              buttonText: "Reset",
+              action: resetFile(file.value),
+            }],
+          });
+          break;
 
 
         case "StagedAdded":
