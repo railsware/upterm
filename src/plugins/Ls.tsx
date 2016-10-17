@@ -15,7 +15,7 @@ type State = {
     itemWidth: number | undefined,
 }
 
-const renderFile = (file: any, itemWidth = 0) => {
+const renderFile = (file: any, itemWidth = 0, key: number) => {
     const style: CSSObject = {display: "inline-block"};
     if (itemWidth) {
         // TODO: respect LSCOLORS env var
@@ -24,6 +24,7 @@ const renderFile = (file: any, itemWidth = 0) => {
         style.margin = "2px 4px";
     }
     return <span
+        key={key}
         style={style}
         onClick={() => e.shell.openExternal(`file://${file.filePath}`)}
         className="underlineOnHover">
@@ -56,7 +57,7 @@ class LSComponent extends React.Component<Props, State> {
                     } as State);
                 }
             }}
-        >{this.props.files.map((file: any) => renderFile(file, this.state.itemWidth))}</div>;
+        >{this.props.files.map((file: any, index: number) => renderFile(file, this.state.itemWidth, index))}</div>;
     }
 }
 

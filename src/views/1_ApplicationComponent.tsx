@@ -18,7 +18,7 @@ export class ApplicationComponent extends React.Component<{}, {}> {
         super(props);
         const electronWindow = remote.BrowserWindow.getAllWindows()[0];
 
-        this.addTab();
+        this.addTab(false);
 
         electronWindow
             .on("move", () => saveWindowBounds(electronWindow))
@@ -48,11 +48,11 @@ export class ApplicationComponent extends React.Component<{}, {}> {
         window.application = this;
     }
 
-    addTab(): void {
+    addTab(forceUpdate = true): void {
         if (this.tabs.length < 9) {
             this.tabs.push(new Tab(this));
             this.focusedTabIndex = this.tabs.length - 1;
-            this.forceUpdate();
+            if (forceUpdate) this.forceUpdate();
         } else {
             remote.shell.beep();
         }
