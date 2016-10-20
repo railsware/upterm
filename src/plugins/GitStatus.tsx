@@ -2,9 +2,11 @@ import * as React from "react";
 import {PluginManager} from "../PluginManager";
 import {isEqual} from "lodash";
 import {Status} from "../Enums";
-import {status, FileStatus, isGitDirectory, StatusCode, branches, Branch} from "../utils/Git";
+import {status, FileStatus, isGitDirectory, StatusCode, branches, Branch, repoRoot} from "../utils/Git";
 import {colors} from "../views/css/colors";
 import {executeCommand} from "../PTY";
+import Link from "../utils/Link";
+import {join} from "path";
 
 const gitFileStyles = {
   paddingLeft: "70px",
@@ -37,7 +39,7 @@ const buttonStyles = {
 interface GitStatusProps {
   currentBranch: Branch | undefined;
   gitStatus: FileStatus[];
-  presentWorkingDirectory: string;
+  repoRoot: string;
 }
 
 interface GitStatusState {
@@ -51,19 +53,25 @@ interface GitStatusFileButton {
 }
 
 interface GitStatusFileProps {
+  absolutePath: string;
   path: string;
   state: string;
   buttons: GitStatusFileButton[];
 }
 
 const GitStatusFile: React.StatelessComponent<GitStatusFileProps> = ({
+  absolutePath,
   path,
   state,
   buttons,
 }) => {
   const separator = state.length > 0 ? ": " : "";
   return <div>
-    <span style={{paddingLeft: '70px'}}>{state}{separator}{path}</span>
+    <span style={{paddingLeft: '70px'}}>
+      {state}
+      {separator}
+      <Link absolutePath={absolutePath}>{path}</Link>
+    </span>
     {buttons.map(({buttonText, action}, index) => <span
       style={buttonStyles}
       onClick={action}
@@ -106,8 +114,8 @@ class GitStatusComponent extends React.Component<GitStatusProps, GitStatusState>
   }
 
   async reload() {
-    const gitStatus = await status(this.props.presentWorkingDirectory as any);
-    const gitBranches: Branch[] = await branches(this.props.presentWorkingDirectory as any);
+    const gitStatus = await status(this.props.repoRoot as any);
+    const gitBranches: Branch[] = await branches(this.props.repoRoot as any);
     const currentBranch = gitBranches.find(branch => branch.isCurrent());
     this.setState({
       currentBranch,
@@ -124,22 +132,24 @@ class GitStatusComponent extends React.Component<GitStatusProps, GitStatusState>
     const unknownFileDescriptions: GitStatusFileProps[] = [];
 
     const addFile = (path: string) => async () => {
-      await executeCommand("git", ["add", path], this.props.presentWorkingDirectory);
+      await executeCommand("git", ["add", path], this.props.repoRoot);
       this.reload();
     }
 
     const resetFile = (path: string) => async () => {
-      await executeCommand("git", ["reset", path], this.props.presentWorkingDirectory);
+      await executeCommand("git", ["reset", path], this.props.repoRoot);
       this.reload();
     }
 
     this.state.gitStatus.forEach((file: FileStatus) => {
+      const absolutePath = join(this.props.repoRoot, file.value);
       switch (file.code) {
         case "Unmodified":
           // Don't show
           break;
         case "UnstagedModified":
           unstagedFilesDescriptions.push({
+            absolutePath: absolutePath,
             path: file.value,
             state: "modified",
             buttons: [{
@@ -150,6 +160,7 @@ class GitStatusComponent extends React.Component<GitStatusProps, GitStatusState>
           break;
         case "UnstagedDeleted":
           unstagedFilesDescriptions.push({
+            absolutePath: absolutePath,
             path: file.value,
             state: "deleted",
             buttons: [{
@@ -160,6 +171,7 @@ class GitStatusComponent extends React.Component<GitStatusProps, GitStatusState>
           break;
         case "StagedModified":
           stagedFilesDescriptions.push({
+            absolutePath: absolutePath,
             path: file.value,
             state: "modified",
             buttons: [{
@@ -170,6 +182,7 @@ class GitStatusComponent extends React.Component<GitStatusProps, GitStatusState>
           break;
         case "StagedModifiedUnstagedModified":
           stagedFilesDescriptions.push({
+            absolutePath: absolutePath,
             path: file.value,
             state: "modified",
             buttons: [{
@@ -178,6 +191,7 @@ class GitStatusComponent extends React.Component<GitStatusProps, GitStatusState>
             }],
           });
           unstagedFilesDescriptions.push({
+            absolutePath: absolutePath,
             path: file.value,
             state: "modified",
             buttons: [{
@@ -188,6 +202,7 @@ class GitStatusComponent extends React.Component<GitStatusProps, GitStatusState>
           break;
         case "StagedModifiedUnstagedDeleted":
           stagedFilesDescriptions.push({
+            absolutePath: absolutePath,
             path: file.value,
             state: "modified",
             buttons: [{
@@ -196,6 +211,7 @@ class GitStatusComponent extends React.Component<GitStatusProps, GitStatusState>
             }],
           });
           unstagedFilesDescriptions.push({
+            absolutePath: absolutePath,
             path: file.value,
             state: "deleted",
             buttons: [],
@@ -203,6 +219,7 @@ class GitStatusComponent extends React.Component<GitStatusProps, GitStatusState>
           break;
         case "StagedAdded":
           stagedFilesDescriptions.push({
+            absolutePath: absolutePath,
             path: file.value,
             state: "added",
             buttons: [{
@@ -210,8 +227,10 @@ class GitStatusComponent extends React.Component<GitStatusProps, GitStatusState>
               action: resetFile(file.value),
             }],
           });
+          break;
         case "StagedAddedUnstagedModified":
           stagedFilesDescriptions.push({
+            absolutePath: absolutePath,
             path: file.value,
             state: "added",
             buttons: [{
@@ -220,6 +239,7 @@ class GitStatusComponent extends React.Component<GitStatusProps, GitStatusState>
             }]
           });
           unstagedFilesDescriptions.push({
+            absolutePath: absolutePath,
             path: file.value,
             state: 'modified',
             buttons: [{
@@ -230,6 +250,7 @@ class GitStatusComponent extends React.Component<GitStatusProps, GitStatusState>
           break;
         case "StagedAddedUnstagedDeleted":
           stagedFilesDescriptions.push({
+            absolutePath: absolutePath,
             path: file.value,
             state: "added",
             buttons: [{
@@ -239,6 +260,7 @@ class GitStatusComponent extends React.Component<GitStatusProps, GitStatusState>
           });
         case "StagedDeleted":
           stagedFilesDescriptions.push({
+            absolutePath: absolutePath,
             path: file.value,
             state: "deleted",
             buttons: [],
@@ -246,11 +268,13 @@ class GitStatusComponent extends React.Component<GitStatusProps, GitStatusState>
           break;
         case "StagedDeletedUnstagedModified":
           stagedFilesDescriptions.push({
+            absolutePath: absolutePath,
             path: file.value,
             state: "deleted",
             buttons: [],
           });
           unstagedFilesDescriptions.push({
+            absolutePath: absolutePath,
             path: file.value,
             state: "modified",
             buttons: [{
@@ -261,6 +285,7 @@ class GitStatusComponent extends React.Component<GitStatusProps, GitStatusState>
           break;
         case "StagedRenamed":
           stagedFilesDescriptions.push({
+            absolutePath: absolutePath,
             path: file.value,
             state: "renamed",
             buttons: [],
@@ -268,11 +293,13 @@ class GitStatusComponent extends React.Component<GitStatusProps, GitStatusState>
           break;
         case "StagedRenamedUnstagedModified":
           stagedFilesDescriptions.push({
+            absolutePath: absolutePath,
             path: file.value,
             state: "renamed",
             buttons: [],
           });
           unstagedFilesDescriptions.push({
+            absolutePath: absolutePath,
             path: file.value,
             state: "modified",
             buttons: [{
@@ -283,11 +310,13 @@ class GitStatusComponent extends React.Component<GitStatusProps, GitStatusState>
           break;
         case "StagedRenamedUnstagedDeleted":
           stagedFilesDescriptions.push({
+            absolutePath: absolutePath,
             path: file.value,
             state: "renamed",
             buttons: [],
           });
           unstagedFilesDescriptions.push({
+            absolutePath: absolutePath,
             path: file.value,
             state: "deleted",
             buttons: [],
@@ -295,6 +324,7 @@ class GitStatusComponent extends React.Component<GitStatusProps, GitStatusState>
           break;
         case "StagedCopied":
           stagedFilesDescriptions.push({
+            absolutePath: absolutePath,
             path: file.value,
             state: "copied",
             buttons: [],
@@ -302,11 +332,13 @@ class GitStatusComponent extends React.Component<GitStatusProps, GitStatusState>
           break;
         case "StagedCopiedUnstagedModified":
           stagedFilesDescriptions.push({
+            absolutePath: absolutePath,
             path: file.value,
             state: "copied",
             buttons: [],
           });
           unstagedFilesDescriptions.push({
+            absolutePath: absolutePath,
             path: file.value,
             state: "modified",
             buttons: [{
@@ -317,11 +349,13 @@ class GitStatusComponent extends React.Component<GitStatusProps, GitStatusState>
           break;
         case "StagedCopiedUnstagedDeleted":
           stagedFilesDescriptions.push({
+            absolutePath: absolutePath,
             path: file.value,
             state: "copied",
             buttons: [],
           });
           unstagedFilesDescriptions.push({
+            absolutePath: absolutePath,
             path: file.value,
             state: "deleted",
             buttons: [],
@@ -329,6 +363,7 @@ class GitStatusComponent extends React.Component<GitStatusProps, GitStatusState>
           break;
         case "UnmergedBothDeleted":
           unmergedFileDescriptions.push({
+            absolutePath: absolutePath,
             path: file.value,
             state: "both deleted",
             buttons: [],
@@ -336,6 +371,7 @@ class GitStatusComponent extends React.Component<GitStatusProps, GitStatusState>
           break;
         case "UnmergedAddedByUs":
           unmergedFileDescriptions.push({
+            absolutePath: absolutePath,
             path: file.value,
             state: "added by us",
             buttons: [],
@@ -343,6 +379,7 @@ class GitStatusComponent extends React.Component<GitStatusProps, GitStatusState>
           break;
         case "UnmergedDeletedByThem":
           unmergedFileDescriptions.push({
+            absolutePath: absolutePath,
             path: file.value,
             state: "deleted by them",
             buttons: [],
@@ -350,6 +387,7 @@ class GitStatusComponent extends React.Component<GitStatusProps, GitStatusState>
           break;
         case "UnmergedAddedByThem":
           unmergedFileDescriptions.push({
+            absolutePath: absolutePath,
             path: file.value,
             state: "added by them",
             buttons: [],
@@ -357,6 +395,7 @@ class GitStatusComponent extends React.Component<GitStatusProps, GitStatusState>
           break;
         case "UnmergedDeletedByUs":
           unmergedFileDescriptions.push({
+            absolutePath: absolutePath,
             path: file.value,
             state: "deleted by us",
             buttons: [],
@@ -364,6 +403,7 @@ class GitStatusComponent extends React.Component<GitStatusProps, GitStatusState>
           break;
         case "UnmergedBothAdded":
           unmergedFileDescriptions.push({
+            absolutePath: absolutePath,
             path: file.value,
             state: "both added",
             buttons: [],
@@ -371,6 +411,7 @@ class GitStatusComponent extends React.Component<GitStatusProps, GitStatusState>
           break;
         case "UnmergedBothModified":
           unmergedFileDescriptions.push({
+            absolutePath: absolutePath,
             path: file.value,
             state: "both modified",
             buttons: [],
@@ -378,14 +419,12 @@ class GitStatusComponent extends React.Component<GitStatusProps, GitStatusState>
           break;
         case "Untracked":
           untrackedFileDescriptions.push({
+            absolutePath: absolutePath,
             path: file.value,
             state: "",
             buttons: [{
               buttonText: "Add",
-              action: async() => {
-                await executeCommand("git", ["add", file.value], this.props.presentWorkingDirectory);
-                this.reload();
-              }
+              action: addFile(file.value),
             }],
           });
           break;
@@ -394,6 +433,7 @@ class GitStatusComponent extends React.Component<GitStatusProps, GitStatusState>
           break;
         case "Invalid":
           unknownFileDescriptions.push({
+            absolutePath: absolutePath,
             path: file.value,
             state: "unknown state",
             buttons: [],
@@ -441,10 +481,11 @@ PluginManager.registerCommandInterceptorPlugin({
     const gitBranches: Branch[] = await branches(presentWorkingDirectory as any);
     const currentBranch = gitBranches.find(branch => branch.isCurrent());
     const gitStatus = await status(presentWorkingDirectory as any);
+    const root = await repoRoot(presentWorkingDirectory);
     return <GitStatusComponent
       currentBranch={currentBranch}
       gitStatus={gitStatus}
-      presentWorkingDirectory={presentWorkingDirectory}
+      repoRoot={root}
     />;
   },
 
