@@ -60,8 +60,9 @@ const GitStatusFile: React.StatelessComponent<GitStatusFileProps> = ({
   state,
   buttons,
 }) => {
+  const separator = state.length > 0 ? ": " : "";
   return <div>
-    <span style={{paddingLeft: '70px'}}>{state}: {path}</span>
+    <span style={{paddingLeft: '70px'}}>{state}{separator}{path}</span>
     {buttons.map(({buttonText, action}, index) => <span
       style={buttonStyles}
       onClick={action}
@@ -116,6 +117,7 @@ class GitStatusComponent extends React.Component<GitStatusProps, GitStatusState>
     const stagedFilesDescriptions: GitStatusFileProps[] = [];
     const unstagedFilesDescriptions: GitStatusFileProps[] = [];
     const untrackedFileDescriptions: GitStatusFileProps[] = [];
+    const unmergedFileDescriptions: GitStatusFileProps[] = [];
     const unknownFileDescriptions: GitStatusFileProps[] = [];
 
     const addFile = (path: string) => async () => {
@@ -164,14 +166,6 @@ class GitStatusComponent extends React.Component<GitStatusProps, GitStatusState>
           });
           break;
         case "StagedModifiedUnstagedModified":
-          unstagedFilesDescriptions.push({
-            path: file.value,
-            state: "modified",
-            buttons: [{
-              buttonText: "Add",
-              action: addFile(file.value),
-            }],
-          });
           stagedFilesDescriptions.push({
             path: file.value,
             state: "modified",
@@ -180,23 +174,205 @@ class GitStatusComponent extends React.Component<GitStatusProps, GitStatusState>
               action: resetFile(file.value),
             }],
           });
+          unstagedFilesDescriptions.push({
+            path: file.value,
+            state: "modified",
+            buttons: [{
+              buttonText: "Add",
+              action: addFile(file.value),
+            }],
+          });
           break;
-
-
+        case "StagedModifiedUnstagedDeleted":
+          stagedFilesDescriptions.push({
+            path: file.value,
+            state: "modified",
+            buttons: [{
+              buttonText: "Reset",
+              action: resetFile(file.value),
+            }],
+          });
+          unstagedFilesDescriptions.push({
+            path: file.value,
+            state: "deleted",
+            buttons: [],
+          });
+          break;
         case "StagedAdded":
           stagedFilesDescriptions.push({
             path: file.value,
             state: "added",
             buttons: [{
               buttonText: "Reset",
-              action: async() => {
-                await executeCommand("git", ["reset", file.value], this.props.presentWorkingDirectory);
-                this.reload();
-              }
+              action: resetFile(file.value),
             }],
           });
-
-
+        case "StagedAddedUnstagedModified":
+          stagedFilesDescriptions.push({
+            path: file.value,
+            state: "added",
+            buttons: [{
+              buttonText: "Reset",
+              action: resetFile(file.value),
+            }]
+          });
+          unstagedFilesDescriptions.push({
+            path: file.value,
+            state: 'modified',
+            buttons: [{
+              buttonText: "Add",
+              action: addFile(file.value),
+            }],
+          });
+          break;
+        case "StagedAddedUnstagedDeleted":
+          stagedFilesDescriptions.push({
+            path: file.value,
+            state: "added",
+            buttons: [{
+              buttonText: "Reset",
+              action: resetFile(file.value),
+            }]
+          });
+        case "StagedDeleted":
+          stagedFilesDescriptions.push({
+            path: file.value,
+            state: "deleted",
+            buttons: [],
+          });
+          break;
+        case "StagedDeletedUnstagedModified":
+          stagedFilesDescriptions.push({
+            path: file.value,
+            state: "deleted",
+            buttons: [],
+          });
+          unstagedFilesDescriptions.push({
+            path: file.value,
+            state: "modified",
+            buttons: [{
+              buttonText: "Add",
+              action: addFile(file.value),
+            }]
+          });
+          break;
+        case "StagedRenamed":
+          stagedFilesDescriptions.push({
+            path: file.value,
+            state: "renamed",
+            buttons: [],
+          });
+          break;
+        case "StagedRenamedUnstagedModified":
+          stagedFilesDescriptions.push({
+            path: file.value,
+            state: "renamed",
+            buttons: [],
+          });
+          unstagedFilesDescriptions.push({
+            path: file.value,
+            state: "modified",
+            buttons: [{
+              buttonText: "Add",
+              action: addFile(file.value),
+            }],
+          });
+          break;
+        case "StagedRenamedUnstagedDeleted":
+          stagedFilesDescriptions.push({
+            path: file.value,
+            state: "renamed",
+            buttons: [],
+          });
+          unstagedFilesDescriptions.push({
+            path: file.value,
+            state: "deleted",
+            buttons: [],
+          });
+          break;
+        case "StagedCopied":
+          stagedFilesDescriptions.push({
+            path: file.value,
+            state: "copied",
+            buttons: [],
+          });
+          break;
+        case "StagedCopiedUnstagedModified":
+          stagedFilesDescriptions.push({
+            path: file.value,
+            state: "copied",
+            buttons: [],
+          });
+          unstagedFilesDescriptions.push({
+            path: file.value,
+            state: "modified",
+            buttons: [{
+              buttonText: "Add",
+              action: addFile(file.value),
+            }]
+          });
+          break;
+        case "StagedCopiedUnstagedDeleted":
+          stagedFilesDescriptions.push({
+            path: file.value,
+            state: "copied",
+            buttons: [],
+          });
+          unstagedFilesDescriptions.push({
+            path: file.value,
+            state: "deleted",
+            buttons: [],
+          });
+          break;
+        case "UnmergedBothDeleted":
+          unmergedFileDescriptions.push({
+            path: file.value,
+            state: "both deleted",
+            buttons: [],
+          });
+          break;
+        case "UnmergedAddedByUs":
+          unmergedFileDescriptions.push({
+            path: file.value,
+            state: "added by us",
+            buttons: [],
+          });
+          break;
+        case "UnmergedDeletedByThem":
+          unmergedFileDescriptions.push({
+            path: file.value,
+            state: "deleted by them",
+            buttons: [],
+          });
+          break;
+        case "UnmergedAddedByThem":
+          unmergedFileDescriptions.push({
+            path: file.value,
+            state: "added by them",
+            buttons: [],
+          });
+          break;
+        case "UnmergedDeletedByUs":
+          unmergedFileDescriptions.push({
+            path: file.value,
+            state: "deleted by us",
+            buttons: [],
+          });
+          break;
+        case "UnmergedBothAdded":
+          unmergedFileDescriptions.push({
+            path: file.value,
+            state: "both added",
+            buttons: [],
+          });
+          break;
+        case "UnmergedBothModified":
+          unmergedFileDescriptions.push({
+            path: file.value,
+            state: "both modified",
+            buttons: [],
+          });
+          break;
         case "Untracked":
           untrackedFileDescriptions.push({
             path: file.value,
@@ -210,8 +386,9 @@ class GitStatusComponent extends React.Component<GitStatusProps, GitStatusState>
             }],
           });
           break;
-
-
+        case "Ignored":
+          // Git status doesn't show ignored items...
+          break;
         case "Invalid":
           unknownFileDescriptions.push({
             path: file.value,
@@ -231,6 +408,10 @@ class GitStatusComponent extends React.Component<GitStatusProps, GitStatusState>
       <GitStatusSection
         sectionType="Changes not staged for commit:"
         files={unstagedFilesDescriptions}
+      />
+      <GitStatusSection
+        sectionType="Unmerged paths:"
+        files={unmergedFileDescriptions}
       />
       <GitStatusSection
         sectionType="Untracked files:"
