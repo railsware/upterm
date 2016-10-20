@@ -52,7 +52,7 @@
     "electron-prebuilt": "1.2.8",
     "electron-rebuild": "1.2.0",
     "mocha": "3.1.2",
-    "npm-check-updates": "2.8.0",
+    "npm-check-updates": "2.8.4",
     "spectron": "3.4.0",
     "ts-node": "1.6.0",
     "tslint": "3.15.1",
