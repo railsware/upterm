@@ -85,6 +85,6 @@
     "app-category-type": "public.app-category.developer-tools", 
     "linux": {
       "target": ["AppImage"]
-    },
+    }
   }
 }
