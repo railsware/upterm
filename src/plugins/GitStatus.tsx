@@ -16,9 +16,10 @@ const gitStagedFileStyles = {
   color: colors.green,
 }
 
-const gitStatusStyle = {
+const gitStatusStyle = (color: string) => ({
   lineHeight: "18px",
-}
+  color: color,
+})
 
 const buttonStyles = {
   borderColor: colors.blue,
@@ -75,18 +76,20 @@ const GitStatusFile: React.StatelessComponent<GitStatusFileProps> = ({
 interface GitStatusSectionProps {
   sectionType: string,
   files: GitStatusFileProps[],
+  color: string,
 }
 
 const GitStatusSection: React.StatelessComponent<GitStatusSectionProps> = ({
   sectionType,
-  files
+  files,
+  color,
 }) => {
   if (files.length === 0) {
     return <span style={{ display: "none" }}></span>;
   }
   return <div>
     <div>{sectionType}</div>
-    <div style={gitStatusStyle}>{
+    <div style={gitStatusStyle(color)}>{
       files.map((file, i) => <GitStatusFile key={i.toString()} {...file} />)
     }</div>
   </div>;
@@ -404,22 +407,27 @@ class GitStatusComponent extends React.Component<GitStatusProps, GitStatusState>
       <GitStatusSection
         sectionType="Changes to be committed:"
         files={stagedFilesDescriptions}
+        color={colors.green}
       />
       <GitStatusSection
         sectionType="Changes not staged for commit:"
         files={unstagedFilesDescriptions}
+        color={colors.red}
       />
       <GitStatusSection
         sectionType="Unmerged paths:"
         files={unmergedFileDescriptions}
+        color={colors.red}
       />
       <GitStatusSection
         sectionType="Untracked files:"
         files={untrackedFileDescriptions}
+        color={colors.red}
       />
       <GitStatusSection
         sectionType="Unknown state:"
         files={unknownFileDescriptions}
+        color={colors.red}
       />
     </div>;
   }
