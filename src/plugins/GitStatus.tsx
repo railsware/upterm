@@ -1,27 +1,16 @@
 import * as React from "react";
 import {PluginManager} from "../PluginManager";
 import {isEqual} from "lodash";
-import {Status} from "../Enums";
-import {status, FileStatus, isGitDirectory, StatusCode, branches, Branch, repoRoot} from "../utils/Git";
+import {status, FileStatus, branches, Branch, repoRoot} from "../utils/Git";
 import {colors} from "../views/css/colors";
 import {executeCommand} from "../PTY";
 import Link from "../utils/Link";
 import {join} from "path";
 
-const gitFileStyles = {
-  paddingLeft: "70px",
-  color: colors.red,
-}
-
-const gitStagedFileStyles = {
-  paddingLeft: "70px",
-  color: colors.green,
-}
-
 const gitStatusStyle = (color: string) => ({
   lineHeight: "18px",
   color: color,
-})
+});
 
 const buttonStyles = {
   borderColor: colors.blue,
@@ -34,7 +23,7 @@ const buttonStyles = {
   fontSize: "10px",
   margin: "4px",
   cursor: "pointer",
-}
+};
 
 interface GitStatusProps {
   currentBranch: Branch | undefined;
@@ -67,7 +56,7 @@ const GitStatusFile: React.StatelessComponent<GitStatusFileProps> = ({
 }) => {
   const separator = state.length > 0 ? ": " : "";
   return <div>
-    <span style={{paddingLeft: '70px'}}>
+    <span style={{paddingLeft: "70px"}}>
       {state}
       {separator}
       <Link absolutePath={absolutePath}>{path}</Link>
@@ -82,10 +71,10 @@ const GitStatusFile: React.StatelessComponent<GitStatusFileProps> = ({
 };
 
 interface GitStatusSectionProps {
-  sectionType: string,
-  files: GitStatusFileProps[],
-  color: string,
-}
+  sectionType: string;
+  files: GitStatusFileProps[];
+  color: string;
+};
 
 const GitStatusSection: React.StatelessComponent<GitStatusSectionProps> = ({
   sectionType,
@@ -101,7 +90,7 @@ const GitStatusSection: React.StatelessComponent<GitStatusSectionProps> = ({
       files.map((file, i) => <GitStatusFile key={i.toString()} {...file} />)
     }</div>
   </div>;
-}
+};
 
 class GitStatusComponent extends React.Component<GitStatusProps, GitStatusState> {
   constructor(props: GitStatusProps) {
@@ -110,7 +99,7 @@ class GitStatusComponent extends React.Component<GitStatusProps, GitStatusState>
     this.state = {
       currentBranch: props.currentBranch,
       gitStatus: props.gitStatus,
-    }
+    };
   }
 
   async reload() {
@@ -134,18 +123,18 @@ class GitStatusComponent extends React.Component<GitStatusProps, GitStatusState>
     const addFile = (path: string) => async () => {
       await executeCommand("git", ["add", path], this.props.repoRoot);
       this.reload();
-    }
+    };
 
     const resetFile = (path: string) => async () => {
       await executeCommand("git", ["reset", path], this.props.repoRoot);
       this.reload();
-    }
+    };
 
     this.state.gitStatus.forEach((file: FileStatus) => {
       const absolutePath = join(this.props.repoRoot, file.value);
       switch (file.code) {
         case "Unmodified":
-          // Don't show
+          // Don"t show
           break;
         case "UnstagedModified":
           unstagedFilesDescriptions.push({
@@ -154,7 +143,7 @@ class GitStatusComponent extends React.Component<GitStatusProps, GitStatusState>
             state: "modified",
             buttons: [{
               buttonText: "Add",
-              action: addFile(file.value)
+              action: addFile(file.value),
             }],
           });
           break;
@@ -166,7 +155,7 @@ class GitStatusComponent extends React.Component<GitStatusProps, GitStatusState>
             buttons: [{
               buttonText: "Add",
               action: addFile(file.value),
-            }]
+            }],
           });
           break;
         case "StagedModified":
@@ -177,7 +166,7 @@ class GitStatusComponent extends React.Component<GitStatusProps, GitStatusState>
             buttons: [{
               buttonText: "Reset",
               action: resetFile(file.value),
-            }]
+            }],
           });
           break;
         case "StagedModifiedUnstagedModified":
@@ -236,12 +225,12 @@ class GitStatusComponent extends React.Component<GitStatusProps, GitStatusState>
             buttons: [{
               buttonText: "Reset",
               action: resetFile(file.value),
-            }]
+            }],
           });
           unstagedFilesDescriptions.push({
             absolutePath: absolutePath,
             path: file.value,
-            state: 'modified',
+            state: "modified",
             buttons: [{
               buttonText: "Add",
               action: addFile(file.value),
@@ -256,8 +245,9 @@ class GitStatusComponent extends React.Component<GitStatusProps, GitStatusState>
             buttons: [{
               buttonText: "Reset",
               action: resetFile(file.value),
-            }]
+            }],
           });
+          break;
         case "StagedDeleted":
           stagedFilesDescriptions.push({
             absolutePath: absolutePath,
@@ -280,7 +270,7 @@ class GitStatusComponent extends React.Component<GitStatusProps, GitStatusState>
             buttons: [{
               buttonText: "Add",
               action: addFile(file.value),
-            }]
+            }],
           });
           break;
         case "StagedRenamed":
@@ -344,7 +334,7 @@ class GitStatusComponent extends React.Component<GitStatusProps, GitStatusState>
             buttons: [{
               buttonText: "Add",
               action: addFile(file.value),
-            }]
+            }],
           });
           break;
         case "StagedCopiedUnstagedDeleted":
@@ -431,6 +421,7 @@ class GitStatusComponent extends React.Component<GitStatusProps, GitStatusState>
         case "Ignored":
           // Git status doesn't show ignored items...
           break;
+        default:
         case "Invalid":
           unknownFileDescriptions.push({
             absolutePath: absolutePath,
@@ -474,10 +465,7 @@ class GitStatusComponent extends React.Component<GitStatusProps, GitStatusState>
 }
 
 PluginManager.registerCommandInterceptorPlugin({
-  intercept: async({
-     command,
-     presentWorkingDirectory,
-   }): Promise<React.ReactElement<any>> => {
+  intercept: async({ presentWorkingDirectory }): Promise<React.ReactElement<any>> => {
     const gitBranches: Branch[] = await branches(presentWorkingDirectory as any);
     const currentBranch = gitBranches.find(branch => branch.isCurrent());
     const gitStatus = await status(presentWorkingDirectory as any);
@@ -489,10 +477,7 @@ PluginManager.registerCommandInterceptorPlugin({
     />;
   },
 
-  isApplicable: ({
-     command,
-     presentWorkingDirectory,
-   }): boolean => {
+  isApplicable: ({ command }): boolean => {
     return isEqual(command, ["git", "status"]);
   },
 });

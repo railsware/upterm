@@ -2,7 +2,6 @@ import * as React from "react";
 import {PluginManager} from "../PluginManager";
 import {join, isAbsolute} from "path";
 import {dirStat} from "dirStat";
-import * as e from "electron";
 import {CSSObject} from "../views/css/definitions";
 import {isEqual} from "lodash";
 import {colors} from "../views/css/colors";
