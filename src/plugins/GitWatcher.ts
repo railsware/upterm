@@ -56,7 +56,7 @@ class GitWatcher extends EventEmitter {
     private async updateGitData() {
 
         executeCommand("git", ["status", "-b", "--porcelain"], this.directory).then(changes => {
-            const status: VcsStatus = (changes.split('\n').length > 2) ? "dirty" : "clean";
+            const status: VcsStatus = (changes.split("\n").length > 2) ? "dirty" : "clean";
             console.log(changes);
             let head: string = changes.split(" ")[1];
             let push: string = "0";
@@ -114,26 +114,28 @@ function linesToFileChanges(lines: string): FileChanges {
     unstagedAdded: 0,
     unstagedModified: 0,
     unstagedDeleted: 0,
-    unstagedUnmerged: 0
+    unstagedUnmerged: 0,
   };
-  lines.split('\n').slice(1).forEach((line) => {
-    switch(line[0]) {
-      case 'A': fileChanges.stagedAdded += 1; break;
-      case 'M':
-      case 'R':
-      case 'C': fileChanges.stagedModified += 1; break;
-      case 'D': fileChanges.stagedDeleted += 1; break;
-      case 'U': fileChanges.stagedUnmerged += 1; break;
+  lines.split("\n").slice(1).forEach((line) => {
+    switch (line[0]) {
+      case "A": fileChanges.stagedAdded += 1; break;
+      case "M":
+      case "R":
+      case "C": fileChanges.stagedModified += 1; break;
+      case "D": fileChanges.stagedDeleted += 1; break;
+      case "U": fileChanges.stagedUnmerged += 1; break;
+      default: break;
     }
 
-    switch(line[1]) {
-      case '?':
-      case 'A': fileChanges.stagedAdded += 1; break;
-      case 'M': fileChanges.stagedModified += 1; break;
-      case 'D': fileChanges.stagedDeleted += 1; break;
-      case 'U': fileChanges.stagedUnmerged += 1; break;
+    switch (line[1]) {
+      case "?":
+      case "A": fileChanges.stagedAdded += 1; break;
+      case "M": fileChanges.stagedModified += 1; break;
+      case "D": fileChanges.stagedDeleted += 1; break;
+      case "U": fileChanges.stagedUnmerged += 1; break;
+      default: break;
     }
-  })
+  });
 
   return fileChanges;
 }

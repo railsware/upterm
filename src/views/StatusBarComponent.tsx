@@ -15,27 +15,27 @@ const VcsDataComponent = ({data}: { data: VcsData }) => {
         return (
             <div style={css.statusBar.vcsData}>
                 <div style={css.statusBar.status(data.status)}>
-                    {(data.status === 'dirty') ?
+                    {(data.status === "dirty") ?
                       (<span>
                         <span style={css.statusBar.stagedFileChanges}>
                           {
-                            '+' + String(data.changes.stagedAdded) + ' ' +
-                            '~' + String(data.changes.stagedModified) + ' ' +
-                            '-' + String(data.changes.stagedDeleted) + ' ' +
-                            '!' + String(data.changes.stagedUnmerged) + ' '
+                            "+" + String(data.changes.stagedAdded) + " " +
+                            "~" + String(data.changes.stagedModified) + " " +
+                            "-" + String(data.changes.stagedDeleted) + " " +
+                            "!" + String(data.changes.stagedUnmerged) + " "
                           }
                         </span>
-                        {'| '}
+                        {"| "}
                         <span style={css.statusBar.unstagedFileChanges}>
                           {
-                            '+' + String(data.changes.unstagedAdded) + ' ' +
-                            '~' + String(data.changes.unstagedModified) + ' ' +
-                            '-' + String(data.changes.unstagedDeleted) + ' ' +
-                            '!' + String(data.changes.unstagedUnmerged) + ' '
+                            "+" + String(data.changes.unstagedAdded) + " " +
+                            "~" + String(data.changes.unstagedModified) + " " +
+                            "-" + String(data.changes.unstagedDeleted) + " " +
+                            "!" + String(data.changes.unstagedUnmerged) + " "
                           }
                         </span>
                       </span>)  :
-                      null
+                      undefined
                     }
                     <span style={css.statusBar.icon} dangerouslySetInnerHTML={{__html: fontAwesome.longArrowDown}}/>
                     {data.pull}
