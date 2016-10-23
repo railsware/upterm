@@ -156,3 +156,7 @@ export async function status(directory: GitDirectoryPath): Promise<FileStatus[]>
     let lines = await linedOutputOf("git", ["status", "--porcelain"], directory);
     return lines.map(line => new FileStatus(line));
 }
+
+export async function repoRoot(directory: string): Promise<string> {
+    return (await linedOutputOf("git", ["rev-parse", "--show-toplevel"], directory))[0];
+}

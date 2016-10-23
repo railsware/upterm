@@ -2,10 +2,10 @@ import * as React from "react";
 import {PluginManager} from "../PluginManager";
 import {join, isAbsolute} from "path";
 import {dirStat} from "dirStat";
-import * as e from "electron";
 import {CSSObject} from "../views/css/definitions";
 import {isEqual} from "lodash";
 import {colors} from "../views/css/colors";
+import Link from "../utils/Link";
 
 type Props = {
     files: any[],
@@ -23,14 +23,10 @@ const renderFile = (file: any, itemWidth = 0, key: number) => {
         style.cursor = "pointer";
         style.margin = "2px 4px";
     }
-    return <span
-        key={key}
-        style={style}
-        onClick={() => e.shell.openExternal(`file://${file.filePath}`)}
-        className="underlineOnHover">
+    return <Link key={key} absolutePath={file.filePath} style={style}>
         <span style={{color: file.isDirectory() ? colors.blue : colors.white}}>{file.fileName}</span>
         <span>{file.isDirectory() ? "/" : ""}</span>
-    </span>;
+    </Link>;
 };
 
 class LSComponent extends React.Component<Props, State> {
@@ -77,7 +73,6 @@ PluginManager.registerCommandInterceptorPlugin({
                 }
             });
         });
-
         return <LSComponent files={files} />;
     },
 
