@@ -43,7 +43,8 @@ document.addEventListener(
                         window.focusedSession,
                         window.focusedJob,
                         window.focusedPrompt,
-                    window.search)(event);
+                        window.search
+                    )(event);
                 };
 
                 document.body.addEventListener("keydown", userEventHandler, true);
