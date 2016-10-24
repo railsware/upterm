@@ -36,7 +36,15 @@ document.addEventListener(
             .then(() => {
                 const application: ApplicationComponent = reactDOM.render(<ApplicationComponent/>, document.body);
 
-                const userEventHandler = (event: UserEvent) => handleUserEvent(application, window.focusedTab, window.focusedSession, window.focusedJob, window.focusedPrompt, window.search)(event);
+                const userEventHandler = (event: UserEvent) => {
+                    handleUserEvent(
+                        application,
+                        window.focusedTab,
+                        window.focusedSession,
+                        window.focusedJob,
+                        window.focusedPrompt,
+                    window.search)(event);
+                };
 
                 document.body.addEventListener("keydown", userEventHandler, true);
                 document.body.addEventListener("paste", userEventHandler, true);
