@@ -82,6 +82,6 @@
   },
   "build": {
     "appId": "com.github.shockone.black-screen",
-    "app-category-type": "public.app-category.developer-tools"
+    "category": "public.app-category.developer-tools"
   }
 }
