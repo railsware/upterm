@@ -129,10 +129,10 @@ function linesToFileChanges(lines: string): FileChanges {
 
     switch (line[1]) {
       case "?":
-      case "A": fileChanges.stagedAdded += 1; break;
-      case "M": fileChanges.stagedModified += 1; break;
-      case "D": fileChanges.stagedDeleted += 1; break;
-      case "U": fileChanges.stagedUnmerged += 1; break;
+      case "A": fileChanges.unstagedAdded += 1; break;
+      case "M": fileChanges.unstagedModified += 1; break;
+      case "D": fileChanges.unstagedDeleted += 1; break;
+      case "U": fileChanges.unstagedUnmerged += 1; break;
       default: break;
     }
   });
