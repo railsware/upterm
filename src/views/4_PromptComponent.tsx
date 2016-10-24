@@ -146,6 +146,7 @@ export class PromptComponent extends React.Component<Props, State> {
                     dangerouslySetInnerHTML={{__html: this.props.status === Status.Interrupted ? fontAwesome.close : ""}}
                 />
                 <div
+                    className="prompt" // Used by tests
                     style={css.prompt(this.state.isSticky)}
                     onInput={this.handleInput.bind(this)}
                     onDrop={this.handleDrop.bind(this)}
