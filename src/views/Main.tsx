@@ -34,7 +34,10 @@ document.addEventListener(
         // FIXME: Remove loadAllPlugins after switching to Webpack (because all the files will be loaded at start anyway).
         Promise.all([loadAllPlugins(), loadEnvironment(), loadAliasesFromConfig()])
             .then(() => {
-                const application: ApplicationComponent = reactDOM.render(<ApplicationComponent/>, document.body);
+                const application: ApplicationComponent = reactDOM.render(
+                    <ApplicationComponent/>,
+                    document.getElementById("react-entry-point")
+                );
 
                 const userEventHandler = (event: UserEvent) => {
                     handleUserEvent(
