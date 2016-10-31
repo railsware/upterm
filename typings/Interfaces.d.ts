@@ -24,7 +24,19 @@ interface PartialRowColumn {
 
 type VcsStatus = "dirty" | "clean";
 
-type VcsData = { kind: "repository", branch: string, push: string, pull: string; status: VcsStatus; } | { kind: "not-repository"; }
+type VcsData = {
+  kind: "repository",
+  branch: string,
+  push: string,
+  pull: string,
+  changes: FileChanges,
+  status: VcsStatus;
+} | { kind: "not-repository"; }
+
+interface FileChanges {
+  stagedChanges: string;
+  unstagedChanges: string;
+}
 
 interface Margins {
     top: number;
