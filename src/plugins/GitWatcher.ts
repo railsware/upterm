@@ -56,7 +56,7 @@ class GitWatcher extends EventEmitter {
     private async updateGitData() {
 
         executeCommand("git", ["status", "-b", "--porcelain"], this.directory).then(changes => {
-            const status: VcsStatus = changes.length ? "dirty" : "clean";
+            const status: VcsStatus = (changes.split("\n").length > 2) ? "dirty" : "clean";
             let head: string = changes.split(" ")[1];
             let push: string = "0";
             let pull: string = "0";
@@ -86,18 +86,55 @@ class GitWatcher extends EventEmitter {
                 }
             }
 
+            let fileChanges = linesToFileChanges(changes);
+
             const data: VcsData = {
                 kind: "repository",
                 branch: head,
                 push: push,
                 pull: pull,
                 status: status,
+                changes: fileChanges,
             };
 
             this.emit(GIT_WATCHER_EVENT_NAME, data);
         });
     }
 }
+function linesToFileChanges(lines: string): FileChanges {
+  let stagedChanges = new Map<string, number>([["+", 0], ["~", 0], ["-", 0], ["!", 0]]);
+  let unstagedChanges = new Map<string, number>([["+", 0], ["~", 0], ["-", 0], ["!", 0]]);
+  lines.split("\n").slice(1).forEach((line) => {
+    switch (line[0]) {
+      case "A": stagedChanges.set("+", stagedChanges.get("+") + 1); break;
+      case "M":
+      case "R":
+      case "C": stagedChanges.set("~", stagedChanges.get("~") + 1); break;
+      case "D": stagedChanges.set("-", stagedChanges.get("-") + 1); break;
+      case "U": stagedChanges.set("!", stagedChanges.get("!") + 1); break;
+      default: break;
+    }
+
+    switch (line[1]) {
+      case "?":
+      case "A": unstagedChanges.set("+", stagedChanges.get("+") + 1); break;
+      case "M": unstagedChanges.set("~", stagedChanges.get("~") + 1); break;
+      case "D": unstagedChanges.set("-", stagedChanges.get("-") + 1); break;
+      case "U": unstagedChanges.set("!", stagedChanges.get("!") + 1); break;
+      default: break;
+    }
+  });
+  let stagedResult: string = [...stagedChanges]
+    .filter((pair) => (pair[1] !== 0))
+    .map(([key, v]) => (key + String(v) + " "))
+    .reduce((left, right) => (left + right), "");
+  let unstagedResult: string = [...unstagedChanges]
+    .filter((pair) => (pair[1] !== 0))
+    .map(([key, v]) => key + String(v) + " ")
+    .reduce((left, right) => left + right, "");
+  return {stagedChanges: stagedResult, unstagedChanges: unstagedResult};
+}
+
 
 interface WatchesValue {
     listeners: Set<Session>;
