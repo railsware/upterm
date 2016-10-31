@@ -64,6 +64,7 @@ const GitStatusFile: React.StatelessComponent<GitStatusFileProps> = ({
     {buttons.map(({buttonText, action}, index) => <span
       style={buttonStyles}
       onClick={action}
+      key={index.toString()}
     >
       {buttonText}
     </span>)}
