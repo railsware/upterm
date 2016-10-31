@@ -247,6 +247,15 @@ class GitStatusComponent extends React.Component<GitStatusProps, GitStatusState>
               action: resetFile(file.value),
             }],
           });
+          unstagedFilesDescriptions.push({
+            absolutePath: absolutePath,
+            path: file.value,
+            state: "deleted",
+            buttons: [{
+              buttonText: "Add",
+              action: addFile(file.value),
+            }]
+          });
           break;
         case "StagedDeleted":
           stagedFilesDescriptions.push({
