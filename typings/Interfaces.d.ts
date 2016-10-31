@@ -34,15 +34,8 @@ type VcsData = {
 } | { kind: "not-repository"; }
 
 interface FileChanges {
-  stagedAdded: number;
-  stagedModified: number;
-  stagedDeleted: number;
-  stagedUnmerged: number;
-
-  unstagedAdded: number;
-  unstagedModified: number;
-  unstagedDeleted: number;
-  unstagedUnmerged: number;
+  stagedChanges: string;
+  unstagedChanges: string;
 }
 
 interface Margins {

@@ -18,23 +18,13 @@ const VcsDataComponent = ({data}: { data: VcsData }) => {
                     {(data.status === "dirty") ?
                       (<span>
                         <span style={css.statusBar.stagedFileChanges}>
-                          {
-                            "+" + String(data.changes.stagedAdded) + " " +
-                            "~" + String(data.changes.stagedModified) + " " +
-                            "-" + String(data.changes.stagedDeleted) + " " +
-                            "!" + String(data.changes.stagedUnmerged) + " "
-                          }
+                          {data.changes.stagedChanges}
                         </span>
-                        {"| "}
+                        {(data.changes.stagedChanges === "") ? "" : "| "}
                         <span style={css.statusBar.unstagedFileChanges}>
-                          {
-                            "+" + String(data.changes.unstagedAdded) + " " +
-                            "~" + String(data.changes.unstagedModified) + " " +
-                            "-" + String(data.changes.unstagedDeleted) + " " +
-                            "!" + String(data.changes.unstagedUnmerged) + " "
-                          }
+                          {data.changes.unstagedChanges}
                         </span>
-                      </span>)  :
+                      </span>) :
                       undefined
                     }
                     <span style={css.statusBar.icon} dangerouslySetInnerHTML={{__html: fontAwesome.longArrowDown}}/>

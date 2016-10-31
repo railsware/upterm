@@ -102,42 +102,38 @@ class GitWatcher extends EventEmitter {
         });
     }
 }
-
 function linesToFileChanges(lines: string): FileChanges {
-
-  let fileChanges = {
-    stagedAdded: 0,
-    stagedModified: 0,
-    stagedDeleted: 0,
-    stagedUnmerged: 0,
-
-    unstagedAdded: 0,
-    unstagedModified: 0,
-    unstagedDeleted: 0,
-    unstagedUnmerged: 0,
-  };
+  let stagedChanges = new Map<string, number>([["+", 0], ["~", 0], ["-", 0], ["!", 0]]);
+  let unstagedChanges = new Map<string, number>([["+", 0], ["~", 0], ["-", 0], ["!", 0]]);
   lines.split("\n").slice(1).forEach((line) => {
     switch (line[0]) {
-      case "A": fileChanges.stagedAdded += 1; break;
+      case "A": stagedChanges.set("+", stagedChanges.get("+") + 1); break;
       case "M":
       case "R":
-      case "C": fileChanges.stagedModified += 1; break;
-      case "D": fileChanges.stagedDeleted += 1; break;
-      case "U": fileChanges.stagedUnmerged += 1; break;
+      case "C": stagedChanges.set("~", stagedChanges.get("~") + 1); break;
+      case "D": stagedChanges.set("-", stagedChanges.get("-") + 1); break;
+      case "U": stagedChanges.set("!", stagedChanges.get("!") + 1); break;
       default: break;
     }
 
     switch (line[1]) {
       case "?":
-      case "A": fileChanges.unstagedAdded += 1; break;
-      case "M": fileChanges.unstagedModified += 1; break;
-      case "D": fileChanges.unstagedDeleted += 1; break;
-      case "U": fileChanges.unstagedUnmerged += 1; break;
+      case "A": unstagedChanges.set("+", stagedChanges.get("+") + 1); break;
+      case "M": unstagedChanges.set("~", stagedChanges.get("~") + 1); break;
+      case "D": unstagedChanges.set("-", stagedChanges.get("-") + 1); break;
+      case "U": unstagedChanges.set("!", stagedChanges.get("!") + 1); break;
       default: break;
     }
   });
-
-  return fileChanges;
+  let stagedResult: string = [...stagedChanges]
+    .filter((pair) => (pair[1] !== 0))
+    .map(([key, v]) => (key + String(v) + " "))
+    .reduce((left, right) => (left + right), "");
+  let unstagedResult: string = [...unstagedChanges]
+    .filter((pair) => (pair[1] !== 0))
+    .map(([key, v]) => key + String(v) + " ")
+    .reduce((left, right) => left + right, "");
+  return {stagedChanges: stagedResult, unstagedChanges: unstagedResult};
 }
 
 
