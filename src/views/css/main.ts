@@ -254,6 +254,8 @@ export const statusBar = {
         marginRight: 10,
     },
     icon: Object.assign({}, icon, {marginRight: 5, marginLeft: 5}),
+    stagedFileChanges: {color: colors.green},
+    unstagedFileChanges: {color: colors.red},
     status: (status: VcsStatus) => {
         return {
             color: status === "dirty" ? colors.blue : colors.white,
