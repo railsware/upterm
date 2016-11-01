@@ -2,7 +2,7 @@
   "name": "black-screen",
   "productName": "Black Screen",
   "description": "A terminal emulator for the 21st century.",
-  "version": "0.2.72",
+  "version": "0.2.73",
   "main": "compiled/src/main/Main.js",
   "author": "Volodymyr Shatskyi <shockone89@gmail.com>",
   "repository": {
@@ -28,7 +28,7 @@
     "@types/node": "6.0.41",
     "@types/pty.js": "0.2.31",
     "@types/react": "0.14.37",
-    "child-process-promise": "2.1.3",
+    "child-process-promise": "2.2.0",
     "dirStat": "0.0.2",
     "font-awesome": "4.6.3",
     "fs-extra": "0.30.0",
