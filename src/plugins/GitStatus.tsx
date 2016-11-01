@@ -255,7 +255,7 @@ class GitStatusComponent extends React.Component<GitStatusProps, GitStatusState>
             buttons: [{
               buttonText: "Add",
               action: addFile(file.value),
-            }]
+            }],
           });
           break;
         case "StagedDeleted":
