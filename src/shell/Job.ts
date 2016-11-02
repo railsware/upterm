@@ -113,7 +113,19 @@ export class Job extends EmitterWithUniqueID implements TerminalLikeDevice {
         if (typeof input === "string") {
             text = input;
         } else {
-            text = input.ctrlKey ? String.fromCharCode(input.keyCode - 64) : normalizeKey(input.key, this.screenBuffer.cursorKeysMode);
+            if (input.ctrlKey) {
+                text = String.fromCharCode(input.keyCode - 64);
+            } else if (input.altKey) {
+                let char = String.fromCharCode(input.keyCode);
+                if (input.shiftKey) {
+                    char = char.toUpperCase();
+                } else {
+                    char = char.toLowerCase();
+                }
+                text = `\x1b${char}`;
+            } else {
+                text = normalizeKey(input.key, this.screenBuffer.cursorKeysMode);
+            }
         }
 
         this.command.write(text);
