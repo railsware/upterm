@@ -435,7 +435,7 @@ class GitStatusComponent extends React.Component<GitStatusProps, GitStatusState>
 
     return <div style={{ padding: "10px" }}>
       <div>{branchText}</div>
-      {this.state.gitStatus.length === 0 ? <div>Nothing to commit, working tree clean.</div> : null}
+      {this.state.gitStatus.length === 0 ? <div>Nothing to commit, working tree clean.</div> : undefined}
       <GitStatusSection
         sectionType="Changes to be committed:"
         files={stagedFilesDescriptions}
