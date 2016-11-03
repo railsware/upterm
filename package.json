@@ -2,7 +2,7 @@
   "name": "black-screen",
   "productName": "Black Screen",
   "description": "A terminal emulator for the 21st century.",
-  "version": "0.2.73",
+  "version": "0.2.74",
   "main": "compiled/src/main/Main.js",
   "author": "Volodymyr Shatskyi <shockone89@gmail.com>",
   "repository": {
@@ -34,7 +34,7 @@
     "fs-extra": "0.30.0",
     "fuzzaldrin": "2.1.0",
     "immutable": "3.8.1",
-    "lodash": "4.16.4",
+    "lodash": "4.16.6",
     "mode-to-permissions": "0.0.2",
     "node-ansiparser": "2.2.0",
     "pty.js": "shockone/pty.js",
