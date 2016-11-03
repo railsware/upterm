@@ -64,6 +64,7 @@ const GitStatusFile: React.StatelessComponent<GitStatusFileProps> = ({
     {buttons.map(({buttonText, action}, index) => <span
       style={buttonStyles}
       onClick={action}
+      key={index.toString()}
     >
       {buttonText}
     </span>)}
@@ -245,6 +246,15 @@ class GitStatusComponent extends React.Component<GitStatusProps, GitStatusState>
             buttons: [{
               buttonText: "Reset",
               action: resetFile(file.value),
+            }],
+          });
+          unstagedFilesDescriptions.push({
+            absolutePath: absolutePath,
+            path: file.value,
+            state: "deleted",
+            buttons: [{
+              buttonText: "Add",
+              action: addFile(file.value),
             }],
           });
           break;
