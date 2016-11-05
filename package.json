@@ -30,7 +30,7 @@
     "@types/react": "0.14.37",
     "child-process-promise": "2.2.0",
     "dirStat": "0.0.2",
-    "font-awesome": "4.6.3",
+    "font-awesome": "4.7.0",
     "fs-extra": "0.30.0",
     "fuzzaldrin": "2.1.0",
     "immutable": "3.8.1",
