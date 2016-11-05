@@ -64,7 +64,7 @@ const promptGrid = {
     },
 };
 
-const sessionsHeight = `(100vh - ${titleBarHeight + infoPanelHeight}px)`;
+const sessionsHeight = `(100vh - ${titleBarHeight + infoPanelHeight + 5}px)`;
 
 const applicationGrid = {
     container: {
