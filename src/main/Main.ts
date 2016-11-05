@@ -1,7 +1,7 @@
 import {app, ipcMain, nativeImage, BrowserWindow, screen} from "electron";
 import {readFileSync} from "fs";
 import {windowBoundsFilePath} from "../utils/Common";
-import {colors} from '../views/css/colors'
+import {colors} from '../views/css/colors';
 
 if (app.dock) {
     app.dock.setIcon(nativeImage.createFromPath("build/icon.png"));
