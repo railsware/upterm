@@ -13,7 +13,7 @@ PluginManager.registerOutputDecorator({
     }}>{job.screenBuffer.toLines().map((line, index) => {
       const match = line.match(/^(.*?):(\d+):(.*)$/);
       if (match) {
-        const [fullLine, path, lineNum, rest] = match;
+        const [, path, lineNum, rest] = match;
         if (path && lineNum && rest) {
           const absolutePath = join(job.environment.pwd, path);
           return <div key={index.toString()}>
