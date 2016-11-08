@@ -103,16 +103,26 @@ export class FileStatus {
     }
 }
 
-type GitDirectoryPath = string & { __isGitDirectoryPath: boolean };
+export type GitDirectoryPath = string & { __isGitDirectoryPath: boolean };
 
 export function isGitDirectory(directory: string): directory is GitDirectoryPath {
     return fs.existsSync(Path.join(directory, ".git") );
 }
 
-export async function branches(directory: GitDirectoryPath): Promise<Branch[]> {
+type BranchesOptions = {
+    directory: GitDirectoryPath;
+    remotes: boolean;
+    tags: boolean;
+};
+
+export async function branches({
+    directory,
+    remotes,
+    tags,
+}: BranchesOptions): Promise<Branch[]> {
     let lines = await linedOutputOf(
         "git",
-        ["for-each-ref", "refs/tags", "refs/heads", "refs/remotes", "--format='%(HEAD)%(refname:short)'"],
+        ["for-each-ref", tags ? "refs/tags": "", "refs/heads", remotes ? "refs/remotes" : "", "--format='%(HEAD)%(refname:short)'"],
         directory
     );
     return lines.map(line => new Branch(line.slice(1), line[0] === "*"));
