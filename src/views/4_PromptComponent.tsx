@@ -111,6 +111,7 @@ export class PromptComponent extends React.Component<Props, State> {
             autocomplete = <AutocompleteComponent suggestions={this.state.suggestions}
                                                   offsetTop={this.state.offsetTop}
                                                   caretPosition={getCaretPosition(this.commandNode)}
+                                                  searchKey={this.props.job.prompt.value}
                                                   onSuggestionHover={index => this.setState(assign(this.state, {highlightedSuggestionIndex: index}))}
                                                   onSuggestionClick={this.applySuggestion.bind(this)}
                                                   highlightedIndex={this.state.highlightedSuggestionIndex}

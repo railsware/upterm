@@ -1,5 +1,7 @@
 // Author: Pouya Kary <k@karyfoundation.org> (in case you had any questions...)
 
+import {colors} from './views/css/colors';
+
 /**
  * Checks if the __key__ exists as a _sequence_ in the __element__.
  */
@@ -24,14 +26,15 @@ export function SequenceFilter(element: string, key: string): boolean {
 /**
  * Inserts spans into the sequence to make it colorized.
  */
-export function HighlightedSequencedSuggestion( element: string, key: string ) {
+export function HighlightSequencedSuggestion( element: string, key: string ): string {
+    console.log(`e --> "${ element }" / k --> "${ key }"`)
     var currentSearchCharIndex = 0;
     var highlightedElement = '';
     for ( var searchStringsIndex = 0; searchStringsIndex < element.length; searchStringsIndex++) {
         var currentChar = element[ searchStringsIndex ];
         if ( currentChar == key[ currentSearchCharIndex ] ) {
             if ( currentSearchCharIndex < key.length ) {
-                highlightedElement += '<b>' + currentChar + '</b>';
+                highlightedElement += `<span style="color:${colors.blue}">${currentChar}</span>`;
                 currentSearchCharIndex++;
             } else {
                 highlightedElement += currentChar;
@@ -40,7 +43,5 @@ export function HighlightedSequencedSuggestion( element: string, key: string ) {
             highlightedElement += currentChar;
         }
     }
-    if ( currentSearchCharIndex >= key.length ) {
-        return highlightedElement;
-    }
+    return highlightedElement;
 }

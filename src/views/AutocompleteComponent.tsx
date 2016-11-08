@@ -1,21 +1,25 @@
 import * as React from "react";
 import {Suggestion} from "../plugins/autocompletion_utils/Common";
 import * as css from "./css/main";
+import {HighlightSequencedSuggestion} from '../SequenceKit'
 
 interface SuggestionProps {
     suggestion: Suggestion;
     onHover: () => void;
     onClick: () => void;
     isHighlighted: boolean;
+    searchKey: string;
 }
 
-const SuggestionComponent = ({suggestion, onHover, onClick, isHighlighted}: SuggestionProps) =>
+const SuggestionComponent = ({suggestion, onHover, onClick, isHighlighted, searchKey}: SuggestionProps) =>
     <li style={css.autocomplete.item(isHighlighted)}
         onMouseOver={onHover}
         onClick={onClick}>
 
         <i style={Object.assign({}, css.suggestionIcon, suggestion.style.css)} dangerouslySetInnerHTML={{__html: suggestion.style.value}}/>
-        <span style={css.autocomplete.value}>{suggestion.displayValue}</span>
+
+        <span style={css.autocomplete.value}
+              dangerouslySetInnerHTML={{__html: HighlightSequencedSuggestion( suggestion.displayValue, searchKey)}} />
         <span style={css.autocomplete.synopsis}>{suggestion.synopsis}</span>
     </li>;
 
@@ -27,6 +31,7 @@ interface AutocompleteProps {
     onSuggestionClick: () => void;
     highlightedIndex: number;
     ref: string;
+    searchKey: string;
 }
 
 export class AutocompleteComponent extends React.Component<AutocompleteProps, {}> {
@@ -36,6 +41,7 @@ export class AutocompleteComponent extends React.Component<AutocompleteProps, {}
                                  onHover={() => this.props.onSuggestionHover(index)}
                                  onClick={this.props.onSuggestionClick}
                                  key={index}
+                                 searchKey={this.props.searchKey}
                                  isHighlighted={index === this.props.highlightedIndex}/>
         );
 
