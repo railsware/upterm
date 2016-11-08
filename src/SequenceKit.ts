@@ -6,6 +6,7 @@ import {colors} from './views/css/colors';
  * Checks if the __key__ exists as a _sequence_ in the __element__.
  */
 export function SequenceFilter(element: string, key: string): boolean {
+    if ( element.length > 40 ) return false;
     var currentSearchCharIndex = 0;
     for (var searchStringsIndex = 0; searchStringsIndex < element.length; searchStringsIndex++) {
         var currentChar = element[searchStringsIndex];
