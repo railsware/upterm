@@ -3,11 +3,12 @@ import {leafNodeAt} from "./shell/Parser";
 import * as _ from "lodash";
 import {History} from "./shell/History";
 import {Suggestion, styles, replaceAllPromptSerializer} from "./plugins/autocompletion_utils/Common";
+import {SequenceFilter} from './SequenceKit';
 
 export const suggestionsLimit = 9;
 
 export const getSuggestions = async(job: Job, caretPosition: number) => {
-    const prefixMatchesInHistory = History.all.filter(line => line.startsWith(job.prompt.value));
+    const prefixMatchesInHistory = History.all.filter(line => SequenceFilter(line, job.prompt.value));
     const suggestionsFromHistory = prefixMatchesInHistory.map(match => new Suggestion({
         value: match,
         promptSerializer: replaceAllPromptSerializer,
@@ -25,7 +26,7 @@ export const getSuggestions = async(job: Job, caretPosition: number) => {
     });
 
     const applicableSuggestions = _.uniqBy([...firstThreeFromHistory, ...suggestions, ...remainderFromHistory], suggestion => suggestion.value).filter(suggestion =>
-        suggestion.value.toLowerCase().startsWith(node.value.toLowerCase())
+        SequenceFilter(suggestion.value.toLowerCase(), node.value.toLowerCase())
     );
 
     if (applicableSuggestions.length === 1) {
