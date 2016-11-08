@@ -3,7 +3,7 @@ import {leafNodeAt} from "./shell/Parser";
 import * as _ from "lodash";
 import {History} from "./shell/History";
 import {Suggestion, styles, replaceAllPromptSerializer} from "./plugins/autocompletion_utils/Common";
-import {SequenceFilter} from './SequenceKit';
+import {SequenceFilter} from "./SequenceKit";
 
 export const suggestionsLimit = 9;
 

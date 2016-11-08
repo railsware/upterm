@@ -1,7 +1,7 @@
 import * as React from "react";
 import {Suggestion} from "../plugins/autocompletion_utils/Common";
 import * as css from "./css/main";
-import {HighlightSequencedSuggestion} from '../SequenceKit'
+import {HighlightSequencedSuggestion} from "../SequenceKit";
 
 interface SuggestionProps {
     suggestion: Suggestion;
