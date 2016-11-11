@@ -14,6 +14,7 @@ import {colors} from "../views/css/colors";
 import {executeCommand} from "../PTY";
 import Link from "../utils/Link";
 import {join} from "path";
+import Button from "./autocompletion_utils/Button";
 
 const gitStatusStyle = (color: string) => ({
   lineHeight: "18px",
@@ -69,13 +70,9 @@ const GitStatusFile: React.StatelessComponent<GitStatusFileProps> = ({
       {separator}
       <Link absolutePath={absolutePath}>{path}</Link>
     </span>
-    {buttons.map(({buttonText, action}, index) => <span
-      style={buttonStyles}
-      onClick={action}
-      key={index.toString()}
-    >
-      {buttonText}
-    </span>)}
+    {buttons.map(({buttonText, action}, index) =>
+      <Button key={index.toString()} onClick={action}>{buttonText}</Button>
+    )}
   </div>;
 };
 
