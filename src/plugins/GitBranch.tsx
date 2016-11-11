@@ -14,27 +14,12 @@ import {colors} from "../views/css/colors";
 import {executeCommand} from "../PTY";
 import Link from "../utils/Link";
 import {join} from "path";
+import Button from "./autocompletion_utils/Button";
 
-const gitStatusStyle = (color: string) => ({
-  lineHeight: "18px",
-  color: color,
-});
-
-const buttonStyles = {
-  borderColor: colors.blue,
-  borderStyle: "solid",
-  borderRadius: "4px",
-  borderWidth: "1px",
-  padding: "2px",
-  color: colors.blue,
-  WebkitUserSelect: "none",
-  fontSize: "10px",
-  margin: "4px",
-  cursor: "pointer",
-};
 
 interface GitBranchProps {
   branches: Branch[];
+  repoRoot: string;
 }
 
 class GitBranchComponent extends React.Component<GitBranchProps, {}> {
@@ -47,6 +32,9 @@ class GitBranchComponent extends React.Component<GitBranchProps, {}> {
       {this.props.branches.map((branch, index) =>
         <div key={index.toString()} style={branch.isCurrent() ? {color: colors.green} : {}}>
           <span style={{whiteSpace: "pre"}}>{branch.isCurrent() ? "* " : "  "}{branch.toString()}</span>
+          <Button onClick={() => {
+            executeCommand("git", ["checkout", branch.toString()], this.props.repoRoot)
+          }}>Checkout</Button>
         </div>
       )}
     </div>;
@@ -61,7 +49,10 @@ PluginManager.registerCommandInterceptorPlugin({
         remotes: false,
         tags: false,
       });
-      return <GitBranchComponent branches={gitBranches} />;
+      return <GitBranchComponent
+        branches={gitBranches}
+        repoRoot={await repoRoot(presentWorkingDirectory)}
+      />;
     } else {
       return <div style={{ padding: "10px" }}>fatal: Not a git repository (or any of the parent directories): .git</div>
     }
