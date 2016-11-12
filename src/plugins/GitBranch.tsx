@@ -44,10 +44,14 @@ class GitBranchComponent extends React.Component<GitBranchProps, GitBranchState>
   }
 
   async reload() {
-    await branches({
+    const newBranches: Branch[] = await branches({
       directory: this.props.repoRoot,
       remotes: false,
       tags: false,
+    });
+    this.setState({
+      branches: newBranches,
+      failReason: undefined,
     });
   }
 
