@@ -482,7 +482,7 @@ PluginManager.registerCommandInterceptorPlugin({
       });
       const currentBranch = gitBranches.find(branch => branch.isCurrent());
       const gitStatus = await status(presentWorkingDirectory as any);
-      const root = await repoRoot(presentWorkingDirectory);
+      const root = await repoRoot(presentWorkingDirectory as any);
       return <GitStatusComponent
         currentBranch={currentBranch}
         gitStatus={gitStatus}
