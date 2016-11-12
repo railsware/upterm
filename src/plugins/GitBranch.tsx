@@ -2,8 +2,6 @@ import * as React from "react";
 import {PluginManager} from "../PluginManager";
 import {isEqual} from "lodash";
 import {
-  status,
-  FileStatus,
   branches,
   Branch,
   repoRoot,
@@ -12,8 +10,6 @@ import {
 } from "../utils/Git";
 import {colors, background} from "../views/css/colors";
 import {executeCommand} from "../PTY";
-import Link from "../utils/Link";
-import {join} from "path";
 import Button from "./autocompletion_utils/Button";
 import {failurize} from "../views/css/functions";
 
@@ -57,14 +53,14 @@ class GitBranchComponent extends React.Component<GitBranchProps, GitBranchState>
 
   render(): any {
     return <div>
-      {this.state.failReason ? <div style={errorMessageStyles}>{this.state.failReason}</div> : null}
+      {this.state.failReason ? <div style={errorMessageStyles}>{this.state.failReason}</div> : undefined}
       <div style={{ padding: "10px" }}>
         {this.state.branches.map((branch, index) =>
           <div key={index.toString()} style={branch.isCurrent() ? {color: colors.green} : {}}>
             <span style={{whiteSpace: "pre"}}>{branch.isCurrent() ? "* " : "  "}{branch.toString()}</span>
             <Button onClick={async () => {
               try {
-                await executeCommand("git", ["checkout", branch.toString()], this.props.repoRoot)
+                await executeCommand("git", ["checkout", branch.toString()], this.props.repoRoot);
                 this.reload();
               } catch (e) {
                 this.setState({ failReason: e.message } as GitBranchState);
@@ -90,7 +86,7 @@ PluginManager.registerCommandInterceptorPlugin({
         repoRoot={await repoRoot(presentWorkingDirectory as GitDirectoryPath)}
       />;
     } else {
-      return <div style={{ padding: "10px" }}>fatal: Not a git repository (or any of the parent directories): .git</div>
+      return <div style={{ padding: "10px" }}>fatal: Not a git repository (or any of the parent directories): .git</div>;
     }
   },
 

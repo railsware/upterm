@@ -19,7 +19,7 @@ type ButtonProps = {
   children?: React.ReactElement<any>;
 };
 
-const Button = ({ onClick, children} : ButtonProps) => <span
+const Button = ({ onClick, children}: ButtonProps) => <span
   style={buttonStyles}
   onClick={onClick}
 >{children}</span>;

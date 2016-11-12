@@ -122,7 +122,7 @@ export async function branches({
 }: BranchesOptions): Promise<Branch[]> {
     let lines = await linedOutputOf(
         "git",
-        ["for-each-ref", tags ? "refs/tags": "", "refs/heads", remotes ? "refs/remotes" : "", "--format='%(HEAD)%(refname:short)'"],
+        ["for-each-ref", tags ? "refs/tags" : "", "refs/heads", remotes ? "refs/remotes" : "", "--format='%(HEAD)%(refname:short)'"],
         directory
     );
     return lines.map(line => new Branch(line.slice(1), line[0] === "*"));
