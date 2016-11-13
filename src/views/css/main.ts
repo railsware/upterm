@@ -18,7 +18,7 @@ export const promptWrapperHeight = promptHeight + promptVerticalPadding;
 const promptBackgroundColor = lighten(colors.black, 5);
 const suggestionSize = 2 * fontSize;
 const defaultShadow = "0 2px 8px 1px rgba(0, 0, 0, 0.3)";
-export const titleBarHeight = 24;
+export const titleBarHeight = 36;
 export const rowHeight = fontSize + 4;
 export const infoPanelHeight = 2 * fontSize + 4;
 export const letterWidth = fontSize / 2 + 1.5;
@@ -64,7 +64,7 @@ const promptGrid = {
     },
 };
 
-const sessionsHeight = `(100vh - ${titleBarHeight + infoPanelHeight}px)`;
+const sessionsHeight = `(100vh - ${titleBarHeight + infoPanelHeight + 5}px)`;
 
 const applicationGrid = {
     container: {
@@ -310,14 +310,14 @@ export const tabs = {
     WebkitPaddingStart: 0,
     WebkitUserSelect: "none",
     listStyle: "none",
-    paddingLeft: 68,
-    paddingRight: 129,
+    paddingLeft: 77,
+    paddingRight: 133,
 };
 
-const searchInputHeight = titleBarHeight - 6;
+const searchInputHeight = titleBarHeight - 14;
 export const search = {
     position: "absolute",
-    right: 4,
+    right: 7,
     top: (titleBarHeight - searchInputHeight) / 2,
 };
 
@@ -334,12 +334,13 @@ export const searchIcon = Object.assign(
 export const searchInput = {
     backgroundColor: searchInputColor,
     border: 0,
-    borderRadius: 3,
+    borderRadius: 30,
     WebkitAppearance: "none",
     outline: "none",
     height: searchInputHeight,
     width: 120,
-    paddingLeft: fontSize,
+    paddingLeft: fontSize + 4,
+    paddingRight: 6,
     color: colors.white,
 };
 
@@ -352,7 +353,8 @@ export const tab = (isHovered: boolean, isFocused: boolean) => {
         flex: "auto",
         display: "inline-block",
         textAlign: "center",
-        paddingTop: 2,
+        verticalAlign: "middle",
+        paddingTop: Math.floor( ( titleBarHeight - fontSize ) / 2 ) - 2,
     };
 };
 

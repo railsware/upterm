@@ -41,7 +41,8 @@
     "react": "15.3.2",
     "react-dom": "15.3.2",
     "tinycolor2": "1.4.1",
-    "uuid": "2.0.3"
+    "uuid": "2.0.3",
+    "yargs-parser": "4.0.2"
   },
   "devDependencies": {
     "@types/chai": "3.4.34",

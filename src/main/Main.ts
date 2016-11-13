@@ -1,6 +1,7 @@
 import {app, ipcMain, nativeImage, BrowserWindow, screen} from "electron";
 import {readFileSync} from "fs";
 import {windowBoundsFilePath} from "../utils/Common";
+import {colors} from "../views/css/colors";
 
 if (app.dock) {
     app.dock.setIcon(nativeImage.createFromPath("build/icon.png"));
@@ -10,11 +11,13 @@ app.on("ready", () => {
     const bounds = windowBounds();
 
     let options: Electron.BrowserWindowOptions = {
+        backgroundColor: colors.black,
         webPreferences: {
             experimentalFeatures: true,
             experimentalCanvasFeatures: true,
         },
-        titleBarStyle: "hidden",
+        titleBarStyle: "hidden-inset",
+        // frame: false,
         resizable: true,
         minWidth: 500,
         minHeight: 300,
@@ -42,7 +45,7 @@ app.on("ready", () => {
     app.on("open-file", (event, file) => browserWindow.webContents.send("change-working-directory", file));
 });
 
-app.on("mainWindow-all-closed", () => process.platform === "darwin" || app.quit());
+app.on("window-all-closed", app.quit );
 
 ipcMain.on("quit", app.quit);
 

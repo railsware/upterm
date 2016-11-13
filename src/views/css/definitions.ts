@@ -1,4 +1,12 @@
+
 export interface CSSObject {
+    border?: number;
+    borderColor?: string;
+    borderRightColor?: string;
+    borderRadius?: number;
+    borderLeftColor?: string;
+    borderWidth?: number;
+    borderStyle?: "solid";
     contain?: "strict" | "paint";
     pointerEvents?: string;
     marginTop?: number;
@@ -30,6 +38,7 @@ export interface CSSObject {
     zoom?: number;
     position?: "fixed" | "relative" | "absolute";
     top?: number | "auto";
+    textAlign?: string;
     bottom?: number | "auto";
     left?: number;
     right?: number;
@@ -52,6 +61,7 @@ export interface CSSObject {
     textDecoration?: "underline";
     fontWeight?: "bold";
     fontSize?: number;
+    verticalAlign?: "middle";
     WebkitAppearance?: "none";
 }
 
