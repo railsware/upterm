@@ -57,7 +57,10 @@ class GitBranchComponent extends React.Component<GitBranchProps, GitBranchState>
       <div style={{ padding: "10px" }}>
         {this.state.branches.map((branch, index) =>
           <div key={index.toString()} style={branch.isCurrent() ? {color: colors.green} : {}}>
-            <span style={{whiteSpace: "pre"}}>{branch.isCurrent() ? "* " : "  "}{branch.toString()}</span>
+            <span style={{
+              whiteSpace: "pre",
+              lineHeight: "18px",
+            }}>{branch.isCurrent() ? "* " : "  "}{branch.toString()}</span>
             <Button onClick={async () => {
               try {
                 await executeCommand("git", ["checkout", branch.toString()], this.props.repoRoot);
@@ -66,6 +69,14 @@ class GitBranchComponent extends React.Component<GitBranchProps, GitBranchState>
                 this.setState({ failReason: e.message } as GitBranchState);
               }
             }}>Checkout</Button>
+            <Button color={colors.red} onClick={async () => {
+              try {
+                await executeCommand("git", ["branch", "-d", branch.toString()], this.props.repoRoot);
+                this.reload();
+              } catch (e) {
+                this.setState({ failReason: e.message } as GitBranchState);
+              }
+            }}>Delete</Button>
           </div>
         )}
       </div>
