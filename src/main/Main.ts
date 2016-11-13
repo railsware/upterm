@@ -42,7 +42,7 @@ app.on("ready", () => {
     app.on("open-file", (event, file) => browserWindow.webContents.send("change-working-directory", file));
 });
 
-app.on("mainWindow-all-closed", () => process.platform === "darwin" || app.quit());
+app.on("window-all-closed", () => app.quit());
 
 ipcMain.on("quit", app.quit);
 
