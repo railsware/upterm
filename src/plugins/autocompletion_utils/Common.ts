@@ -283,6 +283,7 @@ function gitStatusCodeColor(statusCode: StatusCode) {
             return colors.blue;
 
         case "UnstagedDeleted":
+        case "UnstagedModified":
         case "UnmergedBothDeleted":
         case "UnmergedAddedByUs":
         case "UnmergedDeletedByThem":
