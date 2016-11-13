@@ -1,29 +1,25 @@
 import * as React from "react";
 import {PluginManager} from "../PluginManager";
 import {isEqual} from "lodash";
-import {status, FileStatus, branches, Branch, repoRoot} from "../utils/Git";
+import {
+  status,
+  FileStatus,
+  branches,
+  Branch,
+  repoRoot,
+  isGitDirectory,
+  GitDirectoryPath,
+} from "../utils/Git";
 import {colors} from "../views/css/colors";
 import {executeCommand} from "../PTY";
 import Link from "../utils/Link";
 import {join} from "path";
+import Button from "./autocompletion_utils/Button";
 
 const gitStatusStyle = (color: string) => ({
   lineHeight: "18px",
   color: color,
 });
-
-const buttonStyles = {
-  borderColor: colors.blue,
-  borderStyle: "solid",
-  borderRadius: "4px",
-  borderWidth: "1px",
-  padding: "2px",
-  color: colors.blue,
-  WebkitUserSelect: "none",
-  fontSize: "10px",
-  margin: "4px",
-  cursor: "pointer",
-};
 
 interface GitStatusProps {
   currentBranch: Branch | undefined;
@@ -61,13 +57,9 @@ const GitStatusFile: React.StatelessComponent<GitStatusFileProps> = ({
       {separator}
       <Link absolutePath={absolutePath}>{path}</Link>
     </span>
-    {buttons.map(({buttonText, action}, index) => <span
-      style={buttonStyles}
-      onClick={action}
-      key={index.toString()}
-    >
-      {buttonText}
-    </span>)}
+    {buttons.map(({buttonText, action}, index) =>
+      <Button key={index.toString()} onClick={action}>{buttonText}</Button>
+    )}
   </div>;
 };
 
@@ -105,7 +97,11 @@ class GitStatusComponent extends React.Component<GitStatusProps, GitStatusState>
 
   async reload() {
     const gitStatus = await status(this.props.repoRoot as any);
-    const gitBranches: Branch[] = await branches(this.props.repoRoot as any);
+    const gitBranches: Branch[] = await branches({
+      directory: this.props.repoRoot as GitDirectoryPath,
+      remotes: false,
+      tags: false,
+    });
     const currentBranch = gitBranches.find(branch => branch.isCurrent());
     this.setState({
       currentBranch,
@@ -477,15 +473,24 @@ class GitStatusComponent extends React.Component<GitStatusProps, GitStatusState>
 
 PluginManager.registerCommandInterceptorPlugin({
   intercept: async({ presentWorkingDirectory }): Promise<React.ReactElement<any>> => {
-    const gitBranches: Branch[] = await branches(presentWorkingDirectory as any);
-    const currentBranch = gitBranches.find(branch => branch.isCurrent());
-    const gitStatus = await status(presentWorkingDirectory as any);
-    const root = await repoRoot(presentWorkingDirectory);
-    return <GitStatusComponent
-      currentBranch={currentBranch}
-      gitStatus={gitStatus}
-      repoRoot={root}
-    />;
+
+    if (await isGitDirectory(presentWorkingDirectory)) {
+      const gitBranches: Branch[] = await branches({
+        directory: presentWorkingDirectory as GitDirectoryPath,
+        remotes: false,
+        tags: false,
+      });
+      const currentBranch = gitBranches.find(branch => branch.isCurrent());
+      const gitStatus = await status(presentWorkingDirectory as any);
+      const root = await repoRoot(presentWorkingDirectory as any);
+      return <GitStatusComponent
+        currentBranch={currentBranch}
+        gitStatus={gitStatus}
+        repoRoot={root}
+      />;
+    } else {
+      return <div style={{ padding: "10px" }}>fatal: Not a git repository (or any of the parent directories): .git</div>;
+    }
   },
 
   isApplicable: ({ command }): boolean => {

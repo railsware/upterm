@@ -263,8 +263,13 @@ const configVariables = unique(async(context: AutocompletionContext): Promise<Su
 
 const branchesExceptCurrent = async(context: AutocompletionContext): Promise<Suggestion[]> => {
     if (Git.isGitDirectory(context.environment.pwd)) {
-        const branches = (await Git.branches(context.environment.pwd)).filter(branch => !branch.isCurrent());
-        return branches.map(branch => new Suggestion({value: branch.toString(), style: styles.branch}));
+        const allBranches = (await Git.branches({
+            directory: context.environment.pwd,
+            remotes: true,
+            tags: false,
+        }));
+        const nonCurrentBranches = allBranches.filter(branch => !branch.isCurrent());
+        return nonCurrentBranches.map(branch => new Suggestion({value: branch.toString(), style: styles.branch}));
     } else {
         return [];
     }
