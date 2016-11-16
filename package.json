@@ -38,7 +38,7 @@
     "mode-to-permissions": "0.0.2",
     "node-ansiparser": "2.2.0",
     "pty.js": "shockone/pty.js",
-    "react": "15.3.2",
+    "react": "15.4.0",
     "react-dom": "15.3.2",
     "tinycolor2": "1.4.1",
     "uuid": "2.0.3"
