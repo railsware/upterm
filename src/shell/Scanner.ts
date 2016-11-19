@@ -182,8 +182,9 @@ const patterns = [
     },
 ];
 
-export function scan(input: string): Token[] {
+export function scan(rawInput: string): Token[] {
     const tokens: Token[] = [];
+    let input = rawInput.trim();
 
     let position = 0;
 
