@@ -64,7 +64,7 @@ class GitBranchComponent extends React.Component<GitBranchProps, GitBranchState>
 
           if (!branch.isCurrent()) {
             if (this.state.failedDeletes.includes(branch.toString())) {
-              deleteButton = <Buttogn color={colors.red} onClick={async () => {
+              deleteButton = <Button color={colors.red} onClick={async () => {
                 try {
                   executeCommand("git", ["branch", "-D", branch.toString()], this.props.repoRoot);
                   this.reload();
