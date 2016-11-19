@@ -27,6 +27,7 @@ interface GitBranchProps {
 interface GitBranchState {
   failReason: string | undefined;
   branches: Branch[];
+  failedDeletes: string[];
 };
 
 class GitBranchComponent extends React.Component<GitBranchProps, GitBranchState> {
@@ -36,6 +37,7 @@ class GitBranchComponent extends React.Component<GitBranchProps, GitBranchState>
     this.state = {
       failReason: undefined,
       branches: props.branches,
+      failedDeletes: [],
     };
   }
 
@@ -48,15 +50,45 @@ class GitBranchComponent extends React.Component<GitBranchProps, GitBranchState>
     this.setState({
       branches: newBranches,
       failReason: undefined,
+      failedDeletes: [],
     });
   }
 
   render(): any {
+
     return <div>
       {this.state.failReason ? <div style={errorMessageStyles}>{this.state.failReason}</div> : undefined}
       <div style={{ padding: "10px" }}>
-        {this.state.branches.map((branch, index) =>
-          <div key={index.toString()} style={branch.isCurrent() ? {color: colors.green} : {}}>
+        {this.state.branches.map((branch, index) => {
+          let deleteButton: React.ReactElement<any> | null = null;
+
+          if (!branch.isCurrent()) {
+            if (this.state.failedDeletes.includes(branch.toString())) {
+              deleteButton = <Button color={colors.red} onClick={async () => {
+                try {
+                  executeCommand("git", ["branch", "-D", branch.toString()], this.props.repoRoot);
+                  this.reload();
+                } catch (e) {
+                  this.setState({ failReason: e.message } as GitBranchState);
+                }
+              }}>Force Delete</Button>
+            } else {
+              deleteButton = <Button color={colors.red} onClick={async () => {
+                try {
+                  await executeCommand("git", ["branch", "-d", branch.toString()], this.props.repoRoot);
+                  this.reload();
+                } catch (e) {
+                  this.setState({
+                    failReason: e.message,
+                    failedDeletes: this.state.failedDeletes.concat(branch.toString()),
+                  } as GitBranchState);
+                }
+              }}>Delete</Button>;
+            }
+          }
+
+
+          return <div key={index.toString()} style={branch.isCurrent() ? {color: colors.green} : {}}>
             <span style={{
               whiteSpace: "pre",
               lineHeight: "18px",
@@ -69,16 +101,9 @@ class GitBranchComponent extends React.Component<GitBranchProps, GitBranchState>
                 this.setState({ failReason: e.message } as GitBranchState);
               }
             }}>Checkout</Button>
-            <Button color={colors.red} onClick={async () => {
-              try {
-                await executeCommand("git", ["branch", "-d", branch.toString()], this.props.repoRoot);
-                this.reload();
-              } catch (e) {
-                this.setState({ failReason: e.message } as GitBranchState);
-              }
-            }}>Delete</Button>
+            {deleteButton}
           </div>
-        )}
+        })}
       </div>
     </div>;
   }
