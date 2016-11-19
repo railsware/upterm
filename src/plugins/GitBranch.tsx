@@ -60,18 +60,18 @@ class GitBranchComponent extends React.Component<GitBranchProps, GitBranchState>
       {this.state.failReason ? <div style={errorMessageStyles}>{this.state.failReason}</div> : undefined}
       <div style={{ padding: "10px" }}>
         {this.state.branches.map((branch, index) => {
-          let deleteButton: React.ReactElement<any> | null = null;
+          let deleteButton: React.ReactElement<any> | undefined = undefined;
 
           if (!branch.isCurrent()) {
             if (this.state.failedDeletes.includes(branch.toString())) {
-              deleteButton = <Button color={colors.red} onClick={async () => {
+              deleteButton = <Buttogn color={colors.red} onClick={async () => {
                 try {
                   executeCommand("git", ["branch", "-D", branch.toString()], this.props.repoRoot);
                   this.reload();
                 } catch (e) {
                   this.setState({ failReason: e.message } as GitBranchState);
                 }
-              }}>Force Delete</Button>
+              }}>Force Delete</Button>;
             } else {
               deleteButton = <Button color={colors.red} onClick={async () => {
                 try {
@@ -102,7 +102,7 @@ class GitBranchComponent extends React.Component<GitBranchProps, GitBranchState>
               }
             }}>Checkout</Button>
             {deleteButton}
-          </div>
+          </div>;
         })}
       </div>
     </div>;
