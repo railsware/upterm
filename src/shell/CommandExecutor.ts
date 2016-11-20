@@ -9,7 +9,7 @@ export class NonZeroExitCodeError extends Error {
 }
 
 abstract class CommandExecutionStrategy {
-    static async canExecute(job: Job): Promise<boolean> {
+    static async canExecute(_job: Job): Promise<boolean> {
         return false;
     }
 
@@ -63,14 +63,14 @@ class ShellExecutionStrategy extends CommandExecutionStrategy {
                 this.job.environment.toObject(),
                 this.job.dimensions,
                 (data: string) => this.job.parser.parse(data),
-                (exitCode: number) => exitCode === 0 ? resolve() : reject(new NonZeroExitCodeError(exitCode.toString()))
+                (exitCode: number) => exitCode === 0 ? resolve() : reject(new NonZeroExitCodeError(exitCode.toString())),
             );
         });
     }
 }
 
 class WindowsShellExecutionStrategy extends CommandExecutionStrategy {
-    static async canExecute(job: Job) {
+    static async canExecute(_job: Job) {
         return isWindows;
     }
 
@@ -85,7 +85,7 @@ class WindowsShellExecutionStrategy extends CommandExecutionStrategy {
                 ],
                 this.job.environment.toObject(), this.job.dimensions,
                 (data: string) => this.job.parser.parse(data),
-                (exitCode: number) => resolve()
+                (_exitCode: number) => resolve(),
             );
         });
     }
@@ -118,4 +118,3 @@ export class CommandExecutor {
         }
     }
 }
-

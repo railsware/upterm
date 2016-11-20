@@ -531,13 +531,13 @@ const commands = contextIndependent(async(): Promise<Suggestion[]> => {
     return [];
 });
 
-const aliases = contextIndependent(() => Git.aliases(process.env.HOME).then(variables =>
-    variables.map(variable => new Suggestion({
+const aliases = contextIndependent(() => Git.aliases(process.env.HOME).then(
+    variables => variables.map(variable => new Suggestion({
         value: variable.name,
         synopsis: variable.value,
         style: styles.alias,
         space: true,
-    }))
+    })),
 ));
 
 const expandAlias = async(name: string): Promise<string> => {

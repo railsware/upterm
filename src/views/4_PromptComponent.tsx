@@ -50,7 +50,7 @@ export class PromptComponent extends React.Component<Props, State> {
         {
             threshold: 1,
             rootMargin: css.toDOMString(css.promptWrapperHeight),
-        }
+        },
     );
 
     /* tslint:disable:member-ordering */
@@ -177,7 +177,7 @@ export class PromptComponent extends React.Component<Props, State> {
     setPreviousKeyCode(event: KeyboardEvent) {
         this.setState(assign(this.state, {
             previousKeyCode: event.keyCode,
-            offsetTop: (event.target as HTMLDivElement).getBoundingClientRect().top}
+            offsetTop: (event.target as HTMLDivElement).getBoundingClientRect().top},
         ));
     }
 

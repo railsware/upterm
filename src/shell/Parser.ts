@@ -288,7 +288,7 @@ class IOFile extends LeafNode {
 }
 
 class ShellSyntaxNode extends LeafNode {
-    async suggestions(context: PreliminaryAutocompletionContext): Promise<Suggestion[]> {
+    async suggestions(_context: PreliminaryAutocompletionContext): Promise<Suggestion[]> {
         return [];
     }
 }
@@ -301,7 +301,7 @@ class ParameterAssignmentList extends BranchNode {
 }
 
 export class ParameterAssignment extends LeafNode {
-    async suggestions(context: PreliminaryAutocompletionContext): Promise<Suggestion[]> {
+    async suggestions(_context: PreliminaryAutocompletionContext): Promise<Suggestion[]> {
         return [];
     }
 }
@@ -381,7 +381,7 @@ function argumentOfExpandedAST(argument: Argument, aliases: Aliases) {
 }
 
 export class UnknownNode extends LeafNode {
-    async suggestions(context: PreliminaryAutocompletionContext): Promise<Suggestion[]> {
+    async suggestions(_context: PreliminaryAutocompletionContext): Promise<Suggestion[]> {
         return [];
     }
 }
@@ -396,7 +396,7 @@ export class EmptyNode extends LeafNode {
         return Number.MAX_SAFE_INTEGER;
     }
 
-    async suggestions(context: PreliminaryAutocompletionContext): Promise<Suggestion[]> {
+    async suggestions(_context: PreliminaryAutocompletionContext): Promise<Suggestion[]> {
         return [];
     }
 }

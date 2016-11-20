@@ -54,7 +54,7 @@ class RowComponent extends React.Component<RowProps, {}> {
     render() {
         let rowWithoutHoles = this.props.row.toArray().map(char => char || Char.empty);
         let charGroups = groupWhen(charGrouper, rowWithoutHoles).map((charGroup: Char[], index: number) =>
-            <CharGroupComponent job={this.props.job} group={charGroup} key={index}/>
+            <CharGroupComponent job={this.props.job} group={charGroup} key={index}/>,
         );
 
         return <div style={css.row(this.props.job.status, this.props.job.screenBuffer.activeScreenBufferType)}
@@ -86,7 +86,7 @@ export class BufferComponent extends React.Component<Props, State> {
                         key={index}
                         row={row || List<Char>()}
                         status={this.props.job.status}
-                        job={this.props.job}/>
+                        job={this.props.job}/>,
                 )}
             </div>
         );

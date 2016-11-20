@@ -212,7 +212,7 @@ const baseOptions = combine(mapObject(
             return mapSuggestions(longFlag(option),
                                   suggestion => suggestion.withDescription(info.description));
         }
-    }
+    },
 ));
 
 const extendedRegexOption = combine([

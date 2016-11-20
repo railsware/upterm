@@ -10,7 +10,7 @@ export const combineManPageLines = (lines: string[]) => lines
                 return memo.concat(next, " ");
             }
         },
-        ""
+        "",
     )
     .trim();
 
@@ -69,7 +69,7 @@ export const extractManPageSectionParagraphs = (contents: string[]) => {
             }
             return memo;
         },
-        <string[][]>[[]]
+        <string[][]>[[]],
     )
     .filter(lines => lines.length > 0);
 };

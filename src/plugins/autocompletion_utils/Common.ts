@@ -243,7 +243,7 @@ export const directoriesSuggestionsProvider = filesSuggestionsProvider(info => i
 export const environmentVariableSuggestions = mk(async context => {
     if (context.argument.value.startsWith("$")) {
         return context.environment.map((key, value) =>
-            new Suggestion({value: "$" + key, description: value, style: styles.environmentVariable})
+            new Suggestion({value: "$" + key, description: value, style: styles.environmentVariable}),
         );
     } else {
         return [];

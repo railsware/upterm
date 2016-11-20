@@ -88,26 +88,26 @@ export class Session extends EmitterWithUniqueID {
         }
 
         PluginManager.environmentObservers.forEach(observer =>
-            observer.presentWorkingDirectoryWillChange(this, normalizedDirectory)
+            observer.presentWorkingDirectoryWillChange(this, normalizedDirectory),
         );
 
         this.environment.pwd = normalizedDirectory;
         this.historicalPresentDirectoriesStack.prepend(normalizedDirectory);
 
         PluginManager.environmentObservers.forEach(observer =>
-            observer.presentWorkingDirectoryDidChange(this, normalizedDirectory)
+            observer.presentWorkingDirectoryDidChange(this, normalizedDirectory),
         );
     }
 
     private serialize() {
         writeFileCreatingParents(presentWorkingDirectoryFilePath, JSON.stringify(this.directory)).then(
             () => void 0,
-            (error: any) => { if (error) throw error; }
+            (error: any) => { if (error) throw error; },
         );
 
         writeFileCreatingParents(historyFilePath, this.history.serialize()).then(
             () => void 0,
-            (error: any) => { if (error) throw error; }
+            (error: any) => { if (error) throw error; },
         );
     };
 

@@ -14,7 +14,7 @@ interface HandlerResult {
 }
 
 const SGR: { [indexer: string]: (attributes: Attributes) => Attributes } = {
-    0: (attributes: Attributes) => defaultAttributes,
+    0: (_attributes: Attributes) => defaultAttributes,
     1: (attributes: Attributes) => assign(attributes, {brightness: Brightness.Bright}),
     2: (attributes: Attributes) => assign(attributes, {weight: Weight.Faint}),
     4: (attributes: Attributes) => assign(attributes, {underline: true}),
@@ -328,7 +328,7 @@ export class ANSIParser {
         };
     }
 
-    private csiHandler(collected: any, rawParams: number[] | number, flag: string): HandlerResult {
+    private csiHandler(_collected: any, rawParams: number[] | number, flag: string): HandlerResult {
         let short = "";
         let long = "";
         let url = "";

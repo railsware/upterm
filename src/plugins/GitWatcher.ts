@@ -38,13 +38,13 @@ class GitWatcher extends EventEmitter {
 
             this.watcher.on(
                 "change",
-                (type: string, fileName: string) => {
+                (_type: string, fileName: string) => {
                     if (!fileName.startsWith(".git") ||
                         fileName === this.GIT_HEAD_FILE_NAME ||
                         fileName.startsWith(this.GIT_HEADS_DIRECTORY_NAME)) {
                         this.updateGitData();
                     }
-                }
+                },
             );
         } else {
             const data: VcsData = { kind: "not-repository" };
@@ -145,7 +145,7 @@ interface WatchesValue {
 class WatchManager implements EnvironmentObserverPlugin {
     directoryToDetails: Map<string, WatchesValue> = new Map();
 
-    presentWorkingDirectoryWillChange(session: Session, newDirectory: string) {
+    presentWorkingDirectoryWillChange(session: Session, _newDirectory: string) {
         const oldDirectory = session.directory;
 
         if (!this.directoryToDetails.has(oldDirectory)) {

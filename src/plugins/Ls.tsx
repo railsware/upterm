@@ -9,11 +9,11 @@ import Link from "../utils/Link";
 
 type Props = {
     files: any[],
-}
+};
 
 type State = {
     itemWidth: number | undefined,
-}
+};
 
 const renderFile = (file: any, itemWidth = 0, key: number) => {
     const style: CSSObject = {display: "inline-block"};

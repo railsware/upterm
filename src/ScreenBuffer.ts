@@ -103,7 +103,7 @@ export class ScreenBuffer extends events.EventEmitter {
             let char: Char = storage.getIn(cursorCoordinates);
             storage = storage.setIn(
                 cursorCoordinates,
-                Char.flyweight(char.toString(), assign(char.attributes, {cursor: true}))
+                Char.flyweight(char.toString(), assign(char.attributes, {cursor: true})),
             );
         }
 
@@ -167,7 +167,7 @@ export class ScreenBuffer extends events.EventEmitter {
             this.storage = this.storage.update(
                 this.cursorPosition.row,
                 List<Char>(),
-                (row: List<Char>) => row.splice(this.cursorPosition.column, n).toList()
+                (row: List<Char>) => row.splice(this.cursorPosition.column, n).toList(),
             );
         }
         this.emitData();
@@ -180,7 +180,7 @@ export class ScreenBuffer extends events.EventEmitter {
             this.storage = this.storage.update(
                 this.cursorPosition.row,
                 List<Char>(),
-                (row: List<Char>) => row.splice(this.cursorPosition.column, 0, nSpace).toList()
+                (row: List<Char>) => row.splice(this.cursorPosition.column, 0, nSpace).toList(),
             );
         }
         this.emitData();
@@ -193,7 +193,7 @@ export class ScreenBuffer extends events.EventEmitter {
                 List<Char>(),
                 (row: List<Char>) => row.take(this.cursorPosition.column)
                     .concat(Array(n).fill(Char.empty), row.skip(this.cursorPosition.column + n))
-                    .toList()
+                    .toList(),
             );
         }
         this.emitData();
@@ -209,7 +209,7 @@ export class ScreenBuffer extends events.EventEmitter {
             this.storage = this.storage.update(
                 this.cursorPosition.row,
                 List<Char>(),
-                (row: List<Char>) => row.take(this.cursorPosition.column).toList()
+                (row: List<Char>) => row.take(this.cursorPosition.column).toList(),
             );
         }
         this.emitData();

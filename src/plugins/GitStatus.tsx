@@ -58,7 +58,7 @@ const GitStatusFile: React.StatelessComponent<GitStatusFileProps> = ({
       <Link absolutePath={absolutePath}>{path}</Link>
     </span>
     {buttons.map(({buttonText, action}, index) =>
-      <Button key={index.toString()} onClick={action}>{buttonText}</Button>
+      <Button key={index.toString()} onClick={action}>{buttonText}</Button>,
     )}
   </div>;
 };
