@@ -5,14 +5,14 @@ export function memoize(resolver: Function | undefined = undefined) {
         resolver = (...args: any[]) => JSON.stringify(args);
     }
 
-    return (target: any, name: string, descriptor: TypedPropertyDescriptor<any>) => {
+    return (_target: any, _name: string, descriptor: TypedPropertyDescriptor<any>) => {
         descriptor.value = _.memoize(descriptor.value, resolver);
 
         return descriptor;
     };
 }
 
-export const memoizeAccessor = <T>(target: Object, name: string | symbol, descriptor: TypedPropertyDescriptor<T>) => {
+export const memoizeAccessor = <T>(_target: Object, name: string | symbol, descriptor: TypedPropertyDescriptor<T>) => {
     const memoizedPropertyName = `__memoized_${name}`;
     const originalGetter = descriptor.get;
 
@@ -28,7 +28,7 @@ export const memoizeAccessor = <T>(target: Object, name: string | symbol, descri
 };
 
 export function debounce(wait: number = 0) {
-    return (target: any, name: string, descriptor: PropertyDescriptor) => {
+    return (_target: any, _name: string, descriptor: PropertyDescriptor) => {
         descriptor.value = _.debounce(descriptor.value, wait);
 
         return descriptor;

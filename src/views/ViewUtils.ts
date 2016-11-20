@@ -46,6 +46,6 @@ export function getCaretPosition(element: Node): number {
 export function saveWindowBounds(browserWindow: Electron.BrowserWindow) {
     writeFileCreatingParents(windowBoundsFilePath, JSON.stringify(browserWindow.getBounds())).then(
         () => void 0,
-        (error: any) => { if (error) throw error; }
+        (error: any) => { if (error) throw error; },
     );
 }

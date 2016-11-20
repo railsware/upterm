@@ -58,7 +58,7 @@ export function executeCommand(
     command: string,
     args: string[] = [],
     directory: string,
-    execOptions?: any
+    execOptions?: any,
 ): Promise<string> {
     return new Promise((resolve, reject) => {
         const options = Object.assign(
@@ -67,7 +67,7 @@ export function executeCommand(
             {
                 env: _.extend({PWD: directory}, process.env),
                 cwd: directory,
-            }
+            },
         );
 
         ChildProcess.exec(`${command} ${args.join(" ")}`, options, (error, output) => {

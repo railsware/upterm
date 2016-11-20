@@ -53,6 +53,7 @@ export type StatusCode =
     "Ignored" |
 
     "Invalid"
+;
 
 function lettersToStatusCode(letters: string): StatusCode {
     switch (letters) {
@@ -123,7 +124,7 @@ export async function branches({
     let lines = await linedOutputOf(
         "git",
         ["for-each-ref", tags ? "refs/tags" : "", "refs/heads", remotes ? "refs/remotes" : "", "--format='%(HEAD)%(refname:short)'"],
-        directory
+        directory,
     );
     return lines.map(line => new Branch(line.slice(1), line[0] === "*"));
 }
@@ -132,7 +133,7 @@ export async function configVariables(directory: string): Promise<ConfigVariable
     const lines = await linedOutputOf(
         "git",
         ["config", "--list"],
-        directory
+        directory,
     );
 
     return lines.map(line => {

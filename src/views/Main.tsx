@@ -16,7 +16,7 @@ document.addEventListener(
         event.preventDefault();
         return false;
     },
-    false
+    false,
 );
 
 document.addEventListener(
@@ -25,7 +25,7 @@ document.addEventListener(
         event.preventDefault();
         return false;
     },
-    false
+    false,
 );
 
 document.addEventListener(
@@ -36,7 +36,7 @@ document.addEventListener(
             .then(() => {
                 const application: ApplicationComponent = reactDOM.render(
                     <ApplicationComponent/>,
-                    document.getElementById("react-entry-point")
+                    document.getElementById("react-entry-point"),
                 );
 
                 const userEventHandler = (event: UserEvent) => {
@@ -46,7 +46,7 @@ document.addEventListener(
                         window.focusedSession,
                         window.focusedJob,
                         window.focusedPrompt,
-                        window.search
+                        window.search,
                     )(event);
                 };
 
@@ -54,5 +54,5 @@ document.addEventListener(
                 document.body.addEventListener("paste", userEventHandler, true);
             });
     },
-    false
+    false,
 );

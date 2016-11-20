@@ -39,7 +39,7 @@ app.on("ready", () => {
         browserWindow.focus();
     });
 
-    app.on("open-file", (event, file) => browserWindow.webContents.send("change-working-directory", file));
+    app.on("open-file", (_event, file) => browserWindow.webContents.send("change-working-directory", file));
 });
 
 app.on("window-all-closed", () => app.quit());

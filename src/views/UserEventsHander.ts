@@ -14,11 +14,11 @@ export type UserEvent = KeyboardEvent | ClipboardEvent;
 
 export const handleUserEvent = (
     application: ApplicationComponent,
-    tab: Tab,
+    _tab: Tab,
     session: SessionComponent,
     job: JobComponent,
     prompt: PromptComponent,
-    search: SearchComponent
+    search: SearchComponent,
 ) => (event: UserEvent) => {
     if (event instanceof ClipboardEvent) {
         if (search.isFocused) {

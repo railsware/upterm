@@ -24,7 +24,7 @@ const shortOptions = combine(mapObject(
     (option, info) => {
         return mapSuggestions(shortFlag(option),
                               suggestion => suggestion.withDescription(info.description));
-    }
+    },
 ));
 
 
@@ -111,7 +111,7 @@ const processSuggestions = async(context: AutocompletionContext): Promise<Sugges
         return processes
                 .filter(i => !arg.params.includes(i.pid))
                 .map(i => new Suggestion({value: arg.start + i.pid, displayValue: i.pid,
-                            description: `Process with command '${i.cmd.slice(0, 25)}' 
+                            description: `Process with command '${i.cmd.slice(0, 25)}'
                                 and ruser '${i.ruser}'`,
                             style: styles.optionValue}));
     };
@@ -122,7 +122,7 @@ const sessionSuggestions = async(context: AutocompletionContext): Promise<Sugges
         return sessions
                 .filter(i => !arg.params.includes(i.sid))
                 .map(i => new Suggestion({value: arg.start + i.sid, displayValue: i.sid,
-                            description: `Session '${i.sid}' with ruser '${i.ruser}' 
+                            description: `Session '${i.sid}' with ruser '${i.ruser}'
                                 and rgroup '${i.rgroup}'`,
                             style: styles.optionValue}));
     };
@@ -150,7 +150,7 @@ const longOptions: LongFlagItem[] = [
     },
     {
         flag: "tty=",
-        description: `selects the processes associated with the terminals given 
+        description: `selects the processes associated with the terminals given
                 in ttylist. Identical to -T.`,
         providers: terminalSuggestions,
     },

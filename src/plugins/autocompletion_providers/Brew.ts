@@ -29,7 +29,7 @@ const getFormulae = memoize(
         }
         return [];
     },
-    (brewArgs: string[]) => brewArgs.join(" ")
+    (brewArgs: string[]) => brewArgs.join(" "),
 );
 
 const getAllFormulae = (cask: boolean) => getFormulae(cask ? ["cask", "search"] : ["search"]);

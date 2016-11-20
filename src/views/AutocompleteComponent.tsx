@@ -36,7 +36,7 @@ export class AutocompleteComponent extends React.Component<AutocompleteProps, {}
                                  onHover={() => this.props.onSuggestionHover(index)}
                                  onClick={this.props.onSuggestionClick}
                                  key={index}
-                                 isHighlighted={index === this.props.highlightedIndex}/>
+                                 isHighlighted={index === this.props.highlightedIndex}/>,
         );
 
         const suggestionDescription = this.props.suggestions[this.props.highlightedIndex].description;

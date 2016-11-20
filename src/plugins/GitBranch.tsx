@@ -77,7 +77,7 @@ class GitBranchComponent extends React.Component<GitBranchProps, GitBranchState>
                 this.setState({ failReason: e.message } as GitBranchState);
               }
             }}>Delete</Button>
-          </div>
+          </div>,
         )}
       </div>
     </div>;

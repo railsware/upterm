@@ -75,7 +75,7 @@ export class Job extends EmitterWithUniqueID implements TerminalLikeDevice {
             presentWorkingDirectory: this.environment.pwd,
         };
         const interceptor = PluginManager.commandInterceptorPlugins.find(
-            potentialInterceptor => potentialInterceptor.isApplicable(interceptorOptions)
+            potentialInterceptor => potentialInterceptor.isApplicable(interceptorOptions),
         );
 
         await Promise.all(PluginManager.preexecPlugins.map(plugin => plugin(this)));
@@ -181,7 +181,7 @@ export class Job extends EmitterWithUniqueID implements TerminalLikeDevice {
 
     private get decorators(): i.OutputDecorator[] {
         return PluginManager.outputDecorators.filter(decorator =>
-            this.status === Status.InProgress ? decorator.shouldDecorateRunningPrograms : true
+            this.status === Status.InProgress ? decorator.shouldDecorateRunningPrograms : true,
         );
     }
 
