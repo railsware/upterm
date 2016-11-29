@@ -21,11 +21,11 @@ const VcsDataComponent = ({data}: { data: VcsData }) => {
                       </span>) :
                       undefined
                     }
-                    <span style={css.statusBar.icon} dangerouslySetInnerHTML={{__html: fontAwesome.longArrowDown}}/>
+                    <span style={css.statusBar.icon}>{fontAwesome.longArrowDown}</span>
                     {data.pull}
-                    <span style={css.statusBar.icon} dangerouslySetInnerHTML={{__html: fontAwesome.longArrowUp}}/>
+                    <span style={css.statusBar.icon}>{fontAwesome.longArrowUp}</span>
                     {data.push}
-                    <span style={css.statusBar.icon} dangerouslySetInnerHTML={{__html: fontAwesome.codeFork}}/>
+                    <span style={css.statusBar.icon}>{fontAwesome.codeFork}</span>
                     {data.branch}
                 </span>
             </div>
@@ -37,7 +37,7 @@ const VcsDataComponent = ({data}: { data: VcsData }) => {
 
 export const StatusBarComponent = ({presentWorkingDirectory}: { presentWorkingDirectory: string }) =>
     <div style={css.statusBar.itself}>
-        <span style={css.statusBar.icon} dangerouslySetInnerHTML={{__html: fontAwesome.folderOpen}}/>
+        <span style={css.statusBar.icon}>{fontAwesome.folderOpen}</span>
         <span style={css.statusBar.presentDirectory}>{presentWorkingDirectory}</span>
         <VcsDataComponent data={watchManager.vcsDataFor(presentWorkingDirectory)}/>
     </div>;

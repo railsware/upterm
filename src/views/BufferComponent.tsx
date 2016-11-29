@@ -32,7 +32,7 @@ class Cut extends React.Component<CutProps, CutState> {
                  onClick={this.props.clickHandler}
                  onMouseEnter={() => this.setState({isHovered: true})}
                  onMouseLeave={() => this.setState({isHovered: false})}>
-                <i style={css.outputCutIcon} dangerouslySetInnerHTML={{__html: fontAwesome.expand}}/>
+                <i style={css.outputCutIcon}>{fontAwesome.expand}</i>
                 {`Show all ${this.props.job.screenBuffer.size} rows.`}
             </div>
         );

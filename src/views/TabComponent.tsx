@@ -35,11 +35,12 @@ export class TabComponent extends React.Component<TabProps, TabState> {
                    onClick={this.props.activate}
                    onMouseEnter={() => this.setState({hover: TabHoverState.Tab})}
                    onMouseLeave={() => this.setState({hover: TabHoverState.Nothing})}>
-            <span style={css.tabClose(this.state.hover)}
-                  dangerouslySetInnerHTML={{__html: fontAwesome.times}}
-                  onClick={this.props.closeHandler}
-                  onMouseEnter={() => this.setState({hover: TabHoverState.Close})}
-                  onMouseLeave={() => this.setState({hover: TabHoverState.Tab})}/>
+            <span
+                style={css.tabClose(this.state.hover)}
+                onClick={this.props.closeHandler}
+                onMouseEnter={() => this.setState({hover: TabHoverState.Close})}
+                onMouseLeave={() => this.setState({hover: TabHoverState.Tab})}
+            >{fontAwesome.times}</span>
             <span style={css.commandSign}>⌘</span>
             <span>{this.props.position}</span>
         </li>;

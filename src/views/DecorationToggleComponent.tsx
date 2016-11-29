@@ -7,16 +7,9 @@ interface Props {
     isDecorated: boolean;
 }
 
-export class DecorationToggleComponent extends React.Component<Props, {}> {
-    constructor(props: Props) {
-        super(props);
-    }
+const DecorationToggleComponent = (props: Props) => <span
+    style={css.decorationToggle(props.isDecorated)}
+    onClick={props.decorateToggler}
+>{fontAwesome.magic}</span>;
 
-    render() {
-        return (
-            <span style={css.decorationToggle(this.props.isDecorated)}
-               onClick={this.props.decorateToggler}
-               dangerouslySetInnerHTML={{__html: fontAwesome.magic}}/>
-        );
-    }
-}
+export default DecorationToggleComponent;
