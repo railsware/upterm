@@ -15,7 +15,7 @@ export class SearchComponent extends React.Component<{}, {}> {
     render() {
         return (
             <div style={css.search}>
-                <span style={css.searchIcon} dangerouslySetInnerHTML={{__html: fontAwesome.search}}/>
+                <span style={css.searchIcon}>{fontAwesome.search}</span>
                 <input
                     ref="input"
                     style={css.searchInput}

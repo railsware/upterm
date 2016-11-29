@@ -2,7 +2,7 @@ import * as _ from "lodash";
 import * as e from "../Enums";
 import * as React from "react";
 import {AutocompleteComponent} from "./AutocompleteComponent";
-import {DecorationToggleComponent} from "./DecorationToggleComponent";
+import DecorationToggleComponent from "./DecorationToggleComponent";
 import {History} from "../shell/History";
 import {stopBubblingUp, getCaretPosition, setCaretPosition} from "./ViewUtils";
 import {Prompt} from "../shell/Prompt";
@@ -129,10 +129,13 @@ export class PromptComponent extends React.Component<Props, State> {
         }
 
         if (this.state.isSticky) {
-            scrollToTop = <span style={css.action}
-                                title="Scroll to beginning of output."
-                                onClick={this.handleScrollToTop.bind(this)}
-                                dangerouslySetInnerHTML={{__html: fontAwesome.longArrowUp}}/>;
+            scrollToTop = <span
+                style={css.action}
+                title="Scroll to beginning of output."
+                onClick={this.handleScrollToTop.bind(this)}
+            >
+                {fontAwesome.longArrowUp}
+            </span>;
         }
 
         return <div ref="placeholder" id={this.props.job.id.toString()} style={css.promptPlaceholder}>
@@ -143,8 +146,9 @@ export class PromptComponent extends React.Component<Props, State> {
                 <div
                     style={css.promptInfo(this.props.status)}
                     title={JSON.stringify(this.props.status)}
-                    dangerouslySetInnerHTML={{__html: this.props.status === Status.Interrupted ? fontAwesome.close : ""}}
-                />
+                >
+                    {this.props.status === Status.Interrupted ? fontAwesome.close : ""}
+                </div>
                 <div
                     className="prompt" // Used by tests
                     style={css.prompt(this.state.isSticky)}
