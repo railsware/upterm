@@ -4,17 +4,11 @@ import * as css from "./css/main";
 import {fontAwesome} from "./css/FontAwesome";
 import {watchManager} from "../plugins/GitWatcher";
 
-const PresentWorkingDirectory = ({presentWorkingDirectory}: { presentWorkingDirectory: string }) =>
-    <div style={css.statusBar.presentDirectory}>
-        <span style={css.statusBar.icon} dangerouslySetInnerHTML={{__html: fontAwesome.folderOpen}}/>
-        {presentWorkingDirectory}
-    </div>;
-
 const VcsDataComponent = ({data}: { data: VcsData }) => {
     if (data.kind === "repository") {
         return (
             <div style={css.statusBar.vcsData}>
-                <div style={css.statusBar.status(data.status)}>
+                <span style={css.statusBar.status(data.status)}>
                     {(data.status === "dirty") ?
                       (<span>
                         <span style={css.statusBar.stagedFileChanges}>
@@ -33,9 +27,9 @@ const VcsDataComponent = ({data}: { data: VcsData }) => {
                     {data.push}
                     <span style={css.statusBar.icon} dangerouslySetInnerHTML={{__html: fontAwesome.codeFork}}/>
                     {data.branch}
-                </div>
+                </span>
             </div>
-        );
+    );
     } else {
         return <div></div>;
     }
@@ -43,6 +37,7 @@ const VcsDataComponent = ({data}: { data: VcsData }) => {
 
 export const StatusBarComponent = ({presentWorkingDirectory}: { presentWorkingDirectory: string }) =>
     <div style={css.statusBar.itself}>
-        <PresentWorkingDirectory presentWorkingDirectory={presentWorkingDirectory}/>
+        <span style={css.statusBar.icon} dangerouslySetInnerHTML={{__html: fontAwesome.folderOpen}}/>
+        <span style={css.statusBar.presentDirectory}>{presentWorkingDirectory}</span>
         <VcsDataComponent data={watchManager.vcsDataFor(presentWorkingDirectory)}/>
     </div>;
