@@ -244,22 +244,30 @@ export const autocomplete = {
 };
 
 export const statusBar = {
-    itself: infoPanel,
+    itself: Object.assign({}, infoPanel, {display: "flex", overflow: "hidden"}),
     presentDirectory: {
-        display: "inline-block",
+        flexGrow: 1,
+        textOverflow: "ellipsis",
+        direction: "rtl",
+        textAlign: "left",
+        overflow: "hidden",
+        whiteSpace: "pre",
+        paddingRight: "10px",
     },
     vcsData: {
-        display: "inline-block",
-        float: "right",
-        marginRight: 10,
+        flexGrow: 2,
+        textAlign: "right",
+        textOverflow: "ellipsis",
+        overflow: "hidden",
+        whiteSpace: "pre",
+        paddingRight: "8px",
     },
-    icon: Object.assign({}, icon, {marginRight: 5, marginLeft: 5}),
+    icon: Object.assign({}, icon, {paddingRight: 5, paddingLeft: 5, display: "inline-block"}),
     stagedFileChanges: {color: colors.green},
     unstagedFileChanges: {color: colors.red},
     status: (status: VcsStatus) => {
         return {
             color: status === "dirty" ? colors.blue : colors.white,
-            display: "inline-block",
         };
     },
 };
