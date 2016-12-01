@@ -32,17 +32,18 @@ type JSONProps = {
     keyName?: any,
     key?: any,
     initialExpanded?: boolean,
-}
+};
+
 type JSONState = {
     expanded?: any,
     createdChildNodes?: any,
-}
+};
 
 type JSONValueProps = {
     value: any,
     keyName: any,
     key: any,
-}
+};
 
 /**
  * Returns the type of an object as a string.

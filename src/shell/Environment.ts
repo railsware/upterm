@@ -118,7 +118,7 @@ export class EnvironmentPath extends AbstractOrderedSet<string> {
                     return [];
                 }
             },
-            updatedPaths => this.environment.set("PATH", updatedPaths.join(Path.delimiter))
+            updatedPaths => this.environment.set("PATH", updatedPaths.join(Path.delimiter)),
         );
     }
 }

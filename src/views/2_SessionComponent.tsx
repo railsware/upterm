@@ -56,7 +56,7 @@ export class SessionComponent extends React.Component<Props, {}> {
         const jobs = _.takeRight(this.props.session.jobs, this.RENDER_JOBS_COUNT).map((job: Job, index: number) =>
             <JobComponent key={job.id}
                           job={job}
-                          isFocused={this.props.isFocused && index === this.props.session.jobs.length - 1}/>
+                          isFocused={this.props.isFocused && index === this.props.session.jobs.length - 1}/>,
         );
 
         return (

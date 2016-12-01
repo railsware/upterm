@@ -32,10 +32,10 @@ const executors: Dictionary<(i: Job, a: string[]) => void> = {
 
         job.session.directory = fullPath;
     },
-    clear: (job: Job, args: string[]): void => {
+    clear: (job: Job, _args: string[]): void => {
         setTimeout(() => job.session.clearJobs(), 0);
     },
-    exit: (job: Job, args: string[]): void => {
+    exit: (job: Job, _args: string[]): void => {
         job.session.close();
     },
     export: (job: Job, args: string[]): void => {

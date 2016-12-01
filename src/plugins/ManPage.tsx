@@ -7,12 +7,12 @@ import {v4} from "uuid";
 
 type Props = {
     man: string,
-}
+};
 
 type State = {
     html: undefined | string,
     uniqueId: string,
-}
+};
 
 const postprocesManHTML = (element: HTMLElement, uniqueId: string) => {
     Array.prototype.slice.call(element.getElementsByTagName("a")).forEach((link: any) => {

@@ -9,7 +9,7 @@ export const attributesFlyweight = _.memoize(
         const ordered: Dictionary<any> = {};
         Object.keys(attributes).sort().forEach(key => ordered[key] = attributes[key]);
         return JSON.stringify(ordered);
-    }
+    },
 );
 
 export const defaultAttributes = Object.freeze({

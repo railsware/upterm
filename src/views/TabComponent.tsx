@@ -17,7 +17,7 @@ export interface TabProps {
 export enum TabHoverState {
     Nothing,
     Tab,
-    Close
+    Close,
 }
 
 interface TabState {

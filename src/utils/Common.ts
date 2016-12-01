@@ -54,7 +54,7 @@ export function recursiveFilesIn(directoryPath: string): Promise<string[]> {
     return new Promise(resolve =>
         walk(directoryPath)
             .on("data", (file: FSExtraWalkObject) => file.stats.isFile() && files.push(file.path))
-            .on("end", () => resolve(files))
+            .on("end", () => resolve(files)),
     );
 }
 
@@ -194,7 +194,7 @@ export function userFriendlyPath(path: string): string {
 
 export async function filterAsync<T>(values: T[], asyncPredicate: (t: T) => Promise<boolean>): Promise<T[]> {
     const filtered = await Promise.all(values.map(asyncPredicate));
-    return values.filter((value: T, index: number) => filtered[index]);
+    return values.filter((_value: T, index: number) => filtered[index]);
 }
 
 export async function reduceAsync<A, E>(array: E[], initial: A, callback: (a: A, e: E) => Promise<A>): Promise<A> {

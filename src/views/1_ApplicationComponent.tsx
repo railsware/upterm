@@ -30,8 +30,8 @@ export class ApplicationComponent extends React.Component<{}, {}> {
             .on("devtools-opened", () => this.recalculateDimensions())
             .on("devtools-closed", () => this.recalculateDimensions());
 
-        ipcRenderer.on("change-working-directory", (event: Electron.IpcRendererEvent, directory: string) =>
-            this.focusedTab.focusedPane.session.directory = directory
+        ipcRenderer.on("change-working-directory", (_event: Electron.IpcRendererEvent, directory: string) =>
+            this.focusedTab.focusedPane.session.directory = directory,
         );
 
         window.onbeforeunload = () => {
@@ -114,7 +114,7 @@ export class ApplicationComponent extends React.Component<{}, {}> {
         let tabs: React.ReactElement<TabProps>[] | undefined;
 
         if (this.tabs.length > 1) {
-            tabs = this.tabs.map((tab: Tab, index: number) =>
+            tabs = this.tabs.map((_tab: Tab, index: number) =>
                 <TabComponent isFocused={index === this.focusedTabIndex}
                               key={index}
                               position={index + 1}
@@ -129,7 +129,7 @@ export class ApplicationComponent extends React.Component<{}, {}> {
                                   event.stopPropagation();
                                   event.preventDefault();
                               }}>
-                </TabComponent>
+                </TabComponent>,
             );
         }
 

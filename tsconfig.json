@@ -12,7 +12,9 @@
     "outDir": "compiled/src",
     "strictNullChecks": true,
     "noImplicitThis": true,
-    "inlineSourceMap": true
+    "inlineSourceMap": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true
   },
   "exclude": [
     "node_modules",

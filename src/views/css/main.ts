@@ -139,7 +139,7 @@ export const application = Object.assign(
         color: colors.white,
         fontFamily: "'Hack', 'Fira Code', 'Menlo', monospace",
         fontSize: fontSize,
-    }
+    },
 );
 
 export const jobs = (isSessionFocused: boolean): CSSObject => Object.assign(
@@ -177,7 +177,7 @@ export const autocompletionDescription = Object.assign(
         fontSize: "0.8em",
         minHeight: infoPanelHeight,
     },
-    infoPanel
+    infoPanel,
 );
 
 export const suggestionIcon = Object.assign(
@@ -194,7 +194,7 @@ export const suggestionIcon = Object.assign(
         opacity: ".5",
         marginRight: 10,
         backgroundColor: "rgba(0, 0, 0, 0.15)",
-    }
+    },
 );
 
 export const autocomplete = {
@@ -244,22 +244,30 @@ export const autocomplete = {
 };
 
 export const statusBar = {
-    itself: infoPanel,
+    itself: Object.assign({}, infoPanel, {display: "flex", overflow: "hidden"}),
     presentDirectory: {
-        display: "inline-block",
+        flexGrow: 1,
+        textOverflow: "ellipsis",
+        direction: "rtl",
+        textAlign: "left",
+        overflow: "hidden",
+        whiteSpace: "pre",
+        paddingRight: "10px",
     },
     vcsData: {
-        display: "inline-block",
-        float: "right",
-        marginRight: 10,
+        flexGrow: 2,
+        textAlign: "right",
+        textOverflow: "ellipsis",
+        overflow: "hidden",
+        whiteSpace: "pre",
+        paddingRight: "8px",
     },
-    icon: Object.assign({}, icon, {marginRight: 5, marginLeft: 5}),
+    icon: Object.assign({}, icon, {paddingRight: 5, paddingLeft: 5, display: "inline-block"}),
     stagedFileChanges: {color: colors.green},
     unstagedFileChanges: {color: colors.red},
     status: (status: VcsStatus) => {
         return {
             color: status === "dirty" ? colors.blue : colors.white,
-            display: "inline-block",
         };
     },
 };
@@ -270,7 +278,7 @@ export const sessions = (list: PaneList) => Object.assign(
         display: "grid",
     },
     sessionsGridTemplate(list),
-    applicationGrid.sessions
+    applicationGrid.sessions,
 );
 
 export const session = (isFocused: boolean) => {
@@ -328,7 +336,7 @@ export const searchIcon = Object.assign(
         top: -1,
         fontSize: fontSize - 4,
     },
-    icon
+    icon,
 );
 
 export const searchInput = {
@@ -367,7 +375,7 @@ export const tabClose = (hover: TabHoverState) => {
             position: "absolute",
             left: margin,
             top: margin / 2,
-        }
+        },
     );
 };
 
@@ -414,7 +422,7 @@ export const outputCut = (status: Status, isHovered: boolean) => Object.assign(
     jaggedBorder(
         [Status.Failure, Status.Interrupted].includes(status) ? failurize(backgroundColor) : backgroundColor,
         [Status.Failure, Status.Interrupted].includes(status) ? failurize(panelColor) : panelColor,
-        isHovered ? 0 : 0
+        isHovered ? 0 : 0,
     ),
     {
         position: "relative",
@@ -427,7 +435,7 @@ export const outputCut = (status: Status, isHovered: boolean) => Object.assign(
         color: lighten(backgroundColor, isHovered ? 35 : 30),
         cursor: "pointer",
         zIndex: outputCutZIndex,
-    }
+    },
 );
 
 export const outputCutIcon = Object.assign({marginRight: 10}, icon);
@@ -548,7 +556,7 @@ export const action = Object.assign(
         margin: "0 3px",
         cursor: "pointer",
     },
-    icon
+    icon,
 );
 
 export const decorationToggle = (isEnabled: boolean) => {
@@ -557,7 +565,7 @@ export const decorationToggle = (isEnabled: boolean) => {
         action,
         {
             color: isEnabled ? colors.green : colors.white,
-        }
+        },
     );
 };
 
@@ -566,7 +574,7 @@ export const autocompletedPreview = Object.assign(
     promptInlineElement,
     {
         color: lighten(promptBackgroundColor, 15),
-    }
+    },
 );
 
 export const prompt = (isSticky: boolean) => Object.assign(
@@ -576,7 +584,7 @@ export const prompt = (isSticky: boolean) => Object.assign(
         color: colors.white,
         zIndex: 2,
         whiteSpace: isSticky ? "nowrap" : "pre-wrap",
-    }
+    },
 );
 
 export const promptPlaceholder = {

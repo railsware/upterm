@@ -72,7 +72,7 @@ export enum Status {
 
 export enum ScreenBufferType {
     Standard,
-    Alternate
+    Alternate,
 }
 
 export enum Weight {
