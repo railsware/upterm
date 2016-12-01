@@ -11,10 +11,11 @@ describe("scan", () => {
         expect(tokens.length).to.eq(0);
     });
 
-    it("returns no token on input that consists only of spaces", () => {
+    it("returns an invalid token on input that consists only of spaces", () => {
         const tokens = scan("  ");
 
-        expect(tokens.length).to.eq(0);
+        expect(tokens.length).to.eq(1);
+        expect(tokens[0]).to.be.an.instanceof(Invalid);
     });
 
     it("splits on a space", () => {
