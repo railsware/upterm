@@ -150,6 +150,11 @@ describe("scan", () => {
         expect(tokens.map(token => token.value)).to.eql(["cd", "x+"]);
     });
 
+    it("includes spaces at end in final token", () => {
+        const tokens = scan("test space ");
+        expect(tokens.map(token => token.value)).to.eql(["test", "space"]);
+    });
+
     describe("invalid input", () => {
         it("adds an invalid token", async() => {
             const tokens = scan("cd '");

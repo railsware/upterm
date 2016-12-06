@@ -141,43 +141,43 @@ export class Invalid extends Token {
 
 const patterns = [
     {
-        regularExpression: /^(\s*\|)/,
+        regularExpression: /^(\s*\|\s*)/,
         tokenConstructor: Pipe,
     },
     {
-        regularExpression: /^(\s*;)/,
+        regularExpression: /^(\s*;\s*)/,
         tokenConstructor: Semicolon,
     },
     {
-        regularExpression: /^(\s*&&)/,
+        regularExpression: /^(\s*&&\s*)/,
         tokenConstructor: And,
     },
     {
-        regularExpression: /^(\s*\|\|)/,
+        regularExpression: /^(\s*\|\|\s*)/,
         tokenConstructor: Or,
     },
     {
-        regularExpression: /^(\s*>>)/,
+        regularExpression: /^(\s*>>\s*)/,
         tokenConstructor: AppendingOutputRedirectionSymbol,
     },
     {
-        regularExpression: /^(\s*<)/,
+        regularExpression: /^(\s*<\s*)/,
         tokenConstructor: InputRedirectionSymbol,
     },
     {
-        regularExpression: /^(\s*>)/,
+        regularExpression: /^(\s*>\s*)/,
         tokenConstructor: OutputRedirectionSymbol,
     },
     {
-        regularExpression: /^(\s*"(?:\\"|[^"])*")/,
+        regularExpression: /^(\s*"(?:\\"|[^"])*"\s*)/,
         tokenConstructor: DoubleQuotedStringLiteral,
     },
     {
-        regularExpression: /^(\s*'(?:\\'|[^'])*')/,
+        regularExpression: /^(\s*'(?:\\'|[^'])*'\s*)/,
         tokenConstructor : SingleQuotedStringLiteral,
     },
     {
-        regularExpression: /^(\s*(?:\\\s|[a-zA-Z0-9\u0080-\uFFFF+~!@#%^&*_=,.:/?\\-])+)/,
+        regularExpression: /^(\s*(?:\\\s|[a-zA-Z0-9\u0080-\uFFFF+~!@#%^&*_=,.:/?\\-])+\s*)/,
         tokenConstructor : Word,
     },
 ];
