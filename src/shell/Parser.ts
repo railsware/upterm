@@ -36,8 +36,17 @@ abstract class LeafNode extends ASTNode {
         return this.fullStart + this.token.raw.length;
     }
 
-    get spaces(): string {
+    get preceedingSpaces(): string {
         const match = this.token.raw.match(/^(\s*)/);
+        if (match) {
+            return match[1];
+        } else {
+            return "";
+        }
+    }
+
+    get followingSpaces(): string {
+        const match = this.token.raw.match(/(\s*)$/);
         if (match) {
             return match[1];
         } else {
@@ -433,7 +442,7 @@ export function serializeReplacing(tree: ASTNode, focused: LeafNode, replacement
     for (const current of traverse(tree)) {
         if (current instanceof LeafNode) {
             if (current === focused) {
-                serialized += focused.spaces + replacement;
+                serialized += focused.preceedingSpaces + replacement + focused.followingSpaces;
             } else {
                 serialized += current.raw;
             }
