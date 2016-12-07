@@ -122,6 +122,8 @@ export enum KeyboardAction {
     panePrevious,
     paneNext,
     paneClose,
+    windowSplitHorizontally,
+    windowSplitVertically,
     // edit/clipboard commands
     clipboardCopy,
     clipboardCut,
@@ -132,8 +134,8 @@ export enum KeyboardAction {
     editFind,
     editFindClose,
     // window commands
-    windowSplitHorizontally,
-    windowSplitVertically,
+    windowNew,
+    windowClose,
     // view commands
     viewReload,
     viewToggleFullScreen,
