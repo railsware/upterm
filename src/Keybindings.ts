@@ -116,7 +116,6 @@ export type KeybindingMenuType = {
 };
 
 const CopyAccelerator = process.platform === "darwin" ? "Command+C" : "Ctrl+Shift+C";
-const ToggleFullScreenAccelerator = process.platform === "darwin" ? "Command+F" : "Ctrl+Shift+F";
 
 export const KeybindingsForMenu: KeybindingMenuType[] = [
     // Tab commands
@@ -210,7 +209,7 @@ export const KeybindingsForMenu: KeybindingMenuType[] = [
     },
     {
         action: KeyboardAction.viewToggleFullScreen,
-        accelerator: ToggleFullScreenAccelerator,
+        accelerator: "CmdOrCtrl+Shift+F",
     },
 
     // Application commands
