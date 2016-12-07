@@ -71,6 +71,11 @@ export class ApplicationComponent extends React.Component<{}, {}> {
             .on("close-focused-pane", () => {
                 this.closeFocusedPane();
                 this.forceUpdate();
+            })
+
+            // Content actions
+            .on("focus-search-input", () => {
+                (document.querySelector("input[type=search]") as HTMLInputElement).select();
             });
 
         window.onbeforeunload = () => {

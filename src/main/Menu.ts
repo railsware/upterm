@@ -56,8 +56,10 @@ export function buildMenuTemplate(app: Electron.App): Electron.MenuItemOptions[]
                 {
                     label: "Find",
                     accelerator: getAcceleratorForAction(KeyboardAction.editFind),
-                    click: () => {
-                        (document.querySelector("input[type=search]") as HTMLInputElement).select();
+                    click: (_item, browserWindow) => {
+                        if (browserWindow) {
+                            browserWindow.webContents.send("focus-search-input");
+                        }
                     },
                 },
                 {
