@@ -73,8 +73,9 @@ export function createWindow() {
     browserWindow.loadURL("file://" + __dirname + "/../views/index.html");
 
     browserWindow.on("focus", () => {
-        app.dock;
-        app.dock.setBadge("");
+        if (app.dock) {
+            app.dock.setBadge("");
+        }
         setFocssedWindow(browserWindow);
     });
 
