@@ -39,8 +39,8 @@ export class ApplicationComponent extends React.Component<{}, {}> {
             )
             .on("add-tab", () => this.addTab())
             .on("close-focused-tab", () => {
-                this.closeFocusedTab()
-                this.forceUpdate()
+                this.closeFocusedTab();
+                this.forceUpdate();
             })
             .on("activate-previous-tab", () => {
                 this.activatePreviousTab();

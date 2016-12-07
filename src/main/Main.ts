@@ -25,14 +25,14 @@ app.on("ready", () => {
     createWindow();
     registerApplicationMenu();
 
-    globalShortcut.register('CommandOrControl+N', () => {
+    globalShortcut.register("CommandOrControl+N", () => {
         createWindow();
-    })
+    });
 });
 
 app.on("window-all-closed", () => {
     // On OSX the app usually keeps running until Cmd+Q'd.
-    if (process.platform !== 'darwin') {
+    if (process.platform !== "darwin") {
         app.quit();
     }
 });
@@ -83,9 +83,9 @@ export function createWindow() {
         browserWindow.focus();
     });
 
-    browserWindow.on('closed', () => {
+    browserWindow.on("closed", () => {
         closeWindow(browserWindow);
-    })
+    });
 
     windows.push(browserWindow);
 }
@@ -103,8 +103,7 @@ function closeWindow(browserWindow: Electron.BrowserWindow) {
     let next_window = Math.min(index, windows.length);
     if (next_window > -1) {
         windows[next_window].focus();
-    }
-    else {
+    } else {
         focussedWindowIndex = -1;
     }
 }
