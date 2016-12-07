@@ -25,9 +25,7 @@ app.on("ready", () => {
     createWindow();
     registerApplicationMenu();
 
-    globalShortcut.register("CommandOrControl+N", () => {
-        createWindow();
-    });
+    globalShortcut.register("CommandOrControl+N", createWindow);
 });
 
 app.on("window-all-closed", () => {
@@ -76,7 +74,7 @@ export function createWindow() {
         if (app.dock) {
             app.dock.setBadge("");
         }
-        setFocssedWindow(browserWindow);
+        setFocussedWindow(browserWindow);
     });
 
     browserWindow.webContents.on("did-finish-load", () => {
@@ -114,7 +112,7 @@ function closeWindow(browserWindow: Electron.BrowserWindow) {
  *
  * @param {Electron.BrowserWindow} browserWindow
  */
-function setFocssedWindow(browserWindow: Electron.BrowserWindow) {
+function setFocussedWindow(browserWindow: Electron.BrowserWindow) {
     focussedWindowIndex = windows.indexOf(browserWindow);
 }
 
