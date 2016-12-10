@@ -4,14 +4,14 @@ import {Cursor} from "./Cursor";
 import * as i from "./Interfaces";
 import * as e from "./Enums";
 import {List} from "immutable";
-import {error, times, assign} from "./utils/Common";
+import {error, times} from "./utils/Common";
 
 export class ScreenBuffer extends events.EventEmitter {
     public static hugeOutputThreshold = 300;
     public cursor: Cursor = new Cursor();
     public activeScreenBufferType = e.ScreenBufferType.Standard;
     private storage = List<List<Char>>();
-    private _attributes: i.Attributes = assign(defaultAttributes, {color: e.Color.White, weight: e.Weight.Normal});
+    private _attributes: i.Attributes = {...defaultAttributes, color: e.Color.White, weight: e.Weight.Normal};
     private isOriginModeSet = false;
     private isCursorKeysModeSet = false;
     private _margins: Margins = {top: 0, left: 0};
@@ -79,7 +79,7 @@ export class ScreenBuffer extends events.EventEmitter {
     }
 
     setAttributes(attributes: i.Attributes): void {
-        this._attributes = attributesFlyweight(assign(this._attributes, attributes));
+        this._attributes = attributesFlyweight({...this._attributes, ...attributes});
     }
 
     toRenderable(status: e.Status, fromStorage = this.storage): List<List<Char>> {
@@ -103,7 +103,7 @@ export class ScreenBuffer extends events.EventEmitter {
             let char: Char = storage.getIn(cursorCoordinates);
             storage = storage.setIn(
                 cursorCoordinates,
-                Char.flyweight(char.toString(), assign(char.attributes, {cursor: true})),
+                Char.flyweight(char.toString(), {...char.attributes, cursor: true}),
             );
         }
 
@@ -269,7 +269,7 @@ export class ScreenBuffer extends events.EventEmitter {
     }
 
     set margins(margins: PartialMargins) {
-        this._margins = assign(this._margins, margins);
+        this._margins = {...this._margins, ...margins};
     }
 
     get marginTop(): number {

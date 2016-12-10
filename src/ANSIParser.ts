@@ -2,7 +2,7 @@ import {Char, defaultAttributes} from "./Char";
 import {Color, Weight, Brightness, KeyCode, LogLevel, ScreenBufferType} from "./Enums";
 import {Attributes, TerminalLikeDevice, ColorCode} from "./Interfaces";
 import {ScreenBuffer} from "./ScreenBuffer";
-import {print, error, info, debug, assign, csi} from "./utils/Common";
+import {print, error, info, debug, csi} from "./utils/Common";
 
 const ansiParserConstructor: typeof AnsiParser = require("node-ansiparser");
 
@@ -15,47 +15,47 @@ interface HandlerResult {
 
 const SGR: { [indexer: string]: (attributes: Attributes) => Attributes } = {
     0: (_attributes: Attributes) => defaultAttributes,
-    1: (attributes: Attributes) => assign(attributes, {brightness: Brightness.Bright}),
-    2: (attributes: Attributes) => assign(attributes, {weight: Weight.Faint}),
-    4: (attributes: Attributes) => assign(attributes, {underline: true}),
-    7: (attributes: Attributes) => assign(attributes, {inverse: true}),
-    22: (attributes: Attributes) => assign(attributes, {weight: Weight.Normal}),
-    24: (attributes: Attributes) => assign(attributes, {underline: false}),
-    27: (attributes: Attributes) => assign(attributes, {inverse: false}),
-    30: (attributes: Attributes) => assign(attributes, {color: <ColorCode>Color.Black}),
-    31: (attributes: Attributes) => assign(attributes, {color: <ColorCode>Color.Red}),
-    32: (attributes: Attributes) => assign(attributes, {color: <ColorCode>Color.Green}),
-    33: (attributes: Attributes) => assign(attributes, {color: <ColorCode>Color.Yellow}),
-    34: (attributes: Attributes) => assign(attributes, {color: <ColorCode>Color.Blue}),
-    35: (attributes: Attributes) => assign(attributes, {color: <ColorCode>Color.Magenta}),
-    36: (attributes: Attributes) => assign(attributes, {color: <ColorCode>Color.Cyan}),
-    37: (attributes: Attributes) => assign(attributes, {color: <ColorCode>Color.White}),
-    39: (attributes: Attributes) => assign(attributes, {color: <ColorCode>Color.White}),
-    40: (attributes: Attributes) => assign(attributes, {backgroundColor: <ColorCode>Color.Black}),
-    41: (attributes: Attributes) => assign(attributes, {backgroundColor: <ColorCode>Color.Red}),
-    42: (attributes: Attributes) => assign(attributes, {backgroundColor: <ColorCode>Color.Green}),
-    43: (attributes: Attributes) => assign(attributes, {backgroundColor: <ColorCode>Color.Yellow}),
-    44: (attributes: Attributes) => assign(attributes, {backgroundColor: <ColorCode>Color.Blue}),
-    45: (attributes: Attributes) => assign(attributes, {backgroundColor: <ColorCode>Color.Magenta}),
-    46: (attributes: Attributes) => assign(attributes, {backgroundColor: <ColorCode>Color.Cyan}),
-    47: (attributes: Attributes) => assign(attributes, {backgroundColor: <ColorCode>Color.White}),
-    49: (attributes: Attributes) => assign(attributes, {backgroundColor: <ColorCode>Color.Black}),
-    90: (attributes: Attributes) => assign(attributes, {brightness: <ColorCode>Brightness.Bright, color: <ColorCode>Color.Black}),
-    91: (attributes: Attributes) => assign(attributes, {brightness: <ColorCode>Brightness.Bright, color: <ColorCode>Color.Red}),
-    92: (attributes: Attributes) => assign(attributes, {brightness: <ColorCode>Brightness.Bright, color: <ColorCode>Color.Green}),
-    93: (attributes: Attributes) => assign(attributes, {brightness: <ColorCode>Brightness.Bright, color: <ColorCode>Color.Yellow}),
-    94: (attributes: Attributes) => assign(attributes, {brightness: <ColorCode>Brightness.Bright, color: <ColorCode>Color.Blue}),
-    95: (attributes: Attributes) => assign(attributes, {brightness: <ColorCode>Brightness.Bright, color: <ColorCode>Color.Magenta}),
-    96: (attributes: Attributes) => assign(attributes, {brightness: <ColorCode>Brightness.Bright, color: <ColorCode>Color.Cyan}),
-    97: (attributes: Attributes) => assign(attributes, {brightness: <ColorCode>Brightness.Bright, color: <ColorCode>Color.White}),
-    100: (attributes: Attributes) => assign(attributes, {brightness: <ColorCode>Brightness.Bright, backgroundColor: <ColorCode>Color.Black}),
-    101: (attributes: Attributes) => assign(attributes, {brightness: <ColorCode>Brightness.Bright, backgroundColor: <ColorCode>Color.Red}),
-    102: (attributes: Attributes) => assign(attributes, {brightness: <ColorCode>Brightness.Bright, backgroundColor: <ColorCode>Color.Green}),
-    103: (attributes: Attributes) => assign(attributes, {brightness: <ColorCode>Brightness.Bright, backgroundColor: <ColorCode>Color.Yellow}),
-    104: (attributes: Attributes) => assign(attributes, {brightness: <ColorCode>Brightness.Bright, backgroundColor: <ColorCode>Color.Blue}),
-    105: (attributes: Attributes) => assign(attributes, {brightness: <ColorCode>Brightness.Bright, backgroundColor: <ColorCode>Color.Magenta}),
-    106: (attributes: Attributes) => assign(attributes, {brightness: <ColorCode>Brightness.Bright, backgroundColor: <ColorCode>Color.Cyan}),
-    107: (attributes: Attributes) => assign(attributes, {brightness: <ColorCode>Brightness.Bright, backgroundColor: <ColorCode>Color.White}),
+    1: (attributes: Attributes) => ({...attributes, brightness: Brightness.Bright}),
+    2: (attributes: Attributes) => ({...attributes, weight: Weight.Faint}),
+    4: (attributes: Attributes) => ({...attributes, underline: true}),
+    7: (attributes: Attributes) => ({...attributes, inverse: true}),
+    22: (attributes: Attributes) => ({...attributes, weight: Weight.Normal}),
+    24: (attributes: Attributes) => ({...attributes, underline: false}),
+    27: (attributes: Attributes) => ({...attributes, inverse: false}),
+    30: (attributes: Attributes) => ({...attributes, color: <ColorCode>Color.Black}),
+    31: (attributes: Attributes) => ({...attributes, color: <ColorCode>Color.Red}),
+    32: (attributes: Attributes) => ({...attributes, color: <ColorCode>Color.Green}),
+    33: (attributes: Attributes) => ({...attributes, color: <ColorCode>Color.Yellow}),
+    34: (attributes: Attributes) => ({...attributes, color: <ColorCode>Color.Blue}),
+    35: (attributes: Attributes) => ({...attributes, color: <ColorCode>Color.Magenta}),
+    36: (attributes: Attributes) => ({...attributes, color: <ColorCode>Color.Cyan}),
+    37: (attributes: Attributes) => ({...attributes, color: <ColorCode>Color.White}),
+    39: (attributes: Attributes) => ({...attributes, color: <ColorCode>Color.White}),
+    40: (attributes: Attributes) => ({...attributes, backgroundColor: <ColorCode>Color.Black}),
+    41: (attributes: Attributes) => ({...attributes, backgroundColor: <ColorCode>Color.Red}),
+    42: (attributes: Attributes) => ({...attributes, backgroundColor: <ColorCode>Color.Green}),
+    43: (attributes: Attributes) => ({...attributes, backgroundColor: <ColorCode>Color.Yellow}),
+    44: (attributes: Attributes) => ({...attributes, backgroundColor: <ColorCode>Color.Blue}),
+    45: (attributes: Attributes) => ({...attributes, backgroundColor: <ColorCode>Color.Magenta}),
+    46: (attributes: Attributes) => ({...attributes, backgroundColor: <ColorCode>Color.Cyan}),
+    47: (attributes: Attributes) => ({...attributes, backgroundColor: <ColorCode>Color.White}),
+    49: (attributes: Attributes) => ({...attributes, backgroundColor: <ColorCode>Color.Black}),
+    90: (attributes: Attributes) => ({...attributes, brightness: Brightness.Bright, color: <ColorCode>Color.Black}),
+    91: (attributes: Attributes) => ({...attributes, brightness: Brightness.Bright, color: <ColorCode>Color.Red}),
+    92: (attributes: Attributes) => ({...attributes, brightness: Brightness.Bright, color: <ColorCode>Color.Green}),
+    93: (attributes: Attributes) => ({...attributes, brightness: Brightness.Bright, color: <ColorCode>Color.Yellow}),
+    94: (attributes: Attributes) => ({...attributes, brightness: Brightness.Bright, color: <ColorCode>Color.Blue}),
+    95: (attributes: Attributes) => ({...attributes, brightness: Brightness.Bright, color: <ColorCode>Color.Magenta}),
+    96: (attributes: Attributes) => ({...attributes, brightness: Brightness.Bright, color: <ColorCode>Color.Cyan}),
+    97: (attributes: Attributes) => ({...attributes, brightness: Brightness.Bright, color: <ColorCode>Color.White}),
+    100: (attributes: Attributes) => ({...attributes, brightness: Brightness.Bright, backgroundColor: <ColorCode>Color.Black}),
+    101: (attributes: Attributes) => ({...attributes, brightness: Brightness.Bright, backgroundColor: <ColorCode>Color.Red}),
+    102: (attributes: Attributes) => ({...attributes, brightness: Brightness.Bright, backgroundColor: <ColorCode>Color.Green}),
+    103: (attributes: Attributes) => ({...attributes, brightness: Brightness.Bright, backgroundColor: <ColorCode>Color.Yellow}),
+    104: (attributes: Attributes) => ({...attributes, brightness: Brightness.Bright, backgroundColor: <ColorCode>Color.Blue}),
+    105: (attributes: Attributes) => ({...attributes, brightness: Brightness.Bright, backgroundColor: <ColorCode>Color.Magenta}),
+    106: (attributes: Attributes) => ({...attributes, brightness: Brightness.Bright, backgroundColor: <ColorCode>Color.Cyan}),
+    107: (attributes: Attributes) => ({...attributes, brightness: Brightness.Bright, backgroundColor: <ColorCode>Color.White}),
 };
 
 const CSI = {
@@ -540,9 +540,9 @@ export class ANSIParser {
 
     private setColor(sgr: number, color: ColorCode): void {
         if (sgr === 38) {
-            this.screenBuffer.setAttributes(assign(this.screenBuffer.attributes, {color: color}));
+            this.screenBuffer.setAttributes({...this.screenBuffer.attributes, color: color});
         } else {
-            this.screenBuffer.setAttributes(assign(this.screenBuffer.attributes, {backgroundColor: color}));
+            this.screenBuffer.setAttributes({...this.screenBuffer.attributes, backgroundColor: color});
         }
     }
 }
