@@ -4,7 +4,7 @@ import {Attributes} from "./Interfaces";
 import {KeyCode, Brightness, Weight, Color} from "./Enums";
 
 export const attributesFlyweight = _.memoize(
-    (attributes: Attributes): Attributes => Object.freeze(Object.assign({}, attributes)),
+    (attributes: Attributes): Attributes => Object.freeze({...attributes}),
     (attributes: Dictionary<any>) => {
         const ordered: Dictionary<any> = {};
         Object.keys(attributes).sort().forEach(key => ordered[key] = attributes[key]);

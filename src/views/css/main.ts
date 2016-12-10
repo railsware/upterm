@@ -131,22 +131,18 @@ function jaggedBorder(color: string, panelColor: string, darkenPercent: number) 
     };
 }
 
-export const application = Object.assign(
-    {},
-    applicationGrid.container,
-    {
-        backgroundColor: backgroundColor,
-        color: colors.white,
-        fontFamily: "'Hack', 'Fira Code', 'Menlo', monospace",
-        fontSize: fontSize,
-    },
-);
+export const application = {
+    ...applicationGrid.container,
+    backgroundColor: backgroundColor,
+    color: colors.white,
+    fontFamily: "'Hack', 'Fira Code', 'Menlo', monospace",
+    fontSize: fontSize,
+};
 
-export const jobs = (isSessionFocused: boolean): CSSObject => Object.assign(
-    {},
-    sessionGrid.child,
-    isSessionFocused ? {} : unfocusedJobs,
-);
+export const jobs = (isSessionFocused: boolean): CSSObject => ({
+    ...sessionGrid.child,
+    ...(isSessionFocused ? {} : unfocusedJobs),
+});
 
 
 export const row = (jobStatus: Status, activeScreenBufferType: ScreenBufferType) => {
@@ -167,35 +163,30 @@ export const row = (jobStatus: Status, activeScreenBufferType: ScreenBufferType)
     return style;
 };
 
-export const autocompletionDescription = Object.assign(
-    {
-        display: "block",
-        boxShadow: "0 4px 8px 1px rgba(0, 0, 0, 0.3)",
-        position: "absolute",
-        left: 0,
-        right: 0,
-        fontSize: "0.8em",
-        minHeight: infoPanelHeight,
-    },
-    infoPanel,
-);
+export const autocompletionDescription = {
+    display: "block",
+    boxShadow: "0 4px 8px 1px rgba(0, 0, 0, 0.3)",
+    position: "absolute",
+    left: 0,
+    right: 0,
+    fontSize: "0.8em",
+    minHeight: infoPanelHeight,
+    ...infoPanel,
+};
 
-export const suggestionIcon = Object.assign(
-    {},
-    icon,
-    {
-        display: "inline-block",
-        width: suggestionSize,
-        height: suggestionSize,
-        lineHeight: "2em",
-        verticalAlign: "middle",
-        textAlign: "center",
-        fontStyle: "normal",
-        opacity: ".5",
-        marginRight: 10,
-        backgroundColor: "rgba(0, 0, 0, 0.15)",
-    },
-);
+export const suggestionIcon = {
+    ...icon,
+    display: "inline-block",
+    width: suggestionSize,
+    height: suggestionSize,
+    lineHeight: "2em",
+    verticalAlign: "middle",
+    textAlign: "center",
+    fontStyle: "normal",
+    opacity: ".5",
+    marginRight: 10,
+    backgroundColor: "rgba(0, 0, 0, 0.15)",
+};
 
 export const autocomplete = {
     box: (offsetTop: number, caretPosition: number, hasDescription: boolean) => {
@@ -244,7 +235,7 @@ export const autocomplete = {
 };
 
 export const statusBar = {
-    itself: Object.assign({}, infoPanel, {display: "flex", overflow: "hidden"}),
+    itself: {...infoPanel, display: "flex", overflow: "hidden"},
     presentDirectory: {
         flexGrow: 1,
         textOverflow: "ellipsis",
@@ -262,7 +253,7 @@ export const statusBar = {
         whiteSpace: "pre",
         paddingRight: "8px",
     },
-    icon: Object.assign({}, icon, {paddingRight: 5, paddingLeft: 5, display: "inline-block"}),
+    icon: {...icon, paddingRight: 5, paddingLeft: 5, display: "inline-block"},
     stagedFileChanges: {color: colors.green},
     unstagedFileChanges: {color: colors.red},
     status: (status: VcsStatus) => {
@@ -272,14 +263,12 @@ export const statusBar = {
     },
 };
 
-export const sessions = (list: PaneList) => Object.assign(
-    {
-        backgroundColor: backgroundColor,
-        display: "grid",
-    },
-    sessionsGridTemplate(list),
-    applicationGrid.sessions,
-);
+export const sessions = (list: PaneList) => ({
+    backgroundColor: backgroundColor,
+    display: "grid",
+    ...sessionsGridTemplate(list),
+    ...applicationGrid.sessions,
+});
 
 export const session = (isFocused: boolean) => {
     const styles: CSSObject = {
@@ -293,18 +282,16 @@ export const session = (isFocused: boolean) => {
         styles.margin = "0 1px 0 0";
     }
 
-    return Object.assign(styles, sessionGrid.container);
+    return {...styles, ...sessionGrid.container};
 };
 
-export const sessionShutter = (isFocused: boolean) => Object.assign(
-    {
-        backgroundColor: colors.white,
-        zIndex: 1,
-        opacity: isFocused ? 0 : 0.2,
-        pointerEvents: "none",
-    },
-    sessionGrid.child,
-);
+export const sessionShutter = (isFocused: boolean) => ({
+    backgroundColor: colors.white,
+    zIndex: 1,
+    opacity: isFocused ? 0 : 0.2,
+    pointerEvents: "none",
+    ...sessionGrid.child,
+});
 
 export const titleBar = {
     WebkitAppRegion: "drag",
@@ -329,15 +316,13 @@ export const search = {
     top: (titleBarHeight - searchInputHeight) / 2,
 };
 
-export const searchIcon = Object.assign(
-    {
-        position: "relative",
-        left: fontSize,
-        top: -1,
-        fontSize: fontSize - 4,
-    },
-    icon,
-);
+export const searchIcon = {
+    position: "relative",
+    left: fontSize,
+    top: -1,
+    fontSize: fontSize - 4,
+    ...icon,
+};
 
 export const searchInput = {
     backgroundColor: searchInputColor,
@@ -367,16 +352,13 @@ export const tab = (isHovered: boolean, isFocused: boolean) => {
 export const tabClose = (hover: TabHoverState) => {
     const margin = titleBarHeight - fontSize;
 
-    return Object.assign(
-        {},
-        icon,
-        {
-            color: tabCloseButtonColor(hover),
-            position: "absolute",
-            left: margin,
-            top: margin / 2,
-        },
-    );
+    return {
+        ...icon,
+        color: tabCloseButtonColor(hover),
+        position: "absolute",
+        left: margin,
+        top: margin / 2,
+    };
 };
 
 export const commandSign = {
@@ -417,28 +399,25 @@ export const charGroup = (attributes: Attributes, status: Status) => {
     return styles;
 };
 
-export const outputCut = (status: Status, isHovered: boolean) => Object.assign(
-    {},
-    jaggedBorder(
+export const outputCut = (status: Status, isHovered: boolean) => ({
+    ...jaggedBorder(
         [Status.Failure, Status.Interrupted].includes(status) ? failurize(backgroundColor) : backgroundColor,
         [Status.Failure, Status.Interrupted].includes(status) ? failurize(panelColor) : panelColor,
         isHovered ? 0 : 0,
     ),
-    {
-        position: "relative",
-        top: -outputPadding,
-        left: -outputPadding,
-        width: "102%",
-        height: outputCutHeight,
-        textAlign: "center",
-        paddingTop: (outputCutHeight - fontSize) / 3,
-        color: lighten(backgroundColor, isHovered ? 35 : 30),
-        cursor: "pointer",
-        zIndex: outputCutZIndex,
-    },
-);
+    position: "relative",
+    top: -outputPadding,
+    left: -outputPadding,
+    width: "102%",
+    height: outputCutHeight,
+    textAlign: "center",
+    paddingTop: (outputCutHeight - fontSize) / 3,
+    color: lighten(backgroundColor, isHovered ? 35 : 30),
+    cursor: "pointer",
+    zIndex: outputCutZIndex,
+});
 
-export const outputCutIcon = Object.assign({marginRight: 10}, icon);
+export const outputCutIcon = {marginRight: 10, ...icon};
 
 export const output = (activeScreenBufferType: ScreenBufferType, status: Status) => {
     const styles: CSSObject = {
@@ -524,14 +503,14 @@ export const arrow = (status: Status) => {
 };
 
 export const promptInfo = (status: Status) => {
-    const styles: CSSObject = {
+    let styles: CSSObject = {
         cursor: "help",
         zIndex: 2,
         gridArea: promptGrid.decoration.name,
     };
 
     if (status === Status.Interrupted) {
-        Object.assign(styles, icon);
+        styles = {...styles, ...icon};
 
         styles.position = "relative";
         styles.left = 6;
@@ -548,44 +527,33 @@ export const actions = {
     textAlign: "right",
 };
 
-export const action = Object.assign(
-    {
-        textAlign: "center",
-        width: fontSize,
-        display: "inline-block",
-        margin: "0 3px",
-        cursor: "pointer",
-    },
-    icon,
-);
-
-export const decorationToggle = (isEnabled: boolean) => {
-    return Object.assign(
-        {},
-        action,
-        {
-            color: isEnabled ? colors.green : colors.white,
-        },
-    );
+export const action = {
+    textAlign: "center",
+    width: fontSize,
+    display: "inline-block",
+    margin: "0 3px",
+    cursor: "pointer",
+    ...icon,
 };
 
-export const autocompletedPreview = Object.assign(
-    {},
-    promptInlineElement,
-    {
-        color: lighten(promptBackgroundColor, 15),
-    },
-);
+export const decorationToggle = (isEnabled: boolean) => {
+    return {
+        ...action,
+        color: isEnabled ? colors.green : colors.white,
+    };
+};
 
-export const prompt = (isSticky: boolean) => Object.assign(
-    {},
-    promptInlineElement,
-    {
-        color: colors.white,
-        zIndex: 2,
-        whiteSpace: isSticky ? "nowrap" : "pre-wrap",
-    },
-);
+export const autocompletedPreview = {
+    ...promptInlineElement,
+    color: lighten(promptBackgroundColor, 15),
+};
+
+export const prompt = (isSticky: boolean) => ({
+    ...promptInlineElement,
+    color: colors.white,
+    zIndex: 2,
+    whiteSpace: isSticky ? "nowrap" : "pre-wrap",
+});
 
 export const promptPlaceholder = {
     minHeight: promptWrapperHeight,
