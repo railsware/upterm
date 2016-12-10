@@ -34,7 +34,7 @@ interface GitStatusState {
 
 interface GitStatusFileButton {
   buttonText: string;
-  action: () => Promise<{}>;
+  action: () => Promise<void>;
 }
 
 interface GitStatusFileProps {

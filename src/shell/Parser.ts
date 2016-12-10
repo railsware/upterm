@@ -366,7 +366,7 @@ export class Argument extends LeafNode {
             PluginManager.autocompletionProviderFor(argument.command.commandWord!.value),
         ]);
 
-        return provider(Object.assign(context, {argument: argument}));
+        return provider({...context, argument: argument});
     }
 }
 

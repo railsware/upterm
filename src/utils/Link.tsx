@@ -7,7 +7,7 @@ const Link: React.StatelessComponent<{ absolutePath: string, children?: React.Re
   children,
   style,
 }) => <span
-  style={Object.assign({}, { cursor: "pointer" }, style)}
+  style={{cursor: "pointer", ...style}}
   className="underlineOnHover"
   onClick={() => e.shell.openExternal(`file://${absolutePath}`)}
 >{children}</span>;

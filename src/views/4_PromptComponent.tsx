@@ -14,7 +14,6 @@ import * as css from "./css/main";
 import {fontAwesome} from "./css/FontAwesome";
 import {Status} from "../Enums";
 import {scan} from "../shell/Scanner";
-import {assign} from "../utils/Common";
 
 interface Props {
     job: Job;
@@ -45,7 +44,7 @@ export class PromptComponent extends React.Component<Props, State> {
             const nearTop = entry.boundingClientRect.top < 50;
             const isVisible = entry.intersectionRatio === 1;
 
-            this.setState(assign(this.state, {isSticky: nearTop && !isVisible}));
+            this.setState({...this.state, isSticky: nearTop && !isVisible});
         },
         {
             threshold: 1,
@@ -111,7 +110,7 @@ export class PromptComponent extends React.Component<Props, State> {
             autocomplete = <AutocompleteComponent suggestions={this.state.suggestions}
                                                   offsetTop={this.state.offsetTop}
                                                   caretPosition={getCaretPosition(this.commandNode)}
-                                                  onSuggestionHover={index => this.setState(assign(this.state, {highlightedSuggestionIndex: index}))}
+                                                  onSuggestionHover={index => this.setState({...this.state, highlightedSuggestionIndex: index})}
                                                   onSuggestionClick={this.applySuggestion.bind(this)}
                                                   highlightedIndex={this.state.highlightedSuggestionIndex}
                                                   ref="autocomplete"/>;
@@ -154,7 +153,7 @@ export class PromptComponent extends React.Component<Props, State> {
                     style={css.prompt(this.state.isSticky)}
                     onInput={this.handleInput.bind(this)}
                     onDrop={this.handleDrop.bind(this)}
-                    onBlur={() => this.setState(assign(this.state, {caretPositionFromPreviousFocus: getCaretPosition(this.commandNode)}))}
+                    onBlur={() => this.setState({...this.state, caretPositionFromPreviousFocus: getCaretPosition(this.commandNode)})}
                     onFocus={() => setCaretPosition(this.commandNode, this.state.caretPositionFromPreviousFocus)}
                     type="text"
                     ref="command"
@@ -179,10 +178,11 @@ export class PromptComponent extends React.Component<Props, State> {
     }
 
     setPreviousKeyCode(event: KeyboardEvent) {
-        this.setState(assign(this.state, {
+        this.setState({
+            ...this.state,
             previousKeyCode: event.keyCode,
-            offsetTop: (event.target as HTMLDivElement).getBoundingClientRect().top},
-        ));
+            offsetTop: (event.target as HTMLDivElement).getBoundingClientRect().top,
+        });
     }
 
     async appendLastLArgumentOfPreviousCommand(): Promise<void> {
@@ -229,12 +229,12 @@ export class PromptComponent extends React.Component<Props, State> {
 
     focusPreviousSuggestion(): void {
         const index = Math.max(0, this.state.highlightedSuggestionIndex - 1);
-        this.setState(assign(this.state, {highlightedSuggestionIndex: index}));
+        this.setState({...this.state, highlightedSuggestionIndex: index});
     }
 
     focusNextSuggestion(): void {
         const index = Math.min(this.state.suggestions.length - 1, this.state.highlightedSuggestionIndex + 1);
-        this.setState(assign(this.state, {highlightedSuggestionIndex: index}));
+        this.setState({...this.state, highlightedSuggestionIndex: index});
     }
 
     isAutocompleteShown(): boolean {
@@ -316,7 +316,7 @@ export class PromptComponent extends React.Component<Props, State> {
     private async getSuggestions() {
         let suggestions = await getSuggestions(this.props.job, getCaretPosition(this.commandNode));
 
-        this.setState(assign(this.state, {highlightedSuggestionIndex: 0, suggestions: suggestions}));
+        this.setState({...this.state, highlightedSuggestionIndex: 0, suggestions: suggestions});
     }
 
     private handleScrollToTop(event: Event) {

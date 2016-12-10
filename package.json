@@ -23,11 +23,11 @@
     "console"
   ],
   "dependencies": {
-    "@types/electron": "1.4.28",
-    "@types/lodash": "4.14.41",
+    "@types/electron": "1.4.29",
+    "@types/lodash": "4.14.43",
     "@types/node": "6.0.46",
     "@types/pty.js": "0.2.31",
-    "@types/react": "0.14.51",
+    "@types/react": "0.14.54",
     "child-process-promise": "2.2.0",
     "dirStat": "0.0.2",
     "font-awesome": "4.7.0",
@@ -41,22 +41,22 @@
     "react": "15.4.1",
     "react-dom": "15.4.1",
     "tinycolor2": "1.4.1",
-    "uuid": "3.0.0"
+    "uuid": "3.0.1"
   },
   "devDependencies": {
     "@types/chai": "3.4.34",
     "@types/mocha": "2.2.33",
     "chai": "3.5.0",
     "devtron": "1.4.0",
-    "electron-builder": "8.6.0",
-    "electron-prebuilt": "1.4.10",
+    "electron-builder": "10.6.1",
+    "electron-prebuilt": "1.4.12",
     "electron-rebuild": "1.4.0",
     "mocha": "3.2.0",
-    "npm-check-updates": "2.8.7",
+    "npm-check-updates": "2.8.8",
     "spectron": "3.4.0",
-    "ts-node": "1.7.0",
+    "ts-node": "1.7.2",
     "tslint": "4.0.2",
-    "typescript": "2.0.10"
+    "typescript": "2.1.4"
   },
   "scripts": {
     "preinstall": "npm prune",

@@ -6,7 +6,10 @@
       "arguments",
       "statements"
     ],
-    "ban": false,
+    "ban": [
+      true,
+      ["Object", "assign", "Use spread syntax ({...a, ...b}) instead."]
+    ],
     "class-name": true,
     "comment-format": [
       true,
