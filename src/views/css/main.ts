@@ -183,7 +183,7 @@ export const suggestionIcon = {
     verticalAlign: "middle",
     textAlign: "center",
     fontStyle: "normal",
-    opacity: ".5",
+    opacity: .5,
     marginRight: 10,
     backgroundColor: "rgba(0, 0, 0, 0.15)",
 };
