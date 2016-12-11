@@ -183,6 +183,7 @@ export const handleUserEvent = (
             }
         } else {
             if (isKeybindingForEvent(event, KeyboardAction.cliHistoryPrevious)) {
+                prompt.scrollIntoView();
                 prompt.setPreviousHistoryItem();
 
                 event.stopPropagation();
@@ -191,6 +192,7 @@ export const handleUserEvent = (
             }
 
             if (isKeybindingForEvent(event, KeyboardAction.cliHistoryNext)) {
+                prompt.scrollIntoView();
                 prompt.setNextHistoryItem();
 
                 event.stopPropagation();

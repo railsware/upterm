@@ -251,6 +251,12 @@ export class PromptComponent extends React.Component<Props, State> {
         this.setText(this.prompt.value.concat(text));
     }
 
+    scrollIntoView(): void {
+        /* tslint:disable:no-string-literal */
+        this.commandNode.scrollIntoView(true);
+        document.location.href = `#${this.props.job.id}`;
+    }
+
     private setText(text: string): void {
         this.prompt.setValue(text);
         this.setDOMValueProgrammatically(text);
