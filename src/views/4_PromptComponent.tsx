@@ -252,9 +252,7 @@ export class PromptComponent extends React.Component<Props, State> {
     }
 
     scrollIntoView(): void {
-        /* tslint:disable:no-string-literal */
         this.commandNode.scrollIntoView(true);
-        document.location.href = `#${this.props.job.id}`;
     }
 
     private setText(text: string): void {
