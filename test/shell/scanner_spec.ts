@@ -155,15 +155,16 @@ describe("scan", () => {
         expect(tokens.map(token => token.value)).to.eql(["test", "space"]);
     });
 
-    describe("invalid input", () => {
-        it("adds an invalid token", async() => {
-            const tokens = scan("cd '");
+    it("handles escaped brackets in words", () => {
+        const tokens = scan("file\\ with\\ brackets\\(\\)");
+        expect(tokens.map(token => token.value)).to.eql(["file with brackets\\(\\)"]);
+    });
 
-            expect(tokens.length).to.eq(2);
-            expect(tokens[0]).to.be.an.instanceof(Word);
-            expect(tokens[1]).to.be.an.instanceof(Invalid);
-
-            expect(tokens.map(token => token.value)).to.eql(["cd", "'"]);
-        });
+    it("adds an invalid token on invalid input", () => {
+        const tokens = scan("cd '");
+        expect(tokens.length).to.eq(2);
+        expect(tokens[0]).to.be.an.instanceof(Word);
+        expect(tokens[1]).to.be.an.instanceof(Invalid);
+        expect(tokens.map(token => token.value)).to.eql(["cd", "'"]);
     });
 });

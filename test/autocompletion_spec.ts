@@ -6,10 +6,16 @@ import {OrderedSet} from "../src/utils/OrderedSet";
 import {Aliases} from "../src/shell/Aliases";
 import {CommandWord} from "../src/shell/Parser";
 import {Word} from "../src/shell/Scanner";
-import {styles} from "../src/plugins/autocompletion_utils/Common";
+import {
+    styles,
+    anyFilesSuggestions,
+    noEscapeSpacesPromptSerializer
+} from "../src/plugins/autocompletion_utils/Common";
+import {join} from "path";
+import {fontAwesome} from "../src/views/css/FontAwesome";
 
 describe("Autocompletion suggestions", () => {
-    it("include aliases", async() => {
+    it("includes aliases", async() => {
         expect(await getSuggestions({
             currentText: "myAlia",
             currentCaretPosition: 6,
@@ -17,15 +23,29 @@ describe("Autocompletion suggestions", () => {
             environment: new Environment({}),
             historicalPresentDirectoriesStack: new OrderedSet<string>(),
             aliases: new Aliases({
-              myAlias: "expandedAlias",
+                myAlias: "expandedAlias",
             }),
         })).to.eql([{
-          attributes: {
-            description: "expandedAlias",
-            space: true,
-            style: styles.alias,
-            value: "myAlias",
-          }
+            attributes: {
+                description: "expandedAlias",
+                space: true,
+                style: styles.alias,
+                value: "myAlias",
+            }
+        }]);
+    });
+
+    it("wraps file names in quotes if necessary", async() => {
+        expect(await anyFilesSuggestions("fil", join(__dirname, "test_files"))).to.eql([{
+            attributes: {
+                displayValue: "file\\ with\\ brackets\\(\\)",
+                promptSerializer: noEscapeSpacesPromptSerializer,
+                value: "file\\ with\\ brackets\\(\\)",
+                style: {
+                    css: {},
+                    value: fontAwesome.file,
+                },
+            }
         }]);
     });
 });
