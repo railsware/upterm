@@ -1,13 +1,31 @@
-import {Job} from "./shell/Job";
-import {leafNodeAt} from "./shell/Parser";
+import {leafNodeAt, ASTNode} from "./shell/Parser";
 import * as _ from "lodash";
 import {History} from "./shell/History";
 import {Suggestion, styles, replaceAllPromptSerializer} from "./plugins/autocompletion_utils/Common";
+import {Environment} from "./shell/Environment";
+import {OrderedSet} from "./utils/OrderedSet";
+import {Aliases} from "./shell/Aliases";
 
 export const suggestionsLimit = 9;
 
-export const getSuggestions = async(job: Job, caretPosition: number) => {
-    const prefixMatchesInHistory = History.all.filter(line => line.startsWith(job.prompt.value));
+type GetSuggestionsOptions = {
+    currentText: string;
+    currentCaretPosition: number;
+    ast: ASTNode;
+    environment: Environment;
+    historicalPresentDirectoriesStack: OrderedSet<string>;
+    aliases: Aliases;
+};
+
+export const getSuggestions = async({
+    currentText,
+    currentCaretPosition,
+    ast,
+    environment,
+    historicalPresentDirectoriesStack,
+    aliases,
+}: GetSuggestionsOptions): Promise<Suggestion[]> => {
+    const prefixMatchesInHistory = History.all.filter(line => line.startsWith(currentText));
     const suggestionsFromHistory = prefixMatchesInHistory.map(match => new Suggestion({
         value: match,
         promptSerializer: replaceAllPromptSerializer,
@@ -17,11 +35,11 @@ export const getSuggestions = async(job: Job, caretPosition: number) => {
     const firstThreeFromHistory = suggestionsFromHistory.slice(0, 3);
     const remainderFromHistory = suggestionsFromHistory.slice(3);
 
-    const node = leafNodeAt(caretPosition, job.prompt.ast);
+    const node = leafNodeAt(currentCaretPosition, ast);
     const suggestions = await node.suggestions({
-        environment: job.environment,
-        historicalPresentDirectoriesStack: job.session.historicalPresentDirectoriesStack,
-        aliases: job.session.aliases,
+        environment: environment,
+        historicalPresentDirectoriesStack: historicalPresentDirectoriesStack,
+        aliases: aliases,
     });
 
     const applicableSuggestions = _.uniqBy(
