@@ -70,7 +70,7 @@
     "unit-tests": "ELECTRON_RUN_AS_NODE=1 electron $(which mocha) --require ts-node/register $(find test -name '*_spec.ts')",
     "integration-tests": "npm run compile && mocha",
     "update-dependencies": "ncu -u",
-    "lint": "tslint `find src -name '*.ts*'`",
+    "lint": "tslint `find src -name '*.ts*'` `find test -name '*.ts*'`",
     "cleanup": "rm -rf compiled/src",
     "copy-html": "mkdir -p compiled/src/views && cp src/views/index.html compiled/src/views",
     "compile": "npm run cleanup && npm run tsc && npm run copy-html",

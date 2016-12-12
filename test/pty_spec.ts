@@ -16,7 +16,7 @@ describe("PTY", () => {
             (exitCode: number) => {
                 expect(exitCode).to.eq(0);
                 done();
-            }
+            },
         );
     });
 });

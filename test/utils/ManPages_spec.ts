@@ -86,7 +86,7 @@ describe("man page paragraph extraction", () => {
         "           line two",
         "           line three",
       ],
-      ["     -f2   line one"]
+      ["     -f2   line one"],
     ]);
   });
 
@@ -107,7 +107,7 @@ describe("man page paragraph extraction", () => {
         "                      indented",
         "               line three",
       ],
-      ["     -g        line one"]
+      ["     -g        line one"],
     ]);
   });
 });

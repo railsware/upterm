@@ -14,7 +14,7 @@ describe("Job", () => {
         intercept: (_) => {
           calls++;
           return undefined as any;
-        }
+        },
       });
       const job = new Job({
         aliases: new Aliases({}),
@@ -32,14 +32,14 @@ describe("Job", () => {
         intercept: (_) => {
           calls++;
           return undefined as any;
-        }
+        },
       });
       const job = new Job({
         aliases: new Aliases({ test2: "not test2" }),
         environment: { pwd: "test" },
       } as any as Session);
       job.prompt.setValue("test2");
-      job.handleError = () => {};
+      job.handleError = () => undefined;
       await job.execute();
       expect(calls).to.eql(0);
     });
