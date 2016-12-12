@@ -9,7 +9,7 @@ import {Word} from "../src/shell/Scanner";
 import {
     styles,
     anyFilesSuggestions,
-    noEscapeSpacesPromptSerializer
+    noEscapeSpacesPromptSerializer,
 } from "../src/plugins/autocompletion_utils/Common";
 import {join} from "path";
 import {fontAwesome} from "../src/views/css/FontAwesome";
@@ -31,7 +31,7 @@ describe("Autocompletion suggestions", () => {
                 space: true,
                 style: styles.alias,
                 value: "myAlias",
-            }
+            },
         }]);
     });
 
@@ -45,7 +45,7 @@ describe("Autocompletion suggestions", () => {
                     css: {},
                     value: fontAwesome.file,
                 },
-            }
+            },
         }]);
     });
 });
