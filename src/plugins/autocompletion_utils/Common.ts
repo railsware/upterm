@@ -9,7 +9,7 @@ import {fontAwesome} from "../../views/css/FontAwesome";
 import {colors} from "../../views/css/colors";
 import {CSSObject} from "../../views/css/definitions";
 import {StatusCode} from "../../utils/Git";
-import {linedOutputOf} from "../../PTY";
+import {executeCommand} from "../../PTY";
 import {ASTNode, leafNodeAt, serializeReplacing} from "../../shell/Parser";
 
 type Style = { value: string; css: CSSObject};
@@ -228,7 +228,7 @@ const filesSuggestions = (filter: (info: FileInfo) => boolean) => async(tokenVal
         .filter(info => info.stat.isDirectory() || filter(info))
         .map(async info => {
             // Shell out to printf to ecape the filename, it is the only thing that truly knows how to do that
-            const escapedName: string = (await linedOutputOf("printf", ['"%q"', `"${info.name}"`], "/"))[0];
+            const escapedName: string = await executeCommand("printf", ['"%q"', `"${info.name}"`], "/");
             if (info.stat.isDirectory()) {
                 return new Suggestion({
                     value: joinPath(tokenDirectory, escapedName + Path.sep),
