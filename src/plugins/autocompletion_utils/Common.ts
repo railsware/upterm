@@ -9,6 +9,7 @@ import {fontAwesome} from "../../views/css/FontAwesome";
 import {colors} from "../../views/css/colors";
 import {CSSObject} from "../../views/css/definitions";
 import {StatusCode} from "../../utils/Git";
+import {linedOutputOf} from "../../PTY";
 import {ASTNode, leafNodeAt, serializeReplacing} from "../../shell/Parser";
 
 type Style = { value: string; css: CSSObject};
@@ -34,6 +35,11 @@ interface SuggestionAttributes {
 const defaultPromptSerializer: PromptSerializer = (context: PromptSerializerContext): string => {
     const node = leafNodeAt(context.caretPosition, context.ast);
     return serializeReplacing(context.ast, node, context.suggestion.value.replace(/\s/g, "\\ ") + (context.suggestion.shouldAddSpace ? " " : ""));
+};
+
+export const noEscapeSpacesPromptSerializer: PromptSerializer = (context: PromptSerializerContext): string => {
+    const node = leafNodeAt(context.caretPosition, context.ast);
+    return serializeReplacing(context.ast, node, context.suggestion.value + (context.suggestion.shouldAddSpace ? " " : ""));
 };
 
 export const replaceAllPromptSerializer: PromptSerializer = (context: PromptSerializerContext) =>  context.suggestion.value;
@@ -217,16 +223,29 @@ const filesSuggestions = (filter: (info: FileInfo) => boolean) => async(tokenVal
     const directoryPath = resolveDirectory(directory, tokenDirectory);
     const stats = await statsIn(directoryPath);
 
-    return stats
+    return await Promise.all(stats
         .filter(info => info.name.startsWith(".") ? basePath.startsWith(".") : true)
         .filter(info => info.stat.isDirectory() || filter(info))
-        .map(info => {
+        .map(async info => {
+            // Shell out to printf to ecape the filename, it is the only thing that truly knows how to do that
+            const escapedName: string = (await linedOutputOf("printf", ['"%q"', `"${info.name}"`], "/"))[0];
             if (info.stat.isDirectory()) {
-                return new Suggestion({value: joinPath(tokenDirectory, info.name + Path.sep), displayValue: info.name + Path.sep, style: styles.directory});
+                return new Suggestion({
+                    value: joinPath(tokenDirectory, escapedName + Path.sep),
+                    displayValue: escapedName + Path.sep,
+                    style: styles.directory,
+                    promptSerializer: noEscapeSpacesPromptSerializer,
+                });
             } else {
-                return new Suggestion({value: joinPath(tokenDirectory, info.name), displayValue: info.name, style: styles.file(info, joinPath(directoryPath, info.name))});
+                return new Suggestion({
+                    value: joinPath(tokenDirectory, escapedName),
+                    displayValue: escapedName,
+                    style: styles.file(info, joinPath(directoryPath, escapedName)),
+                    promptSerializer: noEscapeSpacesPromptSerializer,
+                });
             }
-        });
+        }),
+    );
 };
 
 const filesSuggestionsProvider =

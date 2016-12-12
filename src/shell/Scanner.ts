@@ -27,7 +27,7 @@ export class Empty extends Token {
     }
 
     get escapedValue() {
-        return <EscapedShellWord>this.raw.trim();
+        return this.raw.trim() as EscapedShellWord;
     }
 }
 
@@ -37,7 +37,7 @@ export class Word extends Token {
     }
 
     get escapedValue() {
-        return <EscapedShellWord>this.raw.trim();
+        return this.raw.trim() as EscapedShellWord;
     }
 }
 
@@ -47,7 +47,7 @@ export class Pipe extends Token {
     }
 
     get escapedValue(): EscapedShellWord {
-        return <EscapedShellWord>this.value;
+        return this.value as EscapedShellWord;
     }
 }
 
@@ -57,7 +57,7 @@ export class Semicolon extends Token {
     }
 
     get escapedValue(): EscapedShellWord {
-        return <EscapedShellWord>this.value;
+        return this.value as EscapedShellWord;
     }
 }
 
@@ -67,7 +67,7 @@ export class And extends Token {
     }
 
     get escapedValue(): EscapedShellWord {
-        return <EscapedShellWord>this.value;
+        return this.value as EscapedShellWord;
     }
 }
 
@@ -77,7 +77,7 @@ export class Or extends Token {
     }
 
     get escapedValue(): EscapedShellWord {
-        return <EscapedShellWord>this.value;
+        return this.value as EscapedShellWord;
     }
 }
 
@@ -87,7 +87,7 @@ export class InputRedirectionSymbol extends Token {
     }
 
     get escapedValue(): EscapedShellWord {
-        return <EscapedShellWord>this.value;
+        return this.value as EscapedShellWord;
     }
 }
 
@@ -97,7 +97,7 @@ export class OutputRedirectionSymbol extends Token {
     }
 
     get escapedValue(): EscapedShellWord {
-        return <EscapedShellWord>this.value;
+        return this.value as EscapedShellWord;
     }
 }
 
@@ -107,7 +107,7 @@ export class AppendingOutputRedirectionSymbol extends Token {
     }
 
     get escapedValue(): EscapedShellWord {
-        return <EscapedShellWord>this.value;
+        return this.value as EscapedShellWord;
     }
 }
 
@@ -119,13 +119,13 @@ export abstract class StringLiteral extends Token {
 
 export class SingleQuotedStringLiteral extends StringLiteral {
     get escapedValue(): EscapedShellWord {
-        return <EscapedShellWord>`'${this.value}'`;
+        return `'${this.value}'` as EscapedShellWord;
     }
 }
 
 export class DoubleQuotedStringLiteral extends StringLiteral {
     get escapedValue(): EscapedShellWord {
-        return <EscapedShellWord>`"${this.value}"`;
+        return `"${this.value}"` as EscapedShellWord;
     }
 }
 
@@ -135,7 +135,7 @@ export class Invalid extends Token {
     }
 
     get escapedValue(): EscapedShellWord {
-        return <EscapedShellWord>this.value;
+        return this.value as EscapedShellWord;
     }
 }
 
@@ -177,7 +177,7 @@ const patterns = [
         tokenConstructor : SingleQuotedStringLiteral,
     },
     {
-        regularExpression: /^(\s*(?:\\\s|[a-zA-Z0-9\u0080-\uFFFF+~!@#%^&*_=,.:/?\\-])+\s*)/,
+        regularExpression: /^(\s*(?:\\\(|\\\)|\\\s|[a-zA-Z0-9\u0080-\uFFFF+~!@#%^&*_=,.:/?\\-])+\s*)/,
         tokenConstructor : Word,
     },
 ];

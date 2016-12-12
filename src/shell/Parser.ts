@@ -316,16 +316,19 @@ export class ParameterAssignment extends LeafNode {
 }
 
 export class CommandWord extends LeafNode {
-    async suggestions(context: PreliminaryAutocompletionContext): Promise<Suggestion[]> {
+    async suggestions({
+        environment,
+        aliases,
+    }: PreliminaryAutocompletionContext): Promise<Suggestion[]> {
         if (this.value.length === 0) {
             return [];
         }
 
-        const relativeExecutablesSuggestions = await executableFilesSuggestions(this.value, context.environment.pwd);
-        const executables = await executablesInPaths(context.environment.path);
+        const relativeExecutablesSuggestions = await executableFilesSuggestions(this.value, environment.pwd);
+        const executables = await executablesInPaths(environment.path);
 
         return [
-            ...mapObject(context.aliases.toObject(), (key, value) => new Suggestion({value: key, description: value, style: styles.alias, space: true})),
+            ...mapObject(aliases.toObject(), (key, value) => new Suggestion({value: key, description: value, style: styles.alias, space: true})),
             ...loginShell.preCommandModifiers.map(modifier => new Suggestion({value: modifier, style: styles.func, space: true})),
             ...executables.map(name => new Suggestion({value: name, description: commandDescriptions[name] || "", style: styles.executable, space: true})),
             ...relativeExecutablesSuggestions,
