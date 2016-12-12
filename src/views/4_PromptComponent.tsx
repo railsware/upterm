@@ -318,7 +318,14 @@ export class PromptComponent extends React.Component<Props, State> {
     }
 
     private async getSuggestions() {
-        let suggestions = await getSuggestions(this.props.job, getCaretPosition(this.commandNode));
+        let suggestions = await getSuggestions({
+            currentText: this.props.job.prompt.value,
+            currentCaretPosition: getCaretPosition(this.commandNode),
+            ast: this.props.job.prompt.ast,
+            environment: this.props.job.environment,
+            historicalPresentDirectoriesStack: this.props.job.session.historicalPresentDirectoriesStack,
+            aliases: this.props.job.session.aliases,
+        });
 
         this.setState({...this.state, highlightedSuggestionIndex: 0, suggestions: suggestions});
     }
