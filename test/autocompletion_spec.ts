@@ -61,10 +61,7 @@ describe("Autocompletion suggestions", () => {
             environment: new Environment({}),
             historicalPresentDirectoriesStack: new OrderedSet<string>(),
             aliases: new Aliases({}),
-            autocompletionProviderFor: () => async() => {
-                console.log('here');
-                return [new Suggestion({value: "test value"})];
-            },
+            autocompletionProviderFor: () => async() => [new Suggestion({value: "test value"})],
         })).to.eql([{
             attributes: {
                 value: "git test value",

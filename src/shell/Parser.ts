@@ -361,7 +361,7 @@ export class CommandWord extends LeafNode {
             ...preCommandModifierSuggestions,
             ...executableSuggestions,
             ...relativeExecutablesSuggestions,
-        ]
+        ];
 
         return allSuggestions;
     }
