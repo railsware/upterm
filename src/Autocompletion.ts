@@ -5,6 +5,8 @@ import {Suggestion, styles, replaceAllPromptSerializer} from "./plugins/autocomp
 import {Environment} from "./shell/Environment";
 import {OrderedSet} from "./utils/OrderedSet";
 import {Aliases} from "./shell/Aliases";
+import {AutocompletionProvider} from "./Interfaces";
+
 
 export const suggestionsLimit = 9;
 
@@ -15,6 +17,7 @@ type GetSuggestionsOptions = {
     environment: Environment;
     historicalPresentDirectoriesStack: OrderedSet<string>;
     aliases: Aliases;
+    autocompletionProviderFor: (commandName: string) => AutocompletionProvider;
 };
 
 export const getSuggestions = async({
@@ -24,6 +27,7 @@ export const getSuggestions = async({
     environment,
     historicalPresentDirectoriesStack,
     aliases,
+    autocompletionProviderFor,
 }: GetSuggestionsOptions): Promise<Suggestion[]> => {
     const prefixMatchesInHistory = History.all.filter(line => line.startsWith(currentText));
     const suggestionsFromHistory = prefixMatchesInHistory.map(match => new Suggestion({
@@ -40,6 +44,7 @@ export const getSuggestions = async({
         environment: environment,
         historicalPresentDirectoriesStack: historicalPresentDirectoriesStack,
         aliases: aliases,
+        autocompletionProviderFor: autocompletionProviderFor,
     });
 
     const applicableSuggestions = _.uniqBy(
