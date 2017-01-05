@@ -14,7 +14,6 @@ import * as css from "./css/main";
 import {fontAwesome} from "./css/FontAwesome";
 import {Status} from "../Enums";
 import {scan} from "../shell/Scanner";
-import {PluginManager} from "../PluginManager";
 
 interface Props {
     job: Job;
@@ -326,7 +325,6 @@ export class PromptComponent extends React.Component<Props, State> {
             environment: this.props.job.environment,
             historicalPresentDirectoriesStack: this.props.job.session.historicalPresentDirectoriesStack,
             aliases: this.props.job.session.aliases,
-            autocompletionProviderFor: PluginManager.autocompletionProviderFor.bind(PluginManager),
         });
 
         this.setState({...this.state, highlightedSuggestionIndex: 0, suggestions: suggestions});
