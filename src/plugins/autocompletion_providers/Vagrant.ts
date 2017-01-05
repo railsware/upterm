@@ -1,10 +1,12 @@
 import {PluginManager} from "../../PluginManager";
 import {linedOutputOf} from "../../PTY";
-import {styles, Suggestion, contextIndependent} from "../autocompletion_utils/Common";
+import {commandWithSubcommands, emptyProvider, SubcommandConfig} from "../autocompletion_utils/Common";
 import {executablesInPaths} from "../../utils/Common";
+import {once} from "lodash";
 
-const commands = contextIndependent(async() => {
-    return (await linedOutputOf("vagrant", ["list-commands"], process.env.HOME))
+const vargrantCommandConfig = once(async() => {
+    const vagrantCommandListLines = await linedOutputOf("vagrant", ["list-commands"], process.env.HOME);
+    return vagrantCommandListLines
         .map(line => {
             const matches = line.match(/([\-a-zA-Z0-9]+)  /);
 
@@ -12,15 +14,14 @@ const commands = contextIndependent(async() => {
                 const name = matches[1];
                 const description = line.replace(matches[1], "").trim();
 
-                return new Suggestion({
-                    value: name,
+                return {
+                    name,
                     description,
-                    style: styles.command,
-                    space: true,
-                });
+                    completion: emptyProvider,
+                };
             }
         })
-        .filter(suggestion => suggestion);
+        .filter(suggestion => suggestion) as SubcommandConfig[];
 });
 
 PluginManager.registerAutocompletionProvider("vagrant", async (context) => {
@@ -30,9 +31,5 @@ PluginManager.registerAutocompletionProvider("vagrant", async (context) => {
         return [];
     }
 
-    if (context.argument.position === 1) {
-        return commands();
-    }
-
-    return [];
+    return commandWithSubcommands(await vargrantCommandConfig())(context);
 });

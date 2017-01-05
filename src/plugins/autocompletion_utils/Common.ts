@@ -356,7 +356,7 @@ export const longFlag = (name: string) => unique(async() => [new Suggestion({val
 
 export const mapSuggestions = (provider: AutocompletionProvider, mapper: (suggestion: Suggestion) => Suggestion) => mk(async(context) => (await provider(context)).map(mapper));
 
-interface SubcommandConfig {
+export interface SubcommandConfig {
     name: string;
     description: string;
     completion?: AutocompletionProvider;
@@ -365,10 +365,11 @@ interface SubcommandConfig {
 export const commandWithSubcommands = (subCommands: SubcommandConfig[]) => {
     return async (context: AutocompletionContext) => {
         if (context.argument.position === 1) {
-            return subCommands.map(({ name, description }) => new Suggestion({
+            return subCommands.map(({ name, description, completion }) => new Suggestion({
                 value: name,
                 description,
                 style: styles.command,
+                space: completion !== undefined,
             }));
         } else if (context.argument.position === 2) {
             const firstArgument = context.argument.command.nthArgument(1);
