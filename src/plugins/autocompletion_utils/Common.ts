@@ -355,3 +355,18 @@ export const shortFlag = (char: string) => unique(async() => [new Suggestion({va
 export const longFlag = (name: string) => unique(async() => [new Suggestion({value: `--${name}`, style: styles.option})]);
 
 export const mapSuggestions = (provider: AutocompletionProvider, mapper: (suggestion: Suggestion) => Suggestion) => mk(async(context) => (await provider(context)).map(mapper));
+
+interface SubcommandConfig {
+    name: string;
+    description: string;
+};
+
+export const commandWithSubcommands = (subcommands: SubcommandConfig[]) => {
+    return async () => {
+        return subcommands.map(({ name, description }) => new Suggestion({
+            value: name,
+            description,
+            style: styles.command,
+        }));
+    }
+}
