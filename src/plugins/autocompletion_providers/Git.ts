@@ -1,14 +1,14 @@
 import * as Git from "../../utils/Git";
 import {
     styles, Suggestion, longAndShortFlag, longFlag, mapSuggestions, unique,
-    contextIndependent, emptyProvider,
+    emptyProvider, SubcommandConfig, commandWithSubcommands
 } from "../autocompletion_utils/Common";
 import * as Common from "../autocompletion_utils/Common";
 import combine from "../autocompletion_utils/Combine";
 import {PluginManager} from "../../PluginManager";
-import {AutocompletionProvider, AutocompletionContext} from "../../Interfaces";
+import {AutocompletionContext} from "../../Interfaces";
 import {linedOutputOf, executeCommand} from "../../PTY";
-import {find, sortBy} from "lodash";
+import {find, sortBy, once} from "lodash";
 
 const addOptions = combine([
     mapSuggestions(longAndShortFlag("patch"), suggestion => suggestion.withDescription(
@@ -295,13 +295,7 @@ const notStagedFiles = unique(async(context: AutocompletionContext): Promise<Sug
     }
 });
 
-interface GitCommandData {
-    name: string;
-    description: string;
-    provider: AutocompletionProvider;
-}
-
-const commandsData: GitCommandData[] = [
+const commandsData: SubcommandConfig[] = [
     {
         name: "add",
         description: "Add file contents to the index.",
@@ -506,7 +500,7 @@ const commandsData: GitCommandData[] = [
     },
 ];
 
-const commands = contextIndependent(async(): Promise<Suggestion[]> => {
+const commands = once(async(): Promise<SubcommandConfig[]> => {
     const text = await executeCommand("git", ["help", "-a"], process.env.HOME);
     const matches = text.match(/  ([\-a-zA-Z0-9]+)/gm);
 
@@ -517,12 +511,11 @@ const commands = contextIndependent(async(): Promise<Suggestion[]> => {
                 const name = match.trim();
                 const data = find(commandsData, {name});
 
-                return new Suggestion({
-                    value: name,
+                return {
+                    name,
                     description: data ? data.description : "",
-                    style: styles.command,
-                    space: true,
-                });
+                    provider: data ? data.provider : emptyProvider,
+                };
             });
 
         return sortBy(suggestions, suggestion => !suggestion.description);
@@ -531,41 +524,25 @@ const commands = contextIndependent(async(): Promise<Suggestion[]> => {
     return [];
 });
 
-const aliases = contextIndependent(() => Git.aliases(process.env.HOME).then(
-    variables => variables.map(variable => new Suggestion({
-        value: variable.name,
-        synopsis: variable.value,
-        style: styles.alias,
-        space: true,
-    })),
-));
+const aliases: () => Promise<SubcommandConfig[]> = once(async() => {
+    const aliasList = await Git.aliases(process.env.HOME);
+    return aliasList.map(({ name, value }) => {
+        let result: SubcommandConfig = {
+            name: name,
+            synopsis: value,
+            style: styles.alias,
+        };
 
-const expandAlias = async(name: string): Promise<string> => {
-    const allAliases = await Git.aliases(process.env.HOME);
-    const alias = find(allAliases, {name});
+        const expandedAliasConfig = find(commandsData, data => data.name === value);
+        if (expandedAliasConfig && expandedAliasConfig.provider) {
+            result.provider = expandedAliasConfig.provider;
+        }
 
-    return alias ? alias.value : name;
-};
-
-const allCommands = combine([aliases, commands]);
+        return result;
+    });
+});
 
 PluginManager.registerAutocompletionProvider("git", async context => {
-    if (context.argument.position === 1) {
-        return allCommands(context);
-    }
-
-    const firstArgument = context.argument.command.nthArgument(1);
-
-    if (!firstArgument) {
-        return [];
-    }
-
-    const name = await expandAlias(firstArgument.value);
-    const data = find(commandsData, {name});
-
-    if (data) {
-        return data.provider(context);
-    }
-
-    return [];
+    const allCommands = [...(await aliases()), ...(await commands())];
+    return commandWithSubcommands(allCommands)(context);
 });

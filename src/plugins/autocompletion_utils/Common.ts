@@ -358,17 +358,20 @@ export const mapSuggestions = (provider: AutocompletionProvider, mapper: (sugges
 
 export interface SubcommandConfig {
     name: string;
-    description: string;
+    description?: string;
+    synopsis?: string;
+    style?: Style;
     provider?: AutocompletionProvider;
 };
 
 export const commandWithSubcommands = (subCommands: SubcommandConfig[]) => {
     return async (context: AutocompletionContext) => {
         if (context.argument.position === 1) {
-            return subCommands.map(({ name, description, provider }) => new Suggestion({
+            return subCommands.map(({ name, description, synopsis, provider, style }) => new Suggestion({
                 value: name,
                 description,
-                style: styles.command,
+                synopsis,
+                style: style || styles.command,
                 space: provider !== undefined,
             }));
         } else if (context.argument.position === 2) {
@@ -379,8 +382,7 @@ export const commandWithSubcommands = (subCommands: SubcommandConfig[]) => {
                     return await subCommandConfig.provider(context);
                 }
             }
-        } else {
-            return []
         }
-    }
-}
+        return [];
+    };
+};
