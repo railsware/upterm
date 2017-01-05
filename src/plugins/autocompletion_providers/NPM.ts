@@ -148,7 +148,7 @@ const npmCommandConfig = [
     {
         name: "run",
         description: "Run arbitrary package scripts",
-        completion: async (context: AutocompletionContext) => {
+        provider: async (context: AutocompletionContext) => {
             const packageFilePath = Path.join(context.environment.pwd, "package.json");
             if (await exists(packageFilePath)) {
                 const parsed = JSON.parse(await readFile(packageFilePath)).scripts || {};

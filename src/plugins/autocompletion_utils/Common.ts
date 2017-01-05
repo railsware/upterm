@@ -359,24 +359,24 @@ export const mapSuggestions = (provider: AutocompletionProvider, mapper: (sugges
 export interface SubcommandConfig {
     name: string;
     description: string;
-    completion?: AutocompletionProvider;
+    provider?: AutocompletionProvider;
 };
 
 export const commandWithSubcommands = (subCommands: SubcommandConfig[]) => {
     return async (context: AutocompletionContext) => {
         if (context.argument.position === 1) {
-            return subCommands.map(({ name, description, completion }) => new Suggestion({
+            return subCommands.map(({ name, description, provider }) => new Suggestion({
                 value: name,
                 description,
                 style: styles.command,
-                space: completion !== undefined,
+                space: provider !== undefined,
             }));
         } else if (context.argument.position === 2) {
             const firstArgument = context.argument.command.nthArgument(1);
             if (firstArgument) {
                 const subCommandConfig = subCommands.find(config => config.name === firstArgument.value);
-                if (subCommandConfig && subCommandConfig.completion) {
-                    return await subCommandConfig.completion(context);
+                if (subCommandConfig && subCommandConfig.provider) {
+                    return await subCommandConfig.provider(context);
                 }
             }
         } else {
