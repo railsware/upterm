@@ -1,7 +1,7 @@
 import * as Git from "../../utils/Git";
 import {
     styles, Suggestion, longAndShortFlag, longFlag, mapSuggestions, unique,
-    emptyProvider, SubcommandConfig, commandWithSubcommands
+    emptyProvider, SubcommandConfig, commandWithSubcommands,
 } from "../autocompletion_utils/Common";
 import * as Common from "../autocompletion_utils/Common";
 import combine from "../autocompletion_utils/Combine";

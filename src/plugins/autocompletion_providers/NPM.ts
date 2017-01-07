@@ -152,7 +152,11 @@ const npmCommandConfig = [
             const packageFilePath = Path.join(context.environment.pwd, "package.json");
             if (await exists(packageFilePath)) {
                 const parsed = JSON.parse(await readFile(packageFilePath)).scripts || {};
-                return mapObject(parsed, (key: string, value: string) => new Suggestion({value: key, description: value, style: styles.command}));
+                return mapObject(parsed, (key: string, value: string) => new Suggestion({
+                    value: key,
+                    description: value,
+                    style: styles.command,
+                }));
             } else {
                 return [];
             }
