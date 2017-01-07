@@ -1,4 +1,4 @@
-import {styles, Suggestion} from "../autocompletion_utils/Common";
+import {commandWithSubcommands} from "../autocompletion_utils/Common";
 import {PluginManager} from "../../PluginManager";
 
 const railsCommandConfig = [
@@ -36,6 +36,4 @@ const railsCommandConfig = [
     },
 ];
 
-const railsCommand = railsCommandConfig.map(config => new Suggestion({value: config.name, description: config.description, style: styles.command}));
-
-PluginManager.registerAutocompletionProvider("rails", async() => railsCommand);
+PluginManager.registerAutocompletionProvider("rails", commandWithSubcommands(railsCommandConfig));

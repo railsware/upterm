@@ -1,38 +1,31 @@
 import {PluginManager} from "../../PluginManager";
 import {linedOutputOf} from "../../PTY";
-import {styles, Suggestion, contextIndependent} from "../autocompletion_utils/Common";
-import {executablesInPaths} from "../../utils/Common";
+import {commandWithSubcommands, emptyProvider, SubcommandConfig} from "../autocompletion_utils/Common";
+import {once} from "lodash";
 
-const commands = contextIndependent(async() => {
-    return (await linedOutputOf("vagrant", ["list-commands"], process.env.HOME))
-        .map(line => {
-            const matches = line.match(/([\-a-zA-Z0-9]+)  /);
+const vargrantCommandConfig = once(async() => {
+    try {
+        return (await linedOutputOf("vagrant", ["list-commands"], process.env.HOME))
+            .map(line => {
+                const matches = line.match(/([\-a-zA-Z0-9]+)  /);
 
-            if (matches) {
-                const name = matches[1];
-                const description = line.replace(matches[1], "").trim();
+                if (matches) {
+                    const name = matches[1];
+                    const description = line.replace(matches[1], "").trim();
 
-                return new Suggestion({
-                    value: name,
-                    description,
-                    style: styles.command,
-                    space: true,
-                });
-            }
-        })
-        .filter(suggestion => suggestion);
+                    return {
+                        name,
+                        description,
+                        provider: emptyProvider,
+                    };
+                }
+            })
+            .filter(suggestion => suggestion) as SubcommandConfig[];
+    } catch (e) {
+        return [] as SubcommandConfig[];
+    }
 });
 
 PluginManager.registerAutocompletionProvider("vagrant", async (context) => {
-    const executables = await executablesInPaths(context.environment.path);
-
-    if (!executables.includes("vagrant")) {
-        return [];
-    }
-
-    if (context.argument.position === 1) {
-        return commands();
-    }
-
-    return [];
+    return commandWithSubcommands(await vargrantCommandConfig())(context);
 });

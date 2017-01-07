@@ -1,7 +1,8 @@
 import * as Path from "path";
-import {Suggestion, styles} from "../autocompletion_utils/Common";
+import {Suggestion, styles, commandWithSubcommands} from "../autocompletion_utils/Common";
 import {exists, readFile, mapObject} from "../../utils/Common";
 import {PluginManager} from "../../PluginManager";
+import {AutocompletionContext} from "../../Interfaces";
 
 const npmCommandConfig = [
     {
@@ -147,6 +148,19 @@ const npmCommandConfig = [
     {
         name: "run",
         description: "Run arbitrary package scripts",
+        provider: async (context: AutocompletionContext) => {
+            const packageFilePath = Path.join(context.environment.pwd, "package.json");
+            if (await exists(packageFilePath)) {
+                const parsed = JSON.parse(await readFile(packageFilePath)).scripts || {};
+                return mapObject(parsed, (key: string, value: string) => new Suggestion({
+                    value: key,
+                    description: value,
+                    style: styles.command,
+                }));
+            } else {
+                return [];
+            }
+        },
     },
     {
         name: "search",
@@ -210,29 +224,4 @@ const npmCommandConfig = [
     },
 ];
 
-const npmCommand = npmCommandConfig.map(config => new Suggestion({value: config.name, description: config.description, style: styles.command}));
-
-PluginManager.registerAutocompletionProvider("npm", async (context) => {
-    if (context.argument.position === 1) {
-        return npmCommand;
-    } else if (context.argument.position === 2) {
-        const firstArgument = context.argument.command.nthArgument(1);
-
-        if (firstArgument && firstArgument.value === "run") {
-            const packageFilePath = Path.join(context.environment.pwd, "package.json");
-
-            if (await exists(packageFilePath)) {
-                const parsed = JSON.parse(await readFile(packageFilePath)).scripts || {};
-                return mapObject(parsed, (key: string, value: string) => new Suggestion({value: key, description: value, style: styles.command}));
-            } else {
-                return [];
-            }
-        } else {
-            // TODO: handle npm sub commands other than "run" that can be
-            // further auto-completed
-            return [];
-        }
-    } else {
-        return [];
-    }
-});
+PluginManager.registerAutocompletionProvider("npm", commandWithSubcommands(npmCommandConfig));

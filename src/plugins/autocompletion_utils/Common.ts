@@ -355,3 +355,34 @@ export const shortFlag = (char: string) => unique(async() => [new Suggestion({va
 export const longFlag = (name: string) => unique(async() => [new Suggestion({value: `--${name}`, style: styles.option})]);
 
 export const mapSuggestions = (provider: AutocompletionProvider, mapper: (suggestion: Suggestion) => Suggestion) => mk(async(context) => (await provider(context)).map(mapper));
+
+export interface SubcommandConfig {
+    name: string;
+    description?: string;
+    synopsis?: string;
+    style?: Style;
+    provider?: AutocompletionProvider;
+};
+
+export const commandWithSubcommands = (subCommands: SubcommandConfig[]) => {
+    return async (context: AutocompletionContext) => {
+        if (context.argument.position === 1) {
+            return subCommands.map(({ name, description, synopsis, provider, style }) => new Suggestion({
+                value: name,
+                description,
+                synopsis,
+                style: style || styles.command,
+                space: provider !== undefined,
+            }));
+        } else if (context.argument.position === 2) {
+            const firstArgument = context.argument.command.nthArgument(1);
+            if (firstArgument) {
+                const subCommandConfig = subCommands.find(config => config.name === firstArgument.value);
+                if (subCommandConfig && subCommandConfig.provider) {
+                    return await subCommandConfig.provider(context);
+                }
+            }
+        }
+        return [];
+    };
+};
