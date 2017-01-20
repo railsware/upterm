@@ -14,6 +14,7 @@ import {Environment} from "./Environment";
 import {normalizeKey} from "../utils/Common";
 import {TerminalLikeDevice} from "../Interfaces";
 import {History} from "./History";
+import {Invalid} from "./Scanner";
 
 function makeThrottledDataEmitter(timesPerSecond: number, subject: EmitterWithUniqueID) {
     return _.throttle(() => subject.emit("data"), 1000 / timesPerSecond);
@@ -69,7 +70,9 @@ export class Job extends EmitterWithUniqueID implements TerminalLikeDevice {
             this.setStatus(Status.InProgress);
         }
 
-        const commandWords: string[] = this.prompt.expandedTokens.map(token => token.escapedValue);
+        const commandWords: string[] = this.prompt.expandedTokens
+            .filter(token => !(token instanceof Invalid))
+            .map(token => token.escapedValue);
         const interceptorOptions = {
             command: commandWords,
             presentWorkingDirectory: this.environment.pwd,

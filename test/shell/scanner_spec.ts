@@ -152,7 +152,7 @@ describe("scan", () => {
 
     it("includes spaces at end in final token", () => {
         const tokens = scan("test space ");
-        expect(tokens.map(token => token.value)).to.eql(["test", "space"]);
+        expect(tokens.map(token => token.value)).to.eql(["test", "space", ""]);
     });
 
     it("handles escaped brackets in words", () => {
