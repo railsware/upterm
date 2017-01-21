@@ -145,39 +145,39 @@ const patterns = [
         tokenConstructor: Pipe,
     },
     {
-        regularExpression: /^(\s*;\s*)/,
+        regularExpression: /^(\s*;)/,
         tokenConstructor: Semicolon,
     },
     {
-        regularExpression: /^(\s*&&\s*)/,
+        regularExpression: /^(\s*&&)/,
         tokenConstructor: And,
     },
     {
-        regularExpression: /^(\s*\|\|\s*)/,
+        regularExpression: /^(\s*\|\|)/,
         tokenConstructor: Or,
     },
     {
-        regularExpression: /^(\s*>>\s*)/,
+        regularExpression: /^(\s*>>)/,
         tokenConstructor: AppendingOutputRedirectionSymbol,
     },
     {
-        regularExpression: /^(\s*<\s*)/,
+        regularExpression: /^(\s*<)/,
         tokenConstructor: InputRedirectionSymbol,
     },
     {
-        regularExpression: /^(\s*>\s*)/,
+        regularExpression: /^(\s*>)/,
         tokenConstructor: OutputRedirectionSymbol,
     },
     {
-        regularExpression: /^(\s*"(?:\\"|[^"])*"\s*)/,
+        regularExpression: /^(\s*"(?:\\"|[^"])*")/,
         tokenConstructor: DoubleQuotedStringLiteral,
     },
     {
-        regularExpression: /^(\s*'(?:\\'|[^'])*'\s*)/,
+        regularExpression: /^(\s*'(?:\\'|[^'])*')/,
         tokenConstructor : SingleQuotedStringLiteral,
     },
     {
-        regularExpression: /^(\s*(?:\\\(|\\\)|\\\s|[a-zA-Z0-9\u0080-\uFFFF+~!@#%^&*_=,.:/?\\-])+\s*)/,
+        regularExpression: /^(\s*(?:\\\(|\\\)|\\\s|[a-zA-Z0-9\u0080-\uFFFF+~!@#%^&*_=,.:/?\\-])+)/,
         tokenConstructor : Word,
     },
 ];
