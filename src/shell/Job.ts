@@ -21,7 +21,6 @@ function makeThrottledDataEmitter(timesPerSecond: number, subject: EmitterWithUn
 }
 
 export class Job extends EmitterWithUniqueID implements TerminalLikeDevice {
-    public command: PTY;
     public status: Status = Status.NotStarted;
     public readonly parser: ANSIParser;
     public interceptionResult: React.ReactElement<any> | undefined;
@@ -30,6 +29,7 @@ export class Job extends EmitterWithUniqueID implements TerminalLikeDevice {
     private readonly rareDataEmitter: Function;
     private readonly frequentDataEmitter: Function;
     private executedWithoutInterceptor: boolean = false;
+    private pty: PTY | undefined;
 
     constructor(private _session: Session) {
         super();
@@ -50,6 +50,10 @@ export class Job extends EmitterWithUniqueID implements TerminalLikeDevice {
             this.executedWithoutInterceptor = true;
             try {
                 await CommandExecutor.execute(this);
+
+                // Need to wipe out PTY so that we
+                // don't keep trying to write to it.
+                this.pty = undefined;
 
                 // Need to check the status here because it's
                 // executed even after the process was interrupted.
@@ -109,6 +113,18 @@ export class Job extends EmitterWithUniqueID implements TerminalLikeDevice {
         this.emit("end");
     }
 
+    isInProgress(): boolean {
+        return this.status === Status.InProgress;
+    }
+
+    isRunningPty(): boolean {
+        return this.pty !== undefined;
+    }
+
+    setPty(pty: PTY) {
+        this.pty = pty;
+    }
+
     // Writes to the process' STDIN.
     write(input: string|KeyboardEvent) {
         let text: string;
@@ -131,7 +147,7 @@ export class Job extends EmitterWithUniqueID implements TerminalLikeDevice {
             }
         }
 
-        this.command.write(text);
+        (this.pty as PTY).write(text);
     }
 
     get session(): Session {
@@ -152,16 +168,16 @@ export class Job extends EmitterWithUniqueID implements TerminalLikeDevice {
     }
 
     interrupt(): void {
-        if (this.command && this.status === Status.InProgress) {
-            this.command.kill("SIGINT");
+        if (this.pty && this.status === Status.InProgress) {
+            this.pty.kill("SIGINT");
             this.setStatus(Status.Interrupted);
             this.emit("end");
         }
     }
 
     winch(): void {
-        if (this.command && this.status === Status.InProgress) {
-            this.command.dimensions = this.dimensions;
+        if (this.pty && this.status === Status.InProgress) {
+            this.pty.dimensions = this.dimensions;
         }
     }
 

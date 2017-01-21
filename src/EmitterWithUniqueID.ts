@@ -1,10 +1,13 @@
 import * as events from "events";
 
+let nextId = 0;
+
 export class EmitterWithUniqueID extends events.EventEmitter {
     public id: number;
 
     constructor() {
         super();
-        this.id = new Date().getTime();
+        this.id = nextId;
+        nextId++;
     }
 }

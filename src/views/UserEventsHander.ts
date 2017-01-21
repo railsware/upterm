@@ -3,7 +3,7 @@ import {SessionComponent} from "./2_SessionComponent";
 import {PromptComponent} from "./4_PromptComponent";
 import {JobComponent} from "./3_JobComponent";
 import {Tab} from "./TabComponent";
-import {Status, KeyboardAction} from "../Enums";
+import {KeyboardAction} from "../Enums";
 import {isModifierKey} from "./ViewUtils";
 import {SearchComponent} from "./SearchComponent";
 import {remote} from "electron";
@@ -25,7 +25,7 @@ export const handleUserEvent = (
             return;
         }
 
-        if (!isInProgress(job)) {
+        if (!job.props.job.isInProgress()) {
             prompt.focus();
             event.preventDefault();
             prompt.appendText(event.clipboardData.getData("text/plain"));
@@ -41,7 +41,7 @@ export const handleUserEvent = (
     }
 
     // Close focused pane
-    if (isKeybindingForEvent(event, KeyboardAction.paneClose) && !isInProgress(job)) {
+    if (isKeybindingForEvent(event, KeyboardAction.paneClose) && !job.props.job.isInProgress()) {
         application.closeFocusedPane();
 
         application.forceUpdate();
@@ -76,7 +76,7 @@ export const handleUserEvent = (
     }
 
     // Console clear
-    if (isKeybindingForEvent(event, KeyboardAction.cliClearJobs) && !isInProgress(job)) {
+    if (isKeybindingForEvent(event, KeyboardAction.cliClearJobs) && !job.props.job.isInProgress()) {
         session.props.session.clearJobs();
 
         event.stopPropagation();
@@ -105,7 +105,7 @@ export const handleUserEvent = (
     }
 
 
-    if (isInProgress(job) && !isModifierKey(event)) {
+    if (job.props.job.isRunningPty() && !isModifierKey(event)) {
         // CLI interrupt
         if (isKeybindingForEvent(event, KeyboardAction.cliInterrupt)) {
             job.props.job.interrupt();
@@ -129,7 +129,7 @@ export const handleUserEvent = (
         return;
     }
 
-    if (!isInProgress(job)) {
+    if (!job.props.job.isInProgress()) {
         // CLI Delete word
         if (isKeybindingForEvent(event, KeyboardAction.cliDeleteWord)) {
             prompt.deleteWord();
@@ -204,10 +204,6 @@ export const handleUserEvent = (
 
     prompt.setPreviousKeyCode(event);
 };
-
-function isInProgress(job: JobComponent): boolean {
-    return job.props.job.status === Status.InProgress;
-}
 
 const app = remote.app;
 const browserWindow = remote.BrowserWindow.getAllWindows()[0];
