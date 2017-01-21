@@ -1,5 +1,5 @@
-import {KeyCode, KeyboardAction} from "../../Enums";
-import {error} from "../../utils/Common";
+import {KeyCode, KeyboardAction} from "./Enums";
+import {error} from "./utils/Common";
 
 export type KeybindingType = {
     action: KeyboardAction,
@@ -118,6 +118,7 @@ export type KeybindingMenuType = {
 const CopyAccelerator = process.platform === "darwin" ? "Command+C" : "Ctrl+Shift+C";
 
 export const KeybindingsForMenu: KeybindingMenuType[] = [
+    // Tab commands
     {
         action: KeyboardAction.tabNew,
         accelerator: "CmdOrCtrl+T",
@@ -134,6 +135,8 @@ export const KeybindingsForMenu: KeybindingMenuType[] = [
         action: KeyboardAction.tabClose,
         accelerator: "CmdOrCtrl+W",
     },
+
+    // Pane commands
     {
         action: KeyboardAction.panePrevious,
         accelerator: "CmdOrCtrl+K",
@@ -146,7 +149,16 @@ export const KeybindingsForMenu: KeybindingMenuType[] = [
         action: KeyboardAction.paneClose,
         accelerator: "CmdOrCtrl+P",
     },
-    // edit/clipboard commands
+    {
+        action: KeyboardAction.windowSplitHorizontally,
+        accelerator: "CmdOrCtrl+-",
+    },
+    {
+        action: KeyboardAction.windowSplitVertically,
+        accelerator: "CmdOrCtrl+\\",
+    },
+
+    // Edit/clipboard commands
     {
         action: KeyboardAction.clipboardCopy,
         accelerator: CopyAccelerator,
@@ -179,16 +191,18 @@ export const KeybindingsForMenu: KeybindingMenuType[] = [
         action: KeyboardAction.editFindClose,
         accelerator: "Esc",
     },
-    // window commands
+
+    // Window commands
     {
-        action: KeyboardAction.windowSplitHorizontally,
-        accelerator: "CmdOrCtrl+-",
+        action: KeyboardAction.windowNew,
+        accelerator: "CmdOrCtrl+N",
     },
     {
-        action: KeyboardAction.windowSplitVertically,
-        accelerator: "CmdOrCtrl+\\",
+        action: KeyboardAction.windowClose,
+        accelerator: "CmdOrCtrl+Shift+W",
     },
-    // view commands
+
+    // View commands
     {
         action: KeyboardAction.viewReload,
         accelerator: "CmdOrCtrl+R",
@@ -197,7 +211,8 @@ export const KeybindingsForMenu: KeybindingMenuType[] = [
         action: KeyboardAction.viewToggleFullScreen,
         accelerator: "CmdOrCtrl+Shift+F",
     },
-    // black screen commands
+
+    // Application commands
     {
         action: KeyboardAction.blackScreenHide,
         accelerator: "CmdOrCtrl+H",
@@ -210,7 +225,8 @@ export const KeybindingsForMenu: KeybindingMenuType[] = [
         action: KeyboardAction.blackScreenHideOthers,
         accelerator: "CmdOrCtrl+Alt+H",
     },
-    // developer
+
+    // Developer commands
     {
         action: KeyboardAction.developerToggleTools,
         accelerator: "CmdOrCtrl+Alt+I",

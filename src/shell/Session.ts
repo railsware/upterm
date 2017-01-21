@@ -38,7 +38,7 @@ export class Session extends EmitterWithUniqueID {
         const job = new Job(this);
 
         job.once("end", () => {
-            const electronWindow = remote.BrowserWindow.getAllWindows()[0];
+            const electronWindow = remote.getCurrentWindow();
 
             if (remote.app.dock && !electronWindow.isFocused()) {
                 remote.app.dock.bounce("informational");

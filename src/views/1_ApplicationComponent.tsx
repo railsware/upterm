@@ -9,33 +9,77 @@ import {saveWindowBounds} from "./ViewUtils";
 import {StatusBarComponent} from "./StatusBarComponent";
 import {PaneTree, Pane} from "../utils/PaneTree";
 import {SearchComponent} from "./SearchComponent";
+import {SplitDirection} from "../Enums";
 
 export class ApplicationComponent extends React.Component<{}, {}> {
     private tabs: Tab[] = [];
     private focusedTabIndex: number;
+    private electronWindow: Electron.BrowserWindow = remote.getCurrentWindow();
 
     constructor(props: {}) {
         super(props);
-        const electronWindow = remote.BrowserWindow.getAllWindows()[0];
 
         this.addTab(false);
 
-        electronWindow
-            .on("move", () => saveWindowBounds(electronWindow))
+        this.electronWindow
+            .on("move", () => saveWindowBounds(this.electronWindow))
             .on("resize", () => {
-                saveWindowBounds(electronWindow);
+                saveWindowBounds(this.electronWindow);
                 this.recalculateDimensions();
-            })
-            .webContents
+            });
+
+        this.electronWindow.webContents
             .on("devtools-opened", () => this.recalculateDimensions())
             .on("devtools-closed", () => this.recalculateDimensions());
 
-        ipcRenderer.on("change-working-directory", (_event: Electron.IpcRendererEvent, directory: string) =>
-            this.focusedTab.focusedPane.session.directory = directory,
-        );
+        ipcRenderer
+            // Tabs actions
+            .on("change-working-directory", (_event: Electron.IpcRendererEvent, directory: string) =>
+                this.focusedTab.focusedPane.session.directory = directory,
+            )
+            .on("add-tab", () => this.addTab())
+            .on("close-focused-tab", () => {
+                this.closeFocusedTab();
+                this.forceUpdate();
+            })
+            .on("activate-previous-tab", () => {
+                this.activatePreviousTab();
+                this.forceUpdate();
+            })
+            .on("activate-next-tab", () => {
+                this.activateNextTab();
+                this.forceUpdate();
+            })
+
+            // Panels actions
+            .on("split-horizontally", () => {
+                window.focusedTab.addPane(SplitDirection.Horizontal);
+                this.forceUpdate();
+            })
+            .on("split-vertically", () => {
+                window.focusedTab.addPane(SplitDirection.Vertical);
+                this.forceUpdate();
+            })
+            .on("activate-previous-pane", () => {
+                window.focusedTab.activatePreviousPane();
+                this.forceUpdate();
+            })
+            .on("activate-next-pane", () => {
+                window.focusedTab.activateNextPane();
+                this.forceUpdate();
+            })
+            .on("close-focused-pane", () => {
+                this.closeFocusedPane();
+                this.forceUpdate();
+            })
+
+            // Content actions
+            .on("focus-search-input", () => {
+                (document.querySelector("input[type=search]") as HTMLInputElement).select();
+            });
 
         window.onbeforeunload = () => {
-            electronWindow
+            this.electronWindow
                 .removeAllListeners()
                 .webContents
                 .removeAllListeners("devtools-opened")
@@ -182,7 +226,7 @@ export class ApplicationComponent extends React.Component<{}, {}> {
         _.pull(this.tabs, tab);
 
         if (this.tabs.length === 0 && quit) {
-            ipcRenderer.send("quit");
+            this.electronWindow.close();
         } else if (this.tabs.length === this.focusedTabIndex) {
             this.focusedTabIndex -= 1;
         }

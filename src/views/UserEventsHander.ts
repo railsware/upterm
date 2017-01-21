@@ -6,9 +6,7 @@ import {Tab} from "./TabComponent";
 import {Status, KeyboardAction} from "../Enums";
 import {isModifierKey} from "./ViewUtils";
 import {SearchComponent} from "./SearchComponent";
-import {remote} from "electron";
-import {buildMenuTemplate} from "./menu/Menu";
-import {isKeybindingForEvent} from "./keyevents/Keybindings";
+import {isKeybindingForEvent} from "../Keybindings";
 
 export type UserEvent = KeyboardEvent | ClipboardEvent;
 
@@ -208,9 +206,3 @@ export const handleUserEvent = (
 function isInProgress(job: JobComponent): boolean {
     return job.props.job.status === Status.InProgress;
 }
-
-const app = remote.app;
-const browserWindow = remote.BrowserWindow.getAllWindows()[0];
-const template = buildMenuTemplate(app, browserWindow);
-
-remote.Menu.setApplicationMenu(remote.Menu.buildFromTemplate(template));

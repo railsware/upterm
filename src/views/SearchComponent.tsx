@@ -4,7 +4,7 @@ import {remote} from "electron";
 import {fontAwesome} from "./css/FontAwesome";
 
 export class SearchComponent extends React.Component<{}, {}> {
-    private webContents: Electron.WebContents = remote.BrowserWindow.getAllWindows()[0].webContents;
+    private webContents: Electron.WebContents = remote.getCurrentWindow().webContents;
 
     constructor() {
         super();
