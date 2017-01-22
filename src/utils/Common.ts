@@ -1,4 +1,4 @@
-import {walk} from "fs-extra";
+import * as walk from "klaw";
 import * as Path from "path";
 import * as i from "./../Interfaces";
 import * as e from "./../Enums";

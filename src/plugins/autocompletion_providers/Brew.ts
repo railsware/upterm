@@ -337,7 +337,7 @@ let getProvider = (context: AutocompletionContext, commandData: BrewCommandData[
     }
 
     const name = argument.value;
-    const data: BrewCommandData = find(commandData, {name});
+    const data = find(commandData, {name});
 
     if (data && data.commands) {
         return getProvider(context, data.commands, argIndex + 1);
