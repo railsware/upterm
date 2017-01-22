@@ -65,6 +65,7 @@ export function executeCommand(
             ...execOptions,
             env: _.extend({PWD: directory}, process.env),
             cwd: directory,
+            shell: "/bin/bash",
         };
 
         ChildProcess.exec(`${command} ${args.join(" ")}`, options, (error, output) => {
