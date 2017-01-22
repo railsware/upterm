@@ -58,13 +58,13 @@ class ShellExecutionStrategy extends CommandExecutionStrategy {
 
     startExecution() {
         return new Promise((resolve, reject) => {
-            this.job.command = new PTY(
+            this.job.setPty(new PTY(
                 this.job.prompt.expandedTokens.map(token => token.escapedValue),
                 this.job.environment.toObject(),
                 this.job.dimensions,
                 (data: string) => this.job.parser.parse(data),
                 (exitCode: number) => exitCode === 0 ? resolve() : reject(new NonZeroExitCodeError(exitCode.toString())),
-            );
+            ));
         });
     }
 }
@@ -76,27 +76,27 @@ class WindowsShellExecutionStrategy extends CommandExecutionStrategy {
 
     startExecution() {
         return new Promise((resolve) => {
-            this.job.command = new PTY(
+            this.job.setPty(new PTY(
                 [
                     this.cmdPath,
-                    <EscapedShellWord>"/s",
-                    <EscapedShellWord>"/c",
+                    "/s" as EscapedShellWord,
+                    "/c" as EscapedShellWord,
                     ...this.job.prompt.expandedTokens.map(token => token.escapedValue),
                 ],
                 this.job.environment.toObject(), this.job.dimensions,
                 (data: string) => this.job.parser.parse(data),
                 (_exitCode: number) => resolve(),
-            );
+            ));
         });
     }
 
     private get cmdPath(): EscapedShellWord {
         if (this.job.environment.has("comspec")) {
-            return <EscapedShellWord>this.job.environment.get("comspec");
+            return this.job.environment.get("comspec") as EscapedShellWord;
         } else if (this.job.environment.has("SystemRoot")) {
-            return <EscapedShellWord>Path.join(this.job.environment.get("SystemRoot"), "System32", "cmd.exe");
+            return Path.join(this.job.environment.get("SystemRoot"), "System32", "cmd.exe") as EscapedShellWord;
         } else {
-            return <EscapedShellWord>"cmd.exe";
+            return "cmd.exe" as EscapedShellWord;
         }
     }
 }
