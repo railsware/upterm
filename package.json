@@ -62,7 +62,7 @@
     "preinstall": "npm prune",
     "postinstall": "electron-rebuild",
     "pack": "npm run compile && build",
-    "release": "build --publish always --prerelease",
+    "release": "build --publish always",
     "electron": "electron .",
     "prestart": "npm install && npm run compile",
     "start": "bash housekeeping/start.sh",
