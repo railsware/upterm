@@ -54,10 +54,6 @@ declare class AnsiParser {
     parse(data: string): any;
 }
 
-declare module "fs-extra" {
-    export function walk(dirPath: string): NodeJS.ReadableStream;
-}
-
 interface Array<T> {
     includes(value: T): boolean;
 }
