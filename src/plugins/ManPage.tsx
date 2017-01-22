@@ -1,5 +1,4 @@
 import * as React from "react";
-import {Job} from "../shell/Job";
 import {PluginManager} from "../PluginManager";
 import {executeCommand} from "../PTY";
 import {shell} from "electron";
@@ -100,14 +99,13 @@ class HTMLManPageComponent extends React.Component<Props, State> {
     }
 }
 
-PluginManager.registerOutputDecorator({
-    decorate: (job: Job): React.ReactElement<any> => {
-        const match = job.prompt.value.match(/^man\s+([a-zA-Z]\w*)\s*$/);
-        return <HTMLManPageComponent man={(match as string[])[1] as string} />;
+PluginManager.registerCommandInterceptorPlugin({
+    intercept: async({ command }): Promise<React.ReactElement<any>> => {
+        return <HTMLManPageComponent man={command[1]} />;
     },
 
-    isApplicable: (job: Job): boolean => {
+    isApplicable: ({ command }): boolean => {
         // Matches man page with a single arg that isn't a flag.
-        return /^man\s+[a-zA-Z]\w*\s*$/.test(job.prompt.value);
+        return command.length === 2 && command[0] === "man" && !(command[1].startsWith("-"));
     },
 });
