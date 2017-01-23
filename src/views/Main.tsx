@@ -51,7 +51,7 @@ document.addEventListener(
             window.focusedPrompt,
             window.search,
             event,
-        )
+        );
 
         document.body.addEventListener("keydown", userEventHandler, true);
         document.body.addEventListener("paste", userEventHandler, true);
