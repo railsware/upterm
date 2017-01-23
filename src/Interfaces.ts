@@ -76,3 +76,5 @@ export interface TerminalLikeDevice {
     dimensions: Dimensions;
     write: (input: string | KeyboardEvent) => void;
 }
+
+export type UserEvent = KeyboardEvent | ClipboardEvent;
