@@ -1,10 +1,13 @@
 import {KeyboardAction, SplitDirection} from "../../Enums";
 import {remote} from "electron";
 import {getAcceleratorForAction} from "../keyevents/Keybindings";
+import {ApplicationComponent} from "../1_ApplicationComponent";
 
-
-
-export function buildMenuTemplate(app: Electron.App, browserWindow: Electron.BrowserWindow): Electron.MenuItemOptions[] {
+export function buildMenuTemplate(
+    app: Electron.App,
+    browserWindow: Electron.BrowserWindow,
+    application: ApplicationComponent,
+): Electron.MenuItemOptions[] {
     const template: Electron.MenuItemOptions[] = [
         {
             label: "Black Screen",
@@ -118,7 +121,7 @@ export function buildMenuTemplate(app: Electron.App, browserWindow: Electron.Bro
                     label: "New Tab",
                     accelerator: getAcceleratorForAction(KeyboardAction.tabNew),
                     click: () => {
-                        window.application.addTab();
+                        application.addTab();
                     },
                 },
                 {
@@ -128,16 +131,16 @@ export function buildMenuTemplate(app: Electron.App, browserWindow: Electron.Bro
                     label: "Previous",
                     accelerator: getAcceleratorForAction(KeyboardAction.tabPrevious),
                     click: () => {
-                        window.application.activatePreviousTab();
-                        window.application.forceUpdate();
+                        application.activatePreviousTab();
+                        application.forceUpdate();
                     },
                 },
                 {
                     label: "Next",
                     accelerator: getAcceleratorForAction(KeyboardAction.tabNext),
                     click: () => {
-                        window.application.activateNextTab();
-                        window.application.forceUpdate();
+                        application.activateNextTab();
+                        application.forceUpdate();
                     },
                 },
                 {
@@ -147,8 +150,8 @@ export function buildMenuTemplate(app: Electron.App, browserWindow: Electron.Bro
                     label: "Close",
                     accelerator: getAcceleratorForAction(KeyboardAction.tabClose),
                     click: () => {
-                        window.application.closeFocusedTab();
-                        window.application.forceUpdate();
+                        application.closeFocusedTab();
+                        application.forceUpdate();
                     },
                 },
             ],
@@ -161,7 +164,7 @@ export function buildMenuTemplate(app: Electron.App, browserWindow: Electron.Bro
                     accelerator: getAcceleratorForAction(KeyboardAction.windowSplitHorizontally),
                     click: () => {
                         window.focusedTab.addPane(SplitDirection.Horizontal);
-                        window.application.forceUpdate();
+                        application.forceUpdate();
                     },
                 },
                 {
@@ -169,7 +172,7 @@ export function buildMenuTemplate(app: Electron.App, browserWindow: Electron.Bro
                     accelerator: getAcceleratorForAction(KeyboardAction.windowSplitVertically),
                     click: () => {
                         window.focusedTab.addPane(SplitDirection.Vertical);
-                        window.application.forceUpdate();
+                        application.forceUpdate();
                     },
                 },
                 {
@@ -180,7 +183,7 @@ export function buildMenuTemplate(app: Electron.App, browserWindow: Electron.Bro
                     accelerator: getAcceleratorForAction(KeyboardAction.panePrevious),
                     click: () => {
                         window.focusedTab.activatePreviousPane();
-                        window.application.forceUpdate();
+                        application.forceUpdate();
                     },
                 },
                 {
@@ -188,7 +191,7 @@ export function buildMenuTemplate(app: Electron.App, browserWindow: Electron.Bro
                     accelerator: getAcceleratorForAction(KeyboardAction.paneNext),
                     click: () => {
                         window.focusedTab.activateNextPane();
-                        window.application.forceUpdate();
+                        application.forceUpdate();
                     },
                 },
                 {
@@ -198,8 +201,8 @@ export function buildMenuTemplate(app: Electron.App, browserWindow: Electron.Bro
                     label: "Close",
                     accelerator: getAcceleratorForAction(KeyboardAction.paneClose),
                     click: () => {
-                        window.application.closeFocusedPane();
-                        window.application.forceUpdate();
+                        application.closeFocusedPane();
+                        application.forceUpdate();
                     },
                 },
             ],

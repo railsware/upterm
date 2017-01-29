@@ -11,11 +11,7 @@ import {UserEvent} from "../Interfaces";
 import {remote} from "electron";
 import {buildMenuTemplate} from "./menu/Menu";
 
-const app = remote.app;
 const browserWindow = remote.BrowserWindow.getAllWindows()[0];
-const template = buildMenuTemplate(app, browserWindow);
-
-remote.Menu.setApplicationMenu(remote.Menu.buildFromTemplate(template));
 
 document.addEventListener(
     "dragover",
@@ -44,6 +40,9 @@ document.addEventListener(
             <ApplicationComponent/>,
             document.getElementById("react-entry-point"),
         );
+
+        const template = buildMenuTemplate(remote.app, browserWindow, application);
+        remote.Menu.setApplicationMenu(remote.Menu.buildFromTemplate(template));
 
         const userEventHandler = (event: UserEvent) => application.handleUserEvent(
             window.focusedSession,
