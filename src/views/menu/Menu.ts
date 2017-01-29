@@ -6,7 +6,7 @@ import {ApplicationComponent} from "../1_ApplicationComponent";
 export function buildMenuTemplate(
     app: Electron.App,
     browserWindow: Electron.BrowserWindow,
-    application: ApplicationComponent
+    application: ApplicationComponent,
 ): Electron.MenuItemOptions[] {
     const template: Electron.MenuItemOptions[] = [
         {
