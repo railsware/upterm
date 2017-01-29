@@ -343,6 +343,10 @@ export class ApplicationComponent extends React.Component<{}, ApplicationState> 
         );
     }
 
+    focusedTab(): Tab {
+        return this.state.tabs[this.state.focusedTabIndex];
+    }
+
     private renderPanes(tree: PaneTree): JSX.Element {
         if (tree instanceof Pane) {
             const pane = tree;
@@ -369,10 +373,6 @@ export class ApplicationComponent extends React.Component<{}, ApplicationState> 
         for (const tab of this.state.tabs) {
             tab.updateAllPanesDimensions();
         }
-    }
-
-    focusedTab(): Tab {
-        return this.state.tabs[this.state.focusedTabIndex];
     }
 
     private closeTab(tab: Tab, quit = true): void {
