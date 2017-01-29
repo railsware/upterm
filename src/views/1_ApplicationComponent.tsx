@@ -37,7 +37,7 @@ export class ApplicationComponent extends React.Component<{}, ApplicationState> 
             .on("devtools-closed", () => this.recalculateDimensions());
 
         ipcRenderer.on("change-working-directory", (_event: Electron.IpcRendererEvent, directory: string) =>
-            this.focusedTab.focusedPane.session.directory = directory,
+            this.focusedTab().focusedPane.session.directory = directory,
         );
 
         window.onbeforeunload = () => {
@@ -80,7 +80,7 @@ export class ApplicationComponent extends React.Component<{}, ApplicationState> 
     }
 
     closeFocusedTab() {
-        this.closeTab(this.focusedTab);
+        this.closeTab(this.focusedTab());
 
         this.forceUpdate();
     }
@@ -106,10 +106,10 @@ export class ApplicationComponent extends React.Component<{}, ApplicationState> 
     }
 
     closeFocusedPane() {
-        this.focusedTab.closeFocusedPane();
+        this.focusedTab().closeFocusedPane();
 
-        if (this.focusedTab.panes.size === 0) {
-            this.closeTab(this.focusedTab);
+        if (this.focusedTab().panes.size === 0) {
+            this.closeTab(this.focusedTab());
         }
 
         this.forceUpdate();
@@ -337,8 +337,8 @@ export class ApplicationComponent extends React.Component<{}, ApplicationState> 
                     <ul style={css.tabs}>{tabs}</ul>
                     <SearchComponent/>
                 </div>
-                {this.renderPanes(this.focusedTab.panes)}
-                <StatusBarComponent presentWorkingDirectory={this.focusedTab.focusedPane.session.directory}/>
+                {this.renderPanes(this.focusedTab().panes)}
+                <StatusBarComponent presentWorkingDirectory={this.focusedTab().focusedPane.session.directory}/>
             </div>
         );
     }
@@ -347,7 +347,7 @@ export class ApplicationComponent extends React.Component<{}, ApplicationState> 
         if (tree instanceof Pane) {
             const pane = tree;
             const session = pane.session;
-            const isFocused = pane === this.focusedTab.focusedPane;
+            const isFocused = pane === this.focusedTab().focusedPane;
 
             return (
                 <SessionComponent session={session}
@@ -355,7 +355,7 @@ export class ApplicationComponent extends React.Component<{}, ApplicationState> 
                                   isFocused={isFocused}
                                   updateStatusBar={isFocused ? () => this.forceUpdate() : undefined}
                                   focus={() => {
-                                      this.focusedTab.activatePane(pane);
+                                      this.focusedTab().activatePane(pane);
                                       this.forceUpdate();
                                   }}>
                 </SessionComponent>
@@ -371,7 +371,7 @@ export class ApplicationComponent extends React.Component<{}, ApplicationState> 
         }
     }
 
-    private get focusedTab(): Tab {
+    focusedTab(): Tab {
         return this.state.tabs[this.state.focusedTabIndex];
     }
 
