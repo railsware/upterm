@@ -163,7 +163,7 @@ export function buildMenuTemplate(
                     label: "Split Horizontally",
                     accelerator: getAcceleratorForAction(KeyboardAction.windowSplitHorizontally),
                     click: () => {
-                        window.focusedTab.addPane(SplitDirection.Horizontal);
+                        application.focusedTab().addPane(SplitDirection.Horizontal);
                         application.forceUpdate();
                     },
                 },
@@ -171,7 +171,7 @@ export function buildMenuTemplate(
                     label: "Split Vertically",
                     accelerator: getAcceleratorForAction(KeyboardAction.windowSplitVertically),
                     click: () => {
-                        window.focusedTab.addPane(SplitDirection.Vertical);
+                        application.focusedTab().addPane(SplitDirection.Vertical);
                         application.forceUpdate();
                     },
                 },
@@ -182,7 +182,7 @@ export function buildMenuTemplate(
                     label: "Previous",
                     accelerator: getAcceleratorForAction(KeyboardAction.panePrevious),
                     click: () => {
-                        window.focusedTab.activatePreviousPane();
+                        application.focusedTab().activatePreviousPane();
                         application.forceUpdate();
                     },
                 },
@@ -190,7 +190,7 @@ export function buildMenuTemplate(
                     label: "Next",
                     accelerator: getAcceleratorForAction(KeyboardAction.paneNext),
                     click: () => {
-                        window.focusedTab.activateNextPane();
+                        application.focusedTab().activateNextPane();
                         application.forceUpdate();
                     },
                 },
