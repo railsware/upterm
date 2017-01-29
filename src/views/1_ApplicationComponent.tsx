@@ -50,8 +50,6 @@ export class ApplicationComponent extends React.Component<{}, {}> {
 
             this.closeAllTabs();
         };
-
-        window.application = this;
     }
 
     addTab(forceUpdate = true): void {
