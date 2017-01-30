@@ -24,32 +24,35 @@ type ApplicationState = {
 export class ApplicationComponent extends React.Component<{}, ApplicationState> {
     constructor(props: {}) {
         super(props);
-        const electronWindow = remote.BrowserWindow.getAllWindows()[0];
+        // Necessary because "remote" does not exist in electron-mocha tests
+        if (remote) {
+            const electronWindow = remote.BrowserWindow.getAllWindows()[0];
 
-        electronWindow
-            .on("move", () => saveWindowBounds(electronWindow))
-            .on("resize", () => {
-                saveWindowBounds(electronWindow);
-                this.recalculateDimensions();
-            })
-            .webContents
-            .on("devtools-opened", () => this.recalculateDimensions())
-            .on("devtools-closed", () => this.recalculateDimensions());
-
-        ipcRenderer.on("change-working-directory", (_event: Electron.IpcRendererEvent, directory: string) =>
-            this.focusedTab().focusedPane.session.directory = directory,
-        );
-
-        window.onbeforeunload = () => {
             electronWindow
-                .removeAllListeners()
+                .on("move", () => saveWindowBounds(electronWindow))
+                .on("resize", () => {
+                    saveWindowBounds(electronWindow);
+                    this.recalculateDimensions();
+                })
                 .webContents
-                .removeAllListeners("devtools-opened")
-                .removeAllListeners("devtools-closed")
-                .removeAllListeners("found-in-page");
+                .on("devtools-opened", () => this.recalculateDimensions())
+                .on("devtools-closed", () => this.recalculateDimensions());
 
-            this.closeAllTabs();
-        };
+            ipcRenderer.on("change-working-directory", (_event: Electron.IpcRendererEvent, directory: string) =>
+                this.focusedTab().focusedPane.session.directory = directory,
+            );
+
+            window.onbeforeunload = () => {
+                electronWindow
+                    .removeAllListeners()
+                    .webContents
+                    .removeAllListeners("devtools-opened")
+                    .removeAllListeners("devtools-closed")
+                    .removeAllListeners("found-in-page");
+
+                this.closeAllTabs();
+            };
+        }
 
         this.state = {
             tabs: [new Tab(this)],
