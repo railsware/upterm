@@ -31,6 +31,7 @@
     "@types/react": "15.0.1",
     "child-process-promise": "2.2.0",
     "dirStat": "0.0.2",
+    "enzyme": "2.7.1",
     "font-awesome": "4.7.0",
     "fuzzaldrin": "2.1.0",
     "immutable": "3.8.1",
