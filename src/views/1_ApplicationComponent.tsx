@@ -119,7 +119,6 @@ export class ApplicationComponent extends React.Component<{}, ApplicationState> 
     }
 
     handleUserEvent(
-        session: SessionComponent,
         job: JobComponent,
         prompt: PromptComponent,
         search: SearchComponent,
@@ -183,7 +182,7 @@ export class ApplicationComponent extends React.Component<{}, ApplicationState> 
 
         // Console clear
         if (isKeybindingForEvent(event, KeyboardAction.cliClearJobs) && !job.props.job.isInProgress()) {
-            session.props.session.clearJobs();
+            this.focusedTab().focusedPane.session.clearJobs();
 
             event.stopPropagation();
             event.preventDefault();
