@@ -113,6 +113,13 @@ export class Tab {
     }
 
     private get contentSize(): Size {
+        // For tests that are run in electron-mocha
+        if (typeof window === "undefined") {
+            return {
+                width: 0,
+                height: 0,
+            };
+        }
         return {
             width: window.innerWidth,
             height: window.innerHeight - css.titleBarHeight - css.infoPanelHeight - css.outputPadding,
