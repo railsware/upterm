@@ -74,6 +74,7 @@ const applicationGrid = {
     },
     sessions: {
         height: "100%",
+        maxWidth: "100%",
     },
 };
 
@@ -81,9 +82,11 @@ const sessionGrid = {
     container: {
         display: "grid",
         gridTemplateAreas: "'all'",
+        gridTemplateColumns: "100%",
     },
     child: {
         gridArea: "all",
+        maxWidth: "100%",
     },
 };
 
@@ -474,7 +477,6 @@ export const promptWrapper = (status: Status, isSticky: boolean) => {
         styles.width = "100%";
         styles.position = "fixed";
         styles.top = titleBarHeight;
-        styles.height = promptWrapperHeight;
     }
 
     if ([Status.Failure, Status.Interrupted].includes(status)) {
@@ -548,12 +550,13 @@ export const autocompletedPreview = {
     color: lighten(promptBackgroundColor, 15),
 };
 
-export const prompt = (isSticky: boolean) => ({
+export const prompt = {
     ...promptInlineElement,
     color: colors.white,
     zIndex: 2,
-    whiteSpace: isSticky ? "nowrap" : "pre-wrap",
-});
+    whiteSpace: "pre-wrap",
+    wordBreak: "break-word",
+};
 
 export const promptPlaceholder = {
     minHeight: promptWrapperHeight,
