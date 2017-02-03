@@ -31,7 +31,13 @@ export class Empty extends Token {
     }
 }
 
-export class Word extends Token {
+export abstract class StringLiteral extends Token {
+    get value() {
+        return this.raw.trim().slice(1, -1);
+    }
+}
+
+export class Word extends StringLiteral {
     get value() {
         return this.raw.trim().replace(/\\\s/g, " ");
     }
@@ -111,9 +117,21 @@ export class AppendingOutputRedirectionSymbol extends Token {
     }
 }
 
-export abstract class StringLiteral extends Token {
+export class CompositeStringLiteral extends StringLiteral {
+    private tokens: Token[];
+
+    constructor(tokens: Token[]) {
+        let raw = tokens.map(token => token.raw).join("");
+        super(raw, tokens[0].fullStart);
+        this.tokens = tokens;
+    }
+
     get value() {
-        return this.raw.trim().slice(1, -1);
+        return this.tokens.map(token => token.value).join("");
+    }
+
+    get escapedValue() {
+        return this.tokens.map(token => token.escapedValue).join("") as EscapedShellWord;
     }
 }
 
@@ -189,7 +207,7 @@ export function scan(input: string): Token[] {
 
     while (true) {
         if (input.length === 0) {
-            return tokens;
+            return squashLiterals(tokens);
         }
 
         let foundMatch = false;
@@ -208,13 +226,41 @@ export function scan(input: string): Token[] {
 
         if (!foundMatch) {
             tokens.push(new Invalid(input, position));
-            return tokens;
+            return squashLiterals(tokens);
         }
     }
 }
 
+// Find sequences of literals with no spaces between them and squash:
+// they should be one token.
+function squashLiterals(tokens: Token[]): Token[] {
+    let result: Token[] = [];
+    let i: number = 0;
+    while (i < tokens.length) {
+        let currentComposite: Token[] = [];
+        while (i < tokens.length - 1 && shouldSquash(tokens[i], tokens[i + 1])) {
+            currentComposite.push(tokens[i++]);
+        }
+        if (currentComposite.length > 0) {
+            currentComposite.push(tokens[i++]); // last token in the sequence
+            result.push(new CompositeStringLiteral(currentComposite));
+        }
+        if (i < tokens.length) {
+            result.push(tokens[i++]);
+        }
+    }
+    return result;
+}
+
 function concatTokens(left: Token[], right: Token[]): Token[] {
     return left.concat(right);
+}
+
+function shouldSquash(left: Token, right: Token): boolean {
+    return left instanceof StringLiteral
+            && right instanceof StringLiteral
+            && !/\s$/.test(left.raw) // ends with spaces
+            && !/^\s/.test(right.raw); // starts with spaces
 }
 
 export function expandAliases(tokens: Token[], aliases: Aliases): Token[] {

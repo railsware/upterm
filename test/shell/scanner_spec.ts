@@ -1,6 +1,6 @@
 import {expect} from "chai";
 import {
-    scan, Word, DoubleQuotedStringLiteral, SingleQuotedStringLiteral,
+    scan, Word, DoubleQuotedStringLiteral, SingleQuotedStringLiteral, CompositeStringLiteral,
     Pipe, OutputRedirectionSymbol, AppendingOutputRedirectionSymbol, InputRedirectionSymbol, Invalid, Semicolon,
 } from "../../src/shell/Scanner";
 
@@ -46,6 +46,17 @@ describe("scan", () => {
         expect(tokens[1]).to.be.an.instanceof(SingleQuotedStringLiteral);
 
         expect(tokens.map(token => token.value)).to.eql(["prefix", "inside quotes"]);
+    });
+
+    it("doesn't split string literals with no spaces between them", () => {
+        const tokens = scan("echo a'b'\"c\" d");
+
+        expect(tokens.length).to.eq(3);
+        expect(tokens[0]).to.be.an.instanceof(Word);
+        expect(tokens[1]).to.be.an.instanceof(CompositeStringLiteral);
+        expect(tokens[2]).to.be.an.instanceof(Word);
+
+        expect(tokens.map(token => token.value)).to.eql(["echo", "abc", "d"]);
     });
 
     it("doesn't split on an escaped space", () => {
