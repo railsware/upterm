@@ -1,6 +1,5 @@
 import {SessionComponent} from "./2_SessionComponent";
 import {PromptComponent} from "./4_PromptComponent";
-import {JobComponent} from "./3_JobComponent";
 import {TabComponent, TabProps, Tab} from "./TabComponent";
 import * as React from "react";
 import * as _ from "lodash";
@@ -119,25 +118,25 @@ export class ApplicationComponent extends React.Component<{}, ApplicationState> 
     }
 
     handleUserEvent(
-        job: JobComponent,
         prompt: PromptComponent,
         search: SearchComponent,
         event: UserEvent,
     ) {
+        const activeJob = this.focusedTab().focusedPane.session.currentJob;
         // Pasted data
         if (event instanceof ClipboardEvent) {
             if (search.isFocused) {
                 return;
             }
 
-            if (!job.props.job.isInProgress()) {
+            if (!activeJob.isInProgress()) {
                 prompt.focus();
                 event.preventDefault();
                 prompt.appendText(event.clipboardData.getData("text/plain"));
                 return;
             }
 
-            job.props.job.write(event.clipboardData.getData("text/plain"));
+            activeJob.write(event.clipboardData.getData("text/plain"));
 
             event.stopPropagation();
             event.preventDefault();
@@ -146,7 +145,7 @@ export class ApplicationComponent extends React.Component<{}, ApplicationState> 
         }
 
         // Close focused pane
-        if (isKeybindingForEvent(event, KeyboardAction.paneClose) && !job.props.job.isInProgress()) {
+        if (isKeybindingForEvent(event, KeyboardAction.paneClose) && !activeJob.isInProgress()) {
             this.closeFocusedPane();
 
             this.forceUpdate();
@@ -181,7 +180,7 @@ export class ApplicationComponent extends React.Component<{}, ApplicationState> 
         }
 
         // Console clear
-        if (isKeybindingForEvent(event, KeyboardAction.cliClearJobs) && !job.props.job.isInProgress()) {
+        if (isKeybindingForEvent(event, KeyboardAction.cliClearJobs) && !activeJob.isInProgress()) {
             this.focusedTab().focusedPane.session.clearJobs();
 
             event.stopPropagation();
@@ -209,12 +208,12 @@ export class ApplicationComponent extends React.Component<{}, ApplicationState> 
             return;
         }
 
-        if (job.props.job.isRunningPty() && !isModifierKey(event)) {
+        if (activeJob.isRunningPty() && !isModifierKey(event)) {
             // CLI interrupt
             if (isKeybindingForEvent(event, KeyboardAction.cliInterrupt)) {
-                job.props.job.interrupt();
+                activeJob.interrupt();
             } else {
-                job.props.job.write(event);
+                activeJob.write(event);
             }
 
             event.stopPropagation();
@@ -233,7 +232,7 @@ export class ApplicationComponent extends React.Component<{}, ApplicationState> 
             return;
         }
 
-        if (!job.props.job.isInProgress()) {
+        if (!activeJob.isInProgress()) {
             // CLI Delete word
             if (isKeybindingForEvent(event, KeyboardAction.cliDeleteWord)) {
                 prompt.deleteWord();

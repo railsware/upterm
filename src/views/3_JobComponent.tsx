@@ -19,24 +19,12 @@ export class JobComponent extends React.Component<Props, State> {
         this.state = {
             decorate: true,
         };
-
-        // FIXME: find a better design to propagate events.
-        if (this.props.isFocused) {
-            window.focusedJob = this;
-        }
     }
 
     componentDidMount() {
         this.props.job
             .on("data", () => this.forceUpdate())
             .on("status", () => this.forceUpdate());
-    }
-
-    componentDidUpdate() {
-        // FIXME: find a better design to propagate events.
-        if (this.props.isFocused) {
-            window.focusedJob = this;
-        }
     }
 
     render() {
