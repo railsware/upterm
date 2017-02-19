@@ -2,6 +2,7 @@ import {linedOutputOf} from "../PTY";
 import * as Path from "path";
 import * as fs from "fs";
 import * as _ from "lodash";
+import {executeCommand} from "../PTY";
 
 export class Branch {
     constructor(private refName: string, private _isCurrent: boolean) {
@@ -121,12 +122,20 @@ export async function branches({
     remotes,
     tags,
 }: BranchesOptions): Promise<Branch[]> {
+    const currentBranch = await executeCommand(
+        "git",
+        ['"symbolic-ref"', '"--short"', '"-q"', '"HEAD"'],
+        directory)
+        .then(branchName => branchName.trim());
     let lines = await linedOutputOf(
         "git",
         ["for-each-ref", tags ? "refs/tags" : "", "refs/heads", remotes ? "refs/remotes" : "", "--format='%(HEAD)%(refname:short)'"],
         directory,
     );
-    return lines.map(line => new Branch(line.slice(1), line[0] === "*"));
+    return lines.map(line => {
+        const branch = line.slice(1).trim();
+        return new Branch(branch, branch === currentBranch);
+    });
 }
 
 export async function configVariables(directory: string): Promise<ConfigVariable[]> {
