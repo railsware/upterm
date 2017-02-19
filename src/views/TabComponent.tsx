@@ -75,7 +75,13 @@ export class Tab {
         this.focusedPane.session.removeAllListeners();
 
         const focused = this.focusedPane;
-        this._focusedPane = this.panes.previous(focused);
+        const previousPane = this.panes.previous(focused);
+        if (previousPane.session.id === focused.session.id) {
+            // The firse pane was removed, so focus the nextone
+            this._focusedPane = this.panes.next(focused);
+        } else {
+            this._focusedPane = previousPane;
+        }
         this.panes.remove(focused);
     }
 

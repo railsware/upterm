@@ -45,7 +45,6 @@ document.addEventListener(
         remote.Menu.setApplicationMenu(remote.Menu.buildFromTemplate(template));
 
         const userEventHandler = (event: UserEvent) => application.handleUserEvent(
-            window.focusedSession,
             window.focusedJob,
             window.focusedPrompt,
             window.search,
