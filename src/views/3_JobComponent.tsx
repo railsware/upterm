@@ -13,6 +13,8 @@ interface State {
 }
 
 export class JobComponent extends React.Component<Props, State> {
+    private _promptComponent: PromptComponent;
+
     constructor(props: Props) {
         super(props);
 
@@ -25,6 +27,10 @@ export class JobComponent extends React.Component<Props, State> {
         this.props.job
             .on("data", () => this.forceUpdate())
             .on("status", () => this.forceUpdate());
+    }
+
+    promptComponent(): PromptComponent {
+        return this._promptComponent;
     }
 
     render() {
@@ -40,19 +46,22 @@ export class JobComponent extends React.Component<Props, State> {
 
         return (
             <div className={"job"}>
-                <PromptComponent job={this.props.job}
-                                 status={this.props.job.status}
-                                 isFocused={this.props.isFocused}
-                                 showDecorationToggle={!!this.props.job.interceptionResult || canBeDecorated}
-                                 decorateToggler={() => {
-                                     if (this.props.job.interceptionResult) {
-                                         // Re-execute without intercepting
-                                         this.props.job.execute({ allowInterception: false });
-                                     }
-                                     // Show non-decorated output
-                                     this.setState({decorate: !this.state.decorate});
-                                 }}
-                                 isDecorated={this.state.decorate} />
+                <PromptComponent
+                    job={this.props.job}
+                    ref={promptComponent => { this._promptComponent = promptComponent; }}
+                    status={this.props.job.status}
+                    isFocused={this.props.isFocused}
+                    showDecorationToggle={!!this.props.job.interceptionResult || canBeDecorated}
+                    decorateToggler={() => {
+                        if (this.props.job.interceptionResult) {
+                            // Re-execute without intercepting
+                            this.props.job.execute({ allowInterception: false });
+                        }
+                        // Show non-decorated output
+                        this.setState({decorate: !this.state.decorate});
+                    }}
+                    isDecorated={this.state.decorate}
+                 />
                 {buffer}
             </div>
         );

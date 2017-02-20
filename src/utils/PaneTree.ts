@@ -1,5 +1,6 @@
 import {Session} from "../shell/Session";
 import {SplitDirection} from "../Enums";
+import {SessionComponent} from "../views/2_SessionComponent";
 import * as _ from "lodash";
 
 export type PaneTree = Pane | PaneList;
@@ -7,9 +8,18 @@ export type PaneTree = Pane | PaneList;
 export class Pane {
     readonly session: Session;
     readonly size = 1;
+    private _sessionComponent: SessionComponent;
 
     constructor(session: Session) {
         this.session = session;
+    }
+
+    setSessionComponent(component: SessionComponent) {
+        this._sessionComponent = component;
+    }
+
+    sessionComponent(): SessionComponent {
+        return this._sessionComponent;
     }
 }
 

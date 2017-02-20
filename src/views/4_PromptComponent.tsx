@@ -65,11 +65,6 @@ export class PromptComponent extends React.Component<Props, State> {
             suggestions: [],
             isSticky: false,
         };
-
-        // FIXME: find a better design to propagate events.
-        if (this.props.isFocused) {
-            window.focusedPrompt = this;
-        }
     }
 
     componentDidMount() {
@@ -91,11 +86,6 @@ export class PromptComponent extends React.Component<Props, State> {
 
         if (!prevProps.isFocused && this.props.isFocused) {
             this.focus();
-        }
-
-        // FIXME: find a better design to propagate events.
-        if (this.props.isFocused) {
-            window.focusedPrompt = this;
         }
     }
 

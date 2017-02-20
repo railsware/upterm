@@ -18,8 +18,11 @@ const FOOTER_HEIGHT = 50;
 export class SessionComponent extends React.Component<Props, {}> {
     RENDER_JOBS_COUNT = 25;
 
+    private _jobComponents: JobComponent[];
+
     constructor(props: Props) {
         super(props);
+        this._jobComponents = [];
     }
 
     componentDidMount() {
@@ -40,11 +43,18 @@ export class SessionComponent extends React.Component<Props, {}> {
             .on("vcs-data", () => this.props.updateStatusBar && this.props.updateStatusBar());
     }
 
+    activeJobComponent(): JobComponent {
+        return this._jobComponents[this._jobComponents.length - 1];
+    }
+
     render() {
         const jobs = _.takeRight(this.props.session.jobs, this.RENDER_JOBS_COUNT).map((job: Job, index: number) =>
-            <JobComponent key={job.id}
-                          job={job}
-                          isFocused={this.props.isFocused && index === this.props.session.jobs.length - 1}/>,
+            <JobComponent
+                key={job.id}
+                ref={jobComponent => { this._jobComponents[job.id] = jobComponent; }}
+                job={job}
+                isFocused={this.props.isFocused && index === this.props.session.jobs.length - 1}
+            />,
         );
 
         return (
