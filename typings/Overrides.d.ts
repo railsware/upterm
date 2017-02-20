@@ -40,7 +40,6 @@ declare class IntersectionObserver {
 
 interface Window {
     DEBUG: boolean;
-    focusedPrompt: any;
     search: any;
 }
 

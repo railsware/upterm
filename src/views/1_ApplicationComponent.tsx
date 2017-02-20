@@ -1,5 +1,4 @@
 import {SessionComponent} from "./2_SessionComponent";
-import {PromptComponent} from "./4_PromptComponent";
 import {TabComponent, TabProps, Tab} from "./TabComponent";
 import * as React from "react";
 import * as _ from "lodash";
@@ -14,6 +13,7 @@ import {isKeybindingForEvent} from "./keyevents/Keybindings";
 import {KeyboardAction} from "../Enums";
 import {UserEvent} from "../Interfaces";
 import {isModifierKey} from "./ViewUtils";
+import {PromptComponent} from "./4_PromptComponent";
 
 type ApplicationState = {
     tabs: Tab[];
@@ -118,11 +118,11 @@ export class ApplicationComponent extends React.Component<{}, ApplicationState> 
     }
 
     handleUserEvent(
-        prompt: PromptComponent,
         search: SearchComponent,
         event: UserEvent,
     ) {
         const activeJob = this.focusedTab().focusedPane.session.currentJob;
+        const prompt: PromptComponent = this.focusedTab().focusedPane.sessionComponent().activeJobComponent().promptComponent();
         // Pasted data
         if (event instanceof ClipboardEvent) {
             if (search.isFocused) {
@@ -355,14 +355,16 @@ export class ApplicationComponent extends React.Component<{}, ApplicationState> 
             const isFocused = pane === this.focusedTab().focusedPane;
 
             return (
-                <SessionComponent session={session}
-                                  key={session.id}
-                                  isFocused={isFocused}
-                                  updateStatusBar={isFocused ? () => this.forceUpdate() : undefined}
-                                  focus={() => {
-                                      this.focusedTab().activatePane(pane);
-                                      this.forceUpdate();
-                                  }}>
+                <SessionComponent
+                    session={session}
+                    key={session.id}
+                    ref={sessionComponent => { pane.setSessionComponent(sessionComponent); }}
+                    isFocused={isFocused}
+                    updateStatusBar={isFocused ? () => this.forceUpdate() : undefined}
+                    focus={() => {
+                        this.focusedTab().activatePane(pane);
+                        this.forceUpdate();
+                    }}>
                 </SessionComponent>
             );
         } else {
