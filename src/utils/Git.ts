@@ -122,16 +122,19 @@ export async function branches({
     remotes,
     tags,
 }: BranchesOptions): Promise<Branch[]> {
-    const currentBranch = await executeCommand(
+    const promiseCurrentBranch = executeCommand(
         "git",
         ['"symbolic-ref"', '"--short"', '"-q"', '"HEAD"'],
         directory)
         .then(branchName => branchName.trim());
-    let lines = await linedOutputOf(
+    let promiseLines = linedOutputOf(
         "git",
-        ["for-each-ref", tags ? "refs/tags" : "", "refs/heads", remotes ? "refs/remotes" : "", "--format='%(HEAD)%(refname:short)'"],
+        ["for-each-ref", tags ? "refs/tags" : "", "refs/heads",
+         remotes ? "refs/remotes" : "", "--format='%(HEAD)%(refname:short)'"],
         directory,
     );
+    // Wait until the two concurrent promise requests resolve before continuing.
+    let [currentBranch, lines] = await Promise.all([promiseCurrentBranch, promiseLines]);
     return lines.map(line => {
         const branch = line.slice(1).trim();
         return new Branch(branch, branch === currentBranch);
