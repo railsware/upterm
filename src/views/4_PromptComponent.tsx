@@ -2,12 +2,14 @@ import * as _ from "lodash";
 import * as e from "../Enums";
 import * as React from "react";
 import {AutocompleteComponent} from "./AutocompleteComponent";
+import {FloatingMenu} from "./FloatingMenu";
 import DecorationToggleComponent from "./DecorationToggleComponent";
 import {History} from "../shell/History";
 import {stopBubblingUp, getCaretPosition, setCaretPosition} from "./ViewUtils";
 import {Prompt} from "../shell/Prompt";
 import {Job} from "../shell/Job";
 import {Suggestion} from "../plugins/autocompletion_utils/Common";
+import Button from "../plugins/autocompletion_utils/Button";
 import {KeyCode} from "../Enums";
 import {getSuggestions} from "../Autocompletion";
 import * as css from "./css/main";
@@ -31,6 +33,7 @@ interface State {
     caretPositionFromPreviousFocus: number;
     suggestions: Suggestion[];
     isSticky: boolean;
+    showJobMenu: boolean;
 }
 
 
@@ -64,6 +67,7 @@ export class PromptComponent extends React.Component<Props, State> {
             caretPositionFromPreviousFocus: 0,
             suggestions: [],
             isSticky: false,
+            showJobMenu: false,
         };
     }
 
@@ -95,6 +99,7 @@ export class PromptComponent extends React.Component<Props, State> {
         let autocompletedPreview: any;
         let decorationToggle: any;
         let scrollToTop: any;
+        let jobMenuButton: any;
 
         if (this.showAutocomplete()) {
             autocomplete = <AutocompleteComponent suggestions={this.state.suggestions}
@@ -127,6 +132,12 @@ export class PromptComponent extends React.Component<Props, State> {
             </span>;
         }
 
+        jobMenuButton = <span style={{transform: "translateY(-1px)"}}>
+            <Button
+                onClick={() => this.setState({showJobMenu: !this.state.showJobMenu} as State)}
+            >•••</Button>
+        </span>
+
         return <div ref="placeholder" id={this.props.job.id.toString()} style={css.promptPlaceholder}>
             <div style={css.promptWrapper(this.props.status, this.state.isSticky)}>
                 <div style={css.arrow(this.props.status)}>
@@ -154,7 +165,17 @@ export class PromptComponent extends React.Component<Props, State> {
                 <div style={css.actions}>
                     {decorationToggle}
                     {scrollToTop}
+                    {this.props.job.isInProgress() ? jobMenuButton : null}
                 </div>
+                {this.state.showJobMenu ? <FloatingMenu
+                    highlightedIndex={0}
+                    menuItems={[{
+                        text: "Send SIGKILL",
+                        action: () => this.props.job.sendSignal("SIGKILL") ,
+                    }]}
+                    hide={() => this.setState({ showJobMenu: false } as any)}
+                    offsetTop={this.state.offsetTop}
+                /> : null}
             </div>
         </div>;
     }

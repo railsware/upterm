@@ -188,6 +188,21 @@ export const suggestionIcon = {
     backgroundColor: "rgba(0, 0, 0, 0.15)",
 };
 
+export const floatingMenu = {
+    box: (offsetTop: number) => {
+        const shouldDisplayAbove = offsetTop + (suggestionsLimit * suggestionSize) > window.innerHeight;
+        return {
+            position: "absolute",
+            top: shouldDisplayAbove ? "auto" : promptWrapperHeight,
+            bottom: shouldDisplayAbove ? suggestionSize : "auto",
+            right: "20px",
+            boxShadow: defaultShadow,
+            backgroundColor: colors.black,
+            zIndex: 3,
+        }
+    }
+}
+
 export const autocomplete = {
     box: (offsetTop: number, caretPosition: number, hasDescription: boolean) => {
         const shouldDisplayAbove = offsetTop + (suggestionsLimit * suggestionSize) > window.innerHeight;
@@ -594,4 +609,8 @@ export const arrowInner = (status: Status) => {
 export const image = {
     maxHeight: "90vh",
     maxWidth: "100vh",
+};
+
+export const menuButton = {
+    color: "blue",
 };
