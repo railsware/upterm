@@ -22,4 +22,4 @@ echo $BODY
 
 curl --request POST "https://$GH_TOKEN:x-oauth-basic@api.github.com/repos/vshatskyi/black-screen/releases" \
     -H "Content-Type: application/json" \
-    -d "{\"body\": $BODY, \"draft\": false, \"prerelease\": false, \"tag_name\": \"$NEW_VERSION\"}"
+    -d "{\"body\": $BODY, \"tag_name\": \"$NEW_VERSION\", \"name\": \"$NEW_VERSION\"}"
