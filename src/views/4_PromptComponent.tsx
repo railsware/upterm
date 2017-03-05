@@ -267,7 +267,7 @@ export class PromptComponent extends React.Component<Props, State> {
          * Without this line caret position is incorrect when you click on a suggestion
          * because the prompt temporarily loses focus and then restores the previous position.
          */
-        this.state.caretPositionFromPreviousFocus = newCaretPosition;
+        (this.state as any).caretPositionFromPreviousFocus = newCaretPosition;
 
         setCaretPosition(this.commandNode, newCaretPosition);
         this.forceUpdate();
