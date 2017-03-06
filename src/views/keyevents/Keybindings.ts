@@ -195,7 +195,7 @@ export const KeybindingsForMenu: KeybindingMenuType[] = [
     },
     {
         action: KeyboardAction.viewToggleFullScreen,
-        accelerator: "CmdOrCtrl+Shift+F",
+        accelerator: "Ctrl+Cmd+F",
     },
     // black screen commands
     {
