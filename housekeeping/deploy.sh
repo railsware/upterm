@@ -1,6 +1,4 @@
 #!/bin/bash
-set -euxo pipefail
-
 git config user.name "Travis CI"
 git config user.email "travis@travis-ci.com"
 npm version patch -m "Bump version to %s. [ci skip]"
