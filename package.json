@@ -53,9 +53,9 @@
     "@types/mocha": "2.2.39",
     "chai": "3.5.0",
     "devtron": "1.4.0",
-    "electron-builder": "11.4.4",
-    "electron-mocha": "3.3.0",
     "electron": "1.4.13",
+    "electron-builder": "14.5.3",
+    "electron-mocha": "3.3.0",
     "electron-rebuild": "1.5.7",
     "enzyme": "2.7.1",
     "mocha": "3.2.0",
@@ -85,11 +85,7 @@
     "tsc": "tsc"
   },
   "license": "MIT",
-  "directories": {
-    "app": "."
-  },
   "build": {
-    "appId": "com.github.shockone.black-screen",
-    "category": "public.app-category.developer-tools"
+    "appId": "com.github.shockone.black-screen"
   }
 }
