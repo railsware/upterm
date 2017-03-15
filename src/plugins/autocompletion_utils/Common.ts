@@ -386,3 +386,24 @@ export const commandWithSubcommands = (subCommands: SubcommandConfig[]) => {
         return [];
     };
 };
+
+export const combineShortFlags = (suggestionsProvider: AutocompletionProvider) => {
+    return async (context: AutocompletionContext) => {
+        const token = context.argument.value;
+        const reShortFlag = new RegExp(/^\-[a-zA-Z]$/);
+        const reShortFlags = new RegExp(/^\-[a-zA-Z]+$/);
+        const suggestions = await suggestionsProvider(context);
+        if (reShortFlags.test(token)) {
+            return suggestions
+                    .filter(s =>
+                        reShortFlag.test(s.value) && !token.includes(s.value.slice(1))
+                            && s.withSpace)
+                    .map(s =>
+                        new Suggestion({value: token + s.value.slice(1),
+                            displayValue: s.displayValue, description: s.description,
+                            style: s.style}));
+        } else {
+            return suggestions;
+        }
+    };
+};
