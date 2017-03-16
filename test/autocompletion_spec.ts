@@ -36,7 +36,7 @@ describe("Autocompletion suggestions", () => {
     });
 
     it("wraps file names in quotes if necessary", async() => {
-        expect(await anyFilesSuggestions("fil", join(__dirname, "test_files"))).to.eql([{
+        expect(await anyFilesSuggestions("fil", join(__dirname, "test_files", "file_names_test"))).to.eql([{
             attributes: {
                 displayValue: "file\\ with\\ brackets\\(\\)",
                 promptSerializer: noEscapeSpacesPromptSerializer,

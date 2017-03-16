@@ -102,13 +102,15 @@ export class PromptComponent extends React.Component<Props, State> {
         let jobMenuButton: any;
 
         if (this.showAutocomplete()) {
-            autocomplete = <AutocompleteComponent suggestions={this.state.suggestions}
-                                                  offsetTop={this.state.offsetTop}
-                                                  caretPosition={getCaretPosition(this.commandNode)}
-                                                  onSuggestionHover={index => this.setState({...this.state, highlightedSuggestionIndex: index})}
-                                                  onSuggestionClick={this.applySuggestion.bind(this)}
-                                                  highlightedIndex={this.state.highlightedSuggestionIndex}
-                                                  ref="autocomplete"/>;
+            autocomplete = <AutocompleteComponent
+                suggestions={this.state.suggestions}
+                offsetTop={this.state.offsetTop}
+                caretPosition={getCaretPosition(this.commandNode)}
+                onSuggestionHover={index => this.setState({...this.state, highlightedSuggestionIndex: index})}
+                onSuggestionClick={this.applySuggestion.bind(this)}
+                highlightedIndex={this.state.highlightedSuggestionIndex}
+                ref="autocomplete"
+            />;
             const completed = this.valueWithCurrentSuggestion;
             if (completed.trim() !== this.prompt.value && completed.startsWith(this.prompt.value)) {
                 autocompletedPreview = <div style={css.autocompletedPreview}>{completed}</div>;
@@ -132,11 +134,11 @@ export class PromptComponent extends React.Component<Props, State> {
             </span>;
         }
 
-        jobMenuButton = <span style={{transform: "translateY(-1px)"}}>
+        jobMenuButton = <span style={{transform: "translateY(-1px)"}} className="jobMenu">
             <Button
                 onClick={() => this.setState({showJobMenu: !this.state.showJobMenu} as State)}
             >•••</Button>
-        </span>
+        </span>;
 
         return <div ref="placeholder" id={this.props.job.id.toString()} style={css.promptPlaceholder}>
             <div style={css.promptWrapper(this.props.status, this.state.isSticky)}>
@@ -165,17 +167,20 @@ export class PromptComponent extends React.Component<Props, State> {
                 <div style={css.actions}>
                     {decorationToggle}
                     {scrollToTop}
-                    {this.props.job.isInProgress() ? jobMenuButton : null}
+                    {this.props.job.isInProgress() ? jobMenuButton : undefined}
                 </div>
                 {this.state.showJobMenu ? <FloatingMenu
                     highlightedIndex={0}
                     menuItems={[{
                         text: "Send SIGKILL",
-                        action: () => this.props.job.sendSignal("SIGKILL") ,
+                        action: () => this.props.job.sendSignal("SIGKILL"),
+                    }, {
+                        text: "Send SIGTERM",
+                        action: () => this.props.job.sendSignal("SIGTERM"),
                     }]}
                     hide={() => this.setState({ showJobMenu: false } as any)}
                     offsetTop={this.state.offsetTop}
-                /> : null}
+                /> : undefined}
             </div>
         </div>;
     }

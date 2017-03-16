@@ -1,5 +1,6 @@
 import * as React from "react";
 import * as css from "./css/main";
+import {fontAwesome} from "./css/FontAwesome";
 
 interface MenuItemProps {
     suggestion: string;
@@ -13,8 +14,10 @@ const MenuItem = ({suggestion, onHover, onClick, isHighlighted}: MenuItemProps) 
         style={css.autocomplete.item(isHighlighted)}
         onMouseOver={onHover}
         onClick={onClick}
+        className="floatingMenuItem"
     >
-        <span>{suggestion}</span>
+        <i style={css.suggestionIcon as any}>{fontAwesome.times}</i>
+        <span style={css.autocomplete.value}>{suggestion}</span>
     </li>;
 
 export interface MenuItemData {
@@ -54,10 +57,8 @@ export class FloatingMenu extends React.Component<Props, State> {
             isHighlighted={index === this.state.highlightedIndex}
         />);
 
-        return (
-            <div style={css.floatingMenu.box(this.props.offsetTop)}>
-                <ul style={css.autocomplete.suggestionsList}>{suggestionViews}</ul>
-            </div>
-        );
+        return <div style={css.floatingMenu.box(this.props.offsetTop)}>
+            <ul style={css.autocomplete.suggestionsList}>{suggestionViews}</ul>
+        </div>;
     }
 }

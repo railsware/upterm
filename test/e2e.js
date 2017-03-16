@@ -1,5 +1,6 @@
 const {Application} = require("spectron");
 const {expect} = require("chai");
+const {join} = require("path");
 
 const timeout = 50000;
 
@@ -30,5 +31,24 @@ describe("application launch", function () {
         then((output) => {
             expect(output[0]).to.contain("expected-text");
         });
-    })
+    });
+
+    it("send signals via button", function () {
+        return app.client.
+        waitUntilWindowLoaded().
+        waitForExist(".prompt", timeout).
+        setValue(".prompt", `node ${join(__dirname, "test_files", "print_on_sigterm.js")}\n`).
+        waitForExist(".jobMenu", timeout).
+        click(".jobMenu").
+        waitForExist(".floatingMenuItem").
+        click(".floatingMenuItem:last-of-type").
+        click(".jobMenu").
+        waitForExist(".floatingMenuItem").
+        click(".floatingMenuItem:first-of-type").
+        waitForExist(".prompt[contenteditable=true]").
+        getText(".job .output").
+        then(output => {
+            expect(output[0]).to.eql('Received SIGTERM');
+        });
+    });
 });
