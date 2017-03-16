@@ -14,7 +14,7 @@ const SuggestionComponent = ({suggestion, onHover, onClick, isHighlighted}: Sugg
         onMouseOver={onHover}
         onClick={onClick}>
 
-        <i style={{...css.suggestionIcon, ...suggestion.style.css} as any} dangerouslySetInnerHTML={{__html: suggestion.style.value}}/>
+        <i style={{...css.suggestionIcon, ...suggestion.style.css} as any}>{suggestion.style.value}</i>
         <span style={css.autocomplete.value}>{suggestion.displayValue}</span>
         <span style={css.autocomplete.synopsis}>{suggestion.synopsis}</span>
     </li>;
@@ -32,11 +32,13 @@ interface AutocompleteProps {
 export class AutocompleteComponent extends React.Component<AutocompleteProps, {}> {
     render() {
         const suggestionViews = this.props.suggestions.map((suggestion, index) =>
-            <SuggestionComponent suggestion={suggestion}
-                                 onHover={() => this.props.onSuggestionHover(index)}
-                                 onClick={this.props.onSuggestionClick}
-                                 key={index}
-                                 isHighlighted={index === this.props.highlightedIndex}/>,
+            <SuggestionComponent
+                suggestion={suggestion}
+                onHover={() => this.props.onSuggestionHover(index)}
+                onClick={this.props.onSuggestionClick}
+                key={index}
+                isHighlighted={index === this.props.highlightedIndex}
+            />,
         );
 
         const suggestionDescription = this.props.suggestions[this.props.highlightedIndex].description;

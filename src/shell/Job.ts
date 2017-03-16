@@ -175,6 +175,12 @@ export class Job extends EmitterWithUniqueID implements TerminalLikeDevice {
         }
     }
 
+    sendSignal(signal: string): void {
+        if (this.pty) {
+            this.pty.kill(signal);
+        }
+    }
+
     winch(): void {
         if (this.pty && this.status === Status.InProgress) {
             this.pty.dimensions = this.dimensions;

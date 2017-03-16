@@ -188,6 +188,25 @@ export const suggestionIcon = {
     backgroundColor: "rgba(0, 0, 0, 0.15)",
 };
 
+export const floatingMenu = {
+    box: (offsetTop: number) => {
+        // TODO: Make this be less magic. Use a computation
+        // that is based on the number of items in the menu.
+        // Also, should unify this with AutoocompleteMenu
+        const shouldDisplayAbove = offsetTop + 100 > window.innerHeight;
+        return {
+            position: "absolute",
+            top: shouldDisplayAbove ? "auto" : promptWrapperHeight,
+            bottom: shouldDisplayAbove ? suggestionSize : "auto",
+            minWidth: 300,
+            right: "20px",
+            boxShadow: defaultShadow,
+            backgroundColor: colors.black,
+            zIndex: 3,
+        };
+    },
+};
+
 export const autocomplete = {
     box: (offsetTop: number, caretPosition: number, hasDescription: boolean) => {
         const shouldDisplayAbove = offsetTop + (suggestionsLimit * suggestionSize) > window.innerHeight;
@@ -594,4 +613,8 @@ export const arrowInner = (status: Status) => {
 export const image = {
     maxHeight: "90vh",
     maxWidth: "100vh",
+};
+
+export const menuButton = {
+    color: "blue",
 };
