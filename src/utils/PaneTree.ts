@@ -77,6 +77,11 @@ export abstract class PaneList {
         }
     }
 
+    /**
+     * Returns the pane previous to the 'pane' argument provided.
+     * @param {Pane} pane The reference pane.
+     * @returns {Pane}
+     */
     previous(pane: Pane): Pane {
         const firstPaneIndex = 0;
         const lastPaneIndex = this.size - 1;
@@ -102,6 +107,11 @@ export abstract class PaneList {
         return previous;
     }
 
+    /**
+     * Returns the pane next after the 'pane' argument provided.
+     * @param {Pane} pane The reference pane.
+     * @returns {Pane}
+     */
     next(pane: Pane): Pane {
         const firstPaneIndex = 0;
         const lastPaneIndex = this.size - 1;
