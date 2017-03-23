@@ -78,6 +78,8 @@ export abstract class PaneList {
     }
 
     previous(pane: Pane): Pane {
+        const firstPaneIndex = 0;
+        const lastPaneIndex = this.size - 1;
         let paneIndex = 0;
 
         this.forEach((current, index) => {
@@ -89,7 +91,10 @@ export abstract class PaneList {
         let previous = pane;
 
         this.forEach((current, index) => {
-            if (index === paneIndex - 1) {
+            if (paneIndex === firstPaneIndex) {
+                if (index === lastPaneIndex)
+                    previous = current;
+            } else if (index === paneIndex - 1) {
                 previous = current;
             }
         });
@@ -98,6 +103,8 @@ export abstract class PaneList {
     }
 
     next(pane: Pane): Pane {
+        const firstPaneIndex = 0;
+        const lastPaneIndex = this.size - 1;
         let paneIndex = 0;
 
         this.forEach((current, index) => {
@@ -109,7 +116,10 @@ export abstract class PaneList {
         let next = pane;
 
         this.forEach((current, index) => {
-            if (index === paneIndex + 1) {
+            if (paneIndex === lastPaneIndex) {
+                if (index === firstPaneIndex)
+                    next = current;
+            } else if (index === paneIndex + 1) {
                 next = current;
             }
         });
