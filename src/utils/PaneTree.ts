@@ -83,28 +83,21 @@ export abstract class PaneList {
      * @returns {Pane}
      */
     previous(pane: Pane): Pane {
-        const firstPaneIndex = 0;
-        const lastPaneIndex = this.size - 1;
         let paneIndex = 0;
+        let panes: Pane[] = [];
 
-        this.forEach((current, index) => {
-            if (pane === current) {
+        this.forEach((currentPane, index) => {
+            panes.push(currentPane);
+            if (pane === currentPane) {
                 paneIndex = index;
             }
         });
 
-        let previous = pane;
-
-        this.forEach((current, index) => {
-            if (paneIndex === firstPaneIndex) {
-                if (index === lastPaneIndex)
-                    previous = current;
-            } else if (index === paneIndex - 1) {
-                previous = current;
-            }
-        });
-
-        return previous;
+        if (paneIndex === 0) {
+            return panes[panes.length - 1];
+        } else {
+            return panes[paneIndex - 1];
+        }
     }
 
     /**
@@ -113,28 +106,21 @@ export abstract class PaneList {
      * @returns {Pane}
      */
     next(pane: Pane): Pane {
-        const firstPaneIndex = 0;
-        const lastPaneIndex = this.size - 1;
         let paneIndex = 0;
+        let panes: Pane[] = [];
 
-        this.forEach((current, index) => {
-            if (pane === current) {
+        this.forEach((currentPane, index) => {
+            panes.push(currentPane);
+            if (pane === currentPane) {
                 paneIndex = index;
             }
         });
 
-        let next = pane;
-
-        this.forEach((current, index) => {
-            if (paneIndex === lastPaneIndex) {
-                if (index === firstPaneIndex)
-                    next = current;
-            } else if (index === paneIndex + 1) {
-                next = current;
-            }
-        });
-
-        return next;
+        if (paneIndex === panes.length - 1) {
+            return panes[0];
+        } else {
+            return panes[paneIndex + 1];
+        }
     }
 
     protected abstract insertBelow(position: number, pane: Pane): void;
