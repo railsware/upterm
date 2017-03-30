@@ -77,6 +77,10 @@ export class Suggestion {
         return this.attributes.space || false;
     }
 
+    clone(): Suggestion {
+        return new Suggestion({...this.attributes});
+    }
+
     withValue(value: string): this {
         this.attributes.value = value;
         return this;

@@ -28,6 +28,7 @@ export interface PreliminaryAutocompletionContext {
     readonly environment: Environment;
     readonly historicalPresentDirectoriesStack: OrderedSet<string>;
     readonly aliases: Aliases;
+    readonly autocompletionProviderFor: (commandName: string) => AutocompletionProvider;
 }
 
 export interface AutocompletionContext extends PreliminaryAutocompletionContext {

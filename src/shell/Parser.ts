@@ -5,7 +5,6 @@ import {commandDescriptions} from "../plugins/autocompletion_providers/Executabl
 import {executablesInPaths, mapObject} from "../utils/Common";
 import {loginShell} from "../utils/Shell";
 import {PreliminaryAutocompletionContext} from "../Interfaces";
-import {PluginManager} from "../PluginManager";
 import {Aliases} from "./Aliases";
 import combine from "../plugins/autocompletion_utils/Combine";
 import {
@@ -15,6 +14,7 @@ import {
     environmentVariableSuggestions,
     executableFilesSuggestions,
 } from "../plugins/autocompletion_utils/Common";
+import {OrderedSet} from "../utils/OrderedSet";
 
 
 export abstract class ASTNode {
@@ -24,7 +24,7 @@ export abstract class ASTNode {
 }
 
 abstract class LeafNode extends ASTNode {
-    constructor(private token: Scanner.Token) {
+    constructor(readonly token: Scanner.Token) {
         super();
     }
 
@@ -319,20 +319,51 @@ export class CommandWord extends LeafNode {
     async suggestions({
         environment,
         aliases,
+        autocompletionProviderFor,
     }: PreliminaryAutocompletionContext): Promise<Suggestion[]> {
+        if (this.followingSpaces) {
+            // User is about to enter an argument. Use argument suggestions.
+            const argumentNode = new Argument(new Scanner.Empty(), new Command([this.token]), 1);
+            const argumentSuggestions = await argumentNode.suggestions({
+                environment,
+                aliases,
+                autocompletionProviderFor,
+                historicalPresentDirectoriesStack: new OrderedSet<string>(),
+            });
+            return argumentSuggestions.map(suggestion => suggestion.clone().withValue(this.raw + suggestion.value));
+        }
         if (this.value.length === 0) {
             return [];
         }
-
-        const relativeExecutablesSuggestions = await executableFilesSuggestions(this.value, environment.pwd);
         const executables = await executablesInPaths(environment.path);
 
-        return [
-            ...mapObject(aliases.toObject(), (key, value) => new Suggestion({value: key, description: value, style: styles.alias, space: true})),
-            ...loginShell.preCommandModifiers.map(modifier => new Suggestion({value: modifier, style: styles.func, space: true})),
-            ...executables.map(name => new Suggestion({value: name, description: commandDescriptions[name] || "", style: styles.executable, space: true})),
+        const aliasSuggestions = mapObject(aliases.toObject(), (key, value) => new Suggestion({
+            value: key,
+            description: value,
+            style: styles.alias,
+            space: true,
+        }));
+        const preCommandModifierSuggestions = loginShell.preCommandModifiers.map(modifier => new Suggestion({
+            value: modifier,
+            style: styles.func,
+            space: true,
+        }));
+        const executableSuggestions = executables.map(name => new Suggestion({
+            value: name,
+            description: commandDescriptions[name] || "",
+            style: styles.executable,
+            space: true,
+        }));
+        const relativeExecutablesSuggestions = await executableFilesSuggestions(this.value, environment.pwd);
+
+        const allSuggestions = [
+            ...aliasSuggestions,
+            ...preCommandModifierSuggestions,
+            ...executableSuggestions,
             ...relativeExecutablesSuggestions,
         ];
+
+        return allSuggestions;
     }
 }
 
@@ -366,7 +397,7 @@ export class Argument extends LeafNode {
         const argument = argumentOfExpandedAST(this, context.aliases);
         const provider = combine([
             environmentVariableSuggestions,
-            PluginManager.autocompletionProviderFor(argument.command.commandWord!.value),
+            context.autocompletionProviderFor(argument.command.commandWord!.value),
         ]);
 
         return provider({...context, argument: argument});
