@@ -222,10 +222,10 @@ const filesSuggestions = (filter: (info: FileInfo) => boolean) => async(tokenVal
     const directoryPath = resolveDirectory(directory, tokenDirectory);
     const stats = await statsIn(directoryPath);
 
-    return await Promise.all(stats
+    return stats
         .filter(info => info.name.startsWith(".") ? basePath.startsWith(".") : true)
         .filter(info => info.stat.isDirectory() || filter(info))
-        .map(async info => {
+        .map(info => {
             const escapedName: string = escapeFilePath(info.name);
 
             if (info.stat.isDirectory()) {
@@ -243,8 +243,7 @@ const filesSuggestions = (filter: (info: FileInfo) => boolean) => async(tokenVal
                     promptSerializer: noEscapeSpacesPromptSerializer,
                 });
             }
-        }),
-    );
+        });
 };
 
 const filesSuggestionsProvider =
