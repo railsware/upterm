@@ -335,6 +335,10 @@ export function mapObject<T, R>(object: Dictionary<T>, mapper: (key: string, val
     return result;
 }
 
+export function escapeFilePath(unescaped: string): string {
+  return unescaped.replace(/([\s'"\[\]<>#$%^&*()])/g, "\\$1");
+}
+
 const baseConfigDirectory = Path.join(homeDirectory, ".black-screen");
 export const presentWorkingDirectoryFilePath = Path.join(baseConfigDirectory, "presentWorkingDirectory");
 export const historyFilePath = Path.join(baseConfigDirectory, "history");
