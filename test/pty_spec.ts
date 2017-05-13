@@ -8,7 +8,7 @@ describe("PTY", () => {
         let output = "";
         const tokens = scan("echo '$('");
 
-        new PTY(
+        return new PTY(
             tokens.map(token => token.escapedValue),
             process.env,
             {columns: 80, rows: 30},

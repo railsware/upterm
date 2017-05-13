@@ -16,7 +16,7 @@ const buttonStyles = (color: string) => ({
 
 type ButtonProps = {
   onClick: () => void;
-  children?: React.ReactElement<any>;
+  children: string;
   color?: string;
 };
 

@@ -228,5 +228,5 @@ export class Job extends EmitterWithUniqueID implements TerminalLikeDevice {
     }
 
     private throttledDataEmitter = () =>
-        this._screenBuffer.size < ScreenBuffer.hugeOutputThreshold ? this.frequentDataEmitter() : this.rareDataEmitter();
+        this._screenBuffer.size < ScreenBuffer.hugeOutputThreshold ? this.frequentDataEmitter() : this.rareDataEmitter()
 }

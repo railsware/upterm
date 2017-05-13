@@ -6,6 +6,7 @@ import {Attributes} from "../../Interfaces";
 import {suggestionsLimit} from "../../Autocompletion";
 import {CSSObject, Px, Fr} from "./definitions";
 import {ColumnList, PaneList} from "../../utils/PaneTree";
+import {CSSProperties} from "react";
 
 export {toDOMString} from "./functions";
 
@@ -163,7 +164,7 @@ export const row = (jobStatus: Status, activeScreenBufferType: ScreenBufferType)
     return style;
 };
 
-export const autocompletionDescription = {
+export const autocompletionDescription: CSSProperties = {
     display: "block",
     boxShadow: "0 4px 8px 1px rgba(0, 0, 0, 0.3)",
     position: "absolute",
@@ -189,7 +190,7 @@ export const suggestionIcon = {
 };
 
 export const floatingMenu = {
-    box: (offsetTop: number) => {
+    box: (offsetTop: number): CSSProperties => {
         // TODO: Make this be less magic. Use a computation
         // that is based on the number of items in the menu.
         // Also, should unify this with AutoocompleteMenu
@@ -208,7 +209,7 @@ export const floatingMenu = {
 };
 
 export const autocomplete = {
-    box: (offsetTop: number, caretPosition: number, hasDescription: boolean) => {
+    box: (offsetTop: number, caretPosition: number, hasDescription: boolean): CSSProperties => {
         const shouldDisplayAbove = offsetTop + (suggestionsLimit * suggestionSize) > window.innerHeight;
 
         return {
@@ -250,11 +251,11 @@ export const autocomplete = {
         overflow: "auto",
         padding: 0,
         margin: 0,
-    },
+    } as CSSProperties,
 };
 
 export const statusBar = {
-    itself: {...infoPanel, display: "flex", overflow: "hidden"},
+    itself: {...infoPanel, display: "flex", overflow: "hidden"} as CSSProperties,
     presentDirectory: {
         flexGrow: 1,
         textOverflow: "ellipsis",
@@ -263,7 +264,7 @@ export const statusBar = {
         overflow: "hidden",
         whiteSpace: "pre",
         paddingRight: "10px",
-    },
+    } as CSSProperties,
     vcsData: {
         flexGrow: 2,
         textAlign: "right",
@@ -271,7 +272,7 @@ export const statusBar = {
         overflow: "hidden",
         whiteSpace: "pre",
         paddingRight: "8px",
-    },
+    } as CSSProperties,
     icon: {...icon, paddingRight: 5, paddingLeft: 5, display: "inline-block"},
     stagedFileChanges: {color: colors.green},
     unstagedFileChanges: {color: colors.red},
@@ -329,13 +330,13 @@ export const tabs = {
 };
 
 const searchInputHeight = titleBarHeight - 6;
-export const search = {
+export const search: CSSProperties = {
     position: "absolute",
     right: 4,
     top: (titleBarHeight - searchInputHeight) / 2,
 };
 
-export const searchIcon = {
+export const searchIcon: CSSProperties = {
     position: "relative",
     left: fontSize,
     top: -1,
@@ -355,7 +356,7 @@ export const searchInput = {
     color: colors.white,
 };
 
-export const tab = (isHovered: boolean, isFocused: boolean) => {
+export const tab = (isHovered: boolean, isFocused: boolean): CSSProperties => {
     return {
         backgroundColor: isHovered ? panelColor : colors.black,
         opacity: (isHovered || isFocused) ? 1 : 0.3,
@@ -368,7 +369,7 @@ export const tab = (isHovered: boolean, isFocused: boolean) => {
     };
 };
 
-export const tabClose = (hover: TabHoverState) => {
+export const tabClose = (hover: TabHoverState): CSSProperties => {
     const margin = titleBarHeight - fontSize;
 
     return {
@@ -418,7 +419,7 @@ export const charGroup = (attributes: Attributes, status: Status) => {
     return styles;
 };
 
-export const outputCut = (status: Status, isHovered: boolean) => ({
+export const outputCut = (status: Status, isHovered: boolean): CSSProperties => ({
     ...jaggedBorder(
         [Status.Failure, Status.Interrupted].includes(status) ? failurize(backgroundColor) : backgroundColor,
         [Status.Failure, Status.Interrupted].includes(status) ? failurize(panelColor) : panelColor,

@@ -360,7 +360,7 @@ export interface SubcommandConfig {
     synopsis?: string;
     style?: Style;
     provider?: AutocompletionProvider;
-};
+}
 
 export const commandWithSubcommands = (subCommands: SubcommandConfig[]) => {
     return async (context: AutocompletionContext) => {

@@ -22,13 +22,13 @@ const errorMessageStyles = {
 interface GitBranchProps {
   branches: Branch[];
   repoRoot: GitDirectoryPath;
-};
+}
 
 interface GitBranchState {
   failReason: string | undefined;
   branches: Branch[];
   failedDeletes: string[];
-};
+}
 
 class GitBranchComponent extends React.Component<GitBranchProps, GitBranchState> {
   constructor(props: GitBranchProps) {

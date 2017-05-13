@@ -67,7 +67,7 @@ interface GitStatusSectionProps {
   sectionType: string;
   files: GitStatusFileProps[];
   color: string;
-};
+}
 
 const GitStatusSection: React.StatelessComponent<GitStatusSectionProps> = ({
   sectionType,

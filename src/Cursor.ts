@@ -5,7 +5,7 @@ export class Cursor {
     constructor(private position: RowColumn = { row: 0, column: 0 }) {
     }
 
-    moveAbsolute(position: PartialRowColumn, homePosition: PartialRowColumn): this {
+    moveAbsolute(position: PartialRowColumn, homePosition: RowColumn): this {
         if (typeof position.column === "number") {
             this.position.column = position.column + homePosition.column;
         }

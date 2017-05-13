@@ -61,12 +61,12 @@ export class ScreenBuffer extends events.EventEmitter {
     }
 
     scrollDown(count: number) {
-        this.storage = this.storage.splice(this._margins.bottom - count + 1, count).toList();
+        this.storage = this.storage.splice((this._margins.bottom || 0) - count + 1, count).toList();
         times(count, () => this.storage = this.storage.splice(this.cursor.row, 0, undefined).toList());
     }
 
     scrollUp(count: number, deletedLine = this._margins.top) {
-        times(count, () => this.storage = this.storage.splice(this._margins.bottom + 1, 0, undefined).toList());
+        times(count, () => this.storage = this.storage.splice((this._margins.bottom || 0) + 1, 0, undefined).toList());
         this.storage = this.storage.splice(deletedLine, count).toList();
     }
 
@@ -176,7 +176,7 @@ export class ScreenBuffer extends events.EventEmitter {
     insertSpaceRight(n: number) {
         if (this.storage.get(this.cursorPosition.row)) {
             let nSpace = "";
-            for (let i = 0; i < n; i++) { nSpace += " "; };
+            for (let i = 0; i < n; i++) { nSpace += " "; }
             this.storage = this.storage.update(
                 this.cursorPosition.row,
                 List<Char>(),
@@ -301,5 +301,5 @@ export class ScreenBuffer extends events.EventEmitter {
 
     private emitData() {
         this.emit("data");
-    };
+    }
 }

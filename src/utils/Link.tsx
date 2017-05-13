@@ -2,7 +2,7 @@ import * as React from "react";
 import * as e from "electron";
 import {CSSObject} from "../views/css/definitions";
 
-const Link: React.StatelessComponent<{ absolutePath: string, children?: React.ReactElement<any>, style?: CSSObject }> = ({
+const Link: React.StatelessComponent<{ absolutePath: string, children: any, style?: CSSObject }> = ({
   absolutePath,
   children,
   style,

@@ -23,7 +23,7 @@ const MenuItem = ({suggestion, onHover, onClick, isHighlighted}: MenuItemProps) 
 export interface MenuItemData {
     text: string;
     action: () => void;
-};
+}
 
 interface Props {
     offsetTop: number;

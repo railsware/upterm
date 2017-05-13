@@ -1,8 +1,3 @@
-declare class Notification {
-    constructor(str: string);
-    constructor(title: string, options: { body: string });
-}
-
 interface IntersectionObserverEntry {
     readonly time: number;
     readonly rootBounds: ClientRect;
@@ -28,14 +23,6 @@ interface IntersectionObserverInit {
     // in the range [0, 1]).  Callback will be invoked when the visible ratio of the observed
     // element crosses a threshold in the list.
     threshold?: number | number[];
-}
-
-declare class IntersectionObserver {
-    constructor(handler: (entries: IntersectionObserverEntry[], observer: IntersectionObserver) => void, options?: IntersectionObserverInit);
-    observe(target: Element): void;
-    unobserve(target: Element): void;
-    disconnect(): void;
-    takeRecords(): IntersectionObserverEntry[];
 }
 
 interface Window {

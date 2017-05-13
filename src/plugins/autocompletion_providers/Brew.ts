@@ -325,8 +325,9 @@ const fromData = (commandsData: BrewCommandData[]) =>
         return sortBy(suggestions, suggestion => !suggestion.description);
     });
 
-let getProvider = (context: AutocompletionContext, commandData: BrewCommandData[],
-             argIndex: number): AutocompletionProvider => {
+let getProvider = (context: AutocompletionContext,
+                   commandData: BrewCommandData[],
+                   argIndex: number): AutocompletionProvider => {
     if (context.argument.position === argIndex) {
         return fromData(commandData);
     }

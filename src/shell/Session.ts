@@ -109,7 +109,7 @@ export class Session extends EmitterWithUniqueID {
             () => void 0,
             (error: any) => { if (error) throw error; },
         );
-    };
+    }
 
     private deserialize(): void {
         this.directory = this.readSerialized(presentWorkingDirectoryFilePath, homeDirectory);
@@ -122,5 +122,5 @@ export class Session extends EmitterWithUniqueID {
         } catch (error) {
             return defaultValue;
         }
-    };
+    }
 }

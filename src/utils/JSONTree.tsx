@@ -165,7 +165,7 @@ class JSONArrayNode extends React.Component<JSONProps, JSONState> {
             <ol style={childListStyle}>{childNodes}</ol>
         </li>;
     }
-};
+}
 
 /**
  * Object node class. If you have an object, this is what you should use to
@@ -255,7 +255,7 @@ class JSONObjectNode extends React.Component<JSONProps, any> {
             </li>
         );
     }
-};
+}
 
 /**
  * String node component
@@ -269,7 +269,7 @@ class JSONStringNode extends React.Component<JSONValueProps, any> {
             </li>
         );
     }
-};
+}
 
 /**
  * Number node component
@@ -283,7 +283,7 @@ class JSONNumberNode extends React.Component<JSONValueProps, any> {
             </li>
         );
     }
-};
+}
 
 
 /**
@@ -298,7 +298,7 @@ class JSONNullNode extends React.Component<JSONValueProps, any> {
             </li>
         );
     }
-};
+}
 
 /**
  * Boolean node component
@@ -311,7 +311,7 @@ class JSONBooleanNode extends React.Component<JSONValueProps, any> {
             <span style={{color: colors.cyan}}>{truthString}</span>
         </li>;
     }
-};
+}
 
 /**
  * JSONTree component. This is the 'viewer' base. Pass it a `data` prop and it
@@ -333,6 +333,6 @@ class JSONTree extends React.Component<JSONProps, any> {
         }
         return <ul>{rootNode}</ul>;
     }
-};
+}
 
 export default JSONTree;

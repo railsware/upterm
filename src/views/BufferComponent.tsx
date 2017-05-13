@@ -94,7 +94,7 @@ export class BufferComponent extends React.Component<Props, State> {
 
     private get shouldCutOutput(): boolean {
         return this.props.job.screenBuffer.size > ScreenBuffer.hugeOutputThreshold && !this.state.expandButtonPressed;
-    };
+    }
 
     private get renderableRows(): List<List<Char>> {
         return this.shouldCutOutput ? this.props.job.screenBuffer.toCutRenderable(this.props.job.status) : this.props.job.screenBuffer.toRenderable(this.props.job.status);

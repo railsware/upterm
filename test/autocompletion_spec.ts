@@ -15,8 +15,17 @@ import {join} from "path";
 import {fontAwesome} from "../src/views/css/FontAwesome";
 
 describe("Autocompletion suggestions", () => {
-    it("includes aliases", async() => {
-        expect(await getSuggestions({
+    it("includes aliases", async () => {
+        const expectedSuggestions = [{
+            attributes: {
+                value: "myAlias",
+                description: "expandedAlias",
+                style: styles.alias,
+                space: true,
+            },
+        }];
+
+        const suggestions = await getSuggestions({
             currentText: "myAlia",
             currentCaretPosition: 6,
             ast: new CommandWord(new Word("myAlia", 0)),
@@ -25,27 +34,25 @@ describe("Autocompletion suggestions", () => {
             aliases: new Aliases({
                 myAlias: "expandedAlias",
             }),
-        })).to.eql([{
-            attributes: {
-                description: "expandedAlias",
-                space: true,
-                style: styles.alias,
-                value: "myAlias",
-            },
-        }]);
+        });
+
+        expect(JSON.stringify(suggestions)).to.eql(JSON.stringify(expectedSuggestions));
     });
 
-    it("wraps file names in quotes if necessary", async() => {
-        expect(await anyFilesSuggestions("fil", join(__dirname, "test_files", "file_names_test"))).to.eql([{
+    it("wraps file names in quotes if necessary", async () => {
+        const expectedSuggestions = [{
             attributes: {
+                value: "file\\ with\\ brackets\\(\\)",
                 displayValue: "file with brackets()",
                 promptSerializer: noEscapeSpacesPromptSerializer,
-                value: "file\\ with\\ brackets\\(\\)",
                 style: {
-                    css: {},
                     value: fontAwesome.file,
+                    css: {},
                 },
             },
-        }]);
+        }];
+        const suggestions = await anyFilesSuggestions("fil", join(__dirname, "test_files", "file_names_test"));
+
+        expect(JSON.stringify(suggestions)).to.eql(JSON.stringify(expectedSuggestions));
     });
 });

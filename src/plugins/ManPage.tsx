@@ -51,7 +51,7 @@ const postprocesManHTML = (element: HTMLElement, uniqueId: string) => {
 
     // Remove <hr /> tags if they are the first or last in the document
     const [firstHR, lastHR] = element.getElementsByTagName("hr");
-    if (firstHR && firstHR.previousElementSibling.tagName === "TITLE" && (firstHR.previousElementSibling as any).innerText === "") {
+    if (firstHR && firstHR.previousElementSibling && firstHR.previousElementSibling.tagName === "TITLE" && (firstHR.previousElementSibling as any).innerText === "") {
         firstHR.remove();
     }
     if (lastHR && !lastHR.nextElementSibling) {
