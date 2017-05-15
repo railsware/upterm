@@ -1,4 +1,4 @@
-import {statsIn, resolveDirectory, directoryName, joinPath, isImage, escapeFilePath} from "../../utils/Common";
+import {io, resolveDirectory, directoryName, joinPath, isImage, escapeFilePath} from "../../utils/Common";
 import {
     FileInfo, AutocompletionContext, AutocompletionProvider,
 } from "../../Interfaces";
@@ -220,7 +220,7 @@ const filesSuggestions = (filter: (info: FileInfo) => boolean) => async(tokenVal
     const tokenDirectory = directoryName(tokenValue);
     const basePath = tokenValue.slice(tokenDirectory.length);
     const directoryPath = resolveDirectory(directory, tokenDirectory);
-    const stats = await statsIn(directoryPath);
+    const stats = await io.statsIn(directoryPath);
 
     return stats
         .filter(info => info.name.startsWith(".") ? basePath.startsWith(".") : true)

@@ -40,107 +40,104 @@ export function times(n: number, action: Function): void {
     }
 }
 
-async function filesIn(directoryPath: FullPath): Promise<string[]> {
-    if (await exists(directoryPath) && await isDirectory(directoryPath)) {
-        return await readDirectory(directoryPath);
-    } else {
-        return [];
-    }
-}
+export const io = {
+    filesIn: async (directoryPath: FullPath): Promise<string[]> => {
+        if (await io.exists(directoryPath) && await io.isDirectory(directoryPath)) {
+            return await io.readDirectory(directoryPath);
+        } else {
+            return [];
+        }
+    },
+    recursiveFilesIn: (directoryPath: string): Promise<string[]> => {
+        let files: string[] = [];
 
-export function recursiveFilesIn(directoryPath: string): Promise<string[]> {
-    let files: string[] = [];
-
-    return new Promise(resolve =>
-        walk(directoryPath)
-            .on("data", (file: FSExtraWalkObject) => file.stats.isFile() && files.push(file.path))
-            .on("end", () => resolve(files)),
-    );
-}
-
-export function lstat(filePath: string): Promise<fs.Stats> {
-    return new Promise((resolve, reject) => {
-        fs.lstat(filePath, (error: NodeJS.ErrnoException, pathStat: fs.Stats) => {
-            if (error) {
-                reject(error);
-            } else {
-                resolve(pathStat);
-            }
+        return new Promise(resolve =>
+            walk(directoryPath)
+                .on("data", (file: FSExtraWalkObject) => file.stats.isFile() && files.push(file.path))
+                .on("end", () => resolve(files)),
+        );
+    },
+    lstat: (filePath: string): Promise<fs.Stats> => {
+        return new Promise((resolve, reject) => {
+            fs.lstat(filePath, (error: NodeJS.ErrnoException, pathStat: fs.Stats) => {
+                if (error) {
+                    reject(error);
+                } else {
+                    resolve(pathStat);
+                }
+            });
         });
-    });
-}
-
-export async function statsIn(directoryPath: FullPath): Promise<i.FileInfo[]> {
-    return Promise.all((await filesIn(directoryPath)).map(async (fileName) => {
-        return {name: fileName, stat: await lstat(Path.join(directoryPath, fileName))};
-    }));
-}
-
-export function mkdir(directoryPath: string): Promise<{}> {
-    return new Promise(resolve => fs.mkdir(directoryPath, resolve));
-}
-
-export function exists(filePath: string): Promise<boolean> {
-    return new Promise(resolve => fs.exists(filePath, resolve));
-}
-
-export async function isDirectory(directoryPath: string): Promise<boolean> {
-    if (await exists(directoryPath)) {
-        return (await lstat(directoryPath)).isDirectory();
-    } else {
-        return false;
-    }
-}
-
-async function ensureDirectoryExists(filePath: string): Promise<void> {
-    const directoryPath = Path.dirname(filePath);
-    if (await exists(directoryPath)) {
-        return;
-    }
-    await ensureDirectoryExists(directoryPath);
-    await mkdir(directoryPath);
-}
-
-export async function writeFileCreatingParents(filePath: string, content: string): Promise<{}> {
-    await ensureDirectoryExists(filePath);
-    return writeFile(filePath, content);
-}
-
-export function writeFile(filePath: string, content: string): Promise<{}> {
-    return new Promise((resolve, reject) => {
-        fs.writeFile(filePath, content, (error) => {
-            if (error) {
-                reject(error);
-            } else {
-                resolve();
-            }
+    },
+    statsIn: async (directoryPath: FullPath): Promise<i.FileInfo[]> => {
+        return Promise.all((await io.filesIn(directoryPath)).map(async (fileName) => {
+            return {name: fileName, stat: await io.lstat(Path.join(directoryPath, fileName))};
+        }));
+    },
+    mkdir: (directoryPath: string): Promise<{}> => {
+        return new Promise(resolve => fs.mkdir(directoryPath, resolve));
+    },
+    exists: (filePath: string): Promise<boolean> => {
+        return new Promise(resolve => fs.exists(filePath, resolve));
+    },
+    isDirectory: async (directoryPath: string): Promise<boolean> => {
+        if (await io.exists(directoryPath)) {
+            return (await io.lstat(directoryPath)).isDirectory();
+        } else {
+            return false;
+        }
+    },
+    ensureDirectoryExists: async (filePath: string): Promise<void> => {
+        const directoryPath = Path.dirname(filePath);
+        if (await io.exists(directoryPath)) {
+            return;
+        }
+        await io.ensureDirectoryExists(directoryPath);
+        await io.mkdir(directoryPath);
+    },
+    writeFileCreatingParents: async (filePath: string, content: string): Promise<{}> => {
+        await io.ensureDirectoryExists(filePath);
+        return io.writeFile(filePath, content);
+    },
+    writeFile: (filePath: string, content: string): Promise<{}> => {
+        return new Promise((resolve, reject) => {
+            fs.writeFile(filePath, content, (error) => {
+                if (error) {
+                    reject(error);
+                } else {
+                    resolve();
+                }
+            });
         });
-    });
-}
-
-export function readFile(filePath: string): Promise<string> {
-    return new Promise((resolve, reject) => {
-        fs.readFile(filePath, (error, buffer) => {
-            if (error) {
-                reject(error);
-            } else {
-                resolve(buffer.toString());
-            }
+    },
+    readFile: (filePath: string): Promise<string> => {
+        return new Promise((resolve, reject) => {
+            fs.readFile(filePath, (error, buffer) => {
+                if (error) {
+                    reject(error);
+                } else {
+                    resolve(buffer.toString());
+                }
+            });
         });
-    });
-}
+    },
+    readDirectory: (directoryPath: string): Promise<string[]> => {
+        return new Promise((resolve, reject) => {
+            fs.readdir(directoryPath, (readError: NodeJS.ErrnoException, files: Array<string>) => {
+                if (readError) {
+                    reject(readError);
+                }
 
-export function readDirectory(directoryPath: string): Promise<string[]> {
-    return new Promise((resolve, reject) => {
-        fs.readdir(directoryPath, (readError: NodeJS.ErrnoException, files: Array<string>) => {
-            if (readError) {
-                reject(readError);
-            }
-
-            resolve(files);
+                resolve(files);
+            });
         });
-    });
-}
+    },
+    executablesInPaths: async (path: EnvironmentPath): Promise<string[]> => {
+        const validPaths = await filterAsync(path.toArray(), io.isDirectory);
+        const allFiles: string[][] = await Promise.all(validPaths.map(io.filesIn));
+
+        return _.uniq(_.flatten(allFiles));
+    },
+};
 
 /**
  * Unlike Path.join, doesn't remove ./ and ../ parts.
@@ -169,13 +166,6 @@ export function directoryName(path: string): string {
         return normalizeDirectory(directoryParts.join(Path.sep));
     }
 }
-
-export const executablesInPaths = async (path: EnvironmentPath): Promise<string[]> => {
-    const validPaths = await filterAsync(path.toArray(), isDirectory);
-    const allFiles: string[][] = await Promise.all(validPaths.map(filesIn));
-
-    return _.uniq(_.flatten(allFiles));
-};
 
 export const isWindows = process.platform === "win32";
 export const homeDirectory = process.env[(isWindows) ? "USERPROFILE" : "HOME"];

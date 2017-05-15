@@ -2,15 +2,15 @@ import {Session} from "../shell/Session";
 import {PluginManager} from "../PluginManager";
 import * as Path from "path";
 import * as fs from "fs";
-import {homeDirectory, exists, readFile} from "../utils/Common";
+import {homeDirectory, io} from "../utils/Common";
 
 const rvmDirectory = Path.join(homeDirectory, ".rvm");
 const rubyVersionFileName = ".ruby-version";
 const gemSetNameFileName = ".ruby-gemset";
 
 async function getRubyVersion(directory: string): Promise<string> {
-    if (await exists(Path.join(directory, rubyVersionFileName))) {
-        return (await readFile(Path.join(directory, rubyVersionFileName))).trim();
+    if (await io.exists(Path.join(directory, rubyVersionFileName))) {
+        return (await io.readFile(Path.join(directory, rubyVersionFileName))).trim();
     } else {
         return new Promise<string>((resolve, reject) => {
             fs.realpath(Path.join(rvmDirectory, "rubies", "default"), (err, resolvedPath) => {
@@ -27,8 +27,8 @@ async function getRubyVersion(directory: string): Promise<string> {
 async function getGemSetName(directory: string): Promise<string> {
     const gemSetNameFilePath = Path.join(directory, gemSetNameFileName);
 
-    if (await exists(gemSetNameFilePath)) {
-        return (await readFile(gemSetNameFilePath)).trim();
+    if (await io.exists(gemSetNameFilePath)) {
+        return (await io.readFile(gemSetNameFilePath)).trim();
     } else {
         return "global";
     }

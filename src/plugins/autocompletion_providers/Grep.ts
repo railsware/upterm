@@ -3,7 +3,7 @@ import {longFlag, longAndShortFlag, mapSuggestions, anyFilesSuggestionsProvider,
     Suggestion, styles, anyFilesSuggestions, directoriesSuggestions} from "../autocompletion_utils/Common";
 import combine from "../autocompletion_utils/Combine";
 import {AutocompletionContext} from "../../Interfaces";
-import {isDirectory, mapObject} from "../../utils/Common";
+import {io, mapObject} from "../../utils/Common";
 
 // Grep option suggestions based on linux  man file:
 // http://linux.die.net/man/1/grep
@@ -321,7 +321,7 @@ const fileValueSuggestions = async(context: AutocompletionContext): Promise<Sugg
         const fileSuggestions = await anyFilesSuggestions(optionValue, workingDirectory);
         return fileSuggestions.map(item =>
                 new Suggestion({value: tokenValue + item.value, displayValue: item.displayValue,
-                    style: isDirectory(workingDirectory + item.value) ? styles.directory : styles.optionValue}));
+                    style: io.isDirectory(workingDirectory + item.value) ? styles.directory : styles.optionValue}));
     } else {
         return [];
     }
@@ -337,7 +337,7 @@ const excludeFromSuggestions = async(context: AutocompletionContext): Promise<Su
         const fileSuggestions = await anyFilesSuggestions(optionValue, workingDirectory);
         return fileSuggestions.map(item =>
                 new Suggestion({value: tokenValue + item.value, displayValue: item.displayValue,
-                    style: isDirectory(workingDirectory + item.value) ? styles.directory : styles.optionValue}));
+                    style: io.isDirectory(workingDirectory + item.value) ? styles.directory : styles.optionValue}));
     } else {
         return [];
     }

@@ -1,13 +1,13 @@
 import {Session} from "../shell/Session";
 import {PluginManager} from "../PluginManager";
 import * as Path from "path";
-import {homeDirectory, exists, readFile} from "../utils/Common";
+import {homeDirectory, io} from "../utils/Common";
 
 async function withNvmPath(directory: string, callback: (path: string) => void) {
     const rcPath = Path.join(directory, ".nvmrc");
 
-    if (await exists(rcPath)) {
-        const version = (await readFile(rcPath)).trim();
+    if (await io.exists(rcPath)) {
+        const version = (await io.readFile(rcPath)).trim();
         callback(Path.join(homeDirectory, ".nvm", "versions", "node", version, "bin"));
     }
 }

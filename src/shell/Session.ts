@@ -7,7 +7,7 @@ import {Status} from "../Enums";
 import {ApplicationComponent} from "../views/1_ApplicationComponent";
 import {Environment, processEnvironment} from "./Environment";
 import {
-    homeDirectory, normalizeDirectory, writeFileCreatingParents,
+    homeDirectory, normalizeDirectory, io,
     presentWorkingDirectoryFilePath, historyFilePath,
 } from "../utils/Common";
 import {remote} from "electron";
@@ -100,12 +100,12 @@ export class Session extends EmitterWithUniqueID {
     }
 
     private serialize() {
-        writeFileCreatingParents(presentWorkingDirectoryFilePath, JSON.stringify(this.directory)).then(
+        io.writeFileCreatingParents(presentWorkingDirectoryFilePath, JSON.stringify(this.directory)).then(
             () => void 0,
             (error: any) => { if (error) throw error; },
         );
 
-        writeFileCreatingParents(historyFilePath, this.history.serialize()).then(
+        io.writeFileCreatingParents(historyFilePath, this.history.serialize()).then(
             () => void 0,
             (error: any) => { if (error) throw error; },
         );

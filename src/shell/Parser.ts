@@ -2,7 +2,7 @@ import * as Scanner from "./Scanner";
 import * as _ from "lodash";
 import {memoizeAccessor} from "../Decorators";
 import {commandDescriptions} from "../plugins/autocompletion_providers/Executable";
-import {executablesInPaths, mapObject} from "../utils/Common";
+import {io, mapObject} from "../utils/Common";
 import {loginShell} from "../utils/Shell";
 import {PreliminaryAutocompletionContext} from "../Interfaces";
 import {PluginManager} from "../PluginManager";
@@ -325,7 +325,7 @@ export class CommandWord extends LeafNode {
         }
 
         const relativeExecutablesSuggestions = await executableFilesSuggestions(this.value, environment.pwd);
-        const executables = await executablesInPaths(environment.path);
+        const executables = await io.executablesInPaths(environment.path);
 
         return [
             ...mapObject(aliases.toObject(), (key, value) => new Suggestion({value: key, description: value, style: styles.alias, space: true})),

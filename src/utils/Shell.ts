@@ -2,7 +2,7 @@ import {basename} from "path";
 import {readFileSync, statSync} from "fs";
 import * as Path from "path";
 import {EOL} from "os";
-import {resolveFile, exists, filterAsync, homeDirectory} from "./Common";
+import {resolveFile, io, filterAsync, homeDirectory} from "./Common";
 import * as _ from "lodash";
 
 abstract class Shell {
@@ -14,7 +14,7 @@ abstract class Shell {
 
     async existingConfigFiles(): Promise<string[]> {
         const resolvedConfigFiles = this.configFiles.map(fileName => resolveFile(process.env.HOME, fileName));
-        return await filterAsync(resolvedConfigFiles, exists);
+        return await filterAsync(resolvedConfigFiles, io.exists);
     }
 
     loadHistory(): { lastModified: Date, commands: string[] } {

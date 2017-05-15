@@ -1,6 +1,6 @@
 import * as Path from "path";
 import {Suggestion, styles, commandWithSubcommands} from "../autocompletion_utils/Common";
-import {exists, readFile, mapObject} from "../../utils/Common";
+import {io, mapObject} from "../../utils/Common";
 import {PluginManager} from "../../PluginManager";
 import {AutocompletionContext} from "../../Interfaces";
 
@@ -150,8 +150,8 @@ const npmCommandConfig = [
         description: "Run arbitrary package scripts",
         provider: async (context: AutocompletionContext) => {
             const packageFilePath = Path.join(context.environment.pwd, "package.json");
-            if (await exists(packageFilePath)) {
-                const parsed = JSON.parse(await readFile(packageFilePath)).scripts || {};
+            if (await io.exists(packageFilePath)) {
+                const parsed = JSON.parse(await io.readFile(packageFilePath)).scripts || {};
                 return mapObject(parsed, (key: string, value: string) => new Suggestion({
                     value: key,
                     description: value,

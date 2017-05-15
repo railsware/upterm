@@ -1,6 +1,6 @@
 import {OutputDecorator, EnvironmentObserverPlugin, AutocompletionProvider, PreexecPlugin, CommandInterceptorPlugin} from "./Interfaces";
 import * as Path from "path";
-import {recursiveFilesIn} from "./utils/Common";
+import {io} from "./utils/Common";
 import {environmentVariableSuggestions, anyFilesSuggestionsProvider} from "../src/plugins/autocompletion_utils/Common";
 import combine from "../src/plugins/autocompletion_utils/Combine";
 
@@ -58,7 +58,7 @@ export class PluginManager {
 
 export async function loadAllPlugins(): Promise<void> {
     const pluginsDirectory = Path.join(__dirname, "plugins");
-    const filePaths = await recursiveFilesIn(pluginsDirectory);
+    const filePaths = await io.recursiveFilesIn(pluginsDirectory);
 
     filePaths.map(require).map((module: any) => module.default);
 }

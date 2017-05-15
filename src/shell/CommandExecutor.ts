@@ -2,7 +2,7 @@ import {Job} from "./Job";
 import {Command} from "./Command";
 import {PTY} from "../PTY";
 import * as Path from "path";
-import {executablesInPaths, resolveFile, isWindows, filterAsync, exists} from "../utils/Common";
+import {resolveFile, isWindows, filterAsync, io} from "../utils/Common";
 import {loginShell} from "../utils/Shell";
 
 export class NonZeroExitCodeError extends Error {
@@ -49,11 +49,11 @@ class ShellExecutionStrategy extends CommandExecutionStrategy {
     }
 
     private static async isExecutableFromPath(job: Job): Promise<boolean> {
-        return (await executablesInPaths(job.environment.path)).includes(job.prompt.commandName);
+        return (await io.executablesInPaths(job.environment.path)).includes(job.prompt.commandName);
     }
 
     private static async isPathOfExecutable(job: Job): Promise<boolean> {
-        return await exists(resolveFile(job.session.directory, job.prompt.commandName));
+        return await io.exists(resolveFile(job.session.directory, job.prompt.commandName));
     }
 
     startExecution() {
