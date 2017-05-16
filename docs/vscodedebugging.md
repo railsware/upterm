@@ -35,7 +35,7 @@ The contents of these files should be as follows.
             "name": "Electron Main",
             "runtimeExecutable": "${workspaceRoot}/node_modules/.bin/electron",
             "program": "${workspaceRoot}/compiled/src/main/Main.js",
-            "protocol": "legacy",
+            "protocol": "inspector",
             "stopOnEntry": false,
             "args": [],
             "cwd": "${workspaceRoot}/",
@@ -108,8 +108,6 @@ Note. If the code has been modified and no updates to dependent node modules wer
 
 Source maps are enabled for the black-screen project which allows the Typescript code to be debugged. Source maps map the Typescript code to the generated (transpiled) Javascript code, with the Javascript code being what's executed by node.js.
 
-However, you can still debug the generated Javascript files by placing breakpoints in generated Javascipt files under the `compiled\src` folder.
-
 To enter debugging mode select the <b>Debug</b> icon on the left hand side menu. Or alternatively, select the `Shift + ⌘ + d` (or `Shift + Ctrl + d`) keys.
 
 ![debug process](images/debug_renderer_process.png "debug process")
@@ -117,4 +115,4 @@ To enter debugging mode select the <b>Debug</b> icon on the left hand side menu.
 To launch a debug session, from the top left hand side of the <b>Debug</b> window select `Debug rendered process` and press the Play button.
 Note. A breakpoint needs to be placed in the code prior to launching a debug session, to allow stepping through code.
 
-These instructions were tested on vscode version 1.10.2.
+These instructions were tested on vscode version 1.12.1.
