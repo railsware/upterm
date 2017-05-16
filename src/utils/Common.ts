@@ -40,7 +40,7 @@ export function times(n: number, action: Function): void {
     }
 }
 
-export const io = {
+export const readIO = {
     filesIn: async (directoryPath: FullPath): Promise<string[]> => {
         if (await io.exists(directoryPath) && await io.isDirectory(directoryPath)) {
             return await io.readDirectory(directoryPath);
@@ -68,13 +68,10 @@ export const io = {
             });
         });
     },
-    statsIn: async (directoryPath: FullPath): Promise<i.FileInfo[]> => {
+    lstatsIn: async (directoryPath: FullPath): Promise<i.FileInfo[]> => {
         return Promise.all((await io.filesIn(directoryPath)).map(async (fileName) => {
             return {name: fileName, stat: await io.lstat(Path.join(directoryPath, fileName))};
         }));
-    },
-    mkdir: (directoryPath: string): Promise<{}> => {
-        return new Promise(resolve => fs.mkdir(directoryPath, resolve));
     },
     exists: (filePath: string): Promise<boolean> => {
         return new Promise(resolve => fs.exists(filePath, resolve));
@@ -85,29 +82,6 @@ export const io = {
         } else {
             return false;
         }
-    },
-    ensureDirectoryExists: async (filePath: string): Promise<void> => {
-        const directoryPath = Path.dirname(filePath);
-        if (await io.exists(directoryPath)) {
-            return;
-        }
-        await io.ensureDirectoryExists(directoryPath);
-        await io.mkdir(directoryPath);
-    },
-    writeFileCreatingParents: async (filePath: string, content: string): Promise<{}> => {
-        await io.ensureDirectoryExists(filePath);
-        return io.writeFile(filePath, content);
-    },
-    writeFile: (filePath: string, content: string): Promise<{}> => {
-        return new Promise((resolve, reject) => {
-            fs.writeFile(filePath, content, (error) => {
-                if (error) {
-                    reject(error);
-                } else {
-                    resolve();
-                }
-            });
-        });
     },
     readFile: (filePath: string): Promise<string> => {
         return new Promise((resolve, reject) => {
@@ -138,6 +112,34 @@ export const io = {
         return _.uniq(_.flatten(allFiles));
     },
 };
+
+export const writeIO = {
+    mkdir: (directoryPath: string): Promise<{}> => {
+        return new Promise(resolve => fs.mkdir(directoryPath, resolve));
+    },
+    ensureDirectoryExists: async (filePath: string): Promise<void> => {
+        const directoryPath = Path.dirname(filePath);
+        if (await io.exists(directoryPath)) {
+            return;
+        }
+        await io.ensureDirectoryExists(directoryPath);
+        await io.mkdir(directoryPath);
+    },
+    writeFileCreatingParents: async (filePath: string, content: string): Promise<{}> => {
+        await io.ensureDirectoryExists(filePath);
+        return new Promise((resolve, reject) => {
+            fs.writeFile(filePath, content, (error) => {
+                if (error) {
+                    reject(error);
+                } else {
+                    resolve();
+                }
+            });
+        });
+    },
+};
+
+export const io: typeof readIO & typeof writeIO = {...readIO, ...writeIO};
 
 /**
  * Unlike Path.join, doesn't remove ./ and ../ parts.

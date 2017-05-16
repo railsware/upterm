@@ -220,7 +220,7 @@ const filesSuggestions = (filter: (info: FileInfo) => boolean) => async(tokenVal
     const tokenDirectory = directoryName(tokenValue);
     const basePath = tokenValue.slice(tokenDirectory.length);
     const directoryPath = resolveDirectory(directory, tokenDirectory);
-    const stats = await io.statsIn(directoryPath);
+    const stats = await io.lstatsIn(directoryPath);
 
     return stats
         .filter(info => info.name.startsWith(".") ? basePath.startsWith(".") : true)
