@@ -3,7 +3,7 @@ import * as Path from "path";
 import * as i from "./../Interfaces";
 import * as e from "./../Enums";
 import * as _ from "lodash";
-import * as fs from "fs";
+import * as fs from "fs-extra";
 import {KeyCode} from "./../Enums";
 import {EnvironmentPath} from "../shell/Environment";
 
@@ -114,28 +114,9 @@ export const readIO = {
 };
 
 export const writeIO = {
-    mkdir: (directoryPath: string): Promise<{}> => {
-        return new Promise(resolve => fs.mkdir(directoryPath, resolve));
-    },
-    ensureDirectoryExists: async (filePath: string): Promise<void> => {
-        const directoryPath = Path.dirname(filePath);
-        if (await io.exists(directoryPath)) {
-            return;
-        }
-        await io.ensureDirectoryExists(directoryPath);
-        await io.mkdir(directoryPath);
-    },
-    writeFileCreatingParents: async (filePath: string, content: string): Promise<{}> => {
-        await io.ensureDirectoryExists(filePath);
-        return new Promise((resolve, reject) => {
-            fs.writeFile(filePath, content, (error) => {
-                if (error) {
-                    reject(error);
-                } else {
-                    resolve();
-                }
-            });
-        });
+    writeFileCreatingParents: async (filePath: string, content: string): Promise<void> => {
+        await fs.ensureDir(Path.dirname(filePath));
+        return fs.writeFile(filePath, content);
     },
 };
 
