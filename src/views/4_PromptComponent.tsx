@@ -153,7 +153,7 @@ export class PromptComponent extends React.Component<Props, State> {
                 </div>
                 <div
                     className="prompt" // Used by tests
-                    style={css.prompt(this.state.isSticky)}
+                    style={css.prompt}
                     onInput={this.handleInput.bind(this)}
                     onDrop={this.handleDrop.bind(this)}
                     onBlur={() => this.setState({...this.state, caretPositionFromPreviousFocus: getCaretPosition(this.commandNode)})}
