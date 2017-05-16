@@ -63,11 +63,22 @@ export const io = {
         }));
     },
     fileExists: async (filePath: string): Promise<boolean> => {
-        if (await fs.pathExists(filePath)) {
-            return (await fs.lstat(filePath)).isFile();
-        } else {
+        if (!await fs.pathExists(filePath)) {
             return false;
         }
+
+        const stat = await fs.lstat(filePath);
+
+        if (stat.isFile()) {
+            return true;
+        }
+
+        if (stat.isSymbolicLink()) {
+            const realPath = await io.realPath(filePath);
+            return io.fileExists(realPath);
+        }
+
+        return false;
     },
     directoryExists: async (directoryPath: string): Promise<boolean> => {
         if (await fs.pathExists(directoryPath)) {
