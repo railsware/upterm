@@ -25,11 +25,24 @@ We aim to be compatible at least with [VT100](https://en.wikipedia.org/wiki/VT10
 Install
 ------------
 
+###### MacOS
+
 ```bash
 brew cask install black-screen
 ```
 
-Linux and Windows builds will be available after 1.0.0 release. Currently only OS X is supported to speed up the development process.
+Beware that the version in Homebrew might be outdated. Visit the [releases](https://github.com/railsware/black-screen/releases) page to download the latest version.
+
+###### Linux
+
+* `git clone https://github.com/railsware/black-screen.git`
+* `cd black-screen`
+* `npm install`
+* `npm run pack`
+
+###### Windows
+
+Windows is not supported at the moment. Consider voting for the [Windows Support](https://github.com/railsware/black-screen/issues/800) Issue.
 
 Technologies
 ------------
