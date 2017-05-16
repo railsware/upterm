@@ -321,7 +321,7 @@ const fileValueSuggestions = async(context: AutocompletionContext): Promise<Sugg
         const fileSuggestions = await anyFilesSuggestions(optionValue, workingDirectory);
         return fileSuggestions.map(item =>
                 new Suggestion({value: tokenValue + item.value, displayValue: item.displayValue,
-                    style: io.isDirectory(workingDirectory + item.value) ? styles.directory : styles.optionValue}));
+                    style: io.directoryExists(workingDirectory + item.value) ? styles.directory : styles.optionValue}));
     } else {
         return [];
     }
@@ -337,7 +337,7 @@ const excludeFromSuggestions = async(context: AutocompletionContext): Promise<Su
         const fileSuggestions = await anyFilesSuggestions(optionValue, workingDirectory);
         return fileSuggestions.map(item =>
                 new Suggestion({value: tokenValue + item.value, displayValue: item.displayValue,
-                    style: io.isDirectory(workingDirectory + item.value) ? styles.directory : styles.optionValue}));
+                    style: io.directoryExists(workingDirectory + item.value) ? styles.directory : styles.optionValue}));
     } else {
         return [];
     }

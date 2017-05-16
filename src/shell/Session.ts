@@ -1,4 +1,5 @@
 import {readFileSync} from "fs";
+import {outputFile, outputJSON} from "fs-extra";
 import {Job} from "./Job";
 import {History} from "./History";
 import {EmitterWithUniqueID} from "../EmitterWithUniqueID";
@@ -7,7 +8,7 @@ import {Status} from "../Enums";
 import {ApplicationComponent} from "../views/1_ApplicationComponent";
 import {Environment, processEnvironment} from "./Environment";
 import {
-    homeDirectory, normalizeDirectory, io,
+    homeDirectory, normalizeDirectory,
     presentWorkingDirectoryFilePath, historyFilePath,
 } from "../utils/Common";
 import {remote} from "electron";
@@ -99,16 +100,11 @@ export class Session extends EmitterWithUniqueID {
         );
     }
 
-    private serialize() {
-        io.writeFileCreatingParents(presentWorkingDirectoryFilePath, JSON.stringify(this.directory)).then(
-            () => void 0,
-            (error: any) => { if (error) throw error; },
-        );
-
-        io.writeFileCreatingParents(historyFilePath, this.history.serialize()).then(
-            () => void 0,
-            (error: any) => { if (error) throw error; },
-        );
+    private async serialize() {
+        return Promise.all([
+            outputJSON(presentWorkingDirectoryFilePath, this.directory),
+            outputFile(historyFilePath, this.history.serialize()),
+        ]);
     }
 
     private deserialize(): void {

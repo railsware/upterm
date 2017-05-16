@@ -53,7 +53,7 @@ class ShellExecutionStrategy extends CommandExecutionStrategy {
     }
 
     private static async isPathOfExecutable(job: Job): Promise<boolean> {
-        return await io.exists(resolveFile(job.session.directory, job.prompt.commandName));
+        return await io.fileExists(resolveFile(job.session.directory, job.prompt.commandName));
     }
 
     startExecution() {

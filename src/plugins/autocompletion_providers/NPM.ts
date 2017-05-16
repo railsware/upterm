@@ -150,7 +150,7 @@ const npmCommandConfig = [
         description: "Run arbitrary package scripts",
         provider: async (context: AutocompletionContext) => {
             const packageFilePath = Path.join(context.environment.pwd, "package.json");
-            if (await io.exists(packageFilePath)) {
+            if (await io.fileExists(packageFilePath)) {
                 const parsed = JSON.parse(await io.readFile(packageFilePath)).scripts || {};
                 return mapObject(parsed, (key: string, value: string) => new Suggestion({
                     value: key,

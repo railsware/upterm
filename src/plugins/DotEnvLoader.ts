@@ -7,7 +7,7 @@ import {sourceFile} from "../shell/Command";
 PluginManager.registerEnvironmentObserver({
     presentWorkingDirectoryWillChange: () => void 0,
     presentWorkingDirectoryDidChange: async(session: Session, directory: string) => {
-        if (await io.exists(Path.join(directory, ".env"))) {
+        if (await io.fileExists(Path.join(directory, ".env"))) {
             sourceFile(session, ".env");
         }
     },

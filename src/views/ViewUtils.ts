@@ -1,5 +1,6 @@
 import {KeyCode} from "../Enums";
-import {io, windowBoundsFilePath} from "../utils/Common";
+import {windowBoundsFilePath} from "../utils/Common";
+import {outputJSON} from "fs-extra";
 
 export function stopBubblingUp(event: Event): Event {
     event.stopPropagation();
@@ -44,8 +45,5 @@ export function getCaretPosition(element: Node): number {
 }
 
 export function saveWindowBounds(browserWindow: Electron.BrowserWindow) {
-    io.writeFileCreatingParents(windowBoundsFilePath, JSON.stringify(browserWindow.getBounds())).then(
-        () => void 0,
-        (error: any) => { if (error) throw error; },
-    );
+    return outputJSON(windowBoundsFilePath, browserWindow.getBounds());
 }

@@ -6,7 +6,7 @@ import {homeDirectory, io} from "../utils/Common";
 async function withNvmPath(directory: string, callback: (path: string) => void) {
     const rcPath = Path.join(directory, ".nvmrc");
 
-    if (await io.exists(rcPath)) {
+    if (await io.fileExists(rcPath)) {
         const version = (await io.readFile(rcPath)).trim();
         callback(Path.join(homeDirectory, ".nvm", "versions", "node", version, "bin"));
     }

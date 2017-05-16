@@ -14,7 +14,7 @@ abstract class Shell {
 
     async existingConfigFiles(): Promise<string[]> {
         const resolvedConfigFiles = this.configFiles.map(fileName => resolveFile(process.env.HOME, fileName));
-        return await filterAsync(resolvedConfigFiles, io.exists);
+        return await filterAsync(resolvedConfigFiles, io.fileExists);
     }
 
     loadHistory(): { lastModified: Date, commands: string[] } {
