@@ -2,10 +2,6 @@ import {app, ipcMain, nativeImage, BrowserWindow, screen} from "electron";
 import {readFileSync} from "fs";
 import {windowBoundsFilePath} from "../utils/Common";
 
-if (app.dock) {
-    app.dock.setIcon(nativeImage.createFromPath("build/icon.png"));
-}
-
 app.on("ready", () => {
     const bounds = windowBounds();
 
@@ -25,6 +21,8 @@ app.on("ready", () => {
         show: false,
     };
     const browserWindow = new BrowserWindow(options);
+
+    browserWindow.setIcon(nativeImage.createFromPath("build/icon.png"));
 
     if (process.env.REACT_EXTENSION_PATH) {
         BrowserWindow.addDevToolsExtension(process.env.REACT_EXTENSION_PATH);

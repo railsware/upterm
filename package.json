@@ -88,6 +88,6 @@
   },
   "license": "MIT",
   "build": {
-    "appId": "com.github.shockone.black-screen"
+    "appId": "com.github.railsware.black-screen"
   }
 }
