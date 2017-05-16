@@ -5,7 +5,7 @@ import {ColorCode} from "../../Interfaces";
 export const colors = {
     black: "#292C33",
     red: "#BF6E7C",
-    white: "#95A2BB",
+    white: "#aebcda",
     green: "#88B379",
     yellow: "#D9BD86",
     blue: "#66A5DF",
@@ -14,7 +14,7 @@ export const colors = {
 
     brightBlack: "#484c54",
     brightRed: "#dd8494",
-    brightWhite: "#adbcd7",
+    brightWhite: "#bccce8",
     brightGreen: "#9dcc8c",
     brightYellow: "#e9cc92",
     brightBlue: "#6cb2f0",
