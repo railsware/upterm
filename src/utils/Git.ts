@@ -1,7 +1,6 @@
 import {linedOutputOf} from "../PTY";
 import * as Path from "path";
 import * as fs from "fs";
-import * as _ from "lodash";
 import {executeCommand} from "../PTY";
 
 export class Branch {
@@ -9,7 +8,7 @@ export class Branch {
     }
 
     toString(): string {
-        return _.last(this.refName.split("/"));
+        return this.refName;
     }
 
     isCurrent(): boolean {
@@ -127,16 +126,22 @@ export async function branches({
         ['"symbolic-ref"', '"--short"', '"-q"', '"HEAD"'],
         directory)
         .then(branchName => branchName.trim());
+    const branchFilter = [
+        "s/^refs\\/heads\\///g",
+        remotes ? "s/^refs\\/remotes\\/[^\\?%\\*\\:\\|\"\\<\\>\\\\]*\\///g" : "",
+        tags ? "s/^refs\\/tags\\///g" : ""].join(";");
     let promiseLines = linedOutputOf(
         "git",
-        ["for-each-ref", tags ? "refs/tags" : "", "refs/heads",
-         remotes ? "refs/remotes" : "", "--format='%(HEAD)%(refname:short)'"],
+        ["for-each-ref", "refs/heads", remotes ? "refs/remotes" : "", tags ? "refs/tags" : "",
+        "--format='%(HEAD)%(refname)'",
+        "|", "sed", "-r", "'s/^.{1}//'",
+        "|", "sed", "-e", "'" + branchFilter + "'"],
         directory,
     );
     // Wait until the two concurrent promise requests resolve before continuing.
     let [currentBranch, lines] = await Promise.all([promiseCurrentBranch, promiseLines]);
     return lines.map(line => {
-        const branch = line.slice(1).trim();
+        const branch = line.trim();
         return new Branch(branch, branch === currentBranch);
     });
 }
