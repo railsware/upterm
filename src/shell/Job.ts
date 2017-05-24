@@ -21,21 +21,17 @@ function makeThrottledDataEmitter(timesPerSecond: number, subject: EmitterWithUn
 }
 
 export class Job extends EmitterWithUniqueID implements TerminalLikeDevice {
-    public status: Status = Status.NotStarted;
+    public status: Status = Status.InProgress;
     public readonly parser: ANSIParser;
     public interceptionResult: React.ReactElement<any> | undefined;
-    private readonly _prompt: Prompt;
     private readonly _screenBuffer: ScreenBuffer;
     private readonly rareDataEmitter: Function;
     private readonly frequentDataEmitter: Function;
     private executedWithoutInterceptor: boolean = false;
     private pty: PTY | undefined;
 
-    constructor(private _session: Session) {
+    constructor(private _session: Session, private _prompt: Prompt) {
         super();
-
-        this._prompt = new Prompt(this);
-        this._prompt.on("send", () => this.execute());
 
         this.rareDataEmitter = makeThrottledDataEmitter(1, this);
         this.frequentDataEmitter = makeThrottledDataEmitter(60, this);
@@ -43,6 +39,7 @@ export class Job extends EmitterWithUniqueID implements TerminalLikeDevice {
         this._screenBuffer = new ScreenBuffer();
         this._screenBuffer.on("data", this.throttledDataEmitter);
         this.parser = new ANSIParser(this);
+        this.execute();
     }
 
     async executeWithoutInterceptor(): Promise<void> {
@@ -69,10 +66,6 @@ export class Job extends EmitterWithUniqueID implements TerminalLikeDevice {
 
     async execute({allowInterception = true} = {}): Promise<void> {
         History.add(this.prompt.value);
-
-        if (this.status === Status.NotStarted) {
-            this.setStatus(Status.InProgress);
-        }
 
         const commandWords: string[] = this.prompt.expandedTokens
             .filter(token => !(token instanceof Invalid))

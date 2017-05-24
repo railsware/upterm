@@ -46,7 +46,6 @@ const outputCutZIndex = 0;
 
 const decorationWidth = 30;
 const arrowZIndex = 2;
-const progressBarStripesSize = 30;
 const arrowColor = lighten(promptBackgroundColor, 10);
 const searchInputColor = lighten(panelColor, 15);
 
@@ -475,7 +474,7 @@ export const output = (activeScreenBufferType: ScreenBufferType, status: Status)
     return styles;
 };
 
-export const promptWrapper = (status: Status, isSticky: boolean) => {
+export const promptWrapper = (isSticky: boolean, status: Status | undefined = undefined) => {
     const styles: CSSObject = {
         top: 0,
         paddingTop: promptVerticalPadding,
@@ -497,14 +496,14 @@ export const promptWrapper = (status: Status, isSticky: boolean) => {
         styles.height = promptWrapperHeight;
     }
 
-    if ([Status.Failure, Status.Interrupted].includes(status)) {
+    if (status && [Status.Failure, Status.Interrupted].includes(status)) {
         styles.backgroundColor = failurize(promptBackgroundColor);
     }
 
     return styles;
 };
 
-export const arrow = (status: Status) => {
+export const arrow = (status: Status | undefined = undefined) => {
     const styles: CSSObject = {
         gridArea: promptGrid.decoration.name,
         position: "relative",
@@ -522,7 +521,7 @@ export const arrow = (status: Status) => {
     return styles;
 };
 
-export const promptInfo = (status: Status) => {
+export const promptInfo = (status: Status | undefined = undefined) => {
     let styles: CSSObject = {
         cursor: "help",
         zIndex: 2,
@@ -579,7 +578,7 @@ export const promptPlaceholder = {
     minHeight: promptWrapperHeight,
 };
 
-export const arrowInner = (status: Status) => {
+export const arrowInner = (status: Status | undefined = undefined) => {
     const styles: CSSObject = {
         content: "",
         position: "absolute",
@@ -595,16 +594,7 @@ export const arrowInner = (status: Status) => {
         backgroundSize: 0, // Is used to animate the inProgress arrow.
     };
 
-    if (status === Status.InProgress) {
-        const color = lighten(colors.black, 3);
-
-        styles.transition = "background 0.1s step-end 0.3s";
-        styles.animation = "progress-bar-stripes 0.5s linear infinite";
-        styles.backgroundImage = `linear-gradient(45deg, ${color} 25%, transparent 25%, transparent 50%, ${color} 50%, ${color} 75%, transparent 75%, transparent)`;
-        styles.backgroundSize = `${progressBarStripesSize}px ${progressBarStripesSize}px`;
-    }
-
-    if ([Status.Failure, Status.Interrupted].includes(status)) {
+    if (status && [Status.Failure, Status.Interrupted].includes(status)) {
         styles.backgroundColor = failurize(arrowColor);
     }
 

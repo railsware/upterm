@@ -1,7 +1,7 @@
 import * as React from "react";
 import {Job} from "../shell/Job";
-import {PromptComponent} from "./4_PromptComponent";
 import {BufferComponent} from "./BufferComponent";
+import {JobHeaderComponent} from "./JobHeaderComponent";
 
 interface Props {
     job: Job;
@@ -12,9 +12,7 @@ interface State {
     decorate: boolean;
 }
 
-export class JobComponent extends React.Component<Props, State> {
-    private _promptComponent: PromptComponent;
-
+export class JobShowComponent extends React.Component<Props, State> {
     constructor(props: Props) {
         super(props);
 
@@ -27,10 +25,6 @@ export class JobComponent extends React.Component<Props, State> {
         this.props.job
             .on("data", () => this.forceUpdate())
             .on("status", () => this.forceUpdate());
-    }
-
-    promptComponent(): PromptComponent {
-        return this._promptComponent;
     }
 
     render() {
@@ -46,11 +40,8 @@ export class JobComponent extends React.Component<Props, State> {
 
         return (
             <div className={"job"}>
-                <PromptComponent
+                <JobHeaderComponent
                     job={this.props.job}
-                    ref={promptComponent => { this._promptComponent = promptComponent; }}
-                    status={this.props.job.status}
-                    isFocused={this.props.isFocused}
                     showDecorationToggle={!!this.props.job.interceptionResult || canBeDecorated}
                     decorateToggler={() => {
                         if (this.props.job.interceptionResult) {

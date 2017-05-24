@@ -15,6 +15,7 @@ import {remote} from "electron";
 import {OrderedSet} from "../utils/OrderedSet";
 import {Aliases, aliasesFromConfig} from "./Aliases";
 import * as _ from "lodash";
+import {Prompt} from "./Prompt";
 
 export class Session extends EmitterWithUniqueID {
     jobs: Array<Job> = [];
@@ -35,8 +36,8 @@ export class Session extends EmitterWithUniqueID {
         this.clearJobs();
     }
 
-    createJob(): void {
-        const job = new Job(this);
+    createJob(prompt: Prompt): void {
+        const job = new Job(this, prompt);
 
         job.once("end", () => {
             const electronWindow = remote.BrowserWindow.getAllWindows()[0];
@@ -47,8 +48,6 @@ export class Session extends EmitterWithUniqueID {
                 /* tslint:disable:no-unused-expression */
                 new Notification("Command has been completed", { body: job.prompt.value });
             }
-
-            this.createJob();
         });
 
         this.jobs = this.jobs.concat(job);
@@ -64,13 +63,17 @@ export class Session extends EmitterWithUniqueID {
         this.jobs.forEach(job => job.winch());
     }
 
-    get currentJob(): Job {
-        return _.last(this.jobs);
+    get currentJob(): Job | undefined {
+        const lastJob = _.last(this.jobs);
+
+        if (lastJob && lastJob.status === Status.InProgress) {
+            return lastJob;
+        }
     }
 
     clearJobs(): void {
         this.jobs = [];
-        this.createJob();
+        this.emit("job");
     }
 
     close(): void {

@@ -13,7 +13,6 @@ import {isKeybindingForEvent} from "./keyevents/Keybindings";
 import {KeyboardAction} from "../Enums";
 import {UserEvent} from "../Interfaces";
 import {isModifierKey} from "./ViewUtils";
-import {PromptComponent} from "./4_PromptComponent";
 
 type ApplicationState = {
     tabs: Tab[];
@@ -121,31 +120,34 @@ export class ApplicationComponent extends React.Component<{}, ApplicationState> 
         search: SearchComponent,
         event: UserEvent,
     ) {
-        const activeJob = this.focusedTab().focusedPane.session.currentJob;
-        const prompt: PromptComponent = this.focusedTab().focusedPane.sessionComponent().activeJobComponent().promptComponent();
+        const currentJob = this.focusedTab().focusedPane.session.currentJob;
+        const jobFormComponent = this.focusedTab().focusedPane.sessionComponent().jobFormComponent();
+
         // Pasted data
         if (event instanceof ClipboardEvent) {
             if (search.isFocused) {
                 return;
             }
 
-            if (!activeJob.isInProgress()) {
-                prompt.focus();
+            if (jobFormComponent) {
+                jobFormComponent.focus();
                 event.preventDefault();
-                prompt.appendText(event.clipboardData.getData("text/plain"));
+                jobFormComponent.appendText(event.clipboardData.getData("text/plain"));
                 return;
             }
 
-            activeJob.write(event.clipboardData.getData("text/plain"));
+            if (currentJob) {
+                currentJob.write(event.clipboardData.getData("text/plain"));
 
-            event.stopPropagation();
-            event.preventDefault();
+                event.stopPropagation();
+                event.preventDefault();
+            }
 
             return;
         }
 
         // Close focused pane
-        if (isKeybindingForEvent(event, KeyboardAction.paneClose) && !activeJob.isInProgress()) {
+        if (isKeybindingForEvent(event, KeyboardAction.paneClose) && jobFormComponent) {
             this.closeFocusedPane();
 
             this.forceUpdate();
@@ -180,7 +182,7 @@ export class ApplicationComponent extends React.Component<{}, ApplicationState> 
         }
 
         // Console clear
-        if (isKeybindingForEvent(event, KeyboardAction.cliClearJobs) && !activeJob.isInProgress()) {
+        if (isKeybindingForEvent(event, KeyboardAction.cliClearJobs) && jobFormComponent) {
             this.focusedTab().focusedPane.session.clearJobs();
 
             event.stopPropagation();
@@ -198,7 +200,6 @@ export class ApplicationComponent extends React.Component<{}, ApplicationState> 
             // Search close
             if (isKeybindingForEvent(event, KeyboardAction.editFindClose)) {
                 search.clearSelection();
-                setTimeout(() => prompt.focus(), 0);
 
                 event.stopPropagation();
                 event.preventDefault();
@@ -208,12 +209,12 @@ export class ApplicationComponent extends React.Component<{}, ApplicationState> 
             return;
         }
 
-        if (activeJob.isRunningPty() && !isModifierKey(event)) {
+        if (currentJob && currentJob.isRunningPty() && !isModifierKey(event)) {
             // CLI interrupt
             if (isKeybindingForEvent(event, KeyboardAction.cliInterrupt)) {
-                activeJob.interrupt();
+                currentJob.interrupt();
             } else {
-                activeJob.write(event);
+                currentJob.write(event);
             }
 
             event.stopPropagation();
@@ -221,91 +222,93 @@ export class ApplicationComponent extends React.Component<{}, ApplicationState> 
             return;
         }
 
-        prompt.focus();
+        if (!jobFormComponent) {
+            return;
+        }
+
+        jobFormComponent.focus();
 
         // Append last argument to prompt
         if (isKeybindingForEvent(event, KeyboardAction.cliAppendLastArgumentOfPreviousCommand)) {
-            prompt.appendLastLArgumentOfPreviousCommand();
+            jobFormComponent.appendLastLArgumentOfPreviousCommand();
 
             event.stopPropagation();
             event.preventDefault();
             return;
         }
 
-        if (!activeJob.isInProgress()) {
-            // CLI Delete word
-            if (isKeybindingForEvent(event, KeyboardAction.cliDeleteWord)) {
-                prompt.deleteWord();
+        // CLI Delete word
+        if (isKeybindingForEvent(event, KeyboardAction.cliDeleteWord)) {
+            jobFormComponent.deleteWord();
+
+            event.stopPropagation();
+            event.preventDefault();
+            return;
+        }
+
+        // CLI execute command
+        if (isKeybindingForEvent(event, KeyboardAction.cliRunCommand)) {
+            jobFormComponent.execute((event.target as HTMLElement).innerText);
+
+            event.stopPropagation();
+            event.preventDefault();
+            return;
+        }
+
+        // CLI clear
+        if (isKeybindingForEvent(event, KeyboardAction.cliClearText)) {
+            jobFormComponent.clear();
+
+            event.stopPropagation();
+            event.preventDefault();
+            return;
+        }
+
+        if (jobFormComponent.isAutocompleteShown()) {
+            if (isKeybindingForEvent(event, KeyboardAction.autocompleteInsertCompletion)) {
+                jobFormComponent.applySuggestion();
 
                 event.stopPropagation();
                 event.preventDefault();
                 return;
             }
 
-            // CLI execute command
-            if (isKeybindingForEvent(event, KeyboardAction.cliRunCommand)) {
-                prompt.execute((event.target as HTMLElement).innerText);
+            if (isKeybindingForEvent(event, KeyboardAction.autocompletePreviousSuggestion)) {
+                jobFormComponent.focusPreviousSuggestion();
 
                 event.stopPropagation();
                 event.preventDefault();
                 return;
             }
 
-            // CLI clear
-            if (isKeybindingForEvent(event, KeyboardAction.cliClearText)) {
-                prompt.clear();
+            if (isKeybindingForEvent(event, KeyboardAction.autocompleteNextSuggestion)) {
+                jobFormComponent.focusNextSuggestion();
+
+                event.stopPropagation();
+                event.preventDefault();
+                return;
+            }
+        } else {
+            if (isKeybindingForEvent(event, KeyboardAction.cliHistoryPrevious)) {
+                jobFormComponent.scrollIntoView();
+                jobFormComponent.setPreviousHistoryItem();
 
                 event.stopPropagation();
                 event.preventDefault();
                 return;
             }
 
-            if (prompt.isAutocompleteShown()) {
-                if (isKeybindingForEvent(event, KeyboardAction.autocompleteInsertCompletion)) {
-                    prompt.applySuggestion();
+            if (isKeybindingForEvent(event, KeyboardAction.cliHistoryNext)) {
+                jobFormComponent.scrollIntoView();
+                jobFormComponent.setNextHistoryItem();
 
-                    event.stopPropagation();
-                    event.preventDefault();
-                    return;
-                }
-
-                if (isKeybindingForEvent(event, KeyboardAction.autocompletePreviousSuggestion)) {
-                    prompt.focusPreviousSuggestion();
-
-                    event.stopPropagation();
-                    event.preventDefault();
-                    return;
-                }
-
-                if (isKeybindingForEvent(event, KeyboardAction.autocompleteNextSuggestion)) {
-                    prompt.focusNextSuggestion();
-
-                    event.stopPropagation();
-                    event.preventDefault();
-                    return;
-                }
-            } else {
-                if (isKeybindingForEvent(event, KeyboardAction.cliHistoryPrevious)) {
-                    prompt.scrollIntoView();
-                    prompt.setPreviousHistoryItem();
-
-                    event.stopPropagation();
-                    event.preventDefault();
-                    return;
-                }
-
-                if (isKeybindingForEvent(event, KeyboardAction.cliHistoryNext)) {
-                    prompt.scrollIntoView();
-                    prompt.setNextHistoryItem();
-
-                    event.stopPropagation();
-                    event.preventDefault();
-                    return;
-                }
+                event.stopPropagation();
+                event.preventDefault();
+                return;
             }
         }
 
-        prompt.setPreviousKeyCode(event);
+        jobFormComponent.setPreviousKeyCode(event);
     }
 
     render() {

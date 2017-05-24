@@ -63,7 +63,6 @@ export enum Color {
 }
 
 export enum Status {
-    NotStarted,
     InProgress,
     Failure,
     Interrupted,

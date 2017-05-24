@@ -1,28 +1,18 @@
 import * as _ from "lodash";
-import * as e from "../Enums";
 import * as React from "react";
 import {AutocompleteComponent} from "./AutocompleteComponent";
-import {FloatingMenu} from "./FloatingMenu";
-import DecorationToggleComponent from "./DecorationToggleComponent";
 import {History} from "../shell/History";
-import {stopBubblingUp, getCaretPosition, setCaretPosition} from "./ViewUtils";
+import {getCaretPosition, setCaretPosition} from "./ViewUtils";
 import {Prompt} from "../shell/Prompt";
-import {Job} from "../shell/Job";
 import {Suggestion} from "../plugins/autocompletion_utils/Common";
-import Button from "../plugins/autocompletion_utils/Button";
 import {KeyCode} from "../Enums";
 import {getSuggestions} from "../Autocompletion";
 import * as css from "./css/main";
-import {fontAwesome} from "./css/FontAwesome";
-import {Status} from "../Enums";
 import {scan} from "../shell/Scanner";
+import {Session} from "../shell/Session";
 
 interface Props {
-    job: Job;
-    status: e.Status;
-    decorateToggler: () => void;
-    isDecorated: boolean;
-    showDecorationToggle: boolean;
+    session: Session;
     isFocused: boolean;
 }
 
@@ -33,12 +23,9 @@ interface State {
     caretPositionFromPreviousFocus: number;
     suggestions: Suggestion[];
     isSticky: boolean;
-    showJobMenu: boolean;
 }
 
-
-// TODO: Make sure we only update the view when the model changes.
-export class PromptComponent extends React.Component<Props, State> {
+export class JobFormComponent extends React.Component<Props, State> {
     private prompt: Prompt;
 
     private intersectionObserver = new IntersectionObserver(
@@ -58,7 +45,7 @@ export class PromptComponent extends React.Component<Props, State> {
     /* tslint:disable:member-ordering */
     constructor(props: Props) {
         super(props);
-        this.prompt = this.props.job.prompt;
+        this.prompt = new Prompt(this.props.session);
 
         this.state = {
             highlightedSuggestionIndex: 0,
@@ -67,7 +54,6 @@ export class PromptComponent extends React.Component<Props, State> {
             caretPositionFromPreviousFocus: 0,
             suggestions: [],
             isSticky: false,
-            showJobMenu: false,
         };
     }
 
@@ -84,10 +70,6 @@ export class PromptComponent extends React.Component<Props, State> {
     }
 
     componentDidUpdate(prevProps: Props) {
-        if (this.props.status !== e.Status.NotStarted) {
-            return;
-        }
-
         if (!prevProps.isFocused && this.props.isFocused) {
             this.focus();
         }
@@ -97,9 +79,6 @@ export class PromptComponent extends React.Component<Props, State> {
         // FIXME: write better types.
         let autocomplete: any;
         let autocompletedPreview: any;
-        let decorationToggle: any;
-        let scrollToTop: any;
-        let jobMenuButton: any;
 
         if (this.showAutocomplete()) {
             autocomplete = <AutocompleteComponent
@@ -117,42 +96,17 @@ export class PromptComponent extends React.Component<Props, State> {
             }
         }
 
-        if (this.props.showDecorationToggle) {
-            decorationToggle = <DecorationToggleComponent
-                decorateToggler={this.props.decorateToggler}
-                isDecorated={this.props.isDecorated}
-            />;
-        }
-
-        if (this.state.isSticky) {
-            scrollToTop = <span
-                style={css.action}
-                title="Scroll to beginning of output."
-                onClick={this.handleScrollToTop.bind(this)}
-            >
-                {fontAwesome.longArrowUp}
-            </span>;
-        }
-
-        jobMenuButton = <span style={{transform: "translateY(-1px)"}} className="jobMenu">
-            <Button
-                onClick={() => this.setState({showJobMenu: !this.state.showJobMenu} as State)}
-            >•••</Button>
-        </span>;
-
-        return <div ref="placeholder" id={this.props.job.id.toString()} style={css.promptPlaceholder}>
-            <div style={css.promptWrapper(this.props.status, this.state.isSticky)}>
-                <div style={css.arrow(this.props.status)}>
-                    <div style={css.arrowInner(this.props.status)} />
+        return <div ref="placeholder" style={css.promptPlaceholder}>
+            <div style={css.promptWrapper(this.state.isSticky)}>
+                <div style={css.arrow()}>
+                    <div style={css.arrowInner()} />
                 </div>
                 <div
-                    style={css.promptInfo(this.props.status)}
-                    title={JSON.stringify(this.props.status)}
+                    style={css.promptInfo()}
                 >
-                    {this.props.status === Status.Interrupted ? fontAwesome.close : ""}
                 </div>
                 <div
-                    className="prompt" // Used by tests
+                    className="prompt"
                     style={css.prompt(this.state.isSticky)}
                     onInput={this.handleInput.bind(this)}
                     onDrop={this.handleDrop.bind(this)}
@@ -160,27 +114,10 @@ export class PromptComponent extends React.Component<Props, State> {
                     onFocus={() => setCaretPosition(this.commandNode, this.state.caretPositionFromPreviousFocus)}
                     type="text"
                     ref="command"
-                    contentEditable={this.props.status === e.Status.NotStarted}
+                    contentEditable={true}
                 />
                 {autocompletedPreview}
                 {autocomplete}
-                <div style={css.actions}>
-                    {decorationToggle}
-                    {scrollToTop}
-                    {this.props.job.isInProgress() ? jobMenuButton : undefined}
-                </div>
-                {this.state.showJobMenu ? <FloatingMenu
-                    highlightedIndex={0}
-                    menuItems={[{
-                        text: "Send SIGKILL",
-                        action: () => this.props.job.sendSignal("SIGKILL"),
-                    }, {
-                        text: "Send SIGTERM",
-                        action: () => this.props.job.sendSignal("SIGTERM"),
-                    }]}
-                    hide={() => this.setState({ showJobMenu: false } as any)}
-                    offsetTop={this.state.offsetTop}
-                /> : undefined}
             </div>
         </div>;
     }
@@ -209,7 +146,7 @@ export class PromptComponent extends React.Component<Props, State> {
         this.prompt.setValue(promptText);
 
         if (!this.isEmpty()) {
-            this.props.job.execute();
+            this.props.session.createJob(this.prompt);
         }
     }
 
@@ -307,7 +244,7 @@ export class PromptComponent extends React.Component<Props, State> {
         const suggestion = this.state.suggestions[this.state.highlightedSuggestionIndex];
 
         return suggestion.promptSerializer({
-            ast: this.props.job.prompt.ast,
+            ast: this.prompt.ast,
             caretPosition: getCaretPosition(this.commandNode),
             suggestion: suggestion,
         });
@@ -324,7 +261,7 @@ export class PromptComponent extends React.Component<Props, State> {
         return this.props.isFocused &&
             this.state.suggestions.length > 0 &&
             this.commandNode && !this.isEmpty() &&
-            this.props.status === e.Status.NotStarted && !ignoredKeyCodes.includes(this.state.previousKeyCode);
+            !ignoredKeyCodes.includes(this.state.previousKeyCode);
     }
 
     private async handleInput(event: React.SyntheticEvent<HTMLElement>): Promise<void> {
@@ -335,21 +272,15 @@ export class PromptComponent extends React.Component<Props, State> {
 
     private async getSuggestions() {
         let suggestions = await getSuggestions({
-            currentText: this.props.job.prompt.value,
+            currentText: this.prompt.value,
             currentCaretPosition: getCaretPosition(this.commandNode),
-            ast: this.props.job.prompt.ast,
-            environment: this.props.job.environment,
-            historicalPresentDirectoriesStack: this.props.job.session.historicalPresentDirectoriesStack,
-            aliases: this.props.job.session.aliases,
+            ast: this.prompt.ast,
+            environment: this.props.session.environment,
+            historicalPresentDirectoriesStack: this.props.session.historicalPresentDirectoriesStack,
+            aliases: this.props.session.aliases,
         });
 
         this.setState({...this.state, highlightedSuggestionIndex: 0, suggestions: suggestions});
-    }
-
-    private handleScrollToTop(event: Event) {
-        stopBubblingUp(event);
-
-        document.location.href = `#${this.props.job.id}`;
     }
 
     private handleDrop(event: DragEvent) {
