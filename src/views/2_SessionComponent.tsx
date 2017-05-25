@@ -64,7 +64,7 @@ export class SessionComponent extends React.Component<Props, {}> {
             lastJob.once("end", () => this.forceUpdate());
         }
 
-        const jobFormComponent = lastJobInProgress ? null : <JobFormComponent
+        const jobFormComponent = lastJobInProgress ? undefined : <JobFormComponent
             key={this.props.session.jobs.length}
             ref={component => { this._jobFormComponent = component; }}
             session={this.props.session}
