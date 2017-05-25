@@ -38,6 +38,7 @@ export class Session extends EmitterWithUniqueID {
 
     createJob(prompt: Prompt): void {
         const job = new Job(this, prompt);
+        job.execute();
 
         job.once("end", () => {
             const electronWindow = remote.BrowserWindow.getAllWindows()[0];

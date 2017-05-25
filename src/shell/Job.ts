@@ -39,7 +39,6 @@ export class Job extends EmitterWithUniqueID implements TerminalLikeDevice {
         this._screenBuffer = new ScreenBuffer();
         this._screenBuffer.on("data", this.throttledDataEmitter);
         this.parser = new ANSIParser(this);
-        this.execute();
     }
 
     async executeWithoutInterceptor(): Promise<void> {

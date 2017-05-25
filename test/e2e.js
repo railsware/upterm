@@ -25,11 +25,11 @@ describe("application launch", function () {
         waitUntilWindowLoaded().
         waitForExist(".prompt", timeout).
         setValue(".prompt", "echo expected-text\n").
-        waitForExist(".prompt[contenteditable=false]").
-        waitForExist(".prompt[contenteditable=true]").
+        waitForExist(".job-header").
+        waitForExist(".prompt").
         getText(".job .output").
         then((output) => {
-            expect(output[0]).to.contain("expected-text");
+            expect(output).to.contain("expected-text");
         });
     });
 
@@ -45,10 +45,10 @@ describe("application launch", function () {
         click(".jobMenu").
         waitForExist(".floatingMenuItem").
         click(".floatingMenuItem:first-of-type").
-        waitForExist(".prompt[contenteditable=true]").
+        waitForExist(".prompt").
         getText(".job .output").
         then(output => {
-            expect(output[0]).to.eql('Received SIGTERM');
+            expect(output).to.eql('Received SIGTERM');
         });
     });
 });
