@@ -1,22 +1,29 @@
 import * as ChildProcess from "child_process";
 import * as OS from "os";
 import * as _ from "lodash";
-import * as pty from "pty.js";
+import * as pty from "node-pty";
 import {loginShell} from "./utils/Shell";
 import {debug} from "./utils/Common";
 
+interface ITerminal {
+    write(data: string): void;
+    resize(cols: number, rows: number): void;
+    kill(signal?: string): void;
+    on(type: string, listener: (...args: any[]) => any): void;
+}
+
 export class PTY {
-    private terminal: pty.Terminal;
+    private terminal: ITerminal;
 
     // TODO: write proper signatures.
     // TODO: use generators.
     // TODO: terminate. https://github.com/atom/atom/blob/v1.0.15/src/task.coffee#L151
     constructor(words: EscapedShellWord[], env: ProcessEnvironment, dimensions: Dimensions, dataHandler: (d: string) => void, exitHandler: (c: number) => void) {
-        const shellArguments = [...loginShell.noConfigSwitches, "-i", "-c", words.join(" ")];
+        const shellArguments = [...loginShell.noConfigSwitches, ...loginShell.interactiveCommandSwitches, words.join(" ")];
 
         debug(`PTY: ${loginShell.executableName} ${JSON.stringify(shellArguments)}`);
 
-        this.terminal = pty.fork(loginShell.executableName, shellArguments, {
+        this.terminal = <any> pty.fork(loginShell.executableName, shellArguments, {
             cols: dimensions.columns,
             rows: dimensions.rows,
             cwd: env.PWD,
@@ -24,9 +31,7 @@ export class PTY {
         });
 
         this.terminal.on("data", (data: string) => dataHandler(data));
-        this.terminal.on("exit", (code: number) => {
-            exitHandler(code);
-        });
+        this.terminal.on("exit", (code: number) => exitHandler(code));
     }
 
     write(data: string): void {
@@ -65,7 +70,7 @@ export function executeCommand(
             ...execOptions,
             env: _.extend({PWD: directory}, process.env),
             cwd: directory,
-            shell: "/bin/bash",
+            shell: loginShell.commandExecutorPath,
         };
 
         ChildProcess.exec(`${command} ${args.join(" ")}`, options, (error, output) => {
@@ -86,5 +91,5 @@ export async function linedOutputOf(command: string, args: string[], directory: 
 export async function executeCommandWithShellConfig(command: string): Promise<string[]> {
     const sourceCommands = (await loginShell.existingConfigFiles()).map(fileName => `source ${fileName} &> /dev/null`);
 
-    return await linedOutputOf(loginShell.executableName, ["-c", `'${[...sourceCommands, command].join("; ")}'`], process.env.HOME);
+    return await linedOutputOf(loginShell.executableName, [...loginShell.executeCommandSwitches, loginShell.combineCommands([...sourceCommands, command])], process.env.HOME);
 }

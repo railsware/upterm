@@ -4,6 +4,7 @@ import {clone} from "lodash";
 import {homeDirectory} from "../utils/Common";
 import * as Path from "path";
 import {AbstractOrderedSet} from "../utils/OrderedSet";
+import {loginShell} from "../utils/Shell";
 
 const ignoredEnvironmentVariables = [
     "NODE_ENV",
@@ -34,7 +35,7 @@ export const preprocessEnv = (lines: string[]) => {
 
 export const processEnvironment: Dictionary<string> = {};
 export async function loadEnvironment(): Promise<void> {
-    const lines = preprocessEnv(await executeCommandWithShellConfig("env"));
+    const lines = preprocessEnv(await executeCommandWithShellConfig(loginShell.environmentCommand));
 
     lines.forEach(line => {
         const [key, ...valueComponents] = line.trim().split("=");
