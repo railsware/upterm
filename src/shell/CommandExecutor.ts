@@ -114,7 +114,7 @@ export class CommandExecutor {
         if (applicableExecutors.length) {
             return new applicableExecutors[0](job).startExecution();
         } else {
-            throw `Black Screen: command "${job.prompt.commandName}" not found.\n`;
+            throw `Upterm: command "${job.prompt.commandName}" not found.\n`;
         }
     }
 }

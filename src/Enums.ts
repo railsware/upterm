@@ -136,10 +136,10 @@ export enum KeyboardAction {
     // view commands
     viewReload,
     viewToggleFullScreen,
-    // black screen commands
-    blackScreenHide,
-    blackScreenQuit,
-    blackScreenHideOthers,
+    // Upterm commands
+    uptermHide,
+    uptermQuit,
+    uptermHideOthers,
     // developer
     developerToggleTools,
     developerToggleDebugMode,

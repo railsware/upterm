@@ -285,7 +285,7 @@ export function escapeFilePath(unescaped: string): string {
   return unescaped.replace(/([\s'"\[\]<>#$%^&*()])/g, "\\$1");
 }
 
-const baseConfigDirectory = Path.join(homeDirectory, ".black-screen");
+const baseConfigDirectory = Path.join(homeDirectory, ".upterm");
 export const presentWorkingDirectoryFilePath = Path.join(baseConfigDirectory, "presentWorkingDirectory");
 export const historyFilePath = Path.join(baseConfigDirectory, "history");
 export const windowBoundsFilePath = Path.join(baseConfigDirectory, "windowBounds");

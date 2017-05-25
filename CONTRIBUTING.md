@@ -8,7 +8,7 @@ If not, before reporting the issue you'll need to gather some information by fol
 
   ```bash
   git pull
-  rm -r "/Applications/Black Screen"*
+  rm -r "/Applications/Upterm"*
   npm run pack
   ```
 2. If the bug is still present, [open an issue](issues/new).

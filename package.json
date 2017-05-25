@@ -1,16 +1,16 @@
 {
-  "name": "black-screen",
-  "productName": "Black Screen",
+  "name": "upterm",
+  "productName": "Upterm",
   "description": "A terminal emulator for the 21st century.",
   "version": "0.2.146",
   "main": "compiled/src/main/Main.js",
   "author": "Volodymyr Shatskyi <shockone89@gmail.com>",
   "repository": {
     "type": "git",
-    "url": "https://github.com/shockone/black-screen.git"
+    "url": "https://github.com/railsware/upterm.git"
   },
   "bugs": {
-    "url": "https://github.com/shockone/black-screen/issues"
+    "url": "https://github.com/railsware/upterm/issues"
   },
   "engineStrict": true,
   "engines": {
@@ -88,6 +88,6 @@
   },
   "license": "MIT",
   "build": {
-    "appId": "com.github.railsware.black-screen"
+    "appId": "com.github.railsware.upterm"
   }
 }

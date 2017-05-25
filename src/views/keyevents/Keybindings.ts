@@ -197,17 +197,17 @@ export const KeybindingsForMenu: KeybindingMenuType[] = [
         action: KeyboardAction.viewToggleFullScreen,
         accelerator: "Ctrl+Cmd+F",
     },
-    // black screen commands
+    // Upterm commands
     {
-        action: KeyboardAction.blackScreenHide,
+        action: KeyboardAction.uptermHide,
         accelerator: "CmdOrCtrl+H",
     },
     {
-        action: KeyboardAction.blackScreenQuit,
+        action: KeyboardAction.uptermQuit,
         accelerator: "CmdOrCtrl+Q",
     },
     {
-        action: KeyboardAction.blackScreenHideOthers,
+        action: KeyboardAction.uptermHideOthers,
         accelerator: "CmdOrCtrl+Alt+H",
     },
     // developer

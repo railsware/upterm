@@ -10,25 +10,25 @@ export function buildMenuTemplate(
 ): Electron.MenuItemOptions[] {
     const template: Electron.MenuItemOptions[] = [
         {
-            label: "Black Screen",
+            label: "Upterm",
             submenu: [
                 {
-                    label: "About Black Screen",
+                    label: "About Upterm",
                     role: "about",
                 },
                 {
                     type: "separator",
                 },
                 {
-                    label: "Hide Black Screen",
-                    accelerator: getAcceleratorForAction(KeyboardAction.blackScreenHide),
+                    label: "Hide Upterm",
+                    accelerator: getAcceleratorForAction(KeyboardAction.uptermHide),
                     click: () => {
                         app.hide();
                     },
                 },
                 {
                     label: "Hide Others",
-                    accelerator: getAcceleratorForAction(KeyboardAction.blackScreenHideOthers),
+                    accelerator: getAcceleratorForAction(KeyboardAction.uptermHideOthers),
                     role: "hideothers",
                 },
                 {
@@ -36,7 +36,7 @@ export function buildMenuTemplate(
                 },
                 {
                     label: "Quit",
-                    accelerator: getAcceleratorForAction(KeyboardAction.blackScreenQuit),
+                    accelerator: getAcceleratorForAction(KeyboardAction.uptermQuit),
                     click: () => {
                         app.quit();
                     },
@@ -214,7 +214,7 @@ export function buildMenuTemplate(
                     label: "GitHub Repository",
                     click: () => {
                         /* tslint:disable:no-unused-expression */
-                        remote.shell.openExternal("https://github.com/shockone/black-screen");
+                        remote.shell.openExternal("https://github.com/railsware/upterm");
                     },
                 },
             ],

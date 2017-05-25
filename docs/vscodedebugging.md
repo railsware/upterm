@@ -1,8 +1,8 @@
-# Debugging black-screen in Visual Studio Code
+# Debugging Upterm in Visual Studio Code
 
 Microsoft's open source Visual Studio Code (vscode) provides debugging for Typescript based applications.
 
-The recommended steps for debugging black-screen in vscode are described in the steps below.
+The recommended steps for debugging Upterm in vscode are described in the steps below.
 
 ## Step 1. Install the Debugger for Chrome Extension
 
@@ -96,7 +96,7 @@ Note. On Windows the `runtimeExecutable` parameter should be changed to:
 
 ## Step 3. Build the project
 
-After first install of black-screen and after each time black-screen is modified the project needs to be re-built before launching a debug session.
+After first install of Upterm and after each time Upterm is modified the project needs to be re-built before launching a debug session.
 
 To build the project in vscode open the activity search box by selecting the `⌘ + p` keys on Mac OS (or `Ctrl + p` on Linux and Windows), and then enter `task prestart`. Or alternatively from the command line run `npn run prestart`.
 
@@ -106,7 +106,7 @@ Note. If the code has been modified and no updates to dependent node modules wer
 
 ## Step 4. Debug the project
 
-Source maps are enabled for the black-screen project which allows the Typescript code to be debugged. Source maps map the Typescript code to the generated (transpiled) Javascript code, with the Javascript code being what's executed by node.js.
+Source maps are enabled for the Upterm project which allows the Typescript code to be debugged. Source maps map the Typescript code to the generated (transpiled) Javascript code, with the Javascript code being what's executed by node.js.
 
 To enter debugging mode select the <b>Debug</b> icon on the left hand side menu. Or alternatively, select the `Shift + ⌘ + d` (or `Shift + Ctrl + d`) keys.
 
