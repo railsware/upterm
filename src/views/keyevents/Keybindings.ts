@@ -124,11 +124,11 @@ export const KeybindingsForMenu: KeybindingMenuType[] = [
     },
     {
         action: KeyboardAction.tabPrevious,
-        accelerator: "Ctrl+Shift+Tab",
+        accelerator: "CmdOrCtrl+]",
     },
     {
         action: KeyboardAction.tabNext,
-        accelerator: "Ctrl+Tab",
+        accelerator: "CmdOrCtrl+[",
     },
     {
         action: KeyboardAction.tabClose,
