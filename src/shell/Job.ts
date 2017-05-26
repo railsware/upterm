@@ -125,8 +125,20 @@ export class Job extends EmitterWithUniqueID implements TerminalLikeDevice {
             text = input;
         } else {
             if (input.ctrlKey) {
+                /**
+                 * @link https://unix.stackexchange.com/a/158298/201739
+                 */
                 text = String.fromCharCode(input.keyCode - 64);
             } else if (input.altKey) {
+                /**
+                 * The alt key can mean two things:
+                 *   - send an escape character before special keys such as cursor-keys, or
+                 *   - act as an extended shift, allowing you to enter codes for Latin-1 values from 160 to 255.
+                 *
+                 * We currently don't support the second one since it's less frequently used.
+                 * For future reference, the correct extended code would be keyCode + 160.
+                 * @link http://invisible-island.net/ncurses/ncurses.faq.html#bash_meta_mode
+                 */
                 let char = String.fromCharCode(input.keyCode);
                 if (input.shiftKey) {
                     char = char.toUpperCase();
