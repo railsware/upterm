@@ -115,65 +115,65 @@ export type KeybindingMenuType = {
     accelerator: string,
 };
 
-const CopyAccelerator = process.platform === "darwin" ? "Command+C" : "Ctrl+Shift+C";
+const CmdOrCtrl = process.platform === "darwin" ? "Cmd" : "Ctrl";
 
 export const KeybindingsForMenu: KeybindingMenuType[] = [
     {
         action: KeyboardAction.tabNew,
-        accelerator: "CmdOrCtrl+T",
+        accelerator: `${CmdOrCtrl}+T`,
     },
     {
         action: KeyboardAction.tabPrevious,
-        accelerator: "CmdOrCtrl+]",
+        accelerator: `${CmdOrCtrl}+]`,
     },
     {
         action: KeyboardAction.tabNext,
-        accelerator: "CmdOrCtrl+[",
+        accelerator: `${CmdOrCtrl}+[`,
     },
     {
         action: KeyboardAction.tabClose,
-        accelerator: "CmdOrCtrl+W",
+        accelerator: `${CmdOrCtrl}+W`,
     },
     {
         action: KeyboardAction.panePrevious,
-        accelerator: "CmdOrCtrl+K",
+        accelerator: `${CmdOrCtrl}+K`,
     },
     {
         action: KeyboardAction.paneNext,
-        accelerator: "CmdOrCtrl+J",
+        accelerator: `${CmdOrCtrl}+J`,
     },
     {
         action: KeyboardAction.paneClose,
-        accelerator: "CmdOrCtrl+P",
+        accelerator: `${CmdOrCtrl}+P`,
     },
     // edit/clipboard commands
     {
         action: KeyboardAction.clipboardCopy,
-        accelerator: CopyAccelerator,
+        accelerator: process.platform === "darwin" ? "Command+C" : "Ctrl+Shift+C",
     },
     {
         action: KeyboardAction.clipboardCut,
-        accelerator: "CmdOrCtrl+X",
+        accelerator: `${CmdOrCtrl}+X`,
     },
     {
         action: KeyboardAction.clipboardPaste,
-        accelerator: "CmdOrCtrl+V",
+        accelerator: `${CmdOrCtrl}+V`,
     },
     {
         action: KeyboardAction.editUndo,
-        accelerator: "CmdOrCtrl+Z",
+        accelerator: `${CmdOrCtrl}+Z`,
     },
     {
         action: KeyboardAction.editRedo,
-        accelerator: "CmdOrCtrl+Shift+Z",
+        accelerator: `${CmdOrCtrl}+Shift+Z`,
     },
     {
         action: KeyboardAction.editSelectAll,
-        accelerator: "CmdOrCtrl+A",
+        accelerator: `${CmdOrCtrl}+A`,
     },
     {
         action: KeyboardAction.editFind,
-        accelerator: "CmdOrCtrl+F",
+        accelerator: `${CmdOrCtrl}+F`,
     },
     {
         action: KeyboardAction.editFindClose,
@@ -182,16 +182,16 @@ export const KeybindingsForMenu: KeybindingMenuType[] = [
     // window commands
     {
         action: KeyboardAction.windowSplitHorizontally,
-        accelerator: "CmdOrCtrl+-",
+        accelerator: `${CmdOrCtrl}+-`,
     },
     {
         action: KeyboardAction.windowSplitVertically,
-        accelerator: "CmdOrCtrl+\\",
+        accelerator: `${CmdOrCtrl}+\\`,
     },
     // view commands
     {
         action: KeyboardAction.viewReload,
-        accelerator: "CmdOrCtrl+R",
+        accelerator: `${CmdOrCtrl}+R`,
     },
     {
         action: KeyboardAction.viewToggleFullScreen,
@@ -200,24 +200,24 @@ export const KeybindingsForMenu: KeybindingMenuType[] = [
     // Upterm commands
     {
         action: KeyboardAction.uptermHide,
-        accelerator: "CmdOrCtrl+H",
+        accelerator: `${CmdOrCtrl}+H`,
     },
     {
         action: KeyboardAction.uptermQuit,
-        accelerator: "CmdOrCtrl+Q",
+        accelerator: `${CmdOrCtrl}+Q`,
     },
     {
         action: KeyboardAction.uptermHideOthers,
-        accelerator: "CmdOrCtrl+Alt+H",
+        accelerator: `${CmdOrCtrl}+Alt+H`,
     },
     // developer
     {
         action: KeyboardAction.developerToggleTools,
-        accelerator: "CmdOrCtrl+Alt+I",
+        accelerator: `${CmdOrCtrl}+Alt+I`,
     },
     {
         action: KeyboardAction.developerToggleDebugMode,
-        accelerator: "CmdOrCtrl+D",
+        accelerator: `${CmdOrCtrl}+Shift+D`,
     },
 ];
 
@@ -231,4 +231,33 @@ export function getAcceleratorForAction(action: KeyboardAction): string {
         return menuAction.action === action;
     })[0];
     return matchingMenuItem.accelerator;
+}
+
+export function isMenuShortcut(event: KeyboardEvent): boolean {
+    const accelerator = toAccelerator(event);
+    return !!KeybindingsForMenu.find(action => action.accelerator === accelerator);
+}
+
+function toAccelerator(event: KeyboardEvent): string {
+    let parts: string[] = [];
+
+    if (event.ctrlKey) {
+        parts.push("Ctrl");
+    }
+
+    if (event.shiftKey) {
+        parts.push("Shift");
+    }
+
+    if (event.metaKey) {
+        parts.push("Cmd");
+    }
+
+    if (event.altKey) {
+        parts.push("Alt");
+    }
+
+    parts.push(event.key.toUpperCase());
+
+    return parts.join("+");
 }

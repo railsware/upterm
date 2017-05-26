@@ -9,7 +9,7 @@ import {saveWindowBounds} from "./ViewUtils";
 import {StatusBarComponent} from "./StatusBarComponent";
 import {PaneTree, Pane} from "../utils/PaneTree";
 import {SearchComponent} from "./SearchComponent";
-import {isKeybindingForEvent} from "./keyevents/Keybindings";
+import {isMenuShortcut, isKeybindingForEvent} from "./keyevents/Keybindings";
 import {KeyboardAction} from "../Enums";
 import {UserEvent} from "../Interfaces";
 import {isModifierKey} from "./ViewUtils";
@@ -143,6 +143,10 @@ export class ApplicationComponent extends React.Component<{}, ApplicationState> 
                 event.preventDefault();
             }
 
+            return;
+        }
+
+        if (isMenuShortcut(event)) {
             return;
         }
 
