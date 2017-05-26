@@ -27,10 +27,6 @@ export const KeybindingsForActions: KeybindingType[] = [
         keybinding: (e: KeyboardEvent) => e.keyCode === KeyCode.CarriageReturn,
     },
     {
-        action: KeyboardAction.cliInterrupt,
-        keybinding: (e: KeyboardEvent) => e.ctrlKey && e.keyCode === KeyCode.C,
-    },
-    {
         action: KeyboardAction.cliClearJobs,
         keybinding: (e: KeyboardEvent) => e.ctrlKey && e.keyCode === KeyCode.L,
     },

@@ -214,12 +214,7 @@ export class ApplicationComponent extends React.Component<{}, ApplicationState> 
         }
 
         if (currentJob && currentJob.isRunningPty() && !isModifierKey(event)) {
-            // CLI interrupt
-            if (isKeybindingForEvent(event, KeyboardAction.cliInterrupt)) {
-                currentJob.interrupt();
-            } else {
-                currentJob.write(event);
-            }
+            currentJob.write(event);
 
             event.stopPropagation();
             event.preventDefault();

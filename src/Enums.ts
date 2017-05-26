@@ -100,7 +100,6 @@ export enum SplitDirection {
 export enum KeyboardAction {
     // CLI commands
     cliRunCommand,
-    cliInterrupt,
     cliClearJobs,
     cliDeleteWord,
     cliClearText,
