@@ -123,6 +123,7 @@ export class JobFormComponent extends React.Component<Props, State> {
     }
 
     focus(): void {
+        this.scrollIntoView();
         this.commandNode.focus();
     }
 
@@ -205,7 +206,7 @@ export class JobFormComponent extends React.Component<Props, State> {
     }
 
     scrollIntoView(): void {
-        this.commandNode.scrollIntoView(true);
+        this.placeholderNode.scrollIntoView(true);
     }
 
     private setText(text: string): void {
