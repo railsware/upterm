@@ -45,6 +45,7 @@ export enum KeyCode {
     X = 88,
     Y = 89,
     Z = 90,
+    Meta = 91,
     Delete = 127,
     Underscore = 189,
     Period = 190,
