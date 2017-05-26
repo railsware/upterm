@@ -31,7 +31,7 @@ export class Session extends EmitterWithUniqueID {
         // TODO: of Session for the application.
         this.deserialize();
 
-        this.on("job", () => this.serialize());
+        this.on("jobs-changed", () => this.serialize());
 
         this.clearJobs();
     }
@@ -41,6 +41,8 @@ export class Session extends EmitterWithUniqueID {
         job.execute();
 
         job.once("end", () => {
+            this.emit("jobs-changed");
+
             const electronWindow = remote.BrowserWindow.getAllWindows()[0];
 
             if (remote.app.dock && !electronWindow.isFocused()) {
@@ -52,7 +54,7 @@ export class Session extends EmitterWithUniqueID {
         });
 
         this.jobs = this.jobs.concat(job);
-        this.emit("job");
+        this.emit("jobs-changed");
     }
 
     get dimensions(): Dimensions {
@@ -74,7 +76,7 @@ export class Session extends EmitterWithUniqueID {
 
     clearJobs(): void {
         this.jobs = [];
-        this.emit("job");
+        this.emit("jobs-changed");
     }
 
     close(): void {

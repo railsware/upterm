@@ -28,7 +28,7 @@ export class SessionComponent extends React.Component<Props, {}> {
 
     componentDidMount() {
         this.props.session
-            .on("job", () => {
+            .on("jobs-changed", () => {
                 const s = (this.refs as any).session;
                 if (s) {
                     if (s.scrollHeight - s.offsetHeight - s.scrollTop > FOOTER_HEIGHT) {
