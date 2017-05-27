@@ -16,7 +16,7 @@ and make a better looking terminal with appropriate tools.
 
 Upterm shows the autocompletion box as you type and tries to be smart about what to suggest.
 Often you can find useful additional information on the right side of the autocompletion, e.g. expanded alias value,
-history substitutions for `!!`, command descriptions, value of the previous directory (`cd -`), etc.
+command descriptions, value of the previous directory (`cd -`), etc.
 
 ###### Compatibility
 
@@ -57,7 +57,6 @@ More Screenshots
 
 ![](README/npm_autocompletion.png)
 ![](README/error.png)
-![](README/history_autocompletion.png)
 ![](README/top_autocompletion.png)
 ![](README/json_decorator.png)
 ![](README/vim.png)
