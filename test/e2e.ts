@@ -22,15 +22,38 @@ class Page {
     }
 
     get job() {
-        return new Job(this.client.element(".job"));
+        return new Job(this.client, this.client.element(".job"));
     }
 }
 
-class Job {
-    constructor(private job: WebdriverIO.Client<WebdriverIO.RawResult<WebdriverIO.Element>> & WebdriverIO.RawResult<WebdriverIO.Element>) {}
+abstract class Block {
+    constructor(
+        protected client: SpectronClient,
+        protected selector: WebdriverIO.Client<WebdriverIO.RawResult<WebdriverIO.Element>> & WebdriverIO.RawResult<WebdriverIO.Element>
+    ) {}
+}
 
+class Job extends Block {
     get output() {
-        return this.job.element(".output");
+        return this.selector.element(".output");
+    }
+
+    get menu() {
+        return new JobMenu(this.client, this.selector.element(".jobMenu"));
+    }
+}
+
+class JobMenu extends Block {
+    get sigkillItem() {
+        return this.client.element(".floatingMenuItem:first-of-type");
+    }
+
+    get sigtermItem() {
+        return this.client.element(".floatingMenuItem:last-of-type");
+    }
+
+    open() {
+        return this.selector.click();
     }
 }
 
@@ -43,7 +66,7 @@ describe("application launch", function () {
     beforeEach(async () => {
         app = new Application({path: "node_modules/.bin/electron", args: ["."]});
         await app.start();
-        app.client.waitUntilWindowLoaded();
+        await app.client.waitUntilWindowLoaded();
         page = new Page(app.client);
         return page.waitTillLoaded();
     });
@@ -56,25 +79,21 @@ describe("application launch", function () {
 
     it("can execute a command", async () => {
         await page.executeCommand("echo expected-text");
-        const text = await page.job.output.getText();
+        const output = await page.job.output.getText();
 
-        expect(text).to.contain("expected-text");
+        expect(output).to.contain("expected-text");
     });
 
-    it("send signals via button", async () => {
+    it.only("send signals via button", async () => {
         await page.executeCommand(`node ${join(__dirname, "test_files", "print_on_sigterm.js")}`);
 
-        return app.client.waitForExist(".jobMenu", timeout).
-        click(".jobMenu").
-        waitForExist(".floatingMenuItem").
-        click(".floatingMenuItem:last-of-type").
-        click(".jobMenu").
-        waitForExist(".floatingMenuItem").
-        click(".floatingMenuItem:first-of-type").
-        waitForExist(".prompt").
-        getText(".job .output").
-        then(output => {
-            expect(output).to.eql("Received SIGTERM");
-        });
+        await page.job.menu.open();
+        await page.job.menu.sigtermItem.click();
+
+        await page.job.menu.open();
+        await page.job.menu.sigkillItem.click();
+
+        const output = await page.job.output.getText();
+        expect(output).to.eql("Received SIGTERM");
     });
 });
