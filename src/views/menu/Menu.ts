@@ -197,14 +197,6 @@ export function buildMenuTemplate(
                 {
                     type: "separator",
                 },
-                {
-                    label: "Close",
-                    accelerator: getAcceleratorForAction(KeyboardAction.paneClose),
-                    click: () => {
-                        application.closeFocusedPane();
-                        application.forceUpdate();
-                    },
-                },
             ],
         },
         {
