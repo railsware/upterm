@@ -13,28 +13,6 @@ export function buildMenuTemplate(
             label: "Upterm",
             submenu: [
                 {
-                    label: "About Upterm",
-                    role: "about",
-                },
-                {
-                    type: "separator",
-                },
-                {
-                    label: "Hide Upterm",
-                    accelerator: getAcceleratorForAction(KeyboardAction.uptermHide),
-                    click: () => {
-                        app.hide();
-                    },
-                },
-                {
-                    label: "Hide Others",
-                    accelerator: getAcceleratorForAction(KeyboardAction.uptermHideOthers),
-                    role: "hideothers",
-                },
-                {
-                    type: "separator",
-                },
-                {
                     label: "Quit",
                     accelerator: getAcceleratorForAction(KeyboardAction.uptermQuit),
                     click: () => {

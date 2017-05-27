@@ -187,7 +187,7 @@ export const KeybindingsForMenu: KeybindingMenuType[] = [
     },
     {
         action: KeyboardAction.viewToggleFullScreen,
-        accelerator: "Ctrl+Cmd+F",
+        accelerator: "Ctrl+Shift+F",
     },
     // Upterm commands
     {
