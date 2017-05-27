@@ -33,7 +33,7 @@ class Page {
 abstract class Block {
     constructor(
         protected client: SpectronClient,
-        protected selector: WebdriverIO.Client<WebdriverIO.RawResult<WebdriverIO.Element>> & WebdriverIO.RawResult<WebdriverIO.Element>
+        protected selector: WebdriverIO.Client<WebdriverIO.RawResult<WebdriverIO.Element>> & WebdriverIO.RawResult<WebdriverIO.Element>,
     ) {}
 }
 
