@@ -63,16 +63,24 @@ describe("application launch", function () {
     let app: Application;
     let page: Page;
 
-    beforeEach(async () => {
+    before(async () => {
         app = new Application({path: "node_modules/.bin/electron", args: ["."]});
-        await app.start();
+    });
+
+    beforeEach(async () => {
+        if (app.isRunning()) {
+            await app.restart();
+        } else {
+            await app.start();
+        }
+
         await app.client.waitUntilWindowLoaded();
         page = new Page(app.client);
         return page.waitTillLoaded();
     });
 
-    afterEach(function () {
-        if (app && app.isRunning()) {
+    after(() => {
+        if (app.isRunning()) {
             return app.stop();
         }
     });
@@ -84,7 +92,7 @@ describe("application launch", function () {
         expect(output).to.contain("expected-text");
     });
 
-    it.only("send signals via button", async () => {
+    it("send signals via button", async () => {
         await page.executeCommand(`node ${join(__dirname, "test_files", "print_on_sigterm.js")}`);
 
         await page.job.menu.open();
