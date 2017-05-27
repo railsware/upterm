@@ -21,8 +21,16 @@ class Page {
         return this.client.element(this.promptSelector);
     }
 
-    get jobOutput() {
-        return this.client.element(".job .output");
+    get job() {
+        return new Job(this.client.element(".job"));
+    }
+}
+
+class Job {
+    constructor(private job: WebdriverIO.Client<WebdriverIO.RawResult<WebdriverIO.Element>> & WebdriverIO.RawResult<WebdriverIO.Element>) {}
+
+    get output() {
+        return this.job.element(".output");
     }
 }
 
@@ -48,7 +56,7 @@ describe("application launch", function () {
 
     it("can execute a command", async () => {
         await page.executeCommand("echo expected-text");
-        const text = await page.jobOutput.getText();
+        const text = await page.job.output.getText();
 
         expect(text).to.contain("expected-text");
     });
