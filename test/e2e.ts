@@ -10,7 +10,7 @@ class Page {
     constructor(private client: SpectronClient) {}
 
     waitTillLoaded() {
-        return this.client.waitForExist(this.promptSelector);
+        return this.client.waitForExist(this.promptSelector, timeout);
     }
 
     executeCommand(command: string) {
