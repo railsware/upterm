@@ -36,8 +36,8 @@ const VcsDataComponent = ({data}: { data: VcsData }) => {
 };
 
 export const StatusBarComponent = ({presentWorkingDirectory}: { presentWorkingDirectory: string }) =>
-    <div style={css.statusBar.itself}>
+    <div className="status-bar" style={css.statusBar.itself}>
         <span style={css.statusBar.icon}>{fontAwesome.folderOpen}</span>
-        <span style={css.statusBar.presentDirectory}>{presentWorkingDirectory}</span>
+        <span className="present-directory" style={css.statusBar.presentDirectory}>{presentWorkingDirectory}</span>
         <VcsDataComponent data={watchManager.vcsDataFor(presentWorkingDirectory)}/>
     </div>;
