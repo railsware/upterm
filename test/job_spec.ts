@@ -8,7 +8,7 @@ import {isEqual} from "lodash";
 import {Prompt} from "../src/shell/Prompt";
 
 describe("Job", () => {
-    it.only("runs interceptors", async () => {
+    it("runs interceptors", async () => {
         let calls = 0;
         PluginManager.registerCommandInterceptorPlugin({
             isApplicable: ({ command }) => isEqual(command, ["test1"]),

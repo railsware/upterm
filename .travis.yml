@@ -10,7 +10,7 @@ deploy:
   provider: script
   script: bash housekeeping/deploy.sh
   on:
-    branch: master
+    branch: release
 env:
   global:
     # GH_TOKEN
