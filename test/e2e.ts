@@ -24,6 +24,10 @@ class Page {
     get job() {
         return new Job(this.client, this.client.element(".job"));
     }
+
+    get statusBar() {
+        return new StatusBar(this.client, this.client.element(".status-bar"));
+    }
 }
 
 abstract class Block {
@@ -54,6 +58,12 @@ class JobMenu extends Block {
 
     open() {
         return this.selector.click();
+    }
+}
+
+class StatusBar extends Block {
+    get presentDirectory() {
+        return this.selector.element(".present-directory");
     }
 }
 
@@ -103,5 +113,18 @@ describe("application launch", function () {
 
         const output = await page.job.output.getText();
         expect(output).to.eql("Received SIGTERM");
+    });
+
+    describe("status bar", () => {
+        it("changes working directory on cd", async () => {
+            const oldDirectory = __dirname + "/";
+            const newDirectory = join(oldDirectory, "utils") + "/";
+
+            await page.executeCommand(`cd ${oldDirectory}`);
+            expect(await page.statusBar.presentDirectory.getText()).to.eql(oldDirectory);
+
+            await page.executeCommand(`cd ${newDirectory}`);
+            expect(await page.statusBar.presentDirectory.getText()).to.eql(newDirectory);
+        });
     });
 });
