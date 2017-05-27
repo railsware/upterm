@@ -1,29 +1,28 @@
-const {Application} = require("spectron");
-const {expect} = require("chai");
-const {join} = require("path");
+import {Application} from "spectron";
+import {expect} from "chai";
+import {join} from "path";
 
 const timeout = 50000;
 
 describe("application launch", function () {
     this.timeout(timeout);
 
-    let app;
+    let app: Application;
 
-    beforeEach(function () {
+    beforeEach(async () => {
         app = new Application({path: "node_modules/.bin/electron", args: ["."]});
-        return app.start();
+        await app.start();
+        return app.client.waitUntilWindowLoaded();
     });
 
     afterEach(function () {
         if (app && app.isRunning()) {
-            return app.stop()
+            return app.stop();
         }
     });
 
-    it("can execute a command", function () {
-        return app.client.
-        waitUntilWindowLoaded().
-        waitForExist(".prompt", timeout).
+    it("can execute a command", async function () {
+        return app.client.waitForExist(".prompt", timeout).
         setValue(".prompt", "echo expected-text\n").
         waitForExist(".job-header").
         waitForExist(".prompt").
@@ -33,10 +32,8 @@ describe("application launch", function () {
         });
     });
 
-    it("send signals via button", function () {
-        return app.client.
-        waitUntilWindowLoaded().
-        waitForExist(".prompt", timeout).
+    it("send signals via button", async function () {
+        return app.client.waitForExist(".prompt", timeout).
         setValue(".prompt", `node ${join(__dirname, "test_files", "print_on_sigterm.js")}\n`).
         waitForExist(".jobMenu", timeout).
         click(".jobMenu").
@@ -48,7 +45,7 @@ describe("application launch", function () {
         waitForExist(".prompt").
         getText(".job .output").
         then(output => {
-            expect(output).to.eql('Received SIGTERM');
+            expect(output).to.eql("Received SIGTERM");
         });
     });
 });
