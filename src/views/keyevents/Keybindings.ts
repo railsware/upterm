@@ -72,6 +72,11 @@ export const KeybindingsForActions: KeybindingType[] = [
             return (e.ctrlKey && e.keyCode === KeyCode.N) || (e.keyCode === KeyCode.Down);
         },
     },
+    // pane command
+    {
+        action: KeyboardAction.paneClose,
+        keybinding: (e: KeyboardEvent) => isMeta(e) && e.keyCode === KeyCode.D,
+    },
     // tab commands
     {
         action: KeyboardAction.tabFocus,

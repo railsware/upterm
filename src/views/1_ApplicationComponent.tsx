@@ -150,6 +150,17 @@ export class ApplicationComponent extends React.Component<{}, ApplicationState> 
             return;
         }
 
+        // Close focused pane
+        if (isKeybindingForEvent(event, KeyboardAction.paneClose) && jobFormComponent) {
+            this.closeFocusedPane();
+
+            this.forceUpdate();
+
+            event.stopPropagation();
+            event.preventDefault();
+            return;
+        }
+
         // Change focussed tab
         if (isKeybindingForEvent(event, KeyboardAction.tabFocus)) {
             const position = parseInt(event.key, 10);
