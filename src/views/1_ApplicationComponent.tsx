@@ -146,7 +146,7 @@ export class ApplicationComponent extends React.Component<{}, ApplicationState> 
             return;
         }
 
-        if (isMenuShortcut(event)) {
+        if (isModifierKey(event) || isMenuShortcut(event)) {
             return;
         }
 
@@ -213,7 +213,7 @@ export class ApplicationComponent extends React.Component<{}, ApplicationState> 
             return;
         }
 
-        if (currentJob && currentJob.isRunningPty() && !isModifierKey(event)) {
+        if (currentJob && currentJob.isRunningPty()) {
             currentJob.write(event);
 
             event.stopPropagation();

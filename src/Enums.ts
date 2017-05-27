@@ -118,6 +118,8 @@ export enum KeyboardAction {
     tabNext,
     tabClose,
     // pane commands
+    paneSplitHorizontally,
+    paneSplitVertically,
     panePrevious,
     paneNext,
     paneClose,
@@ -130,9 +132,6 @@ export enum KeyboardAction {
     editSelectAll,
     editFind,
     editFindClose,
-    // window commands
-    windowSplitHorizontally,
-    windowSplitVertically,
     // view commands
     viewReload,
     viewToggleFullScreen,

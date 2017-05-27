@@ -130,6 +130,15 @@ export const KeybindingsForMenu: KeybindingMenuType[] = [
         action: KeyboardAction.tabClose,
         accelerator: `${CmdOrCtrl}+W`,
     },
+    // pane commands
+    {
+        action: KeyboardAction.paneSplitHorizontally,
+        accelerator: `Alt+-`,
+    },
+    {
+        action: KeyboardAction.paneSplitVertically,
+        accelerator: `Alt+\\`,
+    },
     {
         action: KeyboardAction.panePrevious,
         accelerator: `Alt+[`,
@@ -170,15 +179,6 @@ export const KeybindingsForMenu: KeybindingMenuType[] = [
     {
         action: KeyboardAction.editFindClose,
         accelerator: "Esc",
-    },
-    // window commands
-    {
-        action: KeyboardAction.windowSplitHorizontally,
-        accelerator: `${CmdOrCtrl}+-`,
-    },
-    {
-        action: KeyboardAction.windowSplitVertically,
-        accelerator: `${CmdOrCtrl}+\\`,
     },
     // view commands
     {

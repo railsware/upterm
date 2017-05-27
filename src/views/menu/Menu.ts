@@ -161,7 +161,7 @@ export function buildMenuTemplate(
             submenu: [
                 {
                     label: "Split Horizontally",
-                    accelerator: getAcceleratorForAction(KeyboardAction.windowSplitHorizontally),
+                    accelerator: getAcceleratorForAction(KeyboardAction.paneSplitHorizontally),
                     click: () => {
                         application.focusedTab().addPane(SplitDirection.Horizontal);
                         application.forceUpdate();
@@ -169,7 +169,7 @@ export function buildMenuTemplate(
                 },
                 {
                     label: "Split Vertically",
-                    accelerator: getAcceleratorForAction(KeyboardAction.windowSplitVertically),
+                    accelerator: getAcceleratorForAction(KeyboardAction.paneSplitVertically),
                     click: () => {
                         application.focusedTab().addPane(SplitDirection.Vertical);
                         application.forceUpdate();
