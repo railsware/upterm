@@ -131,17 +131,15 @@ export class ApplicationComponent extends React.Component<{}, ApplicationState> 
 
             if (jobFormComponent) {
                 jobFormComponent.focus();
-                event.preventDefault();
-                jobFormComponent.appendText(event.clipboardData.getData("text/plain"));
-                return;
+                document.execCommand("inserttext", false, event.clipboardData.getData("text/plain"));
             }
 
             if (currentJob) {
                 currentJob.write(event.clipboardData.getData("text/plain"));
-
-                event.stopPropagation();
-                event.preventDefault();
             }
+
+            event.stopPropagation();
+            event.preventDefault();
 
             return;
         }
