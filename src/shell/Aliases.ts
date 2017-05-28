@@ -1,11 +1,10 @@
-import {executeCommandWithShellConfig} from "../PTY";
+import {loginShell} from "../utils/Shell";
 import * as _ from "lodash";
 
 export const aliasesFromConfig: Dictionary<string> = {};
 
 export async function loadAliasesFromConfig(): Promise<void> {
-    const lines = await executeCommandWithShellConfig("alias");
-
+    const lines = await loginShell.loadAliases();
     lines.map(parseAlias).forEach(parsed => aliasesFromConfig[parsed.name] = parsed.value);
 }
 

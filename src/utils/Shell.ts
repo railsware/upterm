@@ -2,15 +2,23 @@ import {basename} from "path";
 import {readFileSync, statSync} from "fs";
 import * as Path from "path";
 import {EOL} from "os";
-import {resolveFile, io, filterAsync, homeDirectory} from "./Common";
+import {resolveFile, io, isWindows, filterAsync, homeDirectory} from "./Common";
+import {executeCommandWithShellConfig} from "../PTY";
 import * as _ from "lodash";
 
 abstract class Shell {
     abstract get executableName(): string;
     abstract get configFiles(): string[];
     abstract get noConfigSwitches(): string[];
+    abstract get executeCommandSwitches(): string[];
+    abstract get interactiveCommandSwitches(): string[];
     abstract get preCommandModifiers(): string[];
     abstract get historyFileName(): string;
+    abstract get commandExecutorPath(): string;
+    abstract get environmentCommand(): string;
+    abstract loadAliases(): Promise<string[]>;
+
+    abstract combineCommands(commands: string[]): string;
 
     async existingConfigFiles(): Promise<string[]> {
         const resolvedConfigFiles = this.configFiles.map(fileName => resolveFile(process.env.HOME, fileName));
@@ -33,7 +41,33 @@ abstract class Shell {
     }
 }
 
-class Bash extends Shell {
+abstract class UnixShell extends Shell {
+    get executeCommandSwitches() {
+        return ["-c"];
+    }
+
+    get interactiveCommandSwitches() {
+        return ["-i", "-c"];
+    }
+
+    get commandExecutorPath() {
+        return "/bin/bash";
+    }
+
+    get environmentCommand() {
+        return "env";
+    }
+
+    loadAliases() {
+        return executeCommandWithShellConfig("alias");
+    }
+
+    combineCommands(commands: string[]) {
+        return `'${commands.join("; ")}'`;
+    }
+}
+
+class Bash extends UnixShell {
     get executableName() {
         return "bash";
     }
@@ -65,7 +99,7 @@ class Bash extends Shell {
     }
 }
 
-class ZSH extends Shell {
+class ZSH extends UnixShell {
     get executableName() {
         return "zsh";
     }
@@ -105,18 +139,71 @@ class ZSH extends Shell {
     }
 }
 
+class Cmd extends Shell {
+    static get cmdPath() {
+        return Path.join(process.env.WINDIR, "System32", "cmd.exe");
+    }
+
+    get executableName() {
+        return "cmd.exe";
+    }
+
+    get configFiles() {
+        return [
+        ];
+    }
+
+    get executeCommandSwitches() {
+        return ["/c"];
+    }
+
+    get interactiveCommandSwitches() {
+        return ["/c"];
+    }
+
+    get noConfigSwitches() {
+        return [];
+    }
+
+    get preCommandModifiers(): string[] {
+        return [];
+    }
+
+    get historyFileName(): string {
+        return "";
+    }
+
+    get commandExecutorPath() {
+        return Cmd.cmdPath;
+    }
+
+    get environmentCommand() {
+        return "set";
+    }
+
+    combineCommands(commands: string[]) {
+        return `"${commands.join(" && ")}`;
+    }
+
+    async loadAliases() {
+        return [];
+    }
+}
+
 const supportedShells: Dictionary<Shell> = {
     bash: new Bash(),
-    zsh: new ZSH() ,
+    zsh: new ZSH(),
+    "cmd.exe": new Cmd(),
 };
 
 const shell = () => {
-    const shellName = basename(process.env.SHELL);
+    const shellName = process.env.SHELL ? basename(process.env.SHELL) : "";
     if (shellName in supportedShells) {
         return process.env.SHELL;
     } else {
-        console.error(`${shellName} is not supported; defaulting to /bin/bash`);
-        return "/bin/bash";
+        const defaultShell = isWindows ? Cmd.cmdPath : "/bin/bash";
+        console.error(`${shellName} is not supported; defaulting to ${defaultShell}`);
+        return defaultShell;
     }
 };
 
