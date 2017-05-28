@@ -63,11 +63,13 @@ class RowComponent extends React.Component<RowProps, {}> {
 
             return <div className="output-row"
                         key={rowIndex}
-                        style={css.row(this.props.job.status, this.props.job.screenBuffer.activeScreenBufferType)}
                         ref={(div: HTMLElement | undefined) => div && div.scrollIntoViewIfNeeded()}>{charGroups}</div>;
         });
 
-        return <div className="wrapped-output-row">{outputRows}</div>;
+        return <div className="wrapped-output-row"
+                    style={css.row(this.props.job.status, this.props.job.screenBuffer.activeScreenBufferType)}>
+            {outputRows}
+        </div>;
     }
 }
 
