@@ -474,7 +474,7 @@ export const output = (activeScreenBufferType: ScreenBufferType, status: Status)
     return styles;
 };
 
-export const promptWrapper = (isSticky: boolean, status: Status | undefined = undefined) => {
+export const promptWrapper = (status: Status | undefined = undefined) => {
     const styles: CSSObject = {
         top: 0,
         paddingTop: promptVerticalPadding,
@@ -487,14 +487,6 @@ export const promptWrapper = (isSticky: boolean, status: Status | undefined = un
         minHeight: promptWrapperHeight,
         zIndex: outputCutZIndex + 1,
     };
-
-    if (isSticky) {
-        styles.boxShadow = "0 5px 8px -3px rgba(0, 0, 0, 0.3)";
-        styles.width = "100%";
-        styles.position = "fixed";
-        styles.top = titleBarHeight;
-        styles.height = promptWrapperHeight;
-    }
 
     if (status && [Status.Failure, Status.Interrupted].includes(status)) {
         styles.backgroundColor = failurize(promptBackgroundColor);
@@ -567,12 +559,12 @@ export const autocompletedPreview = {
     color: lighten(promptBackgroundColor, 15),
 };
 
-export const prompt = (isSticky: boolean) => ({
+export const prompt = {
     ...promptInlineElement,
     color: colors.white,
     zIndex: 2,
-    whiteSpace: isSticky ? "nowrap" : "pre-wrap",
-});
+    whiteSpace: "pre-wrap",
+};
 
 export const promptPlaceholder = {
     minHeight: promptWrapperHeight,

@@ -1,7 +1,6 @@
 import * as React from "react";
 import {FloatingMenu} from "./FloatingMenu";
 import DecorationToggleComponent from "./DecorationToggleComponent";
-import {stopBubblingUp} from "./ViewUtils";
 import {Job} from "../shell/Job";
 import Button from "../plugins/autocompletion_utils/Button";
 import * as css from "./css/main";
@@ -17,45 +16,20 @@ interface Props {
 
 interface State {
     offsetTop: number;
-    isSticky: boolean;
     showJobMenu: boolean;
 }
 
 
 // TODO: Make sure we only update the view when the model changes.
 export class JobHeaderComponent extends React.Component<Props, State> {
-    private intersectionObserver = new IntersectionObserver(
-        (entries) => {
-            const entry = entries[0];
-            const nearTop = entry.boundingClientRect.top < 50;
-            const isVisible = entry.intersectionRatio === 1;
-
-            this.setState({...this.state, isSticky: nearTop && !isVisible});
-        },
-        {
-            threshold: 1,
-            rootMargin: css.toDOMString(css.promptWrapperHeight),
-        },
-    );
-
     /* tslint:disable:member-ordering */
     constructor(props: Props) {
         super(props);
 
         this.state = {
             offsetTop: 0,
-            isSticky: false,
             showJobMenu: false,
         };
-    }
-
-    componentDidMount() {
-        this.intersectionObserver.observe(this.placeholderNode);
-    }
-
-    componentWillUnmount() {
-        this.intersectionObserver.unobserve(this.placeholderNode);
-        this.intersectionObserver.disconnect();
     }
 
     render() {
@@ -71,16 +45,6 @@ export class JobHeaderComponent extends React.Component<Props, State> {
             />;
         }
 
-        if (this.state.isSticky) {
-            scrollToTop = <span
-                style={css.action}
-                title="Scroll to beginning of output."
-                onClick={this.handleScrollToTop.bind(this)}
-            >
-                {fontAwesome.longArrowUp}
-            </span>;
-        }
-
         jobMenuButton = <span style={{transform: "translateY(-1px)"}} className="jobMenu">
             <Button
                 onClick={() => this.setState({showJobMenu: !this.state.showJobMenu} as State)}
@@ -88,7 +52,7 @@ export class JobHeaderComponent extends React.Component<Props, State> {
         </span>;
 
         return <div className="job-header" ref="placeholder" style={css.promptPlaceholder}>
-            <div style={css.promptWrapper(this.state.isSticky, this.props.job.status)}>
+            <div style={css.promptWrapper(this.props.job.status)}>
                 <div style={css.arrow(this.props.job.status)}>
                     <div style={css.arrowInner(this.props.job.status)} />
                 </div>
@@ -99,7 +63,7 @@ export class JobHeaderComponent extends React.Component<Props, State> {
                     {this.props.job.status === Status.Interrupted ? fontAwesome.close : ""}
                 </div>
                 <div
-                    style={css.prompt(this.state.isSticky)}
+                    style={css.prompt}
                     type="text"
                 >
                     {this.props.job.prompt.value}
@@ -132,11 +96,5 @@ export class JobHeaderComponent extends React.Component<Props, State> {
     private get placeholderNode(): Element {
         /* tslint:disable:no-string-literal */
         return this.refs["placeholder"] as Element;
-    }
-
-    private handleScrollToTop(event: Event) {
-        stopBubblingUp(event);
-
-        document.location.href = `#${this.props.job.id}`;
     }
 }

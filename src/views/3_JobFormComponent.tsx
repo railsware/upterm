@@ -22,25 +22,10 @@ interface State {
     offsetTop: number;
     caretPositionFromPreviousFocus: number;
     suggestions: Suggestion[];
-    isSticky: boolean;
 }
 
 export class JobFormComponent extends React.Component<Props, State> {
     private prompt: Prompt;
-
-    private intersectionObserver = new IntersectionObserver(
-        (entries) => {
-            const entry = entries[0];
-            const nearTop = entry.boundingClientRect.top < 50;
-            const isVisible = entry.intersectionRatio === 1;
-
-            this.setState({...this.state, isSticky: nearTop && !isVisible});
-        },
-        {
-            threshold: 1,
-            rootMargin: css.toDOMString(css.promptWrapperHeight),
-        },
-    );
 
     /* tslint:disable:member-ordering */
     constructor(props: Props) {
@@ -53,20 +38,12 @@ export class JobFormComponent extends React.Component<Props, State> {
             offsetTop: 0,
             caretPositionFromPreviousFocus: 0,
             suggestions: [],
-            isSticky: false,
         };
     }
 
     componentDidMount() {
         this.focus();
         this.setDOMValueProgrammatically(this.prompt.value);
-
-        this.intersectionObserver.observe(this.placeholderNode);
-    }
-
-    componentWillUnmount() {
-        this.intersectionObserver.unobserve(this.placeholderNode);
-        this.intersectionObserver.disconnect();
     }
 
     componentDidUpdate(prevProps: Props) {
@@ -97,7 +74,7 @@ export class JobFormComponent extends React.Component<Props, State> {
         }
 
         return <div ref="placeholder" style={css.promptPlaceholder}>
-            <div style={css.promptWrapper(this.state.isSticky)}>
+            <div style={css.promptWrapper()}>
                 <div style={css.arrow()}>
                     <div style={css.arrowInner()} />
                 </div>
@@ -107,7 +84,7 @@ export class JobFormComponent extends React.Component<Props, State> {
                 </div>
                 <div
                     className="prompt"
-                    style={css.prompt(this.state.isSticky)}
+                    style={css.prompt}
                     onInput={this.handleInput.bind(this)}
                     onDrop={this.handleDrop.bind(this)}
                     onBlur={() => this.setState({...this.state, caretPositionFromPreviousFocus: getCaretPosition(this.commandNode)})}
