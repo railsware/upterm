@@ -1,15 +1,15 @@
 import {linedOutputOf} from "../PTY";
 import * as Path from "path";
 import * as fs from "fs";
-import * as _ from "lodash";
 import {executeCommand} from "../PTY";
+import * as _ from "lodash";
 
 export class Branch {
     constructor(private refName: string, private _isCurrent: boolean) {
     }
 
     toString(): string {
-        return _.last(this.refName.split("/"));
+        return this.refName;
     }
 
     isCurrent(): boolean {
@@ -122,21 +122,32 @@ export async function branches({
     remotes,
     tags,
 }: BranchesOptions): Promise<Branch[]> {
-    const promiseCurrentBranch = executeCommand(
+    const currentBranch = await executeCommand(
         "git",
         ['"symbolic-ref"', '"--short"', '"-q"', '"HEAD"'],
         directory)
         .then(branchName => branchName.trim());
-    let promiseLines = linedOutputOf(
+    const promiseHeadsTags = linedOutputOf(
         "git",
-        ["for-each-ref", tags ? "refs/tags" : "", "refs/heads",
-         remotes ? "refs/remotes" : "", "--format='%(HEAD)%(refname:short)'"],
+        ["for-each-ref", "refs/heads ", tags ? "refs/tags " : "",
+        "--format='%(HEAD)%(refname:strip=2)'", "|",
+        "sed", "-r", "'s/^.{1}//'"],
         directory,
     );
+    const promiseRemotes = linedOutputOf(
+        "git",
+        ["for-each-ref", "refs/remotes",
+        "--format='%(HEAD)%(refname:strip=3)'", "|",
+        "sed", "'s/^.{1}//'"],
+        directory,
+    );
+    let promiseBranches = [promiseHeadsTags];
+    if (remotes)
+        promiseBranches.push(promiseRemotes);
     // Wait until the two concurrent promise requests resolve before continuing.
-    let [currentBranch, lines] = await Promise.all([promiseCurrentBranch, promiseLines]);
-    return lines.map(line => {
-        const branch = line.slice(1).trim();
+    const allBranches = _.flatten(await Promise.all(promiseBranches));
+    return allBranches.map(b => {
+        const branch = b.trim();
         return new Branch(branch, branch === currentBranch);
     });
 }
