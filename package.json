@@ -89,6 +89,9 @@
   },
   "license": "MIT",
   "build": {
-    "appId": "com.github.railsware.upterm"
+    "appId": "com.github.railsware.upterm",
+    "linux": {
+      "icon": "icons"
+    }
   }
 }
