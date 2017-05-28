@@ -87,7 +87,7 @@ export class JobHeaderComponent extends React.Component<Props, State> {
             >•••</Button>
         </span>;
 
-        return <div className="job-header" ref="placeholder" id={this.props.job.id.toString()} style={css.promptPlaceholder}>
+        return <div className="job-header" ref="placeholder" style={css.promptPlaceholder}>
             <div style={css.promptWrapper(this.state.isSticky, this.props.job.status)}>
                 <div style={css.arrow(this.props.job.status)}>
                     <div style={css.arrowInner(this.props.job.status)} />

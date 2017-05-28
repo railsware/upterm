@@ -1,4 +1,5 @@
 import * as React from "react";
+import * as _ from "lodash";
 import {ScreenBuffer} from "../ScreenBuffer";
 import {Char} from "../Char";
 import {groupWhen} from "../utils/Common";
@@ -52,13 +53,21 @@ class RowComponent extends React.Component<RowProps, {}> {
     }
 
     render() {
-        let rowWithoutHoles = this.props.row.toArray().map(char => char || Char.empty);
-        let charGroups = groupWhen(charGrouper, rowWithoutHoles).map((charGroup: Char[], index: number) =>
-            <CharGroupComponent job={this.props.job} group={charGroup} key={index}/>,
-        );
+        const rowWithoutHoles = this.props.row.toArray().map(char => char || Char.empty);
+        const wrappedRows = _.chunk(rowWithoutHoles, this.props.job.dimensions.columns);
 
-        return <div style={css.row(this.props.job.status, this.props.job.screenBuffer.activeScreenBufferType)}
-                    ref={(div: HTMLElement | undefined) => div && div.scrollIntoViewIfNeeded()}>{charGroups}</div>;
+        const outputRows = wrappedRows.map((row, rowIndex) => {
+            const charGroups = groupWhen(charGrouper, row).map((charGroup: Char[], index: number) =>
+                <CharGroupComponent job={this.props.job} group={charGroup} key={index}/>,
+            );
+
+            return <div className="output-row"
+                        key={rowIndex}
+                        style={css.row(this.props.job.status, this.props.job.screenBuffer.activeScreenBufferType)}
+                        ref={(div: HTMLElement | undefined) => div && div.scrollIntoViewIfNeeded()}>{charGroups}</div>;
+        });
+
+        return <div className="wrapped-output-row">{outputRows}</div>;
     }
 }
 
