@@ -42,7 +42,7 @@ Beware that the version in Homebrew might be outdated. Visit the [releases](http
 
 ###### Windows
 
-Windows is not supported at the moment. Consider voting for the [Windows Support](https://github.com/railsware/upterm/issues/800) Issue.
+Windows is not officially supported at the moment. The [Windows Support](https://github.com/railsware/upterm/issues/800) Issue explains potential experimental support.
 
 Technologies
 ------------
