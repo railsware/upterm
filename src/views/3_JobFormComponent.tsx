@@ -50,27 +50,42 @@ export class JobFormComponent extends React.Component<Props, State> {
         if (!prevProps.isFocused && this.props.isFocused) {
             this.focus();
         }
+
+        if (this.state.suggestions.length && this.state.previousKeyCode !== KeyCode.Backspace) {
+            this.commandNode.innerText = this.valueWithCurrentSuggestion;
+
+            const el = document.getElementsByClassName("prompt")[0];
+            const sel = window.getSelection();
+
+            const range = document.createRange();
+
+            range.setStart(el.childNodes[0], this.prompt.value.length);
+            range.setEndAfter(el);
+
+            sel.removeAllRanges();
+            sel.addRange(range);
+        }
     }
 
     render() {
         // FIXME: write better types.
         let autocomplete: any;
-        let autocompletedPreview: any;
+        // let autocompletedPreview: any;
 
         if (this.showAutocomplete()) {
             autocomplete = <AutocompleteComponent
                 suggestions={this.state.suggestions}
                 offsetTop={this.state.offsetTop}
-                caretPosition={getCaretPosition(this.commandNode)}
+                caretPosition={this.prompt.value.length}
                 onSuggestionHover={index => this.setState({...this.state, highlightedSuggestionIndex: index})}
                 onSuggestionClick={this.applySuggestion.bind(this)}
                 highlightedIndex={this.state.highlightedSuggestionIndex}
                 ref="autocomplete"
             />;
-            const completed = this.valueWithCurrentSuggestion;
-            if (completed.trim() !== this.prompt.value && completed.startsWith(this.prompt.value)) {
-                autocompletedPreview = <div style={css.autocompletedPreview}>{completed}</div>;
-            }
+            // const completed = this.valueWithCurrentSuggestion;
+            // if (completed.trim() !== this.prompt.value && completed.startsWith(this.prompt.value)) {
+            //     autocompletedPreview = <div style={css.autocompletedPreview}>{completed}</div>;
+            // }
         }
 
         return <div ref="placeholder" style={css.promptPlaceholder}>
@@ -93,7 +108,6 @@ export class JobFormComponent extends React.Component<Props, State> {
                     ref="command"
                     contentEditable={true}
                 />
-                {autocompletedPreview}
                 {autocomplete}
             </div>
         </div>;
@@ -223,7 +237,7 @@ export class JobFormComponent extends React.Component<Props, State> {
 
         return suggestion.promptSerializer({
             ast: this.prompt.ast,
-            caretPosition: getCaretPosition(this.commandNode),
+            caretPosition: this.prompt.value.length,
             suggestion: suggestion,
         });
     }
