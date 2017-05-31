@@ -149,7 +149,6 @@ export const row = (jobStatus: Status, activeScreenBufferType: ScreenBufferType)
     const style: CSSObject = {
         padding: `0 ${outputPadding}`,
         minHeight: rowHeight,
-        contain: "strict",
     };
 
     if (activeScreenBufferType === ScreenBufferType.Alternate) {
@@ -446,7 +445,6 @@ export const output = (activeScreenBufferType: ScreenBufferType, status: Status)
         paddingRight: activeScreenBufferType === ScreenBufferType.Alternate ? 0 : outputPadding,
         whiteSpace: "pre-wrap",
         backgroundColor: backgroundColor,
-        contain: "paint",
     };
 
     if (activeScreenBufferType === ScreenBufferType.Alternate) {
