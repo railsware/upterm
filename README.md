@@ -33,7 +33,14 @@ brew cask install upterm
 
 Beware that the version in Homebrew might be outdated. Visit the [releases](https://github.com/railsware/upterm/releases) page to download the latest version.
 
-###### Linux
+###### Linux *(Arch Linux)*
+```bash
+yaourt -S upterm
+```
+
+As with macOS's `brew` install, the AUR may also be outdated. To install the latest version, refer to the [install guide for Linux (Others)](#linux-others).
+
+###### Linux *(Others)*
 
 * `git clone https://github.com/railsware/upterm.git`
 * `cd upterm`
