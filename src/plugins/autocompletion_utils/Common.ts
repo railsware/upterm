@@ -31,6 +31,10 @@ interface SuggestionAttributes {
     promptSerializer: PromptSerializer;
 }
 
+export function provide(provider: AutocompletionProvider): AutocompletionProvider {
+    return provider;
+}
+
 const defaultPromptSerializer: PromptSerializer = (context: PromptSerializerContext): string => {
     const node = leafNodeAt(context.caretPosition, context.ast);
     return serializeReplacing(context.ast, node, context.suggestion.value.replace(/\s/g, "\\ ") + (context.suggestion.shouldAddSpace ? " " : ""));
@@ -182,7 +186,7 @@ export const styles = {
     },
 };
 
-export const unique = (provider: AutocompletionProvider): AutocompletionProvider => mk(async (context) => {
+export const unique = (provider: AutocompletionProvider) => provide(async context => {
     const suggestions = await provider(context);
     return suggestions.filter(suggestion => !context.argument.command.hasArgument(suggestion.value, context.argument));
 });
@@ -242,7 +246,7 @@ export const anyFilesSuggestionsProvider = unique(filesSuggestionsProvider(() =>
 export const directoriesSuggestions = filesSuggestions(info => info.stat.isDirectory());
 export const directoriesSuggestionsProvider = filesSuggestionsProvider(info => info.stat.isDirectory());
 
-export const environmentVariableSuggestions = mk(async context => {
+export const environmentVariableSuggestions = provide(async context => {
     if (context.argument.value.startsWith("$")) {
         return context.environment.map((key, value) =>
             new Suggestion({value: "$" + key, description: value, style: styles.environmentVariable}),
@@ -256,13 +260,7 @@ export function contextIndependent(provider: () => Promise<Suggestion[]>) {
     return _.memoize(provider, () => "");
 }
 
-export function mk(provider: AutocompletionProvider) {
-    return provider;
-}
-
-export const emptyProvider = mk(async() => []);
-
-
+export const emptyProvider = provide(async() => []);
 
 function gitStatusCodeColor(statusCode: StatusCode) {
     switch (statusCode) {
@@ -321,7 +319,7 @@ function extensionIcon(extension: string) {
     }
 }
 
-export const longAndShortFlag = (name: string, shortName = name[0]) => mk(async context => {
+export const longAndShortFlag = (name: string, shortName = name[0]) => provide(async context => {
     const longValue = `--${name}`;
     const shortValue = `-${shortName}`;
 
@@ -337,7 +335,7 @@ export const longAndShortFlag = (name: string, shortName = name[0]) => mk(async 
 export const shortFlag = (char: string) => unique(async() => [new Suggestion({value: `-${char}`, style: styles.option})]);
 export const longFlag = (name: string) => unique(async() => [new Suggestion({value: `--${name}`, style: styles.option})]);
 
-export const mapSuggestions = (provider: AutocompletionProvider, mapper: (suggestion: Suggestion) => Suggestion) => mk(async(context) => (await provider(context)).map(mapper));
+export const mapSuggestions = (provider: AutocompletionProvider, mapper: (suggestion: Suggestion) => Suggestion) => provide(async context => (await provider(context)).map(mapper));
 
 export interface SubcommandConfig {
     name: string;

@@ -1,12 +1,11 @@
 import * as Git from "../../utils/Git";
 import {
     styles, Suggestion, longAndShortFlag, longFlag, mapSuggestions, unique,
-    emptyProvider, SubcommandConfig, commandWithSubcommands,
+    emptyProvider, SubcommandConfig, commandWithSubcommands, provide,
 } from "../autocompletion_utils/Common";
 import * as Common from "../autocompletion_utils/Common";
 import combine from "../autocompletion_utils/Combine";
 import {PluginManager} from "../../PluginManager";
-import {AutocompletionContext} from "../../Interfaces";
 import {linedOutputOf, executeCommand} from "../../PTY";
 import {find, sortBy, once} from "lodash";
 
@@ -246,22 +245,22 @@ const commonMergeOptions = combine([
     "no-progress",
 ].map(longFlag));
 
-const remotes = async(context: AutocompletionContext): Promise<Suggestion[]> => {
+const remotes = provide(async context => {
     if (Git.isGitDirectory(context.environment.pwd)) {
         const names = await Git.remotes(context.environment.pwd);
         return names.map(name => new Suggestion({value: name, style: styles.branch}));
     }
 
     return [];
-};
+});
 
-const configVariables = unique(async(context: AutocompletionContext): Promise<Suggestion[]> => {
+const configVariables = unique(provide(async context => {
     const variables = await Git.configVariables(context.environment.pwd);
 
     return variables.map(variable => new Suggestion({value: variable.name, description: variable.value, style: styles.option}));
-});
+}));
 
-const branchesExceptCurrent = async(context: AutocompletionContext): Promise<Suggestion[]> => {
+const branchesExceptCurrent = provide(async context => {
     if (Git.isGitDirectory(context.environment.pwd)) {
         const allBranches = (await Git.branches({
             directory: context.environment.pwd,
@@ -273,9 +272,9 @@ const branchesExceptCurrent = async(context: AutocompletionContext): Promise<Sug
     } else {
         return [];
     }
-};
+});
 
-const branchAlias = async(context: AutocompletionContext): Promise<Suggestion[]> => {
+const branchAlias = provide(async context => {
     if (doesLookLikeBranchAlias(context.argument.value)) {
         let nameOfAlias = (await linedOutputOf("git", ["name-rev", "--name-only", canonizeBranchAlias(context.argument.value)], context.environment.pwd))[0];
         if (nameOfAlias && !nameOfAlias.startsWith("Could not get")) {
@@ -284,16 +283,16 @@ const branchAlias = async(context: AutocompletionContext): Promise<Suggestion[]>
     }
 
     return [];
-};
+});
 
-const notStagedFiles = unique(async(context: AutocompletionContext): Promise<Suggestion[]> => {
+const notStagedFiles = unique(provide(async context => {
     if (Git.isGitDirectory(context.environment.pwd)) {
         const fileStatuses = await Git.status(context.environment.pwd);
         return fileStatuses.map(fileStatus => new Suggestion({value: fileStatus.value, style: styles.gitFileStatus(fileStatus.code)}));
     } else {
         return [];
     }
-});
+}));
 
 const commandsData: SubcommandConfig[] = [
     {

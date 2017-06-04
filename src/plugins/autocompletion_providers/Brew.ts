@@ -1,6 +1,6 @@
 import {
     styles, Suggestion, longFlag, contextIndependent,
-    emptyProvider, shortFlag,
+    emptyProvider, shortFlag, provide,
 } from "../autocompletion_utils/Common";
 import combine from "../autocompletion_utils/Combine";
 import {PluginManager} from "../../PluginManager";
@@ -53,34 +53,29 @@ const formulaSuggestions = async(formulae: FormulaAttributes[],
         }));
 };
 
-const availableFormulae =
-    async(context: AutocompletionContext): Promise<Suggestion[]> => {
-        const argument = context.argument.command.nthArgument(2);
-        const query = argument ? argument.value : "";
-        return formulaSuggestions(await getAllFormulae(false), query);
-    };
+const availableFormulae = provide(async context => {
+    const argument = context.argument.command.nthArgument(2);
+    const query = argument ? argument.value : "";
+    return formulaSuggestions(await getAllFormulae(false), query);
+});
 
-const installedFormulae =
-    async(context: AutocompletionContext): Promise<Suggestion[]> => {
-        const argument = context.argument.command.nthArgument(2);
-        const query = argument ? argument.value : "";
-        return formulaSuggestions(await getInstalledFormulae(false), query);
-    };
+const installedFormulae = provide(async context => {
+    const argument = context.argument.command.nthArgument(2);
+    const query = argument ? argument.value : "";
+    return formulaSuggestions(await getInstalledFormulae(false), query);
+});
 
-const caskAvailableFormulae =
-    async(context: AutocompletionContext): Promise<Suggestion[]> => {
-        const argument = context.argument.command.nthArgument(3);
-        const query = argument ? argument.value : "";
-        return formulaSuggestions(await getAllFormulae(true), query);
-    };
+const caskAvailableFormulae = provide(async context => {
+    const argument = context.argument.command.nthArgument(3);
+    const query = argument ? argument.value : "";
+    return formulaSuggestions(await getAllFormulae(true), query);
+});
 
-const caskInstalledFormulae =
-    async(context: AutocompletionContext): Promise<Suggestion[]> => {
-        const argument = context.argument.command.nthArgument(3);
-        const query = argument ? argument.value : "";
-        return formulaSuggestions(await getInstalledFormulae(true), query);
-    };
-
+const caskInstalledFormulae = provide(async context => {
+    const argument = context.argument.command.nthArgument(3);
+    const query = argument ? argument.value : "";
+    return formulaSuggestions(await getInstalledFormulae(true), query);
+});
 
 interface BrewCommandData {
     name: string;
@@ -313,7 +308,7 @@ const brewCommands: BrewCommandData[] = [
 ];
 
 const fromData = (commandsData: BrewCommandData[]) =>
-    contextIndependent(async(): Promise<Suggestion[]> => {
+    contextIndependent(async() => {
         const suggestions = commandsData
             .map(command => new Suggestion({
                 value: command.name,

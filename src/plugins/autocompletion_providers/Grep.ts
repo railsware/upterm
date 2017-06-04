@@ -1,8 +1,9 @@
 import {PluginManager} from "../../PluginManager";
-import {longFlag, longAndShortFlag, mapSuggestions, anyFilesSuggestionsProvider,
-    Suggestion, styles, anyFilesSuggestions, directoriesSuggestions} from "../autocompletion_utils/Common";
+import {
+    longFlag, longAndShortFlag, mapSuggestions, anyFilesSuggestionsProvider,
+    Suggestion, styles, anyFilesSuggestions, directoriesSuggestions, provide,
+} from "../autocompletion_utils/Common";
 import combine from "../autocompletion_utils/Combine";
-import {AutocompletionContext} from "../../Interfaces";
 import {io, mapObject} from "../../utils/Common";
 
 // Grep option suggestions based on linux  man file:
@@ -291,7 +292,7 @@ const directoriesValues = [
             this is equivalent to the -r option.`,
     }];
 
-const fixedValueSuggestions = async(context: AutocompletionContext): Promise<Suggestion[]> => {
+const fixedValueSuggestions = provide(async context => {
     const token = context.argument.value;
     let optionValues: any[] = [];
 
@@ -309,9 +310,9 @@ const fixedValueSuggestions = async(context: AutocompletionContext): Promise<Sug
     return optionValues.map(item =>
         new Suggestion({value: "--" + item.flag + "=" + item.displayValue, displayValue: item.displayValue,
                         description: item.description, style: styles.optionValue}));
-};
+});
 
-const fileValueSuggestions = async(context: AutocompletionContext): Promise<Suggestion[]> => {
+const fileValueSuggestions = provide(async context => {
     const tokenValue = "--file=";
     const token = context.argument.value;
 
@@ -325,9 +326,9 @@ const fileValueSuggestions = async(context: AutocompletionContext): Promise<Sugg
     } else {
         return [];
     }
-};
+});
 
-const excludeFromSuggestions = async(context: AutocompletionContext): Promise<Suggestion[]> => {
+const excludeFromSuggestions = provide(async context => {
     const tokenValue = "--exclude-from=";
     const token = context.argument.value;
 
@@ -341,9 +342,9 @@ const excludeFromSuggestions = async(context: AutocompletionContext): Promise<Su
     } else {
         return [];
     }
-};
+});
 
-const excludeDirSuggestions = async(context: AutocompletionContext): Promise<Suggestion[]> => {
+const excludeDirSuggestions = provide(async context => {
     const tokenValue = "--exclude-dir=";
     const token = context.argument.value;
 
@@ -357,7 +358,7 @@ const excludeDirSuggestions = async(context: AutocompletionContext): Promise<Sug
     } else {
         return [];
     }
-};
+});
 
 const commonOptions = combine([baseOptions, fixedValueSuggestions, fileValueSuggestions,
     anyFilesSuggestionsProvider, excludeFromSuggestions, excludeDirSuggestions]);
