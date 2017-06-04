@@ -17,10 +17,6 @@ interface RowColumn {
     column: number;
     row: number;
 }
-interface PartialRowColumn {
-    column?: number;
-    row?: number;
-}
 
 type VcsStatus = "dirty" | "clean";
 
@@ -31,7 +27,7 @@ type VcsData = {
   pull: string,
   changes: FileChanges,
   status: VcsStatus;
-} | { kind: "not-repository"; }
+} | { kind: "not-repository"; };
 
 interface FileChanges {
   stagedChanges: string;
@@ -42,12 +38,6 @@ interface Margins {
     top: number;
     bottom?: number;
     left: number;
-    right?: number;
-}
-interface PartialMargins {
-    top?: number;
-    bottom?: number;
-    left?: number;
     right?: number;
 }
 

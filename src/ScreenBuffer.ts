@@ -160,7 +160,7 @@ export class ScreenBuffer extends events.EventEmitter {
         return this;
     }
 
-    moveCursorAbsolute(position: PartialRowColumn): this {
+    moveCursorAbsolute(position: Partial<RowColumn>): this {
         this.cursor.moveAbsolute(position, this.homePosition);
         this.ensureRowExists(this.cursor.row);
         this.emitData();
@@ -274,7 +274,7 @@ export class ScreenBuffer extends events.EventEmitter {
         return this.isCursorKeysModeSet;
     }
 
-    set margins(margins: PartialMargins) {
+    set margins(margins: Partial<Margins>) {
         this._margins = {...this._margins, ...margins};
     }
 
