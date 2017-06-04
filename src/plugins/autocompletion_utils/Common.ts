@@ -22,13 +22,13 @@ interface PromptSerializerContext {
 type PromptSerializer = (context: PromptSerializerContext) => string;
 
 interface SuggestionAttributes {
-    value?: string;
-    displayValue?: string;
-    synopsis?: string;
-    description?: string;
-    style?: Style;
-    space?: boolean;
-    promptSerializer?: PromptSerializer;
+    value: string;
+    displayValue: string;
+    synopsis: string;
+    description: string;
+    style: Style;
+    space: boolean;
+    promptSerializer: PromptSerializer;
 }
 
 const defaultPromptSerializer: PromptSerializer = (context: PromptSerializerContext): string => {
@@ -44,7 +44,7 @@ export const noEscapeSpacesPromptSerializer: PromptSerializer = (context: Prompt
 export const replaceAllPromptSerializer: PromptSerializer = (context: PromptSerializerContext) =>  context.suggestion.value;
 
 export class Suggestion {
-    constructor(private attributes: SuggestionAttributes = {}) {
+    constructor(private attributes: Partial<SuggestionAttributes> = {}) {
         this.attributes = attributes;
     }
 
@@ -76,16 +76,6 @@ export class Suggestion {
         return this.attributes.space || false;
     }
 
-    withValue(value: string): this {
-        this.attributes.value = value;
-        return this;
-    }
-
-    withDisplayValue(value: string): this {
-        this.attributes.displayValue = value;
-        return this;
-    }
-
     withSynopsis(synopsis: string): this {
         this.attributes.synopsis = synopsis;
         return this;
@@ -93,11 +83,6 @@ export class Suggestion {
 
     withDescription(description: string): this {
         this.attributes.description = description;
-        return this;
-    }
-
-    withStyle(style: Style): this {
-        this.attributes.style = style;
         return this;
     }
 
