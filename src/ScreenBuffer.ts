@@ -240,7 +240,7 @@ export class ScreenBuffer extends events.EventEmitter {
 
     clearToEnd() {
         this.clearRowToEnd();
-        this.storage.splice(this.cursorPosition.row + 1, Number.MAX_VALUE);
+        this.storage = this.storage.splice(this.cursorPosition.row + 1, this.storage.size - this.cursorPosition.row).toList();
         this.emitData();
     }
 
