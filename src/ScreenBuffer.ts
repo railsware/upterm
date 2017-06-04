@@ -6,6 +6,11 @@ import * as e from "./Enums";
 import {List} from "immutable";
 import {error, times} from "./utils/Common";
 
+interface SavedState {
+    cursorPosition: RowColumn;
+    attributes: i.Attributes;
+}
+
 export class ScreenBuffer extends events.EventEmitter {
     public static hugeOutputThreshold = 300;
     public cursor: Cursor = new Cursor();
@@ -15,6 +20,7 @@ export class ScreenBuffer extends events.EventEmitter {
     private isOriginModeSet = false;
     private isCursorKeysModeSet = false;
     private _margins: Margins = {top: 0, left: 0};
+    private savedState: SavedState | undefined;
 
     constructor() {
         super();
@@ -278,6 +284,22 @@ export class ScreenBuffer extends events.EventEmitter {
 
     at(position: RowColumn): Char {
         return this.storage.getIn([position.row, position.column]);
+    }
+
+    saveCurrentState() {
+        this.savedState = {
+            cursorPosition: {...this.cursorPosition},
+            attributes: {...this.attributes},
+        };
+    }
+
+    restoreCurrentState() {
+        if (this.savedState) {
+            this.moveCursorAbsolute(this.savedState.cursorPosition);
+            this.setAttributes(this.savedState.attributes);
+        } else {
+            console.error("No state to restore.");
+        }
     }
 
     private get homePosition(): RowColumn {
