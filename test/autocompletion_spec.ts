@@ -17,12 +17,13 @@ import {fontAwesome} from "../src/views/css/FontAwesome";
 describe("Autocompletion suggestions", () => {
     it("includes aliases", async () => {
         const expectedSuggestions = [{
-            attributes: {
-                value: "myAlias",
-                description: "expandedAlias",
-                style: styles.alias,
-                space: true,
-            },
+            value: "myAlias",
+            displayValue: "myAlias",
+            description: "expandedAlias",
+            synopsis: "expandedAlias",
+            isFiltered: false,
+            style: styles.alias,
+            space: true,
         }];
 
         const suggestions = await getSuggestions({
@@ -41,14 +42,12 @@ describe("Autocompletion suggestions", () => {
 
     it("wraps file names in quotes if necessary", async () => {
         const expectedSuggestions = [{
-            attributes: {
-                value: "file\\ with\\ brackets\\(\\)",
-                displayValue: "file with brackets()",
-                promptSerializer: noEscapeSpacesPromptSerializer,
-                style: {
-                    value: fontAwesome.file,
-                    css: {},
-                },
+            value: "file\\ with\\ brackets\\(\\)",
+            displayValue: "file with brackets()",
+            promptSerializer: noEscapeSpacesPromptSerializer,
+            style: {
+                value: fontAwesome.file,
+                css: {},
             },
         }];
         const suggestions = await anyFilesSuggestions("fil", join(__dirname, "test_files", "file_names_test"));

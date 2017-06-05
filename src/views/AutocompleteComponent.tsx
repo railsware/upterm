@@ -1,9 +1,9 @@
 import * as React from "react";
-import {Suggestion} from "../plugins/autocompletion_utils/Common";
+import {SuggestionWithDefaults} from "../plugins/autocompletion_utils/Common";
 import * as css from "./css/main";
 
 interface SuggestionProps {
-    suggestion: Suggestion;
+    suggestion: SuggestionWithDefaults;
     onHover: () => void;
     onClick: () => void;
     isHighlighted: boolean;
@@ -22,7 +22,7 @@ const SuggestionComponent = ({suggestion, onHover, onClick, isHighlighted}: Sugg
 interface AutocompleteProps {
     offsetTop: number;
     caretPosition: number;
-    suggestions: Suggestion[];
+    suggestions: SuggestionWithDefaults[];
     onSuggestionHover: (index: number) => void;
     onSuggestionClick: () => void;
     highlightedIndex: number;

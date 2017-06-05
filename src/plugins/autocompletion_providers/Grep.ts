@@ -1,7 +1,7 @@
 import {PluginManager} from "../../PluginManager";
 import {
     longFlag, longAndShortFlag, mapSuggestions, anyFilesSuggestionsProvider,
-    Suggestion, styles, anyFilesSuggestions, directoriesSuggestions, provide,
+    styles, anyFilesSuggestions, directoriesSuggestions, provide,
 } from "../autocompletion_utils/Common";
 import combine from "../autocompletion_utils/Combine";
 import {io, mapObject} from "../../utils/Common";
@@ -207,24 +207,29 @@ const baseOptions = combine(mapObject(
     },
     (option, info) => {
         if (info.short) {
-            return mapSuggestions(longAndShortFlag(option, info.short),
-                                  suggestion => suggestion.withDescription(info.description));
+            return mapSuggestions(
+                longAndShortFlag(option, info.short),
+                suggestion => ({...suggestion, description: info.description}),
+            );
         } else {
-            return mapSuggestions(longFlag(option),
-                                  suggestion => suggestion.withDescription(info.description));
+            return mapSuggestions(
+                longFlag(option),
+                suggestion => ({...suggestion, description: info.description}),
+            );
         }
     },
 ));
 
 const extendedRegexOption = combine([
-    mapSuggestions(longAndShortFlag("extended-regexp", "E"), suggestion => suggestion.withDescription(`
-        Interpret <pattern> (defined using --regexp=<pattern> as an extended regular expression`)),
+    mapSuggestions(
+        longAndShortFlag("extended-regexp", "E"),
+        suggestion => ({...suggestion, description: `Interpret <pattern> (defined using --regexp=<pattern> as an extended regular expression`})),
 ]);
 
 const fixedStringsOption = combine([
-    mapSuggestions(longAndShortFlag("fixed-strings", "F"), suggestion => suggestion.withDescription(`
-        Interpret <pattern> (defined using --regexp=<pattern>) as a list of fixed strings, separated
-        by new-lines lines, any of which is to be matched`)),
+    mapSuggestions(
+        longAndShortFlag("fixed-strings", "F"),
+        suggestion => ({...suggestion, description: `Interpret <pattern> (defined using --regexp=<pattern>) as a list of fixed strings, separated by new-lines lines, any of which is to be matched`})),
 ]);
 
 const binaryFilesValues = [
@@ -307,9 +312,12 @@ const fixedValueSuggestions = provide(async context => {
     } else {
         return [];
     }
-    return optionValues.map(item =>
-        new Suggestion({value: "--" + item.flag + "=" + item.displayValue, displayValue: item.displayValue,
-                        description: item.description, style: styles.optionValue}));
+    return optionValues.map(item => ({
+        value: "--" + item.flag + "=" + item.displayValue,
+        displayValue: item.displayValue,
+        description: item.description,
+        style: styles.optionValue,
+    }));
 });
 
 const fileValueSuggestions = provide(async context => {
@@ -321,7 +329,7 @@ const fileValueSuggestions = provide(async context => {
         const optionValue = token.slice(tokenValue.length);
         const fileSuggestions = await anyFilesSuggestions(optionValue, workingDirectory);
         return fileSuggestions.map(item =>
-                new Suggestion({value: tokenValue + item.value, displayValue: item.displayValue,
+                ({value: tokenValue + item.value, displayValue: item.displayValue,
                     style: io.directoryExists(workingDirectory + item.value) ? styles.directory : styles.optionValue}));
     } else {
         return [];
@@ -336,9 +344,11 @@ const excludeFromSuggestions = provide(async context => {
         const workingDirectory = context.environment.pwd;
         const optionValue = token.slice(tokenValue.length);
         const fileSuggestions = await anyFilesSuggestions(optionValue, workingDirectory);
-        return fileSuggestions.map(item =>
-                new Suggestion({value: tokenValue + item.value, displayValue: item.displayValue,
-                    style: io.directoryExists(workingDirectory + item.value) ? styles.directory : styles.optionValue}));
+        return fileSuggestions.map(item => ({
+            value: tokenValue + item.value,
+            displayValue: item.displayValue,
+            style: io.directoryExists(workingDirectory + item.value) ? styles.directory : styles.optionValue,
+        }));
     } else {
         return [];
     }
@@ -353,7 +363,7 @@ const excludeDirSuggestions = provide(async context => {
         const optionValue = token.slice(tokenValue.length);
         const directorySuggestions = await directoriesSuggestions(optionValue, workingDirectory);
         return directorySuggestions.map(item =>
-                new Suggestion({value: tokenValue + item.value, displayValue: item.displayValue,
+                ({value: tokenValue + item.value, displayValue: item.displayValue,
                     style: styles.directory}));
     } else {
         return [];

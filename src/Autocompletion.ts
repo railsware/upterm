@@ -1,7 +1,10 @@
 import {leafNodeAt, ASTNode} from "./shell/Parser";
 import * as _ from "lodash";
 import {History} from "./shell/History";
-import {Suggestion, styles, replaceAllPromptSerializer} from "./plugins/autocompletion_utils/Common";
+import {
+    styles, replaceAllPromptSerializer, Suggestion,
+    SuggestionWithDefaults, addDefaultAttributeValues,
+} from "./plugins/autocompletion_utils/Common";
 import {Environment} from "./shell/Environment";
 import {OrderedSet} from "./utils/OrderedSet";
 import {Aliases} from "./shell/Aliases";
@@ -24,9 +27,9 @@ export const getSuggestions = async({
     environment,
     historicalPresentDirectoriesStack,
     aliases,
-}: GetSuggestionsOptions): Promise<Suggestion[]> => {
+}: GetSuggestionsOptions): Promise<SuggestionWithDefaults[]> => {
     const prefixMatchesInHistory = History.all.filter(line => line.startsWith(currentText));
-    const suggestionsFromHistory = prefixMatchesInHistory.map(match => new Suggestion({
+    const suggestionsFromHistory = prefixMatchesInHistory.map(match => ({
         value: match,
         promptSerializer: replaceAllPromptSerializer,
         isFiltered: true,
@@ -44,7 +47,7 @@ export const getSuggestions = async({
     });
 
     const uniqueSuggestions = _.uniqBy([...firstThreeFromHistory, ...suggestions, ...remainderFromHistory], suggestion => suggestion.value);
-    const applicableSuggestions = uniqueSuggestions.filter(suggestion => suggestion.isFiltered || suggestion.value.toLowerCase().startsWith(node.value.toLowerCase()));
+    const applicableSuggestions: Suggestion[] = uniqueSuggestions.filter(suggestion => suggestion.isFiltered || suggestion.value.toLowerCase().startsWith(node.value.toLowerCase()));
 
     if (applicableSuggestions.length === 1) {
         const suggestion = applicableSuggestions[0];
@@ -53,10 +56,10 @@ export const getSuggestions = async({
          * The suggestion would simply duplicate the prompt value without providing no
          * additional information. Skipping it for clarity.
          */
-        if (node.value === suggestion.value && suggestion.description.length === 0 && suggestion.synopsis.length === 0) {
+        if (node.value === suggestion.value && (suggestion.description && suggestion.description.length === 0) && (suggestion.synopsis && suggestion.synopsis.length === 0)) {
             return [];
         }
     }
 
-    return applicableSuggestions.slice(0, suggestionsLimit);
+    return applicableSuggestions.slice(0, suggestionsLimit).map(addDefaultAttributeValues);
 };

@@ -9,11 +9,10 @@ import {PluginManager} from "../PluginManager";
 import {Aliases} from "./Aliases";
 import combine from "../plugins/autocompletion_utils/Combine";
 import {
-    Suggestion,
     styles,
     anyFilesSuggestions,
     environmentVariableSuggestions,
-    executableFilesSuggestions, PartialSuggestion,
+    executableFilesSuggestions, Suggestion,
 } from "../plugins/autocompletion_utils/Common";
 
 
@@ -328,9 +327,9 @@ export class CommandWord extends LeafNode {
         const executables = await io.executablesInPaths(environment.path);
 
         return [
-            ...mapObject(aliases.toObject(), (key, value) => new Suggestion({value: key, description: value, style: styles.alias, space: true})),
-            ...loginShell.preCommandModifiers.map(modifier => new Suggestion({value: modifier, style: styles.func, space: true})),
-            ...executables.map(name => new Suggestion({value: name, description: commandDescriptions[name] || "", style: styles.executable, space: true})),
+            ...mapObject(aliases.toObject(), (key, value) => ({value: key, description: value, style: styles.alias, space: true})),
+            ...loginShell.preCommandModifiers.map(modifier => ({value: modifier, style: styles.func, space: true})),
+            ...executables.map(name => ({value: name, description: commandDescriptions[name] || "", style: styles.executable, space: true})),
             ...relativeExecutablesSuggestions,
         ];
     }
@@ -362,7 +361,7 @@ export class Argument extends LeafNode {
         this.position = position;
     }
 
-    async suggestions(context: PreliminaryAutocompletionContext): Promise<PartialSuggestion[]> {
+    async suggestions(context: PreliminaryAutocompletionContext): Promise<Suggestion[]> {
         const argument = argumentOfExpandedAST(this, context.aliases);
         const provider = combine([
             environmentVariableSuggestions,

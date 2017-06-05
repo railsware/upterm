@@ -1,6 +1,6 @@
 import * as Git from "../../utils/Git";
 import {
-    styles, Suggestion, longAndShortFlag, longFlag, mapSuggestions, unique,
+    styles, longAndShortFlag, longFlag, mapSuggestions, unique,
     emptyProvider, SubcommandConfig, commandWithSubcommands, provide,
 } from "../autocompletion_utils/Common";
 import * as Common from "../autocompletion_utils/Common";
@@ -10,14 +10,14 @@ import {linedOutputOf, executeCommand} from "../../PTY";
 import {find, sortBy, once} from "lodash";
 
 const addOptions = combine([
-    mapSuggestions(longAndShortFlag("patch"), suggestion => suggestion.withDescription(
+    mapSuggestions(longAndShortFlag("patch"), suggestion => ({...suggestion, description:
         `Interactively choose hunks of patch between the index and the work tree and add them to the index. This gives the user a chance to review the
          difference before adding modified contents to the index.
          This effectively runs add --interactive, but bypasses the initial command menu and directly jumps to the patch subcommand. See "Interactive
-         mode" for details.`)),
-    mapSuggestions(longFlag("interactive"), suggestion => suggestion.withDescription(`
+         mode" for details.`})),
+    mapSuggestions(longFlag("interactive"), suggestion => ({...suggestion, description: `
         Add modified contents in the working tree interactively to the index. Optional path arguments may be supplied to limit operation to a subset
-        of the working tree. See "Interactive mode" for details.`)),
+        of the working tree. See "Interactive mode" for details.`})),
 ]);
 
 function doesLookLikeBranchAlias(word: string) {
@@ -187,7 +187,7 @@ const commitOptionsData: OptionData[] = [
 
 const commitOptions = combine(commitOptionsData.map(({ longFlag, shortFlag, noShortFlag, description }) => {
     const provider = noShortFlag ? Common.longFlag(longFlag) : longAndShortFlag(longFlag, shortFlag);
-    return mapSuggestions(provider, suggestion => suggestion.withDescription(description));
+    return mapSuggestions(provider, suggestion => ({...suggestion, description}));
 }));
 
 const pushOptions = combine([
@@ -248,7 +248,7 @@ const commonMergeOptions = combine([
 const remotes = provide(async context => {
     if (Git.isGitDirectory(context.environment.pwd)) {
         const names = await Git.remotes(context.environment.pwd);
-        return names.map(name => new Suggestion({value: name, style: styles.branch}));
+        return names.map(name => ({value: name, style: styles.branch}));
     }
 
     return [];
@@ -257,7 +257,7 @@ const remotes = provide(async context => {
 const configVariables = unique(provide(async context => {
     const variables = await Git.configVariables(context.environment.pwd);
 
-    return variables.map(variable => new Suggestion({value: variable.name, description: variable.value, style: styles.option}));
+    return variables.map(variable => ({value: variable.name, description: variable.value, style: styles.option}));
 }));
 
 const branchesExceptCurrent = provide(async context => {
@@ -268,7 +268,7 @@ const branchesExceptCurrent = provide(async context => {
             tags: false,
         }));
         const nonCurrentBranches = allBranches.filter(branch => !branch.isCurrent());
-        return nonCurrentBranches.map(branch => new Suggestion({value: branch.toString(), style: styles.branch}));
+        return nonCurrentBranches.map(branch => ({value: branch.toString(), style: styles.branch}));
     } else {
         return [];
     }
@@ -278,7 +278,7 @@ const branchAlias = provide(async context => {
     if (doesLookLikeBranchAlias(context.argument.value)) {
         let nameOfAlias = (await linedOutputOf("git", ["name-rev", "--name-only", canonizeBranchAlias(context.argument.value)], context.environment.pwd))[0];
         if (nameOfAlias && !nameOfAlias.startsWith("Could not get")) {
-            return [new Suggestion({value: context.argument.value, synopsis: nameOfAlias, style: styles.branch})];
+            return [{value: context.argument.value, synopsis: nameOfAlias, style: styles.branch}];
         }
     }
 
@@ -288,7 +288,7 @@ const branchAlias = provide(async context => {
 const notStagedFiles = unique(provide(async context => {
     if (Git.isGitDirectory(context.environment.pwd)) {
         const fileStatuses = await Git.status(context.environment.pwd);
-        return fileStatuses.map(fileStatus => new Suggestion({value: fileStatus.value, style: styles.gitFileStatus(fileStatus.code)}));
+        return fileStatuses.map(fileStatus => ({value: fileStatus.value, style: styles.gitFileStatus(fileStatus.code)}));
     } else {
         return [];
     }

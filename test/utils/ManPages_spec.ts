@@ -8,7 +8,7 @@ import {
   extractManPageSectionParagraphs,
   suggestionFromFlagParagraph,
 } from "../../src/utils/ManPageParsingUtils";
-import {Suggestion, styles} from "../../src/plugins/autocompletion_utils/Common";
+import {styles} from "../../src/plugins/autocompletion_utils/Common";
 
 describe("man page line combiner", () => {
   it("combines lines with correct spacing", () => {
@@ -117,11 +117,11 @@ describe("suggestion parser", () => {
     expect(suggestionFromFlagParagraph([
       "   -f  flag with",
       "       description",
-    ])).to.eql(new Suggestion({
+    ])).to.eql({
       value: "-f",
       style: styles.option,
       description: "flag with description",
-    }));
+    });
   });
 
   it("can handle short flags with arguments", () => {
@@ -129,13 +129,13 @@ describe("suggestion parser", () => {
       "   -f arg",
       "       flag with",
       "       description",
-    ])).to.eql(new Suggestion({
+    ])).to.eql({
       value: "-f",
       style: styles.option,
       description: "flag with description",
       displayValue: "-f arg",
       space: true,
-    }));
+    });
   });
 
   // DESCRIPTION section can contain things other than flags

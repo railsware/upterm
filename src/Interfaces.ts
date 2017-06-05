@@ -3,7 +3,7 @@ import {Stats} from "fs";
 import {ReactElement} from "react";
 import {Job} from "./shell/Job";
 import {Session} from "./shell/Session";
-import {PartialSuggestion} from "./plugins/autocompletion_utils/Common";
+import {Suggestion} from "./plugins/autocompletion_utils/Common";
 import {ScreenBuffer} from "./ScreenBuffer";
 import {Environment} from "./shell/Environment";
 import {OrderedSet} from "./utils/OrderedSet";
@@ -34,7 +34,7 @@ export interface AutocompletionContext extends PreliminaryAutocompletionContext 
     readonly argument: Argument;
 }
 
-export type AutocompletionProvider = (context: AutocompletionContext) => Promise<PartialSuggestion[]>;
+export type AutocompletionProvider = (context: AutocompletionContext) => Promise<Suggestion[]>;
 
 export interface FileInfo {
     name: string;

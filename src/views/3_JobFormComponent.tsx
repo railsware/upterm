@@ -4,7 +4,7 @@ import {AutocompleteComponent} from "./AutocompleteComponent";
 import {History} from "../shell/History";
 import {getCaretPosition, setCaretPosition} from "./ViewUtils";
 import {Prompt} from "../shell/Prompt";
-import {Suggestion} from "../plugins/autocompletion_utils/Common";
+import {SuggestionWithDefaults} from "../plugins/autocompletion_utils/Common";
 import {KeyCode} from "../Enums";
 import {getSuggestions} from "../Autocompletion";
 import * as css from "./css/main";
@@ -21,7 +21,7 @@ interface State {
     previousKeyCode: number;
     offsetTop: number;
     caretPositionFromPreviousFocus: number;
-    suggestions: Suggestion[];
+    suggestions: SuggestionWithDefaults[];
 }
 
 export class JobFormComponent extends React.Component<Props, State> {

@@ -1,6 +1,6 @@
 import {
-    styles, Suggestion, longFlag, contextIndependent,
-    emptyProvider, shortFlag, provide,
+    styles, longFlag, contextIndependent,
+    emptyProvider, shortFlag, provide, Suggestion,
 } from "../autocompletion_utils/Common";
 import combine from "../autocompletion_utils/Combine";
 import {PluginManager} from "../../PluginManager";
@@ -44,7 +44,7 @@ const formulaSuggestions = async(formulae: FormulaAttributes[],
         .filter(formula =>  !query ||
         formula.name.startsWith(query) ||
         formula.path.startsWith(query))
-        .map(formula => new Suggestion({
+        .map(formula => ({
             value: formula.name,
             displayValue: formula.name,
             synopsis: formula.path,
@@ -310,7 +310,7 @@ const brewCommands: BrewCommandData[] = [
 const fromData = (commandsData: BrewCommandData[]) =>
     contextIndependent(async() => {
         const suggestions = commandsData
-            .map(command => new Suggestion({
+            .map(command => ({
                 value: command.name,
                 description: command.description || "",
                 style: styles.command,

@@ -103,7 +103,7 @@ const options = combine(mapObject(
             long: "Show library version and the usage prompt, then quit.",
         },
     },
-    (option, descriptions) => mapSuggestions(shortFlag(option), suggestion => suggestion.withSynopsis(descriptions.short).withDescription(descriptions.long)),
+    (option, descriptions) => mapSuggestions(shortFlag(option), suggestion => ({...suggestion, synopsis: descriptions.short, description: descriptions.long})),
 ));
 
 
