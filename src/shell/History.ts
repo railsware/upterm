@@ -2,6 +2,7 @@ import {readFileSync, statSync} from "fs";
 import {flatten, orderBy} from "lodash";
 import {loginShell} from "../utils/Shell";
 import {historyFilePath} from "../utils/Common";
+import * as _ from "lodash";
 
 const readHistoryFileData = () => {
     try {
@@ -79,7 +80,7 @@ export class History {
     }
 
     static deserialize(): void {
-        this.storage = flatten(orderBy([loginShell.loadHistory(), readHistoryFileData()], history => history.lastModified, "desc").map(history => history.commands));
+        this.storage = _.uniq(flatten(orderBy([loginShell.loadHistory(), readHistoryFileData()], history => history.lastModified, "desc").map(history => history.commands)));
     }
 
     private static remove(entry: string): void {
