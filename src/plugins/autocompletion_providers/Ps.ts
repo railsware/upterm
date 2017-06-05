@@ -1,6 +1,6 @@
 import {PluginManager} from "../../PluginManager";
 import {
-    shortFlag, mapSuggestions, Suggestion, styles, provide,
+    shortFlag, mapSuggestions, Suggestion, styles, provide, PartialSuggestion,
 }
     from "../autocompletion_utils/Common";
 import combine from "../autocompletion_utils/Combine";
@@ -169,7 +169,7 @@ const longOptions: LongFlagItem[] = [
 ];
 
 const longFlagSuggestions = provide(async context => {
-    let suggestions: Suggestion[] = [];
+    let suggestions: PartialSuggestion[] = [];
     const token: string = context.argument.value;
     for (let i of longOptions) {
         const flag = "--" + i.flag;

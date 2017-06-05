@@ -13,7 +13,7 @@ import {
     styles,
     anyFilesSuggestions,
     environmentVariableSuggestions,
-    executableFilesSuggestions,
+    executableFilesSuggestions, PartialSuggestion,
 } from "../plugins/autocompletion_utils/Common";
 
 
@@ -362,7 +362,7 @@ export class Argument extends LeafNode {
         this.position = position;
     }
 
-    async suggestions(context: PreliminaryAutocompletionContext): Promise<Suggestion[]> {
+    async suggestions(context: PreliminaryAutocompletionContext): Promise<PartialSuggestion[]> {
         const argument = argumentOfExpandedAST(this, context.aliases);
         const provider = combine([
             environmentVariableSuggestions,

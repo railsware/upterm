@@ -100,11 +100,6 @@ export class Suggestion {
         return this;
     }
 
-    withSpace(): this {
-        this.attributes.space = true;
-        return this;
-    }
-
     private get truncatedDescription(): string {
         return _.truncate(this.description, {length: 50, separator: " "});
     }
@@ -388,7 +383,7 @@ export const combineShortFlags = (suggestionsProvider: AutocompletionProvider) =
             return suggestions
                     .filter(s =>
                         reShortFlag.test(s.value) && !token.includes(s.value.slice(1))
-                            && s.withSpace)
+                            && s.space)
                     .map(s =>
                         new Suggestion({value: token + s.value.slice(1),
                             displayValue: s.displayValue, description: s.description,
