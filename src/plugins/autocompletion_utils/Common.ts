@@ -21,8 +21,11 @@ interface PromptSerializerContext {
 
 type PromptSerializer = (context: PromptSerializerContext) => string;
 
-interface SuggestionAttributes {
+interface RequiredSuggestionAttributes {
     value: string;
+}
+
+interface AdditionalSuggestionAttributes {
     displayValue: string;
     synopsis: string;
     description: string;
@@ -31,6 +34,8 @@ interface SuggestionAttributes {
     space: boolean;
     promptSerializer: PromptSerializer;
 }
+
+export type PartialSuggestion = RequiredSuggestionAttributes & Partial<AdditionalSuggestionAttributes>;
 
 export function provide(provider: AutocompletionProvider): AutocompletionProvider {
     return provider;
@@ -49,7 +54,7 @@ export const noEscapeSpacesPromptSerializer: PromptSerializer = (context: Prompt
 export const replaceAllPromptSerializer: PromptSerializer = (context: PromptSerializerContext) =>  context.suggestion.value;
 
 export class Suggestion {
-    constructor(private attributes: Partial<SuggestionAttributes> = {}) {
+    constructor(private attributes: PartialSuggestion) {
         this.attributes = attributes;
     }
 
