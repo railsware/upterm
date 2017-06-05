@@ -29,6 +29,7 @@ export const getSuggestions = async({
     const suggestionsFromHistory = prefixMatchesInHistory.map(match => new Suggestion({
         value: match,
         promptSerializer: replaceAllPromptSerializer,
+        isFiltered: true,
         style: styles.history,
     }));
 
@@ -42,10 +43,8 @@ export const getSuggestions = async({
         aliases: aliases,
     });
 
-    const applicableSuggestions = _.uniqBy(
-        [...firstThreeFromHistory, ...suggestions, ...remainderFromHistory],
-        suggestion => suggestion.value,
-    ).filter(suggestion => suggestion.value.toLowerCase().startsWith(node.value.toLowerCase()));
+    const uniqueSuggestions = _.uniqBy([...firstThreeFromHistory, ...suggestions, ...remainderFromHistory], suggestion => suggestion.value);
+    const applicableSuggestions = uniqueSuggestions.filter(suggestion => suggestion.isFiltered || suggestion.value.toLowerCase().startsWith(node.value.toLowerCase()));
 
     if (applicableSuggestions.length === 1) {
         const suggestion = applicableSuggestions[0];

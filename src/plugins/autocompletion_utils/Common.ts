@@ -26,6 +26,7 @@ interface SuggestionAttributes {
     displayValue: string;
     synopsis: string;
     description: string;
+    isFiltered: boolean;
     style: Style;
     space: boolean;
     promptSerializer: PromptSerializer;
@@ -70,6 +71,10 @@ export class Suggestion {
 
     get displayValue(): string {
         return this.attributes.displayValue || this.value;
+    }
+
+    get isFiltered(): boolean {
+        return this.attributes.isFiltered || false;
     }
 
     get promptSerializer(): PromptSerializer {
