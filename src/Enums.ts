@@ -102,7 +102,6 @@ export enum KeyboardAction {
     // CLI commands
     cliRunCommand,
     cliClearJobs,
-    cliDeleteWord,
     cliClearText,
     cliAppendLastArgumentOfPreviousCommand,
     cliHistoryPrevious,

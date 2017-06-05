@@ -128,28 +128,6 @@ export class JobFormComponent extends React.Component<Props, State> {
         }
     }
 
-    async deleteWord(current = this.prompt.value, position = getCaretPosition(this.commandNode)): Promise<void> {
-        if (!current.length) {
-            return;
-        }
-
-        const lastIndex = current.substring(0, position).lastIndexOf(" ");
-        const endsWithASpace = lastIndex === current.length - 1;
-
-        current = current.substring(0, lastIndex);
-
-        if (endsWithASpace) {
-            this.deleteWord(current, position);
-        } else {
-            if (current.length) {
-                current += " ";
-            }
-
-            this.prompt.setValue(current + this.prompt.value.substring(getCaretPosition(this.commandNode)));
-            this.setDOMValueProgrammatically(this.prompt.value);
-        }
-    }
-
     setPreviousHistoryItem(): void {
         this.setText(History.getPrevious());
     }

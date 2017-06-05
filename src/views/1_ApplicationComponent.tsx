@@ -234,15 +234,6 @@ export class ApplicationComponent extends React.Component<{}, ApplicationState> 
             return;
         }
 
-        // CLI Delete word
-        if (isKeybindingForEvent(event, KeyboardAction.cliDeleteWord)) {
-            jobFormComponent.deleteWord();
-
-            event.stopPropagation();
-            event.preventDefault();
-            return;
-        }
-
         // CLI execute command
         if (isKeybindingForEvent(event, KeyboardAction.cliRunCommand)) {
             jobFormComponent.execute((event.target as HTMLElement).innerText);
