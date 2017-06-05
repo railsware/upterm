@@ -10,7 +10,7 @@ import {
 } from "../utils/Git";
 import {colors, background} from "../views/css/colors";
 import {executeCommand} from "../PTY";
-import Button from "./autocompletion_utils/Button";
+import {Button} from "./autocompletion_utils/Button";
 import {failurize} from "../views/css/functions";
 
 const errorMessageStyles = {

@@ -7,7 +7,7 @@ import {loginShell} from "../utils/Shell";
 import {PreliminaryAutocompletionContext} from "../Interfaces";
 import {PluginManager} from "../PluginManager";
 import {Aliases} from "./Aliases";
-import combine from "../plugins/autocompletion_utils/Combine";
+import {combine} from "../plugins/autocompletion_utils/Combine";
 import {
     styles,
     anyFilesSuggestions,

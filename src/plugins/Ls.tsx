@@ -5,7 +5,7 @@ import {dirStat} from "dirStat";
 import {CSSObject} from "../views/css/definitions";
 import {isEqual} from "lodash";
 import {colors} from "../views/css/colors";
-import Link from "../utils/Link";
+import {Link} from "../utils/Link";
 
 type Props = {
     files: any[],

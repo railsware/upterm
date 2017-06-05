@@ -2,7 +2,7 @@ import {OutputDecorator, EnvironmentObserverPlugin, AutocompletionProvider, Pree
 import * as Path from "path";
 import {io} from "./utils/Common";
 import {environmentVariableSuggestions, anyFilesSuggestionsProvider} from "../src/plugins/autocompletion_utils/Common";
-import combine from "../src/plugins/autocompletion_utils/Combine";
+import {combine} from "../src/plugins/autocompletion_utils/Combine";
 
 const defaultAutocompletionProvider = combine([environmentVariableSuggestions, anyFilesSuggestionsProvider]);
 

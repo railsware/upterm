@@ -3,7 +3,7 @@ import {
     longFlag, longAndShortFlag, mapSuggestions, anyFilesSuggestionsProvider,
     styles, anyFilesSuggestions, directoriesSuggestions, provide,
 } from "../autocompletion_utils/Common";
-import combine from "../autocompletion_utils/Combine";
+import {combine} from "../autocompletion_utils/Combine";
 import {io, mapObject} from "../../utils/Common";
 
 // Grep option suggestions based on linux  man file:

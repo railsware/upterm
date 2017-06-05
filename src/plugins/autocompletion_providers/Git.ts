@@ -4,7 +4,7 @@ import {
     emptyProvider, SubcommandConfig, commandWithSubcommands, provide,
 } from "../autocompletion_utils/Common";
 import * as Common from "../autocompletion_utils/Common";
-import combine from "../autocompletion_utils/Combine";
+import {combine} from "../autocompletion_utils/Combine";
 import {PluginManager} from "../../PluginManager";
 import {linedOutputOf, executeCommand} from "../../PTY";
 import {find, sortBy, once} from "lodash";

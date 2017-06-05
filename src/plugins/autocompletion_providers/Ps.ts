@@ -3,7 +3,7 @@ import {
     shortFlag, mapSuggestions, styles, provide, Suggestion,
 }
     from "../autocompletion_utils/Common";
-import combine from "../autocompletion_utils/Combine";
+import {combine} from "../autocompletion_utils/Combine";
 import {AutocompletionContext, AutocompletionProvider} from "../../Interfaces";
 import {mapObject} from "../../utils/Common";
 import * as Process from "../../utils/Process";

@@ -2,7 +2,7 @@ import {
     styles, longFlag, contextIndependent,
     emptyProvider, shortFlag, provide, Suggestion,
 } from "../autocompletion_utils/Common";
-import combine from "../autocompletion_utils/Combine";
+import {combine} from "../autocompletion_utils/Combine";
 import {PluginManager} from "../../PluginManager";
 import {AutocompletionProvider, AutocompletionContext} from "../../Interfaces";
 import {executeCommand} from "../../PTY";

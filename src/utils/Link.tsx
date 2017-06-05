@@ -2,7 +2,7 @@ import * as React from "react";
 import * as e from "electron";
 import {CSSObject} from "../views/css/definitions";
 
-const Link: React.StatelessComponent<{ absolutePath: string, children: any, style?: CSSObject }> = ({
+export const Link: React.StatelessComponent<{ absolutePath: string, children: any, style?: CSSObject }> = ({
   absolutePath,
   children,
   style,
@@ -11,5 +11,3 @@ const Link: React.StatelessComponent<{ absolutePath: string, children: any, styl
   className="underlineOnHover"
   onClick={() => e.shell.openExternal(`file://${absolutePath}`)}
 >{children}</span>;
-
-export default Link;
