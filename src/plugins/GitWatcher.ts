@@ -1,7 +1,7 @@
 import {Session} from "../shell/Session";
 import {PluginManager} from "../PluginManager";
 import {EnvironmentObserverPlugin} from "../Interfaces";
-import {watch, FSWatcher} from "fs";
+import {watch, FSWatcher} from "chokidar";
 import * as Path from "path";
 import * as _ from "lodash";
 import {EventEmitter} from "events";
@@ -32,12 +32,10 @@ class GitWatcher extends EventEmitter {
     watch() {
         if (Git.isGitDirectory(this.directory)) {
             this.updateGitData(this.directory);
-            this.watcher = watch(this.directory, <any>{
-                recursive: true,
-            });
+            this.watcher = watch(this.directory, {ignoreInitial: true, ignored: Path.join(this.directory, "node_modules", "**")});
 
             this.watcher.on(
-                "change",
+                "all",
                 (_type: string, fileName: string) => {
                     if (!fileName.startsWith(".git") ||
                         fileName === this.GIT_HEAD_FILE_NAME ||

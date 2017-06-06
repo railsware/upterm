@@ -24,6 +24,7 @@
   ],
   "dependencies": {
     "child-process-promise": "2.2.1",
+    "chokidar": "1.7.0",
     "dirStat": "0.0.2",
     "font-awesome": "4.7.0",
     "fs-extra": "3.0.1",
@@ -40,6 +41,7 @@
   },
   "devDependencies": {
     "@types/chai": "3.5.2",
+    "@types/chokidar": "1.6.0",
     "@types/electron": "1.4.37",
     "@types/enzyme": "2.8.0",
     "@types/fs-extra": "3.0.1",
