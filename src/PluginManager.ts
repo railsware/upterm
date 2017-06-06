@@ -55,10 +55,24 @@ export class PluginManager {
     }
 }
 
+const loadPreexecPlugins = async(): Promise<void> => {
+    const preexecDirectory = Path.join(__dirname, "plugins", "preexec");
+    const filePaths = await recursiveFilesIn(preexecDirectory);
+    filePaths.forEach(path => {
+        const module = require(path);
+        if (typeof module.default !== "function") {
+            console.error(`Invalid preexec plugin: ${path} does not export a function`);
+        } else {
+            PluginManager.registerPreexecPlugin(module.default);
+        }
+    });
+};
 
 export async function loadAllPlugins(): Promise<void> {
+    await loadPreexecPlugins();
+
     const pluginsDirectory = Path.join(__dirname, "plugins");
     const filePaths = await io.recursiveFilesIn(pluginsDirectory);
 
-    filePaths.map(require).map((module: any) => module.default);
+    filePaths.map(require);
 }
