@@ -108,6 +108,10 @@ export class FileStatus {
 export type GitDirectoryPath = string & { __isGitDirectoryPath: boolean };
 
 export function isGitDirectory(directory: string): directory is GitDirectoryPath {
+    let parsedPath = Path.parse(directory);
+    if(!fs.existsSync(Path.join(directory, ".git")) && parsedPath.root != parsedPath.dir) {
+        return isGitDirectory(Path.resolve(directory, ".."))
+    }
     return fs.existsSync(Path.join(directory, ".git") );
 }
 
