@@ -1,6 +1,4 @@
 import {linedOutputOf} from "../PTY";
-import * as Path from "path";
-import * as fs from "fs";
 import {executeCommand} from "../PTY";
 import * as _ from "lodash";
 
@@ -107,8 +105,8 @@ export class FileStatus {
 
 export type GitDirectoryPath = string & { __isGitDirectoryPath: boolean };
 
-export function isGitDirectory(directory: string): directory is GitDirectoryPath {
-    return fs.existsSync(Path.join(directory, ".git") );
+export async function isGitDirectory(directory: string): Promise<boolean> {
+    return await executeCommand("git", ["rev-parse", "--is-inside-work-tree"], directory) == "true";
 }
 
 type BranchesOptions = {

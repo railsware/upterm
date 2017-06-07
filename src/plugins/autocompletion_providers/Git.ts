@@ -246,8 +246,8 @@ const commonMergeOptions = combine([
 ].map(longFlag));
 
 const remotes = provide(async context => {
-    if (Git.isGitDirectory(context.environment.pwd)) {
-        const names = await Git.remotes(context.environment.pwd);
+    if (await Git.isGitDirectory(context.environment.pwd)) {
+        const names = await Git.remotes(context.environment.pwd as Git.GitDirectoryPath);
         return names.map(name => ({value: name, style: styles.branch}));
     }
 
@@ -261,9 +261,9 @@ const configVariables = unique(provide(async context => {
 }));
 
 const branchesExceptCurrent = provide(async context => {
-    if (Git.isGitDirectory(context.environment.pwd)) {
+    if (await Git.isGitDirectory(context.environment.pwd)) {
         const allBranches = (await Git.branches({
-            directory: context.environment.pwd,
+            directory: context.environment.pwd as Git.GitDirectoryPath,
             remotes: true,
             tags: false,
         }));
@@ -286,8 +286,8 @@ const branchAlias = provide(async context => {
 });
 
 const notStagedFiles = unique(provide(async context => {
-    if (Git.isGitDirectory(context.environment.pwd)) {
-        const fileStatuses = await Git.status(context.environment.pwd);
+    if (await Git.isGitDirectory(context.environment.pwd)) {
+        const fileStatuses = await Git.status(context.environment.pwd as Git.GitDirectoryPath);
         return fileStatuses.map(fileStatus => ({value: fileStatus.value, style: styles.gitFileStatus(fileStatus.code)}));
     } else {
         return [];
