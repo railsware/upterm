@@ -91,6 +91,7 @@ export class BufferComponent extends React.Component<Props, State> {
 
     render() {
         const buffer = this.props.job.screenBuffer;
+        const showCursor = this.props.job.status === Status.InProgress && (buffer._showCursor || buffer._blinkCursor);
 
         return (
             <div className="output"
@@ -106,7 +107,7 @@ export class BufferComponent extends React.Component<Props, State> {
                             <RowComponent
                                 key={index}
                                 row={row}
-                                hasCursor={index === buffer.cursorRow && this.props.job.status === Status.InProgress && (buffer._showCursor || buffer._blinkCursor)}
+                                hasCursor={index === buffer.cursorRow && showCursor}
                                 status={this.props.job.status}
                                 job={this.props.job}/>
                         );
