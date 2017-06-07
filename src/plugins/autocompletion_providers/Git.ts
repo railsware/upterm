@@ -247,8 +247,8 @@ const commonMergeOptions = combine([
 ].map(longFlag));
 
 const remotes = async(context: AutocompletionContext): Promise<Suggestion[]> => {
-    if (Git.isGitDirectory(context.environment.pwd)) {
-        const names = await Git.remotes(context.environment.pwd);
+    if (await Git.isGitDirectory(context.environment.pwd)) {
+        const names = await Git.remotes(context.environment.pwd as Git.GitDirectoryPath);
         return names.map(name => new Suggestion({value: name, style: styles.branch}));
     }
 
@@ -262,9 +262,9 @@ const configVariables = unique(async(context: AutocompletionContext): Promise<Su
 });
 
 const branchesExceptCurrent = async(context: AutocompletionContext): Promise<Suggestion[]> => {
-    if (Git.isGitDirectory(context.environment.pwd)) {
+    if (await Git.isGitDirectory(context.environment.pwd)) {
         const allBranches = (await Git.branches({
-            directory: context.environment.pwd,
+            directory: context.environment.pwd as Git.GitDirectoryPath,
             remotes: true,
             tags: false,
         }));
@@ -287,8 +287,8 @@ const branchAlias = async(context: AutocompletionContext): Promise<Suggestion[]>
 };
 
 const notStagedFiles = unique(async(context: AutocompletionContext): Promise<Suggestion[]> => {
-    if (Git.isGitDirectory(context.environment.pwd)) {
-        const fileStatuses = await Git.status(context.environment.pwd);
+    if (await Git.isGitDirectory(context.environment.pwd)) {
+        const fileStatuses = await Git.status(context.environment.pwd as Git.GitDirectoryPath);
         return fileStatuses.map(fileStatus => new Suggestion({value: fileStatus.value, style: styles.gitFileStatus(fileStatus.code)}));
     } else {
         return [];
