@@ -4,7 +4,7 @@
 What Is It?
 -----------
 
-Upterm is an IDE in the world of terminals. Strictly speaking, it's both a
+Upterm (formerly Black Screen) is an IDE in the world of terminals. Strictly speaking, it's both a
 terminal emulator and an *interactive* shell based on [Electron](http://electron.atom.io/).
 Also, unlike most of the emulators you can meet nowadays it uses HTML and CSS for its UI (exactly as Atom does),
 which means we can [stop misusing unicode characters](https://github.com/vim-airline/vim-airline)
