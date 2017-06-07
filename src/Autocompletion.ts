@@ -20,14 +20,14 @@ type GetSuggestionsOptions = {
     aliases: Aliases;
 };
 
-export const getSuggestions = async({
+export async function getSuggestions({
     currentText,
     currentCaretPosition,
     ast,
     environment,
     historicalPresentDirectoriesStack,
     aliases,
-}: GetSuggestionsOptions): Promise<SuggestionWithDefaults[]> => {
+}: GetSuggestionsOptions): Promise<SuggestionWithDefaults[]> {
     const prefixMatchesInHistory = History.all.filter(line => line.startsWith(currentText));
     const suggestionsFromHistory = prefixMatchesInHistory.map(match => ({
         value: match,
@@ -62,4 +62,4 @@ export const getSuggestions = async({
     }
 
     return applicableSuggestions.slice(0, suggestionsLimit).map(addDefaultAttributeValues);
-};
+}

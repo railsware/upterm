@@ -16,7 +16,7 @@ type Style = { value: string; css: CSSObject};
 interface PromptSerializerContext {
     ast: ASTNode;
     caretPosition: number;
-    suggestion: Suggestion;
+    suggestion: SuggestionWithDefaults;
 }
 
 type PromptSerializer = (context: PromptSerializerContext) => string;
@@ -56,11 +56,6 @@ export function addDefaultAttributeValues(suggestion: Suggestion): SuggestionWit
 }
 
 const defaultPromptSerializer: PromptSerializer = (context: PromptSerializerContext): string => {
-    const node = leafNodeAt(context.caretPosition, context.ast);
-    return serializeReplacing(context.ast, node, context.suggestion.value.replace(/\s/g, "\\ ") + (context.suggestion.space ? " " : ""));
-};
-
-export const noEscapeSpacesPromptSerializer: PromptSerializer = (context: PromptSerializerContext): string => {
     const node = leafNodeAt(context.caretPosition, context.ast);
     return serializeReplacing(context.ast, node, context.suggestion.value + (context.suggestion.space ? " " : ""));
 };
@@ -189,14 +184,12 @@ const filesSuggestions = (filter: (info: FileInfo) => boolean) => async(tokenVal
                     value: joinPath(tokenDirectory, escapedName + Path.sep),
                     displayValue: info.name + Path.sep,
                     style: styles.directory,
-                    promptSerializer: noEscapeSpacesPromptSerializer,
                 };
             } else {
                 return {
                     value: joinPath(tokenDirectory, escapedName),
                     displayValue: info.name,
                     style: styles.file(info, joinPath(directoryPath, escapedName)),
-                    promptSerializer: noEscapeSpacesPromptSerializer,
                 };
             }
         });

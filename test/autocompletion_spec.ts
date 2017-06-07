@@ -9,7 +9,6 @@ import {Word} from "../src/shell/Scanner";
 import {
     styles,
     anyFilesSuggestions,
-    noEscapeSpacesPromptSerializer,
 } from "../src/plugins/autocompletion_utils/Common";
 import {join} from "path";
 import {fontAwesome} from "../src/views/css/FontAwesome";
@@ -44,7 +43,6 @@ describe("Autocompletion suggestions", () => {
         const expectedSuggestions = [{
             value: "file\\ with\\ brackets\\(\\)",
             displayValue: "file with brackets()",
-            promptSerializer: noEscapeSpacesPromptSerializer,
             style: {
                 value: fontAwesome.file,
                 css: {},
