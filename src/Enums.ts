@@ -50,6 +50,7 @@ export enum KeyCode {
     Underscore = 189,
     Period = 190,
     VerticalBar = 220,
+    AltGraph = 225,
 }
 
 export enum Color {
