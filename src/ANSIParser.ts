@@ -206,7 +206,7 @@ export class ANSIParser {
                     /* tslint:disable:max-line-length */
                     long = "Move the active position to the same horizontal position on the preceding lin If the active position is at the top margin, a scroll down is performed.";
 
-                    if (this.screenBuffer.cursorPosition.row === this.screenBuffer.marginTop) {
+                    if (this.screenBuffer.cursorRow === this.screenBuffer.marginTop) {
                         this.screenBuffer.scrollDown(1);
                     } else {
                         this.screenBuffer.moveCursorRelative({vertical: -1});
@@ -432,7 +432,7 @@ export class ANSIParser {
                 url = "http://www.vt100.net/docs/vt510-rm/DL";
                 short = "Deletes one or more lines in the scrolling region, starting with the line that has the cursor. (DL)";
 
-                this.screenBuffer.scrollUp(param || 1, this.screenBuffer.cursorPosition.row);
+                this.screenBuffer.scrollUp(param || 1, this.screenBuffer.cursorRow);
                 break;
             case "P":
                 url = "http://www.vt100.net/docs/vt510-rm/DCH.html";
@@ -507,8 +507,7 @@ export class ANSIParser {
                 if (param === 6) {
                     url = "http://www.vt100.net/docs/vt510-rm/CPR";
                     short = "Report Cursor Position (CPR) [row;column] as CSI r ; c R";
-                    const {row, column} = this.screenBuffer.cursorPosition;
-                    this.terminalDevice.write(csi(`${row + 1};${column + 1}R`));
+                    this.terminalDevice.write(csi(`${this.screenBuffer.cursorRow + 1};${this.screenBuffer.cursorRow + 1}R`));
                 } else {
                     status = "unhandled";
                 }

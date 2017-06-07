@@ -6,13 +6,15 @@ import {List} from "immutable";
 import {error, times} from "./utils/Common";
 
 interface SavedState {
-    cursorPosition: RowColumn;
+    cursorRow: number;
+    cursorColumn: number;
     attributes: i.Attributes;
 }
 
 export class ScreenBuffer extends events.EventEmitter {
     public static hugeOutputThreshold = 300;
-    public cursorPosition: RowColumn = {row: 0, column: 0};
+    public cursorRow = 0;
+    public cursorColumn = 0;
     public _showCursor = true;
     public _blinkCursor = true;
     public activeScreenBufferType = e.ScreenBufferType.Standard;
@@ -44,10 +46,10 @@ export class ScreenBuffer extends events.EventEmitter {
                     this.moveCursorRelative({horizontal: -1});
                     break;
                 case e.KeyCode.Tab:
-                    this.moveCursorAbsolute({column: Math.floor((this.cursorPosition.column + 8) / 8) * 8});
+                    this.moveCursorAbsolute({column: Math.floor((this.cursorColumn + 8) / 8) * 8});
                     break;
                 case e.KeyCode.NewLine:
-                    if (this.cursorPosition.row === this._margins.bottom) {
+                    if (this.cursorRow === this._margins.bottom) {
                         this.scrollUp(1);
                     } else {
                         this.moveCursorRelative({vertical: 1});
@@ -61,7 +63,7 @@ export class ScreenBuffer extends events.EventEmitter {
                     error(`Couldn't write a special char "${charObject}" with char code ${charObject.toString().charCodeAt(0)}.`);
             }
         } else {
-            this.set(this.cursorPosition, charObject);
+            this.set(charObject);
             this.moveCursorRelative({horizontal: 1});
         }
         this.emitData();
@@ -69,7 +71,7 @@ export class ScreenBuffer extends events.EventEmitter {
 
     scrollDown(count: number) {
         this.storage = this.storage.splice((this._margins.bottom || 0) - count + 1, count).toList();
-        times(count, () => this.storage = this.storage.splice(this.cursorPosition.row, 0, undefined).toList());
+        times(count, () => this.storage = this.storage.splice(this.cursorRow, 0, undefined).toList());
     }
 
     scrollUp(count: number, deletedLine = this._margins.top) {
@@ -93,8 +95,8 @@ export class ScreenBuffer extends events.EventEmitter {
         let storage = fromStorage;
 
         if (status === e.Status.InProgress && (this._showCursor || this._blinkCursor)) {
-            const cursorRow = this.cursorPosition.row - (this.storage.size - fromStorage.size);
-            const cursorColumn = this.cursorPosition.column;
+            const cursorRow = this.cursorRow - (this.storage.size - fromStorage.size);
+            const cursorColumn = this.cursorColumn;
 
             const cursorCoordinates = [cursorRow, cursorColumn];
 
@@ -142,24 +144,24 @@ export class ScreenBuffer extends events.EventEmitter {
     }
 
     showCursor(state: boolean): void {
-        this.ensureRowExists(this.cursorPosition.row);
+        this.ensureRowExists(this.cursorRow);
         this._showCursor = state;
         this.emitData();
     }
 
     blinkCursor(state: boolean): void {
-        this.ensureRowExists(this.cursorPosition.row);
+        this.ensureRowExists(this.cursorRow);
         this._blinkCursor = state;
         this.emitData();
     }
 
     moveCursorRelative(advancement: Advancement): this {
-        const row = Math.max(0, this.cursorPosition.row + (advancement.vertical || 0));
-        const column = Math.max(0, this.cursorPosition.column + (advancement.horizontal || 0));
+        const row = Math.max(0, this.cursorRow + (advancement.vertical || 0));
+        const column = Math.max(0, this.cursorColumn + (advancement.horizontal || 0));
 
         this.moveCursorAbsolute({ row: row, column: column });
 
-        this.ensureRowExists(this.cursorPosition.row);
+        this.ensureRowExists(this.cursorRow);
         this.emitData();
 
         return this;
@@ -167,50 +169,50 @@ export class ScreenBuffer extends events.EventEmitter {
 
     moveCursorAbsolute(position: Partial<RowColumn>): this {
         if (typeof position.column === "number") {
-            this.cursorPosition.column = Math.max(position.column, 0) + this.homePosition.column;
+            this.cursorColumn = Math.max(position.column, 0) + this.homePosition.column;
         }
 
         if (typeof position.row === "number") {
-            this.cursorPosition.row = Math.max(position.row, 0) + this.homePosition.row;
+            this.cursorRow = Math.max(position.row, 0) + this.homePosition.row;
         }
 
-        this.ensureRowExists(this.cursorPosition.row);
+        this.ensureRowExists(this.cursorRow);
         this.emitData();
 
         return this;
     }
 
     deleteRight(n: number) {
-        if (this.storage.get(this.cursorPosition.row)) {
+        if (this.storage.get(this.cursorRow)) {
             this.storage = this.storage.update(
-                this.cursorPosition.row,
+                this.cursorRow,
                 List<Char>(),
-                (row: List<Char>) => row.splice(this.cursorPosition.column, n).toList(),
+                (row: List<Char>) => row.splice(this.cursorColumn, n).toList(),
             );
         }
         this.emitData();
     }
 
     insertSpaceRight(n: number) {
-        if (this.storage.get(this.cursorPosition.row)) {
+        if (this.storage.get(this.cursorRow)) {
             let nSpace = "";
             for (let i = 0; i < n; i++) { nSpace += " "; }
             this.storage = this.storage.update(
-                this.cursorPosition.row,
+                this.cursorRow,
                 List<Char>(),
-                (row: List<Char>) => row.splice(this.cursorPosition.column, 0, nSpace).toList(),
+                (row: List<Char>) => row.splice(this.cursorColumn, 0, nSpace).toList(),
             );
         }
         this.emitData();
     }
 
     eraseRight(n: number) {
-        if (this.storage.get(this.cursorPosition.row)) {
+        if (this.storage.get(this.cursorRow)) {
             this.storage = this.storage.update(
-                this.cursorPosition.row,
+                this.cursorRow,
                 List<Char>(),
-                (row: List<Char>) => row.take(this.cursorPosition.column)
-                    .concat(Array(n).fill(Char.empty), row.skip(this.cursorPosition.column + n))
+                (row: List<Char>) => row.take(this.cursorColumn)
+                    .concat(Array(n).fill(Char.empty), row.skip(this.cursorColumn + n))
                     .toList(),
             );
         }
@@ -218,27 +220,27 @@ export class ScreenBuffer extends events.EventEmitter {
     }
 
     clearRow() {
-        this.storage = this.storage.set(this.cursorPosition.row, List<Char>());
+        this.storage = this.storage.set(this.cursorRow, List<Char>());
         this.emitData();
     }
 
     clearRowToEnd() {
-        if (this.storage.get(this.cursorPosition.row)) {
+        if (this.storage.get(this.cursorRow)) {
             this.storage = this.storage.update(
-                this.cursorPosition.row,
+                this.cursorRow,
                 List<Char>(),
-                (row: List<Char>) => row.take(this.cursorPosition.column).toList(),
+                (row: List<Char>) => row.take(this.cursorColumn).toList(),
             );
         }
         this.emitData();
     }
 
     clearRowToBeginning() {
-        if (this.storage.get(this.cursorPosition.row)) {
-            const replacement = Array(this.cursorPosition.column).fill(Char.empty);
+        if (this.storage.get(this.cursorRow)) {
+            const replacement = Array(this.cursorColumn).fill(Char.empty);
             this.storage = this.storage.update(
-                this.cursorPosition.row,
-                row => row.splice(0, this.cursorPosition.column + 1, ...replacement).toList());
+                this.cursorRow,
+                row => row.splice(0, this.cursorColumn + 1, ...replacement).toList());
         }
         this.emitData();
     }
@@ -250,15 +252,15 @@ export class ScreenBuffer extends events.EventEmitter {
 
     clearToBeginning() {
         this.clearRowToBeginning();
-        const replacement = Array(this.cursorPosition.row);
+        const replacement = Array(this.cursorRow);
 
-        this.storage = this.storage.splice(0, this.cursorPosition.row, ...replacement).toList();
+        this.storage = this.storage.splice(0, this.cursorRow, ...replacement).toList();
         this.emitData();
     }
 
     clearToEnd() {
         this.clearRowToEnd();
-        this.storage = this.storage.splice(this.cursorPosition.row + 1, this.storage.size - this.cursorPosition.row).toList();
+        this.storage = this.storage.splice(this.cursorRow + 1, this.storage.size - this.cursorRow).toList();
         this.emitData();
     }
 
@@ -296,14 +298,15 @@ export class ScreenBuffer extends events.EventEmitter {
 
     saveCurrentState() {
         this.savedState = {
-            cursorPosition: {...this.cursorPosition},
+            cursorRow: this.cursorRow,
+            cursorColumn: this.cursorColumn,
             attributes: {...this.attributes},
         };
     }
 
     restoreCurrentState() {
         if (this.savedState) {
-            this.moveCursorAbsolute(this.savedState.cursorPosition);
+            this.moveCursorAbsolute({row: this.savedState.cursorRow, column: this.savedState.cursorColumn});
             this.setAttributes(this.savedState.attributes);
         } else {
             console.error("No state to restore.");
@@ -318,9 +321,9 @@ export class ScreenBuffer extends events.EventEmitter {
         }
     }
 
-    private set(position: RowColumn, char: Char): void {
-        this.ensureRowExists(position.row);
-        this.storage = this.storage.setIn([position.row, position.column], char);
+    private set(char: Char): void {
+        this.ensureRowExists(this.cursorRow);
+        this.storage = this.storage.setIn([this.cursorRow, this.cursorColumn], char);
     }
 
     private ensureRowExists(rowNumber: number): void {
