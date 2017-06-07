@@ -507,7 +507,7 @@ export class ANSIParser {
                 if (param === 6) {
                     url = "http://www.vt100.net/docs/vt510-rm/CPR";
                     short = "Report Cursor Position (CPR) [row;column] as CSI r ; c R";
-                    this.terminalDevice.write(csi(`${this.screenBuffer.cursorRow + 1};${this.screenBuffer.cursorRow + 1}R`));
+                    this.terminalDevice.write(csi(`${this.screenBuffer.cursorRow + 1};${this.screenBuffer.cursorColumn + 1}R`));
                 } else {
                     status = "unhandled";
                 }
