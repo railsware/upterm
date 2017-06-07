@@ -53,6 +53,7 @@ export class SessionComponent extends React.Component<Props, {}> {
             <JobShowComponent
                 key={job.id}
                 job={job}
+                jobStatus={job.status}
                 isFocused={this.props.isFocused && index === this.props.session.jobs.length - 1}
             />,
         );

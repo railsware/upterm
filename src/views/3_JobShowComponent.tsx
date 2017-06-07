@@ -2,9 +2,11 @@ import * as React from "react";
 import {Job} from "../shell/Job";
 import {BufferComponent} from "./BufferComponent";
 import {JobHeaderComponent} from "./JobHeaderComponent";
+import {Status} from "../Enums";
 
 interface Props {
     job: Job;
+    jobStatus: Status;
     isFocused: boolean;
 }
 
@@ -25,6 +27,12 @@ export class JobShowComponent extends React.Component<Props, State> {
         this.props.job
             .on("data", () => this.forceUpdate())
             .on("status", () => this.forceUpdate());
+    }
+
+    shouldComponentUpdate(nextProps: Props, nextState: State) {
+        return this.state.decorate !== nextState.decorate ||
+            this.props.jobStatus === Status.InProgress ||
+            this.props.jobStatus !== nextProps.jobStatus;
     }
 
     render() {
