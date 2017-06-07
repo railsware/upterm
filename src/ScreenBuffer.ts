@@ -1,6 +1,5 @@
 import * as events from "events";
 import {Char, attributesFlyweight, defaultAttributes} from "./Char";
-import {Cursor} from "./Cursor";
 import * as i from "./Interfaces";
 import * as e from "./Enums";
 import {List} from "immutable";
@@ -13,7 +12,9 @@ interface SavedState {
 
 export class ScreenBuffer extends events.EventEmitter {
     public static hugeOutputThreshold = 300;
-    public cursor: Cursor = new Cursor();
+    public cursorPosition: RowColumn = {row: 0, column: 0};
+    public _showCursor = true;
+    public _blinkCursor = true;
     public activeScreenBufferType = e.ScreenBufferType.Standard;
     private storage = List<List<Char>>();
     private _attributes: i.Attributes = {...defaultAttributes, color: e.Color.White, weight: e.Weight.Normal};
@@ -43,10 +44,10 @@ export class ScreenBuffer extends events.EventEmitter {
                     this.moveCursorRelative({horizontal: -1});
                     break;
                 case e.KeyCode.Tab:
-                    this.moveCursorAbsolute({column: Math.floor((this.cursor.column + 8) / 8) * 8});
+                    this.moveCursorAbsolute({column: Math.floor((this.cursorPosition.column + 8) / 8) * 8});
                     break;
                 case e.KeyCode.NewLine:
-                    if (this.cursor.row === this._margins.bottom) {
+                    if (this.cursorPosition.row === this._margins.bottom) {
                         this.scrollUp(1);
                     } else {
                         this.moveCursorRelative({vertical: 1});
@@ -68,7 +69,7 @@ export class ScreenBuffer extends events.EventEmitter {
 
     scrollDown(count: number) {
         this.storage = this.storage.splice((this._margins.bottom || 0) - count + 1, count).toList();
-        times(count, () => this.storage = this.storage.splice(this.cursor.row, 0, undefined).toList());
+        times(count, () => this.storage = this.storage.splice(this.cursorPosition.row, 0, undefined).toList());
     }
 
     scrollUp(count: number, deletedLine = this._margins.top) {
@@ -91,7 +92,7 @@ export class ScreenBuffer extends events.EventEmitter {
     toRenderable(status: e.Status, fromStorage = this.storage): List<List<Char>> {
         let storage = fromStorage;
 
-        if (status === e.Status.InProgress && (this.cursor.show || this.cursor.blink)) {
+        if (status === e.Status.InProgress && (this._showCursor || this._blinkCursor)) {
             const cursorRow = this.cursorPosition.row - (this.storage.size - fromStorage.size);
             const cursorColumn = this.cursorPosition.column;
 
@@ -141,28 +142,39 @@ export class ScreenBuffer extends events.EventEmitter {
     }
 
     showCursor(state: boolean): void {
-        this.ensureRowExists(this.cursor.row);
-        this.cursor.show = state;
+        this.ensureRowExists(this.cursorPosition.row);
+        this._showCursor = state;
         this.emitData();
     }
 
     blinkCursor(state: boolean): void {
-        this.ensureRowExists(this.cursor.row);
-        this.cursor.blink = state;
+        this.ensureRowExists(this.cursorPosition.row);
+        this._blinkCursor = state;
         this.emitData();
     }
 
-    moveCursorRelative(position: Advancement): this {
-        this.cursor.moveRelative(position);
-        this.ensureRowExists(this.cursor.row);
+    moveCursorRelative(advancement: Advancement): this {
+        const row = Math.max(0, this.cursorPosition.row + (advancement.vertical || 0));
+        const column = Math.max(0, this.cursorPosition.column + (advancement.horizontal || 0));
+
+        this.moveCursorAbsolute({ row: row, column: column });
+
+        this.ensureRowExists(this.cursorPosition.row);
         this.emitData();
 
         return this;
     }
 
     moveCursorAbsolute(position: Partial<RowColumn>): this {
-        this.cursor.moveAbsolute(position, this.homePosition);
-        this.ensureRowExists(this.cursor.row);
+        if (typeof position.column === "number") {
+            this.cursorPosition.column = Math.max(position.column, 0) + this.homePosition.column;
+        }
+
+        if (typeof position.row === "number") {
+            this.cursorPosition.row = Math.max(position.row, 0) + this.homePosition.row;
+        }
+
+        this.ensureRowExists(this.cursorPosition.row);
         this.emitData();
 
         return this;
@@ -252,10 +264,6 @@ export class ScreenBuffer extends events.EventEmitter {
 
     get size(): number {
         return this.storage.size;
-    }
-
-    get cursorPosition(): RowColumn {
-        return this.cursor.getPosition();
     }
 
     isEmpty(): boolean {

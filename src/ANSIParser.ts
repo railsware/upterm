@@ -206,7 +206,7 @@ export class ANSIParser {
                     /* tslint:disable:max-line-length */
                     long = "Move the active position to the same horizontal position on the preceding lin If the active position is at the top margin, a scroll down is performed.";
 
-                    if (this.screenBuffer.cursor.row === this.screenBuffer.marginTop) {
+                    if (this.screenBuffer.cursorPosition.row === this.screenBuffer.marginTop) {
                         this.screenBuffer.scrollDown(1);
                     } else {
                         this.screenBuffer.moveCursorRelative({vertical: -1});
@@ -432,7 +432,7 @@ export class ANSIParser {
                 url = "http://www.vt100.net/docs/vt510-rm/DL";
                 short = "Deletes one or more lines in the scrolling region, starting with the line that has the cursor. (DL)";
 
-                this.screenBuffer.scrollUp(param || 1, this.screenBuffer.cursor.row);
+                this.screenBuffer.scrollUp(param || 1, this.screenBuffer.cursorPosition.row);
                 break;
             case "P":
                 url = "http://www.vt100.net/docs/vt510-rm/DCH.html";
@@ -566,6 +566,6 @@ function or1(value: number | undefined) {
 
 // TODO: Move to
 function logPosition(buffer: ScreenBuffer) {
-    const position = buffer.cursor.getPosition();
+    const position = buffer.cursorPosition;
     debug(`%crow: ${position.row}\tcolumn: ${position.column}\t value: ${buffer.at(position)}`, "color: green");
 }
