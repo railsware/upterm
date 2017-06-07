@@ -220,6 +220,14 @@ export class ANSIParser {
                     this.screenBuffer.moveCursorRelative({vertical: 1});
                     this.screenBuffer.moveCursorAbsolute({column: 0});
                     break;
+                case "7":
+                    long = "Save current state (cursor coordinates, attributes, character sets pointed at by G0, G1).";
+                    this.screenBuffer.saveCurrentState();
+                    break;
+                case "8":
+                    long = "Restore state most recently saved by ESC 7.";
+                    this.screenBuffer.restoreCurrentState();
+                    break;
                 default:
                     status = "unhandled";
             }

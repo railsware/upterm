@@ -31,10 +31,6 @@ export const KeybindingsForActions: KeybindingType[] = [
         keybinding: (e: KeyboardEvent) => e.ctrlKey && e.keyCode === KeyCode.L,
     },
     {
-        action: KeyboardAction.cliDeleteWord,
-        keybinding: (e: KeyboardEvent) => e.ctrlKey && e.keyCode === KeyCode.W,
-    },
-    {
         action: KeyboardAction.cliClearText,
         // Need to include !shiftKey otherwise it will clear instead of copying
         keybinding: (e: KeyboardEvent) => e.ctrlKey && e.keyCode === KeyCode.C && !e.shiftKey,

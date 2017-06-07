@@ -20,9 +20,7 @@ type ButtonProps = {
   color?: string;
 };
 
-const Button = ({ onClick, children, color = colors.blue }: ButtonProps) => <span
+export const Button = ({ onClick, children, color = colors.blue }: ButtonProps) => <span
   style={buttonStyles(color)}
   onClick={onClick}
 >{children}</span>;
-
-export default Button;

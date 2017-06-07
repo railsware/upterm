@@ -12,9 +12,9 @@ import {
 } from "../utils/Git";
 import {colors} from "../views/css/colors";
 import {executeCommand} from "../PTY";
-import Link from "../utils/Link";
+import {Link} from "../utils/Link";
 import {join} from "path";
-import Button from "./autocompletion_utils/Button";
+import {Button} from "./autocompletion_utils/Button";
 
 const gitStatusStyle = (color: string) => ({
   lineHeight: "18px",

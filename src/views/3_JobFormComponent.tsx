@@ -4,7 +4,7 @@ import {AutocompleteComponent} from "./AutocompleteComponent";
 import {History} from "../shell/History";
 import {getCaretPosition, setCaretPosition} from "./ViewUtils";
 import {Prompt} from "../shell/Prompt";
-import {Suggestion} from "../plugins/autocompletion_utils/Common";
+import {SuggestionWithDefaults} from "../plugins/autocompletion_utils/Common";
 import {KeyCode} from "../Enums";
 import {getSuggestions} from "../Autocompletion";
 import * as css from "./css/main";
@@ -21,7 +21,7 @@ interface State {
     previousKeyCode: number;
     offsetTop: number;
     caretPositionFromPreviousFocus: number;
-    suggestions: Suggestion[];
+    suggestions: SuggestionWithDefaults[];
 }
 
 export class JobFormComponent extends React.Component<Props, State> {
@@ -125,28 +125,6 @@ export class JobFormComponent extends React.Component<Props, State> {
 
         if (!this.isEmpty()) {
             this.props.session.createJob(this.prompt);
-        }
-    }
-
-    async deleteWord(current = this.prompt.value, position = getCaretPosition(this.commandNode)): Promise<void> {
-        if (!current.length) {
-            return;
-        }
-
-        const lastIndex = current.substring(0, position).lastIndexOf(" ");
-        const endsWithASpace = lastIndex === current.length - 1;
-
-        current = current.substring(0, lastIndex);
-
-        if (endsWithASpace) {
-            this.deleteWord(current, position);
-        } else {
-            if (current.length) {
-                current += " ";
-            }
-
-            this.prompt.setValue(current + this.prompt.value.substring(getCaretPosition(this.commandNode)));
-            this.setDOMValueProgrammatically(this.prompt.value);
         }
     }
 

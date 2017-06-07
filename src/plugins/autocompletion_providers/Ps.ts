@@ -1,7 +1,9 @@
 import {PluginManager} from "../../PluginManager";
-import {shortFlag, mapSuggestions, Suggestion, styles}
+import {
+    shortFlag, mapSuggestions, styles, provide, Suggestion,
+}
     from "../autocompletion_utils/Common";
-import combine from "../autocompletion_utils/Combine";
+import {combine} from "../autocompletion_utils/Combine";
 import {AutocompletionContext, AutocompletionProvider} from "../../Interfaces";
 import {mapObject} from "../../utils/Common";
 import * as Process from "../../utils/Process";
@@ -23,7 +25,7 @@ const shortOptions = combine(mapObject(
     },
     (option, info) => {
         return mapSuggestions(shortFlag(option),
-                              suggestion => suggestion.withDescription(info.description));
+                              suggestion => ({...suggestion, description: info.description}));
     },
 ));
 
@@ -51,81 +53,81 @@ interface LongFlagItem {
     providers?: AutocompletionProvider;
 }
 
-const realUserSuggestions = async(context: AutocompletionContext): Promise<Suggestion[]> => {
-        const arg = argInfo(context);
-        const users = await Process.users();
-        return users
-                    .filter(i => !arg.params.includes(i.ruser))
-                    .map(i =>
-                        new Suggestion({value: arg.start + i.ruser, displayValue: i.ruser,
-                            description: `User '${i.ruser}' with id '${i.ruserid}'`,
-                            style: styles.optionValue}));
-    };
+const realUserSuggestions = provide(async context => {
+    const arg = argInfo(context);
+    const users = await Process.users();
+    return users
+        .filter(i => !arg.params.includes(i.ruser))
+        .map(i =>
+            ({value: arg.start + i.ruser, displayValue: i.ruser,
+                description: `User '${i.ruser}' with id '${i.ruserid}'`,
+                style: styles.optionValue}));
+});
 
-const effectiveUserSuggestions = async(context: AutocompletionContext): Promise<Suggestion[]> => {
-        const arg = argInfo(context);
-        const users = await Process.users();
-        return users
-                    .filter(i => !arg.params.includes(i.euser))
-                    .map(i =>
-                        new Suggestion({value: arg.start + i.euser, displayValue: i.euser,
-                            description: `User '${i.euser}' with id '${i.euserid}'`,
-                            style: styles.optionValue}));
-    };
+const effectiveUserSuggestions = provide(async context => {
+    const arg = argInfo(context);
+    const users = await Process.users();
+    return users
+        .filter(i => !arg.params.includes(i.euser))
+        .map(i =>
+            ({value: arg.start + i.euser, displayValue: i.euser,
+                description: `User '${i.euser}' with id '${i.euserid}'`,
+                style: styles.optionValue}));
+});
 
-const effectiveGroupSuggestions = async(context: AutocompletionContext): Promise<Suggestion[]> => {
-        const arg = argInfo(context);
-        const groups = await Process.groups();
-        return groups
-                    .filter(i => !arg.params.includes(i.egroup))
-                    .map(i =>
-                        new Suggestion({value: arg.start + i.egroup, displayValue: i.egroup,
-                            description: `Group '${i.egroup}' with id '${i.egroupid}'`,
-                            style: styles.optionValue}));
-    };
+const effectiveGroupSuggestions = provide(async context => {
+    const arg = argInfo(context);
+    const groups = await Process.groups();
+    return groups
+        .filter(i => !arg.params.includes(i.egroup))
+        .map(i =>
+            ({value: arg.start + i.egroup, displayValue: i.egroup,
+                description: `Group '${i.egroup}' with id '${i.egroupid}'`,
+                style: styles.optionValue}));
+});
 
-const realGroupSuggestions = async(context: AutocompletionContext): Promise<Suggestion[]> => {
-        const arg = argInfo(context);
-        const groups = await Process.groups();
-        return groups
-                    .filter(i => !arg.params.includes(i.rgroup))
-                    .map(i =>
-                        new Suggestion({value: arg.start + i.rgroup, displayValue: i.rgroup,
-                            description: `Group '${i.rgroup}' with id '${i.rgroupid}'`,
-                            style: styles.optionValue}));
-    };
+const realGroupSuggestions = provide(async context => {
+    const arg = argInfo(context);
+    const groups = await Process.groups();
+    return groups
+        .filter(i => !arg.params.includes(i.rgroup))
+        .map(i =>
+            ({value: arg.start + i.rgroup, displayValue: i.rgroup,
+                description: `Group '${i.rgroup}' with id '${i.rgroupid}'`,
+                style: styles.optionValue}));
+});
 
-const terminalSuggestions = async(context: AutocompletionContext): Promise<Suggestion[]> => {
-        const arg = argInfo(context);
-        const terminals = await Process.terminals();
-        return terminals
-                .filter(i => !arg.params.includes(i.name))
-                .map(i => new Suggestion({value: arg.start + i.name, displayValue: i.name,
-                            description: `Terminal '${i.name}' with ruser '${i.ruser}'`,
-                            style: styles.optionValue}));
-    };
+const terminalSuggestions = provide(async context => {
+    const arg = argInfo(context);
+    const terminals = await Process.terminals();
+    return terminals
+        .filter(i => !arg.params.includes(i.name))
+        .map(i => ({value: arg.start + i.name, displayValue: i.name,
+            description: `Terminal '${i.name}' with ruser '${i.ruser}'`,
+            style: styles.optionValue}));
+});
 
-const processSuggestions = async(context: AutocompletionContext): Promise<Suggestion[]> => {
-        const arg = argInfo(context);
-        const processes = await Process.processes();
-        return processes
-                .filter(i => !arg.params.includes(i.pid))
-                .map(i => new Suggestion({value: arg.start + i.pid, displayValue: i.pid,
-                            description: `Process with command '${i.cmd.slice(0, 25)}'
+const processSuggestions = provide(async context => {
+    const arg = argInfo(context);
+    const processes = await Process.processes();
+    return processes
+        .filter(i => !arg.params.includes(i.pid))
+        .map(i => ({value: arg.start + i.pid, displayValue: i.pid,
+            description: `Process with command '${i.cmd.slice(0, 25)}'
                                 and ruser '${i.ruser}'`,
-                            style: styles.optionValue}));
-    };
+            style: styles.optionValue}));
+});
 
-const sessionSuggestions = async(context: AutocompletionContext): Promise<Suggestion[]> => {
-        const arg = argInfo(context);
-        const sessions = await Process.sessions();
-        return sessions
-                .filter(i => !arg.params.includes(i.sid))
-                .map(i => new Suggestion({value: arg.start + i.sid, displayValue: i.sid,
-                            description: `Session '${i.sid}' with ruser '${i.ruser}'
+const sessionSuggestions = provide(async context => {
+    const arg = argInfo(context);
+    const sessions = await Process.sessions();
+    return sessions
+        .filter(i => !arg.params.includes(i.sid))
+        .map(i => ({value: arg.start + i.sid, displayValue: i.sid,
+            description: `Session '${i.sid}' with ruser '${i.ruser}'
                                 and rgroup '${i.rgroup}'`,
-                            style: styles.optionValue}));
-    };
+            style: styles.optionValue}));
+});
 
 const longOptions: LongFlagItem[] = [
     {
@@ -166,21 +168,21 @@ const longOptions: LongFlagItem[] = [
     },
 ];
 
-const longFlagSuggestions = async(context: AutocompletionContext): Promise<Suggestion[]> => {
-        let suggestions: Suggestion[] = [];
-        const token: string = context.argument.value;
-        for (let i of longOptions) {
-            const flag = "--" + i.flag;
-            suggestions.push(new Suggestion({value: flag,
-                                    displayValue: flag, description: i.description,
-                                    style: styles.option}));
-            if (i.providers && token.startsWith(flag)) {
-                let providerSuggestions = await i.providers(context);
-                suggestions = [...suggestions, ...providerSuggestions];
-            }
+const longFlagSuggestions = provide(async context => {
+    let suggestions: Suggestion[] = [];
+    const token: string = context.argument.value;
+    for (let i of longOptions) {
+        const flag = "--" + i.flag;
+        suggestions.push({value: flag,
+            displayValue: flag, description: i.description,
+            style: styles.option});
+        if (i.providers && token.startsWith(flag)) {
+            let providerSuggestions = await i.providers(context);
+            suggestions = [...suggestions, ...providerSuggestions];
         }
-        return suggestions;
-    };
+    }
+    return suggestions;
+});
 
 const psSuggestions = combine([shortOptions, longFlagSuggestions]);
 

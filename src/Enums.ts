@@ -50,6 +50,7 @@ export enum KeyCode {
     Underscore = 189,
     Period = 190,
     VerticalBar = 220,
+    AltGraph = 225,
 }
 
 export enum Color {
@@ -102,7 +103,6 @@ export enum KeyboardAction {
     // CLI commands
     cliRunCommand,
     cliClearJobs,
-    cliDeleteWord,
     cliClearText,
     cliAppendLastArgumentOfPreviousCommand,
     cliHistoryPrevious,

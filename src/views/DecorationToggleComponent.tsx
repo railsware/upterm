@@ -7,9 +7,7 @@ interface Props {
     isDecorated: boolean;
 }
 
-const DecorationToggleComponent = (props: Props) => <span
+export const DecorationToggleComponent = (props: Props) => <span
     style={css.decorationToggle(props.isDecorated)}
     onClick={props.decorateToggler}
 >{fontAwesome.magic}</span>;
-
-export default DecorationToggleComponent;

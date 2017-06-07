@@ -5,13 +5,13 @@ export class Cursor {
     constructor(private position: RowColumn = { row: 0, column: 0 }) {
     }
 
-    moveAbsolute(position: PartialRowColumn, homePosition: RowColumn): this {
+    moveAbsolute(position: Partial<RowColumn>, homePosition: RowColumn): this {
         if (typeof position.column === "number") {
-            this.position.column = position.column + homePosition.column;
+            this.position.column = Math.max(position.column, 0) + homePosition.column;
         }
 
         if (typeof position.row === "number") {
-            this.position.row = position.row + homePosition.row;
+            this.position.row = Math.max(position.row, 0) + homePosition.row;
         }
 
         return this;

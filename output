@@ -1,0 +1,41 @@
+     # /home/vlad/.rvm/gems/ruby-2.3.3@early_warning/gems/activesupport-4.2.6/lib/active_support/callbacks.rb:498:in `block (2 levels) in around'
+     # /home/vlad/.rvm/gems/ruby-2.3.3@early_warning/gems/activesupport-4.2.6/lib/active_support/callbacks.rb:343:in `block (2 levels) in simple'
+     # /home/vlad/.rvm/gems/ruby-2.3.3@early_warning/gems/activejob-4.2.6/lib/active_job/logging.rb:14:in `block (3 levels) in <module:Logging>'
+     # /home/vlad/.rvm/gems/ruby-2.3.3@early_warning/gems/activejob-4.2.6/lib/active_job/logging.rb:43:in `block in tag_logger'
+     # /home/vlad/.rvm/gems/ruby-2.3.3@early_warning/gems/activesupport-4.2.6/lib/active_support/tagged_logging.rb:68:in `block in tagged'
+     # /home/vlad/.rvm/gems/ruby-2.3.3@early_warning/gems/activesupport-4.2.6/lib/active_support/tagged_logging.rb:26:in `tagged'
+     # /home/vlad/.rvm/gems/ruby-2.3.3@early_warning/gems/activesupport-4.2.6/lib/active_support/tagged_logging.rb:68:in `tagged'
+     # /home/vlad/.rvm/gems/ruby-2.3.3@early_warning/gems/activejob-4.2.6/lib/active_job/logging.rb:43:in `tag_logger'
+     # /home/vlad/.rvm/gems/ruby-2.3.3@early_warning/gems/activejob-4.2.6/lib/active_job/logging.rb:13:in `block (2 levels) in <module:Logging>'
+     # /home/vlad/.rvm/gems/ruby-2.3.3@early_warning/gems/activesupport-4.2.6/lib/active_support/callbacks.rb:441:in `instance_exec'
+     # /home/vlad/.rvm/gems/ruby-2.3.3@early_warning/gems/activesupport-4.2.6/lib/active_support/callbacks.rb:441:in `block in make_lambda'
+     # /home/vlad/.rvm/gems/ruby-2.3.3@early_warning/gems/activesupport-4.2.6/lib/active_support/callbacks.rb:342:in `block in simple'
+     # /home/vlad/.rvm/gems/ruby-2.3.3@early_warning/gems/activesupport-4.2.6/lib/active_support/callbacks.rb:497:in `block in around'
+     # /home/vlad/.rvm/gems/ruby-2.3.3@early_warning/gems/activesupport-4.2.6/lib/active_support/callbacks.rb:505:in `call'
+     # /home/vlad/.rvm/gems/ruby-2.3.3@early_warning/gems/activesupport-4.2.6/lib/active_support/callbacks.rb:92:in `__run_callbacks__'
+     # /home/vlad/.rvm/gems/ruby-2.3.3@early_warning/gems/activesupport-4.2.6/lib/active_support/callbacks.rb:778:in `_run_enqueue_callbacks'
+     # /home/vlad/.rvm/gems/ruby-2.3.3@early_warning/gems/activesupport-4.2.6/lib/active_support/callbacks.rb:81:in `run_callbacks'
+     # /home/vlad/.rvm/gems/ruby-2.3.3@early_warning/gems/activejob-4.2.6/lib/active_job/enqueuing.rb:67:in `enqueue'
+     # /home/vlad/.rvm/gems/ruby-2.3.3@early_warning/gems/activejob-4.2.6/lib/active_job/enqueuing.rb:17:in `perform_later'
+     # ./app/services/demo_data_copy.rb:39:in `copy_data!'
+     # ./spec/services/demo_data_copy_spec.rb:26:in `block (4 levels) in <top (required)>'
+     # ------------------
+     # --- Caused by: ---
+     # IO::EINPROGRESSWaitWritable:
+     #   Operation now in progress - connect(2) would block
+     #   /home/vlad/.rvm/gems/ruby-2.3.3@early_warning/gems/redis-3.3.1/lib/redis/connection/ruby.rb:182:in `connect_addrinfo'
+
+Finished in 48.91 seconds (files took 3.53 seconds to load)
+701 examples, 8 failures
+
+Failed examples:
+
+rspec ./spec/services/data_removal_service_spec.rb:36 # DataRemovalService nuke_customer_data! should blow away only the requested data
+rspec ./spec/services/demo_data_copy_spec.rb:119 # DemoDataCopy#copy_data! should not delete student associations if student is part of many orgs
+rspec ./spec/services/demo_data_copy_spec.rb:29 # DemoDataCopy#copy_data! check copy data should copy all data after Sep of 2015
+rspec ./spec/services/demo_data_copy_spec.rb:35 # DemoDataCopy#copy_data! check copy data should not change source organization data
+rspec ./spec/services/demo_data_copy_spec.rb:45 # DemoDataCopy#copy_data! check copy data should copy ews org data
+rspec ./spec/services/demo_data_copy_spec.rb:58 # DemoDataCopy#copy_data! check copy data should copy ews student data
+rspec ./spec/services/demo_data_copy_spec.rb:93 # DemoDataCopy#copy_data! check copy data should fake some of the ews student data
+rspec ./spec/services/demo_data_copy_spec.rb:106 # DemoDataCopy#copy_data! check copy data should remove destination_student_datum and destination ews_student
+

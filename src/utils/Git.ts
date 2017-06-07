@@ -115,16 +115,32 @@ type BranchesOptions = {
     tags: boolean;
 };
 
+export async function currentBranchName(directory: GitDirectoryPath): Promise<string> {
+    const output = await executeCommand(
+        "git",
+        ['"symbolic-ref"', '"--short"', '"-q"', '"HEAD"'],
+        directory,
+    );
+
+    return output.trim();
+}
+
+export async function hasUncommittedChanges(directory: GitDirectoryPath): Promise<boolean> {
+    const output = await executeCommand(
+        "git",
+        ["status", "--untracked-files=no", "--porcelain"],
+        directory,
+    );
+
+    return output.trim().length !== 0;
+}
+
 export async function branches({
     directory,
     remotes,
     tags,
 }: BranchesOptions): Promise<Branch[]> {
-    const currentBranch = await executeCommand(
-        "git",
-        ['"symbolic-ref"', '"--short"', '"-q"', '"HEAD"'],
-        directory)
-        .then(branchName => branchName.trim());
+    const currentBranch = await currentBranchName(directory);
     const promiseHeadsTags = linedOutputOf(
         "git",
         ["for-each-ref", "refs/heads ", tags ? "refs/tags " : "",

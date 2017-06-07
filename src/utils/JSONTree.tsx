@@ -320,7 +320,7 @@ class JSONBooleanNode extends React.Component<JSONValueProps, any> {
  *
  * The first node it draws will be expanded by default.
  */
-class JSONTree extends React.Component<JSONProps, any> {
+export class JSONTree extends React.Component<JSONProps, any> {
     render(): JSX.Element {
         let nodeType = objType(this.props.data);
         let rootNode: JSX.Element;
@@ -334,5 +334,3 @@ class JSONTree extends React.Component<JSONProps, any> {
         return <ul>{rootNode}</ul>;
     }
 }
-
-export default JSONTree;

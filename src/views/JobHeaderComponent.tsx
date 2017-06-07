@@ -1,8 +1,8 @@
 import * as React from "react";
 import {FloatingMenu} from "./FloatingMenu";
-import DecorationToggleComponent from "./DecorationToggleComponent";
+import {DecorationToggleComponent} from "./DecorationToggleComponent";
 import {Job} from "../shell/Job";
-import Button from "../plugins/autocompletion_utils/Button";
+import {Button} from "../plugins/autocompletion_utils/Button";
 import * as css from "./css/main";
 import {fontAwesome} from "./css/FontAwesome";
 import {Status} from "../Enums";

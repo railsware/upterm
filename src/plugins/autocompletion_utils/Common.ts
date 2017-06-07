@@ -16,100 +16,51 @@ type Style = { value: string; css: CSSObject};
 interface PromptSerializerContext {
     ast: ASTNode;
     caretPosition: number;
-    suggestion: Suggestion;
+    suggestion: SuggestionWithDefaults;
 }
 
 type PromptSerializer = (context: PromptSerializerContext) => string;
 
-interface SuggestionAttributes {
-    value?: string;
-    displayValue?: string;
-    synopsis?: string;
-    description?: string;
-    style?: Style;
-    space?: boolean;
-    promptSerializer?: PromptSerializer;
+interface RequiredSuggestionAttributes {
+    value: string;
+}
+
+interface AdditionalSuggestionAttributes {
+    displayValue: string;
+    description: string;
+    synopsis: string;
+    isFiltered: boolean;
+    style: Style;
+    space: boolean;
+    promptSerializer: PromptSerializer;
+}
+
+export type Suggestion = RequiredSuggestionAttributes & Partial<AdditionalSuggestionAttributes>;
+export type SuggestionWithDefaults = RequiredSuggestionAttributes & AdditionalSuggestionAttributes;
+
+export function provide(provider: AutocompletionProvider): AutocompletionProvider {
+    return provider;
+}
+
+export function addDefaultAttributeValues(suggestion: Suggestion): SuggestionWithDefaults {
+    return {
+        value: suggestion.value,
+        displayValue: suggestion.displayValue || suggestion.value,
+        description: suggestion.description || "",
+        synopsis: _.truncate(suggestion.description, {length: 50, separator: " "}),
+        isFiltered: suggestion.isFiltered || false,
+        style: suggestion.style || {value: "", css: {}},
+        space: suggestion.space || false,
+        promptSerializer: suggestion.promptSerializer || defaultPromptSerializer,
+    };
 }
 
 const defaultPromptSerializer: PromptSerializer = (context: PromptSerializerContext): string => {
     const node = leafNodeAt(context.caretPosition, context.ast);
-    return serializeReplacing(context.ast, node, context.suggestion.value.replace(/\s/g, "\\ ") + (context.suggestion.shouldAddSpace ? " " : ""));
-};
-
-export const noEscapeSpacesPromptSerializer: PromptSerializer = (context: PromptSerializerContext): string => {
-    const node = leafNodeAt(context.caretPosition, context.ast);
-    return serializeReplacing(context.ast, node, context.suggestion.value + (context.suggestion.shouldAddSpace ? " " : ""));
+    return serializeReplacing(context.ast, node, context.suggestion.value + (context.suggestion.space ? " " : ""));
 };
 
 export const replaceAllPromptSerializer: PromptSerializer = (context: PromptSerializerContext) =>  context.suggestion.value;
-
-export class Suggestion {
-    constructor(private attributes: SuggestionAttributes = {}) {
-        this.attributes = attributes;
-    }
-
-    get value(): string {
-        return this.attributes.value || "";
-    }
-
-    get synopsis(): string {
-        return this.attributes.synopsis || this.truncatedDescription;
-    }
-
-    get description(): string {
-        return this.attributes.description || "";
-    }
-
-    get style(): Style {
-        return this.attributes.style || {value: "", css: {}};
-    }
-
-    get displayValue(): string {
-        return this.attributes.displayValue || this.value;
-    }
-
-    get promptSerializer(): PromptSerializer {
-        return this.attributes.promptSerializer || defaultPromptSerializer;
-    }
-
-    get shouldAddSpace(): boolean {
-        return this.attributes.space || false;
-    }
-
-    withValue(value: string): this {
-        this.attributes.value = value;
-        return this;
-    }
-
-    withDisplayValue(value: string): this {
-        this.attributes.displayValue = value;
-        return this;
-    }
-
-    withSynopsis(synopsis: string): this {
-        this.attributes.synopsis = synopsis;
-        return this;
-    }
-
-    withDescription(description: string): this {
-        this.attributes.description = description;
-        return this;
-    }
-
-    withStyle(style: Style): this {
-        this.attributes.style = style;
-        return this;
-    }
-
-    withSpace(): this {
-        this.attributes.space = true;
-        return this;
-    }
-
-    private get truncatedDescription(): string {
-        return _.truncate(this.description, {length: 50, separator: " "});
-    }
-}
 
 export const styles = {
     executable: {
@@ -197,7 +148,7 @@ export const styles = {
     },
 };
 
-export const unique = (provider: AutocompletionProvider): AutocompletionProvider => mk(async (context) => {
+export const unique = (provider: AutocompletionProvider) => provide(async context => {
     const suggestions = await provider(context);
     return suggestions.filter(suggestion => !context.argument.command.hasArgument(suggestion.value, context.argument));
 });
@@ -213,7 +164,7 @@ const filesSuggestions = (filter: (info: FileInfo) => boolean) => async(tokenVal
             const value = `..${Path.sep}`.repeat(numberOfParts);
             const description = pwdParts.slice(0, -numberOfParts).join(Path.sep) || Path.sep;
 
-            return new Suggestion({value: value, description: description, style: styles.directory});
+            return {value: value, description: description, style: styles.directory};
         });
     }
 
@@ -229,19 +180,17 @@ const filesSuggestions = (filter: (info: FileInfo) => boolean) => async(tokenVal
             const escapedName: string = escapeFilePath(info.name);
 
             if (info.stat.isDirectory()) {
-                return new Suggestion({
+                return {
                     value: joinPath(tokenDirectory, escapedName + Path.sep),
                     displayValue: info.name + Path.sep,
                     style: styles.directory,
-                    promptSerializer: noEscapeSpacesPromptSerializer,
-                });
+                };
             } else {
-                return new Suggestion({
+                return {
                     value: joinPath(tokenDirectory, escapedName),
                     displayValue: info.name,
                     style: styles.file(info, joinPath(directoryPath, escapedName)),
-                    promptSerializer: noEscapeSpacesPromptSerializer,
-                });
+                };
             }
         });
 };
@@ -257,10 +206,10 @@ export const anyFilesSuggestionsProvider = unique(filesSuggestionsProvider(() =>
 export const directoriesSuggestions = filesSuggestions(info => info.stat.isDirectory());
 export const directoriesSuggestionsProvider = filesSuggestionsProvider(info => info.stat.isDirectory());
 
-export const environmentVariableSuggestions = mk(async context => {
+export const environmentVariableSuggestions = provide(async context => {
     if (context.argument.value.startsWith("$")) {
         return context.environment.map((key, value) =>
-            new Suggestion({value: "$" + key, description: value, style: styles.environmentVariable}),
+            ({value: "$" + key, description: value, style: styles.environmentVariable}),
         );
     } else {
         return [];
@@ -271,13 +220,7 @@ export function contextIndependent(provider: () => Promise<Suggestion[]>) {
     return _.memoize(provider, () => "");
 }
 
-export function mk(provider: AutocompletionProvider) {
-    return provider;
-}
-
-export const emptyProvider = mk(async() => []);
-
-
+export const emptyProvider = provide(async() => []);
 
 function gitStatusCodeColor(statusCode: StatusCode) {
     switch (statusCode) {
@@ -336,7 +279,7 @@ function extensionIcon(extension: string) {
     }
 }
 
-export const longAndShortFlag = (name: string, shortName = name[0]) => mk(async context => {
+export const longAndShortFlag = (name: string, shortName = name[0]) => provide(async context => {
     const longValue = `--${name}`;
     const shortValue = `-${shortName}`;
 
@@ -346,13 +289,13 @@ export const longAndShortFlag = (name: string, shortName = name[0]) => mk(async 
 
     const value = context.argument.value === shortValue ? shortValue : longValue;
 
-    return [new Suggestion({value: value, displayValue: `${shortValue} ${longValue}`, style: styles.option})];
+    return [{value: value, displayValue: `${shortValue} ${longValue}`, style: styles.option}];
 });
 
-export const shortFlag = (char: string) => unique(async() => [new Suggestion({value: `-${char}`, style: styles.option})]);
-export const longFlag = (name: string) => unique(async() => [new Suggestion({value: `--${name}`, style: styles.option})]);
+export const shortFlag = (char: string) => unique(async() => [{value: `-${char}`, style: styles.option}]);
+export const longFlag = (name: string) => unique(async() => [{value: `--${name}`, style: styles.option}]);
 
-export const mapSuggestions = (provider: AutocompletionProvider, mapper: (suggestion: Suggestion) => Suggestion) => mk(async(context) => (await provider(context)).map(mapper));
+export const mapSuggestions = (provider: AutocompletionProvider, mapper: (suggestion: Suggestion) => Suggestion) => provide(async context => (await provider(context)).map(mapper));
 
 export interface SubcommandConfig {
     name: string;
@@ -365,7 +308,7 @@ export interface SubcommandConfig {
 export const commandWithSubcommands = (subCommands: SubcommandConfig[]) => {
     return async (context: AutocompletionContext) => {
         if (context.argument.position === 1) {
-            return subCommands.map(({ name, description, synopsis, provider, style }) => new Suggestion({
+            return subCommands.map(({ name, description, synopsis, provider, style }) => ({
                 value: name,
                 description,
                 synopsis,
@@ -395,9 +338,9 @@ export const combineShortFlags = (suggestionsProvider: AutocompletionProvider) =
             return suggestions
                     .filter(s =>
                         reShortFlag.test(s.value) && !token.includes(s.value.slice(1))
-                            && s.withSpace)
+                            && s.space)
                     .map(s =>
-                        new Suggestion({value: token + s.value.slice(1),
+                        ({value: token + s.value.slice(1),
                             displayValue: s.displayValue, description: s.description,
                             style: s.style}));
         } else {

@@ -9,22 +9,6 @@ const VcsDataComponent = ({data}: { data: VcsData }) => {
         return (
             <div style={css.statusBar.vcsData}>
                 <span style={css.statusBar.status(data.status)}>
-                    {(data.status === "dirty") ?
-                      (<span>
-                        <span style={css.statusBar.stagedFileChanges}>
-                          {data.changes.stagedChanges}
-                        </span>
-                        {(data.changes.stagedChanges === "") ? "" : "| "}
-                        <span style={css.statusBar.unstagedFileChanges}>
-                          {data.changes.unstagedChanges}
-                        </span>
-                      </span>) :
-                      undefined
-                    }
-                    <span style={css.statusBar.icon}>{fontAwesome.longArrowDown}</span>
-                    {data.pull}
-                    <span style={css.statusBar.icon}>{fontAwesome.longArrowUp}</span>
-                    {data.push}
                     <span style={css.statusBar.icon}>{fontAwesome.codeFork}</span>
                     {data.branch}
                 </span>

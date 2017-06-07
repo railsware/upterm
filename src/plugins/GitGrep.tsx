@@ -1,7 +1,7 @@
 import * as React from "react";
 import {PluginManager} from "../PluginManager";
 import {Job} from "../shell/Job";
-import Link from "../utils/Link";
+import {Link} from "../utils/Link";
 import {join} from "path";
 import {colors} from "../views/css/colors";
 
