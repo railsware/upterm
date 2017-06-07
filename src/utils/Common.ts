@@ -289,3 +289,11 @@ const baseConfigDirectory = Path.join(homeDirectory, ".upterm");
 export const presentWorkingDirectoryFilePath = Path.join(baseConfigDirectory, "presentWorkingDirectory");
 export const historyFilePath = Path.join(baseConfigDirectory, "history");
 export const windowBoundsFilePath = Path.join(baseConfigDirectory, "windowBounds");
+
+export function fuzzyMatch(input: string, candidate: string): boolean {
+    function tokenize(string: string) {
+        return string.split(/-|_/);
+    }
+
+    return !!tokenize(candidate).find(token => token.toLowerCase().startsWith(input.toLowerCase()));
+}

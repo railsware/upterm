@@ -8,6 +8,7 @@ import {
 import {Environment} from "./shell/Environment";
 import {OrderedSet} from "./utils/OrderedSet";
 import {Aliases} from "./shell/Aliases";
+import {fuzzyMatch} from "./utils/Common";
 
 export const suggestionsLimit = 9;
 
@@ -47,7 +48,7 @@ export async function getSuggestions({
     });
 
     const uniqueSuggestions = _.uniqBy([...firstThreeFromHistory, ...suggestions, ...remainderFromHistory], suggestion => suggestion.value);
-    const applicableSuggestions: Suggestion[] = uniqueSuggestions.filter(suggestion => suggestion.isFiltered || suggestion.value.toLowerCase().startsWith(node.value.toLowerCase()));
+    const applicableSuggestions: Suggestion[] = uniqueSuggestions.filter(suggestion => suggestion.isFiltered || fuzzyMatch(node.value, suggestion.value));
 
     if (applicableSuggestions.length === 1) {
         const suggestion = applicableSuggestions[0];
