@@ -96,23 +96,27 @@ export class BufferComponent extends React.Component<Props, State> {
             <div className="output"
                  style={css.output(this.props.job.screenBuffer.activeScreenBufferType, this.props.job.status)}>
                 {this.shouldCutOutput ? <Cut job={this.props.job} clickHandler={() => this.setState({ expandButtonPressed: true })}/> : undefined}
-                {this.renderableRows.map((row, index: number) =>
-                    <RowComponent
-                        key={index}
-                        row={row || List<Char>()}
-                        hasCursor={index === buffer.cursorRow && this.props.job.status === Status.InProgress && (buffer._showCursor || buffer._blinkCursor)}
-                        status={this.props.job.status}
-                        job={this.props.job}/>,
-                )}
+                {buffer.storage.map((possiblyEmptyRow, index: number) => {
+                    const row = possiblyEmptyRow || List<Char>();
+
+                    if (this.shouldCutOutput && index < buffer.size - ScreenBuffer.hugeOutputThreshold) {
+                        return undefined;
+                    } else {
+                        return (
+                            <RowComponent
+                                key={index}
+                                row={row}
+                                hasCursor={index === buffer.cursorRow && this.props.job.status === Status.InProgress && (buffer._showCursor || buffer._blinkCursor)}
+                                status={this.props.job.status}
+                                job={this.props.job}/>
+                        );
+                    }
+                })}
             </div>
         );
     }
 
     private get shouldCutOutput(): boolean {
         return this.props.job.screenBuffer.size > ScreenBuffer.hugeOutputThreshold && !this.state.expandButtonPressed;
-    }
-
-    private get renderableRows(): List<List<Char>> {
-        return this.shouldCutOutput ? this.props.job.screenBuffer.toCutRenderable() : this.props.job.screenBuffer.toRenderable();
     }
 }

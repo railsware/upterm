@@ -18,7 +18,7 @@ export class ScreenBuffer extends events.EventEmitter {
     public _showCursor = true;
     public _blinkCursor = true;
     public activeScreenBufferType = e.ScreenBufferType.Standard;
-    private storage = List<List<Char>>();
+    public storage = List<List<Char>>();
     private _attributes: i.Attributes = {...defaultAttributes, color: e.Color.White, weight: e.Weight.Normal};
     private isOriginModeSet = false;
     private isCursorKeysModeSet = false;
@@ -89,14 +89,6 @@ export class ScreenBuffer extends events.EventEmitter {
 
     setAttributes(attributes: i.Attributes): void {
         this._attributes = attributesFlyweight({...this._attributes, ...attributes});
-    }
-
-    toRenderable(fromStorage = this.storage): List<List<Char>> {
-        return fromStorage;
-    }
-
-    toCutRenderable(): List<List<Char>> {
-        return this.toRenderable(<List<List<Char>>>(this.storage.takeLast(ScreenBuffer.hugeOutputThreshold)));
     }
 
     toLines(): string[] {
