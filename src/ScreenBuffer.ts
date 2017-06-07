@@ -91,36 +91,12 @@ export class ScreenBuffer extends events.EventEmitter {
         this._attributes = attributesFlyweight({...this._attributes, ...attributes});
     }
 
-    toRenderable(status: e.Status, fromStorage = this.storage): List<List<Char>> {
-        let storage = fromStorage;
-
-        if (status === e.Status.InProgress && (this._showCursor || this._blinkCursor)) {
-            const cursorRow = this.cursorRow - (this.storage.size - fromStorage.size);
-            const cursorColumn = this.cursorColumn;
-
-            const cursorCoordinates = [cursorRow, cursorColumn];
-
-            if (!storage.get(cursorRow)) {
-                storage = storage.set(cursorRow, List<Char>(Array(cursorColumn).fill(Char.empty)));
-            }
-
-
-            if (!storage.getIn(cursorCoordinates)) {
-                storage = storage.setIn(cursorCoordinates, Char.empty);
-            }
-
-            let char: Char = storage.getIn(cursorCoordinates);
-            storage = storage.setIn(
-                cursorCoordinates,
-                Char.flyweight(char.toString(), {...char.attributes, cursor: true}),
-            );
-        }
-
-        return storage;
+    toRenderable(fromStorage = this.storage): List<List<Char>> {
+        return fromStorage;
     }
 
-    toCutRenderable(status: e.Status): List<List<Char>> {
-        return this.toRenderable(status, <List<List<Char>>>(this.storage.takeLast(ScreenBuffer.hugeOutputThreshold)));
+    toCutRenderable(): List<List<Char>> {
+        return this.toRenderable(<List<List<Char>>>(this.storage.takeLast(ScreenBuffer.hugeOutputThreshold)));
     }
 
     toLines(): string[] {

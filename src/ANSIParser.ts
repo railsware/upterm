@@ -565,6 +565,6 @@ function or1(value: number | undefined) {
 
 // TODO: Move to
 function logPosition(buffer: ScreenBuffer) {
-    const position = buffer.cursorPosition;
-    debug(`%crow: ${position.row}\tcolumn: ${position.column}\t value: ${buffer.at(position)}`, "color: green");
+    const position = {row: buffer.cursorRow, column: buffer.cursorColumn};
+    debug(`%crow: ${position.row}\tcolumn: ${buffer.cursorColumn}\t value: ${buffer.at(position)}`, "color: green");
 }

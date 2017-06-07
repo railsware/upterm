@@ -40,6 +40,7 @@ class Cut extends React.Component<CutProps, CutState> {
 }
 interface RowProps {
     row: List<Char>;
+    hasCursor: boolean;
     status: Status;
     job: Job;
 }
@@ -48,11 +49,22 @@ const charGrouper = (a: Char, b: Char) => a.attributes === b.attributes;
 
 class RowComponent extends React.Component<RowProps, {}> {
     shouldComponentUpdate(nextProps: RowProps) {
-        return this.props.row !== nextProps.row || this.props.status !== nextProps.status;
+        return this.props.row !== nextProps.row ||
+            this.props.status !== nextProps.status ||
+            this.props.hasCursor !== nextProps.hasCursor;
     }
 
     render() {
-        const rowWithoutHoles = this.props.row.toArray().map(char => char || Char.empty);
+        const rowWithoutHoles = this.props.row.toArray().map((char, index) => {
+            const char2 = char || Char.empty;
+            const attributes = (this.props.hasCursor && index === this.props.job.screenBuffer.cursorColumn) ?
+                {...char2.attributes, cursor: true} :
+                char2.attributes;
+
+            return Char.flyweight(char2.toString(), attributes);
+
+        });
+
         const charGroups = groupWhen(charGrouper, rowWithoutHoles).map((charGroup: Char[], index: number) =>
             <CharGroupComponent job={this.props.job} group={charGroup} key={index}/>,
         );
@@ -78,14 +90,17 @@ export class BufferComponent extends React.Component<Props, State> {
     }
 
     render() {
+        const buffer = this.props.job.screenBuffer;
+
         return (
             <div className="output"
                  style={css.output(this.props.job.screenBuffer.activeScreenBufferType, this.props.job.status)}>
                 {this.shouldCutOutput ? <Cut job={this.props.job} clickHandler={() => this.setState({ expandButtonPressed: true })}/> : undefined}
-                {this.renderableRows.map((row, index) =>
+                {this.renderableRows.map((row, index: number) =>
                     <RowComponent
                         key={index}
                         row={row || List<Char>()}
+                        hasCursor={index === buffer.cursorRow && this.props.job.status === Status.InProgress && (buffer._showCursor || buffer._blinkCursor)}
                         status={this.props.job.status}
                         job={this.props.job}/>,
                 )}
@@ -98,6 +113,6 @@ export class BufferComponent extends React.Component<Props, State> {
     }
 
     private get renderableRows(): List<List<Char>> {
-        return this.shouldCutOutput ? this.props.job.screenBuffer.toCutRenderable(this.props.job.status) : this.props.job.screenBuffer.toRenderable(this.props.job.status);
+        return this.shouldCutOutput ? this.props.job.screenBuffer.toCutRenderable() : this.props.job.screenBuffer.toRenderable();
     }
 }
