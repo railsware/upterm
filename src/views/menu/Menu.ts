@@ -7,8 +7,8 @@ export function buildMenuTemplate(
     app: Electron.App,
     browserWindow: Electron.BrowserWindow,
     application: ApplicationComponent,
-): Electron.MenuItemOptions[] {
-    const template: Electron.MenuItemOptions[] = [
+): Electron.MenuItemConstructorOptions[] {
+    const template: Electron.MenuItemConstructorOptions[] = [
         {
             label: "Upterm",
             submenu: [

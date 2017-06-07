@@ -5,7 +5,7 @@ import {windowBoundsFilePath} from "../utils/Common";
 app.on("ready", () => {
     const bounds = windowBounds();
 
-    let options: Electron.BrowserWindowOptions = {
+    let options: Electron.BrowserWindowConstructorOptions = {
         webPreferences: {
             experimentalFeatures: true,
             experimentalCanvasFeatures: true,

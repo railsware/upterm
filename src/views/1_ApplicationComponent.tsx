@@ -36,7 +36,7 @@ export class ApplicationComponent extends React.Component<{}, ApplicationState> 
                 .on("devtools-opened", () => this.recalculateDimensions())
                 .on("devtools-closed", () => this.recalculateDimensions());
 
-            ipcRenderer.on("change-working-directory", (_event: Electron.IpcRendererEvent, directory: string) =>
+            ipcRenderer.on("change-working-directory", (_event: Event, directory: string) =>
                 this.focusedTab().focusedPane.session.directory = directory,
             );
 
