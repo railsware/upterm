@@ -23,7 +23,8 @@ type VcsStatus = "dirty" | "clean";
 type VcsData = {
   kind: "repository",
   branch: string,
-  status: VcsStatus;
+  status: VcsStatus,
+  origin: string;
 } | { kind: "not-repository"; };
 
 interface FileChanges {

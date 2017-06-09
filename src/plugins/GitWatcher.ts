@@ -7,7 +7,7 @@ import * as _ from "lodash";
 import {EventEmitter} from "events";
 import {debounce} from "../Decorators";
 import * as Git from "../utils/Git";
-import {currentBranchName, GitDirectoryPath, hasUncommittedChanges} from "../utils/Git";
+import {currentBranchName, GitDirectoryPath, hasUncommittedChanges, origin} from "../utils/Git";
 
 const GIT_WATCHER_EVENT_NAME = "git-data-changed";
 
@@ -58,6 +58,7 @@ class GitWatcher extends EventEmitter {
             kind: "repository",
             branch: await currentBranchName(directory),
             status: (await hasUncommittedChanges(directory) ? "dirty" : "clean"),
+            origin: await origin(directory)
         };
 
         this.emit(GIT_WATCHER_EVENT_NAME, data);

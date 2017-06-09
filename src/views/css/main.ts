@@ -262,6 +262,7 @@ export const statusBar = {
         overflow: "hidden",
         whiteSpace: "pre",
         paddingRight: "10px",
+        cursor: "pointer",
     } as CSSProperties,
     vcsData: {
         flexGrow: 2,
@@ -277,6 +278,7 @@ export const statusBar = {
     status: (status: VcsStatus) => {
         return {
             color: status === "dirty" ? colors.blue : colors.white,
+            cursor: "pointer",
         };
     },
 };

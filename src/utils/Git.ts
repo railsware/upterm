@@ -210,3 +210,7 @@ export async function status(directory: GitDirectoryPath): Promise<FileStatus[]>
 export async function repoRoot(directory: GitDirectoryPath): Promise<GitDirectoryPath> {
     return (await linedOutputOf("git", ["rev-parse", "--show-toplevel"], directory))[0] as GitDirectoryPath;
 }
+ export async function origin(directory: GitDirectoryPath): Promise<string> {
+    let remoteOrigin = (await linedOutputOf("git", ["config", "--get", "remote.origin.url"], directory))[0];
+    return remoteOrigin.trim().replace(/^git@(.*?):/, 'https://$1/').replace(/[A-z0-9\-]+@/, '').replace(/\.git$/, '');
+ }
