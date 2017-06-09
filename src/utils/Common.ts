@@ -288,8 +288,20 @@ export const windowBoundsFilePath = Path.join(baseConfigDirectory, "windowBounds
 
 export function fuzzyMatch(input: string, candidate: string): boolean {
     function tokenize(string: string) {
-        return string.split(/-|_| /);
+        return string.split(/-|_| |:|\//);
     }
 
-    return !!tokenize(candidate).find(token => token.toLowerCase().startsWith(input.toLowerCase()));
+    const lowerCasedInput = input.toLowerCase();
+
+    // A user wants to match by prefix.
+    if (candidate.toLowerCase().startsWith(lowerCasedInput)) {
+        return true;
+    }
+
+    // A user wants to match by a part of the word, e.g. chr for google-chrome.
+    if (tokenize(candidate).find(token => token.toLowerCase().startsWith(lowerCasedInput))) {
+        return true;
+    }
+
+    return false;
 }
