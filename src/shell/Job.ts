@@ -14,7 +14,6 @@ import {Environment} from "./Environment";
 import {normalizeKey} from "../utils/Common";
 import {TerminalLikeDevice} from "../Interfaces";
 import {History} from "./History";
-import {Invalid} from "./Scanner";
 
 function makeThrottledDataEmitter(timesPerSecond: number, subject: EmitterWithUniqueID) {
     return _.throttle(() => subject.emit("data"), 1000 / timesPerSecond);
@@ -23,11 +22,9 @@ function makeThrottledDataEmitter(timesPerSecond: number, subject: EmitterWithUn
 export class Job extends EmitterWithUniqueID implements TerminalLikeDevice {
     public status: Status = Status.InProgress;
     public readonly parser: ANSIParser;
-    public interceptionResult: React.ReactElement<any> | undefined;
     private readonly _screenBuffer: ScreenBuffer;
     private readonly rareDataEmitter: Function;
     private readonly frequentDataEmitter: Function;
-    private executedWithoutInterceptor: boolean = false;
     private pty: PTY | undefined;
 
     constructor(private _session: Session, private _prompt: Prompt) {
@@ -41,56 +38,27 @@ export class Job extends EmitterWithUniqueID implements TerminalLikeDevice {
         this.parser = new ANSIParser(this);
     }
 
-    async executeWithoutInterceptor(): Promise<void> {
-        if (!this.executedWithoutInterceptor) {
-            this.executedWithoutInterceptor = true;
-            try {
-                await CommandExecutor.execute(this);
-
-                // Need to wipe out PTY so that we
-                // don't keep trying to write to it.
-                this.pty = undefined;
-
-                // Need to check the status here because it's
-                // executed even after the process was interrupted.
-                if (this.status === Status.InProgress) {
-                    this.setStatus(Status.Success);
-                }
-                this.emit("end");
-            } catch (exception) {
-                this.handleError(exception);
-            }
-        }
-    }
-
-    async execute({allowInterception = true} = {}): Promise<void> {
+    async execute(): Promise<void> {
         History.add(this.prompt.value);
-
-        const commandWords: string[] = this.prompt.expandedTokens
-            .filter(token => !(token instanceof Invalid))
-            .map(token => token.escapedValue);
-        const interceptorOptions = {
-            command: commandWords,
-            presentWorkingDirectory: this.environment.pwd,
-        };
-        const interceptor = PluginManager.commandInterceptorPlugins.find(
-            potentialInterceptor => potentialInterceptor.isApplicable(interceptorOptions),
-        );
-
         await Promise.all(PluginManager.preexecPlugins.map(plugin => plugin(this)));
-        if (interceptor && allowInterception) {
-            if (!this.interceptionResult) {
-                try {
-                    this.interceptionResult = await interceptor.intercept(interceptorOptions);
-                    this.setStatus(Status.Success);
-                } catch (e) {
-                    await this.executeWithoutInterceptor();
-                }
+
+        try {
+            await CommandExecutor.execute(this);
+
+            // Need to wipe out PTY so that we
+            // don't keep trying to write to it.
+            this.pty = undefined;
+
+            // Need to check the status here because it's
+            // executed even after the process was interrupted.
+            if (this.status === Status.InProgress) {
+                this.setStatus(Status.Success);
             }
-        } else {
-            await this.executeWithoutInterceptor();
+        } catch (exception) {
+            this.handleError(exception);
+        } finally {
+            this.emit("end");
         }
-        this.emit("end");
     }
 
     handleError(message: NonZeroExitCodeError | string): void {

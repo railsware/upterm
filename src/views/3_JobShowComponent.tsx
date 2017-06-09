@@ -38,9 +38,7 @@ export class JobShowComponent extends React.Component<Props, State> {
     render() {
         let buffer: React.ReactElement<any>;
         let canBePrettified = this.props.job.canBePrettified();
-        if (this.props.job.interceptionResult && this.state.prettify) {
-            buffer = this.props.job.interceptionResult;
-        } else if (canBePrettified && this.state.prettify) {
+        if (canBePrettified && this.state.prettify) {
             buffer = this.props.job.prettify();
         } else {
             buffer = <BufferComponent job={this.props.job}/>;
@@ -50,12 +48,8 @@ export class JobShowComponent extends React.Component<Props, State> {
             <div className={"job"}>
                 <JobHeaderComponent
                     job={this.props.job}
-                    showPrettifyToggle={!!this.props.job.interceptionResult || canBePrettified}
+                    showPrettifyToggle={canBePrettified}
                     prettifyToggler={() => {
-                        if (this.props.job.interceptionResult) {
-                            // Re-execute without intercepting
-                            this.props.job.execute({ allowInterception: false });
-                        }
                         // Show not prettified output
                         this.setState({prettify: !this.state.prettify});
                     }}

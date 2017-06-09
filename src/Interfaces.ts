@@ -55,16 +55,6 @@ export interface PreexecPlugin {
     (job: Job): Promise<void>;
 }
 
-export interface CommandInterceptorOptions {
-    command: string[];
-    presentWorkingDirectory: string;
-}
-
-export interface CommandInterceptorPlugin {
-    isApplicable: (options: CommandInterceptorOptions) => boolean;
-    intercept: (options: CommandInterceptorOptions) => Promise<ReactElement<any>>;
-}
-
 export interface TerminalLikeDevice {
     screenBuffer: ScreenBuffer;
     dimensions: Dimensions;
