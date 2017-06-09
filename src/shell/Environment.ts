@@ -1,7 +1,8 @@
 import {delimiter} from "path";
+import * as _ from "lodash";
 import {executeCommandWithShellConfig} from "../PTY";
 import {clone} from "lodash";
-import {homeDirectory} from "../utils/Common";
+import {homeDirectory, resolveDirectory} from "../utils/Common";
 import * as Path from "path";
 import {AbstractOrderedSet} from "../utils/OrderedSet";
 import {loginShell} from "../utils/Shell";
@@ -90,8 +91,8 @@ export class Environment {
         return new EnvironmentPath(this);
     }
 
-    get cdpath(): string[] {
-        return (this.get("CDPATH") || "").split(delimiter).map(path => path || this.pwd);
+    get cdpath(): FullPath[] {
+        return _.uniq((this.get("CDPATH") || ".").split(delimiter).map(path => path || this.pwd).map(path => resolveDirectory(this.pwd, path)));
     }
 
     get pwd(): string {
