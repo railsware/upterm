@@ -28,7 +28,7 @@ export const KeybindingsForActions: KeybindingType[] = [
     },
     {
         action: KeyboardAction.cliClearJobs,
-        keybinding: (e: KeyboardEvent) => e.ctrlKey && e.keyCode === KeyCode.L,
+        keybinding: (e: KeyboardEvent) => (e.ctrlKey && e.keyCode === KeyCode.L) || (isMeta(e) && e.keyCode === KeyCode.K),
     },
     {
         action: KeyboardAction.cliClearText,
