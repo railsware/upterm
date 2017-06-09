@@ -58,7 +58,7 @@ class GitWatcher extends EventEmitter {
             kind: "repository",
             branch: await currentBranchName(directory),
             status: (await hasUncommittedChanges(directory) ? "dirty" : "clean"),
-            origin: await origin(directory)
+            origin: await origin(directory),
         };
 
         this.emit(GIT_WATCHER_EVENT_NAME, data);

@@ -10,13 +10,13 @@ const VcsDataComponent = ({data}: { data: VcsData }) => {
         let remoteOrigin: string;
 
         if (data.origin.includes("github.com") || data.origin.includes("gitlab.com")) {
-            remoteOrigin = `${data.origin}/tree/${data.branch}`
+            remoteOrigin = `${data.origin}/tree/${data.branch}`;
         } else if (data.origin.includes("bitbucket.org")) {
-            remoteOrigin = `${data.origin}/branch/${data.branch}`
+            remoteOrigin = `${data.origin}/branch/${data.branch}`;
         }
 
         function openBrowser() {
-            shell.openExternal(remoteOrigin)
+            shell.openExternal(remoteOrigin);
         }
 
         return (
@@ -34,7 +34,7 @@ const VcsDataComponent = ({data}: { data: VcsData }) => {
 
 export const StatusBarComponent = ({presentWorkingDirectory}: { presentWorkingDirectory: string }) => {
     function openFolder() {
-        shell.openExternal(`file://${presentWorkingDirectory}`)
+        shell.openExternal(`file://${presentWorkingDirectory}`);
     }
 
     return (
