@@ -191,15 +191,15 @@ export class Job extends EmitterWithUniqueID implements TerminalLikeDevice {
         }
     }
 
-    canBeDecorated(): boolean {
-        return !!this.firstApplicableDecorator;
+    canBePrettified(): boolean {
+        return this.status !== Status.InProgress && !!this.firstApplicablePrettyfier;
     }
 
-    decorate(): React.ReactElement<any> {
-        if (this.firstApplicableDecorator) {
-            return this.firstApplicableDecorator.decorate(this);
+    prettify(): React.ReactElement<any> {
+        if (this.firstApplicablePrettyfier) {
+            return this.firstApplicablePrettyfier.prettify(this);
         } else {
-            throw "No applicable decorator found.";
+            throw "No applicable prettyfier found.";
         }
     }
 
@@ -208,14 +208,8 @@ export class Job extends EmitterWithUniqueID implements TerminalLikeDevice {
         return this.session.environment;
     }
 
-    private get decorators(): i.OutputDecorator[] {
-        return PluginManager.outputDecorators.filter(decorator =>
-            this.status === Status.InProgress ? decorator.shouldDecorateRunningPrograms : true,
-        );
-    }
-
-    private get firstApplicableDecorator(): i.OutputDecorator | undefined {
-        return this.decorators.find(decorator => decorator.isApplicable(this));
+    private get firstApplicablePrettyfier(): i.Prettyfier | undefined {
+        return PluginManager.prettyfiers.find(prettyfier => prettyfier.isApplicable(this));
     }
 
     get screenBuffer(): ScreenBuffer {

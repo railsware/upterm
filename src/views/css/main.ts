@@ -545,7 +545,7 @@ export const action = {
     ...icon,
 };
 
-export const decorationToggle = (isEnabled: boolean) => {
+export const prettifyToggle = (isEnabled: boolean) => {
     return {
         ...action,
         color: isEnabled ? colors.green : colors.white,

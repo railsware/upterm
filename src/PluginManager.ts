@@ -1,4 +1,4 @@
-import {OutputDecorator, EnvironmentObserverPlugin, AutocompletionProvider, PreexecPlugin, CommandInterceptorPlugin} from "./Interfaces";
+import {Prettyfier, EnvironmentObserverPlugin, AutocompletionProvider, PreexecPlugin, CommandInterceptorPlugin} from "./Interfaces";
 import * as Path from "path";
 import {io} from "./utils/Common";
 import {environmentVariableSuggestions, anyFilesSuggestionsProvider} from "../src/plugins/autocompletion_utils/Common";
@@ -8,18 +8,18 @@ const defaultAutocompletionProvider = combine([environmentVariableSuggestions, a
 
 // FIXME: Technical debt: register all the plugin types via single method.
 export class PluginManager {
-    private static _outputDecorators: OutputDecorator[] = [];
+    private static _prettyfiers: Prettyfier[] = [];
     private static _environmentObservers: EnvironmentObserverPlugin[] = [];
     private static _autocompletionProviders: Dictionary<AutocompletionProvider> = {};
     private static _preexecPlugins: PreexecPlugin[] = [];
     private static _commandInterceptorPlugins: CommandInterceptorPlugin[] = [];
 
-    static registerOutputDecorator(decorator: OutputDecorator): void {
-        this._outputDecorators.push(decorator);
+    static registerPrettyfier(prettyfier: Prettyfier): void {
+        this._prettyfiers.push(prettyfier);
     }
 
-    static get outputDecorators(): OutputDecorator[] {
-        return this._outputDecorators;
+    static get prettyfiers(): Prettyfier[] {
+        return this._prettyfiers;
     }
 
     static registerEnvironmentObserver(plugin: EnvironmentObserverPlugin): void {

@@ -1,6 +1,6 @@
 import * as React from "react";
 import {FloatingMenu} from "./FloatingMenu";
-import {DecorationToggleComponent} from "./DecorationToggleComponent";
+import {PrettifyToggleComponent} from "./PrettifyToggleComponent";
 import {Job} from "../shell/Job";
 import {Button} from "../plugins/autocompletion_utils/Button";
 import * as css from "./css/main";
@@ -9,9 +9,9 @@ import {Status} from "../Enums";
 
 interface Props {
     job: Job;
-    decorateToggler: () => void;
-    isDecorated: boolean;
-    showDecorationToggle: boolean;
+    prettifyToggler: () => void;
+    isPrettified: boolean;
+    showPrettifyToggle: boolean;
 }
 
 interface State {
@@ -34,14 +34,14 @@ export class JobHeaderComponent extends React.Component<Props, State> {
 
     render() {
         // FIXME: write better types.
-        let decorationToggle: any;
+        let prettifyToggle: any;
         let scrollToTop: any;
         let jobMenuButton: any;
 
-        if (this.props.showDecorationToggle) {
-            decorationToggle = <DecorationToggleComponent
-                decorateToggler={this.props.decorateToggler}
-                isDecorated={this.props.isDecorated}
+        if (this.props.showPrettifyToggle) {
+            prettifyToggle = <PrettifyToggleComponent
+                prettifyToggler={this.props.prettifyToggler}
+                isPrettified={this.props.isPrettified}
             />;
         }
 
@@ -69,7 +69,7 @@ export class JobHeaderComponent extends React.Component<Props, State> {
                     {this.props.job.prompt.value}
                     </div>
                 <div style={css.actions}>
-                    {decorationToggle}
+                    {prettifyToggle}
                     {scrollToTop}
                     {this.props.job.isInProgress() ? jobMenuButton : undefined}
                 </div>

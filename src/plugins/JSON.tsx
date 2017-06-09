@@ -3,8 +3,8 @@ import {Job} from "../shell/Job";
 import {PluginManager} from "../PluginManager";
 import {JSONTree} from "../utils/JSONTree";
 
-PluginManager.registerOutputDecorator({
-    decorate: (job: Job): React.ReactElement<any> => {
+PluginManager.registerPrettyfier({
+    prettify: (job: Job): React.ReactElement<any> => {
         return <JSONTree data={JSON.parse(job.screenBuffer.toString())}/>;
     },
 

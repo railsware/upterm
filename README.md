@@ -65,7 +65,7 @@ More Screenshots
 ![](README/npm_autocompletion.png)
 ![](README/error.png)
 ![](README/top_autocompletion.png)
-![](README/json_decorator.png)
+![](README/json_prettyfier.png)
 ![](README/vim.png)
 ![](README/emacs.png)
 ![](README/htop.png)

@@ -5,8 +5,8 @@ import {Link} from "../utils/Link";
 import {join} from "path";
 import {colors} from "../views/css/colors";
 
-PluginManager.registerOutputDecorator({
-  decorate: (job: Job): React.ReactElement<any> => {
+PluginManager.registerPrettyfier({
+  prettify: (job: Job): React.ReactElement<any> => {
     return <div style={{
       padding: "10px",
       lineHeight: "18px",

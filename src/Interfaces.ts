@@ -41,15 +41,9 @@ export interface FileInfo {
     stat: Stats;
 }
 
-export interface OutputDecorator {
+export interface Prettyfier {
     isApplicable: (job: Job) => boolean;
-    decorate: (job: Job) => ReactElement<any>;
-
-    /**
-     * @note Setting this property to `true` will result in rendering performance
-     *       decrease because the output will be re-decorated after each data chunk.
-     */
-    shouldDecorateRunningPrograms?: boolean;
+    prettify: (job: Job) => ReactElement<any>;
 }
 
 export interface EnvironmentObserverPlugin {

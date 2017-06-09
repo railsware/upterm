@@ -11,7 +11,7 @@ interface Props {
 }
 
 interface State {
-    decorate: boolean;
+    prettify: boolean;
 }
 
 export class JobShowComponent extends React.Component<Props, State> {
@@ -19,7 +19,7 @@ export class JobShowComponent extends React.Component<Props, State> {
         super(props);
 
         this.state = {
-            decorate: true,
+            prettify: true,
         };
     }
 
@@ -30,18 +30,18 @@ export class JobShowComponent extends React.Component<Props, State> {
     }
 
     shouldComponentUpdate(nextProps: Props, nextState: State) {
-        return this.state.decorate !== nextState.decorate ||
+        return this.state.prettify !== nextState.prettify ||
             this.props.jobStatus === Status.InProgress ||
             this.props.jobStatus !== nextProps.jobStatus;
     }
 
     render() {
         let buffer: React.ReactElement<any>;
-        let canBeDecorated = this.props.job.canBeDecorated();
-        if (this.props.job.interceptionResult && this.state.decorate) {
+        let canBePrettified = this.props.job.canBePrettified();
+        if (this.props.job.interceptionResult && this.state.prettify) {
             buffer = this.props.job.interceptionResult;
-        } else if (canBeDecorated && this.state.decorate) {
-            buffer = this.props.job.decorate();
+        } else if (canBePrettified && this.state.prettify) {
+            buffer = this.props.job.prettify();
         } else {
             buffer = <BufferComponent job={this.props.job}/>;
         }
@@ -50,16 +50,16 @@ export class JobShowComponent extends React.Component<Props, State> {
             <div className={"job"}>
                 <JobHeaderComponent
                     job={this.props.job}
-                    showDecorationToggle={!!this.props.job.interceptionResult || canBeDecorated}
-                    decorateToggler={() => {
+                    showPrettifyToggle={!!this.props.job.interceptionResult || canBePrettified}
+                    prettifyToggler={() => {
                         if (this.props.job.interceptionResult) {
                             // Re-execute without intercepting
                             this.props.job.execute({ allowInterception: false });
                         }
-                        // Show non-decorated output
-                        this.setState({decorate: !this.state.decorate});
+                        // Show not prettified output
+                        this.setState({prettify: !this.state.prettify});
                     }}
-                    isDecorated={this.state.decorate}
+                    isPrettified={this.state.prettify}
                  />
                 {buffer}
             </div>
