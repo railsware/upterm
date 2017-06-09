@@ -1,4 +1,5 @@
 import * as React from "react";
+import * as _ from "lodash";
 import {ScreenBuffer} from "../ScreenBuffer";
 import {Char} from "../Char";
 import {groupWhen} from "../utils/Common";
@@ -55,14 +56,16 @@ class RowComponent extends React.Component<RowProps, {}> {
     }
 
     render() {
-        const rowWithoutHoles = this.props.row.toArray().map((char, index) => {
-            const char2 = char || Char.empty;
-            const attributes = (this.props.hasCursor && index === this.props.job.screenBuffer.cursorColumn) ?
-                {...char2.attributes, cursor: true} :
-                char2.attributes;
+        const cursorColumn = this.props.job.screenBuffer.cursorColumn;
+        const row = this.props.row.toArray();
 
-            return Char.flyweight(char2.toString(), attributes);
+        const rowWithoutHoles = _.range(0, Math.max(cursorColumn + 1, this.props.row.size)).map(index => {
+            const char = row[index] || Char.empty;
+            const attributes = (this.props.hasCursor && index === cursorColumn) ?
+                {...char.attributes, cursor: true} :
+                char.attributes;
 
+            return Char.flyweight(char.toString(), attributes);
         });
 
         const charGroups = groupWhen(charGrouper, rowWithoutHoles).map((charGroup: Char[], index: number) =>
