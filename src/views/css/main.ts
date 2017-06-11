@@ -20,7 +20,7 @@ const promptBackgroundColor = lighten(colors.black, 5);
 const suggestionSize = 2 * fontSize;
 const defaultShadow = "0 2px 8px 1px rgba(0, 0, 0, 0.3)";
 export const titleBarHeight = 24;
-export const rowHeight = fontSize + 4;
+export const rowHeight = fontSize + 2;
 export const infoPanelHeight = 2 * fontSize + 4;
 export const letterWidth = fontSize / 2 + 1.5;
 

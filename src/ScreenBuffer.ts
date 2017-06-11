@@ -11,6 +11,44 @@ interface SavedState {
     attributes: i.Attributes;
 }
 
+/**
+ * Copied from xterm.js
+ * @link https://github.com/sourcelair/xterm.js/blob/master/src/Charsets.ts
+ */
+const graphicCharset: Dictionary<string> = {
+    "`": "\u25c6", // "◆"
+    "a": "\u2592", // "▒"
+    "b": "\u0009", // "\t"
+    "c": "\u000c", // "\f"
+    "d": "\u000d", // "\r"
+    "e": "\u000a", // "\n"
+    "f": "\u00b0", // "°"
+    "g": "\u00b1", // "±"
+    "h": "\u2424", // "\u2424" (NL)
+    "i": "\u000b", // "\v"
+    "j": "\u2518", // "┘"
+    "k": "\u2510", // "┐"
+    "l": "\u250c", // "┌"
+    "m": "\u2514", // "└"
+    "n": "\u253c", // "┼"
+    "o": "\u23ba", // "⎺"
+    "p": "\u23bb", // "⎻"
+    "q": "\u2500", // "─"
+    "r": "\u23bc", // "⎼"
+    "s": "\u23bd", // "⎽"
+    "t": "\u251c", // "├"
+    "u": "\u2524", // "┤"
+    "v": "\u2534", // "┴"
+    "w": "\u252c", // "┬"
+    "x": "\u2502", // "│"
+    "y": "\u2264", // "≤"
+    "z": "\u2265", // "≥"
+    "{": "\u03c0", // "π"
+    "|": "\u2260", // "≠"
+    "}": "\u00a3", // "£"
+    "~": "\u00b7", // "·"
+};
+
 export class ScreenBuffer extends events.EventEmitter {
     public static hugeOutputThreshold = 300;
     public cursorRow = 0;
@@ -19,6 +57,7 @@ export class ScreenBuffer extends events.EventEmitter {
     public _blinkCursor = true;
     public activeScreenBufferType = e.ScreenBufferType.Standard;
     public storage = List<List<Char>>();
+    public useGraphicCharset = false;
     private _attributes: i.Attributes = {...defaultAttributes, color: e.Color.White, weight: e.Weight.Normal};
     private isOriginModeSet = false;
     private isCursorKeysModeSet = false;
@@ -36,7 +75,8 @@ export class ScreenBuffer extends events.EventEmitter {
     }
 
     writeOne(char: string): void {
-        const charObject = Char.flyweight(char, this.attributes);
+        const charFromCharset = this.useGraphicCharset ? graphicCharset[char] : char;
+        const charObject = Char.flyweight(charFromCharset, this.attributes);
 
         if (charObject.isSpecial()) {
             switch (charObject.keyCode) {

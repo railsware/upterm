@@ -175,6 +175,14 @@ export class ANSIParser {
                 }
 
                 this.screenBuffer.moveCursorAbsolute({row: 0, column: 0});
+            } else if (collected === "(" && flag === "0") {
+                short = "Enable Graphic Charset";
+
+                this.screenBuffer.useGraphicCharset = true;
+            } else if (collected === "(" && flag === "B") {
+                short = "Enable ASCII Charset";
+
+                this.screenBuffer.useGraphicCharset = false;
             } else {
                 status = "unhandled";
             }
