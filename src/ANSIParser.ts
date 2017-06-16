@@ -1,4 +1,4 @@
-import {Char, defaultAttributes} from "./Char";
+import {defaultAttributes} from "./Char";
 import {Color, Weight, Brightness, KeyCode, LogLevel, ScreenBufferType} from "./Enums";
 import {Attributes, TerminalLikeDevice, ColorCode} from "./Interfaces";
 import {ScreenBuffer} from "./ScreenBuffer";
@@ -98,13 +98,9 @@ export class ANSIParser {
                 error("osc", s);
             },
             inst_x: (flag: string) => {
-                const char = Char.flyweight(flag, this.terminalDevice.screenBuffer.attributes);
-                const name = KeyCode[char.keyCode];
-
-                print((name ? LogLevel.Log : LogLevel.Error), flag.split("").map((_, index) => flag.charCodeAt(index)));
-
                 this.screenBuffer.writeOne(flag);
 
+                print((KeyCode[flag.charCodeAt(0)] ? LogLevel.Log : LogLevel.Error), flag.split("").map((_, index) => flag.charCodeAt(index)));
                 logPosition(this.screenBuffer);
             },
             /**

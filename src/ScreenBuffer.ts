@@ -1,5 +1,5 @@
 import * as events from "events";
-import {Char, attributesFlyweight, defaultAttributes, space} from "./Char";
+import {attributesFlyweight, defaultAttributes, space, createChar, Char} from "./Char";
 import * as i from "./Interfaces";
 import * as e from "./Enums";
 import {List} from "immutable";
@@ -76,10 +76,15 @@ export class ScreenBuffer extends events.EventEmitter {
 
     writeOne(char: string): void {
         const charFromCharset = this.useGraphicCharset ? graphicCharset[char] : char;
-        const charObject = Char.flyweight(charFromCharset, this.attributes);
+        const charObject = createChar(charFromCharset, this.attributes);
+        const charCode = charFromCharset.charCodeAt(0);
 
-        if (charObject.isSpecial()) {
-            switch (charObject.keyCode) {
+        /**
+         * Is a special symbol.
+         * @link http://www.asciitable.com/index/asciifull.gif
+         */
+        if (charCode < 32) {
+            switch (charCode) {
                 case e.KeyCode.Bell:
                     break;
                 case e.KeyCode.Backspace:
@@ -100,7 +105,7 @@ export class ScreenBuffer extends events.EventEmitter {
                     this.moveCursorAbsolute({column: 0});
                     break;
                 default:
-                    error(`Couldn't write a special char "${charObject}" with char code ${charObject.toString().charCodeAt(0)}.`);
+                    error(`Couldn't write a special char "${charObject}".`);
             }
         } else {
             this.set(charObject);

@@ -1,7 +1,7 @@
 import * as React from "react";
 import * as _ from "lodash";
 import {ScreenBuffer} from "../ScreenBuffer";
-import {Char, space} from "../Char";
+import {Char, createChar, space} from "../Char";
 import {groupWhen} from "../utils/Common";
 import {List} from "immutable";
 import * as css from "./css/main";
@@ -10,7 +10,7 @@ import {Job} from "../shell/Job";
 import {Status} from "../Enums";
 
 const CharGroupComponent = ({job, group}: {job: Job, group: Char[]}) =>
-    <span style={css.charGroup(group[0].attributes, job.status)}>{group.map(char => char.toString()).join("")}</span>;
+    <span style={css.charGroup(group[0].attributes, job.status)}>{group.map(char => char.value).join("")}</span>;
 
 interface CutProps {
     job: Job;
@@ -65,7 +65,7 @@ class RowComponent extends React.Component<RowProps, {}> {
                 {...char.attributes, cursor: true} :
                 char.attributes;
 
-            return Char.flyweight(char.toString(), attributes);
+            return createChar(char.value, attributes);
         });
 
         const charGroups = groupWhen(charGrouper, rowWithoutHoles).map((charGroup: Char[], index: number) =>

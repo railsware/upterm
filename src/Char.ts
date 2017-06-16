@@ -1,7 +1,6 @@
 import * as _ from "lodash";
-import {memoize} from "./Decorators";
 import {Attributes} from "./Interfaces";
-import {KeyCode, Brightness, Weight, Color} from "./Enums";
+import {Brightness, Weight, Color} from "./Enums";
 
 export const attributesFlyweight = _.memoize(
     (attributes: Attributes): Attributes => Object.freeze({...attributes}),
@@ -24,37 +23,20 @@ export const defaultAttributes = Object.freeze({
     cursor: false,
 });
 
-export class Char {
-
-    @memoize()
-    static flyweight(char: string, attributes: Attributes) {
-        return new Char(char, attributesFlyweight(attributes));
-
-    }
-
-    constructor(private char: string, private _attributes: Attributes) {
-        if (char.length !== 1) {
-            throw(`Char can be created only from a single character; passed ${char.length}: ${char}`);
-        }
-    }
-
-    get keyCode(): KeyCode {
-        return (<any>KeyCode)[KeyCode[this.char.charCodeAt(0)]];
-    }
-
-    get attributes(): Attributes {
-        return this._attributes;
-    }
-
-    toString(): string {
-        return this.char;
-    }
-
-    isSpecial(): boolean {
-        // http://www.asciitable.com/index/asciifull.gif
-        const charCode = this.char.charCodeAt(0);
-        return charCode < 32;
-    }
+export interface Char {
+    value: string;
+    attributes: Attributes;
 }
 
-export const space = Char.flyweight(" ", defaultAttributes);
+export function createChar(char: string, attributes: Attributes): Char {
+    if (char.length !== 1) {
+        throw(`Char can be created only from a single character; passed ${char.length}: ${char}`);
+    }
+
+    return {
+        value: char,
+        attributes: attributesFlyweight(attributes),
+    };
+}
+
+export const space = createChar(" ", defaultAttributes);
