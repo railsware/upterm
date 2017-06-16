@@ -1,7 +1,7 @@
 import * as React from "react";
 import * as _ from "lodash";
 import {ScreenBuffer} from "../ScreenBuffer";
-import {Char} from "../Char";
+import {Char, space} from "../Char";
 import {groupWhen} from "../utils/Common";
 import {List} from "immutable";
 import * as css from "./css/main";
@@ -60,7 +60,7 @@ class RowComponent extends React.Component<RowProps, {}> {
         const row = this.props.row.toArray();
 
         const rowWithoutHoles = _.range(0, Math.max(cursorColumn + 1, this.props.row.size)).map(index => {
-            const char = row[index] || Char.empty;
+            const char = row[index] || space;
             const attributes = (this.props.hasCursor && index === cursorColumn) ?
                 {...char.attributes, cursor: true} :
                 char.attributes;

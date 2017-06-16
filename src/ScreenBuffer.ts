@@ -1,5 +1,5 @@
 import * as events from "events";
-import {Char, attributesFlyweight, defaultAttributes} from "./Char";
+import {Char, attributesFlyweight, defaultAttributes, space} from "./Char";
 import * as i from "./Interfaces";
 import * as e from "./Enums";
 import {List} from "immutable";
@@ -220,7 +220,7 @@ export class ScreenBuffer extends events.EventEmitter {
                 this.cursorRow,
                 List<Char>(),
                 (row: List<Char>) => row.take(this.cursorColumn)
-                    .concat(Array(n).fill(Char.empty), row.skip(this.cursorColumn + n))
+                    .concat(Array(n).fill(space), row.skip(this.cursorColumn + n))
                     .toList(),
             );
         }
@@ -245,7 +245,7 @@ export class ScreenBuffer extends events.EventEmitter {
 
     clearRowToBeginning() {
         if (this.storage.get(this.cursorRow)) {
-            const replacement = Array(this.cursorColumn).fill(Char.empty);
+            const replacement = Array(this.cursorColumn).fill(space);
             this.storage = this.storage.update(
                 this.cursorRow,
                 row => row.splice(0, this.cursorColumn + 1, ...replacement).toList());

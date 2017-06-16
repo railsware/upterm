@@ -25,7 +25,6 @@ export const defaultAttributes = Object.freeze({
 });
 
 export class Char {
-    static empty = Char.flyweight(" ", defaultAttributes);
 
     @memoize()
     static flyweight(char: string, attributes: Attributes) {
@@ -57,3 +56,5 @@ export class Char {
         return charCode < 32;
     }
 }
+
+export const space = Char.flyweight(" ", defaultAttributes);
