@@ -141,7 +141,7 @@ export class Output extends events.EventEmitter {
             if (row) {
                 return row.map(char => {
                     if (char) {
-                        return char.toString();
+                        return char.value;
                     } else {
                         return " ";
                     }
