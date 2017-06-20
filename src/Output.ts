@@ -637,11 +637,13 @@ export class Output extends events.EventEmitter {
 
     writeMany(value: string): void {
         for (let i = 0; i !== value.length; ++i) {
-            this.writeOne(value.charAt(i));
+            this.writeOne(value.charAt(i), true);
         }
+
+        this.emitData();
     }
 
-    writeOne(char: string): void {
+    writeOne(char: string, skipEmittingData = false): void {
         const charFromCharset = this.useGraphicCharset ? graphicCharset[char] : char;
         const charObject = createChar(charFromCharset, this.attributes);
         const charCode = charFromCharset.charCodeAt(0);
@@ -678,7 +680,10 @@ export class Output extends events.EventEmitter {
             this.set(charObject);
             this.moveCursorRelative({horizontal: 1});
         }
-        this.emitData();
+
+        if (!skipEmittingData) {
+            this.emitData();
+        }
     }
 
     scrollDown(count: number) {
