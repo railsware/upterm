@@ -112,7 +112,7 @@ describe("application launch", function () {
         await page.job.menu.sigkillItem.click();
 
         const output = await page.job.output.getText();
-        expect(output).to.eql("Received SIGTERM");
+        expect(output).to.contain("Received SIGTERM");
     });
 
     describe("status bar", () => {
