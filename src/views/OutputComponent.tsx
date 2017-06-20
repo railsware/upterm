@@ -1,6 +1,6 @@
 import * as React from "react";
 import * as _ from "lodash";
-import {ScreenBuffer} from "../ScreenBuffer";
+import {Output} from "../Output";
 import {Char, createChar, space} from "../Char";
 import {groupWhen} from "../utils/Common";
 import {List} from "immutable";
@@ -34,7 +34,7 @@ class Cut extends React.Component<CutProps, CutState> {
                  onMouseEnter={() => this.setState({isHovered: true})}
                  onMouseLeave={() => this.setState({isHovered: false})}>
                 <i style={css.outputCutIcon}>{fontAwesome.expand}</i>
-                {`Show all ${this.props.job.screenBuffer.size} rows.`}
+                {`Show all ${this.props.job.output.size} rows.`}
             </div>
         );
     }
@@ -56,7 +56,7 @@ class RowComponent extends React.Component<RowProps, {}> {
     }
 
     render() {
-        const cursorColumn = this.props.job.screenBuffer.cursorColumn;
+        const cursorColumn = this.props.job.output.cursorColumn;
         const row = this.props.row.toArray();
 
         const rowWithoutHoles = _.range(0, Math.max(cursorColumn + 1, this.props.row.size)).map(index => {
@@ -73,7 +73,7 @@ class RowComponent extends React.Component<RowProps, {}> {
         );
 
         return <div className="output-row"
-                    style={css.row(this.props.job.status, this.props.job.screenBuffer.activeScreenBufferType)}
+                    style={css.row(this.props.job.status, this.props.job.output.activeOutputType)}
                     ref={(div: HTMLElement | undefined) => div && div.scrollIntoViewIfNeeded()}>{charGroups}</div>;
     }
 }
@@ -86,31 +86,31 @@ interface State {
     expandButtonPressed: boolean;
 }
 
-export class BufferComponent extends React.Component<Props, State> {
+export class OutputComponent extends React.Component<Props, State> {
     constructor(props: Props) {
         super(props);
         this.state = { expandButtonPressed: false };
     }
 
     render() {
-        const buffer = this.props.job.screenBuffer;
-        const showCursor = this.props.job.status === Status.InProgress && (buffer._showCursor || buffer._blinkCursor);
+        const output = this.props.job.output;
+        const showCursor = this.props.job.status === Status.InProgress && (output._showCursor || output._blinkCursor);
 
         return (
             <div className="output"
-                 style={css.output(this.props.job.screenBuffer.activeScreenBufferType, this.props.job.status)}>
+                 style={css.output(this.props.job.output.activeOutputType, this.props.job.status)}>
                 {this.shouldCutOutput ? <Cut job={this.props.job} clickHandler={() => this.setState({ expandButtonPressed: true })}/> : undefined}
-                {buffer.storage.map((possiblyEmptyRow, index: number) => {
+                {output.storage.map((possiblyEmptyRow, index: number) => {
                     const row = possiblyEmptyRow || List<Char>();
 
-                    if (this.shouldCutOutput && index < buffer.size - ScreenBuffer.hugeOutputThreshold) {
+                    if (this.shouldCutOutput && index < output.size - Output.hugeOutputThreshold) {
                         return undefined;
                     } else {
                         return (
                             <RowComponent
                                 key={index}
                                 row={row}
-                                hasCursor={index === buffer.cursorRow && showCursor}
+                                hasCursor={index === output.cursorRow && showCursor}
                                 status={this.props.job.status}
                                 job={this.props.job}/>
                         );
@@ -121,6 +121,6 @@ export class BufferComponent extends React.Component<Props, State> {
     }
 
     private get shouldCutOutput(): boolean {
-        return this.props.job.screenBuffer.size > ScreenBuffer.hugeOutputThreshold && !this.state.expandButtonPressed;
+        return this.props.job.output.size > Output.hugeOutputThreshold && !this.state.expandButtonPressed;
     }
 }

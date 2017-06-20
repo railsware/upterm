@@ -71,7 +71,7 @@ export enum Status {
     Success,
 }
 
-export enum ScreenBufferType {
+export enum OutputType {
     Standard,
     Alternate,
 }

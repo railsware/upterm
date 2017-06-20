@@ -1,11 +1,11 @@
 import "mocha";
 import {expect} from "chai";
-import {ScreenBuffer} from "../src/ScreenBuffer";
+import {Output} from "../src/Output";
 import {ANSIParser} from "../src/ANSIParser";
 import {TerminalLikeDevice} from "../src/Interfaces";
 
 class DummyTerminal implements TerminalLikeDevice {
-    screenBuffer = new ScreenBuffer();
+    output = new Output();
     dimensions = {columns: 80, rows: 24};
     written = "";
     write = (input: string) => this.written += input;
@@ -35,14 +35,14 @@ describe("ANSI parser", () => {
     it("can parse an ASCII string", async() => {
         parser.parse("something");
 
-        expect(terminal.screenBuffer.toString()).to.eql("something");
+        expect(terminal.output.toString()).to.eql("something");
     });
 
     describe("movements", () => {
         it("can move down", async() => {
             parser.parse(`first${csi([1], "B")}second`);
 
-            expect(terminal.screenBuffer.toString()).to.eql(output(`
+            expect(terminal.output.toString()).to.eql(output(`
 first
      second
 `));
@@ -53,8 +53,8 @@ first
         it("sets the correct foreground color", async() => {
             parser.parse(`${sgr([38, 2, 255, 100, 0])}A${sgr([0])}`);
 
-            expect(terminal.screenBuffer.toString()).to.eql("A");
-            const firstChar = terminal.screenBuffer.at({row: 0, column: 0});
+            expect(terminal.output.toString()).to.eql("A");
+            const firstChar = terminal.output.at({row: 0, column: 0});
             expect(firstChar.attributes.color).to.eql([255, 100, 0]);
         });
     });
@@ -65,7 +65,7 @@ first
                 it("report cursor position", async() => {
                     parser.parse(`some text${csi([6], "n")}`);
 
-                    expect(terminal.screenBuffer.toString()).to.eql("some text");
+                    expect(terminal.output.toString()).to.eql("some text");
                     expect(terminal.written).to.eql(`${csi([1, 10], "R")}`);
                 });
             });

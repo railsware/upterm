@@ -1,6 +1,6 @@
 import * as React from "react";
 import {Job} from "../shell/Job";
-import {BufferComponent} from "./BufferComponent";
+import {OutputComponent} from "./OutputComponent";
 import {JobHeaderComponent} from "./JobHeaderComponent";
 import {Status} from "../Enums";
 
@@ -36,12 +36,12 @@ export class JobShowComponent extends React.Component<Props, State> {
     }
 
     render() {
-        let buffer: React.ReactElement<any>;
+        let output: React.ReactElement<any>;
         let canBePrettified = this.props.job.canBePrettified();
         if (canBePrettified && this.state.prettify) {
-            buffer = this.props.job.prettify();
+            output = this.props.job.prettify();
         } else {
-            buffer = <BufferComponent job={this.props.job}/>;
+            output = <OutputComponent job={this.props.job}/>;
         }
 
         return (
@@ -55,7 +55,7 @@ export class JobShowComponent extends React.Component<Props, State> {
                     }}
                     isPrettified={this.state.prettify}
                  />
-                {buffer}
+                {output}
             </div>
         );
     }

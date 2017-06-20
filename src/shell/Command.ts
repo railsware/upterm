@@ -40,7 +40,7 @@ const executors: Dictionary<(i: Job, a: string[]) => void> = {
     },
     export: (job: Job, args: string[]): void => {
         if (args.length === 0) {
-            job.screenBuffer.writeMany(job.environment.map((key, value) => `${key}=${value}`).join("\r\n"));
+            job.output.writeMany(job.environment.map((key, value) => `${key}=${value}`).join("\r\n"));
         } else {
             args.forEach(argument => {
                 const firstEqualIndex = argument.indexOf("=");
@@ -57,7 +57,7 @@ const executors: Dictionary<(i: Job, a: string[]) => void> = {
     },
     alias: (job: Job, args: string[]): void => {
         if (args.length === 0) {
-            job.screenBuffer.writeMany(mapObject(job.session.aliases.toObject(), (key, value) => `${key}=${value}`).join("\r\n"));
+            job.output.writeMany(mapObject(job.session.aliases.toObject(), (key, value) => `${key}=${value}`).join("\r\n"));
         } else if (args.length === 1) {
             const parsed = parseAlias(args[0]);
             job.session.aliases.add(parsed.name, parsed.value);
@@ -80,7 +80,7 @@ const executors: Dictionary<(i: Job, a: string[]) => void> = {
     },
     show: (job: Job, args: string[]): void => {
         const imgs = args.map(argument => resolveFile(job.environment.pwd, argument));
-        job.screenBuffer.writeMany(imgs.join(EOL));
+        job.output.writeMany(imgs.join(EOL));
     },
 };
 

@@ -4,7 +4,7 @@ import * as React from "react";
 import {Session} from "./Session";
 import {ANSIParser} from "../ANSIParser";
 import {Prompt} from "./Prompt";
-import {ScreenBuffer} from "../ScreenBuffer";
+import {Output} from "../Output";
 import {CommandExecutor, NonZeroExitCodeError} from "./CommandExecutor";
 import {PTY} from "../PTY";
 import {PluginManager} from "../PluginManager";
@@ -22,7 +22,7 @@ function makeThrottledDataEmitter(timesPerSecond: number, subject: EmitterWithUn
 export class Job extends EmitterWithUniqueID implements TerminalLikeDevice {
     public status: Status = Status.InProgress;
     public readonly parser: ANSIParser;
-    private readonly _screenBuffer: ScreenBuffer;
+    private readonly _output: Output;
     private readonly rareDataEmitter: Function;
     private readonly frequentDataEmitter: Function;
     private pty: PTY | undefined;
@@ -33,8 +33,8 @@ export class Job extends EmitterWithUniqueID implements TerminalLikeDevice {
         this.rareDataEmitter = makeThrottledDataEmitter(1, this);
         this.frequentDataEmitter = makeThrottledDataEmitter(60, this);
 
-        this._screenBuffer = new ScreenBuffer();
-        this._screenBuffer.on("data", this.throttledDataEmitter);
+        this._output = new Output();
+        this._output.on("data", this.throttledDataEmitter);
         this.parser = new ANSIParser(this);
     }
 
@@ -67,7 +67,7 @@ export class Job extends EmitterWithUniqueID implements TerminalLikeDevice {
             if (message instanceof NonZeroExitCodeError) {
                 // Do nothing.
             } else {
-                this._screenBuffer.writeMany(message);
+                this._output.writeMany(message);
             }
         }
         this.emit("end");
@@ -115,7 +115,7 @@ export class Job extends EmitterWithUniqueID implements TerminalLikeDevice {
                 }
                 text = `\x1b${char}`;
             } else {
-                text = normalizeKey(input.key, this.screenBuffer.cursorKeysMode);
+                text = normalizeKey(input.key, this.output.cursorKeysMode);
             }
         }
 
@@ -136,7 +136,7 @@ export class Job extends EmitterWithUniqueID implements TerminalLikeDevice {
     }
 
     hasOutput(): boolean {
-        return !this._screenBuffer.isEmpty();
+        return !this._output.isEmpty();
     }
 
     interrupt(): void {
@@ -180,8 +180,8 @@ export class Job extends EmitterWithUniqueID implements TerminalLikeDevice {
         return PluginManager.prettyfiers.find(prettyfier => prettyfier.isApplicable(this));
     }
 
-    get screenBuffer(): ScreenBuffer {
-        return this._screenBuffer;
+    get output(): Output {
+        return this._output;
     }
 
     get prompt(): Prompt {
@@ -194,5 +194,5 @@ export class Job extends EmitterWithUniqueID implements TerminalLikeDevice {
     }
 
     private throttledDataEmitter = () =>
-        this._screenBuffer.size < ScreenBuffer.hugeOutputThreshold ? this.frequentDataEmitter() : this.rareDataEmitter()
+        this._output.size < Output.hugeOutputThreshold ? this.frequentDataEmitter() : this.rareDataEmitter()
 }

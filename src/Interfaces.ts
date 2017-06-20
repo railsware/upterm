@@ -4,7 +4,7 @@ import {ReactElement} from "react";
 import {Job} from "./shell/Job";
 import {Session} from "./shell/Session";
 import {Suggestion} from "./plugins/autocompletion_utils/Common";
-import {ScreenBuffer} from "./ScreenBuffer";
+import {Output} from "./Output";
 import {Environment} from "./shell/Environment";
 import {OrderedSet} from "./utils/OrderedSet";
 import {Argument} from "./shell/Parser";
@@ -56,7 +56,7 @@ export interface PreexecPlugin {
 }
 
 export interface TerminalLikeDevice {
-    screenBuffer: ScreenBuffer;
+    output: Output;
     dimensions: Dimensions;
     write: (input: string | KeyboardEvent) => void;
 }

@@ -49,13 +49,13 @@ const graphicCharset: Dictionary<string> = {
     "~": "\u00b7", // "·"
 };
 
-export class ScreenBuffer extends events.EventEmitter {
+export class Output extends events.EventEmitter {
     public static hugeOutputThreshold = 300;
     public cursorRow = 0;
     public cursorColumn = 0;
     public _showCursor = true;
     public _blinkCursor = true;
-    public activeScreenBufferType = e.ScreenBufferType.Standard;
+    public activeOutputType = e.OutputType.Standard;
     public storage = List<List<Char>>();
     public useGraphicCharset = false;
     private _attributes: i.Attributes = {...defaultAttributes, color: e.Color.White, weight: e.Weight.Normal};

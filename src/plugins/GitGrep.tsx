@@ -10,7 +10,7 @@ PluginManager.registerPrettyfier({
     return <div style={{
       padding: "10px",
       lineHeight: "18px",
-    }}>{job.screenBuffer.toLines().map((line, index) => {
+    }}>{job.output.toLines().map((line, index) => {
       const match = line.match(/^(.*?):(\d+):(.*)$/);
       if (match) {
         const [, path, lineNum, rest] = match;

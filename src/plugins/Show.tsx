@@ -5,7 +5,7 @@ import * as css from "../views/css/main";
 
 PluginManager.registerPrettyfier({
     prettify: (job: Job): React.ReactElement<any> => {
-        const rows = job.screenBuffer.toLines().map(path => <img style={css.image} src={path}/>);
+        const rows = job.output.toLines().map(path => <img style={css.image} src={path}/>);
 
         return <div>{rows}</div>;
     },

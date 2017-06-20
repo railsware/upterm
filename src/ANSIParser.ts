@@ -1,7 +1,7 @@
 import {defaultAttributes} from "./Char";
-import {Color, Weight, Brightness, KeyCode, LogLevel, ScreenBufferType} from "./Enums";
+import {Color, Weight, Brightness, KeyCode, LogLevel, OutputType} from "./Enums";
 import {Attributes, TerminalLikeDevice, ColorCode} from "./Interfaces";
-import {ScreenBuffer} from "./ScreenBuffer";
+import {Output} from "./Output";
 import {print, error, info, debug, csi} from "./utils/Common";
 
 const ansiParserConstructor: typeof AnsiParser = require("node-ansiparser");
@@ -90,18 +90,18 @@ export class ANSIParser {
             inst_p: (text: string) => {
                 info("text", text, text.split("").map(letter => letter.charCodeAt(0)));
 
-                this.screenBuffer.writeMany(text);
+                this.output.writeMany(text);
 
-                logPosition(this.screenBuffer);
+                logPosition(this.output);
             },
             inst_o: function (s: any) {
                 error("osc", s);
             },
             inst_x: (flag: string) => {
-                this.screenBuffer.writeOne(flag);
+                this.output.writeOne(flag);
 
                 print((KeyCode[flag.charCodeAt(0)] ? LogLevel.Log : LogLevel.Error), flag.split("").map((_, index) => flag.charCodeAt(index)));
-                logPosition(this.screenBuffer);
+                logPosition(this.output);
             },
             /**
              * CSI handler.
@@ -133,7 +133,7 @@ export class ANSIParser {
                     }
                 }
 
-                logPosition(this.screenBuffer);
+                logPosition(this.output);
             },
             /**
              * ESC handler.
@@ -147,7 +147,7 @@ export class ANSIParser {
                     error(`%cESC ${collected} ${flag}`, "color: blue", handlerResult.description, handlerResult.url);
                 }
 
-                logPosition(this.screenBuffer);
+                logPosition(this.output);
             },
         });
     }
@@ -166,19 +166,19 @@ export class ANSIParser {
                 const dimensions = this.terminalDevice.dimensions;
 
                 for (let i = 0; i !== dimensions.rows; ++i) {
-                    this.screenBuffer.moveCursorAbsolute({row: i, column: 0});
-                    this.screenBuffer.writeMany(Array(dimensions.columns).join("E"));
+                    this.output.moveCursorAbsolute({row: i, column: 0});
+                    this.output.writeMany(Array(dimensions.columns).join("E"));
                 }
 
-                this.screenBuffer.moveCursorAbsolute({row: 0, column: 0});
+                this.output.moveCursorAbsolute({row: 0, column: 0});
             } else if (collected === "(" && flag === "0") {
                 short = "Enable Graphic Charset";
 
-                this.screenBuffer.useGraphicCharset = true;
+                this.output.useGraphicCharset = true;
             } else if (collected === "(" && flag === "B") {
                 short = "Enable ASCII Charset";
 
-                this.screenBuffer.useGraphicCharset = false;
+                this.output.useGraphicCharset = false;
             } else {
                 status = "unhandled";
             }
@@ -187,33 +187,33 @@ export class ANSIParser {
                 case "A":
                     short = "Cursor up.";
 
-                    this.screenBuffer.moveCursorRelative({vertical: -1});
+                    this.output.moveCursorRelative({vertical: -1});
                     break;
                 case "B":
                     short = "Cursor down.";
 
-                    this.screenBuffer.moveCursorRelative({vertical: 1});
+                    this.output.moveCursorRelative({vertical: 1});
                     break;
                 case "C":
                     short = "Cursor right.";
 
-                    this.screenBuffer.moveCursorRelative({horizontal: 1});
+                    this.output.moveCursorRelative({horizontal: 1});
                     break;
                 case "D":
                     short = "Index (IND).";
                     url = "http://www.vt100.net/docs/vt510-rm/IND";
 
-                    this.screenBuffer.moveCursorRelative({vertical: 1});
+                    this.output.moveCursorRelative({vertical: 1});
                     break;
                 case "M":
                     short = "Reverse Index (RI).";
                     /* tslint:disable:max-line-length */
                     long = "Move the active position to the same horizontal position on the preceding lin If the active position is at the top margin, a scroll down is performed.";
 
-                    if (this.screenBuffer.cursorRow === this.screenBuffer.marginTop) {
-                        this.screenBuffer.scrollDown(1);
+                    if (this.output.cursorRow === this.output.marginTop) {
+                        this.output.scrollDown(1);
                     } else {
-                        this.screenBuffer.moveCursorRelative({vertical: -1});
+                        this.output.moveCursorRelative({vertical: -1});
                     }
                     break;
                 case "E":
@@ -221,16 +221,16 @@ export class ANSIParser {
                     /* tslint:disable:max-line-length */
                     long = "This sequence causes the active position to move to the first position on the next line downward. If the active position is at the bottom margin, a scroll up is performed.";
 
-                    this.screenBuffer.moveCursorRelative({vertical: 1});
-                    this.screenBuffer.moveCursorAbsolute({column: 0});
+                    this.output.moveCursorRelative({vertical: 1});
+                    this.output.moveCursorAbsolute({column: 0});
                     break;
                 case "7":
                     long = "Save current state (cursor coordinates, attributes, character sets pointed at by G0, G1).";
-                    this.screenBuffer.saveCurrentState();
+                    this.output.saveCurrentState();
                     break;
                 case "8":
                     long = "Restore state most recently saved by ESC 7.";
-                    this.screenBuffer.restoreCurrentState();
+                    this.output.restoreCurrentState();
                     break;
                 default:
                     status = "unhandled";
@@ -257,7 +257,7 @@ export class ANSIParser {
                 description = "Cursor Keys Mode.";
                 url = "http://www.vt100.net/docs/vt510-rm/DECCKM";
 
-                this.screenBuffer.cursorKeysMode = shouldSet;
+                this.output.cursorKeysMode = shouldSet;
                 break;
             case 3:
                 url = "http://www.vt100.net/docs/vt510-rm/DECCOLM";
@@ -271,7 +271,7 @@ export class ANSIParser {
 
                     this.terminalDevice.dimensions = {columns: 80, rows: this.terminalDevice.dimensions.rows};
                 }
-                this.screenBuffer.clear();
+                this.output.clear();
                 // TODO
                 // If you change the DECCOLM setting, the terminal:
                 //      Sets the left, right, top and bottom scrolling margins to their default positions.
@@ -283,17 +283,17 @@ export class ANSIParser {
                 description = "Origin Mode (DECOM).";
                 url = "http://www.vt100.net/docs/vt510-rm/DECOM";
 
-                this.screenBuffer.originMode = shouldSet;
+                this.output.originMode = shouldSet;
                 break;
             case 12:
                 if (shouldSet) {
                     description = "Start Blinking Cursor (att610).";
 
-                    this.screenBuffer.blinkCursor(true);
+                    this.output.blinkCursor(true);
                 } else {
                     description = "Stop Blinking Cursor (att610).";
 
-                    this.screenBuffer.blinkCursor(false);
+                    this.output.blinkCursor(false);
                 }
 
                 break;
@@ -303,11 +303,11 @@ export class ANSIParser {
                 if (shouldSet) {
                     description = "Show Cursor (DECTCEM).";
 
-                    this.screenBuffer.showCursor(true);
+                    this.output.showCursor(true);
                 } else {
                     description = "Hide Cursor (DECTCEM).";
 
-                    this.screenBuffer.showCursor(false);
+                    this.output.showCursor(false);
                 }
                 break;
             case 1049:
@@ -315,7 +315,7 @@ export class ANSIParser {
                     /* tslint:disable:max-line-length */
                     description = "Save cursor as in DECSC and use Alternate Screen Buffer, clearing it first.  (This may be disabled by the titeInhibit resource).  This combines the effects of the 1047  and 1048  modes.  Use this with terminfo-based applications rather than the 47  mod";
 
-                    this.screenBuffer.activeScreenBufferType = ScreenBufferType.Alternate;
+                    this.output.activeOutputType = OutputType.Alternate;
                 } else {
                     // TODO: Add Implementation
                     status = "unhandled";
@@ -353,21 +353,21 @@ export class ANSIParser {
             case "A":
                 short = "Cursor Up Ps Times (default = 1) (CUU).";
 
-                this.screenBuffer.moveCursorRelative({vertical: -(param || 1)});
+                this.output.moveCursorRelative({vertical: -(param || 1)});
                 break;
             case "B":
                 short = "Cursor Down Ps Times (default = 1) (CUD).";
-                this.screenBuffer.moveCursorRelative({vertical: (param || 1)});
+                this.output.moveCursorRelative({vertical: (param || 1)});
                 break;
             case "C":
                 short = "Cursor Forward Ps Times (default = 1) (CUF).";
 
-                this.screenBuffer.moveCursorRelative({horizontal: (param || 1)});
+                this.output.moveCursorRelative({horizontal: (param || 1)});
                 break;
             case "D":
                 short = "Cursor Backward Ps Times (default = 1) (CUB).";
 
-                this.screenBuffer.moveCursorRelative({horizontal: -(param || 1)});
+                this.output.moveCursorRelative({horizontal: -(param || 1)});
                 break;
             // CSI Ps E  Cursor Next Line Ps Times (default = 1) (CNL).
             // CSI Ps F  Cursor Preceding Line Ps Times (default = 1) (CPL).
@@ -375,13 +375,13 @@ export class ANSIParser {
                 short = "Cursor Character Absolute [column] (default = [row,1]) (CHA)";
                 url = "http://www.vt100.net/docs/vt510-rm/CHA";
 
-                this.screenBuffer.moveCursorAbsolute({column: or1(param || 1) - 1});
+                this.output.moveCursorAbsolute({column: or1(param || 1) - 1});
                 break;
             case "H":
                 short = "Cursor Position [row;column] (default = [1,1]) (CUP).";
                 url = "http://www.vt100.net/docs/vt510-rm/CUP";
 
-                this.screenBuffer.moveCursorAbsolute({row: or1(params[0]) - 1, column: or1(params[1]) - 1});
+                this.output.moveCursorAbsolute({row: or1(params[0]) - 1, column: or1(params[1]) - 1});
                 break;
             case "J":
                 url = "http://www.vt100.net/docs/vt510-rm/ED";
@@ -390,17 +390,17 @@ export class ANSIParser {
                     case CSI.erase.entireSsh:
                         short = "Erase Entire Display (ED).";
 
-                        this.screenBuffer.clear();
+                        this.output.clear();
                         break;
                     case CSI.erase.toEnd:
                         short = "Erase Display Below (ED).";
 
-                        this.screenBuffer.clearToEnd();
+                        this.output.clearToEnd();
                         break;
                     case CSI.erase.toBeginning:
                         short = "Erase Display Above (ED).";
 
-                        this.screenBuffer.clearToBeginning();
+                        this.output.clearToBeginning();
                         break;
                     default:
                         throw `Unknown CSI erase: "${param}".`;
@@ -412,15 +412,15 @@ export class ANSIParser {
                     case CSI.erase.entire:
                         short = "Erase the Line (DECSEL).";
 
-                        this.screenBuffer.clearRow();
+                        this.output.clearRow();
                         break;
                     case CSI.erase.toEnd:
                         short = "Erase Line to Right (DECSEL).";
-                        this.screenBuffer.clearRowToEnd();
+                        this.output.clearRowToEnd();
                         break;
                     case CSI.erase.toBeginning:
                         short = "Erase Line to Left (DECSEL).";
-                        this.screenBuffer.clearRowToBeginning();
+                        this.output.clearRowToBeginning();
                         break;
                     default:
                         throw `Unknown CSI erase: "${param}".`;
@@ -430,25 +430,25 @@ export class ANSIParser {
                 url = "http://www.vt100.net/docs/vt510-rm/IL";
                 short = "Inserts one or more blank lines, starting at the cursor. (DL)";
 
-                this.screenBuffer.scrollDown(param || 1);
+                this.output.scrollDown(param || 1);
                 break;
             case "M":
                 url = "http://www.vt100.net/docs/vt510-rm/DL";
                 short = "Deletes one or more lines in the scrolling region, starting with the line that has the cursor. (DL)";
 
-                this.screenBuffer.scrollUp(param || 1, this.screenBuffer.cursorRow);
+                this.output.scrollUp(param || 1, this.output.cursorRow);
                 break;
             case "P":
                 url = "http://www.vt100.net/docs/vt510-rm/DCH.html";
                 short = "Deletes one or more characters from the cursor position to the right.";
 
-                this.screenBuffer.deleteRight(param);
+                this.output.deleteRight(param);
                 break;
             case "X":
                 short = "Erase P s Character(s) (default = 1) (ECH)";
                 url = "http://www.vt100.net/docs/vt510-rm/ECH";
 
-                this.screenBuffer.eraseRight(param || 1);
+                this.output.eraseRight(param || 1);
                 break;
             case "c":
                 short = "Send Device Attributes (Primary DA)";
@@ -458,20 +458,20 @@ export class ANSIParser {
                 short = "Line Position Absolute [row] (default = [1,column]) (VPA).";
                 url = "http://www.vt100.net/docs/vt510-rm/VPA";
 
-                this.screenBuffer.moveCursorAbsolute({row: or1(param || 1) - 1});
+                this.output.moveCursorAbsolute({row: or1(param || 1) - 1});
                 break;
             case "f":
                 short = "Horizontal and Vertical Position [row;column] (default = [1,1]) (HVP).";
                 url = "http://www.vt100.net/docs/vt510-rm/HVP";
 
-                this.screenBuffer.moveCursorAbsolute({row: or1(params[0]) - 1, column: or1(params[1]) - 1});
+                this.output.moveCursorAbsolute({row: or1(params[0]) - 1, column: or1(params[1]) - 1});
                 break;
             case "m":
                 short = `SGR: ${params}`;
 
                 if (params.length === 0) {
                     short = "Reset SGR";
-                    this.screenBuffer.resetAttributes();
+                    this.output.resetAttributes();
                     break;
                 }
 
@@ -499,7 +499,7 @@ export class ANSIParser {
                         const attributesUpdater = SGR[sgr];
 
                         if (attributesUpdater) {
-                            this.screenBuffer.setAttributes(attributesUpdater(this.screenBuffer.attributes));
+                            this.output.setAttributes(attributesUpdater(this.output.attributes));
                         } else {
                             error("sgr", sgr, params);
                         }
@@ -511,7 +511,7 @@ export class ANSIParser {
                 if (param === 6) {
                     url = "http://www.vt100.net/docs/vt510-rm/CPR";
                     short = "Report Cursor Position (CPR) [row;column] as CSI r ; c R";
-                    this.terminalDevice.write(csi(`${this.screenBuffer.cursorRow + 1};${this.screenBuffer.cursorColumn + 1}R`));
+                    this.terminalDevice.write(csi(`${this.output.cursorRow + 1};${this.output.cursorColumn + 1}R`));
                 } else {
                     status = "unhandled";
                 }
@@ -524,14 +524,14 @@ export class ANSIParser {
                 let bottom = <number>(params[1] ? params[1] - 1 : undefined);
                 let top = <number>(params[0] ? params[0] - 1 : undefined);
 
-                this.screenBuffer.margins = {top: top, bottom: bottom};
-                this.screenBuffer.moveCursorAbsolute({row: 0, column: 0});
+                this.output.margins = {top: top, bottom: bottom};
+                this.output.moveCursorAbsolute({row: 0, column: 0});
                 break;
             case "@":
                 url = "http://www.vt100.net/docs/vt510-rm/ICH.html";
                 short = "Inserts one or more space (SP) characters starting at the cursor position.";
 
-                this.screenBuffer.insertSpaceRight(param);
+                this.output.insertSpaceRight(param);
                 break;
             default:
                 status = "unhandled";
@@ -545,15 +545,15 @@ export class ANSIParser {
         };
     }
 
-    private get screenBuffer() {
-        return this.terminalDevice.screenBuffer;
+    private get output() {
+        return this.terminalDevice.output;
     }
 
     private setColor(sgr: number, color: ColorCode): void {
         if (sgr === 38) {
-            this.screenBuffer.setAttributes({...this.screenBuffer.attributes, color: color});
+            this.output.setAttributes({...this.output.attributes, color: color});
         } else {
-            this.screenBuffer.setAttributes({...this.screenBuffer.attributes, backgroundColor: color});
+            this.output.setAttributes({...this.output.attributes, backgroundColor: color});
         }
     }
 }
@@ -568,7 +568,7 @@ function or1(value: number | undefined) {
 
 
 // TODO: Move to
-function logPosition(buffer: ScreenBuffer) {
-    const position = {row: buffer.cursorRow, column: buffer.cursorColumn};
-    debug(`%crow: ${position.row}\tcolumn: ${buffer.cursorColumn}\t value: ${buffer.at(position)}`, "color: green");
+function logPosition(output: Output) {
+    const position = {row: output.cursorRow, column: output.cursorColumn};
+    debug(`%crow: ${position.row}\tcolumn: ${output.cursorColumn}\t value: ${output.at(position)}`, "color: green");
 }
