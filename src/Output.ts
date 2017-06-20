@@ -16,6 +16,65 @@ interface HandlerResult {
     url: string;
 }
 
+interface SavedState {
+    cursorRow: number;
+    cursorColumn: number;
+    attributes: i.Attributes;
+}
+
+function or1(value: number | undefined) {
+    if (value === undefined) {
+        return 1;
+    } else {
+        return value;
+    }
+}
+
+
+// TODO: Move to
+function logPosition(output: Output) {
+    const position = {row: output.cursorRow, column: output.cursorColumn};
+    debug(`%crow: ${position.row}\tcolumn: ${output.cursorColumn}\t value: ${output.at(position)}`, "color: green");
+}
+
+/**
+ * Copied from xterm.js
+ * @link https://github.com/sourcelair/xterm.js/blob/master/src/Charsets.ts
+ */
+const graphicCharset: Dictionary<string> = {
+    "`": "\u25c6", // "◆"
+    "a": "\u2592", // "▒"
+    "b": "\u0009", // "\t"
+    "c": "\u000c", // "\f"
+    "d": "\u000d", // "\r"
+    "e": "\u000a", // "\n"
+    "f": "\u00b0", // "°"
+    "g": "\u00b1", // "±"
+    "h": "\u2424", // "\u2424" (NL)
+    "i": "\u000b", // "\v"
+    "j": "\u2518", // "┘"
+    "k": "\u2510", // "┐"
+    "l": "\u250c", // "┌"
+    "m": "\u2514", // "└"
+    "n": "\u253c", // "┼"
+    "o": "\u23ba", // "⎺"
+    "p": "\u23bb", // "⎻"
+    "q": "\u2500", // "─"
+    "r": "\u23bc", // "⎼"
+    "s": "\u23bd", // "⎽"
+    "t": "\u251c", // "├"
+    "u": "\u2524", // "┤"
+    "v": "\u2534", // "┴"
+    "w": "\u252c", // "┬"
+    "x": "\u2502", // "│"
+    "y": "\u2264", // "≤"
+    "z": "\u2265", // "≥"
+    "{": "\u03c0", // "π"
+    "|": "\u2260", // "≠"
+    "}": "\u00a3", // "£"
+    "~": "\u00b7", // "·"
+};
+
 const SGR: { [indexer: string]: (attributes: Attributes) => Attributes } = {
     0: (_attributes: Attributes) => defaultAttributes,
     1: (attributes: Attributes) => ({...attributes, brightness: Brightness.Bright}),
@@ -78,18 +137,8 @@ const colorFormatCodes = {
 class ANSIParser {
     private parser: AnsiParser;
 
-    constructor(private terminalDevice: TerminalLikeDevice) {
-        this.parser = this.initializeAnsiParser();
-    }
-
-    parse(data: string): void {
-        this.parser.parse(data);
-    }
-
-    private initializeAnsiParser(): AnsiParser {
-        // TODO: The parser is a mess, but I tried to make it
-        // TODO: an easy to clean up mess.
-        return new ansiParserConstructor({
+    constructor(private terminalDevice: TerminalLikeDevice, private output: Output) {
+        this.parser = new ansiParserConstructor({
             inst_p: (text: string) => {
                 info("text", text, text.split("").map(letter => letter.charCodeAt(0)));
 
@@ -153,6 +202,10 @@ class ANSIParser {
                 logPosition(this.output);
             },
         });
+    }
+
+    parse(data: ANSIString): void {
+        this.parser.parse(data);
     }
 
     private escapeHandler(collected: any, flag: string) {
@@ -548,10 +601,6 @@ class ANSIParser {
         };
     }
 
-    private get output() {
-        return this.terminalDevice.output;
-    }
-
     private setColor(sgr: number, color: ColorCode): void {
         if (sgr === 38) {
             this.output.setAttributes({...this.output.attributes, color: color});
@@ -560,65 +609,6 @@ class ANSIParser {
         }
     }
 }
-
-function or1(value: number | undefined) {
-    if (value === undefined) {
-        return 1;
-    } else {
-        return value;
-    }
-}
-
-
-// TODO: Move to
-function logPosition(output: Output) {
-    const position = {row: output.cursorRow, column: output.cursorColumn};
-    debug(`%crow: ${position.row}\tcolumn: ${output.cursorColumn}\t value: ${output.at(position)}`, "color: green");
-}
-
-interface SavedState {
-    cursorRow: number;
-    cursorColumn: number;
-    attributes: i.Attributes;
-}
-
-/**
- * Copied from xterm.js
- * @link https://github.com/sourcelair/xterm.js/blob/master/src/Charsets.ts
- */
-const graphicCharset: Dictionary<string> = {
-    "`": "\u25c6", // "◆"
-    "a": "\u2592", // "▒"
-    "b": "\u0009", // "\t"
-    "c": "\u000c", // "\f"
-    "d": "\u000d", // "\r"
-    "e": "\u000a", // "\n"
-    "f": "\u00b0", // "°"
-    "g": "\u00b1", // "±"
-    "h": "\u2424", // "\u2424" (NL)
-    "i": "\u000b", // "\v"
-    "j": "\u2518", // "┘"
-    "k": "\u2510", // "┐"
-    "l": "\u250c", // "┌"
-    "m": "\u2514", // "└"
-    "n": "\u253c", // "┼"
-    "o": "\u23ba", // "⎺"
-    "p": "\u23bb", // "⎻"
-    "q": "\u2500", // "─"
-    "r": "\u23bc", // "⎼"
-    "s": "\u23bd", // "⎽"
-    "t": "\u251c", // "├"
-    "u": "\u2524", // "┤"
-    "v": "\u2534", // "┴"
-    "w": "\u252c", // "┬"
-    "x": "\u2502", // "│"
-    "y": "\u2264", // "≤"
-    "z": "\u2265", // "≥"
-    "{": "\u03c0", // "π"
-    "|": "\u2260", // "≠"
-    "}": "\u00a3", // "£"
-    "~": "\u00b7", // "·"
-};
 
 export class Output extends events.EventEmitter {
     public static hugeOutputThreshold = 300;
@@ -638,10 +628,10 @@ export class Output extends events.EventEmitter {
 
     constructor(terminalDevice: TerminalLikeDevice) {
         super();
-        this.parser = new ANSIParser(terminalDevice);
+        this.parser = new ANSIParser(terminalDevice, this);
     }
 
-    write(ansiString: string) {
+    write(ansiString: ANSIString) {
         this.parser.parse(ansiString);
     }
 
