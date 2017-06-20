@@ -2,7 +2,6 @@ import * as _ from "lodash";
 import * as i from "../Interfaces";
 import * as React from "react";
 import {Session} from "./Session";
-import {ANSIParser} from "../ANSIParser";
 import {Prompt} from "./Prompt";
 import {Output} from "../Output";
 import {CommandExecutor, NonZeroExitCodeError} from "./CommandExecutor";
@@ -21,21 +20,14 @@ function makeThrottledDataEmitter(timesPerSecond: number, subject: EmitterWithUn
 
 export class Job extends EmitterWithUniqueID implements TerminalLikeDevice {
     public status: Status = Status.InProgress;
-    public readonly parser: ANSIParser;
-    private readonly _output: Output;
-    private readonly rareDataEmitter: Function;
-    private readonly frequentDataEmitter: Function;
+    private readonly _output: Output = new Output(this);
+    private readonly rareDataEmitter: Function = makeThrottledDataEmitter(1, this);
+    private readonly frequentDataEmitter: Function = makeThrottledDataEmitter(60, this);
     private pty: PTY | undefined;
 
     constructor(private _session: Session, private _prompt: Prompt) {
         super();
-
-        this.rareDataEmitter = makeThrottledDataEmitter(1, this);
-        this.frequentDataEmitter = makeThrottledDataEmitter(60, this);
-
-        this._output = new Output();
         this._output.on("data", this.throttledDataEmitter);
-        this.parser = new ANSIParser(this);
     }
 
     async execute(): Promise<void> {
