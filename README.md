@@ -46,6 +46,7 @@ As with macOS's `brew` install, the AUR may also be outdated. To install the lat
 * `cd upterm`
 * `npm install`
 * `npm run pack`
+* `sudo ./dist/upterm-*.AppImage` 
 
 ###### Windows
 
