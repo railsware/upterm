@@ -633,17 +633,17 @@ export class Output extends events.EventEmitter {
 
     write(ansiString: ANSIString) {
         this.parser.parse(ansiString);
+        this.emitData();
     }
 
     writeMany(value: string): void {
         for (let i = 0; i !== value.length; ++i) {
-            this.writeOne(value.charAt(i), true);
+            this.writeOne(value.charAt(i));
         }
 
-        this.emitData();
     }
 
-    writeOne(char: string, skipEmittingData = false): void {
+    writeOne(char: string): void {
         const charFromCharset = this.useGraphicCharset ? graphicCharset[char] : char;
         const charObject = createChar(charFromCharset, this.attributes);
         const charCode = charFromCharset.charCodeAt(0);
@@ -679,10 +679,6 @@ export class Output extends events.EventEmitter {
         } else {
             this.set(charObject);
             this.moveCursorRelative({horizontal: 1});
-        }
-
-        if (!skipEmittingData) {
-            this.emitData();
         }
     }
 
@@ -731,13 +727,11 @@ export class Output extends events.EventEmitter {
     showCursor(state: boolean): void {
         this.ensureRowExists(this.cursorRow);
         this._showCursor = state;
-        this.emitData();
     }
 
     blinkCursor(state: boolean): void {
         this.ensureRowExists(this.cursorRow);
         this._blinkCursor = state;
-        this.emitData();
     }
 
     moveCursorRelative(advancement: Advancement): this {
@@ -747,7 +741,6 @@ export class Output extends events.EventEmitter {
         this.moveCursorAbsolute({ row: row, column: column });
 
         this.ensureRowExists(this.cursorRow);
-        this.emitData();
 
         return this;
     }
@@ -762,7 +755,6 @@ export class Output extends events.EventEmitter {
         }
 
         this.ensureRowExists(this.cursorRow);
-        this.emitData();
 
         return this;
     }
@@ -775,7 +767,6 @@ export class Output extends events.EventEmitter {
                 (row: List<Char>) => row.splice(this.cursorColumn, n).toList(),
             );
         }
-        this.emitData();
     }
 
     insertSpaceRight(n: number) {
@@ -788,7 +779,6 @@ export class Output extends events.EventEmitter {
                 (row: List<Char>) => row.splice(this.cursorColumn, 0, nSpace).toList(),
             );
         }
-        this.emitData();
     }
 
     eraseRight(n: number) {
@@ -801,12 +791,10 @@ export class Output extends events.EventEmitter {
                     .toList(),
             );
         }
-        this.emitData();
     }
 
     clearRow() {
         this.storage = this.storage.set(this.cursorRow, List<Char>());
-        this.emitData();
     }
 
     clearRowToEnd() {
@@ -817,7 +805,6 @@ export class Output extends events.EventEmitter {
                 (row: List<Char>) => row.take(this.cursorColumn).toList(),
             );
         }
-        this.emitData();
     }
 
     clearRowToBeginning() {
@@ -827,7 +814,6 @@ export class Output extends events.EventEmitter {
                 this.cursorRow,
                 row => row.splice(0, this.cursorColumn + 1, ...replacement).toList());
         }
-        this.emitData();
     }
 
     clear() {
@@ -840,13 +826,11 @@ export class Output extends events.EventEmitter {
         const replacement = Array(this.cursorRow);
 
         this.storage = this.storage.splice(0, this.cursorRow, ...replacement).toList();
-        this.emitData();
     }
 
     clearToEnd() {
         this.clearRowToEnd();
         this.storage = this.storage.splice(this.cursorRow + 1, this.storage.size - this.cursorRow).toList();
-        this.emitData();
     }
 
     get size(): number {
