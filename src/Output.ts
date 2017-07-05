@@ -633,7 +633,7 @@ export class Output extends events.EventEmitter {
 
     write(ansiString: ANSIString) {
         this.parser.parse(ansiString);
-        this.emitData();
+        this.emit("data");
     }
 
     writeMany(value: string): void {
@@ -899,9 +899,5 @@ export class Output extends events.EventEmitter {
         if (!this.storage.get(rowNumber)) {
             this.storage = this.storage.set(rowNumber, List<Char>());
         }
-    }
-
-    private emitData() {
-        this.emit("data");
     }
 }
