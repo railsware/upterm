@@ -3,7 +3,7 @@ import * as OS from "os";
 import * as _ from "lodash";
 import * as pty from "node-pty";
 import {loginShell} from "./utils/Shell";
-import {debug} from "./utils/Common";
+import {info} from "./utils/Common";
 
 interface ITerminal {
     write(data: string): void;
@@ -18,10 +18,10 @@ export class PTY {
     // TODO: write proper signatures.
     // TODO: use generators.
     // TODO: terminate. https://github.com/atom/atom/blob/v1.0.15/src/task.coffee#L151
-    constructor(words: EscapedShellWord[], env: ProcessEnvironment, dimensions: Dimensions, dataHandler: (d: ANSIString) => void, exitHandler: (c: number) => void) {
+    constructor(words: EscapedShellWord[], env: ProcessEnvironment, dimensions: Dimensions, dataHandler: (d: string) => void, exitHandler: (c: number) => void) {
         const shellArguments = [...loginShell.noConfigSwitches, ...loginShell.interactiveCommandSwitches, words.join(" ")];
 
-        debug(`PTY: ${loginShell.executableName} ${JSON.stringify(shellArguments)}`);
+        info(`PTY: ${loginShell.executableName} ${JSON.stringify(shellArguments)}`);
 
         this.terminal = <any> pty.fork(loginShell.executableName, shellArguments, {
             cols: dimensions.columns,
@@ -30,7 +30,7 @@ export class PTY {
             env: env,
         });
 
-        this.terminal.on("data", (data: ANSIString) => dataHandler(data));
+        this.terminal.on("data", (data: string) => dataHandler(data));
         this.terminal.on("exit", (code: number) => exitHandler(code));
     }
 

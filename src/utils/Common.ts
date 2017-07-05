@@ -16,10 +16,6 @@ export function info(...args: any[]): void {
     print(e.LogLevel.Info, args);
 }
 
-export function debug(...args: any[]): void {
-    print(e.LogLevel.Debug, args);
-}
-
 export function log(...args: any[]): void {
     print(e.LogLevel.Log, args);
 }

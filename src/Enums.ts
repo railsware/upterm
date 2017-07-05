@@ -89,7 +89,6 @@ export enum Brightness {
 
 export enum LogLevel {
     Info = <LogLevel><any>"info",
-    Debug = <LogLevel><any>"debug",
     Log = <LogLevel><any>"log",
     Error = <LogLevel><any>"error",
 }

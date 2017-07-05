@@ -31,14 +31,14 @@ describe("ANSI parser", () => {
     });
 
     it("can parse an ASCII string", async() => {
-        terminal.output.write(<ANSIString> "something");
+        terminal.output.write("something");
 
         expect(terminal.output.toString()).to.eql("something");
     });
 
     describe("movements", () => {
         it("can move down", async() => {
-            terminal.output.write(<ANSIString> `first${csi([1], "B")}second`);
+            terminal.output.write(`first${csi([1], "B")}second`);
 
             expect(terminal.output.toString()).to.eql(output(`
 first
@@ -49,7 +49,7 @@ first
 
     describe("true color", () => {
         it("sets the correct foreground color", async() => {
-            terminal.output.write(<ANSIString> `${sgr([38, 2, 255, 100, 0])}A${sgr([0])}`);
+            terminal.output.write(`${sgr([38, 2, 255, 100, 0])}A${sgr([0])}`);
 
             expect(terminal.output.toString()).to.eql("A");
             const firstChar = terminal.output.at({row: 0, column: 0});
@@ -61,7 +61,7 @@ first
         describe("Device Status Report (DSR)", () => {
             describe("Report Cursor Position (CPR)", () => {
                 it("report cursor position", async() => {
-                    terminal.output.write(<ANSIString> `some text${csi([6], "n")}`);
+                    terminal.output.write(`some text${csi([6], "n")}`);
 
                     expect(terminal.output.toString()).to.eql("some text");
                     expect(terminal.written).to.eql(`${csi([1, 10], "R")}`);
@@ -71,8 +71,8 @@ first
     });
 
     describe("vttest", () => {
-        function vttest(fileName: string): ANSIString {
-            return <ANSIString>readFileSync(`${__dirname}/test_files/vttest/${fileName}`).toString();
+        function vttest(fileName: string): string {
+            return readFileSync(`${__dirname}/test_files/vttest/${fileName}`).toString();
         }
 
         describe("cursor movements", () => {

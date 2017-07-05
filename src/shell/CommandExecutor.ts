@@ -62,7 +62,7 @@ class ShellExecutionStrategy extends CommandExecutionStrategy {
                 this.job.prompt.expandedTokens.map(token => token.escapedValue),
                 this.job.environment.toObject(),
                 this.job.dimensions,
-                (data: ANSIString) => this.job.output.write(data),
+                (data: string) => this.job.output.write(data),
                 (exitCode: number) => exitCode === 0 ? resolve() : reject(new NonZeroExitCodeError(exitCode.toString())),
             ));
         });
@@ -84,7 +84,7 @@ class WindowsShellExecutionStrategy extends CommandExecutionStrategy {
                     ...this.job.prompt.expandedTokens.map(token => token.escapedValue),
                 ],
                 this.job.environment.toObject(), this.job.dimensions,
-                (data: ANSIString) => this.job.output.write(data),
+                (data: string) => this.job.output.write(data),
                 (_exitCode: number) => resolve(),
             ));
         });

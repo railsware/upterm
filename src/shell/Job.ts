@@ -59,7 +59,7 @@ export class Job extends EmitterWithUniqueID implements TerminalLikeDevice {
             if (message instanceof NonZeroExitCodeError) {
                 // Do nothing.
             } else {
-                this._output.writeMany(message);
+                this._output.write(message);
             }
         }
         this.emit("end");

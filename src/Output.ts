@@ -5,7 +5,7 @@ import * as e from "./Enums";
 import {List} from "immutable";
 import {Color, Weight, Brightness, KeyCode, LogLevel, OutputType} from "./Enums";
 import {Attributes, TerminalLikeDevice, ColorCode} from "./Interfaces";
-import {print, error, info, debug, csi, times} from "./utils/Common";
+import {print, error, info, csi, times} from "./utils/Common";
 
 const ansiParserConstructor: typeof AnsiParser = require("node-ansiparser");
 
@@ -34,7 +34,9 @@ function or1(value: number | undefined) {
 // TODO: Move to
 function logPosition(output: Output) {
     const position = {row: output.cursorRow, column: output.cursorColumn};
-    debug(`%crow: ${position.row}\tcolumn: ${output.cursorColumn}\t value: ${output.at(position)}`, "color: green");
+    const char = output.at(position);
+    const value = char ? char.value : 'NULL';
+    info(`%crow: ${position.row}\tcolumn: ${output.cursorColumn}\t value: ${value}`, "color: green");
 }
 
 /**
@@ -142,7 +144,9 @@ class ANSIParser {
             inst_p: (text: string) => {
                 info("text", text, text.split("").map(letter => letter.charCodeAt(0)));
 
-                this.output.writeMany(text);
+                for (let i = 0; i !== text.length; ++i) {
+                    this.output.writeOne(text.charAt(i));
+                }
 
                 logPosition(this.output);
             },
@@ -204,7 +208,7 @@ class ANSIParser {
         });
     }
 
-    parse(data: ANSIString): void {
+    parse(data: string): void {
         this.parser.parse(data);
     }
 
@@ -223,7 +227,7 @@ class ANSIParser {
 
                 for (let i = 0; i !== dimensions.rows; ++i) {
                     this.output.moveCursorAbsolute({row: i, column: 0});
-                    this.output.writeMany(Array(dimensions.columns).join("E"));
+                    this.output.write(Array(dimensions.columns).join("E"));
                 }
 
                 this.output.moveCursorAbsolute({row: 0, column: 0});
@@ -631,16 +635,9 @@ export class Output extends events.EventEmitter {
         this.parser = new ANSIParser(terminalDevice, this);
     }
 
-    write(ansiString: ANSIString) {
+    write(ansiString: string) {
         this.parser.parse(ansiString);
         this.emit("data");
-    }
-
-    writeMany(value: string): void {
-        for (let i = 0; i !== value.length; ++i) {
-            this.writeOne(value.charAt(i));
-        }
-
     }
 
     writeOne(char: string): void {
