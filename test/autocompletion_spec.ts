@@ -69,9 +69,9 @@ describe("Util methods", () => {
         });
 
         it("Git branches found for repo", async () => {
-            // let environment =  new Environment({});
-            // console.log("git dir check - " + __dirname);
-            // console.log("env path - " + environment.pwd);
+            let environment =  new Environment({});
+            console.log("git dir check - " + __dirname);
+            console.log("env path - " + environment.pwd);
             // console.log("upterm repo root dir - " + repoDirRoot);
             const currBranches =
                 await Git.branches({directory: repoGitDirectory, remotes: false, tags: false});
