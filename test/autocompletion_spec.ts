@@ -75,7 +75,7 @@ describe("Util methods", () => {
             // console.log("upterm repo root dir - " + repoDirRoot);
             const currBranches =
                 await Git.branches({directory: repoGitDirectory, remotes: false, tags: false});
-            // console.log("git branches length - " + currBranches.length);
+            console.log("git branches length - " + currBranches.length);
             expect(currBranches.length).to.greaterThan(0);
         });
 
