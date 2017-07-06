@@ -56,12 +56,12 @@ class RowComponent extends React.Component<RowProps, {}> {
     }
 
     render() {
-        const cursorColumn = this.props.job.output.cursorColumn;
+        const cursorColumnIndex = this.props.job.output.cursorColumnIndex;
         const row = this.props.row.toArray();
 
-        const rowWithoutHoles = _.range(0, Math.max(cursorColumn + 1, this.props.row.size)).map(index => {
+        const rowWithoutHoles = _.range(0, Math.max(cursorColumnIndex + 1, this.props.row.size)).map(index => {
             const char = row[index] || space;
-            const attributes = (this.props.hasCursor && index === cursorColumn) ?
+            const attributes = (this.props.hasCursor && index === cursorColumnIndex) ?
                 {...char.attributes, cursor: true} :
                 char.attributes;
 
@@ -110,7 +110,7 @@ export class OutputComponent extends React.Component<Props, State> {
                             <RowComponent
                                 key={index}
                                 row={row}
-                                hasCursor={index === output.cursorRow && showCursor}
+                                hasCursor={index === output.cursorRowIndex && showCursor}
                                 status={this.props.job.status}
                                 job={this.props.job}/>
                         );

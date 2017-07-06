@@ -14,8 +14,8 @@ interface Advancement {
 }
 
 interface RowColumn {
-    column: number;
-    row: number;
+    columnIndex: number;
+    rowIndex: number;
 }
 
 type VcsStatus = "dirty" | "clean";

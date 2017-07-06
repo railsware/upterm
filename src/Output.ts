@@ -17,8 +17,8 @@ interface HandlerResult {
 }
 
 interface SavedState {
-    cursorRow: number;
-    cursorColumn: number;
+    cursorRowIndex: number;
+    cursorColumnIndex: number;
     attributes: i.Attributes;
 }
 
@@ -33,10 +33,10 @@ function or1(value: number | undefined) {
 
 // TODO: Move to
 function logPosition(output: Output) {
-    const position = {row: output.cursorRow, column: output.cursorColumn};
+    const position = {rowIndex: output.cursorRowIndex, columnIndex: output.cursorColumnIndex};
     const char = output.at(position);
     const value = char ? char.value : "NULL";
-    info(`%crow: ${position.row + 1}\tcolumn: ${output.cursorColumn + 1}\t value: ${value}, rows: ${output.storage.size}`, "color: green");
+    info(`%crow: ${position.rowIndex + 1}\tcolumn: ${output.cursorColumnIndex + 1}\t value: ${value}, rows: ${output.storage.size}`, "color: green");
 }
 
 /**
@@ -226,11 +226,11 @@ class ANSIParser {
                 const dimensions = this.output.dimensions;
 
                 for (let i = 0; i !== dimensions.rows; ++i) {
-                    this.output.moveCursorAbsolute({row: i, column: 0});
+                    this.output.moveCursorAbsolute({rowIndex: i, columnIndex: 0});
                     this.output.write(Array(dimensions.columns).join("E"));
                 }
 
-                this.output.moveCursorAbsolute({row: 0, column: 0});
+                this.output.moveCursorAbsolute({rowIndex: 0, columnIndex: 0});
             } else if (collected === "(" && flag === "0") {
                 short = "Enable Graphic Charset";
 
@@ -270,7 +270,7 @@ class ANSIParser {
                     /* tslint:disable:max-line-length */
                     long = "Move the active position to the same horizontal position on the preceding lin If the active position is at the top margin, a scroll down is performed.";
 
-                    if (this.output.cursorRow === this.output.marginTop) {
+                    if (this.output.cursorRowIndex === this.output.marginTop) {
                         this.output.scrollDown(1);
                     } else {
                         this.output.moveCursorRelative({vertical: -1});
@@ -282,7 +282,7 @@ class ANSIParser {
                     long = "This sequence causes the active position to move to the first position on the next line downward. If the active position is at the bottom margin, a scroll up is performed.";
 
                     this.output.moveCursorRelative({vertical: 1});
-                    this.output.moveCursorAbsolute({column: 0});
+                    this.output.moveCursorAbsolute({columnIndex: 0});
                     break;
                 case "7":
                     long = "Save current state (cursor coordinates, attributes, character sets pointed at by G0, G1).";
@@ -435,13 +435,13 @@ class ANSIParser {
                 short = "Cursor Character Absolute [column] (default = [row,1]) (CHA)";
                 url = "http://www.vt100.net/docs/vt510-rm/CHA";
 
-                this.output.moveCursorAbsolute({column: or1(param || 1) - 1});
+                this.output.moveCursorAbsolute({columnIndex: or1(param || 1) - 1});
                 break;
             case "H":
                 short = "Cursor Position [row;column] (default = [1,1]) (CUP).";
                 url = "http://www.vt100.net/docs/vt510-rm/CUP";
 
-                this.output.moveCursorAbsolute({row: or1(params[0]) - 1, column: or1(params[1]) - 1});
+                this.output.moveCursorAbsolute({rowIndex: or1(params[0]) - 1, columnIndex: or1(params[1]) - 1});
                 break;
             case "J":
                 url = "http://www.vt100.net/docs/vt510-rm/ED";
@@ -496,7 +496,7 @@ class ANSIParser {
                 url = "http://www.vt100.net/docs/vt510-rm/DL";
                 short = "Deletes one or more lines in the scrolling region, starting with the line that has the cursor. (DL)";
 
-                this.output.scrollUp(param || 1, this.output.cursorRow);
+                this.output.scrollUp(param || 1, this.output.cursorRowIndex);
                 break;
             case "P":
                 url = "http://www.vt100.net/docs/vt510-rm/DCH.html";
@@ -518,13 +518,13 @@ class ANSIParser {
                 short = "Line Position Absolute [row] (default = [1,column]) (VPA).";
                 url = "http://www.vt100.net/docs/vt510-rm/VPA";
 
-                this.output.moveCursorAbsolute({row: or1(param || 1) - 1});
+                this.output.moveCursorAbsolute({rowIndex: or1(param || 1) - 1});
                 break;
             case "f":
                 short = "Horizontal and Vertical Position [row;column] (default = [1,1]) (HVP).";
                 url = "http://www.vt100.net/docs/vt510-rm/HVP";
 
-                this.output.moveCursorAbsolute({row: or1(params[0]) - 1, column: or1(params[1]) - 1});
+                this.output.moveCursorAbsolute({rowIndex: or1(params[0]) - 1, columnIndex: or1(params[1]) - 1});
                 break;
             case "m":
                 short = `SGR: ${params}`;
@@ -571,7 +571,7 @@ class ANSIParser {
                 if (param === 6) {
                     url = "http://www.vt100.net/docs/vt510-rm/CPR";
                     short = "Report Cursor Position (CPR) [row;column] as CSI r ; c R";
-                    this.terminalDevice.write(csi(`${this.output.cursorRow + 1};${this.output.cursorColumn + 1}R`));
+                    this.terminalDevice.write(csi(`${this.output.cursorRowIndex + 1};${this.output.cursorColumnIndex + 1}R`));
                 } else {
                     status = "unhandled";
                 }
@@ -585,7 +585,7 @@ class ANSIParser {
                 let top = <number>(params[0] ? params[0] - 1 : undefined);
 
                 this.output.margins = {top: top, bottom: bottom};
-                this.output.moveCursorAbsolute({row: 0, column: 0});
+                this.output.moveCursorAbsolute({rowIndex: 0, columnIndex: 0});
                 break;
             case "@":
                 url = "http://www.vt100.net/docs/vt510-rm/ICH.html";
@@ -616,8 +616,8 @@ class ANSIParser {
 
 export class Output extends events.EventEmitter {
     public static hugeOutputThreshold = 300;
-    public cursorRow = 0;
-    public cursorColumn = 0;
+    public cursorRowIndex = 0;
+    public cursorColumnIndex = 0;
     public _showCursor = true;
     public _blinkCursor = true;
     public activeOutputType = e.OutputType.Standard;
@@ -657,10 +657,10 @@ export class Output extends events.EventEmitter {
                     this.moveCursorRelative({horizontal: -1});
                     break;
                 case e.KeyCode.Tab:
-                    this.moveCursorAbsolute({column: Math.floor((this.cursorColumn + 8) / 8) * 8});
+                    this.moveCursorAbsolute({columnIndex: Math.floor((this.cursorColumnIndex + 8) / 8) * 8});
                     break;
                 case e.KeyCode.NewLine:
-                    if (this.cursorRow === this._margins.bottom) {
+                    if (this.cursorRowIndex === this._margins.bottom) {
                         this.scrollUp(1);
                     } else {
                         this.moveCursorRelative({vertical: 1});
@@ -668,14 +668,14 @@ export class Output extends events.EventEmitter {
 
                     break;
                 case e.KeyCode.CarriageReturn:
-                    this.moveCursorAbsolute({column: 0});
+                    this.moveCursorAbsolute({columnIndex: 0});
                     break;
                 default:
                     error(`Couldn't write a special char "${charObject}".`);
             }
         } else {
-            if (this.cursorColumn === this.dimensions.columns) {
-                this.moveCursorAbsolute({column: 0});
+            if (this.cursorColumnIndex === this.dimensions.columns) {
+                this.moveCursorAbsolute({columnIndex: 0});
                 this.moveCursorRelative({vertical: 1});
             }
 
@@ -686,7 +686,7 @@ export class Output extends events.EventEmitter {
 
     scrollDown(count: number) {
         this.storage = this.storage.splice((this._margins.bottom || 0) - count + 1, count).toList();
-        times(count, () => this.storage = this.storage.splice(this.cursorRow, 0, undefined).toList());
+        times(count, () => this.storage = this.storage.splice(this.cursorRowIndex, 0, undefined).toList());
     }
 
     scrollUp(count: number, deletedLine = this._margins.top) {
@@ -727,112 +727,112 @@ export class Output extends events.EventEmitter {
     }
 
     showCursor(state: boolean): void {
-        this.ensureRowExists(this.cursorRow);
+        this.ensureRowExists(this.cursorRowIndex);
         this._showCursor = state;
     }
 
     blinkCursor(state: boolean): void {
-        this.ensureRowExists(this.cursorRow);
+        this.ensureRowExists(this.cursorRowIndex);
         this._blinkCursor = state;
     }
 
     moveCursorRelative(advancement: Advancement): this {
         // Cursor might be hanging after the last column.
-        const boundCursorColumnIndex = Math.min(this.dimensions.columns - 1, this.cursorColumn);
+        const boundCursorColumnIndex = Math.min(this.dimensions.columns - 1, this.cursorColumnIndex);
 
-        const row = Math.max(0, this.cursorRow + (advancement.vertical || 0));
-        const column = Math.min(this.dimensions.columns, Math.max(0, boundCursorColumnIndex + (advancement.horizontal || 0)));
+        const rowIndex = Math.max(0, this.cursorRowIndex + (advancement.vertical || 0));
+        const columnIndex = Math.min(this.dimensions.columns, Math.max(0, boundCursorColumnIndex + (advancement.horizontal || 0)));
 
-        this.moveCursorAbsolute({ row: row, column: column });
+        this.moveCursorAbsolute({rowIndex: rowIndex, columnIndex: columnIndex});
 
         return this;
     }
 
     moveCursorAbsolute(position: Partial<RowColumn>): this {
-        if (typeof position.column === "number") {
-            this.cursorColumn = Math.max(position.column, 0) + this.homePosition.column;
+        if (typeof position.columnIndex === "number") {
+            this.cursorColumnIndex = Math.max(position.columnIndex, 0) + this.homePosition.columnIndex;
         }
 
-        if (typeof position.row === "number") {
-            this.cursorRow = Math.max(position.row, 0) + this.homePosition.row;
+        if (typeof position.rowIndex === "number") {
+            this.cursorRowIndex = Math.max(position.rowIndex, 0) + this.homePosition.rowIndex;
         }
 
         return this;
     }
 
     deleteRight(n: number) {
-        if (this.storage.get(this.cursorRow)) {
+        if (this.storage.get(this.cursorRowIndex)) {
             this.storage = this.storage.update(
-                this.cursorRow,
+                this.cursorRowIndex,
                 List<Char>(),
-                (row: List<Char>) => row.splice(this.cursorColumn, n).toList(),
+                (row: List<Char>) => row.splice(this.cursorColumnIndex, n).toList(),
             );
         }
     }
 
     insertSpaceRight(n: number) {
-        if (this.storage.get(this.cursorRow)) {
+        if (this.storage.get(this.cursorRowIndex)) {
             let nSpace = "";
             for (let i = 0; i < n; i++) { nSpace += " "; }
             this.storage = this.storage.update(
-                this.cursorRow,
+                this.cursorRowIndex,
                 List<Char>(),
-                (row: List<Char>) => row.splice(this.cursorColumn, 0, nSpace).toList(),
+                (row: List<Char>) => row.splice(this.cursorColumnIndex, 0, nSpace).toList(),
             );
         }
     }
 
     eraseRight(n: number) {
-        if (this.storage.get(this.cursorRow)) {
+        if (this.storage.get(this.cursorRowIndex)) {
             this.storage = this.storage.update(
-                this.cursorRow,
+                this.cursorRowIndex,
                 List<Char>(),
-                (row: List<Char>) => row.take(this.cursorColumn)
-                    .concat(Array(n).fill(space), row.skip(this.cursorColumn + n))
+                (row: List<Char>) => row.take(this.cursorColumnIndex)
+                    .concat(Array(n).fill(space), row.skip(this.cursorColumnIndex + n))
                     .toList(),
             );
         }
     }
 
     clearRow() {
-        this.storage = this.storage.set(this.cursorRow, List<Char>());
+        this.storage = this.storage.set(this.cursorRowIndex, List<Char>());
     }
 
     clearRowToEnd() {
-        if (this.storage.get(this.cursorRow)) {
+        if (this.storage.get(this.cursorRowIndex)) {
             this.storage = this.storage.update(
-                this.cursorRow,
+                this.cursorRowIndex,
                 List<Char>(),
-                (row: List<Char>) => row.take(this.cursorColumn).toList(),
+                (row: List<Char>) => row.take(this.cursorColumnIndex).toList(),
             );
         }
     }
 
     clearRowToBeginning() {
-        if (this.storage.get(this.cursorRow)) {
-            const count = this.cursorColumn + 1;
+        if (this.storage.get(this.cursorRowIndex)) {
+            const count = this.cursorColumnIndex + 1;
             const replacement = Array(count).fill(space);
             this.storage = this.storage.update(
-                this.cursorRow,
+                this.cursorRowIndex,
                 row => row.splice(0, count, ...replacement).toList());
         }
     }
 
     clear() {
         this.storage = List<List<Char>>();
-        this.moveCursorAbsolute({row: 0, column: 0});
+        this.moveCursorAbsolute({rowIndex: 0, columnIndex: 0});
     }
 
     clearToBeginning() {
         this.clearRowToBeginning();
-        const replacement = Array(this.cursorRow);
+        const replacement = Array(this.cursorRowIndex);
 
-        this.storage = this.storage.splice(0, this.cursorRow, ...replacement).toList();
+        this.storage = this.storage.splice(0, this.cursorRowIndex, ...replacement).toList();
     }
 
     clearToEnd() {
         this.clearRowToEnd();
-        this.storage = this.storage.splice(this.cursorRow + 1, this.storage.size - this.cursorRow).toList();
+        this.storage = this.storage.splice(this.cursorRowIndex + 1, this.storage.size - this.cursorRowIndex).toList();
     }
 
     get size(): number {
@@ -864,20 +864,20 @@ export class Output extends events.EventEmitter {
     }
 
     at(position: RowColumn): Char {
-        return this.storage.getIn([position.row, position.column]);
+        return this.storage.getIn([position.rowIndex, position.columnIndex]);
     }
 
     saveCurrentState() {
         this.savedState = {
-            cursorRow: this.cursorRow,
-            cursorColumn: this.cursorColumn,
+            cursorRowIndex: this.cursorRowIndex,
+            cursorColumnIndex: this.cursorColumnIndex,
             attributes: {...this.attributes},
         };
     }
 
     restoreCurrentState() {
         if (this.savedState) {
-            this.moveCursorAbsolute({row: this.savedState.cursorRow, column: this.savedState.cursorColumn});
+            this.moveCursorAbsolute({rowIndex: this.savedState.cursorRowIndex, columnIndex: this.savedState.cursorColumnIndex});
             this.setAttributes(this.savedState.attributes);
         } else {
             console.error("No state to restore.");
@@ -886,20 +886,20 @@ export class Output extends events.EventEmitter {
 
     private get homePosition(): RowColumn {
         if (this.isOriginModeSet) {
-            return {row: this._margins.top || 0, column: this._margins.left || 0};
+            return {rowIndex: this._margins.top || 0, columnIndex: this._margins.left || 0};
         } else {
-            return {row: 0, column: 0};
+            return {rowIndex: 0, columnIndex: 0};
         }
     }
 
     private set(char: Char): void {
-        this.ensureRowExists(this.cursorRow);
-        this.storage = this.storage.setIn([this.cursorRow, this.cursorColumn], char);
+        this.ensureRowExists(this.cursorRowIndex);
+        this.storage = this.storage.setIn([this.cursorRowIndex, this.cursorColumnIndex], char);
     }
 
-    private ensureRowExists(rowNumber: number): void {
-        if (!this.storage.get(rowNumber)) {
-            this.storage = this.storage.set(rowNumber, List<Char>());
+    private ensureRowExists(rowIndex: number): void {
+        if (!this.storage.get(rowIndex)) {
+            this.storage = this.storage.set(rowIndex, List<Char>());
         }
     }
 }

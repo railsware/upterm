@@ -72,7 +72,7 @@ first
             terminal.output.write(`${sgr([38, 2, 255, 100, 0])}A${sgr([0])}`);
 
             expect(terminal.output.toString()).to.eql("A");
-            const firstChar = terminal.output.at({row: 0, column: 0});
+            const firstChar = terminal.output.at({rowIndex: 0, columnIndex: 0});
             expect(firstChar.attributes.color).to.eql([255, 100, 0]);
         });
     });
