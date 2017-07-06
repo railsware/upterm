@@ -78,8 +78,7 @@ first
         describe("cursor movements", () => {
             it("1-1", () => {
 
-                terminal.output.write(vttest("1-1"));
-                expect(terminal.output.toString()).to.contain(output(`
+                const expectedOutput = output(`
 ********************************************************************************
 *++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*
 *+                                                                            +*
@@ -104,7 +103,20 @@ first
 *+                                                                            +*
 *++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*
 ********************************************************************************
-`));
+`);
+
+                terminal.output.write(vttest("1-1"));
+                const actualOutput = terminal.output.toString();
+
+                if (expectedOutput !== actualOutput) {
+                    console.log("Expected output:");
+                    console.log(expectedOutput);
+
+                    console.log("Actual output:");
+                    console.log(actualOutput);
+
+                    expect(expectedOutput).to.eq(actualOutput);
+                }
             });
         });
     });
