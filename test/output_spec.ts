@@ -6,15 +6,15 @@ import {readFileSync} from "fs";
 
 class DummyTerminal implements TerminalLikeDevice {
     output: Output = new Output(this, {columns: 90, rows: 40});
-    dimensions = {columns: 80, rows: 24};
     written = "";
     write = (input: string) => this.written += input;
 }
 
 type CSIFinalCharacter = "A" | "B" | "C" | "D" | "E" | "F" | "R" | "m" | "n";
 
+const esc = `\x1b`;
 const csi = (params: number[], final: CSIFinalCharacter) => {
-    return `\x1b[${params.join(";")}${final}`;
+    return `${esc}[${params.join(";")}${final}`;
 };
 
 const sgr = (params: number[]) => {
@@ -30,10 +30,16 @@ describe("ANSI parser", () => {
         terminal = new DummyTerminal();
     });
 
-    it("can parse an ASCII string", async() => {
-        terminal.output.write("something");
+    it("wraps long strings", async() => {
+        terminal.output.dimensions = {columns: 5, rows: 5};
 
-        expect(terminal.output.toString()).to.eql("something");
+        const expectedOutput = output(`
+01234
+56789
+`);
+        terminal.output.write("0123456789");
+
+        expect(terminal.output.toString()).to.eql(expectedOutput);
     });
 
     describe("movements", () => {
@@ -45,6 +51,20 @@ first
      second
 `));
         });
+
+        it("stays at the same line after writing last column character", async() => {
+            terminal.output.dimensions = {columns: 10, rows: 5};
+            terminal.output.write(`${esc}[1;10H*${esc}[5D*`);
+
+            expect(terminal.output.toString()).to.eql("    *    *");
+            expect(terminal.output.toString()).to.eql("    *    *");
+        });
+    });
+
+    it("can parse an ASCII string", async() => {
+        terminal.output.write("something");
+
+        expect(terminal.output.toString()).to.eql("something");
     });
 
     describe("true color", () => {

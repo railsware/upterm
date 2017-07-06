@@ -36,7 +36,7 @@ function logPosition(output: Output) {
     const position = {row: output.cursorRow, column: output.cursorColumn};
     const char = output.at(position);
     const value = char ? char.value : "NULL";
-    info(`%crow: ${position.row}\tcolumn: ${output.cursorColumn}\t value: ${value}`, "color: green");
+    info(`%crow: ${position.row + 1}\tcolumn: ${output.cursorColumn + 1}\t value: ${value}, rows: ${output.storage.size}`, "color: green");
 }
 
 /**
@@ -674,6 +674,11 @@ export class Output extends events.EventEmitter {
                     error(`Couldn't write a special char "${charObject}".`);
             }
         } else {
+            if (this.cursorColumn === this.dimensions.columns) {
+                this.moveCursorAbsolute({column: 0});
+                this.moveCursorRelative({vertical: 1});
+            }
+
             this.set(charObject);
             this.moveCursorRelative({horizontal: 1});
         }
@@ -732,12 +737,13 @@ export class Output extends events.EventEmitter {
     }
 
     moveCursorRelative(advancement: Advancement): this {
+        // Cursor might be hanging after the last column.
+        const boundCursorColumnIndex = Math.min(this.dimensions.columns - 1, this.cursorColumn);
+
         const row = Math.max(0, this.cursorRow + (advancement.vertical || 0));
-        const column = Math.max(0, this.cursorColumn + (advancement.horizontal || 0));
+        const column = Math.min(this.dimensions.columns, Math.max(0, boundCursorColumnIndex + (advancement.horizontal || 0)));
 
         this.moveCursorAbsolute({ row: row, column: column });
-
-        this.ensureRowExists(this.cursorRow);
 
         return this;
     }
@@ -750,8 +756,6 @@ export class Output extends events.EventEmitter {
         if (typeof position.row === "number") {
             this.cursorRow = Math.max(position.row, 0) + this.homePosition.row;
         }
-
-        this.ensureRowExists(this.cursorRow);
 
         return this;
     }
