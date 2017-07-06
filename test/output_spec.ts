@@ -193,6 +193,30 @@ Z                                                                              z
 Push <RETURN>
 `);
 
+            vttest("1-4", `
+Test of autowrap, mixing control and print characters.
+The left/right margins should have letters in order:
+I                                                                                                                                  i
+J                                                                                                                                  j
+K                                                                                                                                  k
+L                                                                                                                                  l
+M                                                                                                                                  m
+N                                                                                                                                  n
+O                                                                                                                                  o
+P                                                                                                                                  p
+Q                                                                                                                                  q
+R                                                                                                                                  r
+S                                                                                                                                  s
+T                                                                                                                                  t
+U                                                                                                                                  u
+V                                                                                                                                  v
+W                                                                                                                                  w
+X                                                                                                                                  x
+Y                                                                                                                                  y
+Z                                                                                                                                  z
+
+Push <RETURN>
+`);
         });
     });
 });
