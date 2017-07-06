@@ -806,10 +806,11 @@ export class Output extends events.EventEmitter {
 
     clearRowToBeginning() {
         if (this.storage.get(this.cursorRow)) {
-            const replacement = Array(this.cursorColumn).fill(space);
+            const count = this.cursorColumn + 1;
+            const replacement = Array(count).fill(space);
             this.storage = this.storage.update(
                 this.cursorRow,
-                row => row.splice(0, this.cursorColumn + 1, ...replacement).toList());
+                row => row.splice(0, count, ...replacement).toList());
         }
     }
 
