@@ -581,8 +581,8 @@ class ANSIParser {
                 url = "http://www.vt100.net/docs/vt510-rm/DECSTBM";
                 short = "Set Scrolling Region [top;bottom] (default = full size of window) (DECSTBM).";
 
-                let bottom = <number>(params[1] ? params[1] - 1 : undefined);
-                let top = <number>(params[0] ? params[0] - 1 : undefined);
+                const top = <number>(params[0] ? params[0] - 1 : undefined);
+                const bottom = <number>(params[1] ? params[1] - 1 : undefined);
 
                 this.output.margins = {top: top, bottom: bottom};
                 this.output.moveCursorAbsolute({rowIndex: 0, columnIndex: 0});
@@ -657,7 +657,7 @@ export class Output extends events.EventEmitter {
                     this.moveCursorRelative({horizontal: -1});
                     break;
                 case e.KeyCode.Tab:
-                    this.moveCursorAbsolute({columnIndex: Math.floor((this.cursorColumnIndex + 8) / 8) * 8});
+                    this.moveCursorAbsolute({columnIndex: Math.min(this.dimensions.columns - 1, Math.floor((this.cursorColumnIndex + 8) / 8) * 8)});
                     break;
                 case e.KeyCode.NewLine:
                     if (this.cursorRowIndex === this._margins.bottom) {
@@ -740,10 +740,8 @@ export class Output extends events.EventEmitter {
         // Cursor might be hanging after the last column.
         const boundCursorColumnIndex = Math.min(this.dimensions.columns - 1, this.cursorColumnIndex);
 
-        const rowIndex = Math.max(0, this.cursorRowIndex + (advancement.vertical || 0));
-        const columnIndex = Math.min(this.dimensions.columns, Math.max(0, boundCursorColumnIndex + (advancement.horizontal || 0)));
-
-        this.moveCursorAbsolute({rowIndex: rowIndex, columnIndex: columnIndex});
+        this.cursorRowIndex = Math.max(0, this.cursorRowIndex + (advancement.vertical || 0));
+        this.cursorColumnIndex = Math.min(this.dimensions.columns, Math.max(0, boundCursorColumnIndex + (advancement.horizontal || 0)));
 
         return this;
     }
