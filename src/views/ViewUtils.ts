@@ -10,7 +10,7 @@ export function stopBubblingUp(event: Event): Event {
 }
 
 export function isModifierKey(event: KeyboardEvent) {
-    return [KeyCode.Shift, KeyCode.Ctrl, KeyCode.Meta, KeyCode.Alt, KeyCode.AltGraph].includes(event.keyCode);
+    return [KeyCode.Shift, KeyCode.Ctrl, KeyCode.Meta, KeyCode.Alt, KeyCode.CapsLock, KeyCode.AltGraph].includes(event.keyCode);
 }
 
 export function setCaretPosition(node: Node, position: number) {
