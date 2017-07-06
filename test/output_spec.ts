@@ -21,7 +21,7 @@ const sgr = (params: number[]) => {
     return csi(params, "m");
 };
 
-const output = (string: string) => string.slice(1, -1);
+const strip = (string: string) => string.slice(1, -1);
 
 describe("ANSI parser", () => {
     let terminal: DummyTerminal;
@@ -33,7 +33,7 @@ describe("ANSI parser", () => {
     it("wraps long strings", async() => {
         terminal.output.dimensions = {columns: 5, rows: 5};
 
-        const expectedOutput = output(`
+        const expectedOutput = strip(`
 01234
 56789
 `);
@@ -46,7 +46,7 @@ describe("ANSI parser", () => {
         it("can move down", async() => {
             terminal.output.write(`first${csi([1], "B")}second`);
 
-            expect(terminal.output.toString()).to.eql(output(`
+            expect(terminal.output.toString()).to.eql(strip(`
 first
      second
 `));
@@ -91,14 +91,30 @@ first
     });
 
     describe("vttest", () => {
-        function vttest(fileName: string): string {
-            return readFileSync(`${__dirname}/test_files/vttest/${fileName}`).toString();
+        function vttest(fileName: string, output: string) {
+            const input = readFileSync(`${__dirname}/test_files/vttest/${fileName}`).toString();
+
+            return it(fileName, () => {
+
+                const expectedOutput = strip(output);
+
+                terminal.output.write(input);
+                const actualOutput = terminal.output.toString();
+
+                if (expectedOutput !== actualOutput) {
+                    console.log("Expected output:");
+                    console.log(expectedOutput);
+
+                    console.log("Actual output:");
+                    console.log(actualOutput);
+
+                    expect(expectedOutput).to.eq(actualOutput);
+                }
+            });
         }
 
         describe("cursor movements", () => {
-            it("1-1", () => {
-
-                const expectedOutput = output(`
+            vttest("1-1", `
 ********************************************************************************
 *++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*
 *+                                                                            +*
@@ -125,19 +141,32 @@ first
 ********************************************************************************
 `);
 
-                terminal.output.write(vttest("1-1"));
-                const actualOutput = terminal.output.toString();
-
-                if (expectedOutput !== actualOutput) {
-                    console.log("Expected output:");
-                    console.log(expectedOutput);
-
-                    console.log("Actual output:");
-                    console.log(actualOutput);
-
-                    expect(expectedOutput).to.eq(actualOutput);
-                }
-            });
+            vttest("1-2", `
+************************************************************************************************************************************
+*++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*
+*+                                                                                                                                +*
+*+                                                                                                                                +*
+*+                                                                                                                                +*
+*+                                                                                                                                +*
+*+                                                                                                                                +*
+*+                                                                                                                                +*
+*+                                  EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE                                  +*
+*+                                  E                                                          E                                  +*
+*+                                  E The screen should be cleared,  and have an unbroken bor- E                                  +*
+*+                                  E der of *'s and +'s around the edge,   and exactly in the E                                  +*
+*+                                  E middle  there should be a frame of E's around this  text E                                  +*
+*+                                  E with  one (1) free position around it.    Push <RETURN>  E                                  +*
+*+                                  E                                                          E                                  +*
+*+                                  EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE                                  +*
+*+                                                                                                                                +*
+*+                                                                                                                                +*
+*+                                                                                                                                +*
+*+                                                                                                                                +*
+*+                                                                                                                                +*
+*+                                                                                                                                +*
+*++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*
+************************************************************************************************************************************
+`);
         });
     });
 });
