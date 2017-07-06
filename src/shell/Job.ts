@@ -20,13 +20,14 @@ function makeThrottledDataEmitter(timesPerSecond: number, subject: EmitterWithUn
 
 export class Job extends EmitterWithUniqueID implements TerminalLikeDevice {
     public status: Status = Status.InProgress;
-    private readonly _output: Output = new Output(this);
+    private readonly _output: Output;
     private readonly rareDataEmitter: Function = makeThrottledDataEmitter(1, this);
     private readonly frequentDataEmitter: Function = makeThrottledDataEmitter(60, this);
     private pty: PTY | undefined;
 
     constructor(private _session: Session, private _prompt: Prompt) {
         super();
+        this._output = new Output(this, this._session.dimensions);
         this._output.on("data", this.throttledDataEmitter);
     }
 
@@ -118,15 +119,6 @@ export class Job extends EmitterWithUniqueID implements TerminalLikeDevice {
         return this._session;
     }
 
-    get dimensions(): Dimensions {
-        return this.session.dimensions;
-    }
-
-    set dimensions(dimensions: Dimensions) {
-        this.session.dimensions = dimensions;
-        this.winch();
-    }
-
     hasOutput(): boolean {
         return !this._output.isEmpty();
     }
@@ -145,9 +137,10 @@ export class Job extends EmitterWithUniqueID implements TerminalLikeDevice {
         }
     }
 
-    winch(): void {
+    resize(): void {
         if (this.pty && this.status === Status.InProgress) {
-            this.pty.dimensions = this.dimensions;
+            this.pty.resize(this.session.dimensions);
+            this.output.dimensions = this.session.dimensions;
         }
     }
 

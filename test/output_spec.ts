@@ -5,7 +5,7 @@ import {TerminalLikeDevice} from "../src/Interfaces";
 import {readFileSync} from "fs";
 
 class DummyTerminal implements TerminalLikeDevice {
-    output: Output = new Output(this);
+    output: Output = new Output(this, {columns: 90, rows: 40});
     dimensions = {columns: 80, rows: 24};
     written = "";
     write = (input: string) => this.written += input;

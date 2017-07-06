@@ -63,7 +63,7 @@ export class Session extends EmitterWithUniqueID {
 
     set dimensions(value: Dimensions) {
         this._dimensions = value;
-        this.jobs.forEach(job => job.winch());
+        this.jobs.forEach(job => job.resize());
     }
 
     get currentJob(): Job | undefined {

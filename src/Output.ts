@@ -35,7 +35,7 @@ function or1(value: number | undefined) {
 function logPosition(output: Output) {
     const position = {row: output.cursorRow, column: output.cursorColumn};
     const char = output.at(position);
-    const value = char ? char.value : 'NULL';
+    const value = char ? char.value : "NULL";
     info(`%crow: ${position.row}\tcolumn: ${output.cursorColumn}\t value: ${value}`, "color: green");
 }
 
@@ -223,7 +223,7 @@ class ANSIParser {
                 short = "DEC Screen Alignment Test (DECALN).";
                 url = "http://www.vt100.net/docs/vt510-rm/DECALN";
 
-                const dimensions = this.terminalDevice.dimensions;
+                const dimensions = this.output.dimensions;
 
                 for (let i = 0; i !== dimensions.rows; ++i) {
                     this.output.moveCursorAbsolute({row: i, column: 0});
@@ -325,11 +325,11 @@ class ANSIParser {
                 if (shouldSet) {
                     description = "132 Column Mode (DECCOLM).";
 
-                    this.terminalDevice.dimensions = {columns: 132, rows: this.terminalDevice.dimensions.rows};
+                    this.output.dimensions = {columns: 132, rows: this.output.dimensions.rows};
                 } else {
                     description = "80 Column Mode (DECCOLM).";
 
-                    this.terminalDevice.dimensions = {columns: 80, rows: this.terminalDevice.dimensions.rows};
+                    this.output.dimensions = {columns: 80, rows: this.output.dimensions.rows};
                 }
                 this.output.clear();
                 // TODO
@@ -630,7 +630,7 @@ export class Output extends events.EventEmitter {
     private savedState: SavedState | undefined;
     private parser: ANSIParser;
 
-    constructor(terminalDevice: TerminalLikeDevice) {
+    constructor(terminalDevice: TerminalLikeDevice, public dimensions: Dimensions) {
         super();
         this.parser = new ANSIParser(terminalDevice, this);
     }

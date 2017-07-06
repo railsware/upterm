@@ -38,7 +38,7 @@ export class PTY {
         this.terminal.write(data);
     }
 
-    set dimensions(dimensions: Dimensions) {
+    resize(dimensions: Dimensions) {
         this.terminal.resize(dimensions.columns, dimensions.rows);
     }
 

@@ -61,7 +61,7 @@ class ShellExecutionStrategy extends CommandExecutionStrategy {
             this.job.setPty(new PTY(
                 this.job.prompt.expandedTokens.map(token => token.escapedValue),
                 this.job.environment.toObject(),
-                this.job.dimensions,
+                this.job.session.dimensions,
                 (data: string) => this.job.output.write(data),
                 (exitCode: number) => exitCode === 0 ? resolve() : reject(new NonZeroExitCodeError(exitCode.toString())),
             ));
@@ -83,7 +83,7 @@ class WindowsShellExecutionStrategy extends CommandExecutionStrategy {
                     "/c" as EscapedShellWord,
                     ...this.job.prompt.expandedTokens.map(token => token.escapedValue),
                 ],
-                this.job.environment.toObject(), this.job.dimensions,
+                this.job.environment.toObject(), this.job.session.dimensions,
                 (data: string) => this.job.output.write(data),
                 (_exitCode: number) => resolve(),
             ));
