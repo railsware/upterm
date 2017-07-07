@@ -22,6 +22,7 @@ export class PTY {
         const shellArguments = [...loginShell.noConfigSwitches, ...loginShell.interactiveCommandSwitches, words.join(" ")];
 
         info(`PTY: ${loginShell.executableName} ${JSON.stringify(shellArguments)}`);
+        info(`Dimensions: ${JSON.stringify(dimensions)}}`);
 
         this.terminal = <any> pty.fork(loginShell.executableName, shellArguments, {
             cols: dimensions.columns,

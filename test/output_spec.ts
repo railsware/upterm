@@ -60,7 +60,7 @@ first
             expect(terminal.output.toString()).to.eql("    *    *");
         });
 
-        it.only("doesn't move outside of the current page", () => {
+        it("doesn't move outside of the current page", () => {
             terminal.output.dimensions = {columns: 10, rows: 5};
             terminal.output.write(`1\r\n2\r\n3\r\n4\r\n5\r\n6\r\n7${esc}[1;1H42`);
 

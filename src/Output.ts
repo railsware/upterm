@@ -754,9 +754,10 @@ export class Output extends events.EventEmitter {
         }
 
         if (typeof position.rowIndex === "number") {
+            const firstRowOfCurrentPageIndex = Math.max(0, this.storage.size - this.dimensions.rows);
+
             const targetRowIndex = Math.max(position.rowIndex, 0) + this.homePosition.rowIndex;
-            const firstPossibleRowIndex = this.storage.size - this.dimensions.rows;
-            this.cursorRowIndex = Math.max(targetRowIndex, firstPossibleRowIndex);
+            this.cursorRowIndex = targetRowIndex + firstRowOfCurrentPageIndex;
         }
 
         return this;
