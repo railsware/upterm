@@ -108,7 +108,7 @@ first
                     console.log("Actual output:");
                     console.log(actualOutput);
 
-                    expect(expectedOutput).to.eq(actualOutput);
+                    expect(actualOutput).to.eq(expectedOutput);
                 }
             });
         }
@@ -250,6 +250,32 @@ This is a correct sentence
 
 
 
+Push <RETURN>
+`);
+            vttest("2-15", `
+AAAAA
+AAAAA
+AAAAA
+AAAAA
+
+
+
+           normal      bold        underscored blinking    reversed
+
+stars:     **********  **********  **********  **********  **********
+
+line:      ──────────  ──────────  ──────────  ──────────  ──────────
+
+x'es:      xxxxxxxxxx  xxxxxxxxxx  xxxxxxxxxx  xxxxxxxxxx  xxxxxxxxxx
+
+diamonds:  ◆◆◆◆◆◆◆◆◆◆  ◆◆◆◆◆◆◆◆◆◆  ◆◆◆◆◆◆◆◆◆◆  ◆◆◆◆◆◆◆◆◆◆  ◆◆◆◆◆◆◆◆◆◆
+
+
+
+
+Test of the SAVE/RESTORE CURSOR feature. There should
+be ten characters of each flavour, and a rectangle
+of 5 x 4 A's filling the top left of the screen.
 Push <RETURN>
 `);
         });
