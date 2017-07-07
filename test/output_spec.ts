@@ -52,12 +52,19 @@ first
 `));
         });
 
-        it("stays at the same line after writing last column character", async() => {
+        it("stays at the same line after writing last column character", () => {
             terminal.output.dimensions = {columns: 10, rows: 5};
             terminal.output.write(`${esc}[1;10H*${esc}[5D*`);
 
             expect(terminal.output.toString()).to.eql("    *    *");
             expect(terminal.output.toString()).to.eql("    *    *");
+        });
+
+        it.only("doesn't move outside of the current page", () => {
+            terminal.output.dimensions = {columns: 10, rows: 5};
+            terminal.output.write(`1\r\n2\r\n3\r\n4\r\n5\r\n6\r\n7${esc}[1;1H42`);
+
+            expect(terminal.output.toString()).to.eql("1\n2\n42\n4\n5\n6\n7");
         });
     });
 
