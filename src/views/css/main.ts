@@ -144,22 +144,9 @@ export const jobs = (isSessionFocused: boolean): CSSObject => ({
     ...(isSessionFocused ? {} : unfocusedJobs),
 });
 
-
-export const row = (jobStatus: Status, activeOutputType: OutputType) => {
-    const style: CSSObject = {
-        padding: `0 ${outputPadding}`,
-        minHeight: rowHeight,
-    };
-
-    if (activeOutputType === OutputType.Alternate) {
-        if ([Status.Failure, Status.Interrupted, Status.Success].includes(jobStatus)) {
-            style.height = 70;
-        } else if (Status.InProgress === jobStatus) {
-            style.margin = 0;
-        }
-    }
-
-    return style;
+export const row: CSSProperties =  {
+    padding: `0 ${outputPadding}`,
+    minHeight: rowHeight,
 };
 
 export const autocompletionDescription: CSSProperties = {
