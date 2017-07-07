@@ -229,6 +229,29 @@ A B C D E F G H I
 
 Push <RETURN>
 `);
+
+            vttest("1-6", `
+Test of leading zeros in ESC sequences.
+Two lines below you should see the sentence "This is a correct sentence".
+
+This is a correct sentence
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Push <RETURN>
+`);
         });
     });
 });
