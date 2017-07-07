@@ -9,6 +9,8 @@ export enum KeyCode {
     NewLine = 10,
     VerticalTab = 11,
     CarriageReturn = 13,
+    ShiftOut = 14,
+    ShiftIn = 15,
     Shift = 16,
     Ctrl = 17,
     Alt = 18,

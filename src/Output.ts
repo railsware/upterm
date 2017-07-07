@@ -641,9 +641,7 @@ export class Output extends events.EventEmitter {
     }
 
     writeOne(char: string): void {
-        const charFromCharset = this.useGraphicCharset ? graphicCharset[char] : char;
-        const charObject = createChar(charFromCharset, this.attributes);
-        const charCode = charFromCharset.charCodeAt(0);
+        const charCode = char.charCodeAt(0);
 
         /**
          * Is a special symbol.
@@ -675,6 +673,9 @@ export class Output extends events.EventEmitter {
                     error(`Couldn't write a special char with code ${charCode}.`);
             }
         } else {
+            const charFromCharset = this.useGraphicCharset ? graphicCharset[char] : char;
+            const charObject = createChar(charFromCharset, this.attributes);
+
             if (this.cursorColumnIndex === this.dimensions.columns) {
                 this.moveCursorAbsolute({columnIndex: 0});
                 this.moveCursorRelative({vertical: 1});
