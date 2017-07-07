@@ -9,8 +9,8 @@ import {fontAwesome} from "./css/FontAwesome";
 import {Job} from "../shell/Job";
 import {Status} from "../Enums";
 
-const CharGroupComponent = ({job, group}: {job: Job, group: Char[]}) =>
-    <span style={css.charGroup(group[0].attributes, job.status)}>{group.map(char => char.value).join("")}</span>;
+const CharGroupComponent = ({status, group}: {status: Status, group: Char[]}) =>
+    <span style={css.charGroup(group[0].attributes, status)}>{group.map(char => char.value).join("")}</span>;
 
 interface CutProps {
     job: Job;
@@ -42,21 +42,22 @@ class Cut extends React.Component<CutProps, CutState> {
 interface RowProps {
     row: List<Char>;
     hasCursor: boolean;
+    cursorColumnIndex: number;
     status: Status;
-    job: Job;
 }
 
 const charGrouper = (a: Char, b: Char) => a.attributes === b.attributes;
 
-class RowComponent extends React.Component<RowProps, {}> {
+export class RowComponent extends React.Component<RowProps, {}> {
     shouldComponentUpdate(nextProps: RowProps) {
         return this.props.row !== nextProps.row ||
             this.props.status !== nextProps.status ||
-            this.props.hasCursor !== nextProps.hasCursor;
+            this.props.hasCursor !== nextProps.hasCursor ||
+            (nextProps.hasCursor && this.props.cursorColumnIndex !== nextProps.cursorColumnIndex);
     }
 
     render() {
-        const cursorColumnIndex = this.props.job.output.cursorColumnIndex;
+        const cursorColumnIndex = this.props.cursorColumnIndex;
         const row = this.props.row.toArray();
 
         const rowWithoutHoles = _.range(0, Math.max(cursorColumnIndex + 1, this.props.row.size)).map(index => {
@@ -69,11 +70,11 @@ class RowComponent extends React.Component<RowProps, {}> {
         });
 
         const charGroups = groupWhen(charGrouper, rowWithoutHoles).map((charGroup: Char[], index: number) =>
-            <CharGroupComponent job={this.props.job} group={charGroup} key={index}/>,
+            <CharGroupComponent status={this.props.status} group={charGroup} key={index}/>,
         );
 
         return <div className="output-row"
-                    style={css.row(this.props.job.status, this.props.job.output.activeOutputType)}
+                    style={css.row}
                     ref={(div: HTMLElement | undefined) => div && div.scrollIntoViewIfNeeded()}>{charGroups}</div>;
     }
 }
@@ -111,8 +112,8 @@ export class OutputComponent extends React.Component<Props, State> {
                                 key={index}
                                 row={row}
                                 hasCursor={index === output.cursorRowIndex && showCursor}
-                                status={this.props.job.status}
-                                job={this.props.job}/>
+                                cursorColumnIndex={output.cursorColumnIndex}
+                                status={this.props.job.status}/>
                         );
                     }
                 })}
