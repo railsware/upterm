@@ -36,7 +36,7 @@ function logPosition(output: Output) {
     const position = {rowIndex: output.cursorRowIndex, columnIndex: output.cursorColumnIndex};
     const char = output.at(position);
     const value = char ? char.value : "NULL";
-    info(`%crow: ${position.rowIndex + 1}\tcolumn: ${output.cursorColumnIndex + 1}\t value: ${value}, rows: ${output.storage.size}`, "color: green");
+    info(`%crow: ${position.rowIndex + 1}\tcolumn: ${output.cursorColumnIndex + 1}\t value: ${value}, rows: ${output.storage.size}`, "color: grey");
 }
 
 /**
@@ -156,7 +156,7 @@ class ANSIParser {
             inst_x: (flag: string) => {
                 this.output.writeOne(flag);
 
-                print((KeyCode[flag.charCodeAt(0)] ? LogLevel.Log : LogLevel.Error), flag.split("").map((_, index) => flag.charCodeAt(index)));
+                print((KeyCode[flag.charCodeAt(0)] ? LogLevel.Log : LogLevel.Error), ["char", flag.split("").map((_, index) => flag.charCodeAt(index))]);
                 logPosition(this.output);
             },
             /**
@@ -660,6 +660,7 @@ export class Output extends events.EventEmitter {
                     this.moveCursorAbsolute({columnIndex: Math.min(this.dimensions.columns - 1, Math.floor((this.cursorColumnIndex + 8) / 8) * 8)});
                     break;
                 case e.KeyCode.NewLine:
+                case e.KeyCode.VerticalTab:
                     if (this.cursorRowIndex === this._margins.bottom) {
                         this.scrollUp(1);
                     } else {
@@ -671,7 +672,7 @@ export class Output extends events.EventEmitter {
                     this.moveCursorAbsolute({columnIndex: 0});
                     break;
                 default:
-                    error(`Couldn't write a special char "${charObject}".`);
+                    error(`Couldn't write a special char with code ${charCode}.`);
             }
         } else {
             if (this.cursorColumnIndex === this.dimensions.columns) {

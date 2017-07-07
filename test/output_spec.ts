@@ -217,6 +217,18 @@ Z                                                                               
 
 Push <RETURN>
 `);
+
+            vttest("1-5", `
+Test of cursor-control characters inside ESC sequences.
+Below should be four identical lines:
+
+A B C D E F G H I
+A B C D E F G H I
+A B C D E F G H I
+A B C D E F G H I
+
+Push <RETURN>
+`);
         });
     });
 });
