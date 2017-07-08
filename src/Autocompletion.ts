@@ -10,7 +10,7 @@ import {OrderedSet} from "./utils/OrderedSet";
 import {Aliases} from "./shell/Aliases";
 import {fuzzyMatch} from "./utils/Common";
 
-export const suggestionsLimit = 9;
+export const suggestionsLimit = 5;
 
 type GetSuggestionsOptions = {
     currentText: string;

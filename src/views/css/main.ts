@@ -9,7 +9,7 @@ import {ColumnList, PaneList} from "../../utils/PaneTree";
 import {CSSProperties} from "react";
 
 const fontSize = 14;
-export const outputPadding = 5;
+export const outputPadding = 10;
 const promptVerticalPadding = 5;
 const promptHorizontalPadding = 10;
 const promptHeight = 12 + (2 * promptVerticalPadding);
@@ -19,17 +19,8 @@ const suggestionSize = 2 * fontSize;
 const defaultShadow = "0 2px 8px 1px rgba(0, 0, 0, 0.3)";
 export const titleBarHeight = 24;
 export const rowHeight = fontSize + 2;
-export const infoPanelHeight = 2 * fontSize + 4;
+export const statusBarHeight = 60;
 export const letterWidth = fontSize / 2 + 1.5;
-
-const infoPanel = {
-    paddingTop: 8,
-    paddingRight: 0,
-    paddingBottom: 6,
-    paddingLeft: 0.6 * fontSize,
-    lineHeight: 1.3,
-    backgroundColor: panelColor,
-};
 
 const unfocusedJobs: CSSObject = {
     pointerEvents: "none",
@@ -62,13 +53,13 @@ const promptGrid = {
     },
 };
 
-const sessionsHeight = `(100vh - ${titleBarHeight + infoPanelHeight}px)`;
+const sessionsHeight = `(100vh - ${titleBarHeight}px)`;
 
 const applicationGrid = {
     container: {
         display: "grid",
         gridTemplateColumns: "100%",
-        gridTemplateRows: `${titleBarHeight}px calc(${sessionsHeight}) ${infoPanelHeight}px`,
+        gridTemplateRows: `${titleBarHeight}px calc(${sessionsHeight})`,
     },
     sessions: {
         height: "100%",
@@ -78,11 +69,8 @@ const applicationGrid = {
 const sessionGrid = {
     container: {
         display: "grid",
-        gridTemplateAreas: "'all'",
-    },
-    child: {
-        gridArea: "all",
-    },
+        gridTemplateRows: `calc(100% - ${statusBarHeight}px) ${statusBarHeight}px`,
+    }
 };
 
 function sessionsGridTemplate(list: PaneList): CSSObject {
@@ -137,25 +125,20 @@ export const application = {
     fontSize: fontSize,
 };
 
+export const job = {
+    marginTop: fontSize * 3,
+};
+
 export const jobs = (isSessionFocused: boolean): CSSObject => ({
-    ...sessionGrid.child,
+    overflowY: "scroll",
+    display: "flex",
+    flexDirection: "column-reverse",
     ...(isSessionFocused ? {} : unfocusedJobs),
 });
 
 export const row: CSSProperties =  {
     padding: `0 ${outputPadding}`,
     minHeight: rowHeight,
-};
-
-export const autocompletionDescription: CSSProperties = {
-    display: "block",
-    boxShadow: "0 4px 8px 1px rgba(0, 0, 0, 0.3)",
-    position: "absolute",
-    left: 0,
-    right: 0,
-    fontSize: "0.8em",
-    minHeight: infoPanelHeight,
-    ...infoPanel,
 };
 
 export const suggestionIcon = {
@@ -238,7 +221,14 @@ export const autocomplete = {
 };
 
 export const statusBar = {
-    itself: {...infoPanel, display: "flex", overflow: "hidden"} as CSSProperties,
+    itself: {
+        paddingTop: 12,
+        paddingRight: 0,
+        paddingBottom: 6,
+        lineHeight: 1.3,
+        backgroundColor: panelColor,
+        display: "flex",
+    } as CSSProperties,
     presentDirectory: {
         flexGrow: 1,
         textOverflow: "ellipsis",
@@ -287,14 +277,13 @@ export const session = (isFocused: boolean) => {
 
     return {...styles, ...sessionGrid.container};
 };
-
-export const sessionShutter = (isFocused: boolean) => ({
-    backgroundColor: colors.white,
-    zIndex: 1,
-    opacity: isFocused ? 0 : 0.2,
-    pointerEvents: "none",
-    ...sessionGrid.child,
-});
+//
+// export const sessionShutter = (isFocused: boolean) => ({
+//     backgroundColor: colors.white,
+//     zIndex: 1,
+//     opacity: isFocused ? 0 : 0.2,
+//     pointerEvents: "none",
+// });
 
 export const titleBar = {
     WebkitAppRegion: "drag",
@@ -512,6 +501,13 @@ export const promptInfo = (status: Status | undefined = undefined) => {
     return styles;
 };
 
+export const jobHeader: CSSObject = {
+    color: colors.white,
+    fontSize: "1.2em",
+    paddingLeft: outputPadding,
+    borderBottom: `1px solid ${alpha(colors.white, 0.2)}`,
+};
+
 export const actions = {
     gridArea: promptGrid.actions.name,
     marginRight: 15,
@@ -548,6 +544,7 @@ export const prompt = {
 
 export const promptPlaceholder = {
     minHeight: promptWrapperHeight,
+    width: "70%",
 };
 
 export const arrowInner = (status: Status | undefined = undefined) => {

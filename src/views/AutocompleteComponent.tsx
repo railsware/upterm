@@ -31,7 +31,7 @@ interface AutocompleteProps {
 
 export class AutocompleteComponent extends React.Component<AutocompleteProps, {}> {
     render() {
-        const suggestionViews = this.props.suggestions.map((suggestion, index) =>
+        const suggestionViews = this.props.suggestions.slice().reverse().map((suggestion, index) =>
             <SuggestionComponent
                 suggestion={suggestion}
                 onHover={() => this.props.onSuggestionHover(index)}

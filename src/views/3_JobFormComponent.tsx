@@ -197,7 +197,7 @@ export class JobFormComponent extends React.Component<Props, State> {
     }
 
     private get valueWithCurrentSuggestion(): string {
-        const suggestion = this.state.suggestions[this.state.highlightedSuggestionIndex];
+        const suggestion = this.state.suggestions[this.state.suggestions.length - 1 - this.state.highlightedSuggestionIndex];
 
         return suggestion.promptSerializer({
             ast: this.prompt.ast,
@@ -236,7 +236,7 @@ export class JobFormComponent extends React.Component<Props, State> {
             aliases: this.props.session.aliases,
         });
 
-        this.setState({...this.state, highlightedSuggestionIndex: 0, suggestions: suggestions});
+        this.setState({...this.state, highlightedSuggestionIndex: suggestions.length - 1, suggestions: suggestions});
     }
 
     private handleDrop(event: DragEvent) {

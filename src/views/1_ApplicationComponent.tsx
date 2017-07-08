@@ -6,7 +6,6 @@ import {ipcRenderer} from "electron";
 import {remote} from "electron";
 import * as css from "./css/main";
 import {saveWindowBounds} from "./ViewUtils";
-import {StatusBarComponent} from "./StatusBarComponent";
 import {PaneTree, Pane} from "../utils/PaneTree";
 import {SearchComponent} from "./SearchComponent";
 import {isMenuShortcut, isKeybindingForEvent} from "./keyevents/Keybindings";
@@ -330,7 +329,6 @@ export class ApplicationComponent extends React.Component<{}, ApplicationState> 
                     <SearchComponent/>
                 </div>
                 {this.renderPanes(this.focusedTab().panes)}
-                <StatusBarComponent presentWorkingDirectory={this.focusedTab().focusedPane.session.directory}/>
             </div>
         );
     }
