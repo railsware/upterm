@@ -894,7 +894,7 @@ export class Output extends events.EventEmitter {
         }
     }
 
-    private get firstRowOfCurrentPageIndex() {
+    get firstRowOfCurrentPageIndex() {
         return Math.max(0, this.storage.size - this.dimensions.rows);
     }
 

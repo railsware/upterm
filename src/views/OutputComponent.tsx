@@ -7,7 +7,7 @@ import {List} from "immutable";
 import * as css from "./css/main";
 import {fontAwesome} from "./css/FontAwesome";
 import {Job} from "../shell/Job";
-import {Status} from "../Enums";
+import {OutputType, Status} from "../Enums";
 
 const CharGroupComponent = ({status, group}: {status: Status, group: Char[]}) =>
     <span style={css.charGroup(group[0].attributes, status)}>{group.map(char => char.value).join("")}</span>;
@@ -105,6 +105,10 @@ export class OutputComponent extends React.Component<Props, State> {
                     const row = possiblyEmptyRow || List<Char>();
 
                     if (this.shouldCutOutput && index < output.size - Output.hugeOutputThreshold) {
+                        return undefined;
+                    // Don't render scrollback rows in alternate buffer.
+                    // TODO: remove when we have a separate output for alternate buffer.
+                    } else if (this.props.job.output.activeOutputType === OutputType.Alternate && index < this.props.job.output.firstRowOfCurrentPageIndex) {
                         return undefined;
                     } else {
                         return (
