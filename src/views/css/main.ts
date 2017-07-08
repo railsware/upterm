@@ -192,13 +192,13 @@ export const floatingMenu = {
 };
 
 export const autocomplete = {
-    box: (offsetTop: number, caretPosition: number, hasDescription: boolean): CSSProperties => {
+    box: (offsetTop: number, caretPosition: number): CSSProperties => {
         const shouldDisplayAbove = offsetTop + (suggestionsLimit * suggestionSize) > window.innerHeight;
 
         return {
             position: "absolute",
             top: shouldDisplayAbove ? "auto" : promptWrapperHeight,
-            bottom: shouldDisplayAbove ? suggestionSize + (hasDescription ? suggestionSize : 0) : "auto",
+            bottom: shouldDisplayAbove ? suggestionSize : "auto",
             left: decorationWidth + promptHorizontalPadding + (caretPosition * letterWidth),
             minWidth: 300,
             boxShadow: defaultShadow,
