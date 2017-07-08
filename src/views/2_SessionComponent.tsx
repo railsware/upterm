@@ -18,8 +18,8 @@ interface Props {
 const FOOTER_HEIGHT = 50;
 
 export class SessionComponent extends React.Component<Props, {}> {
-    private _statusBarComponent: StatusBarComponent;
     RENDER_JOBS_COUNT = 25;
+    private _statusBarComponent: StatusBarComponent;
 
     constructor(props: Props) {
         super(props);

@@ -70,7 +70,7 @@ const sessionGrid = {
     container: {
         display: "grid",
         gridTemplateRows: `calc(100% - ${statusBarHeight}px) ${statusBarHeight}px`,
-    }
+    },
 };
 
 function sessionsGridTemplate(list: PaneList): CSSObject {
