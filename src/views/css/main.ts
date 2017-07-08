@@ -8,10 +8,8 @@ import {CSSObject, Px, Fr} from "./definitions";
 import {ColumnList, PaneList} from "../../utils/PaneTree";
 import {CSSProperties} from "react";
 
-export {toDOMString} from "./functions";
-
 const fontSize = 14;
-export const outputPadding = 10;
+export const outputPadding = 5;
 const promptVerticalPadding = 5;
 const promptHorizontalPadding = 10;
 const promptHeight = 12 + (2 * promptVerticalPadding);
@@ -428,8 +426,8 @@ export const output = (activeOutputType: OutputType, status: Status) => {
     const styles: CSSObject = {
         paddingTop: outputPadding,
         paddingBottom: outputPadding,
-        paddingLeft: activeOutputType === OutputType.Alternate ? 0 : outputPadding,
-        paddingRight: activeOutputType === OutputType.Alternate ? 0 : outputPadding,
+        paddingLeft: outputPadding,
+        paddingRight: outputPadding,
         whiteSpace: "pre-wrap",
         backgroundColor: backgroundColor,
     };
@@ -446,9 +444,6 @@ export const output = (activeOutputType: OutputType, status: Status) => {
             styles.left = 0;
             styles.right = 0;
             styles.zIndex = 4;
-
-            styles.margin = 0;
-            styles.padding = "5px 0 0 0";
         }
     } else {
         if ([Status.Failure, Status.Interrupted].includes(status)) {

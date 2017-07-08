@@ -13,6 +13,9 @@ class DummyTerminal implements TerminalLikeDevice {
 type CSIFinalCharacter = "A" | "B" | "C" | "D" | "E" | "F" | "R" | "m" | "n";
 
 const esc = `\x1b`;
+const ri = `${esc}M`;
+const cup = (row: number, column: number) => `${esc}[${row};${column}H`;
+const decstbm = (topMargin: number, bottomMargin: number) => `${esc}[${topMargin};${bottomMargin}r`;
 const csi = (params: number[], final: CSIFinalCharacter) => {
     return `${esc}[${params.join(";")}${final}`;
 };
@@ -30,7 +33,7 @@ describe("ANSI parser", () => {
         terminal = new DummyTerminal();
     });
 
-    it("wraps long strings", async() => {
+    it("wraps long strings", () => {
         terminal.output.dimensions = {columns: 5, rows: 5};
 
         const expectedOutput = strip(`
@@ -43,7 +46,7 @@ describe("ANSI parser", () => {
     });
 
     describe("movements", () => {
-        it("can move down", async() => {
+        it("can move down", () => {
             terminal.output.write(`first${csi([1], "B")}second`);
 
             expect(terminal.output.toString()).to.eql(strip(`
@@ -52,23 +55,46 @@ first
 `));
         });
 
-        it("stays at the same line after writing last column character", async() => {
+        it("stays at the same line after writing last column character", () => {
             terminal.output.dimensions = {columns: 10, rows: 5};
             terminal.output.write(`${esc}[1;10H*${esc}[5D*`);
 
             expect(terminal.output.toString()).to.eql("    *    *");
             expect(terminal.output.toString()).to.eql("    *    *");
         });
+
+        it("doesn't move outside of the current page", () => {
+            terminal.output.dimensions = {columns: 10, rows: 5};
+            terminal.output.write(`1\r\n2\r\n3\r\n4\r\n5\r\n6\r\n7${esc}[1;1H42`);
+
+            expect(terminal.output.toString()).to.eql("1\n2\n42\n4\n5\n6\n7");
+        });
+
+        describe("Reverse Index", () => {
+            it("scrolls down when cursor is at the beginning of page", () => {
+                terminal.output.dimensions = {columns: 10, rows: 5};
+                terminal.output.write(`1\r\n2\r\n3\r\n4\r\n5\r\n6\r\n7${cup(1,1)}${ri}`);
+
+                expect(terminal.output.toString()).to.eql("1\n2\n\n3\n4\n5\n6");
+            });
+
+            it.only("scrolls down scrolling region", () => {
+                terminal.output.dimensions = {columns: 10, rows: 5};
+                terminal.output.write(`1\r\n2\r\n3\r\n4\r\n5\r\n6\r\n7${decstbm(1,3)}${cup(1,1)}${ri}`);
+
+                expect(terminal.output.toString()).to.eql("1\n2\n\n3\n4\n6\n7");
+            });
+        });
     });
 
-    it("can parse an ASCII string", async() => {
+    it("can parse an ASCII string", () => {
         terminal.output.write("something");
 
         expect(terminal.output.toString()).to.eql("something");
     });
 
     describe("true color", () => {
-        it("sets the correct foreground color", async() => {
+        it("sets the correct foreground color", () => {
             terminal.output.write(`${sgr([38, 2, 255, 100, 0])}A${sgr([0])}`);
 
             expect(terminal.output.toString()).to.eql("A");
@@ -80,7 +106,7 @@ first
     describe("CSI", () => {
         describe("Device Status Report (DSR)", () => {
             describe("Report Cursor Position (CPR)", () => {
-                it("report cursor position", async() => {
+                it("report cursor position", () => {
                     terminal.output.write(`some text${csi([6], "n")}`);
 
                     expect(terminal.output.toString()).to.eql("some text");
