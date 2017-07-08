@@ -9,10 +9,11 @@ import {ColumnList, PaneList} from "../../utils/PaneTree";
 import {CSSProperties} from "react";
 
 const fontSize = 14;
+const promptFontSize = fontSize * 1.1;
 export const outputPadding = 10;
 const promptVerticalPadding = 5;
 const promptHorizontalPadding = 10;
-const promptHeight = 12 + (2 * promptVerticalPadding);
+const promptHeight = 15 + (2 * promptVerticalPadding);
 export const promptWrapperHeight = promptHeight + promptVerticalPadding;
 const promptBackgroundColor = lighten(colors.black, 5);
 const suggestionSize = 2 * fontSize;
@@ -21,6 +22,7 @@ export const titleBarHeight = 24;
 export const rowHeight = fontSize + 2;
 export const statusBarHeight = 55;
 export const letterWidth = fontSize / 2 + 1.5;
+export const promptLetterWidth = promptFontSize / 2 + 1.5;
 
 const unfocusedJobs: CSSObject = {
     pointerEvents: "none",
@@ -90,10 +92,10 @@ function sessionsGridTemplate(list: PaneList): CSSObject {
 const promptInlineElement: CSSObject = {
     paddingTop: 0,
     paddingRight: promptHorizontalPadding,
-    paddingBottom: 3,
+    paddingBottom: 0,
     paddingLeft: promptHorizontalPadding,
     gridArea: promptGrid.prompt.name,
-    fontSize: fontSize,
+    fontSize: promptFontSize,
     whiteSpace: "pre-wrap",
     WebkitAppearance: "none",
     outline: "none",
@@ -181,8 +183,8 @@ export const autocomplete = {
         return {
             position: "absolute",
             top: shouldDisplayAbove ? "auto" : promptWrapperHeight,
-            bottom: shouldDisplayAbove ? suggestionSize : "auto",
-            left: decorationWidth + promptHorizontalPadding + (caretPosition * letterWidth),
+            bottom: shouldDisplayAbove ? suggestionSize + 8 : "auto",
+            left: decorationWidth + promptHorizontalPadding + (caretPosition * promptLetterWidth),
             minWidth: 300,
             boxShadow: defaultShadow,
             backgroundColor: colors.black,
@@ -453,7 +455,6 @@ export const promptWrapper = (status: Status | undefined = undefined) => {
         gridTemplateAreas: `'${promptGrid.decoration.name} ${promptGrid.prompt.name} ${promptGrid.actions.name}'`,
         gridTemplateRows: "auto",
         gridTemplateColumns: `${promptGrid.decoration.width.toCSS()} ${promptGrid.prompt.width.toCSS()} ${promptGrid.actions.width.toCSS()}`,
-        backgroundColor: promptBackgroundColor,
         minHeight: promptWrapperHeight,
         zIndex: outputCutZIndex + 1,
     };
@@ -557,7 +558,7 @@ export const arrowInner = (status: Status | undefined = undefined) => {
         position: "absolute",
         width: "200%",
         height: "200%",
-        top: -11,
+        top: -10,
         right: -8,
         backgroundColor: arrowColor,
         transformOrigin: "54% 0",
