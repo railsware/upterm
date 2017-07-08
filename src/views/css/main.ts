@@ -228,6 +228,7 @@ export const statusBar = {
         lineHeight: 1.3,
         backgroundColor: panelColor,
         display: "flex",
+        flexDirection: "row-reverse",
     } as CSSProperties,
     presentDirectory: {
         flexGrow: 1,
@@ -244,7 +245,7 @@ export const statusBar = {
         whiteSpace: "pre",
         paddingRight: "8px",
     } as CSSProperties,
-    icon: {...icon, paddingRight: 5, paddingLeft: 5, display: "inline-block"},
+    icon: {...icon, paddingRight: 5, paddingLeft: 5, display: "inline-block", width: fontSize * 1.8, textAlign: "center"},
     rightSizeWrapper: {
     },
     stagedFileChanges: {color: colors.green},
@@ -547,6 +548,7 @@ export const promptPlaceholder = {
     minHeight: promptWrapperHeight,
     marginRight: fontSize,
     width: "70%",
+    flexGrow: 1,
 };
 
 export const arrowInner = (status: Status | undefined = undefined) => {
