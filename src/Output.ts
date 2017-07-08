@@ -268,7 +268,7 @@ class ANSIParser {
                 case "M":
                     short = "Reverse Index (RI).";
                     /* tslint:disable:max-line-length */
-                    long = "Move the active position to the same horizontal position on the preceding lin If the active position is at the top margin, a scroll down is performed.";
+                    long = "Move the active position to the same horizontal position on the preceding line if the active position is at the top margin, a scroll down is performed.";
 
                     if (this.output.cursorRowIndex === this.output.marginTop) {
                         this.output.scrollDown(1);
@@ -687,8 +687,8 @@ export class Output extends events.EventEmitter {
     }
 
     scrollDown(count: number) {
-        this.storage = this.storage.splice((this._margins.bottom || 0) - count + 1, count).toList();
-        times(count, () => this.storage = this.storage.splice(this.cursorRowIndex, 0, undefined).toList());
+        times(count, () => this.storage = this.storage.insert(this.cursorRowIndex, List<Char>()));
+        times(count, () => this.storage = this.storage.delete(this.marginBottom));
     }
 
     scrollUp(count: number, deletedLine = this._margins.top) {
@@ -754,10 +754,9 @@ export class Output extends events.EventEmitter {
         }
 
         if (typeof position.rowIndex === "number") {
-            const firstRowOfCurrentPageIndex = Math.max(0, this.storage.size - this.dimensions.rows);
 
             const targetRowIndex = Math.max(position.rowIndex, 0) + this.homePosition.rowIndex;
-            this.cursorRowIndex = targetRowIndex + firstRowOfCurrentPageIndex;
+            this.cursorRowIndex = targetRowIndex + this.firstRowOfCurrentPageIndex;
         }
 
         return this;
@@ -863,7 +862,15 @@ export class Output extends events.EventEmitter {
     }
 
     get marginTop(): number {
-        return this._margins.top;
+        return this._margins.top + this.firstRowOfCurrentPageIndex;
+    }
+
+    get marginBottom(): number {
+        if (this._margins.bottom) {
+            return this._margins.bottom + this.firstRowOfCurrentPageIndex;
+        } else {
+            return this.storage.size - 1;
+        }
     }
 
     at(position: RowColumn): Char {
@@ -885,6 +892,10 @@ export class Output extends events.EventEmitter {
         } else {
             console.error("No state to restore.");
         }
+    }
+
+    private get firstRowOfCurrentPageIndex() {
+        return Math.max(0, this.storage.size - this.dimensions.rows);
     }
 
     private get homePosition(): RowColumn {
