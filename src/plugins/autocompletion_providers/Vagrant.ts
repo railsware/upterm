@@ -2,10 +2,11 @@ import {PluginManager} from "../../PluginManager";
 import {linedOutputOf} from "../../PTY";
 import {commandWithSubcommands, emptyProvider, SubcommandConfig} from "../autocompletion_utils/Common";
 import {once} from "lodash";
+import {homeDirectory} from "../../utils/Common";
 
 const vargrantCommandConfig = once(async() => {
     try {
-        return (await linedOutputOf("vagrant", ["list-commands"], process.env.HOME))
+        return (await linedOutputOf("vagrant", ["list-commands"], homeDirectory))
             .map(line => {
                 const matches = line.match(/([\-a-zA-Z0-9]+)  /);
 

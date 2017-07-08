@@ -7,6 +7,7 @@ import {PluginManager} from "../../PluginManager";
 import {AutocompletionProvider, AutocompletionContext} from "../../Interfaces";
 import {executeCommand} from "../../PTY";
 import {concat, find, memoize, sortBy} from "lodash";
+import {homeDirectory} from "../../utils/Common";
 
 interface FormulaAttributes {
     name: string;
@@ -15,11 +16,11 @@ interface FormulaAttributes {
 
 const getFormulae = memoize(
     async(brewArgs: string[]): Promise<FormulaAttributes[]> => {
-        const text = await executeCommand("brew", brewArgs, process.env.HOME);
+        const text = await executeCommand("brew", brewArgs, homeDirectory);
 
         const matches = text.match(/^([\-a-zA-Z0-9]+\/)*([\-a-zA-Z0-9]+)$/gm);
         if (matches) {
-            return matches.map(match => {
+            return matches.map((match: string) => {
                 const matchParts = match.split("/");
                 return {
                     name: matchParts[matchParts.length - 1],

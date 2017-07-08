@@ -67,7 +67,7 @@ export class SessionComponent extends React.Component<Props, {}> {
 
         const jobFormComponent = lastJobInProgress ? undefined : <JobFormComponent
             key={this.props.session.jobs.length}
-            ref={component => { this._jobFormComponent = component; }}
+            ref={component => { this._jobFormComponent = component!; }}
             session={this.props.session}
             isFocused={true}
         />;

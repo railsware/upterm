@@ -92,9 +92,9 @@ export enum Brightness {
 }
 
 export enum LogLevel {
-    Info = <LogLevel><any>"info",
-    Log = <LogLevel><any>"log",
-    Error = <LogLevel><any>"error",
+    Info = "info",
+    Log = "log",
+    Error = "error",
 }
 
 export enum SplitDirection {

@@ -78,14 +78,14 @@ abstract class BranchNode extends ASTNode {
     }
 
     get fullEnd(): number {
-        return _.last(this.children).fullEnd;
+        return _.last(this.children)!.fullEnd;
     }
 }
 
 export class CompleteCommand extends BranchNode {
     @memoizeAccessor
     get children(): ASTNode[] {
-        const lastChild = _.last(this.tokens);
+        const lastChild = _.last(this.tokens)!;
         const endsWithSeparator = lastChild instanceof Scanner.Semicolon;
 
         if (endsWithSeparator) {

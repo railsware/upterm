@@ -21,7 +21,7 @@ abstract class Shell {
     abstract combineCommands(commands: string[]): string;
 
     async existingConfigFiles(): Promise<string[]> {
-        const resolvedConfigFiles = this.configFiles.map(fileName => resolveFile(process.env.HOME, fileName));
+        const resolvedConfigFiles = this.configFiles.map(fileName => resolveFile(homeDirectory, fileName));
         return await filterAsync(resolvedConfigFiles, io.fileExists);
     }
 
@@ -30,7 +30,7 @@ abstract class Shell {
         try {
             return {
                 lastModified: statSync(path).mtime,
-                commands: readFileSync(path).toString().trim().split(EOL).reverse().map(line => _.last(line.split(";"))),
+                commands: readFileSync(path).toString().trim().split(EOL).reverse().map(line => _.last(line.split(";"))!),
             };
         } catch (error) {
             return {
@@ -141,7 +141,7 @@ class ZSH extends UnixShell {
 
 class Cmd extends Shell {
     static get cmdPath() {
-        return Path.join(process.env.WINDIR, "System32", "cmd.exe");
+        return Path.join(process.env.WINDIR!, "System32", "cmd.exe");
     }
 
     get executableName() {
@@ -196,10 +196,10 @@ const supportedShells: Dictionary<Shell> = {
     "cmd.exe": new Cmd(),
 };
 
-const shell = () => {
-    const shellName = process.env.SHELL ? basename(process.env.SHELL) : "";
+const shell = (): string => {
+    const shellName = process.env.SHELL ? basename(process.env.SHELL!) : "";
     if (shellName in supportedShells) {
-        return process.env.SHELL;
+        return shellName;
     } else {
         const defaultShell = isWindows ? Cmd.cmdPath : "/bin/bash";
         console.error(`${shellName} is not supported; defaulting to ${defaultShell}`);

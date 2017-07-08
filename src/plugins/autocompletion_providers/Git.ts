@@ -8,6 +8,7 @@ import {combine} from "../autocompletion_utils/Combine";
 import {PluginManager} from "../../PluginManager";
 import {linedOutputOf, executeCommand} from "../../PTY";
 import {find, sortBy, once} from "lodash";
+import {homeDirectory} from "../../utils/Common";
 
 const addOptions = combine([
     mapSuggestions(longAndShortFlag("patch"), suggestion => ({...suggestion, description:
@@ -500,12 +501,12 @@ const commandsData: SubcommandConfig[] = [
 ];
 
 const commands = once(async(): Promise<SubcommandConfig[]> => {
-    const text = await executeCommand("git", ["help", "-a"], process.env.HOME);
-    const matches = text.match(/  ([\-a-zA-Z0-9]+)/gm);
+    const text = await executeCommand("git", ["help", "-a"], homeDirectory);
+    const matches: string[] | null = text.match(/  ([\-a-zA-Z0-9]+)/gm);
 
     if (matches) {
         const suggestions = matches
-            .filter((match) => match.indexOf("--") === -1)
+            .filter(match => match.indexOf("--") === -1)
             .map(match => {
                 const name = match.trim();
                 const data = find(commandsData, {name});
@@ -523,8 +524,8 @@ const commands = once(async(): Promise<SubcommandConfig[]> => {
     return [];
 });
 
-const aliases: () => Promise<SubcommandConfig[]> = once(async() => {
-    const aliasList = await Git.aliases(process.env.HOME);
+const aliases = once(async(): Promise<SubcommandConfig[]> => {
+    const aliasList = await Git.aliases(homeDirectory);
     return aliasList.map(({ name, value }) => {
         let result: SubcommandConfig = {
             name: name,

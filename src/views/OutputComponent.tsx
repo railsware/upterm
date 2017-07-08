@@ -75,7 +75,7 @@ export class RowComponent extends React.Component<RowProps, {}> {
 
         return <div className="output-row"
                     style={css.row}
-                    ref={(div: HTMLElement | undefined) => div && div.scrollIntoViewIfNeeded()}>{charGroups}</div>;
+                    ref={(div: HTMLDivElement | null) => div && div.scrollIntoViewIfNeeded()}>{charGroups}</div>;
     }
 }
 

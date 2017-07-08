@@ -117,7 +117,7 @@ export class JobFormComponent extends React.Component<Props, State> {
     }
 
     async appendLastLArgumentOfPreviousCommand(): Promise<void> {
-        this.setText(this.prompt.value + _.last(scan(History.latest)).value);
+        this.setText(this.prompt.value + _.last(scan(History.latest))!.value);
     }
 
     async execute(promptText: string): Promise<void> {

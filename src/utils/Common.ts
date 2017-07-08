@@ -120,7 +120,7 @@ export function directoryName(path: string): string {
 }
 
 export const isWindows = process.platform === "win32";
-export const homeDirectory = process.env[(isWindows) ? "USERPROFILE" : "HOME"];
+export const homeDirectory = process.env[(isWindows) ? "USERPROFILE" : "HOME"]!;
 
 export function resolveDirectory(pwd: string, directory: string): FullPath {
     return <FullPath>normalizeDirectory(resolveFile(pwd, directory));

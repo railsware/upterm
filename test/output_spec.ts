@@ -73,14 +73,14 @@ first
         describe("Reverse Index", () => {
             it("scrolls down when cursor is at the beginning of page", () => {
                 terminal.output.dimensions = {columns: 10, rows: 5};
-                terminal.output.write(`1\r\n2\r\n3\r\n4\r\n5\r\n6\r\n7${cup(1,1)}${ri}`);
+                terminal.output.write(`1\r\n2\r\n3\r\n4\r\n5\r\n6\r\n7${cup(1, 1)}${ri}`);
 
                 expect(terminal.output.toString()).to.eql("1\n2\n\n3\n4\n5\n6");
             });
 
-            it.only("scrolls down scrolling region", () => {
+            it("scrolls down scrolling region", () => {
                 terminal.output.dimensions = {columns: 10, rows: 5};
-                terminal.output.write(`1\r\n2\r\n3\r\n4\r\n5\r\n6\r\n7${decstbm(1,3)}${cup(1,1)}${ri}`);
+                terminal.output.write(`1\r\n2\r\n3\r\n4\r\n5\r\n6\r\n7${decstbm(1, 3)}${cup(1, 1)}${ri}`);
 
                 expect(terminal.output.toString()).to.eql("1\n2\n\n3\n4\n6\n7");
             });

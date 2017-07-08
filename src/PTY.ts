@@ -3,7 +3,7 @@ import * as OS from "os";
 import * as _ from "lodash";
 import * as pty from "node-pty";
 import {loginShell} from "./utils/Shell";
-import {info} from "./utils/Common";
+import {homeDirectory, info} from "./utils/Common";
 
 interface ITerminal {
     write(data: string): void;
@@ -92,5 +92,5 @@ export async function linedOutputOf(command: string, args: string[], directory: 
 export async function executeCommandWithShellConfig(command: string): Promise<string[]> {
     const sourceCommands = (await loginShell.existingConfigFiles()).map(fileName => `source ${fileName} &> /dev/null`);
 
-    return await linedOutputOf(loginShell.executableName, [...loginShell.executeCommandSwitches, loginShell.combineCommands([...sourceCommands, command])], process.env.HOME);
+    return await linedOutputOf(loginShell.executableName, [...loginShell.executeCommandSwitches, loginShell.combineCommands([...sourceCommands, command])], homeDirectory);
 }

@@ -52,6 +52,7 @@ export interface CSSObject {
     textDecoration?: "underline";
     fontWeight?: "bold";
     fontSize?: number;
+    fontFamily?: string;
     WebkitAppearance?: "none";
 }
 
