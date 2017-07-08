@@ -504,7 +504,8 @@ export const promptInfo = (status: Status | undefined = undefined) => {
 export const jobHeader: CSSObject = {
     color: alpha(colors.white, 0.5),
     fontSize: "1.2em",
-    paddingLeft: outputPadding,
+    paddingLeft: outputPadding * 1.2,
+    paddingBottom: 2,
     borderBottom: `1px solid ${alpha(colors.white, 0.2)}`,
 };
 
