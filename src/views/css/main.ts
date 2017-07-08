@@ -19,7 +19,7 @@ const suggestionSize = 2 * fontSize;
 const defaultShadow = "0 2px 8px 1px rgba(0, 0, 0, 0.3)";
 export const titleBarHeight = 24;
 export const rowHeight = fontSize + 2;
-export const statusBarHeight = 60;
+export const statusBarHeight = 55;
 export const letterWidth = fontSize / 2 + 1.5;
 
 const unfocusedJobs: CSSObject = {
@@ -126,7 +126,7 @@ export const application = {
 };
 
 export const job = {
-    marginTop: fontSize * 3,
+    marginTop: fontSize * 2,
 };
 
 export const jobs = (isSessionFocused: boolean): CSSObject => ({
@@ -239,14 +239,14 @@ export const statusBar = {
         paddingRight: "10px",
     } as CSSProperties,
     vcsData: {
-        flexGrow: 2,
-        textAlign: "right",
         textOverflow: "ellipsis",
         overflow: "hidden",
         whiteSpace: "pre",
         paddingRight: "8px",
     } as CSSProperties,
     icon: {...icon, paddingRight: 5, paddingLeft: 5, display: "inline-block"},
+    rightSizeWrapper: {
+    },
     stagedFileChanges: {color: colors.green},
     unstagedFileChanges: {color: colors.red},
     status: (status: VcsStatus) => {
@@ -502,7 +502,7 @@ export const promptInfo = (status: Status | undefined = undefined) => {
 };
 
 export const jobHeader: CSSObject = {
-    color: colors.white,
+    color: alpha(colors.white, 0.5),
     fontSize: "1.2em",
     paddingLeft: outputPadding,
     borderBottom: `1px solid ${alpha(colors.white, 0.2)}`,
@@ -544,6 +544,7 @@ export const prompt = {
 
 export const promptPlaceholder = {
     minHeight: promptWrapperHeight,
+    marginRight: fontSize,
     width: "70%",
 };
 

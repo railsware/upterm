@@ -73,7 +73,7 @@ export class JobFormComponent extends React.Component<Props, State> {
             }
         }
 
-        return <div ref="placeholder" style={css.promptPlaceholder}>
+        return <div className="prompt-placeholder" ref="placeholder" style={css.promptPlaceholder}>
             <div style={css.promptWrapper()}>
                 <div style={css.arrow()}>
                     <div style={css.arrowInner()} />
