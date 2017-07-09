@@ -4,8 +4,8 @@ import {Session} from "../shell/Session";
 import {Job} from "../shell/Job";
 import {JobShowComponent} from "./3_JobShowComponent";
 import * as css from "./css/main";
-import {JobFormComponent} from "./3_JobFormComponent";
-import {Status} from "../Enums";
+import {PromptComponent} from "./PromptComponent";
+import {StatusBarComponent} from "./StatusBarComponent";
 
 interface Props {
     session: Session;
@@ -19,8 +19,7 @@ const FOOTER_HEIGHT = 50;
 
 export class SessionComponent extends React.Component<Props, {}> {
     RENDER_JOBS_COUNT = 25;
-
-    private _jobFormComponent: JobFormComponent;
+    private _statusBarComponent: StatusBarComponent;
 
     constructor(props: Props) {
         super(props);
@@ -44,12 +43,12 @@ export class SessionComponent extends React.Component<Props, {}> {
             .on("vcs-data", () => this.props.updateStatusBar && this.props.updateStatusBar());
     }
 
-    jobFormComponent(): JobFormComponent | undefined {
-        return this._jobFormComponent;
+    promptComponent(): PromptComponent | undefined {
+        return this._statusBarComponent.promptComponent;
     }
 
     render() {
-        const jobs = _.takeRight(this.props.session.jobs, this.RENDER_JOBS_COUNT).map((job: Job, index: number) =>
+        const jobs = _.takeRight(this.props.session.jobs, this.RENDER_JOBS_COUNT).slice().reverse().map((job: Job, index: number) =>
             <JobShowComponent
                 key={job.id}
                 job={job}
@@ -57,20 +56,6 @@ export class SessionComponent extends React.Component<Props, {}> {
                 isFocused={this.props.isFocused && index === this.props.session.jobs.length - 1}
             />,
         );
-
-        const lastJob = _.last(this.props.session.jobs);
-        const lastJobInProgress = lastJob && lastJob.status === Status.InProgress;
-
-        if (lastJob) {
-            lastJob.once("end", () => this.forceUpdate());
-        }
-
-        const jobFormComponent = lastJobInProgress ? undefined : <JobFormComponent
-            key={this.props.session.jobs.length}
-            ref={component => { this._jobFormComponent = component!; }}
-            session={this.props.session}
-            isFocused={true}
-        />;
 
         return (
             <div className="session"
@@ -80,9 +65,12 @@ export class SessionComponent extends React.Component<Props, {}> {
 
                 <div className="jobs" style={css.jobs(this.props.isFocused)}>
                     {jobs}
-                    {jobFormComponent}
                     </div>
                 <div className="shutter" style={css.sessionShutter(this.props.isFocused)}></div>
+                <StatusBarComponent
+                    ref={component => { this._statusBarComponent = component!; }}
+                    session={this.props.session}
+                />
             </div>
         );
     }

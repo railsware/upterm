@@ -3,33 +3,25 @@ import {colors, panel as panelColor, background as backgroundColor, colorValue} 
 import {TabHoverState} from "../TabComponent";
 import {darken, lighten, failurize, alpha} from "./functions";
 import {Attributes} from "../../Interfaces";
-import {suggestionsLimit} from "../../Autocompletion";
 import {CSSObject, Px, Fr} from "./definitions";
 import {ColumnList, PaneList} from "../../utils/PaneTree";
 import {CSSProperties} from "react";
 
 const fontSize = 14;
-export const outputPadding = 5;
+const promptFontSize = fontSize * 1.1;
+export const outputPadding = 10;
 const promptVerticalPadding = 5;
 const promptHorizontalPadding = 10;
-const promptHeight = 12 + (2 * promptVerticalPadding);
+const promptHeight = 15 + (2 * promptVerticalPadding);
 export const promptWrapperHeight = promptHeight + promptVerticalPadding;
 const promptBackgroundColor = lighten(colors.black, 5);
 const suggestionSize = 2 * fontSize;
 const defaultShadow = "0 2px 8px 1px rgba(0, 0, 0, 0.3)";
 export const titleBarHeight = 24;
 export const rowHeight = fontSize + 2;
-export const infoPanelHeight = 2 * fontSize + 4;
+export const statusBarHeight = 55;
 export const letterWidth = fontSize / 2 + 1.5;
-
-const infoPanel = {
-    paddingTop: 8,
-    paddingRight: 0,
-    paddingBottom: 6,
-    paddingLeft: 0.6 * fontSize,
-    lineHeight: 1.3,
-    backgroundColor: panelColor,
-};
+export const promptLetterWidth = promptFontSize / 2 + 1.5;
 
 const unfocusedJobs: CSSObject = {
     pointerEvents: "none",
@@ -62,13 +54,13 @@ const promptGrid = {
     },
 };
 
-const sessionsHeight = `(100vh - ${titleBarHeight + infoPanelHeight}px)`;
+const sessionsHeight = `(100vh - ${titleBarHeight}px)`;
 
 const applicationGrid = {
     container: {
         display: "grid",
         gridTemplateColumns: "100%",
-        gridTemplateRows: `${titleBarHeight}px calc(${sessionsHeight}) ${infoPanelHeight}px`,
+        gridTemplateRows: `${titleBarHeight}px calc(${sessionsHeight})`,
     },
     sessions: {
         height: "100%",
@@ -78,10 +70,7 @@ const applicationGrid = {
 const sessionGrid = {
     container: {
         display: "grid",
-        gridTemplateAreas: "'all'",
-    },
-    child: {
-        gridArea: "all",
+        gridTemplateRows: `calc(100% - ${statusBarHeight}px) ${statusBarHeight}px`,
     },
 };
 
@@ -102,10 +91,10 @@ function sessionsGridTemplate(list: PaneList): CSSObject {
 const promptInlineElement: CSSObject = {
     paddingTop: 0,
     paddingRight: promptHorizontalPadding,
-    paddingBottom: 3,
+    paddingBottom: 0,
     paddingLeft: promptHorizontalPadding,
     gridArea: promptGrid.prompt.name,
-    fontSize: fontSize,
+    fontSize: promptFontSize,
     whiteSpace: "pre-wrap",
     WebkitAppearance: "none",
     outline: "none",
@@ -137,25 +126,22 @@ export const application = {
     fontSize: fontSize,
 };
 
+export const job = {
+    marginTop: fontSize * 2,
+};
+
 export const jobs = (isSessionFocused: boolean): CSSObject => ({
-    ...sessionGrid.child,
+    gridRow: "1",
+    gridColumn: "1",
+    overflowY: "scroll",
+    display: "flex",
+    flexDirection: "column-reverse",
     ...(isSessionFocused ? {} : unfocusedJobs),
 });
 
 export const row: CSSProperties =  {
     padding: `0 ${outputPadding}`,
     minHeight: rowHeight,
-};
-
-export const autocompletionDescription: CSSProperties = {
-    display: "block",
-    boxShadow: "0 4px 8px 1px rgba(0, 0, 0, 0.3)",
-    position: "absolute",
-    left: 0,
-    right: 0,
-    fontSize: "0.8em",
-    minHeight: infoPanelHeight,
-    ...infoPanel,
 };
 
 export const suggestionIcon = {
@@ -172,34 +158,13 @@ export const suggestionIcon = {
     backgroundColor: "rgba(0, 0, 0, 0.15)",
 };
 
-export const floatingMenu = {
-    box: (offsetTop: number): CSSProperties => {
-        // TODO: Make this be less magic. Use a computation
-        // that is based on the number of items in the menu.
-        // Also, should unify this with AutoocompleteMenu
-        const shouldDisplayAbove = offsetTop + 100 > window.innerHeight;
-        return {
-            position: "absolute",
-            top: shouldDisplayAbove ? "auto" : promptWrapperHeight,
-            bottom: shouldDisplayAbove ? suggestionSize : "auto",
-            minWidth: 300,
-            right: "20px",
-            boxShadow: defaultShadow,
-            backgroundColor: colors.black,
-            zIndex: 3,
-        };
-    },
-};
-
 export const autocomplete = {
-    box: (offsetTop: number, caretPosition: number, hasDescription: boolean): CSSProperties => {
-        const shouldDisplayAbove = offsetTop + (suggestionsLimit * suggestionSize) > window.innerHeight;
-
+    box: (caretPosition: number): CSSProperties => {
         return {
             position: "absolute",
-            top: shouldDisplayAbove ? "auto" : promptWrapperHeight,
-            bottom: shouldDisplayAbove ? suggestionSize + (hasDescription ? suggestionSize : 0) : "auto",
-            left: decorationWidth + promptHorizontalPadding + (caretPosition * letterWidth),
+            top: "auto",
+            bottom: suggestionSize + 8,
+            left: decorationWidth + promptHorizontalPadding + (caretPosition * promptLetterWidth),
             minWidth: 300,
             boxShadow: defaultShadow,
             backgroundColor: colors.black,
@@ -238,7 +203,15 @@ export const autocomplete = {
 };
 
 export const statusBar = {
-    itself: {...infoPanel, display: "flex", overflow: "hidden"} as CSSProperties,
+    itself: {
+        paddingTop: 12,
+        paddingRight: 0,
+        paddingBottom: 6,
+        lineHeight: 1.3,
+        backgroundColor: panelColor,
+        display: "flex",
+        flexDirection: "row-reverse",
+    } as CSSProperties,
     presentDirectory: {
         flexGrow: 1,
         textOverflow: "ellipsis",
@@ -249,14 +222,14 @@ export const statusBar = {
         paddingRight: "10px",
     } as CSSProperties,
     vcsData: {
-        flexGrow: 2,
-        textAlign: "right",
         textOverflow: "ellipsis",
         overflow: "hidden",
         whiteSpace: "pre",
         paddingRight: "8px",
     } as CSSProperties,
-    icon: {...icon, paddingRight: 5, paddingLeft: 5, display: "inline-block"},
+    icon: {...icon, paddingRight: 5, paddingLeft: 5, display: "inline-block", width: fontSize * 1.8, textAlign: "center"},
+    rightSizeWrapper: {
+    },
     stagedFileChanges: {color: colors.green},
     unstagedFileChanges: {color: colors.red},
     status: (status: VcsStatus) => {
@@ -287,13 +260,15 @@ export const session = (isFocused: boolean) => {
 
     return {...styles, ...sessionGrid.container};
 };
-
+//
 export const sessionShutter = (isFocused: boolean) => ({
     backgroundColor: colors.white,
     zIndex: 1,
     opacity: isFocused ? 0 : 0.2,
     pointerEvents: "none",
-    ...sessionGrid.child,
+    gridTemplateRows: "all",
+    gridRow: "1",
+    gridColumn: "1",
 });
 
 export const titleBar = {
@@ -454,25 +429,17 @@ export const output = (activeOutputType: OutputType, status: Status) => {
     return styles;
 };
 
-export const promptWrapper = (status: Status | undefined = undefined) => {
-    const styles: CSSObject = {
-        top: 0,
-        paddingTop: promptVerticalPadding,
-        position: "relative", // To position the autocompletion box correctly.
-        display: "grid",
-        gridTemplateAreas: `'${promptGrid.decoration.name} ${promptGrid.prompt.name} ${promptGrid.actions.name}'`,
-        gridTemplateRows: "auto",
-        gridTemplateColumns: `${promptGrid.decoration.width.toCSS()} ${promptGrid.prompt.width.toCSS()} ${promptGrid.actions.width.toCSS()}`,
-        backgroundColor: promptBackgroundColor,
-        minHeight: promptWrapperHeight,
-        zIndex: outputCutZIndex + 1,
-    };
-
-    if (status && [Status.Failure, Status.Interrupted].includes(status)) {
-        styles.backgroundColor = failurize(promptBackgroundColor);
-    }
-
-    return styles;
+export const promptWrapper: CSSObject = {
+    top: 0,
+    paddingTop: promptVerticalPadding,
+    position: "relative", // To position the autocompletion box correctly.
+    gridRow: "2",
+    display: "grid",
+    gridTemplateAreas: `'${promptGrid.decoration.name} ${promptGrid.prompt.name} ${promptGrid.actions.name}'`,
+    gridTemplateRows: "auto",
+    gridTemplateColumns: `${promptGrid.decoration.width.toCSS()} ${promptGrid.prompt.width.toCSS()} ${promptGrid.actions.width.toCSS()}`,
+    minHeight: promptWrapperHeight,
+    zIndex: outputCutZIndex + 1,
 };
 
 export const arrow = (status: Status | undefined = undefined) => {
@@ -512,6 +479,14 @@ export const promptInfo = (status: Status | undefined = undefined) => {
     return styles;
 };
 
+export const jobHeader: CSSObject = {
+    color: alpha(colors.white, 0.5),
+    fontSize: "1.2em",
+    paddingLeft: outputPadding * 1.2,
+    paddingBottom: 2,
+    borderBottom: `1px solid ${alpha(colors.white, 0.2)}`,
+};
+
 export const actions = {
     gridArea: promptGrid.actions.name,
     marginRight: 15,
@@ -548,36 +523,25 @@ export const prompt = {
 
 export const promptPlaceholder = {
     minHeight: promptWrapperHeight,
+    marginRight: fontSize,
+    width: "70%",
+    flexGrow: 1,
 };
 
-export const arrowInner = (status: Status | undefined = undefined) => {
-    const styles: CSSObject = {
-        content: "",
-        position: "absolute",
-        width: "200%",
-        height: "200%",
-        top: -11,
-        right: -8,
-        backgroundColor: arrowColor,
-        transformOrigin: "54% 0",
-        transform: "rotate(45deg)",
-        zIndex: arrowZIndex - 1,
-
-        backgroundSize: 0, // Is used to animate the inProgress arrow.
-    };
-
-    if (status && [Status.Failure, Status.Interrupted].includes(status)) {
-        styles.backgroundColor = failurize(arrowColor);
-    }
-
-    return styles;
+export const arrowInner: CSSObject = {
+    content: "",
+    position: "absolute",
+    width: "200%",
+    height: "200%",
+    top: -10,
+    right: -8,
+    backgroundColor: arrowColor,
+    transformOrigin: "54% 0",
+    transform: "rotate(45deg)",
+    zIndex: arrowZIndex - 1,
 };
 
 export const image = {
     maxHeight: "90vh",
     maxWidth: "100vh",
-};
-
-export const menuButton = {
-    color: "blue",
 };

@@ -1,8 +1,14 @@
+type BorderType = number | string;
+
 export interface CSSObject {
     contain?: "strict" | "paint";
     pointerEvents?: string;
     marginTop?: number;
     marginBottom?: number;
+    borderTop?: BorderType;
+    borderLeft?: BorderType;
+    borderRight?: BorderType;
+    borderBottom?: BorderType;
     padding?: string | number;
     paddingTop?: number;
     paddingBottom?: number;
@@ -20,10 +26,12 @@ export interface CSSObject {
     flex?: number | "auto" | "none";
     flexGrow?: number;
     flexBasis?: number;
-    flexDirection?: "row" | "column";
+    flexDirection?: "row" | "column" | "column-reverse";
     overflow?: "hidden";
     overflowX?: "auto" | "scroll";
     overflowY?: "auto" | "scroll" | "hidden";
+    gridRow?: string;
+    gridColumn?: string;
     outline?: "none";
     opacity?: number;
     boxShadow?: string;
@@ -51,7 +59,7 @@ export interface CSSObject {
     transform?: string;
     textDecoration?: "underline";
     fontWeight?: "bold";
-    fontSize?: number;
+    fontSize?: number | string;
     fontFamily?: string;
     WebkitAppearance?: "none";
 }

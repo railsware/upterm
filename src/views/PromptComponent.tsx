@@ -19,12 +19,11 @@ interface Props {
 interface State {
     highlightedSuggestionIndex: number;
     previousKeyCode: number;
-    offsetTop: number;
     caretPositionFromPreviousFocus: number;
     suggestions: SuggestionWithDefaults[];
 }
 
-export class JobFormComponent extends React.Component<Props, State> {
+export class PromptComponent extends React.Component<Props, State> {
     private prompt: Prompt;
 
     /* tslint:disable:member-ordering */
@@ -35,7 +34,6 @@ export class JobFormComponent extends React.Component<Props, State> {
         this.state = {
             highlightedSuggestionIndex: 0,
             previousKeyCode: KeyCode.Escape,
-            offsetTop: 0,
             caretPositionFromPreviousFocus: 0,
             suggestions: [],
         };
@@ -60,7 +58,6 @@ export class JobFormComponent extends React.Component<Props, State> {
         if (this.showAutocomplete()) {
             autocomplete = <AutocompleteComponent
                 suggestions={this.state.suggestions}
-                offsetTop={this.state.offsetTop}
                 caretPosition={getCaretPosition(this.commandNode)}
                 onSuggestionHover={index => this.setState({...this.state, highlightedSuggestionIndex: index})}
                 onSuggestionClick={this.applySuggestion.bind(this)}
@@ -73,10 +70,10 @@ export class JobFormComponent extends React.Component<Props, State> {
             }
         }
 
-        return <div ref="placeholder" style={css.promptPlaceholder}>
-            <div style={css.promptWrapper()}>
+        return <div className="prompt-placeholder" ref="placeholder" style={css.promptPlaceholder}>
+            <div className="prompt-wrapper" style={css.promptWrapper}>
                 <div style={css.arrow()}>
-                    <div style={css.arrowInner()} />
+                    <div style={css.arrowInner} />
                 </div>
                 <div
                     style={css.promptInfo()}
@@ -112,7 +109,6 @@ export class JobFormComponent extends React.Component<Props, State> {
         this.setState({
             ...this.state,
             previousKeyCode: event.keyCode,
-            offsetTop: (event.target as HTMLDivElement).getBoundingClientRect().top,
         });
     }
 
@@ -197,7 +193,7 @@ export class JobFormComponent extends React.Component<Props, State> {
     }
 
     private get valueWithCurrentSuggestion(): string {
-        const suggestion = this.state.suggestions[this.state.highlightedSuggestionIndex];
+        const suggestion = this.state.suggestions[this.state.suggestions.length - 1 - this.state.highlightedSuggestionIndex];
 
         return suggestion.promptSerializer({
             ast: this.prompt.ast,
@@ -236,7 +232,7 @@ export class JobFormComponent extends React.Component<Props, State> {
             aliases: this.props.session.aliases,
         });
 
-        this.setState({...this.state, highlightedSuggestionIndex: 0, suggestions: suggestions});
+        this.setState({...this.state, highlightedSuggestionIndex: suggestions.length - 1, suggestions: suggestions});
     }
 
     private handleDrop(event: DragEvent) {

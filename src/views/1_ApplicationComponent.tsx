@@ -6,7 +6,6 @@ import {ipcRenderer} from "electron";
 import {remote} from "electron";
 import * as css from "./css/main";
 import {saveWindowBounds} from "./ViewUtils";
-import {StatusBarComponent} from "./StatusBarComponent";
 import {PaneTree, Pane} from "../utils/PaneTree";
 import {SearchComponent} from "./SearchComponent";
 import {isMenuShortcut, isKeybindingForEvent} from "./keyevents/Keybindings";
@@ -121,7 +120,7 @@ export class ApplicationComponent extends React.Component<{}, ApplicationState> 
         event: UserEvent,
     ) {
         const currentJob = this.focusedTab().focusedPane.session.currentJob;
-        const jobFormComponent = this.focusedTab().focusedPane.sessionComponent().jobFormComponent();
+        const promptComponent = this.focusedTab().focusedPane.sessionComponent().promptComponent();
 
         // Pasted data
         if (event instanceof ClipboardEvent) {
@@ -129,8 +128,8 @@ export class ApplicationComponent extends React.Component<{}, ApplicationState> 
                 return;
             }
 
-            if (jobFormComponent) {
-                jobFormComponent.focus();
+            if (promptComponent) {
+                promptComponent.focus();
                 document.execCommand("inserttext", false, event.clipboardData.getData("text/plain"));
             }
 
@@ -149,7 +148,7 @@ export class ApplicationComponent extends React.Component<{}, ApplicationState> 
         }
 
         // Close focused pane
-        if (isKeybindingForEvent(event, KeyboardAction.paneClose) && jobFormComponent) {
+        if (isKeybindingForEvent(event, KeyboardAction.paneClose) && promptComponent) {
             this.closeFocusedPane();
 
             this.forceUpdate();
@@ -184,7 +183,7 @@ export class ApplicationComponent extends React.Component<{}, ApplicationState> 
         }
 
         // Console clear
-        if (isKeybindingForEvent(event, KeyboardAction.cliClearJobs) && jobFormComponent) {
+        if (isKeybindingForEvent(event, KeyboardAction.cliClearJobs) && promptComponent) {
             this.focusedTab().focusedPane.session.clearJobs();
 
             event.stopPropagation();
@@ -219,15 +218,15 @@ export class ApplicationComponent extends React.Component<{}, ApplicationState> 
             return;
         }
 
-        if (!jobFormComponent) {
+        if (!promptComponent) {
             return;
         }
 
-        jobFormComponent.focus();
+        promptComponent.focus();
 
         // Append last argument to prompt
         if (isKeybindingForEvent(event, KeyboardAction.cliAppendLastArgumentOfPreviousCommand)) {
-            jobFormComponent.appendLastLArgumentOfPreviousCommand();
+            promptComponent.appendLastLArgumentOfPreviousCommand();
 
             event.stopPropagation();
             event.preventDefault();
@@ -236,7 +235,7 @@ export class ApplicationComponent extends React.Component<{}, ApplicationState> 
 
         // CLI execute command
         if (isKeybindingForEvent(event, KeyboardAction.cliRunCommand)) {
-            jobFormComponent.execute((event.target as HTMLElement).innerText);
+            promptComponent.execute((event.target as HTMLElement).innerText);
 
             event.stopPropagation();
             event.preventDefault();
@@ -245,16 +244,16 @@ export class ApplicationComponent extends React.Component<{}, ApplicationState> 
 
         // CLI clear
         if (isKeybindingForEvent(event, KeyboardAction.cliClearText)) {
-            jobFormComponent.clear();
+            promptComponent.clear();
 
             event.stopPropagation();
             event.preventDefault();
             return;
         }
 
-        if (jobFormComponent.isAutocompleteShown()) {
+        if (promptComponent.isAutocompleteShown()) {
             if (isKeybindingForEvent(event, KeyboardAction.autocompleteInsertCompletion)) {
-                jobFormComponent.applySuggestion();
+                promptComponent.applySuggestion();
 
                 event.stopPropagation();
                 event.preventDefault();
@@ -262,7 +261,7 @@ export class ApplicationComponent extends React.Component<{}, ApplicationState> 
             }
 
             if (isKeybindingForEvent(event, KeyboardAction.autocompletePreviousSuggestion)) {
-                jobFormComponent.focusPreviousSuggestion();
+                promptComponent.focusPreviousSuggestion();
 
                 event.stopPropagation();
                 event.preventDefault();
@@ -270,7 +269,7 @@ export class ApplicationComponent extends React.Component<{}, ApplicationState> 
             }
 
             if (isKeybindingForEvent(event, KeyboardAction.autocompleteNextSuggestion)) {
-                jobFormComponent.focusNextSuggestion();
+                promptComponent.focusNextSuggestion();
 
                 event.stopPropagation();
                 event.preventDefault();
@@ -278,8 +277,8 @@ export class ApplicationComponent extends React.Component<{}, ApplicationState> 
             }
         } else {
             if (isKeybindingForEvent(event, KeyboardAction.cliHistoryPrevious)) {
-                jobFormComponent.scrollIntoView();
-                jobFormComponent.setPreviousHistoryItem();
+                promptComponent.scrollIntoView();
+                promptComponent.setPreviousHistoryItem();
 
                 event.stopPropagation();
                 event.preventDefault();
@@ -287,8 +286,8 @@ export class ApplicationComponent extends React.Component<{}, ApplicationState> 
             }
 
             if (isKeybindingForEvent(event, KeyboardAction.cliHistoryNext)) {
-                jobFormComponent.scrollIntoView();
-                jobFormComponent.setNextHistoryItem();
+                promptComponent.scrollIntoView();
+                promptComponent.setNextHistoryItem();
 
                 event.stopPropagation();
                 event.preventDefault();
@@ -296,7 +295,7 @@ export class ApplicationComponent extends React.Component<{}, ApplicationState> 
             }
         }
 
-        jobFormComponent.setPreviousKeyCode(event);
+        promptComponent.setPreviousKeyCode(event);
     }
 
     render() {
@@ -330,7 +329,6 @@ export class ApplicationComponent extends React.Component<{}, ApplicationState> 
                     <SearchComponent/>
                 </div>
                 {this.renderPanes(this.focusedTab().panes)}
-                <StatusBarComponent presentWorkingDirectory={this.focusedTab().focusedPane.session.directory}/>
             </div>
         );
     }

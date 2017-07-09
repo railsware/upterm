@@ -1,4 +1,5 @@
 import * as React from "react";
+import * as css from "./css/main";
 import {Job} from "../shell/Job";
 import {OutputComponent} from "./OutputComponent";
 import {JobHeaderComponent} from "./JobHeaderComponent";
@@ -45,7 +46,7 @@ export class JobShowComponent extends React.Component<Props, State> {
         }
 
         return (
-            <div className={"job"}>
+            <div className={"job"} style={css.job}>
                 <JobHeaderComponent
                     job={this.props.job}
                     showPrettifyToggle={canBePrettified}

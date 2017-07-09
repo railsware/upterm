@@ -41,24 +41,6 @@ class Job extends Block {
     get output() {
         return this.selector.element(".output");
     }
-
-    get menu() {
-        return new JobMenu(this.client, this.selector.element(".jobMenu"));
-    }
-}
-
-class JobMenu extends Block {
-    get sigkillItem() {
-        return this.client.element(".floatingMenuItem:first-of-type");
-    }
-
-    get sigtermItem() {
-        return this.client.element(".floatingMenuItem:last-of-type");
-    }
-
-    open() {
-        return this.selector.click();
-    }
 }
 
 class StatusBar extends Block {
@@ -100,19 +82,6 @@ describe("application launch", function () {
         const output = await page.job.output.getText();
 
         expect(output).to.contain("expected-text");
-    });
-
-    it("send signals via button", async () => {
-        await page.executeCommand(`node ${join(__dirname, "test_files", "print_on_sigterm.js")}`);
-
-        await page.job.menu.open();
-        await page.job.menu.sigtermItem.click();
-
-        await page.job.menu.open();
-        await page.job.menu.sigkillItem.click();
-
-        const output = await page.job.output.getText();
-        expect(output).to.contain("Received SIGTERM");
     });
 
     describe("status bar", () => {

@@ -20,7 +20,6 @@ const SuggestionComponent = ({suggestion, onHover, onClick, isHighlighted}: Sugg
     </li>;
 
 interface AutocompleteProps {
-    offsetTop: number;
     caretPosition: number;
     suggestions: SuggestionWithDefaults[];
     onSuggestionHover: (index: number) => void;
@@ -31,7 +30,7 @@ interface AutocompleteProps {
 
 export class AutocompleteComponent extends React.Component<AutocompleteProps, {}> {
     render() {
-        const suggestionViews = this.props.suggestions.map((suggestion, index) =>
+        const suggestionViews = this.props.suggestions.slice().reverse().map((suggestion, index) =>
             <SuggestionComponent
                 suggestion={suggestion}
                 onHover={() => this.props.onSuggestionHover(index)}
@@ -41,17 +40,9 @@ export class AutocompleteComponent extends React.Component<AutocompleteProps, {}
             />,
         );
 
-        const suggestionDescription = this.props.suggestions[this.props.highlightedIndex].description;
-        let descriptionElement: React.ReactElement<any> | undefined;
-
-        if (suggestionDescription) {
-            descriptionElement = <div style={css.autocompletionDescription}>{suggestionDescription}</div>;
-        }
-
         return (
-            <div style={css.autocomplete.box(this.props.offsetTop, this.props.caretPosition, suggestionDescription.length !== 0)}>
+            <div style={css.autocomplete.box(this.props.caretPosition)}>
                 <ul style={css.autocomplete.suggestionsList}>{suggestionViews}</ul>
-                {descriptionElement}
             </div>
         );
     }
