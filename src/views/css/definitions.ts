@@ -30,6 +30,8 @@ export interface CSSObject {
     overflow?: "hidden";
     overflowX?: "auto" | "scroll";
     overflowY?: "auto" | "scroll" | "hidden";
+    gridRow?: string;
+    gridColumn?: string;
     outline?: "none";
     opacity?: number;
     boxShadow?: string;

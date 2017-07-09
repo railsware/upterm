@@ -131,6 +131,8 @@ export const job = {
 };
 
 export const jobs = (isSessionFocused: boolean): CSSObject => ({
+    gridRow: "1",
+    gridColumn: "1",
     overflowY: "scroll",
     display: "flex",
     flexDirection: "column-reverse",
@@ -258,12 +260,15 @@ export const session = (isFocused: boolean) => {
     return {...styles, ...sessionGrid.container};
 };
 //
-// export const sessionShutter = (isFocused: boolean) => ({
-//     backgroundColor: colors.white,
-//     zIndex: 1,
-//     opacity: isFocused ? 0 : 0.2,
-//     pointerEvents: "none",
-// });
+export const sessionShutter = (isFocused: boolean) => ({
+    backgroundColor: colors.white,
+    zIndex: 1,
+    opacity: isFocused ? 0 : 0.2,
+    pointerEvents: "none",
+    gridTemplateRows: "all",
+    gridRow: "1",
+    gridColumn: "1",
+});
 
 export const titleBar = {
     WebkitAppRegion: "drag",
@@ -428,6 +433,7 @@ export const promptWrapper = (status: Status | undefined = undefined) => {
         top: 0,
         paddingTop: promptVerticalPadding,
         position: "relative", // To position the autocompletion box correctly.
+        gridRow: "2",
         display: "grid",
         gridTemplateAreas: `'${promptGrid.decoration.name} ${promptGrid.prompt.name} ${promptGrid.actions.name}'`,
         gridTemplateRows: "auto",
@@ -555,8 +561,4 @@ export const arrowInner = (status: Status | undefined = undefined) => {
 export const image = {
     maxHeight: "90vh",
     maxWidth: "100vh",
-};
-
-export const menuButton = {
-    color: "blue",
 };

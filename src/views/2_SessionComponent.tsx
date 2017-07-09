@@ -66,6 +66,7 @@ export class SessionComponent extends React.Component<Props, {}> {
                 <div className="jobs" style={css.jobs(this.props.isFocused)}>
                     {jobs}
                     </div>
+                <div className="shutter" style={css.sessionShutter(this.props.isFocused)}></div>
                 <StatusBarComponent
                     ref={component => { this._statusBarComponent = component!; }}
                     session={this.props.session}
