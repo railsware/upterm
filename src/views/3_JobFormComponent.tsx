@@ -19,7 +19,6 @@ interface Props {
 interface State {
     highlightedSuggestionIndex: number;
     previousKeyCode: number;
-    offsetTop: number;
     caretPositionFromPreviousFocus: number;
     suggestions: SuggestionWithDefaults[];
 }
@@ -35,7 +34,6 @@ export class JobFormComponent extends React.Component<Props, State> {
         this.state = {
             highlightedSuggestionIndex: 0,
             previousKeyCode: KeyCode.Escape,
-            offsetTop: 0,
             caretPositionFromPreviousFocus: 0,
             suggestions: [],
         };
@@ -60,7 +58,6 @@ export class JobFormComponent extends React.Component<Props, State> {
         if (this.showAutocomplete()) {
             autocomplete = <AutocompleteComponent
                 suggestions={this.state.suggestions}
-                offsetTop={this.state.offsetTop}
                 caretPosition={getCaretPosition(this.commandNode)}
                 onSuggestionHover={index => this.setState({...this.state, highlightedSuggestionIndex: index})}
                 onSuggestionClick={this.applySuggestion.bind(this)}
@@ -112,7 +109,6 @@ export class JobFormComponent extends React.Component<Props, State> {
         this.setState({
             ...this.state,
             previousKeyCode: event.keyCode,
-            offsetTop: (event.target as HTMLDivElement).getBoundingClientRect().top,
         });
     }
 

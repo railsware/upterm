@@ -20,7 +20,6 @@ const SuggestionComponent = ({suggestion, onHover, onClick, isHighlighted}: Sugg
     </li>;
 
 interface AutocompleteProps {
-    offsetTop: number;
     caretPosition: number;
     suggestions: SuggestionWithDefaults[];
     onSuggestionHover: (index: number) => void;
@@ -42,7 +41,7 @@ export class AutocompleteComponent extends React.Component<AutocompleteProps, {}
         );
 
         return (
-            <div style={css.autocomplete.box(this.props.offsetTop, this.props.caretPosition)}>
+            <div style={css.autocomplete.box(this.props.caretPosition)}>
                 <ul style={css.autocomplete.suggestionsList}>{suggestionViews}</ul>
             </div>
         );

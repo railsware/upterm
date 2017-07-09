@@ -3,7 +3,6 @@ import {colors, panel as panelColor, background as backgroundColor, colorValue} 
 import {TabHoverState} from "../TabComponent";
 import {darken, lighten, failurize, alpha} from "./functions";
 import {Attributes} from "../../Interfaces";
-import {suggestionsLimit} from "../../Autocompletion";
 import {CSSObject, Px, Fr} from "./definitions";
 import {ColumnList, PaneList} from "../../utils/PaneTree";
 import {CSSProperties} from "react";
@@ -157,33 +156,12 @@ export const suggestionIcon = {
     backgroundColor: "rgba(0, 0, 0, 0.15)",
 };
 
-export const floatingMenu = {
-    box: (offsetTop: number): CSSProperties => {
-        // TODO: Make this be less magic. Use a computation
-        // that is based on the number of items in the menu.
-        // Also, should unify this with AutoocompleteMenu
-        const shouldDisplayAbove = offsetTop + 100 > window.innerHeight;
-        return {
-            position: "absolute",
-            top: shouldDisplayAbove ? "auto" : promptWrapperHeight,
-            bottom: shouldDisplayAbove ? suggestionSize : "auto",
-            minWidth: 300,
-            right: "20px",
-            boxShadow: defaultShadow,
-            backgroundColor: colors.black,
-            zIndex: 3,
-        };
-    },
-};
-
 export const autocomplete = {
-    box: (offsetTop: number, caretPosition: number): CSSProperties => {
-        const shouldDisplayAbove = offsetTop + (suggestionsLimit * suggestionSize) > window.innerHeight;
-
+    box: (caretPosition: number): CSSProperties => {
         return {
             position: "absolute",
-            top: shouldDisplayAbove ? "auto" : promptWrapperHeight,
-            bottom: shouldDisplayAbove ? suggestionSize + 8 : "auto",
+            top: "auto",
+            bottom: suggestionSize + 8,
             left: decorationWidth + promptHorizontalPadding + (caretPosition * promptLetterWidth),
             minWidth: 300,
             boxShadow: defaultShadow,
