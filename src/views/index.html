@@ -39,17 +39,28 @@
 
     .application {
       display: grid;
-      grid-template-areas: "title-bar"
-      "sessions";
+      grid-template-areas: "title-bar" "sessions";
+      font-size: var(--font-size);
+      font-family: 'Hack', 'Fira Code', 'Menlo', monospace;
+      background-color: var(--background-color);
+      color: var(--text-color);
+
+      --session-height: calc(100vh - var(--title-bar-height));
+      --session-content-height: calc(var(--session-height) - var(--status-bar-height));
+      --prompt-font-size: calc(var(--font-size) * 1.2);
     }
 
     .title-bar {
       grid-area: title-bar;
+      height: var(--title-bar-height);
+      -webkit-app-region: drag;
     }
 
     .sessions {
       grid-area: sessions;
       display: grid;
+      height: var(--session-height);
+      border-left: var(--background-color);
     }
 
     .session {
@@ -62,14 +73,83 @@
 
     .jobs {
       grid-area: jobs;
+      overflow-y: scroll;
+      display: flex;
+      flex-direction: column-reverse;
+      height: var(--session-content-height);
+    }
+
+    .job {
+      margin-top: calc(var(--font-size) * 2);
     }
 
     .shutter {
       grid-area: jobs;
+      height: var(--session-content-height);
+      z-index: 1;
+      pointer-events: none;
     }
 
     .status-bar {
       grid-area: status-bar;
+    }
+
+    .prompt-wrapper {
+      top: 0;
+      position: relative; /* To position the autocompletion box correctly. */
+      display: grid;
+      grid-template-areas: "prompt-decoration prompt";
+      grid-template-columns: calc(var(--prompt-font-size) * 2) auto;
+      width: 70%;
+      height: var(--prompt-font-size);
+      margin-right: var(--prompt-font-size);
+      flex-grow: 1;
+    }
+
+    .prompt-decoration {
+      grid-area: prompt-decoration;
+      position: relative;
+      overflow: hidden;
+      z-index: 2;
+    }
+
+    .prompt-decoration .square {
+      position: absolute;
+      display: inline-block;
+      /*width: 20px;*/
+      --size: calc(var(--prompt-font-size) * 1.3);
+      width: var(--size);
+      height: var(--size);
+      background-color: var(--text-color);
+      z-index: 1;
+      filter: brightness(50%);
+    }
+
+    .prompt-decoration .rhombus {
+      left: calc(var(--prompt-font-size) * 0.39);
+      transform: rotate(45deg);
+    }
+
+    .prompt-content {
+      /*padding-top: 0;*/
+      /*padding-right: promptHorizontalPadding,*/
+      /*paddingBottom: 0,*/
+      /*paddingLeft: promptHorizontalPadding,*/
+      grid-area: prompt;
+      font-size: var(--prompt-font-size);
+      padding-left: calc(var(--prompt-font-size) / 2);
+      white-space: pre-wrap;
+      -webkit-appearance: none;
+      outline: none;
+    }
+
+    .prompt {
+      color: var(--text-color);
+      z-index: 2;
+    }
+
+    .autocompleted-preview {
+      filter: brightness(50%);
     }
 
     /* inline styles can't really handle pseudo elements, so they still need classes */

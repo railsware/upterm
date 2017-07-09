@@ -7,7 +7,6 @@ import {Prompt} from "../shell/Prompt";
 import {SuggestionWithDefaults} from "../plugins/autocompletion_utils/Common";
 import {KeyCode} from "../Enums";
 import {getSuggestions} from "../Autocompletion";
-import * as css from "./css/main";
 import {scan} from "../shell/Scanner";
 import {Session} from "../shell/Session";
 
@@ -66,33 +65,27 @@ export class PromptComponent extends React.Component<Props, State> {
             />;
             const completed = this.valueWithCurrentSuggestion;
             if (completed.trim() !== this.prompt.value && completed.startsWith(this.prompt.value)) {
-                autocompletedPreview = <div style={css.autocompletedPreview}>{completed}</div>;
+                autocompletedPreview = <div className="autocompleted-preview prompt-content">{completed}</div>;
             }
         }
 
-        return <div className="prompt-placeholder" ref="placeholder" style={css.promptPlaceholder}>
-            <div className="prompt-wrapper" style={css.promptWrapper}>
-                <div style={css.arrow()}>
-                    <div style={css.arrowInner} />
-                </div>
-                <div
-                    style={css.promptInfo()}
-                >
-                </div>
-                <div
-                    className="prompt"
-                    style={css.prompt}
-                    onInput={this.handleInput.bind(this)}
-                    onDrop={this.handleDrop.bind(this)}
-                    onBlur={() => this.setState({...this.state, caretPositionFromPreviousFocus: getCaretPosition(this.commandNode)})}
-                    onFocus={() => setCaretPosition(this.commandNode, this.state.caretPositionFromPreviousFocus)}
-                    type="text"
-                    ref="command"
-                    contentEditable={true}
-                />
-                {autocompletedPreview}
-                {autocomplete}
+        return <div className="prompt-wrapper" ref="wrapper">
+            <div className="prompt-decoration">
+                <div className="square"/>
+                <div className="square rhombus"/>
             </div>
+            <div
+                className="prompt prompt-content"
+                onInput={this.handleInput.bind(this)}
+                onDrop={this.handleDrop.bind(this)}
+                onBlur={() => this.setState({...this.state, caretPositionFromPreviousFocus: getCaretPosition(this.commandNode)})}
+                onFocus={() => setCaretPosition(this.commandNode, this.state.caretPositionFromPreviousFocus)}
+                type="text"
+                ref="command"
+                contentEditable={true}
+            />
+            {autocompletedPreview}
+            {autocomplete}
         </div>;
     }
 
@@ -157,7 +150,7 @@ export class PromptComponent extends React.Component<Props, State> {
     }
 
     scrollIntoView(): void {
-        this.placeholderNode.scrollIntoView(true);
+        this.wrapperNode.scrollIntoView(true);
     }
 
     private setText(text: string): void {
@@ -170,9 +163,9 @@ export class PromptComponent extends React.Component<Props, State> {
         return this.refs["command"] as HTMLInputElement;
     }
 
-    private get placeholderNode(): Element {
+    private get wrapperNode(): Element {
         /* tslint:disable:no-string-literal */
-        return this.refs["placeholder"] as Element;
+        return this.refs["wrapper"] as Element;
     }
 
     private setDOMValueProgrammatically(text: string): void {

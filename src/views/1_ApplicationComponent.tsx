@@ -324,7 +324,7 @@ export class ApplicationComponent extends React.Component<{}, ApplicationState> 
 
         return (
             <div className="application" style={css.application}>
-                <div className="title-bar" style={css.titleBar}>
+                <div className="title-bar">
                     <ul style={css.tabs}>{tabs}</ul>
                     <SearchComponent/>
                 </div>

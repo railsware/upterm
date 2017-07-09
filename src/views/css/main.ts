@@ -3,18 +3,14 @@ import {colors, panel as panelColor, background as backgroundColor, colorValue} 
 import {TabHoverState} from "../TabComponent";
 import {darken, lighten, failurize, alpha} from "./functions";
 import {Attributes} from "../../Interfaces";
-import {CSSObject, Px, Fr} from "./definitions";
+import {CSSObject} from "./definitions";
 import {ColumnList, PaneList} from "../../utils/PaneTree";
 import {CSSProperties} from "react";
 
 const fontSize = 14;
 const promptFontSize = fontSize * 1.1;
 export const outputPadding = 10;
-const promptVerticalPadding = 5;
 const promptHorizontalPadding = 10;
-const promptHeight = 15 + (2 * promptVerticalPadding);
-export const promptWrapperHeight = promptHeight + promptVerticalPadding;
-const promptBackgroundColor = lighten(colors.black, 5);
 const suggestionSize = 2 * fontSize;
 const defaultShadow = "0 2px 8px 1px rgba(0, 0, 0, 0.3)";
 export const titleBarHeight = 24;
@@ -23,36 +19,19 @@ export const statusBarHeight = 55;
 export const letterWidth = fontSize / 2 + 1.5;
 export const promptLetterWidth = promptFontSize / 2 + 1.5;
 
-const unfocusedJobs: CSSObject = {
-    pointerEvents: "none",
-};
-
-const icon = {
-    fontFamily: "FontAwesome",
+const cssVariables = {
+    "--font-size": `${fontSize}px`,
+    "--title-bar-height": `${titleBarHeight}px`,
+    "--status-bar-height": `${statusBarHeight}px`,
+    "--background-color": backgroundColor,
+    "--text-color": colors.white,
 };
 
 const outputCutHeight = fontSize * 2.6;
 const outputCutZIndex = 0;
 
 const decorationWidth = 30;
-const arrowZIndex = 2;
-const arrowColor = lighten(promptBackgroundColor, 10);
 const searchInputColor = lighten(panelColor, 15);
-
-const promptGrid = {
-    decoration: {
-        name: "decoration",
-        width: new Px(decorationWidth),
-    },
-    prompt: {
-        name: "prompt",
-        width: new Fr(1),
-    },
-    actions: {
-        name: "actions",
-        width: new Px(150),
-    },
-};
 
 function sessionsGridTemplate(list: PaneList): CSSObject {
     if (list instanceof ColumnList) {
@@ -67,18 +46,6 @@ function sessionsGridTemplate(list: PaneList): CSSObject {
         };
     }
 }
-
-const promptInlineElement: CSSObject = {
-    paddingTop: 0,
-    paddingRight: promptHorizontalPadding,
-    paddingBottom: 0,
-    paddingLeft: promptHorizontalPadding,
-    gridArea: promptGrid.prompt.name,
-    fontSize: promptFontSize,
-    whiteSpace: "pre-wrap",
-    WebkitAppearance: "none",
-    outline: "none",
-};
 
 function tabCloseButtonColor(hover: TabHoverState) {
     if (hover === TabHoverState.Close) {
@@ -99,24 +66,11 @@ function jaggedBorder(color: string, panelColor: string, darkenPercent: number) 
 }
 
 export const application = {
-    backgroundColor: backgroundColor,
-    color: colors.white,
-    fontFamily: "'Hack', 'Fira Code', 'Menlo', monospace",
-    fontSize: fontSize,
+    ...cssVariables,
 };
-
-export const job = {
-    marginTop: fontSize * 2,
-};
-
-const sessionContentHeight = `calc(100vh - ${titleBarHeight + statusBarHeight}px)`;
 
 export const jobs = (isSessionFocused: boolean): CSSObject => ({
-    overflowY: "scroll",
-    display: "flex",
-    flexDirection: "column-reverse",
-    height: sessionContentHeight,
-    ...(isSessionFocused ? {} : unfocusedJobs),
+    ...(isSessionFocused ? {} : {pointerEvents: "none"}),
 });
 
 export const row: CSSProperties =  {
@@ -125,7 +79,7 @@ export const row: CSSProperties =  {
 };
 
 export const suggestionIcon = {
-    ...icon,
+    fontFamily: "FontAwesome",
     display: "inline-block",
     width: suggestionSize,
     height: suggestionSize,
@@ -208,7 +162,7 @@ export const statusBar = {
         whiteSpace: "pre",
         paddingRight: "8px",
     } as CSSProperties,
-    icon: {...icon, paddingRight: 5, paddingLeft: 5, display: "inline-block", width: fontSize * 1.8, textAlign: "center"},
+    icon: {fontFamily: "FontAwesome", paddingRight: 5, paddingLeft: 5, display: "inline-block", width: fontSize * 1.8, textAlign: "center"},
     rightSizeWrapper: {
     },
     stagedFileChanges: {color: colors.green},
@@ -221,9 +175,7 @@ export const statusBar = {
 };
 
 export const sessions = (list: PaneList) => ({
-    backgroundColor: backgroundColor,
     ...sessionsGridTemplate(list),
-    height: `calc(100vh - ${titleBarHeight}px)`,
 });
 
 export const session = (isFocused: boolean) => {
@@ -239,16 +191,8 @@ export const session = (isFocused: boolean) => {
 
 export const sessionShutter = (isFocused: boolean) => ({
     backgroundColor: colors.white,
-    zIndex: 1,
     opacity: isFocused ? 0 : 0.2,
-    pointerEvents: "none",
-    height: sessionContentHeight,
 });
-
-export const titleBar = {
-    WebkitAppRegion: "drag",
-    height: titleBarHeight,
-};
 
 export const tabs = {
     justifyContent: "center" as "center",
@@ -274,7 +218,7 @@ export const searchIcon: CSSProperties = {
     left: fontSize,
     top: -1,
     fontSize: fontSize - 4,
-    ...icon,
+    fontFamily: "FontAwesome",
 };
 
 export const searchInput = {
@@ -306,7 +250,7 @@ export const tabClose = (hover: TabHoverState): CSSProperties => {
     const margin = titleBarHeight - fontSize;
 
     return {
-        ...icon,
+        fontFamily: "FontAwesome",
         color: tabCloseButtonColor(hover),
         position: "absolute",
         left: margin,
@@ -370,7 +314,7 @@ export const outputCut = (status: Status, isHovered: boolean): CSSProperties => 
     zIndex: outputCutZIndex,
 });
 
-export const outputCutIcon = {marginRight: 10, ...icon};
+export const outputCutIcon = {marginRight: 10, fontFamily: "FontAwesome"};
 
 export const output = (activeOutputType: OutputType, status: Status) => {
     const styles: CSSObject = {
@@ -404,56 +348,6 @@ export const output = (activeOutputType: OutputType, status: Status) => {
     return styles;
 };
 
-export const promptWrapper: CSSObject = {
-    top: 0,
-    paddingTop: promptVerticalPadding,
-    position: "relative", // To position the autocompletion box correctly.
-    gridRow: "2",
-    display: "grid",
-    gridTemplateAreas: `'${promptGrid.decoration.name} ${promptGrid.prompt.name} ${promptGrid.actions.name}'`,
-    gridTemplateRows: "auto",
-    gridTemplateColumns: `${promptGrid.decoration.width.toCSS()} ${promptGrid.prompt.width.toCSS()} ${promptGrid.actions.width.toCSS()}`,
-    minHeight: promptWrapperHeight,
-    zIndex: outputCutZIndex + 1,
-};
-
-export const arrow = (status: Status | undefined = undefined) => {
-    const styles: CSSObject = {
-        gridArea: promptGrid.decoration.name,
-        position: "relative",
-        width: decorationWidth,
-        height: promptHeight - promptVerticalPadding,
-        margin: "0 auto",
-        overflow: "hidden",
-        zIndex: arrowZIndex,
-    };
-
-    if (status === Status.InProgress) {
-        styles.cursor = "progress";
-    }
-
-    return styles;
-};
-
-export const promptInfo = (status: Status | undefined = undefined) => {
-    let styles: CSSObject = {
-        cursor: "help",
-        zIndex: 2,
-        gridArea: promptGrid.decoration.name,
-    };
-
-    if (status === Status.Interrupted) {
-        styles = {...styles, ...icon};
-
-        styles.position = "relative";
-        styles.left = 6;
-        styles.top = 1;
-        styles.color = colors.black;
-    }
-
-    return styles;
-};
-
 export const jobHeader: CSSObject = {
     color: alpha(colors.white, 0.5),
     fontSize: "1.2em",
@@ -463,7 +357,6 @@ export const jobHeader: CSSObject = {
 };
 
 export const actions = {
-    gridArea: promptGrid.actions.name,
     marginRight: 15,
     textAlign: "right",
 };
@@ -474,7 +367,7 @@ export const action = {
     display: "inline-block",
     margin: "0 3px",
     cursor: "pointer",
-    ...icon,
+    fontFamily: "FontAwesome",
 };
 
 export const prettifyToggle = (isEnabled: boolean) => {
@@ -482,38 +375,6 @@ export const prettifyToggle = (isEnabled: boolean) => {
         ...action,
         color: isEnabled ? colors.green : colors.white,
     };
-};
-
-export const autocompletedPreview = {
-    ...promptInlineElement,
-    color: lighten(promptBackgroundColor, 15),
-};
-
-export const prompt = {
-    ...promptInlineElement,
-    color: colors.white,
-    zIndex: 2,
-    whiteSpace: "pre-wrap",
-};
-
-export const promptPlaceholder = {
-    minHeight: promptWrapperHeight,
-    marginRight: fontSize,
-    width: "70%",
-    flexGrow: 1,
-};
-
-export const arrowInner: CSSObject = {
-    content: "",
-    position: "absolute",
-    width: "200%",
-    height: "200%",
-    top: -10,
-    right: -8,
-    backgroundColor: arrowColor,
-    transformOrigin: "54% 0",
-    transform: "rotate(45deg)",
-    zIndex: arrowZIndex - 1,
 };
 
 export const image = {
