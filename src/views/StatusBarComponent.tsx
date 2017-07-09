@@ -7,6 +7,7 @@ import {Session} from "../shell/Session";
 import {Status} from "../Enums";
 import * as _ from "lodash";
 import {PromptComponent} from "./PromptComponent";
+import {userFriendlyPath} from "../utils/Common";
 
 const VcsDataComponent = ({data}: { data: VcsData }) => {
     if (data.kind === "repository") {
@@ -49,7 +50,7 @@ export class StatusBarComponent extends React.Component<Props, {}> {
             <div className="status-bar" style={css.statusBar.itself}>
                 <span style={css.statusBar.rightSizeWrapper}>
                     <span style={css.statusBar.icon}>{fontAwesome.folderOpen}</span>
-                    <span className="present-directory" style={css.statusBar.presentDirectory}>{this.props.session.directory}</span>
+                    <span className="present-directory" style={css.statusBar.presentDirectory}>{userFriendlyPath(this.props.session.directory)}</span>
                     <VcsDataComponent data={watchManager.vcsDataFor(this.props.session.directory)}/>
                 </span>
                 {promptComponent}
