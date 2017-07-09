@@ -4,7 +4,7 @@ import {Session} from "../shell/Session";
 import {Job} from "../shell/Job";
 import {JobShowComponent} from "./3_JobShowComponent";
 import * as css from "./css/main";
-import {JobFormComponent} from "./3_JobFormComponent";
+import {PromptComponent} from "./PromptComponent";
 import {StatusBarComponent} from "./StatusBarComponent";
 
 interface Props {
@@ -43,8 +43,8 @@ export class SessionComponent extends React.Component<Props, {}> {
             .on("vcs-data", () => this.props.updateStatusBar && this.props.updateStatusBar());
     }
 
-    jobFormComponent(): JobFormComponent | undefined {
-        return this._statusBarComponent.jobFormComponent;
+    promptComponent(): PromptComponent | undefined {
+        return this._statusBarComponent.promptComponent;
     }
 
     render() {

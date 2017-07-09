@@ -23,7 +23,7 @@ interface State {
     suggestions: SuggestionWithDefaults[];
 }
 
-export class JobFormComponent extends React.Component<Props, State> {
+export class PromptComponent extends React.Component<Props, State> {
     private prompt: Prompt;
 
     /* tslint:disable:member-ordering */

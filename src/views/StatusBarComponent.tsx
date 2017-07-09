@@ -6,7 +6,7 @@ import {watchManager} from "../plugins/GitWatcher";
 import {Session} from "../shell/Session";
 import {Status} from "../Enums";
 import * as _ from "lodash";
-import {JobFormComponent} from "./3_JobFormComponent";
+import {PromptComponent} from "./PromptComponent";
 
 const VcsDataComponent = ({data}: { data: VcsData }) => {
     if (data.kind === "repository") {
@@ -28,7 +28,7 @@ interface Props {
 }
 
 export class StatusBarComponent extends React.Component<Props, {}> {
-    jobFormComponent: JobFormComponent;
+    promptComponent: PromptComponent;
 
     render() {
         const lastJob = _.last(this.props.session.jobs);
@@ -38,16 +38,16 @@ export class StatusBarComponent extends React.Component<Props, {}> {
             lastJob.once("end", () => this.forceUpdate());
         }
 
-        const jobFormComponent = lastJobInProgress ? undefined : <JobFormComponent
+        const promptComponent = lastJobInProgress ? undefined : <PromptComponent
             key={this.props.session.jobs.length}
-            ref={component => { this.jobFormComponent = component!; }}
+            ref={component => { this.promptComponent = component!; }}
             session={this.props.session}
             isFocused={true}
         />;
 
         return (
             <div className="status-bar" style={css.statusBar.itself}>
-                {jobFormComponent}
+                {promptComponent}
                 <span style={css.statusBar.rightSizeWrapper}>
                     <span style={css.statusBar.icon}>{fontAwesome.folderOpen}</span>
                     <span className="present-directory" style={css.statusBar.presentDirectory}>{this.props.session.directory}</span>
