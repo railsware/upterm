@@ -47,12 +47,12 @@ export class StatusBarComponent extends React.Component<Props, {}> {
 
         return (
             <div className="status-bar" style={css.statusBar.itself}>
-                {promptComponent}
                 <span style={css.statusBar.rightSizeWrapper}>
                     <span style={css.statusBar.icon}>{fontAwesome.folderOpen}</span>
                     <span className="present-directory" style={css.statusBar.presentDirectory}>{this.props.session.directory}</span>
                     <VcsDataComponent data={watchManager.vcsDataFor(this.props.session.directory)}/>
                 </span>
+                {promptComponent}
             </div>
         );
     }

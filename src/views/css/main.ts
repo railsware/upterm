@@ -210,6 +210,7 @@ export const statusBar = {
         lineHeight: 1.3,
         backgroundColor: panelColor,
         display: "flex",
+        flexDirection: "row-reverse",
     } as CSSProperties,
     presentDirectory: {
         flexGrow: 1,
