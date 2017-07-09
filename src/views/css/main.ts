@@ -429,25 +429,17 @@ export const output = (activeOutputType: OutputType, status: Status) => {
     return styles;
 };
 
-export const promptWrapper = (status: Status | undefined = undefined) => {
-    const styles: CSSObject = {
-        top: 0,
-        paddingTop: promptVerticalPadding,
-        position: "relative", // To position the autocompletion box correctly.
-        gridRow: "2",
-        display: "grid",
-        gridTemplateAreas: `'${promptGrid.decoration.name} ${promptGrid.prompt.name} ${promptGrid.actions.name}'`,
-        gridTemplateRows: "auto",
-        gridTemplateColumns: `${promptGrid.decoration.width.toCSS()} ${promptGrid.prompt.width.toCSS()} ${promptGrid.actions.width.toCSS()}`,
-        minHeight: promptWrapperHeight,
-        zIndex: outputCutZIndex + 1,
-    };
-
-    if (status && [Status.Failure, Status.Interrupted].includes(status)) {
-        styles.backgroundColor = failurize(promptBackgroundColor);
-    }
-
-    return styles;
+export const promptWrapper: CSSObject = {
+    top: 0,
+    paddingTop: promptVerticalPadding,
+    position: "relative", // To position the autocompletion box correctly.
+    gridRow: "2",
+    display: "grid",
+    gridTemplateAreas: `'${promptGrid.decoration.name} ${promptGrid.prompt.name} ${promptGrid.actions.name}'`,
+    gridTemplateRows: "auto",
+    gridTemplateColumns: `${promptGrid.decoration.width.toCSS()} ${promptGrid.prompt.width.toCSS()} ${promptGrid.actions.width.toCSS()}`,
+    minHeight: promptWrapperHeight,
+    zIndex: outputCutZIndex + 1,
 };
 
 export const arrow = (status: Status | undefined = undefined) => {
@@ -536,27 +528,17 @@ export const promptPlaceholder = {
     flexGrow: 1,
 };
 
-export const arrowInner = (status: Status | undefined = undefined) => {
-    const styles: CSSObject = {
-        content: "",
-        position: "absolute",
-        width: "200%",
-        height: "200%",
-        top: -10,
-        right: -8,
-        backgroundColor: arrowColor,
-        transformOrigin: "54% 0",
-        transform: "rotate(45deg)",
-        zIndex: arrowZIndex - 1,
-
-        backgroundSize: 0, // Is used to animate the inProgress arrow.
-    };
-
-    if (status && [Status.Failure, Status.Interrupted].includes(status)) {
-        styles.backgroundColor = failurize(arrowColor);
-    }
-
-    return styles;
+export const arrowInner: CSSObject = {
+    content: "",
+    position: "absolute",
+    width: "200%",
+    height: "200%",
+    top: -10,
+    right: -8,
+    backgroundColor: arrowColor,
+    transformOrigin: "54% 0",
+    transform: "rotate(45deg)",
+    zIndex: arrowZIndex - 1,
 };
 
 export const image = {

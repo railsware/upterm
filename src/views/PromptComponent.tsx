@@ -71,9 +71,9 @@ export class PromptComponent extends React.Component<Props, State> {
         }
 
         return <div className="prompt-placeholder" ref="placeholder" style={css.promptPlaceholder}>
-            <div className="prompt-wrapper" style={css.promptWrapper()}>
+            <div className="prompt-wrapper" style={css.promptWrapper}>
                 <div style={css.arrow()}>
-                    <div style={css.arrowInner()} />
+                    <div style={css.arrowInner} />
                 </div>
                 <div
                     style={css.promptInfo()}
