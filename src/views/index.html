@@ -37,6 +37,41 @@
       }
     }
 
+    .application {
+      display: grid;
+      grid-template-areas: "title-bar"
+      "sessions";
+    }
+
+    .title-bar {
+      grid-area: title-bar;
+    }
+
+    .sessions {
+      grid-area: sessions;
+      display: grid;
+    }
+
+    .session {
+      position: relative;
+      outline: none;
+      overflow-y: scroll;
+      display: grid;
+      grid-template-areas: "jobs" "status-bar";
+    }
+
+    .jobs {
+      grid-area: jobs;
+    }
+
+    .shutter {
+      grid-area: jobs;
+    }
+
+    .status-bar {
+      grid-area: status-bar;
+    }
+
     /* inline styles can't really handle pseudo elements, so they still need classes */
     .jsonTreeParentNode:before {
       content: "\0025B8 \0000a0";

@@ -54,26 +54,6 @@ const promptGrid = {
     },
 };
 
-const sessionsHeight = `(100vh - ${titleBarHeight}px)`;
-
-const applicationGrid = {
-    container: {
-        display: "grid",
-        gridTemplateColumns: "100%",
-        gridTemplateRows: `${titleBarHeight}px calc(${sessionsHeight})`,
-    },
-    sessions: {
-        height: "100%",
-    },
-};
-
-const sessionGrid = {
-    container: {
-        display: "grid",
-        gridTemplateRows: `calc(100% - ${statusBarHeight}px) ${statusBarHeight}px`,
-    },
-};
-
 function sessionsGridTemplate(list: PaneList): CSSObject {
     if (list instanceof ColumnList) {
         return {
@@ -119,7 +99,6 @@ function jaggedBorder(color: string, panelColor: string, darkenPercent: number) 
 }
 
 export const application = {
-    ...applicationGrid.container,
     backgroundColor: backgroundColor,
     color: colors.white,
     fontFamily: "'Hack', 'Fira Code', 'Menlo', monospace",
@@ -130,12 +109,13 @@ export const job = {
     marginTop: fontSize * 2,
 };
 
+const sessionContentHeight = `calc(100vh - ${titleBarHeight + statusBarHeight}px)`;
+
 export const jobs = (isSessionFocused: boolean): CSSObject => ({
-    gridRow: "1",
-    gridColumn: "1",
     overflowY: "scroll",
     display: "flex",
     flexDirection: "column-reverse",
+    height: sessionContentHeight,
     ...(isSessionFocused ? {} : unfocusedJobs),
 });
 
@@ -211,6 +191,7 @@ export const statusBar = {
         backgroundColor: panelColor,
         display: "flex",
         flexDirection: "row-reverse",
+        height: statusBarHeight,
     } as CSSProperties,
     presentDirectory: {
         flexGrow: 1,
@@ -241,38 +222,32 @@ export const statusBar = {
 
 export const sessions = (list: PaneList) => ({
     backgroundColor: backgroundColor,
-    display: "grid",
     ...sessionsGridTemplate(list),
-    ...applicationGrid.sessions,
+    height: `calc(100vh - ${titleBarHeight}px)`,
 });
 
 export const session = (isFocused: boolean) => {
-    const styles: CSSObject = {
-        position: "relative",
-        outline: "none",
-        overflowY: "scroll",
-    };
+    const styles: CSSObject = {};
 
     if (!isFocused) {
         styles.boxShadow = `0 0 0 1px ${alpha(colors.white, 0.3)}`;
         styles.margin = "0 1px 0 0";
     }
 
-    return {...styles, ...sessionGrid.container};
+    return styles;
 };
-//
+
 export const sessionShutter = (isFocused: boolean) => ({
     backgroundColor: colors.white,
     zIndex: 1,
     opacity: isFocused ? 0 : 0.2,
     pointerEvents: "none",
-    gridTemplateRows: "all",
-    gridRow: "1",
-    gridColumn: "1",
+    height: sessionContentHeight,
 });
 
 export const titleBar = {
     WebkitAppRegion: "drag",
+    height: titleBarHeight,
 };
 
 export const tabs = {

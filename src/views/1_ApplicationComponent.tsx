@@ -323,12 +323,14 @@ export class ApplicationComponent extends React.Component<{}, ApplicationState> 
         }
 
         return (
-            <div style={css.application}>
-                <div style={css.titleBar}>
+            <div className="application" style={css.application}>
+                <div className="title-bar" style={css.titleBar}>
                     <ul style={css.tabs}>{tabs}</ul>
                     <SearchComponent/>
                 </div>
-                {this.renderPanes(this.focusedTab().panes)}
+                <div className="sessions" style={css.sessions(this.focusedTab().panes)}>
+                    {this.renderPanes(this.focusedTab().panes)}
+                </div>
             </div>
         );
     }
@@ -357,7 +359,7 @@ export class ApplicationComponent extends React.Component<{}, ApplicationState> 
                 </SessionComponent>
             );
         } else {
-            return <div style={css.sessions(tree)}>{tree.children.map(child => this.renderPanes(child))}</div>;
+            return <div>{tree.children.map(child => this.renderPanes(child))}</div>;
         }
     }
 
