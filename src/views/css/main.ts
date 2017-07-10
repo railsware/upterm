@@ -23,6 +23,7 @@ const cssVariables = {
     "--font-size": `${fontSize}px`,
     "--title-bar-height": `${titleBarHeight}px`,
     "--status-bar-height": `${statusBarHeight}px`,
+    "--content-padding": `${outputPadding}px`,
     "--background-color": backgroundColor,
     "--background-color-failure": failurize(backgroundColor),
     "--text-color": colors.white,
@@ -318,10 +319,6 @@ export const outputCutIcon = {marginRight: 10, fontFamily: "FontAwesome"};
 
 export const output = (activeOutputType: OutputType, status: Status) => {
     const styles: CSSObject = {
-        paddingTop: outputPadding,
-        paddingBottom: outputPadding,
-        paddingLeft: outputPadding,
-        paddingRight: outputPadding,
         whiteSpace: "pre-wrap",
     };
 
@@ -341,14 +338,6 @@ export const output = (activeOutputType: OutputType, status: Status) => {
     }
 
     return styles;
-};
-
-export const jobHeader: CSSObject = {
-    color: alpha(colors.white, 0.5),
-    fontSize: "1.2em",
-    paddingLeft: outputPadding * 1.2,
-    paddingBottom: 2,
-    borderBottom: `1px solid ${alpha(colors.white, 0.2)}`,
 };
 
 export const actions = {

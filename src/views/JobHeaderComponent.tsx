@@ -10,24 +10,9 @@ interface Props {
     showPrettifyToggle: boolean;
 }
 
-interface State {
-    offsetTop: number;
-    showJobMenu: boolean;
-}
-
 
 // TODO: Make sure we only update the view when the model changes.
-export class JobHeaderComponent extends React.Component<Props, State> {
-    /* tslint:disable:member-ordering */
-    constructor(props: Props) {
-        super(props);
-
-        this.state = {
-            offsetTop: 0,
-            showJobMenu: false,
-        };
-    }
-
+export class JobHeaderComponent extends React.Component<Props, {}> {
     render() {
         // FIXME: write better types.
         let prettifyToggle: any;
@@ -39,27 +24,9 @@ export class JobHeaderComponent extends React.Component<Props, State> {
             />;
         }
 
-        return <div className="job-header" ref="placeholder">
-            <div>
-                <div
-                    style={css.jobHeader}
-                    type="text"
-                >
-                    {this.props.job.prompt.value}
-                </div>
-                <div style={css.actions}>
-                    {prettifyToggle}
-                </div>
-            </div>
+        return <div className="job-header">
+            <div>{this.props.job.prompt.value}</div>
+            <div style={css.actions}>{prettifyToggle}</div>
         </div>;
-    }
-
-    scrollIntoView(): void {
-        this.placeholderNode.scrollIntoView(true);
-    }
-
-    private get placeholderNode(): Element {
-        /* tslint:disable:no-string-literal */
-        return this.refs["placeholder"] as Element;
     }
 }
