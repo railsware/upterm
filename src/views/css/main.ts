@@ -24,6 +24,7 @@ const cssVariables = {
     "--title-bar-height": `${titleBarHeight}px`,
     "--status-bar-height": `${statusBarHeight}px`,
     "--background-color": backgroundColor,
+    "--background-color-failure": failurize(backgroundColor),
     "--text-color": colors.white,
 };
 
@@ -265,12 +266,11 @@ export const commandSign = {
 
 // To display even empty rows. The height might need tweaking.
 // TODO: Remove if we always have a fixed output width.
-export const charGroup = (attributes: Attributes, status: Status) => {
+export const charGroup = (attributes: Attributes) => {
     const styles: CSSObject = {
         display: "inline-block",
         height: rowHeight,
         color: colorValue(attributes.color, {isBright: attributes.brightness === Brightness.Bright}),
-        backgroundColor: [Status.Failure, Status.Interrupted].includes(status) ? failurize(backgroundColor) : colorValue(attributes.backgroundColor),
     };
 
     if (attributes.inverse) {

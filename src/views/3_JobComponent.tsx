@@ -45,7 +45,7 @@ export class JobComponent extends React.Component<Props, State> {
         }
 
         return (
-            <div className={"job"}>
+            <div className={"job"} data-status={this.props.job.status}>
                 <JobHeaderComponent
                     job={this.props.job}
                     showPrettifyToggle={canBePrettified}

@@ -69,10 +69,10 @@ export enum Color {
 }
 
 export enum Status {
-    InProgress,
-    Failure,
-    Interrupted,
-    Success,
+    InProgress = "in-progress",
+    Failure = "failure",
+    Interrupted = "interrupted",
+    Success = "success",
 }
 
 export enum OutputType {

@@ -9,8 +9,8 @@ import {fontAwesome} from "./css/FontAwesome";
 import {Job} from "../shell/Job";
 import {OutputType, Status} from "../Enums";
 
-const CharGroupComponent = ({status, group}: {status: Status, group: Char[]}) =>
-    <span style={css.charGroup(group[0].attributes, status)}>{group.map(char => char.value).join("")}</span>;
+const CharGroupComponent = ({group}: {group: Char[]}) =>
+    <span style={css.charGroup(group[0].attributes)}>{group.map(char => char.value).join("")}</span>;
 
 interface CutProps {
     job: Job;
@@ -43,7 +43,6 @@ interface RowProps {
     row: List<Char>;
     hasCursor: boolean;
     cursorColumnIndex: number;
-    status: Status;
 }
 
 const charGrouper = (a: Char, b: Char) => a.attributes === b.attributes;
@@ -51,7 +50,6 @@ const charGrouper = (a: Char, b: Char) => a.attributes === b.attributes;
 export class RowComponent extends React.Component<RowProps, {}> {
     shouldComponentUpdate(nextProps: RowProps) {
         return this.props.row !== nextProps.row ||
-            this.props.status !== nextProps.status ||
             this.props.hasCursor !== nextProps.hasCursor ||
             (nextProps.hasCursor && this.props.cursorColumnIndex !== nextProps.cursorColumnIndex);
     }
@@ -70,7 +68,7 @@ export class RowComponent extends React.Component<RowProps, {}> {
         });
 
         const charGroups = groupWhen(charGrouper, rowWithoutHoles).map((charGroup: Char[], index: number) =>
-            <CharGroupComponent status={this.props.status} group={charGroup} key={index}/>,
+            <CharGroupComponent group={charGroup} key={index}/>,
         );
 
         return <div className="output-row"
@@ -116,8 +114,7 @@ export class OutputComponent extends React.Component<Props, State> {
                                 key={index}
                                 row={row}
                                 hasCursor={index === output.cursorRowIndex && showCursor}
-                                cursorColumnIndex={output.cursorColumnIndex}
-                                status={this.props.job.status}/>
+                                cursorColumnIndex={output.cursorColumnIndex}/>
                         );
                     }
                 })}
