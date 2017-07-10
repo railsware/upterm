@@ -14,7 +14,7 @@ interface State {
     prettify: boolean;
 }
 
-export class JobShowComponent extends React.Component<Props, State> {
+export class JobComponent extends React.Component<Props, State> {
     constructor(props: Props) {
         super(props);
 

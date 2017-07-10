@@ -2,7 +2,7 @@ import * as React from "react";
 import * as _ from "lodash";
 import {Session} from "../shell/Session";
 import {Job} from "../shell/Job";
-import {JobShowComponent} from "./3_JobShowComponent";
+import {JobComponent} from "./3_JobComponent";
 import * as css from "./css/main";
 import {PromptComponent} from "./PromptComponent";
 import {StatusBarComponent} from "./StatusBarComponent";
@@ -49,7 +49,7 @@ export class SessionComponent extends React.Component<Props, {}> {
 
     render() {
         const jobs = _.takeRight(this.props.session.jobs, this.RENDER_JOBS_COUNT).slice().reverse().map((job: Job, index: number) =>
-            <JobShowComponent
+            <JobComponent
                 key={job.id}
                 job={job}
                 jobStatus={job.status}
