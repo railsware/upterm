@@ -319,6 +319,7 @@ export const outputCutIcon = {marginRight: 10, fontFamily: "FontAwesome"};
 
 export const output = (activeOutputType: OutputType, status: Status) => {
     const styles: CSSObject = {
+        backgroundColor: backgroundColor,
         whiteSpace: "pre-wrap",
     };
 
