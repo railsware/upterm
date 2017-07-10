@@ -76,7 +76,6 @@ export const jobs = (isSessionFocused: boolean): CSSObject => ({
 });
 
 export const row: CSSProperties =  {
-    padding: `0 ${outputPadding}`,
     minHeight: rowHeight,
 };
 

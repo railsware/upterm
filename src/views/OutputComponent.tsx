@@ -71,7 +71,7 @@ export class RowComponent extends React.Component<RowProps, {}> {
             <CharGroupComponent group={charGroup} key={index}/>,
         );
 
-        return <div className="output-row"
+        return <div className="row"
                     style={css.row}
                     ref={(div: HTMLDivElement | null) => div && div.scrollIntoViewIfNeeded()}>{charGroups}</div>;
     }
