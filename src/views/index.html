@@ -80,7 +80,8 @@
     }
 
     .job-header {
-      filter: brightness(60%);
+      color: var(--background-color);
+      filter: brightness(260%);
       font-size: var(--prompt-font-size);
       padding-bottom: 3px;
     }
@@ -90,7 +91,8 @@
     }
 
     .job[data-status=failure] {
-        background-color: var(--background-color-failure);
+      --background-color: var(--background-color-failure);
+      background-color: var(--background-color);
     }
 
     .shutter {
