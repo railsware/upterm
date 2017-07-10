@@ -319,7 +319,6 @@ export const outputCutIcon = {marginRight: 10, fontFamily: "FontAwesome"};
 
 export const output = (activeOutputType: OutputType, status: Status) => {
     const styles: CSSObject = {
-        backgroundColor: backgroundColor,
         whiteSpace: "pre-wrap",
     };
 
@@ -329,6 +328,7 @@ export const output = (activeOutputType: OutputType, status: Status) => {
         }
 
         if (status === Status.InProgress) {
+            styles.backgroundColor = backgroundColor;
             styles.position = "absolute";
             styles.top = 0;
             styles.bottom = 0;
