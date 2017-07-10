@@ -323,7 +323,6 @@ export const output = (activeOutputType: OutputType, status: Status) => {
         paddingLeft: outputPadding,
         paddingRight: outputPadding,
         whiteSpace: "pre-wrap",
-        backgroundColor: backgroundColor,
     };
 
     if (activeOutputType === OutputType.Alternate) {
@@ -338,10 +337,6 @@ export const output = (activeOutputType: OutputType, status: Status) => {
             styles.left = 0;
             styles.right = 0;
             styles.zIndex = 4;
-        }
-    } else {
-        if ([Status.Failure, Status.Interrupted].includes(status)) {
-            styles.backgroundColor = failurize(backgroundColor);
         }
     }
 
