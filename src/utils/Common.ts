@@ -289,8 +289,8 @@ export function fuzzyMatch(input: string, candidate: string): boolean {
 
     const lowerCasedInput = input.toLowerCase();
 
-    // A user wants to match by prefix.
-    if (candidate.toLowerCase().startsWith(lowerCasedInput)) {
+    // A user wants to match by an exact substring.
+    if (candidate.toLowerCase().includes(lowerCasedInput)) {
         return true;
     }
 

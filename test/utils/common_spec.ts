@@ -18,5 +18,9 @@ describe("common utils", () => {
         it("matches beginning of token", () => {
             expect(fuzzyMatch("nam", "file_name")).to.eql(true);
         });
+
+        it("matches exact substring", () => {
+            expect(fuzzyMatch("2-15", "cat 2-15")).to.eql(true);
+        });
     });
 });
