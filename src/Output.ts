@@ -368,6 +368,12 @@ class ANSIParser {
 
                 this.output.originMode = shouldSet;
                 break;
+            case 7:
+                description = "Wraparound Mode (DECAWM).";
+                url = "http://www.vt100.net/docs/vt510-rm/DECAWM";
+
+                this.output.isAutowrapModeSet = shouldSet;
+                break;
             case 12:
                 if (shouldSet) {
                     description = "Start Blinking Cursor (att610).";
@@ -652,6 +658,7 @@ export class Output extends events.EventEmitter {
         G3: CharacterSets.ASCIIGraphics,
     };
     public selectedCharacterSet: SelectedCharacterSet = "G0";
+    isAutowrapModeSet = true;
     private _attributes: i.Attributes = {...defaultAttributes, color: e.Color.White, weight: e.Weight.Normal};
     private isOriginModeSet = false;
     private isCursorKeysModeSet = false;
@@ -714,8 +721,12 @@ export class Output extends events.EventEmitter {
             const charObject = createChar(charFromCharset, this.attributes);
 
             if (this.cursorColumnIndex === this.dimensions.columns) {
-                this.moveCursorAbsolute({columnIndex: 0});
-                this.moveCursorRelative({vertical: 1});
+                if (this.isAutowrapModeSet) {
+                    this.moveCursorAbsolute({columnIndex: 0});
+                    this.moveCursorRelative({vertical: 1});
+                } else {
+                    this.moveCursorRelative({horizontal: -1});
+                }
             }
 
             this.set(charObject);

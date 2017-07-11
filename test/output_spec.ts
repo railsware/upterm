@@ -278,6 +278,16 @@ This is a correct sentence
 
 Push <RETURN>
 `);
+            vttest("2-1", `
+********************************************************************************
+********************************************************************************
+********************************************************************************
+
+This should be three identical lines of *'s completely filling
+the top of the screen without any empty lines between.
+(Test of WRAP AROUND mode setting.)
+Push <RETURN>
+`);
             vttest("2-15", `
 AAAAA
 AAAAA
