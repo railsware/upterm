@@ -24,8 +24,9 @@ const cssVariables = {
     "--title-bar-height": `${titleBarHeight}px`,
     "--status-bar-height": `${statusBarHeight}px`,
     "--content-padding": `${outputPadding}px`,
-    "--background-color": backgroundColor,
-    "--background-color-failure": failurize(backgroundColor),
+    "--background-color": panelColor,
+    "--job-background-color": backgroundColor,
+    "--job-background-color-failure": failurize(backgroundColor),
     "--text-color": colors.white,
 };
 

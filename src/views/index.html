@@ -80,7 +80,7 @@
     }
 
     .job-header {
-      color: var(--background-color);
+      color: var(--job-background-color);
       filter: brightness(260%);
       font-size: var(--prompt-font-size);
       padding-bottom: 3px;
@@ -88,11 +88,12 @@
 
     .job {
       padding: var(--content-padding);
+      background-color: var(--job-background-color);
+      margin-top: var(--font-size);
     }
 
     .job[data-status=failure] {
-      --background-color: var(--background-color-failure);
-      background-color: var(--background-color);
+      --job-background-color: var(--job-background-color-failure);
     }
 
     .shutter {
