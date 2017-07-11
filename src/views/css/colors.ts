@@ -1,4 +1,3 @@
-import {darken} from "./functions";
 import * as _ from "lodash";
 import {ColorCode} from "../../Interfaces";
 
@@ -81,6 +80,3 @@ export function colorValue(color: ColorCode, options = {isBright: false}) {
         }
     }
 }
-
-export const background = colors.black;
-export const panel = darken(background, 3);

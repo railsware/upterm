@@ -1,5 +1,5 @@
 import {OutputType, Status, Weight, Brightness} from "../../Enums";
-import {colors, panel as panelColor, background as backgroundColor, colorValue} from "./colors";
+import {colors, colorValue} from "./colors";
 import {TabHoverState} from "../TabComponent";
 import {darken, lighten, failurize, alpha} from "./functions";
 import {Attributes} from "../../Interfaces";
@@ -7,6 +7,9 @@ import {CSSObject} from "./definitions";
 import {ColumnList, PaneList} from "../../utils/PaneTree";
 import {CSSProperties} from "react";
 
+
+const jobBackgroundColor = colors.black;
+const backgroundColor = darken(jobBackgroundColor, 4);
 const fontSize = 14;
 const promptFontSize = fontSize * 1.1;
 export const outputPadding = 10;
@@ -24,9 +27,9 @@ const cssVariables = {
     "--title-bar-height": `${titleBarHeight}px`,
     "--status-bar-height": `${statusBarHeight}px`,
     "--content-padding": `${outputPadding}px`,
-    "--background-color": panelColor,
-    "--job-background-color": backgroundColor,
-    "--job-background-color-failure": failurize(backgroundColor),
+    "--background-color": backgroundColor,
+    "--job-background-color": jobBackgroundColor,
+    "--job-background-color-failure": failurize(jobBackgroundColor),
     "--text-color": colors.white,
 };
 
@@ -34,7 +37,7 @@ const outputCutHeight = fontSize * 2.6;
 const outputCutZIndex = 0;
 
 const decorationWidth = 30;
-const searchInputColor = lighten(panelColor, 15);
+const searchInputColor = lighten(backgroundColor, 15);
 
 function sessionsGridTemplate(list: PaneList): CSSObject {
     if (list instanceof ColumnList) {
@@ -144,7 +147,7 @@ export const statusBar = {
         paddingRight: 0,
         paddingBottom: 6,
         lineHeight: 1.3,
-        backgroundColor: panelColor,
+        backgroundColor: backgroundColor,
         display: "flex",
         flexDirection: "row-reverse",
         height: statusBarHeight,
@@ -237,7 +240,7 @@ export const searchInput = {
 
 export const tab = (isHovered: boolean, isFocused: boolean): CSSProperties => {
     return {
-        backgroundColor: isHovered ? panelColor : colors.black,
+        backgroundColor: isHovered ? backgroundColor : colors.black,
         opacity: (isHovered || isFocused) ? 1 : 0.3,
         position: "relative",
         height: titleBarHeight,
@@ -299,8 +302,8 @@ export const charGroup = (attributes: Attributes) => {
 
 export const outputCut = (status: Status, isHovered: boolean): CSSProperties => ({
     ...jaggedBorder(
+        [Status.Failure, Status.Interrupted].includes(status) ? failurize(jobBackgroundColor) : jobBackgroundColor,
         [Status.Failure, Status.Interrupted].includes(status) ? failurize(backgroundColor) : backgroundColor,
-        [Status.Failure, Status.Interrupted].includes(status) ? failurize(panelColor) : panelColor,
         isHovered ? 0 : 0,
     ),
     position: "relative",
@@ -310,7 +313,7 @@ export const outputCut = (status: Status, isHovered: boolean): CSSProperties => 
     height: outputCutHeight,
     textAlign: "center",
     paddingTop: (outputCutHeight - fontSize) / 3,
-    color: lighten(backgroundColor, isHovered ? 35 : 30),
+    color: lighten(jobBackgroundColor, isHovered ? 35 : 30),
     cursor: "pointer",
     zIndex: outputCutZIndex,
 });
@@ -328,7 +331,7 @@ export const output = (activeOutputType: OutputType, status: Status) => {
         }
 
         if (status === Status.InProgress) {
-            styles.backgroundColor = backgroundColor;
+            styles.backgroundColor = jobBackgroundColor;
             styles.position = "absolute";
             styles.top = 0;
             styles.bottom = 0;
