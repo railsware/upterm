@@ -340,7 +340,7 @@ class ANSIParser {
                 description = "Cursor Keys Mode.";
                 url = "http://www.vt100.net/docs/vt510-rm/DECCKM";
 
-                this.output.cursorKeysMode = shouldSet;
+                this.output.isCursorKeysModeSet = shouldSet;
                 break;
             case 3:
                 url = "http://www.vt100.net/docs/vt510-rm/DECCOLM";
@@ -366,7 +366,7 @@ class ANSIParser {
                 description = "Origin Mode (DECOM).";
                 url = "http://www.vt100.net/docs/vt510-rm/DECOM";
 
-                this.output.originMode = shouldSet;
+                this.output.isOriginModeSet = shouldSet;
                 break;
             case 7:
                 description = "Wraparound Mode (DECAWM).";
@@ -658,10 +658,10 @@ export class Output extends events.EventEmitter {
         G3: CharacterSets.ASCIIGraphics,
     };
     public selectedCharacterSet: SelectedCharacterSet = "G0";
-    isAutowrapModeSet = true;
+    public isOriginModeSet = false;
+    public isCursorKeysModeSet = false;
+    public isAutowrapModeSet = true;
     private _attributes: i.Attributes = {...defaultAttributes, color: e.Color.White, weight: e.Weight.Normal};
-    private isOriginModeSet = false;
-    private isCursorKeysModeSet = false;
     private _margins: Margins = {top: 0, left: 0};
     private savedState: SavedState | undefined;
     private parser: ANSIParser;
@@ -891,18 +891,6 @@ export class Output extends events.EventEmitter {
 
     isEmpty(): boolean {
         return this.storage.size === 0;
-    }
-
-    set originMode(mode: boolean) {
-        this.isOriginModeSet = mode;
-    }
-
-    set cursorKeysMode(mode: boolean) {
-        this.isCursorKeysModeSet = mode;
-    }
-
-    get cursorKeysMode(): boolean {
-        return this.isCursorKeysModeSet;
     }
 
     set margins(margins: Partial<Margins>) {

@@ -108,7 +108,7 @@ export class Job extends EmitterWithUniqueID implements TerminalLikeDevice {
                 }
                 text = `\x1b${char}`;
             } else {
-                text = normalizeKey(input.key, this.output.cursorKeysMode);
+                text = normalizeKey(input.key, this.output.isCursorKeysModeSet);
             }
         }
 
