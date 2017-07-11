@@ -20,7 +20,26 @@ interface SavedState {
     cursorRowIndex: number;
     cursorColumnIndex: number;
     attributes: i.Attributes;
+    designatedCharacterSets: DesignatedCharacterSets;
+    selectedCharacterSet: SelectedCharacterSet;
 }
+
+/**
+ * @link http://vt100.net/docs/vt220-rm/chapter4.html
+ */
+enum CharacterSets {
+    ASCIIGraphics,
+    SupplementalGraphics,
+}
+
+interface DesignatedCharacterSets {
+    G0: CharacterSets;
+    G1: CharacterSets;
+    G2: CharacterSets;
+    G3: CharacterSets;
+}
+
+type SelectedCharacterSet = keyof DesignatedCharacterSets;
 
 function or1(value: number | undefined) {
     if (value === undefined) {
@@ -232,13 +251,17 @@ class ANSIParser {
 
                 this.output.moveCursorAbsolute({rowIndex: 0, columnIndex: 0});
             } else if (collected === "(" && flag === "0") {
-                short = "Enable Graphic Charset";
-
-                this.output.useGraphicCharset = true;
+                short = "Designate Graphic Charset to G0";
+                this.output.designatedCharacterSets.G0 = CharacterSets.SupplementalGraphics;
             } else if (collected === "(" && flag === "B") {
-                short = "Enable ASCII Charset";
-
-                this.output.useGraphicCharset = false;
+                short = "Designate ASCII Charset to G0";
+                this.output.designatedCharacterSets.G0 = CharacterSets.ASCIIGraphics;
+            } else if (collected === ")" && flag === "0") {
+                short = "Designate Graphic Charset to G1";
+                this.output.designatedCharacterSets.G1 = CharacterSets.SupplementalGraphics;
+            } else if (collected === ")" && flag === "B") {
+                short = "Designate ASCII Charset to G1";
+                this.output.designatedCharacterSets.G1 = CharacterSets.ASCIIGraphics;
             } else {
                 status = "unhandled";
             }
@@ -622,7 +645,13 @@ export class Output extends events.EventEmitter {
     public _blinkCursor = true;
     public activeOutputType = e.OutputType.Standard;
     public storage = List<List<Char>>();
-    public useGraphicCharset = false;
+    public designatedCharacterSets: DesignatedCharacterSets = {
+        G0: CharacterSets.ASCIIGraphics,
+        G1: CharacterSets.ASCIIGraphics,
+        G2: CharacterSets.ASCIIGraphics,
+        G3: CharacterSets.ASCIIGraphics,
+    };
+    public selectedCharacterSet: SelectedCharacterSet = "G0";
     private _attributes: i.Attributes = {...defaultAttributes, color: e.Color.White, weight: e.Weight.Normal};
     private isOriginModeSet = false;
     private isCursorKeysModeSet = false;
@@ -645,6 +674,7 @@ export class Output extends events.EventEmitter {
 
         /**
          * Is a special symbol.
+         * TODO: take into account C1 and DELETE.
          * @link http://www.asciitable.com/index/asciifull.gif
          */
         if (charCode < 32) {
@@ -669,11 +699,18 @@ export class Output extends events.EventEmitter {
                 case e.KeyCode.CarriageReturn:
                     this.moveCursorAbsolute({columnIndex: 0});
                     break;
+                case e.KeyCode.ShiftIn:
+                    this.selectedCharacterSet = "G0";
+                    break;
+                case e.KeyCode.ShiftOut:
+                    this.selectedCharacterSet = "G1";
+                    break;
                 default:
                     error(`Couldn't write a special char with code ${charCode}.`);
             }
         } else {
-            const charFromCharset = this.useGraphicCharset ? graphicCharset[char] : char;
+
+            const charFromCharset = this.charFromCharset(char);
             const charObject = createChar(charFromCharset, this.attributes);
 
             if (this.cursorColumnIndex === this.dimensions.columns) {
@@ -882,6 +919,8 @@ export class Output extends events.EventEmitter {
             cursorRowIndex: this.cursorRowIndex,
             cursorColumnIndex: this.cursorColumnIndex,
             attributes: {...this.attributes},
+            designatedCharacterSets: {...this.designatedCharacterSets},
+            selectedCharacterSet: this.selectedCharacterSet,
         };
     }
 
@@ -889,6 +928,8 @@ export class Output extends events.EventEmitter {
         if (this.savedState) {
             this.moveCursorAbsolute({rowIndex: this.savedState.cursorRowIndex, columnIndex: this.savedState.cursorColumnIndex});
             this.setAttributes(this.savedState.attributes);
+            this.selectedCharacterSet = this.savedState.selectedCharacterSet;
+            this.designatedCharacterSets = this.savedState.designatedCharacterSets;
         } else {
             console.error("No state to restore.");
         }
@@ -914,6 +955,14 @@ export class Output extends events.EventEmitter {
     private ensureRowExists(rowIndex: number): void {
         if (!this.storage.get(rowIndex)) {
             this.storage = this.storage.set(rowIndex, List<Char>());
+        }
+    }
+
+    private charFromCharset(char: string) {
+        if (this.designatedCharacterSets[this.selectedCharacterSet] === CharacterSets.ASCIIGraphics) {
+            return char;
+        } else {
+            return graphicCharset[char] || char;
         }
     }
 }
