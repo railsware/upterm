@@ -81,14 +81,14 @@ export enum OutputType {
 }
 
 export enum Weight {
-    Normal,
-    Bold,
-    Faint,
+    Normal = "normal",
+    Bold = "bold",
+    Faint = "faint",
 }
 
 export enum Brightness {
-    Normal,
-    Bright,
+    Normal = "normal",
+    Bright = "bright",
 }
 
 export enum LogLevel {

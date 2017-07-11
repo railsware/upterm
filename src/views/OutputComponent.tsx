@@ -9,8 +9,24 @@ import {fontAwesome} from "./css/FontAwesome";
 import {Job} from "../shell/Job";
 import {OutputType, Status} from "../Enums";
 
-const CharGroupComponent = ({group}: {group: Char[]}) =>
-    <span style={css.charGroup(group[0].attributes)}>{group.map(char => char.value).join("")}</span>;
+const CharGroupComponent = ({group}: {group: Char[]}) => {
+    const attributes = group[0].attributes;
+    return (
+        <span
+            data-color={attributes.color}
+            data-background-color={attributes.backgroundColor}
+            data-brightness={attributes.brightness}
+            data-weight={attributes.weight}
+            data-underline={attributes.underline}
+            data-crossed-out={attributes.crossedOut}
+            data-blinking={attributes.blinking}
+            data-cursor={attributes.cursor}
+            data-inverse={attributes.inverse}
+            style={css.charGroup(attributes)}>
+        {group.map(char => char.value).join("")}
+        </span>
+    );
+};
 
 interface CutProps {
     job: Job;
