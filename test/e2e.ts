@@ -1,6 +1,7 @@
 import {Application, SpectronClient} from "spectron";
 import {expect} from "chai";
 import {join} from "path";
+import {userFriendlyPath} from "../src/utils/Common";
 
 const timeout = 50000;
 
@@ -86,8 +87,8 @@ describe("application launch", function () {
 
     describe("status bar", () => {
         it("changes working directory on cd", async () => {
-            const oldDirectory = __dirname + "/";
-            const newDirectory = join(oldDirectory, "utils") + "/";
+            const oldDirectory = userFriendlyPath(__dirname + "/");
+            const newDirectory = userFriendlyPath(join(oldDirectory, "utils") + "/");
 
             await page.executeCommand(`cd ${oldDirectory}`);
             expect(await page.statusBar.presentDirectory.getText()).to.eql(oldDirectory);
