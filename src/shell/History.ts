@@ -20,7 +20,7 @@ const readHistoryFileData = () => {
 
 export class History {
     static pointer: number = 0;
-    private static maxEntriesCount: number = 100;
+    private static maxEntriesCount: number = 5000;
     private static storage: string[] = [];
     private static defaultEntry = "";
 
