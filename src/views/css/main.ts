@@ -1,4 +1,4 @@
-import {OutputType, Status, Weight, Brightness} from "../../Enums";
+import {OutputType, Status, Weight, Brightness, Color} from "../../Enums";
 import {colors, colorValue} from "./colors";
 import {TabHoverState} from "../TabComponent";
 import {darken, lighten, failurize, alpha} from "./functions";
@@ -252,6 +252,11 @@ export const charGroup = (attributes: Attributes) => {
     if (attributes.cursor) {
         styles.backgroundColor = colors.white;
         styles.color = colors.black;
+    }
+
+    // Without this text background in failed commands is black instead of red.
+    if (attributes.backgroundColor === Color.Black && !attributes.inverse) {
+        delete styles.backgroundColor;
     }
 
     return styles;
