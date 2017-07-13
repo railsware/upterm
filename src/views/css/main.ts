@@ -13,9 +13,7 @@ const backgroundColor = darken(jobBackgroundColor, 4);
 const fontSize = 14;
 const promptFontSize = fontSize * 1.1;
 export const outputPadding = 10;
-const promptHorizontalPadding = 10;
 const suggestionSize = 2 * fontSize;
-const defaultShadow = "0 2px 8px 1px rgba(0, 0, 0, 0.3)";
 export const titleBarHeight = 24;
 export const rowHeight = fontSize + 2;
 export const statusBarHeight = 62;
@@ -97,14 +95,7 @@ export const suggestionIcon = {
 export const autocomplete = {
     box: (caretPosition: number): CSSProperties => {
         return {
-            position: "absolute",
-            top: "auto",
-            bottom: suggestionSize + 8,
-            left: decorationWidth + promptHorizontalPadding + (caretPosition * promptLetterWidth),
-            minWidth: 300,
-            boxShadow: defaultShadow,
-            backgroundColor: colors.black,
-            zIndex: 3,
+            left: decorationWidth + (caretPosition * promptLetterWidth),
         };
     },
     synopsis: {

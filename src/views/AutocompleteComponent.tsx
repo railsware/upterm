@@ -41,7 +41,7 @@ export class AutocompleteComponent extends React.Component<AutocompleteProps, {}
         );
 
         return (
-            <div style={css.autocomplete.box(this.props.caretPosition)}>
+            <div className="autocomplete" style={css.autocomplete.box(this.props.caretPosition)}>
                 <ul style={css.autocomplete.suggestionsList}>{suggestionViews}</ul>
             </div>
         );

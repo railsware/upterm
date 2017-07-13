@@ -125,8 +125,6 @@
     }
 
     .status-bar .prompt-wrapper {
-      /*top: 0;*/
-      position: relative; /* To position the autocompletion box correctly. */
       display: grid;
       grid-template-areas: "prompt-decoration prompt";
       grid-template-columns: calc(var(--prompt-font-size) * 2) auto;
@@ -212,6 +210,15 @@
       overflow: hidden;
       white-space: pre;
       padding-right: 8px;
+    }
+
+
+    .autocomplete {
+      position: absolute;
+      bottom: var(--status-bar-height);
+      min-width: 300px;
+      box-shadow: 0 2px 8px 1px rgba(0, 0, 0, 0.3);
+      background-color: var(--background-color);
     }
 
     /* inline styles can't really handle pseudo elements, so they still need classes */
