@@ -16,7 +16,7 @@ export const outputPadding = 10;
 const suggestionSize = 2 * fontSize;
 export const titleBarHeight = 24;
 export const rowHeight = fontSize + 2;
-export const statusBarHeight = 62;
+export const statusBarHeight = 70;
 export const letterWidth = fontSize / 2 + 1.5;
 export const promptLetterWidth = promptFontSize / 2 + 1.5;
 
