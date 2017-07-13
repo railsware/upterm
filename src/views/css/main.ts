@@ -18,7 +18,7 @@ const suggestionSize = 2 * fontSize;
 const defaultShadow = "0 2px 8px 1px rgba(0, 0, 0, 0.3)";
 export const titleBarHeight = 24;
 export const rowHeight = fontSize + 2;
-export const statusBarHeight = 55;
+export const statusBarHeight = 62;
 export const letterWidth = fontSize / 2 + 1.5;
 export const promptLetterWidth = promptFontSize / 2 + 1.5;
 
