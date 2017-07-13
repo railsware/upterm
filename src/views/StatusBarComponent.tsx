@@ -1,7 +1,6 @@
 /* tslint:disable:no-unused-variable */
 import * as React from "react";
 import * as css from "./css/main";
-import {fontAwesome} from "./css/FontAwesome";
 import {watchManager} from "../plugins/GitWatcher";
 import {Session} from "../shell/Session";
 import {Status} from "../Enums";
@@ -12,11 +11,8 @@ import {userFriendlyPath} from "../utils/Common";
 const VcsDataComponent = ({data}: { data: VcsData }) => {
     if (data.kind === "repository") {
         return (
-            <div style={css.statusBar.vcsData}>
-                <span style={css.statusBar.status(data.status)}>
-                    <span style={css.statusBar.icon}>{fontAwesome.codeFork}</span>
-                    {data.branch}
-                </span>
+            <div className="vcs-data" style={css.statusBar.status(data.status)}>
+                {data.branch}
             </div>
     );
     } else {
@@ -47,13 +43,12 @@ export class StatusBarComponent extends React.Component<Props, {}> {
         />;
 
         return (
-            <div className="status-bar" style={css.statusBar.itself}>
-                <span style={css.statusBar.rightSizeWrapper}>
-                    <span style={css.statusBar.icon}>{fontAwesome.folderOpen}</span>
-                    <span className="present-directory" style={css.statusBar.presentDirectory}>{userFriendlyPath(this.props.session.directory)}</span>
+            <div className="status-bar">
+                {promptComponent}
+                <span>
+                    <span className="present-directory">{userFriendlyPath(this.props.session.directory)}</span>
                     <VcsDataComponent data={watchManager.vcsDataFor(this.props.session.directory)}/>
                 </span>
-                {promptComponent}
             </div>
         );
     }

@@ -139,41 +139,9 @@ export const autocomplete = {
 };
 
 export const statusBar = {
-    itself: {
-        paddingTop: 12,
-        paddingRight: 0,
-        paddingBottom: 6,
-        lineHeight: 1.3,
-        backgroundColor: backgroundColor,
-        display: "flex",
-        flexDirection: "row-reverse",
-        height: statusBarHeight,
-    } as CSSProperties,
-    presentDirectory: {
-        flexGrow: 1,
-        textOverflow: "ellipsis",
-        direction: "rtl",
-        textAlign: "left",
-        overflow: "hidden",
-        whiteSpace: "pre",
-        paddingRight: "10px",
-    } as CSSProperties,
-    vcsData: {
-        textOverflow: "ellipsis",
-        overflow: "hidden",
-        whiteSpace: "pre",
-        paddingRight: "8px",
-    } as CSSProperties,
-    icon: {fontFamily: "FontAwesome", paddingRight: 5, paddingLeft: 5, display: "inline-block", width: fontSize * 1.8, textAlign: "center"},
-    rightSizeWrapper: {
-    },
-    stagedFileChanges: {color: colors.green},
-    unstagedFileChanges: {color: colors.red},
-    status: (status: VcsStatus) => {
-        return {
-            color: status === "dirty" ? colors.blue : colors.white,
-        };
-    },
+    status: (status: VcsStatus) => ({
+        color: status === "dirty" ? colors.blue : colors.white,
+    }),
 };
 
 export const sessions = (list: PaneList) => ({

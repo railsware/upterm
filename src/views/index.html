@@ -116,6 +116,46 @@
 
     .status-bar {
       grid-area: status-bar;
+      padding-top: 12px;
+      line-height: 1.3;
+      background-color: var(--background-color);
+      display: flex;
+      height: var(--status-bar-height);
+    }
+
+    .status-bar .present-directory:before {
+      font-family: "FontAwesome";
+      padding-right: 5px;
+      display: inline-block;
+      width: calc(var(--font-size) * 1.8);
+      text-align: center;
+      content: "\f07b";
+    }
+
+    .status-bar .present-directory {
+      flex-grow: 1;
+      text-overflow: ellipsis;
+      direction: rtl;
+      text-align: left;
+      overflow: hidden;
+      white-space: pre;
+      padding-right: 10px;
+    }
+
+    .status-bar .vcs-data:before {
+      font-family: "FontAwesome";
+      padding-right: 5px;
+      display: inline-block;
+      width: calc(var(--font-size) * 1.8);
+      text-align: center;
+      content: "\f126";
+    }
+
+    .status-bar .vcs-data {
+      text-overflow: ellipsis;
+      overflow: hidden;
+      white-space: pre;
+      padding-right: 8px;
     }
 
     .prompt-wrapper {
