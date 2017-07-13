@@ -231,7 +231,7 @@ export const charGroup = (attributes: Attributes) => {
         display: "inline-block",
         height: rowHeight,
         color: colorValue(attributes.color, {isBright: attributes.brightness === Brightness.Bright}),
-        backgroundColor: colorValue(attributes.backgroundColor, {isBright: false})
+        backgroundColor: colorValue(attributes.backgroundColor, {isBright: false}),
     };
 
     if (attributes.inverse) {
