@@ -255,7 +255,7 @@ export const charGroup = (attributes: Attributes) => {
     }
 
     // Without this text background in failed commands is black instead of red.
-    if (attributes.backgroundColor === Color.Black && !attributes.inverse) {
+    if (!attributes.cursor && attributes.backgroundColor === Color.Black && !attributes.inverse) {
         delete styles.backgroundColor;
     }
 
