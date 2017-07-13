@@ -285,3 +285,25 @@ export function expandAliases(tokens: Token[], aliases: Aliases): Token[] {
         return tokens;
     }
 }
+
+export function stringLiteralValue(literal: string): string | undefined {
+    const tokens = scan(literal);
+
+    if (tokens.length !== 1) {
+        return;
+    }
+
+    const token = tokens[0];
+
+    if (token instanceof DoubleQuotedStringLiteral) {
+        return token.value;
+    }
+
+    if (token instanceof SingleQuotedStringLiteral) {
+        return token.value;
+    }
+
+    if (token instanceof Word) {
+        return token.value;
+    }
+}

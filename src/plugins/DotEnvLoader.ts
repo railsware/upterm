@@ -2,7 +2,7 @@ import {Session} from "../shell/Session";
 import {PluginManager} from "../PluginManager";
 import * as Path from "path";
 import {io} from "../utils/Common";
-import {sourceFile} from "../shell/Command";
+import {sourceFile} from "../shell/BuiltInCommands";
 
 PluginManager.registerEnvironmentObserver({
     presentWorkingDirectoryWillChange: () => void 0,

@@ -1,5 +1,5 @@
 import {Job} from "./Job";
-import {Command} from "./Command";
+import {Command} from "./BuiltInCommands";
 import {PTY} from "../PTY";
 import * as Path from "path";
 import {resolveFile, isWindows, filterAsync, io} from "../utils/Common";

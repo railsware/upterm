@@ -1,4 +1,4 @@
-import {expandHistoricalDirectory} from "../../shell/Command";
+import {expandHistoricalDirectory} from "../../shell/BuiltInCommands";
 import {styles, directoriesSuggestionsProvider, Suggestion} from "../autocompletion_utils/Common";
 import * as _ from "lodash";
 import {PluginManager} from "../../PluginManager";

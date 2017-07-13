@@ -6,6 +6,7 @@ import {EOL} from "os";
 import {Session} from "./Session";
 import {OrderedSet} from "../utils/OrderedSet";
 import {parseAlias} from "./Aliases";
+import {stringLiteralValue} from "./Scanner";
 
 const executors: Dictionary<(i: Job, a: string[]) => void> = {
     cd: (job: Job, args: string[]): void => {
@@ -89,8 +90,12 @@ export function sourceFile(session: Session, fileName: string) {
 
     content.split(EOL).forEach(line => {
         if (line.startsWith("export ")) {
-            const [key, value] = line.split(" ")[1].split("=");
-            session.environment.set(key, value);
+            const [variableName, variableValueLiteral] = line.split(" ")[1].split("=");
+
+            const variableValue = stringLiteralValue(variableValueLiteral);
+            if (variableValue) {
+                session.environment.set(variableName, variableValue);
+            }
         }
     });
 }
