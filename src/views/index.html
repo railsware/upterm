@@ -156,6 +156,11 @@
       transform: rotate(45deg);
     }
 
+    .status-bar .prompt {
+      color: var(--text-color);
+      z-index: 2;
+    }
+
     .status-bar .prompt-content {
       grid-area: prompt;
       font-size: var(--prompt-font-size);
@@ -165,9 +170,8 @@
       outline: none;
     }
 
-    .status-bar .prompt {
-      color: var(--text-color);
-      z-index: 2;
+    .status-bar .autocompleted-preview {
+      filter: brightness(50%);
     }
 
     .status-bar .information-line {
@@ -208,10 +212,6 @@
       overflow: hidden;
       white-space: pre;
       padding-right: 8px;
-    }
-
-    .autocompleted-preview {
-      filter: brightness(50%);
     }
 
     /* inline styles can't really handle pseudo elements, so they still need classes */
