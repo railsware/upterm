@@ -33,9 +33,6 @@ const cssVariables = {
     "--text-color": colors.white,
 };
 
-const outputCutHeight = fontSize * 2.6;
-const outputCutZIndex = 0;
-
 const decorationWidth = 30;
 const searchInputColor = lighten(backgroundColor, 15);
 
@@ -301,22 +298,13 @@ export const charGroup = (attributes: Attributes) => {
     return styles;
 };
 
-export const outputCut = (status: Status, isHovered: boolean): CSSProperties => ({
+export const outputCut = (status: Status): CSSProperties => ({
     ...jaggedBorder(
         [Status.Failure, Status.Interrupted].includes(status) ? failurize(jobBackgroundColor) : jobBackgroundColor,
         [Status.Failure, Status.Interrupted].includes(status) ? failurize(backgroundColor) : backgroundColor,
-        isHovered ? 0 : 0,
+        0,
     ),
-    position: "relative",
-    top: -outputPadding,
-    left: -outputPadding,
-    width: "102%",
-    height: outputCutHeight,
-    textAlign: "center",
-    paddingTop: (outputCutHeight - fontSize) / 3,
-    color: lighten(jobBackgroundColor, isHovered ? 35 : 30),
-    cursor: "pointer",
-    zIndex: outputCutZIndex,
+    color: lighten(jobBackgroundColor, 35),
 });
 
 export const outputCutIcon = {marginRight: 10, fontFamily: "FontAwesome"};

@@ -288,6 +288,11 @@ class ANSIParser {
 
                     this.output.moveCursorRelative({vertical: 1});
                     break;
+                case "H":
+                    short = "Move the cursor to the home position.";
+
+                    this.output.moveCursorAbsolute({columnIndex: 0, rowIndex: 0});
+                    break;
                 case "M":
                     short = "Reverse Index (RI).";
                     /* tslint:disable:max-line-length */
@@ -692,7 +697,8 @@ export class Output extends events.EventEmitter {
                     this.moveCursorRelative({horizontal: -1});
                     break;
                 case e.KeyCode.Tab:
-                    this.moveCursorAbsolute({columnIndex: Math.min(this.dimensions.columns - 1, Math.floor((this.cursorColumnIndex + 8) / 8) * 8)});
+                    const nextTabStop = Math.min(this.dimensions.columns - 1, Math.floor((this.cursorColumnIndex + 8) / 8) * 8);
+                    this.moveCursorAbsolute({columnIndex: nextTabStop});
                     break;
                 case e.KeyCode.NewLine:
                 case e.KeyCode.VerticalTab:

@@ -33,28 +33,19 @@ interface CutProps {
     clickHandler: React.EventHandler<React.MouseEvent<HTMLDivElement>>;
 }
 
-interface CutState {
-    isHovered: boolean;
-}
-
-class Cut extends React.Component<CutProps, CutState> {
-    constructor() {
-        super();
-        this.state = {isHovered: false};
-    }
-
+class CutComponent extends React.Component<CutProps, {}> {
     render() {
         return (
-            <div style={css.outputCut(this.props.job.status, this.state.isHovered)}
-                 onClick={this.props.clickHandler}
-                 onMouseEnter={() => this.setState({isHovered: true})}
-                 onMouseLeave={() => this.setState({isHovered: false})}>
+            <div className="output-cut"
+                 style={css.outputCut(this.props.job.status)}
+                 onClick={this.props.clickHandler}>
                 <i style={css.outputCutIcon}>{fontAwesome.expand}</i>
                 {`Show all ${this.props.job.output.size} rows.`}
             </div>
         );
     }
 }
+
 interface RowProps {
     row: List<Char>;
     hasCursor: boolean;
@@ -114,7 +105,7 @@ export class OutputComponent extends React.Component<Props, State> {
         return (
             <div className="output"
                  style={css.output(this.props.job.output.activeOutputType, this.props.job.status)}>
-                {this.shouldCutOutput ? <Cut job={this.props.job} clickHandler={() => this.setState({ expandButtonPressed: true })}/> : undefined}
+                {this.shouldCutOutput ? <CutComponent job={this.props.job} clickHandler={() => this.setState({ expandButtonPressed: true })}/> : undefined}
                 {output.storage.map((possiblyEmptyRow, index: number) => {
                     const row = possiblyEmptyRow || List<Char>();
 

@@ -71,6 +71,13 @@
       grid-template-areas: "jobs" "status-bar";
     }
 
+    .shutter {
+      grid-area: jobs;
+      height: var(--session-content-height);
+      z-index: 1;
+      pointer-events: none;
+    }
+
     .jobs {
       grid-area: jobs;
       overflow-y: scroll;
@@ -86,6 +93,17 @@
       padding-bottom: 3px;
     }
 
+    .output-cut {
+      --height: calc(var(--font-size) * 2.6);
+      position: relative;
+      left: calc(0px - var(--content-padding));
+      width: calc(100% + var(--content-padding));
+      height: var(--height);
+      padding-top: calc(calc(var(--height) - var(--font-size)) / 3);
+      text-align: center;
+      cursor: pointer;
+    }
+
     .job {
       padding: var(--content-padding);
       background-color: var(--job-background-color);
@@ -94,13 +112,6 @@
 
     .job[data-status=failure] {
       --job-background-color: var(--job-background-color-failure);
-    }
-
-    .shutter {
-      grid-area: jobs;
-      height: var(--session-content-height);
-      z-index: 1;
-      pointer-events: none;
     }
 
     .status-bar {
