@@ -74,6 +74,10 @@ export enum Status {
     Interrupted = "interrupted",
     Success = "success",
 }
+export enum ScreenMode {
+    Light = "light",
+    Dark = "dark",
+}
 
 export enum OutputType {
     Standard,

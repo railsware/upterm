@@ -3,7 +3,7 @@ import {attributesFlyweight, defaultAttributes, space, createChar, Char} from ".
 import * as i from "./Interfaces";
 import * as e from "./Enums";
 import {List} from "immutable";
-import {Color, Weight, Brightness, KeyCode, LogLevel, OutputType} from "./Enums";
+import {Color, Weight, Brightness, KeyCode, LogLevel, OutputType, ScreenMode} from "./Enums";
 import {Attributes, TerminalLikeDevice, ColorCode} from "./Interfaces";
 import {print, error, info, csi, times} from "./utils/Common";
 import * as _ from "lodash";
@@ -335,7 +335,7 @@ class ANSIParser {
         };
     }
 
-    private decPrivateModeHandler(ps: number, flag: string): HandlerResult {
+    private decPrivateModeHandler(ps: number, flag: "h" | "l"): HandlerResult {
         let description = "";
         let url = "";
         let status: "handled" | "unhandled" = "handled";
@@ -368,6 +368,12 @@ class ANSIParser {
                 //      Erases all data in page memory.
                 // DECCOLM resets vertical split screen mode (DECLRMM) to unavailabl
                 // DECCOLM clears data from the status line if the status line is set to host-writabl
+                break;
+            case 5:
+                description = "Reverse Video (DECSCNM).";
+                url = "http://www.vt100.net/docs/vt510-rm/DECSCNM";
+
+                this.output.screenMode = (shouldSet ? ScreenMode.Light : ScreenMode.Dark);
                 break;
             case 6:
                 description = "Origin Mode (DECOM).";
@@ -683,6 +689,7 @@ export class Output extends events.EventEmitter {
         G3: CharacterSets.ASCIIGraphics,
     };
     public selectedCharacterSet: SelectedCharacterSet = "G0";
+    public screenMode = ScreenMode.Dark;
     public isOriginModeSet = false;
     public isCursorKeysModeSet = false;
     public isAutowrapModeSet = true;

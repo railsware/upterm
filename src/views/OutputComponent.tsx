@@ -104,16 +104,17 @@ export class OutputComponent extends React.Component<Props, State> {
 
         return (
             <div className="output"
-                 style={css.output(this.props.job.output.activeOutputType, this.props.job.status)}>
+                 data-screen-mode={output.screenMode}
+                 style={css.output(output.activeOutputType, this.props.job.status)}>
                 {this.shouldCutOutput ? <CutComponent job={this.props.job} clickHandler={() => this.setState({ expandButtonPressed: true })}/> : undefined}
                 {output.storage.map((possiblyEmptyRow, index: number) => {
                     const row = possiblyEmptyRow || List<Char>();
 
                     if (this.shouldCutOutput && index < output.size - Output.hugeOutputThreshold) {
                         return undefined;
-                    // Don't render scrollback rows in alternate buffer.
-                    // TODO: remove when we have a separate output for alternate buffer.
-                    } else if (this.props.job.output.activeOutputType === OutputType.Alternate && index < this.props.job.output.firstRowOfCurrentPageIndex) {
+                        // Don't render scrollback rows in alternate buffer.
+                        // TODO: remove when we have a separate output for alternate buffer.
+                    } else if (output.activeOutputType === OutputType.Alternate && index < output.firstRowOfCurrentPageIndex) {
                         return undefined;
                     } else {
                         return (

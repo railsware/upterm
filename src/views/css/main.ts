@@ -274,9 +274,7 @@ export const outputCut = (status: Status): CSSProperties => ({
 export const outputCutIcon = {marginRight: 10, fontFamily: "FontAwesome"};
 
 export const output = (activeOutputType: OutputType, status: Status) => {
-    const styles: CSSObject = {
-        whiteSpace: "pre-wrap",
-    };
+    const styles: CSSObject = {};
 
     if (activeOutputType === OutputType.Alternate) {
         if ([Status.Failure, Status.Interrupted, Status.Success].includes(status)) {

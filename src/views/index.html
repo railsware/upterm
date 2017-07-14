@@ -86,13 +86,6 @@
       height: var(--session-content-height);
     }
 
-    .job-header {
-      color: var(--job-background-color);
-      filter: brightness(260%);
-      font-size: var(--prompt-font-size);
-      padding-bottom: 3px;
-    }
-
     .output-cut {
       --height: calc(var(--font-size) * 2.6);
       position: relative;
@@ -112,6 +105,17 @@
 
     .job[data-status=failure] {
       --job-background-color: var(--job-background-color-failure);
+    }
+
+    .job-header {
+      color: var(--job-background-color);
+      filter: brightness(260%);
+      font-size: var(--prompt-font-size);
+      padding-bottom: 3px;
+    }
+
+    .output {
+      white-space: pre-wrap;
     }
 
     .status-bar {
