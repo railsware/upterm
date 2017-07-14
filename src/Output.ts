@@ -938,7 +938,7 @@ export class Output extends events.EventEmitter {
         if (this._margins.bottom) {
             return this._margins.bottom + this.firstRowOfCurrentPageIndex;
         } else {
-            return this.storage.size - 1;
+            return this.dimensions.rows - 1 + this.firstRowOfCurrentPageIndex;
         }
     }
 
