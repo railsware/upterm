@@ -29,6 +29,8 @@ const cssVariables = {
     "--job-background-color": jobBackgroundColor,
     "--job-background-color-failure": failurize(jobBackgroundColor),
     "--text-color": colors.white,
+    "--black-color": colors.black,
+    "--white-color": colors.white,
 };
 
 const decorationWidth = 30;
@@ -226,10 +228,11 @@ export const commandSign = {
 
 // To display even empty rows. The height might need tweaking.
 // TODO: Remove if we always have a fixed output width.
-export const charGroup = (attributes: Attributes) => {
+export const charGroup = (attributes: Attributes, length: number) => {
     const styles: CSSObject = {
         display: "inline-block",
         height: rowHeight,
+        width: length * letterWidth,
         color: colorValue(attributes.color, {isBright: attributes.brightness === Brightness.Bright}),
         backgroundColor: colorValue(attributes.backgroundColor, {isBright: false}),
     };
@@ -249,13 +252,8 @@ export const charGroup = (attributes: Attributes) => {
         styles.fontWeight = "bold";
     }
 
-    if (attributes.cursor) {
-        styles.backgroundColor = colors.white;
-        styles.color = colors.black;
-    }
-
     // Without this text background in failed commands is black instead of red.
-    if (!attributes.cursor && attributes.backgroundColor === Color.Black && !attributes.inverse) {
+    if (attributes.backgroundColor === Color.Black && !attributes.inverse) {
         delete styles.backgroundColor;
     }
 
@@ -294,6 +292,13 @@ export const output = (activeOutputType: OutputType, status: Status) => {
 
     return styles;
 };
+
+export const cursor = (rowIndex: number, columnIndex: number) => ({
+    top: rowIndex * rowHeight,
+    left: columnIndex * letterWidth,
+    height: rowHeight,
+    width: letterWidth,
+});
 
 export const actions = {
     marginRight: 15,

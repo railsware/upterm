@@ -22,7 +22,7 @@ const CharGroupComponent = ({group}: {group: Char[]}) => {
             data-blinking={attributes.blinking}
             data-cursor={attributes.cursor}
             data-inverse={attributes.inverse}
-            style={css.charGroup(attributes)}>
+            style={css.charGroup(attributes, group.length)}>
         {group.map(char => char.value).join("")}
         </span>
     );
@@ -48,30 +48,21 @@ class CutComponent extends React.Component<CutProps, {}> {
 
 interface RowProps {
     row: List<Char>;
-    hasCursor: boolean;
-    cursorColumnIndex: number;
 }
 
 const charGrouper = (a: Char, b: Char) => a.attributes === b.attributes;
 
 export class RowComponent extends React.Component<RowProps, {}> {
     shouldComponentUpdate(nextProps: RowProps) {
-        return this.props.row !== nextProps.row ||
-            this.props.hasCursor !== nextProps.hasCursor ||
-            (nextProps.hasCursor && this.props.cursorColumnIndex !== nextProps.cursorColumnIndex);
+        return this.props.row !== nextProps.row;
     }
 
     render() {
-        const cursorColumnIndex = this.props.cursorColumnIndex;
         const row = this.props.row.toArray();
 
-        const rowWithoutHoles = _.range(0, Math.max(cursorColumnIndex + 1, this.props.row.size)).map(index => {
+        const rowWithoutHoles = _.range(0, this.props.row.size).map(index => {
             const char = row[index] || space;
-            const attributes = (this.props.hasCursor && index === cursorColumnIndex) ?
-                {...char.attributes, cursor: true} :
-                char.attributes;
-
-            return createChar(char.value, attributes);
+            return createChar(char.value, char.attributes);
         });
 
         const charGroups = groupWhen(charGrouper, rowWithoutHoles).map((charGroup: Char[], index: number) =>
@@ -101,12 +92,14 @@ export class OutputComponent extends React.Component<Props, State> {
     render() {
         const output = this.props.job.output;
         const showCursor = this.props.job.status === Status.InProgress && (output._showCursor || output._blinkCursor);
+        const cursorComponent = showCursor ? <span className="cursor" style={css.cursor(output.cursorRowIndex, output.cursorColumnIndex)}/> : undefined;
 
         return (
             <div className="output"
                  data-screen-mode={output.screenMode}
                  style={css.output(output.activeOutputType, this.props.job.status)}>
                 {this.shouldCutOutput ? <CutComponent job={this.props.job} clickHandler={() => this.setState({ expandButtonPressed: true })}/> : undefined}
+                {cursorComponent}
                 {output.storage.map((possiblyEmptyRow, index: number) => {
                     const row = possiblyEmptyRow || List<Char>();
 
@@ -118,11 +111,7 @@ export class OutputComponent extends React.Component<Props, State> {
                         return undefined;
                     } else {
                         return (
-                            <RowComponent
-                                key={index}
-                                row={row}
-                                hasCursor={index === output.cursorRowIndex && showCursor}
-                                cursorColumnIndex={output.cursorColumnIndex}/>
+                            <RowComponent key={index} row={row}/>
                         );
                     }
                 })}
