@@ -1,6 +1,6 @@
 import * as React from "react";
 import {SuggestionWithDefaults} from "../plugins/autocompletion_utils/Common";
-import * as css from "./css/main";
+import * as css from "./css/styles";
 
 interface SuggestionProps {
     suggestion: SuggestionWithDefaults;

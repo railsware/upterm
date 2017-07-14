@@ -4,7 +4,7 @@ import {Output} from "../Output";
 import {Char, createChar, space} from "../Char";
 import {groupWhen} from "../utils/Common";
 import {List} from "immutable";
-import * as css from "./css/main";
+import * as css from "./css/styles";
 import {fontAwesome} from "./css/FontAwesome";
 import {Job} from "../shell/Job";
 import {OutputType, Status} from "../Enums";

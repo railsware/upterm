@@ -11,7 +11,7 @@ import {CSSObject} from "../../views/css/definitions";
 import {StatusCode} from "../../utils/Git";
 import {ASTNode, leafNodeAt, serializeReplacing} from "../../shell/Parser";
 
-type Style = { value: string; css: CSSObject};
+type SuggestionStyle = { value: string; css: CSSObject};
 
 interface PromptSerializerContext {
     ast: ASTNode;
@@ -30,7 +30,7 @@ interface AdditionalSuggestionAttributes {
     description: string;
     synopsis: string;
     isFiltered: boolean;
-    style: Style;
+    style: SuggestionStyle;
     space: boolean;
     promptSerializer: PromptSerializer;
 }
@@ -101,7 +101,7 @@ export const styles = {
         value: fontAwesome.folder,
         css: {},
     },
-    file: (fileInfo: FileInfo, fullPath: string): Style => {
+    file: (fileInfo: FileInfo, fullPath: string): SuggestionStyle => {
         const extension = Path.extname(fileInfo.name);
 
         if (isImage(extension)) {
@@ -301,7 +301,7 @@ export interface SubcommandConfig {
     name: string;
     description?: string;
     synopsis?: string;
-    style?: Style;
+    style?: SuggestionStyle;
     provider?: AutocompletionProvider;
 }
 

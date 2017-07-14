@@ -1,5 +1,5 @@
 import * as React from "react";
-import * as css from "./css/main";
+import * as css from "./css/styles";
 import {fontAwesome} from "./css/FontAwesome";
 
 interface Props {

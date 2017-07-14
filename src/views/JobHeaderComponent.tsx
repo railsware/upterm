@@ -1,7 +1,7 @@
 import * as React from "react";
 import {PrettifyToggleComponent} from "./PrettifyToggleComponent";
 import {Job} from "../shell/Job";
-import * as css from "./css/main";
+import * as css from "./css/styles";
 
 interface Props {
     job: Job;

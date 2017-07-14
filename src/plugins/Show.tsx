@@ -1,7 +1,7 @@
 import * as React from "react";
 import {PluginManager} from "../PluginManager";
 import {Job} from "../shell/Job";
-import * as css from "../views/css/main";
+import * as css from "../views/css/styles";
 
 PluginManager.registerPrettyfier({
     prettify: (job: Job): React.ReactElement<any> => {

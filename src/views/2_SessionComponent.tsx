@@ -3,7 +3,7 @@ import * as _ from "lodash";
 import {Session} from "../shell/Session";
 import {Job} from "../shell/Job";
 import {JobComponent} from "./3_JobComponent";
-import * as css from "./css/main";
+import * as css from "./css/styles";
 import {PromptComponent} from "./PromptComponent";
 import {StatusBarComponent} from "./StatusBarComponent";
 

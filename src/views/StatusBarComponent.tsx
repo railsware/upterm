@@ -1,6 +1,6 @@
 /* tslint:disable:no-unused-variable */
 import * as React from "react";
-import * as css from "./css/main";
+import * as css from "./css/styles";
 import {watchManager} from "../plugins/GitWatcher";
 import {Session} from "../shell/Session";
 import {Status} from "../Enums";

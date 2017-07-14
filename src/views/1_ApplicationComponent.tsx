@@ -4,7 +4,7 @@ import * as React from "react";
 import * as _ from "lodash";
 import {ipcRenderer} from "electron";
 import {remote} from "electron";
-import * as css from "./css/main";
+import * as css from "./css/styles";
 import {saveWindowBounds} from "./ViewUtils";
 import {PaneTree, Pane} from "../utils/PaneTree";
 import {SearchComponent} from "./SearchComponent";

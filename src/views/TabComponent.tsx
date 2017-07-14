@@ -2,7 +2,7 @@
 import * as React from "react";
 import {Session} from "../shell/Session";
 import {ApplicationComponent} from "./1_ApplicationComponent";
-import * as css from "./css/main";
+import * as css from "./css/styles";
 import {fontAwesome} from "./css/FontAwesome";
 import {SplitDirection} from "../Enums";
 import {Pane, RowList, PaneList} from "../utils/PaneTree";
