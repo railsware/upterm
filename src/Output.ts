@@ -6,6 +6,7 @@ import {List} from "immutable";
 import {Color, Weight, Brightness, KeyCode, LogLevel, OutputType} from "./Enums";
 import {Attributes, TerminalLikeDevice, ColorCode} from "./Interfaces";
 import {print, error, info, csi, times} from "./utils/Common";
+import * as _ from "lodash";
 
 const ansiParserConstructor: typeof AnsiParser = require("node-ansiparser");
 
@@ -289,9 +290,10 @@ class ANSIParser {
                     this.output.moveCursorRelative({vertical: 1});
                     break;
                 case "H":
-                    short = "Move the cursor to the home position.";
+                    short = "Horizontal Tab Set (HTS).";
+                    url = "http://www.vt100.net/docs/vt510-rm/HTS";
 
-                    this.output.moveCursorAbsolute({columnIndex: 0, rowIndex: 0});
+                    this.output.setTabStop();
                     break;
                 case "M":
                     short = "Reverse Index (RI).";
@@ -560,6 +562,24 @@ class ANSIParser {
 
                 this.output.moveCursorAbsolute({rowIndex: or1(params[0]) - 1, columnIndex: or1(params[1]) - 1});
                 break;
+            case "g":
+                url = "http://www.vt100.net/docs/vt510-rm/TBC";
+
+                switch (param) {
+                    case 0:
+                        short = "Clear Tab Stop At Current Column (TBC).";
+
+                        this.output.clearTabStop();
+                        break;
+                    case 3:
+                        short = "Clear All Tab Stops (TBC).";
+
+                        this.output.clearAllTabStops();
+                        break;
+                    default:
+                        error(`Unknown tab clear parameter "${param}", ignoring.`);
+                }
+                break;
             case "m":
                 short = `SGR: ${params}`;
 
@@ -670,6 +690,7 @@ export class Output extends events.EventEmitter {
     private _margins: Margins = {top: 0, left: 0};
     private savedState: SavedState | undefined;
     private parser: ANSIParser;
+    private tabStopIndices = _.range(8, 300, 8);
 
     constructor(terminalDevice: TerminalLikeDevice, public dimensions: Dimensions) {
         super();
@@ -697,8 +718,7 @@ export class Output extends events.EventEmitter {
                     this.moveCursorRelative({horizontal: -1});
                     break;
                 case e.KeyCode.Tab:
-                    const nextTabStop = Math.min(this.dimensions.columns - 1, Math.floor((this.cursorColumnIndex + 8) / 8) * 8);
-                    this.moveCursorAbsolute({columnIndex: nextTabStop});
+                    this.moveCursorAbsolute({columnIndex: this.nextTabStopIndex});
                     break;
                 case e.KeyCode.NewLine:
                 case e.KeyCode.VerticalTab:
@@ -942,6 +962,23 @@ export class Output extends events.EventEmitter {
 
     get firstRowOfCurrentPageIndex() {
         return Math.max(0, this.storage.size - this.dimensions.rows);
+    }
+
+    setTabStop() {
+        this.tabStopIndices = _.sortBy(_.union(this.tabStopIndices, [this.cursorColumnIndex]));
+    }
+
+    clearTabStop() {
+        this.tabStopIndices = _.without(this.tabStopIndices, this.cursorColumnIndex);
+    }
+
+    clearAllTabStops() {
+        this.tabStopIndices = [];
+    }
+
+    get nextTabStopIndex() {
+        const unboundTabStopIndex = this.tabStopIndices.find(index => index > this.cursorColumnIndex) || this.cursorColumnIndex;
+        return Math.min(unboundTabStopIndex, this.dimensions.columns - 1);
     }
 
     private get homePosition(): RowColumn {

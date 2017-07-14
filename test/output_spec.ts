@@ -288,6 +288,15 @@ the top of the screen without any empty lines between.
 (Test of WRAP AROUND mode setting.)
 Push <RETURN>
 `);
+
+            vttest("2-2", `
+      *     *     *     *     *     *     *     *     *     *     *     *     *
+      *     *     *     *     *     *     *     *     *     *     *     *     *
+
+Test of TAB setting/resetting. These two lines
+should look the same. Push <RETURN>
+`);
+
             vttest("2-15", `
 AAAAA
 AAAAA
