@@ -50,8 +50,6 @@ interface RowProps {
     row: List<Char>;
 }
 
-const charGrouper = (a: Char, b: Char) => a.attributes === b.attributes;
-
 export class RowComponent extends React.Component<RowProps, {}> {
     shouldComponentUpdate(nextProps: RowProps) {
         return this.props.row !== nextProps.row;
@@ -65,7 +63,7 @@ export class RowComponent extends React.Component<RowProps, {}> {
             return createChar(char.value, char.attributes);
         });
 
-        const charGroups = groupWhen(charGrouper, rowWithoutHoles).map((charGroup: Char[], index: number) =>
+        const charGroups = groupWhen((a, b) => a.attributes === b.attributes, rowWithoutHoles).map((charGroup: Char[], index: number) =>
             <CharGroupComponent group={charGroup} key={index}/>,
         );
 
