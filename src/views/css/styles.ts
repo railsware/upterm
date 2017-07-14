@@ -244,8 +244,6 @@ export const commandSign = {
 // TODO: Remove if we always have a fixed output width.
 export const charGroup = (attributes: Attributes) => {
     const styles: CSSObject = {
-        display: "inline-block",
-        height: rowHeight,
         color: colorValue(attributes.color, {isBright: attributes.brightness === Brightness.Bright}),
         backgroundColor: colorValue(attributes.backgroundColor, {isBright: false}),
     };
@@ -265,7 +263,10 @@ export const charGroup = (attributes: Attributes) => {
         styles.fontWeight = "bold";
     }
 
-    // Without this text background in failed commands is black instead of red.
+    // Remove default colors to allow CSS override for failed commands and reverse mode.
+    if (attributes.color === Color.White && !attributes.inverse) {
+        delete styles.color;
+    }
     if (attributes.backgroundColor === Color.Black && !attributes.inverse) {
         delete styles.backgroundColor;
     }
