@@ -94,27 +94,29 @@ export class OutputComponent extends React.Component<Props, State> {
         const showCursor = this.props.job.status === Status.InProgress && (output._showCursor || output._blinkCursor);
         const cursorComponent = showCursor ? <span className="cursor" style={css.cursor(output.cursorRowIndex, output.cursorColumnIndex)}/> : undefined;
 
+        const rowComponents = output.storage.map((possiblyEmptyRow, index: number) => {
+            const row = possiblyEmptyRow || List<Char>();
+
+            if (this.shouldCutOutput && index < output.size - Output.hugeOutputThreshold) {
+                return undefined;
+                // Don't render scrollback rows in alternate buffer.
+                // TODO: remove when we have a separate output for alternate buffer.
+            } else if (output.activeOutputType === OutputType.Alternate && index < output.firstRowOfCurrentPageIndex) {
+                return undefined;
+            } else {
+                return (
+                    <RowComponent key={index} row={row}/>
+                );
+            }
+        });
+
         return (
             <div className="output"
                  data-screen-mode={output.screenMode}
                  style={css.output(output.activeOutputType, this.props.job.status)}>
                 {this.shouldCutOutput ? <CutComponent job={this.props.job} clickHandler={() => this.setState({ expandButtonPressed: true })}/> : undefined}
                 {cursorComponent}
-                {output.storage.map((possiblyEmptyRow, index: number) => {
-                    const row = possiblyEmptyRow || List<Char>();
-
-                    if (this.shouldCutOutput && index < output.size - Output.hugeOutputThreshold) {
-                        return undefined;
-                        // Don't render scrollback rows in alternate buffer.
-                        // TODO: remove when we have a separate output for alternate buffer.
-                    } else if (output.activeOutputType === OutputType.Alternate && index < output.firstRowOfCurrentPageIndex) {
-                        return undefined;
-                    } else {
-                        return (
-                            <RowComponent key={index} row={row}/>
-                        );
-                    }
-                })}
+                {rowComponents}
             </div>
         );
     }
