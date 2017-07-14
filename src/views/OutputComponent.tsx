@@ -22,7 +22,7 @@ const CharGroupComponent = ({group}: {group: Char[]}) => {
             data-blinking={attributes.blinking}
             data-cursor={attributes.cursor}
             data-inverse={attributes.inverse}
-            style={css.charGroup(attributes, group.length)}>
+            style={css.charGroup(attributes)}>
         {group.map(char => char.value).join("")}
         </span>
     );

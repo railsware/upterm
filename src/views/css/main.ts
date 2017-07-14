@@ -17,7 +17,7 @@ const suggestionSize = 2 * fontSize;
 export const titleBarHeight = 24;
 export const rowHeight = fontSize + 2;
 export const statusBarHeight = 70;
-export const letterWidth = fontSize / 2 + 1.5;
+export const letterWidth = fontSize / 2 + 1.44;
 export const promptLetterWidth = promptFontSize / 2 + 1.5;
 
 const cssVariables = {
@@ -77,7 +77,7 @@ export const jobs = (isSessionFocused: boolean): CSSObject => ({
 });
 
 export const row: CSSProperties =  {
-    minHeight: rowHeight,
+    height: rowHeight,
 };
 
 export const suggestionIcon = {
@@ -228,11 +228,10 @@ export const commandSign = {
 
 // To display even empty rows. The height might need tweaking.
 // TODO: Remove if we always have a fixed output width.
-export const charGroup = (attributes: Attributes, length: number) => {
+export const charGroup = (attributes: Attributes) => {
     const styles: CSSObject = {
         display: "inline-block",
         height: rowHeight,
-        width: length * letterWidth,
         color: colorValue(attributes.color, {isBright: attributes.brightness === Brightness.Bright}),
         backgroundColor: colorValue(attributes.backgroundColor, {isBright: false}),
     };
