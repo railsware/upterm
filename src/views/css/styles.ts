@@ -7,9 +7,9 @@ import {CSSObject} from "./definitions";
 import {ColumnList, PaneList} from "../../utils/PaneTree";
 import {CSSProperties} from "react";
 
-
 const jobBackgroundColor = colors.black;
 const backgroundColor = darken(jobBackgroundColor, 4);
+const fontFamily = "'Hack', 'Fira Code', 'Menlo', monospace";
 const fontSize = 14;
 const promptFontSize = fontSize * 1.1;
 export const outputPadding = 10;
@@ -17,11 +17,25 @@ const suggestionSize = 2 * fontSize;
 export const titleBarHeight = 24;
 export const rowHeight = fontSize + 2;
 export const statusBarHeight = 70;
-export const letterWidth = fontSize / 2 + 1.44;
 export const promptLetterWidth = promptFontSize / 2 + 1.5;
+
+function getLetterWidth(size: number, fontFamily: string) {
+    // document is not defined in tests.
+    if (typeof document !== "undefined") {
+        const canvas = document.createElement("canvas");
+        const context = canvas.getContext("2d")!;
+        context.font = `${size}px ${fontFamily}`;
+        return context.measureText("m").width;
+    } else {
+        return (size / 2) + 1.5;
+    }
+}
+
+export const letterWidth = getLetterWidth(fontSize, fontFamily);
 
 const cssVariables = {
     "--font-size": `${fontSize}px`,
+    "--font-family": fontFamily,
     "--title-bar-height": `${titleBarHeight}px`,
     "--status-bar-height": `${statusBarHeight}px`,
     "--content-padding": `${outputPadding}px`,
