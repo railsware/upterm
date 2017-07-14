@@ -820,11 +820,15 @@ export class Output extends events.EventEmitter {
     }
 
     moveCursorRelative(advancement: Advancement): this {
-        // Cursor might be hanging after the last column.
-        const boundCursorColumnIndex = Math.min(this.dimensions.columns - 1, this.cursorColumnIndex);
+        const unboundRowIndex = this.cursorRowIndex + (advancement.vertical || 0);
+        const boundRowIndex = this._margins.bottom ? Math.min(this.marginBottom, unboundRowIndex) : unboundRowIndex;
 
-        this.cursorRowIndex = Math.max(0, this.cursorRowIndex + (advancement.vertical || 0));
-        this.cursorColumnIndex = Math.min(this.dimensions.columns, Math.max(0, boundCursorColumnIndex + (advancement.horizontal || 0)));
+        // Cursor might be hanging after the last column.
+        const boundColumnIndex = Math.min(this.lastColumnIndex, this.cursorColumnIndex);
+
+
+        this.cursorRowIndex = Math.max(0, boundRowIndex);
+        this.cursorColumnIndex = Math.min(this.dimensions.columns, Math.max(0, boundColumnIndex + (advancement.horizontal || 0)));
 
         return this;
     }
@@ -985,7 +989,7 @@ export class Output extends events.EventEmitter {
 
     get nextTabStopIndex() {
         const unboundTabStopIndex = this.tabStopIndices.find(index => index > this.cursorColumnIndex) || this.cursorColumnIndex;
-        return Math.min(unboundTabStopIndex, this.dimensions.columns - 1);
+        return Math.min(unboundTabStopIndex, this.lastColumnIndex);
     }
 
     private get homePosition(): RowColumn {
@@ -1013,5 +1017,9 @@ export class Output extends events.EventEmitter {
         } else {
             return graphicCharset[char] || char;
         }
+    }
+
+    private get lastColumnIndex() {
+        return this.dimensions.columns - 1;
     }
 }
