@@ -163,7 +163,7 @@ describe("ANSI parser", () => {
         describe("DECSEL", () => {
             it.only("Erases line to right", () => {
                 terminal.output.dimensions = {columns: 10, rows: 5};
-                const input = `1234567890${cup(1,5)}${decsel(0)}`;
+                const input = `1234567890${cup(1, 5)}${decsel(0)}`;
                 terminal.output.write(input);
 
                 expect(terminal.output.toLines()).to.deep.equal([
