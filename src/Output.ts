@@ -818,6 +818,7 @@ export class Output extends events.EventEmitter {
         this.cursorRowIndex = Math.max(0, boundRowIndex);
         this.cursorColumnIndex = Math.min(this.dimensions.columns, Math.max(0, boundColumnIndex + (advancement.horizontal || 0)));
 
+        this.ensureRowExists(this.cursorRowIndex);
         return this;
     }
 
@@ -832,6 +833,7 @@ export class Output extends events.EventEmitter {
             this.cursorRowIndex = targetRowIndex + this.firstRowOfCurrentPageIndex;
         }
 
+        this.ensureRowExists(this.cursorRowIndex);
         return this;
     }
 
@@ -870,27 +872,24 @@ export class Output extends events.EventEmitter {
     }
 
     clearRow() {
-        this.storage = this.storage.set(this.cursorRowIndex, List<Char>());
+        this.storage = this.storage.set(this.cursorRowIndex, this.emptyLine);
     }
 
     clearRowToEnd() {
-        if (this.storage.get(this.cursorRowIndex)) {
-            this.storage = this.storage.update(
-                this.cursorRowIndex,
-                List<Char>(),
-                (row: List<Char>) => row.take(this.cursorColumnIndex).toList(),
-            );
-        }
+        const oldRow = this.storage.get(this.cursorRowIndex);
+        const newHead = oldRow.splice(this.cursorColumnIndex, this.lastColumnIndex);
+        const newTail = this.spaces(this.lastColumnIndex - this.cursorColumnIndex);
+        const newRow = newHead.concat(newTail).toList();
+
+        this.storage = this.storage.set(this.cursorRowIndex, newRow);
     }
 
     clearRowToBeginning() {
-        if (this.storage.get(this.cursorRowIndex)) {
-            const count = this.cursorColumnIndex + 1;
-            const replacement = Array(count).fill(space);
-            this.storage = this.storage.update(
-                this.cursorRowIndex,
-                row => row.splice(0, count, ...replacement).toList());
-        }
+        const count = this.cursorColumnIndex + 1;
+        const replacement = Array(count).fill(space);
+        this.storage = this.storage.update(
+            this.cursorRowIndex,
+            row => row.splice(0, count, ...replacement).toList());
     }
 
     clear() {
@@ -900,7 +899,7 @@ export class Output extends events.EventEmitter {
 
     clearToBeginning() {
         this.clearRowToBeginning();
-        const replacement = Array(this.cursorRowIndex);
+        const replacement = Array(this.cursorRowIndex).fill(this.emptyLine);
 
         this.storage = this.storage.splice(0, this.cursorRowIndex, ...replacement).toList();
     }
@@ -1016,6 +1015,10 @@ export class Output extends events.EventEmitter {
     }
 
     private get emptyLine() {
-        return List.of(...Array(this.dimensions.columns).fill(createChar(" ", this.attributes)));
+        return this.spaces(this.dimensions.columns);
+    }
+
+    private spaces(n: number) {
+        return List.of(...Array(n).fill(createChar(" ", this.attributes)));
     }
 }
