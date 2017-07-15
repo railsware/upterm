@@ -838,37 +838,31 @@ export class Output extends events.EventEmitter {
     }
 
     deleteRight(n: number) {
-        if (this.storage.get(this.cursorRowIndex)) {
-            this.storage = this.storage.update(
-                this.cursorRowIndex,
-                List<Char>(),
-                (row: List<Char>) => row.splice(this.cursorColumnIndex, n).toList(),
-            );
-        }
+        this.storage = this.storage.update(
+            this.cursorRowIndex,
+            List<Char>(),
+            (row: List<Char>) => row.splice(this.cursorColumnIndex, n).toList(),
+        );
     }
 
     insertSpaceRight(n: number) {
-        if (this.storage.get(this.cursorRowIndex)) {
-            let nSpace = "";
-            for (let i = 0; i < n; i++) { nSpace += " "; }
-            this.storage = this.storage.update(
-                this.cursorRowIndex,
-                List<Char>(),
-                (row: List<Char>) => row.splice(this.cursorColumnIndex, 0, nSpace).toList(),
-            );
-        }
+        let nSpace = "";
+        for (let i = 0; i < n; i++) { nSpace += " "; }
+        this.storage = this.storage.update(
+            this.cursorRowIndex,
+            List<Char>(),
+            (row: List<Char>) => row.splice(this.cursorColumnIndex, 0, nSpace).toList(),
+        );
     }
 
     eraseRight(n: number) {
-        if (this.storage.get(this.cursorRowIndex)) {
-            this.storage = this.storage.update(
-                this.cursorRowIndex,
-                List<Char>(),
-                (row: List<Char>) => row.take(this.cursorColumnIndex)
-                    .concat(Array(n).fill(space), row.skip(this.cursorColumnIndex + n))
-                    .toList(),
-            );
-        }
+        this.storage = this.storage.update(
+            this.cursorRowIndex,
+            List<Char>(),
+            (row: List<Char>) => row.take(this.cursorColumnIndex)
+                .concat(Array(n).fill(space), row.skip(this.cursorColumnIndex + n))
+                .toList(),
+        );
     }
 
     clearRow() {
