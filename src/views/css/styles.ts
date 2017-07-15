@@ -12,7 +12,7 @@ const backgroundColor = darken(jobBackgroundColor, 4);
 const fontFamily = "'Hack', 'Fira Code', 'Menlo', monospace";
 const fontSize = 14;
 const promptFontSize = fontSize * 1.1;
-export const outputPadding = 10;
+export const contentPadding = 10;
 const suggestionSize = 2 * fontSize;
 export const titleBarHeight = 24;
 export const rowHeight = fontSize + 2;
@@ -39,7 +39,7 @@ const cssVariables = {
     "--title-bar-height": `${titleBarHeight}px`,
     "--row-height": `${rowHeight}px`,
     "--status-bar-height": `${statusBarHeight}px`,
-    "--content-padding": `${outputPadding}px`,
+    "--content-padding": `${contentPadding}px`,
     "--background-color": backgroundColor,
     "--job-background-color": jobBackgroundColor,
     "--job-background-color-failure": failurize(jobBackgroundColor),

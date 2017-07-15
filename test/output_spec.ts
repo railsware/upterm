@@ -39,7 +39,7 @@ describe("ANSI parser", () => {
 
         expect(terminal.output.toLines()).to.eql([
             "01234",
-            "56789"
+            "56789",
         ]);
     });
 
@@ -140,7 +140,7 @@ describe("ANSI parser", () => {
             // A temporary test. Can be removed when we have a test for the real behavior.
             it("doesn't fail", () => {
                 terminal.output.dimensions = {columns: 10, rows: 5};
-                const input = `1\r\n2\r\n3${cup(3,1)}${dl(1)}`;
+                const input = `1\r\n2\r\n3${cup(3, 1)}${dl(1)}`;
                 terminal.output.write(input);
 
                 terminal.output.toLines();
@@ -150,11 +150,11 @@ describe("ANSI parser", () => {
         describe("DCH", () => {
             it("Removes chars from cursor position", () => {
                 terminal.output.dimensions = {columns: 10, rows: 5};
-                const input = `1234567890${cup(1,2)}${dch(2)}`;
+                const input = `1234567890${cup(1, 2)}${dch(2)}`;
                 terminal.output.write(input);
 
                 expect(terminal.output.toLines()).to.deep.equal([
-                    "14567890  "
+                    "14567890  ",
                 ]);
             });
         });

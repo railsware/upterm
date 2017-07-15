@@ -127,8 +127,8 @@ export class Tab {
             };
         }
         return {
-            width: window.innerWidth,
-            height: window.innerHeight - css.titleBarHeight - css.statusBarHeight - css.outputPadding,
+            width: window.innerWidth - (2 * css.contentPadding),
+            height: window.innerHeight - css.titleBarHeight - css.statusBarHeight - css.contentPadding,
         };
     }
 }
