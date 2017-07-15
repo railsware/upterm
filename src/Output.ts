@@ -1,5 +1,5 @@
 import * as events from "events";
-import {attributesFlyweight, defaultAttributes, space, createChar, Char} from "./Char";
+import {attributesFlyweight, defaultAttributes, createChar, Char} from "./Char";
 import * as i from "./Interfaces";
 import * as e from "./Enums";
 import {List} from "immutable";
@@ -840,26 +840,22 @@ export class Output extends events.EventEmitter {
     deleteRight(n: number) {
         this.storage = this.storage.update(
             this.cursorRowIndex,
-            (row: List<Char>) => row.splice(this.cursorColumnIndex, n).concat(this.spaces(n)).toList(),
+            row => row.splice(this.cursorColumnIndex, n).concat(this.spaces(n)).toList(),
         );
     }
 
     insertSpaceRight(n: number) {
-        let nSpace = "";
-        for (let i = 0; i < n; i++) { nSpace += " "; }
         this.storage = this.storage.update(
             this.cursorRowIndex,
-            List<Char>(),
-            (row: List<Char>) => row.splice(this.cursorColumnIndex, 0, nSpace).toList(),
+            row => row.splice(this.cursorColumnIndex, 0).concat(this.spaces(n)).toList(),
         );
     }
 
     eraseRight(n: number) {
         this.storage = this.storage.update(
             this.cursorRowIndex,
-            List<Char>(),
-            (row: List<Char>) => row.take(this.cursorColumnIndex)
-                .concat(Array(n).fill(space), row.skip(this.cursorColumnIndex + n))
+            row => row.take(this.cursorColumnIndex)
+                .concat(this.spaces(n), row.skip(this.cursorColumnIndex + n))
                 .toList(),
         );
     }
@@ -879,10 +875,9 @@ export class Output extends events.EventEmitter {
 
     clearRowToBeginning() {
         const count = this.cursorColumnIndex + 1;
-        const replacement = Array(count).fill(space);
         this.storage = this.storage.update(
             this.cursorRowIndex,
-            row => row.splice(0, count, ...replacement).toList());
+            row => this.spaces(count).concat(row.skip(count)).toList());
     }
 
     clear() {

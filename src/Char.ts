@@ -38,5 +38,3 @@ export function createChar(char: string, attributes: Attributes): Char {
         attributes: attributesFlyweight(attributes),
     };
 }
-
-export const space = createChar(" ", defaultAttributes);
