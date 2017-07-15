@@ -12,6 +12,7 @@ const CharGroupComponent = ({group}: {group: Char[]}) => {
     const attributes = group[0].attributes;
     return (
         <span
+            className="char-group"
             data-color={attributes.color}
             data-background-color={attributes.backgroundColor}
             data-brightness={attributes.brightness}
@@ -46,6 +47,7 @@ class CutComponent extends React.Component<CutProps, {}> {
 }
 
 interface RowProps {
+    index: number;
     row: List<Char>;
 }
 
@@ -61,7 +63,7 @@ export class RowComponent extends React.Component<RowProps, {}> {
         );
 
         return (
-            <div className="row" ref={(div: HTMLDivElement | null) => div && div.scrollIntoViewIfNeeded()}>
+            <div className="row" data-index={this.props.index} ref={(div: HTMLDivElement | null) => div && div.scrollIntoViewIfNeeded()}>
                 {charGroupComponents}
             </div>
         );
@@ -85,7 +87,7 @@ export class OutputComponent extends React.Component<Props, State> {
     render() {
         const output = this.props.job.output;
         const showCursor = this.props.job.status === Status.InProgress && (output._showCursor || output._blinkCursor);
-        const cursorComponent = showCursor ? <span className="cursor" style={css.cursor(output.cursorRowIndex, output.cursorColumnIndex)}/> : undefined;
+        const cursorComponent = showCursor ? <span className="cursor" data-row-index={output.cursorRowIndex} style={css.cursor(output.cursorRowIndex, output.cursorColumnIndex)}/> : undefined;
 
         const rowComponents = output.storage.map((row, index: number) => {
             if (this.shouldCutOutput && index < output.size - Output.hugeOutputThreshold) {
@@ -96,7 +98,7 @@ export class OutputComponent extends React.Component<Props, State> {
                 return undefined;
             } else {
                 return (
-                    <RowComponent key={index} row={row!}/>
+                    <RowComponent key={index} index={index} row={row!}/>
                 );
             }
         });

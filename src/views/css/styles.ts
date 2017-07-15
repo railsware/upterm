@@ -37,6 +37,7 @@ const cssVariables = {
     "--font-size": `${fontSize}px`,
     "--font-family": fontFamily,
     "--title-bar-height": `${titleBarHeight}px`,
+    "--row-height": `${rowHeight}px`,
     "--status-bar-height": `${statusBarHeight}px`,
     "--content-padding": `${outputPadding}px`,
     "--background-color": backgroundColor,
