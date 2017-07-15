@@ -5,7 +5,7 @@ import {TerminalLikeDevice} from "../src/Interfaces";
 import {readFileSync} from "fs";
 
 class DummyTerminal implements TerminalLikeDevice {
-    output: Output = new Output(this, {columns: 20, rows: 80});
+    output: Output = new Output(this, {columns: 80, rows: 80});
     written = "";
     write = (input: string) => this.written += input;
 }
@@ -24,8 +24,6 @@ const sgr = (params: number[]) => {
     return csi(params, "m");
 };
 
-const strip = (string: string) => string.slice(1, -1);
-
 describe("ANSI parser", () => {
     let terminal: DummyTerminal;
 
@@ -35,14 +33,12 @@ describe("ANSI parser", () => {
 
     it("wraps long strings", () => {
         terminal.output.dimensions = {columns: 5, rows: 5};
-
-        const expectedOutput = strip(`
-01234
-56789
-`);
         terminal.output.write("0123456789");
 
-        expect(terminal.output.toString()).to.eql(expectedOutput);
+        expect(terminal.output.toLines()).to.eql([
+            "01234",
+            "56789"
+        ]);
     });
 
     describe("movements", () => {
@@ -143,7 +139,7 @@ describe("ANSI parser", () => {
         function vttest(fileName: string, expectedOutput: string[]) {
             const input = readFileSync(`${__dirname}/test_files/vttest/${fileName}`).toString();
 
-            return it.only(fileName, () => {
+            return it(fileName, () => {
 
                 terminal.output.write(input);
                 const actualOutput = terminal.output.toLines();
@@ -296,64 +292,78 @@ describe("ANSI parser", () => {
                 "                                                                                ",
             ]);
 
-            // vttest("1-6", [
-            //     "Test of leading zeros in ESC sequences.",
-            //     'Two lines below you should see the sentence "This is a correct sentence".',
-            //     "",
-            //     "This is a correct sentence",
-            //     "",
-            //     "",
-            //     "",
-            //     "",
-            //     "",
-            //     "Push <RETURN>",
-            // ]);
+            vttest("1-6", [
+                "Test of leading zeros in ESC sequences.                                         ",
+                'Two lines below you should see the sentence "This is a correct sentence".       ',
+                "                                                                                ",
+                "This is a correct sentence                                                      ",
+                "                                                                                ",
+                "                                                                                ",
+                "                                                                                ",
+                "                                                                                ",
+                "                                                                                ",
+                "                                                                                ",
+                "                                                                                ",
+                "                                                                                ",
+                "                                                                                ",
+                "                                                                                ",
+                "                                                                                ",
+                "                                                                                ",
+                "                                                                                ",
+                "                                                                                ",
+                "                                                                                ",
+                "Push <RETURN>                                                                   ",
+                "                                                                                ",
+            ]);
 
-            // vttest("2-1", [
-            //     "********************************************************************************",
-            //     "********************************************************************************",
-            //     "********************************************************************************",
-            //     "",
-            //     "This should be three identical lines of *'s completely filling",
-            //     "the top of the screen without any empty lines between.",
-            //     "(Test of WRAP AROUND mode setting.)",
-            //     "Push <RETURN>",
-            // ]);
-            //
-            // vttest("2-2", [
-            //     "    *     *     *     *     *     *     *     *     *     *     *     *     *",
-            //     "    *     *     *     *     *     *     *     *     *     *     *     *     *",
-            //     "",
-            //     "Test of TAB setting/resetting. These two lines",
-            //     "should look the same. Push <RETURN>",
-            // ]);
-            //
-            // vttest("2-15", [
-            //     "AAAAA",
-            //     "AAAAA",
-            //     "AAAAA",
-            //     "AAAAA",
-            //     "",
-            //     "",
-            //     "",
-            //     "           normal      bold        underscored blinking    reversed",
-            //     "",
-            //     "stars:     **********  **********  **********  **********  **********",
-            //     "",
-            //     "line:      ──────────  ──────────  ──────────  ──────────  ──────────",
-            //     "",
-            //     "x'es:      xxxxxxxxxx  xxxxxxxxxx  xxxxxxxxxx  xxxxxxxxxx  xxxxxxxxxx",
-            //     "",
-            //     "diamonds:  ◆◆◆◆◆◆◆◆◆◆  ◆◆◆◆◆◆◆◆◆◆  ◆◆◆◆◆◆◆◆◆◆  ◆◆◆◆◆◆◆◆◆◆  ◆◆◆◆◆◆◆◆◆◆",
-            //     "",
-            //     "",
-            //     "",
-            //     "",
-            //     "Test of the SAVE/RESTORE CURSOR feature. There should",
-            //     "be ten characters of each flavour, and a rectangle",
-            //     "of 5 x 4 A's filling the top left of the screen.",
-            //     "Push <RETURN>",
-            // ]);
+            vttest("2-1", [
+                "********************************************************************************",
+                "********************************************************************************",
+                "********************************************************************************",
+                "                                                                                ",
+                "This should be three identical lines of *'s completely filling                  ",
+                "the top of the screen without any empty lines between.                          ",
+                "(Test of WRAP AROUND mode setting.)                                             ",
+                "Push <RETURN>                                                                   ",
+                "                                                                                ",
+            ]);
+
+            vttest("2-2", [
+                "      *     *     *     *     *     *     *     *     *     *     *     *     * ",
+                "      *     *     *     *     *     *     *     *     *     *     *     *     * ",
+                "                                                                                ",
+                "Test of TAB setting/resetting. These two lines                                  ",
+                "should look the same. Push <RETURN>                                             ",
+                "                                                                                ",
+            ]);
+
+            vttest("2-15", [
+                "AAAAA                                                                           ",
+                "AAAAA                                                                           ",
+                "AAAAA                                                                           ",
+                "AAAAA                                                                           ",
+                "                                                                                ",
+                "                                                                                ",
+                "                                                                                ",
+                "           normal      bold        underscored blinking    reversed             ",
+                "                                                                                ",
+                "stars:     **********  **********  **********  **********  **********           ",
+                "                                                                                ",
+                "line:      ──────────  ──────────  ──────────  ──────────  ──────────           ",
+                "                                                                                ",
+                "x'es:      xxxxxxxxxx  xxxxxxxxxx  xxxxxxxxxx  xxxxxxxxxx  xxxxxxxxxx           ",
+                "                                                                                ",
+                "diamonds:  ◆◆◆◆◆◆◆◆◆◆  ◆◆◆◆◆◆◆◆◆◆  ◆◆◆◆◆◆◆◆◆◆  ◆◆◆◆◆◆◆◆◆◆  ◆◆◆◆◆◆◆◆◆◆           ",
+                "                                                                                ",
+                "                                                                                ",
+                "                                                                                ",
+                "                                                                                ",
+                "Test of the SAVE/RESTORE CURSOR feature. There should                           ",
+                "be ten characters of each flavour, and a rectangle                              ",
+                "of 5 x 4 A's filling the top left of the screen.                                ",
+                "Push <RETURN>                                                                   ",
+                "                                                                                ",
+            ]);
         });
     });
 });
