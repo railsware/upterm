@@ -1,7 +1,6 @@
 import * as React from "react";
-import * as _ from "lodash";
 import {Output} from "../Output";
-import {Char, createChar, space} from "../Char";
+import {Char} from "../Char";
 import {groupWhen} from "../utils/Common";
 import {List} from "immutable";
 import * as css from "./css/styles";
@@ -56,20 +55,16 @@ export class RowComponent extends React.Component<RowProps, {}> {
     }
 
     render() {
-        const row = this.props.row.toArray();
-
-        const rowWithoutHoles = _.range(0, this.props.row.size).map(index => {
-            const char = row[index] || space;
-            return createChar(char.value, char.attributes);
-        });
-
-        const charGroups = groupWhen((a, b) => a.attributes === b.attributes, rowWithoutHoles).map((charGroup: Char[], index: number) =>
+        const charGroups = groupWhen((a, b) => a.attributes === b.attributes, this.props.row.toArray());
+        const charGroupComponents = charGroups.map((charGroup: Char[], index: number) =>
             <CharGroupComponent group={charGroup} key={index}/>,
         );
 
-        return <div className="row"
-                    style={css.row}
-                    ref={(div: HTMLDivElement | null) => div && div.scrollIntoViewIfNeeded()}>{charGroups}</div>;
+        return (
+            <div className="row" ref={(div: HTMLDivElement | null) => div && div.scrollIntoViewIfNeeded()}>
+                {charGroupComponents}
+            </div>
+        );
     }
 }
 
@@ -92,9 +87,7 @@ export class OutputComponent extends React.Component<Props, State> {
         const showCursor = this.props.job.status === Status.InProgress && (output._showCursor || output._blinkCursor);
         const cursorComponent = showCursor ? <span className="cursor" style={css.cursor(output.cursorRowIndex, output.cursorColumnIndex)}/> : undefined;
 
-        const rowComponents = output.storage.map((possiblyEmptyRow, index: number) => {
-            const row = possiblyEmptyRow || List<Char>();
-
+        const rowComponents = output.storage.map((row, index: number) => {
             if (this.shouldCutOutput && index < output.size - Output.hugeOutputThreshold) {
                 return undefined;
                 // Don't render scrollback rows in alternate buffer.
@@ -103,7 +96,7 @@ export class OutputComponent extends React.Component<Props, State> {
                 return undefined;
             } else {
                 return (
-                    <RowComponent key={index} row={row}/>
+                    <RowComponent key={index} row={row!}/>
                 );
             }
         });

@@ -90,10 +90,6 @@ export const jobs = (isSessionFocused: boolean): CSSObject => ({
     ...(isSessionFocused ? {} : {pointerEvents: "none"}),
 });
 
-export const row: CSSProperties =  {
-    height: rowHeight,
-};
-
 export const suggestionIcon = {
     fontFamily: "FontAwesome",
     display: "inline-block",

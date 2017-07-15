@@ -768,7 +768,7 @@ export class Output extends events.EventEmitter {
     }
 
     scrollDown(count: number) {
-        times(count, () => this.storage = this.storage.insert(this.cursorRowIndex, List<Char>()));
+        times(count, () => this.storage = this.storage.insert(this.cursorRowIndex, this.emptyLine));
         times(count, () => this.storage = this.storage.delete(this.marginBottom));
     }
 
@@ -790,19 +790,7 @@ export class Output extends events.EventEmitter {
     }
 
     toLines(): string[] {
-        return this.storage.map(row => {
-            if (row) {
-                return row.map(char => {
-                    if (char) {
-                        return char.value;
-                    } else {
-                        return " ";
-                    }
-                }).join("");
-            } else {
-                return "";
-            }
-        }).toArray();
+        return this.storage.map(row => row!.map(char => char!.value).join("")).toArray();
     }
 
     toString(): string {
@@ -1006,8 +994,12 @@ export class Output extends events.EventEmitter {
     }
 
     private ensureRowExists(rowIndex: number): void {
-        if (!this.storage.get(rowIndex)) {
-            this.storage = this.storage.set(rowIndex, List<Char>());
+        for (let index = rowIndex; index >= 0; --index) {
+            if (!this.storage.get(index)) {
+                this.storage = this.storage.set(index, this.emptyLine);
+            } else {
+                break;
+            }
         }
     }
 
@@ -1021,5 +1013,9 @@ export class Output extends events.EventEmitter {
 
     private get lastColumnIndex() {
         return this.dimensions.columns - 1;
+    }
+
+    private get emptyLine() {
+        return List.of(...Array(this.dimensions.columns).fill(createChar(" ", this.attributes)));
     }
 }
