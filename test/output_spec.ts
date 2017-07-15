@@ -17,6 +17,7 @@ const ri = `${esc}M`;
 const dl = (rows: number) => `${esc}[${rows}M`;
 const dch = (n: number) => `${esc}[${n}P`;
 const cup = (row: number, column: number) => `${esc}[${row};${column}H`;
+const decsel = (param: number) => `${esc}[${param}K`;
 const decstbm = (topMargin: number, bottomMargin: number) => `${esc}[${topMargin};${bottomMargin}r`;
 const csi = (params: number[], final: CSIFinalCharacter) => {
     return `${esc}[${params.join(";")}${final}`;
@@ -155,6 +156,18 @@ describe("ANSI parser", () => {
 
                 expect(terminal.output.toLines()).to.deep.equal([
                     "14567890  ",
+                ]);
+            });
+        });
+
+        describe("DECSEL", () => {
+            it.only("Erases line to right", () => {
+                terminal.output.dimensions = {columns: 10, rows: 5};
+                const input = `1234567890${cup(1,5)}${decsel(0)}`;
+                terminal.output.write(input);
+
+                expect(terminal.output.toLines()).to.deep.equal([
+                    "1234      ",
                 ]);
             });
         });

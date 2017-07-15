@@ -295,8 +295,8 @@ export const output = (activeOutputType: OutputType, status: Status) => {
             styles.position = "absolute";
             styles.top = 0;
             styles.bottom = 0;
-            styles.left = 0;
-            styles.right = 0;
+            styles.left = contentPadding;
+            styles.right = contentPadding;
             styles.zIndex = 4;
         }
     }

@@ -867,7 +867,7 @@ export class Output extends events.EventEmitter {
     clearRowToEnd() {
         const oldRow = this.storage.get(this.cursorRowIndex);
         const newHead = oldRow.splice(this.cursorColumnIndex, this.lastColumnIndex);
-        const newTail = this.spaces(this.lastColumnIndex - this.cursorColumnIndex);
+        const newTail = this.spaces(this.dimensions.columns - this.cursorColumnIndex);
         const newRow = newHead.concat(newTail).toList();
 
         this.storage = this.storage.set(this.cursorRowIndex, newRow);
