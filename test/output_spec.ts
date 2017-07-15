@@ -15,6 +15,7 @@ type CSIFinalCharacter = "A" | "B" | "C" | "D" | "E" | "F" | "R" | "m" | "n";
 const esc = `\x1b`;
 const ri = `${esc}M`;
 const dl = (rows: number) => `${esc}[${rows}M`;
+const dch = (n: number) => `${esc}[${n}P`;
 const cup = (row: number, column: number) => `${esc}[${row};${column}H`;
 const decstbm = (topMargin: number, bottomMargin: number) => `${esc}[${topMargin};${bottomMargin}r`;
 const csi = (params: number[], final: CSIFinalCharacter) => {
@@ -143,6 +144,18 @@ describe("ANSI parser", () => {
                 terminal.output.write(input);
 
                 terminal.output.toLines();
+            });
+        });
+
+        describe("DCH", () => {
+            it("Removes chars from cursor position", () => {
+                terminal.output.dimensions = {columns: 10, rows: 5};
+                const input = `1234567890${cup(1,2)}${dch(2)}`;
+                terminal.output.write(input);
+
+                expect(terminal.output.toLines()).to.deep.equal([
+                    "14567890  "
+                ]);
             });
         });
     });

@@ -840,8 +840,7 @@ export class Output extends events.EventEmitter {
     deleteRight(n: number) {
         this.storage = this.storage.update(
             this.cursorRowIndex,
-            List<Char>(),
-            (row: List<Char>) => row.splice(this.cursorColumnIndex, n).toList(),
+            (row: List<Char>) => row.splice(this.cursorColumnIndex, n).concat(this.spaces(n)).toList(),
         );
     }
 
