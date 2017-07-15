@@ -14,6 +14,7 @@ type CSIFinalCharacter = "A" | "B" | "C" | "D" | "E" | "F" | "R" | "m" | "n";
 
 const esc = `\x1b`;
 const ri = `${esc}M`;
+const dl = (rows: number) => `${esc}[${rows}M`;
 const cup = (row: number, column: number) => `${esc}[${row};${column}H`;
 const decstbm = (topMargin: number, bottomMargin: number) => `${esc}[${topMargin};${bottomMargin}r`;
 const csi = (params: number[], final: CSIFinalCharacter) => {
@@ -131,6 +132,17 @@ describe("ANSI parser", () => {
 
                     expect(terminal.written).to.eql(`${csi([1, 10], "R")}`);
                 });
+            });
+        });
+
+        describe("DL", () => {
+            // A temporary test. Can be removed when we have a test for the real behavior.
+            it("doesn't fail", () => {
+                terminal.output.dimensions = {columns: 10, rows: 5};
+                const input = `1\r\n2\r\n3${cup(3,1)}${dl(1)}`;
+                terminal.output.write(input);
+
+                terminal.output.toLines();
             });
         });
     });

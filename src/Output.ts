@@ -773,7 +773,7 @@ export class Output extends events.EventEmitter {
     }
 
     scrollUp(count: number, deletedLine = this._margins.top) {
-        times(count, () => this.storage = this.storage.splice((this._margins.bottom || 0) + 1, 0, undefined).toList());
+        times(count, () => this.storage = this.storage.splice((this._margins.bottom || 0) + 1, 0, this.emptyLine).toList());
         this.storage = this.storage.splice(deletedLine, count).toList();
     }
 
