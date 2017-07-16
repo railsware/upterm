@@ -124,6 +124,21 @@
       color: var(--black-color);
     }
 
+    .job[data-status=in-progress] .output[data-buffer-type=alternate] {
+      background-color: var(--job-background-color);
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: var(--content-padding);
+      right: var(--content-padding);
+      z-index: 4;
+    }
+
+    .job[data-status=success] .output[data-buffer-type=alternate],
+    .job[data-status=failed] .output[data-buffer-type=alternate] {
+      zoom: 0.1;
+    }
+
     .output .cursor {
       position: absolute;
       background-color: var(--white-color);

@@ -79,8 +79,8 @@ export enum ScreenMode {
 }
 
 export enum BufferType {
-    Normal,
-    Alternate,
+    Normal = "normal",
+    Alternate = "alternate",
 }
 
 export enum Weight {

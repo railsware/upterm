@@ -69,7 +69,7 @@ export class OutputComponent extends React.Component<Props, {}> {
         return (
             <div className="output"
                  data-screen-mode={output.screenMode}
-                 style={css.output(output.activeBufferType, this.props.job.status)}>
+                 data-buffer-type={output.activeBufferType}>
                 {cursorComponent}
                 {rowComponents}
             </div>

@@ -1,4 +1,4 @@
-import {BufferType, Status, Weight, Brightness, Color} from "../../Enums";
+import {Weight, Brightness, Color} from "../../Enums";
 import {colors, colorValue} from "./colors";
 import {TabHoverState} from "../TabComponent";
 import {darken, lighten, failurize, alpha} from "./functions";
@@ -258,28 +258,6 @@ export const charGroup = (attributes: Attributes) => {
     }
     if (attributes.backgroundColor === Color.Black && !attributes.inverse) {
         delete styles.backgroundColor;
-    }
-
-    return styles;
-};
-
-export const output = (bufferType: BufferType, status: Status) => {
-    const styles: CSSObject = {};
-
-    if (bufferType === BufferType.Alternate) {
-        if ([Status.Failed, Status.Success].includes(status)) {
-            styles.zoom = 0.1;
-        }
-
-        if (status === Status.InProgress) {
-            styles.backgroundColor = jobBackgroundColor;
-            styles.position = "absolute";
-            styles.top = 0;
-            styles.bottom = 0;
-            styles.left = contentPadding;
-            styles.right = contentPadding;
-            styles.zIndex = 4;
-        }
     }
 
     return styles;
