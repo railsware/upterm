@@ -267,7 +267,7 @@ export const charGroup = (attributes: Attributes) => {
 
 export const cursor = (rowIndex: number, columnIndex: number, scrollbackSize: number) => ({
     top: rowIndex * rowHeight + (scrollbackSize * rowHeight),
-    left: columnIndex * letterWidth,
+    left: columnIndex * letterWidth + contentPadding,
     height: rowHeight,
     width: letterWidth,
 });
