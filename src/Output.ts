@@ -56,7 +56,7 @@ function logPosition(output: Output) {
     const position = {rowIndex: output.cursorRowIndex, columnIndex: output.cursorColumnIndex};
     const char = output.at(position);
     const value = char ? char.value : "NULL";
-    info(`%crow: ${position.rowIndex + 1}\tcolumn: ${output.cursorColumnIndex + 1}\t value: ${value}, rows: ${output.storage.size}`, "color: grey");
+    info(`%crow: ${position.rowIndex + 1}\tcolumn: ${output.cursorColumnIndex + 1}\t value: ${value}, rows: ${output.size}`, "color: grey");
 }
 
 /**
@@ -681,7 +681,6 @@ export class Output extends events.EventEmitter {
     public _showCursor = true;
     public _blinkCursor = true;
     public activeOutputType = e.OutputType.Standard;
-    public storage = List<List<Char>>();
     public designatedCharacterSets: DesignatedCharacterSets = {
         G0: CharacterSets.ASCIIGraphics,
         G1: CharacterSets.ASCIIGraphics,
@@ -693,6 +692,7 @@ export class Output extends events.EventEmitter {
     public isOriginModeSet = false;
     public isCursorKeysModeSet = false;
     public isAutowrapModeSet = true;
+    private storage = List<List<Char>>();
     private _attributes: i.Attributes = {...defaultAttributes, color: e.Color.White, weight: e.Weight.Normal};
     private _margins: Margins = {top: 0, left: 0};
     private savedState: SavedState | undefined;
@@ -707,6 +707,10 @@ export class Output extends events.EventEmitter {
     write(ansiString: string) {
         this.parser.parse(ansiString);
         this.emit("data");
+    }
+
+    map<T>(callback: (line: List<Char>, index: number) => T): T[] {
+        return this.storage.map(callback).toArray();
     }
 
     writeOne(char: string): void {
@@ -894,7 +898,7 @@ export class Output extends events.EventEmitter {
 
     clearToEnd() {
         this.clearRowToEnd();
-        this.storage = this.storage.splice(this.cursorRowIndex + 1, this.storage.size - this.cursorRowIndex).toList();
+        this.storage = this.storage.splice(this.cursorRowIndex + 1, this.size - this.cursorRowIndex).toList();
     }
 
     get size(): number {
@@ -902,7 +906,7 @@ export class Output extends events.EventEmitter {
     }
 
     isEmpty(): boolean {
-        return this.storage.size === 0;
+        return this.size === 0;
     }
 
     set margins(margins: Partial<Margins>) {
@@ -947,7 +951,7 @@ export class Output extends events.EventEmitter {
     }
 
     get firstRowOfCurrentPageIndex() {
-        return Math.max(0, this.storage.size - this.dimensions.rows);
+        return Math.max(0, this.size - this.dimensions.rows);
     }
 
     setTabStop() {
