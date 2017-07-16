@@ -69,7 +69,7 @@ export class PromptComponent extends React.Component<Props, State> {
             }
         }
 
-        return <div className="prompt-wrapper" ref="wrapper">
+        return <div className="prompt" ref="wrapper">
             <div className="prompt-decoration">
                 <div className="square"/>
                 <div className="square rhombus"/>
