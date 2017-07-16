@@ -789,8 +789,8 @@ export class Output extends events.EventEmitter {
     }
 
     scrollDown(count: number) {
-        times(count, () => this.page = this.page.insert(this.cursorRowIndex, this.emptyLine));
         times(count, () => this.page = this.page.delete(this.marginBottom));
+        times(count, () => this.page = this.page.insert(this.cursorRowIndex, this.emptyLine));
     }
 
     scrollUp(count: number, deletedLine = this._margins.top) {
