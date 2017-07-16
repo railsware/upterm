@@ -17,7 +17,7 @@ const suggestionSize = 2 * fontSize;
 export const titleBarHeight = 24;
 export const rowHeight = fontSize + 2;
 export const informationLineHeight = fontSize * 2;
-export const statusBarHeight = informationLineHeight + 42;
+export const footerHeight = informationLineHeight + 42;
 export const promptLetterWidth = promptFontSize / 2 + 1.5;
 
 function getLetterWidth(size: number, fontFamily: string) {
@@ -39,7 +39,7 @@ const cssVariables = {
     "--font-family": fontFamily,
     "--title-bar-height": `${titleBarHeight}px`,
     "--row-height": `${rowHeight}px`,
-    "--status-bar-height": `${statusBarHeight}px`,
+    "--footer-height": `${footerHeight}px`,
     "--information-line-height": `${informationLineHeight}px`,
     "--content-padding": `${contentPadding}px`,
     "--background-color": backgroundColor,
@@ -136,7 +136,7 @@ export const autocomplete = {
     } as CSSProperties,
 };
 
-export const statusBar = {
+export const footer = {
     status: (status: VcsStatus) => ({
         color: status === "dirty" ? colors.blue : colors.white,
     }),

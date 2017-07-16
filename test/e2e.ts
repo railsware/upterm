@@ -26,8 +26,8 @@ class Page {
         return new Job(this.client, this.client.element(".job"));
     }
 
-    get statusBar() {
-        return new StatusBar(this.client, this.client.element(".status-bar"));
+    get footer() {
+        return new Footer(this.client, this.client.element(".footer"));
     }
 }
 
@@ -44,7 +44,7 @@ class Job extends Block {
     }
 }
 
-class StatusBar extends Block {
+class Footer extends Block {
     get presentDirectory() {
         return this.selector.element(".present-directory");
     }
@@ -91,10 +91,10 @@ describe("application launch", function () {
             const newDirectory = userFriendlyPath(join(oldDirectory, "utils") + "/");
 
             await page.executeCommand(`cd ${oldDirectory}`);
-            expect(await page.statusBar.presentDirectory.getText()).to.eql(oldDirectory);
+            expect(await page.footer.presentDirectory.getText()).to.eql(oldDirectory);
 
             await page.executeCommand(`cd ${newDirectory}`);
-            expect(await page.statusBar.presentDirectory.getText()).to.eql(newDirectory);
+            expect(await page.footer.presentDirectory.getText()).to.eql(newDirectory);
         });
     });
 });

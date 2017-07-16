@@ -351,7 +351,7 @@ export class ApplicationComponent extends React.Component<{}, ApplicationState> 
                     key={session.id}
                     ref={sessionComponent => { pane.setSessionComponent(sessionComponent!); }}
                     isFocused={isFocused}
-                    updateStatusBar={isFocused ? () => this.forceUpdate() : undefined}
+                    updateFooter={isFocused ? () => this.forceUpdate() : undefined}
                     focus={() => {
                         this.focusedTab().activatePane(pane);
                         this.forceUpdate();

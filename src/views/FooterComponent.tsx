@@ -11,7 +11,7 @@ import {userFriendlyPath} from "../utils/Common";
 const VcsDataComponent = ({data}: { data: VcsData }) => {
     if (data.kind === "repository") {
         return (
-            <span className="vcs-data" style={css.statusBar.status(data.status)}>
+            <span className="vcs-data" style={css.footer.status(data.status)}>
                 {data.branch}
             </span>
     );
@@ -24,7 +24,7 @@ interface Props {
     session: Session;
 }
 
-export class StatusBarComponent extends React.Component<Props, {}> {
+export class FooterComponent extends React.Component<Props, {}> {
     promptComponent: PromptComponent;
 
     render() {
@@ -43,7 +43,7 @@ export class StatusBarComponent extends React.Component<Props, {}> {
         />;
 
         return (
-            <div className="status-bar">
+            <div className="footer">
                 <span className="information-line">
                     <span className="present-directory">{userFriendlyPath(this.props.session.directory)}</span>
                     <VcsDataComponent data={watchManager.vcsDataFor(this.props.session.directory)}/>

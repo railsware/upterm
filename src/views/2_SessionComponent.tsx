@@ -5,13 +5,13 @@ import {Job} from "../shell/Job";
 import {JobComponent} from "./3_JobComponent";
 import * as css from "./css/styles";
 import {PromptComponent} from "./PromptComponent";
-import {StatusBarComponent} from "./StatusBarComponent";
+import {FooterComponent} from "./FooterComponent";
 
 interface Props {
     session: Session;
     isFocused: boolean;
     focus: () => void;
-    updateStatusBar: (() => void) | undefined; // Only the focused session can update the status bar.
+    updateFooter: (() => void) | undefined; // Only the focused session can update the status bar.
 }
 
 // The height to snap to bottom when scroll. TODO: Make this the actual height
@@ -19,7 +19,7 @@ const FOOTER_HEIGHT = 50;
 
 export class SessionComponent extends React.Component<Props, {}> {
     RENDER_JOBS_COUNT = 25;
-    private _statusBarComponent: StatusBarComponent;
+    private _footerComponent: FooterComponent;
 
     constructor(props: Props) {
         super(props);
@@ -36,15 +36,15 @@ export class SessionComponent extends React.Component<Props, {}> {
                         s.scrollTop = s.scrollHeight;
                     }
                 }
-                if (this.props.updateStatusBar) {
-                    this.props.updateStatusBar();
+                if (this.props.updateFooter) {
+                    this.props.updateFooter();
                 }
             })
-            .on("vcs-data", () => this.props.updateStatusBar && this.props.updateStatusBar());
+            .on("vcs-data", () => this.props.updateFooter && this.props.updateFooter());
     }
 
     promptComponent(): PromptComponent | undefined {
-        return this._statusBarComponent.promptComponent;
+        return this._footerComponent.promptComponent;
     }
 
     render() {
@@ -67,8 +67,8 @@ export class SessionComponent extends React.Component<Props, {}> {
                     {jobs}
                     </div>
                 <div className="shutter" style={css.sessionShutter(this.props.isFocused)}></div>
-                <StatusBarComponent
-                    ref={component => { this._statusBarComponent = component!; }}
+                <FooterComponent
+                    ref={component => { this._footerComponent = component!; }}
                     session={this.props.session}
                 />
             </div>
