@@ -802,12 +802,10 @@ export class Output extends events.EventEmitter {
     }
 
     showCursor(state: boolean): void {
-        this.ensureRowExists(this.cursorRowIndex);
         this._showCursor = state;
     }
 
     blinkCursor(state: boolean): void {
-        this.ensureRowExists(this.cursorRowIndex);
         this._blinkCursor = state;
     }
 
@@ -822,7 +820,7 @@ export class Output extends events.EventEmitter {
         this.cursorRowIndex = Math.max(0, boundRowIndex);
         this.cursorColumnIndex = Math.min(this.dimensions.columns, Math.max(0, boundColumnIndex + (advancement.horizontal || 0)));
 
-        this.ensureRowExists(this.cursorRowIndex);
+        this.ensureCursorRowExists();
         return this;
     }
 
@@ -837,7 +835,7 @@ export class Output extends events.EventEmitter {
             this.cursorRowIndex = targetRowIndex + this.firstRowOfCurrentPageIndex;
         }
 
-        this.ensureRowExists(this.cursorRowIndex);
+        this.ensureCursorRowExists();
         return this;
     }
 
@@ -980,12 +978,12 @@ export class Output extends events.EventEmitter {
     }
 
     private set(char: Char): void {
-        this.ensureRowExists(this.cursorRowIndex);
+        this.ensureCursorRowExists();
         this.storage = this.storage.setIn([this.cursorRowIndex, this.cursorColumnIndex], char);
     }
 
-    private ensureRowExists(rowIndex: number): void {
-        for (let index = rowIndex; index >= 0; --index) {
+    private ensureCursorRowExists(): void {
+        for (let index = this.cursorRowIndex; index >= 0; --index) {
             if (!this.storage.get(index)) {
                 this.storage = this.storage.set(index, this.emptyLine);
             } else {
