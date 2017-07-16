@@ -304,8 +304,8 @@ export const output = (activeOutputType: OutputType, status: Status) => {
     return styles;
 };
 
-export const cursor = (rowIndex: number, columnIndex: number) => ({
-    top: rowIndex * rowHeight,
+export const cursor = (rowIndex: number, columnIndex: number, scrollbackSize: number) => ({
+    top: rowIndex * rowHeight + (scrollbackSize * rowHeight),
     left: columnIndex * letterWidth,
     height: rowHeight,
     width: letterWidth,

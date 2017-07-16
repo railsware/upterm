@@ -703,7 +703,7 @@ export class Output extends events.EventEmitter {
     constructor(
         terminalDevice: TerminalLikeDevice,
         public dimensions: Dimensions,
-        private scrollbackSize = 300,
+        private maxScrollbackSize = 300,
     ) {
         super();
         this.parser = new ANSIParser(terminalDevice, this);
@@ -915,6 +915,10 @@ export class Output extends events.EventEmitter {
         this.page = this.page.splice(this.cursorRowIndex + 1, this.size - this.cursorRowIndex).toList();
     }
 
+    get scrollbackSize(): number {
+        return this.scrollback.size;
+    }
+
     get size(): number {
         return this.page.size;
     }
@@ -1006,7 +1010,7 @@ export class Output extends events.EventEmitter {
         if (this.size > this.dimensions.rows) {
             const newStorage = this.page.takeLast(this.dimensions.rows).toList();
             const rowsToMoveToScrollback = this.page.skipLast(this.dimensions.rows).toList();
-            this.scrollback = this.scrollback.concat(rowsToMoveToScrollback).takeLast(this.scrollbackSize).toList();
+            this.scrollback = this.scrollback.concat(rowsToMoveToScrollback).takeLast(this.maxScrollbackSize).toList();
 
             this.page = newStorage;
             this.cursorRowIndex = this.size - 1;
