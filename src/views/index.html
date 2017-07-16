@@ -46,7 +46,6 @@
       color: var(--text-color);
 
       --session-height: calc(100vh - var(--title-bar-height));
-      --session-content-height: calc(var(--session-height) - var(--footer-height));
       --prompt-font-size: calc(var(--font-size) * 1.2);
     }
 
@@ -69,11 +68,12 @@
       overflow-y: scroll;
       display: grid;
       grid-template-areas: "jobs" "footer";
+      grid-template-rows: auto var(--footer-height);
+      height: var(--session-height);
     }
 
     .shutter {
       grid-area: jobs;
-      height: var(--session-content-height);
       z-index: 1;
       pointer-events: none;
     }
@@ -83,7 +83,6 @@
       overflow-y: scroll;
       display: flex;
       flex-direction: column-reverse;
-      height: var(--session-content-height);
     }
 
     .output-cut {
