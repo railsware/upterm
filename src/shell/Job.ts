@@ -14,15 +14,10 @@ import {normalizeKey} from "../utils/Common";
 import {TerminalLikeDevice} from "../Interfaces";
 import {History} from "./History";
 
-function makeThrottledDataEmitter(timesPerSecond: number, subject: EmitterWithUniqueID) {
-    return _.throttle(() => subject.emit("data"), 1000 / timesPerSecond);
-}
-
 export class Job extends EmitterWithUniqueID implements TerminalLikeDevice {
     public status: Status = Status.InProgress;
     private readonly _output: Output;
-    private readonly rareDataEmitter: Function = makeThrottledDataEmitter(1, this);
-    private readonly frequentDataEmitter: Function = makeThrottledDataEmitter(60, this);
+    private readonly throttledDataEmitter = _.throttle(() => this.emit("data"), 1000 / 60);
     private pty: PTY | undefined;
 
     constructor(private _session: Session, private _prompt: Prompt) {
@@ -177,7 +172,4 @@ export class Job extends EmitterWithUniqueID implements TerminalLikeDevice {
         this.status = status;
         this.emit("status", status);
     }
-
-    private throttledDataEmitter = () =>
-        this._output.size < Output.hugeOutputThreshold ? this.frequentDataEmitter() : this.rareDataEmitter()
 }

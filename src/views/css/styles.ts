@@ -75,14 +75,6 @@ function tabCloseButtonColor(hover: TabHoverState) {
     }
 }
 
-function jaggedBorder(color: string, panelColor: string, darkenPercent: number) {
-    return {
-        background: `-webkit-linear-gradient(${darken(panelColor, darkenPercent)} 0%, transparent 0%) 0 100% repeat-x,
-                     -webkit-linear-gradient(135deg, ${color} 33.33%, transparent 33.33%) 0 0 / 15px 50px,
-                     -webkit-linear-gradient(45deg, ${color} 33.33%, ${darken(panelColor, darkenPercent)} 33.33%) 0 0 / 15px 50px`,
-    };
-}
-
 export const application = {
     ...cssVariables,
 };
@@ -270,17 +262,6 @@ export const charGroup = (attributes: Attributes) => {
 
     return styles;
 };
-
-export const outputCut = (status: Status): CSSProperties => ({
-    ...jaggedBorder(
-        [Status.Failure, Status.Interrupted].includes(status) ? failurize(jobBackgroundColor) : jobBackgroundColor,
-        [Status.Failure, Status.Interrupted].includes(status) ? failurize(backgroundColor) : backgroundColor,
-        0,
-    ),
-    color: lighten(jobBackgroundColor, 35),
-});
-
-export const outputCutIcon = {marginRight: 10, fontFamily: "FontAwesome"};
 
 export const output = (activeOutputType: OutputType, status: Status) => {
     const styles: CSSObject = {};

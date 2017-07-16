@@ -675,7 +675,6 @@ class ANSIParser {
 }
 
 export class Output extends events.EventEmitter {
-    public static hugeOutputThreshold = 300;
     public cursorRowIndex = 0;
     public cursorColumnIndex = 0;
     public _showCursor = true;
@@ -703,7 +702,7 @@ export class Output extends events.EventEmitter {
     constructor(
         terminalDevice: TerminalLikeDevice,
         public dimensions: Dimensions,
-        private maxScrollbackSize = 300,
+        private maxScrollbackSize = 200,
     ) {
         super();
         this.parser = new ANSIParser(terminalDevice, this);
