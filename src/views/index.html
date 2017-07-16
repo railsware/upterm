@@ -67,8 +67,8 @@
       outline: none;
       overflow-y: scroll;
       display: grid;
-      grid-template-areas: "jobs" "footer";
-      grid-template-rows: auto var(--footer-height);
+      grid-template-areas: "jobs" "prompt" "footer";
+      grid-template-rows: auto var(--prompt-height) var(--footer-height);
       height: var(--session-height);
     }
 
@@ -153,31 +153,24 @@
       height: var(--row-height);
     }
 
-    .footer {
-      grid-area: footer;
-      height: var(--footer-height);
+    .session .prompt-wrapper {
+      grid-area: prompt;
       padding-top: 10px;
       line-height: 1.3;
-      display: flex;
-      flex-direction: column-reverse;
-      justify-content: space-between;
-    }
-
-    .footer .prompt-wrapper {
       display: grid;
       grid-template-areas: "prompt-decoration prompt";
       grid-template-columns: calc(var(--prompt-font-size) * 2) auto;
       height: var(--prompt-font-size);
     }
 
-    .footer .prompt-decoration {
+    .session .prompt-decoration {
       grid-area: prompt-decoration;
       position: relative;
       overflow: hidden;
       z-index: 2;
     }
 
-    .footer .prompt-decoration .square {
+    .session .prompt-decoration .square {
       position: absolute;
       display: inline-block;
       --size: calc(var(--prompt-font-size) * 1.3);
@@ -188,17 +181,17 @@
       filter: brightness(50%);
     }
 
-    .footer .prompt-decoration .rhombus {
+    .session .prompt-decoration .rhombus {
       left: calc(var(--prompt-font-size) * 0.39);
       transform: rotate(45deg);
     }
 
-    .footer .prompt {
+    .session .prompt {
       color: var(--text-color);
       z-index: 2;
     }
 
-    .footer .prompt-content {
+    .session .prompt-content {
       grid-area: prompt;
       font-size: var(--prompt-font-size);
       padding-left: calc(var(--prompt-font-size) / 2);
@@ -207,8 +200,24 @@
       outline: none;
     }
 
-    .footer .autocompleted-preview {
+    .session .autocompleted-preview {
       filter: brightness(50%);
+    }
+
+    .autocomplete {
+      position: absolute;
+      bottom: calc(var(--footer-height) + var(--prompt-height));
+      min-width: 300px;
+      box-shadow: 0 2px 8px 1px rgba(0, 0, 0, 0.3);
+      background-color: var(--background-color);
+    }
+
+    .footer {
+      grid-area: footer;
+      height: var(--footer-height);
+      display: flex;
+      flex-direction: column-reverse;
+      justify-content: space-between;
     }
 
     .footer .status-bar {
@@ -248,15 +257,6 @@
       overflow: hidden;
       white-space: pre;
       padding-right: 8px;
-    }
-
-
-    .autocomplete {
-      position: absolute;
-      bottom: var(--footer-height);
-      min-width: 300px;
-      box-shadow: 0 2px 8px 1px rgba(0, 0, 0, 0.3);
-      background-color: var(--background-color);
     }
 
     /* inline styles can't really handle pseudo elements, so they still need classes */

@@ -6,6 +6,7 @@ import {JobComponent} from "./3_JobComponent";
 import * as css from "./css/styles";
 import {PromptComponent} from "./PromptComponent";
 import {FooterComponent} from "./FooterComponent";
+import {Status} from "../Enums";
 
 interface Props {
     session: Session;
@@ -19,7 +20,7 @@ const FOOTER_HEIGHT = 50;
 
 export class SessionComponent extends React.Component<Props, {}> {
     RENDER_JOBS_COUNT = 25;
-    private _footerComponent: FooterComponent;
+    promptComponent: PromptComponent;
 
     constructor(props: Props) {
         super(props);
@@ -43,10 +44,6 @@ export class SessionComponent extends React.Component<Props, {}> {
             .on("vcs-data", () => this.props.updateFooter && this.props.updateFooter());
     }
 
-    promptComponent(): PromptComponent | undefined {
-        return this._footerComponent.promptComponent;
-    }
-
     render() {
         const jobs = _.takeRight(this.props.session.jobs, this.RENDER_JOBS_COUNT).slice().reverse().map((job: Job, index: number) =>
             <JobComponent
@@ -57,6 +54,20 @@ export class SessionComponent extends React.Component<Props, {}> {
             />,
         );
 
+        const lastJob = _.last(this.props.session.jobs);
+        const lastJobInProgress = lastJob && lastJob.status === Status.InProgress;
+
+        if (lastJob) {
+            lastJob.once("end", () => this.forceUpdate());
+        }
+
+        const promptComponent = lastJobInProgress ? undefined : <PromptComponent
+            key={this.props.session.jobs.length}
+            ref={component => { this.promptComponent = component!; }}
+            session={this.props.session}
+            isFocused={true}
+        />;
+
         return (
             <div className="session"
                 ref="session"
@@ -65,12 +76,10 @@ export class SessionComponent extends React.Component<Props, {}> {
 
                 <div className="jobs" style={css.jobs(this.props.isFocused)}>
                     {jobs}
-                    </div>
-                <div className="shutter" style={css.sessionShutter(this.props.isFocused)}></div>
-                <FooterComponent
-                    ref={component => { this._footerComponent = component!; }}
-                    session={this.props.session}
-                />
+                </div>
+                <div className="shutter" style={css.sessionShutter(this.props.isFocused)}/>
+                {promptComponent}
+                <FooterComponent session={this.props.session}/>
             </div>
         );
     }
