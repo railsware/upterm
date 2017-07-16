@@ -16,7 +16,8 @@ export const contentPadding = 10;
 const suggestionSize = 2 * fontSize;
 export const titleBarHeight = 24;
 export const rowHeight = fontSize + 2;
-export const statusBarHeight = 70;
+export const informationLineHeight = fontSize * 2;
+export const statusBarHeight = informationLineHeight + 42;
 export const promptLetterWidth = promptFontSize / 2 + 1.5;
 
 function getLetterWidth(size: number, fontFamily: string) {
@@ -39,6 +40,7 @@ const cssVariables = {
     "--title-bar-height": `${titleBarHeight}px`,
     "--row-height": `${rowHeight}px`,
     "--status-bar-height": `${statusBarHeight}px`,
+    "--information-line-height": `${informationLineHeight}px`,
     "--content-padding": `${contentPadding}px`,
     "--background-color": backgroundColor,
     "--job-background-color": jobBackgroundColor,
