@@ -50,7 +50,7 @@ export class Job extends EmitterWithUniqueID implements TerminalLikeDevice {
     }
 
     handleError(message: NonZeroExitCodeError | string): void {
-        this.setStatus(Status.Failure);
+        this.setStatus(Status.Failed);
         if (message) {
             if (message instanceof NonZeroExitCodeError) {
                 // Do nothing.
@@ -121,14 +121,8 @@ export class Job extends EmitterWithUniqueID implements TerminalLikeDevice {
     interrupt(): void {
         if (this.pty && this.status === Status.InProgress) {
             this.pty.kill("SIGINT");
-            this.setStatus(Status.Interrupted);
+            this.setStatus(Status.Failed);
             this.emit("end");
-        }
-    }
-
-    sendSignal(signal: string): void {
-        if (this.pty) {
-            this.pty.kill(signal);
         }
     }
 

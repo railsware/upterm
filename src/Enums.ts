@@ -70,8 +70,7 @@ export enum Color {
 
 export enum Status {
     InProgress = "in-progress",
-    Failure = "failure",
-    Interrupted = "interrupted",
+    Failed = "failed",
     Success = "success",
 }
 export enum ScreenMode {

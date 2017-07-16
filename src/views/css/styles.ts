@@ -42,7 +42,7 @@ const cssVariables = {
     "--content-padding": `${contentPadding}px`,
     "--background-color": backgroundColor,
     "--job-background-color": jobBackgroundColor,
-    "--job-background-color-failure": failurize(jobBackgroundColor),
+    "--failed-job-background-color": failurize(jobBackgroundColor),
     "--text-color": colors.white,
     "--black-color": colors.black,
     "--white-color": colors.white,
@@ -267,7 +267,7 @@ export const output = (bufferType: BufferType, status: Status) => {
     const styles: CSSObject = {};
 
     if (bufferType === BufferType.Alternate) {
-        if ([Status.Failure, Status.Interrupted, Status.Success].includes(status)) {
+        if ([Status.Failed, Status.Success].includes(status)) {
             styles.zoom = 0.1;
         }
 
