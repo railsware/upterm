@@ -179,7 +179,7 @@ export const KeybindingsForMenu: KeybindingMenuType[] = [
     // view commands
     {
         action: KeyboardAction.viewReload,
-        accelerator: `${CmdOrCtrl}+R`,
+        accelerator: `${CmdOrCtrl}+Shift+R`,
     },
     {
         action: KeyboardAction.viewToggleFullScreen,
