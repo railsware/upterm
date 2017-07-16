@@ -92,10 +92,6 @@ export class OutputComponent extends React.Component<Props, State> {
         const rowComponents = output.map((row, index) => {
             if (this.shouldCutOutput && index < output.size - Output.hugeOutputThreshold) {
                 return undefined;
-                // Don't render scrollback rows in alternate buffer.
-                // TODO: remove when we have a separate output for alternate buffer.
-            } else if (output.activeOutputType === OutputType.Alternate && index < output.firstRowOfCurrentPageIndex) {
-                return undefined;
             } else {
                 return (
                     <RowComponent key={index} index={index} row={row}/>

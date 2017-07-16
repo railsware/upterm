@@ -848,8 +848,7 @@ export class Output extends events.EventEmitter {
 
         if (typeof position.rowIndex === "number") {
 
-            const targetRowIndex = Math.max(position.rowIndex, 0) + this.homePosition.rowIndex;
-            this.cursorRowIndex = targetRowIndex + this.firstRowOfCurrentPageIndex;
+            this.cursorRowIndex = Math.max(position.rowIndex, 0) + this.homePosition.rowIndex;
         }
 
         this.ensureCursorRowExists();
@@ -929,14 +928,14 @@ export class Output extends events.EventEmitter {
     }
 
     get marginTop(): number {
-        return this._margins.top + this.firstRowOfCurrentPageIndex;
+        return this._margins.top;
     }
 
     get marginBottom(): number {
         if (this._margins.bottom) {
-            return this._margins.bottom + this.firstRowOfCurrentPageIndex;
+            return this._margins.bottom;
         } else {
-            return this.dimensions.rows - 1 + this.firstRowOfCurrentPageIndex;
+            return this.dimensions.rows - 1;
         }
     }
 
@@ -963,10 +962,6 @@ export class Output extends events.EventEmitter {
         } else {
             console.error("No state to restore.");
         }
-    }
-
-    get firstRowOfCurrentPageIndex() {
-        return Math.max(0, this.size - this.dimensions.rows);
     }
 
     setTabStop() {
