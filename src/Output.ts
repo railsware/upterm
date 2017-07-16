@@ -811,7 +811,7 @@ export class Output extends events.EventEmitter {
     }
 
     toLines(): string[] {
-        return this.page.map(row => row!.map(char => char!.value).join("")).toArray();
+        return this.map(row => row.map(char => char!.value).join(""));
     }
 
     toString(): string {
