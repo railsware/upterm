@@ -1,4 +1,4 @@
-import {OutputType, Status, Weight, Brightness, Color} from "../../Enums";
+import {BufferType, Status, Weight, Brightness, Color} from "../../Enums";
 import {colors, colorValue} from "./colors";
 import {TabHoverState} from "../TabComponent";
 import {darken, lighten, failurize, alpha} from "./functions";
@@ -263,10 +263,10 @@ export const charGroup = (attributes: Attributes) => {
     return styles;
 };
 
-export const output = (activeOutputType: OutputType, status: Status) => {
+export const output = (bufferType: BufferType, status: Status) => {
     const styles: CSSObject = {};
 
-    if (activeOutputType === OutputType.Alternate) {
+    if (bufferType === BufferType.Alternate) {
         if ([Status.Failure, Status.Interrupted, Status.Success].includes(status)) {
             styles.zoom = 0.1;
         }

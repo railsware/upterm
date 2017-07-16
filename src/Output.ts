@@ -3,7 +3,7 @@ import {attributesFlyweight, defaultAttributes, createChar, Char} from "./Char";
 import * as i from "./Interfaces";
 import * as e from "./Enums";
 import {List} from "immutable";
-import {Color, Weight, Brightness, KeyCode, LogLevel, OutputType, ScreenMode} from "./Enums";
+import {Color, Weight, Brightness, KeyCode, LogLevel, BufferType, ScreenMode} from "./Enums";
 import {Attributes, TerminalLikeDevice, ColorCode} from "./Interfaces";
 import {print, error, info, csi, times} from "./utils/Common";
 import * as _ from "lodash";
@@ -157,7 +157,7 @@ const colorFormatCodes = {
 };
 
 export class Output extends events.EventEmitter {
-    public activeOutputType = e.OutputType.Standard;
+    public activeBufferType = e.BufferType.Normal;
     public isCursorKeysModeSet = false;
     public screenMode = ScreenMode.Dark;
     private normalBuffer: Buffer;
@@ -256,7 +256,7 @@ export class Output extends events.EventEmitter {
     }
 
     get activeBuffer() {
-        if (this.activeOutputType === e.OutputType.Standard) {
+        if (this.activeBufferType === e.BufferType.Normal) {
             return this.normalBuffer;
         } else {
             return this.alternateBuffer;
@@ -448,7 +448,7 @@ export class Output extends events.EventEmitter {
                     /* tslint:disable:max-line-length */
                     description = "Save cursor as in DECSC and use Alternate Screen Buffer, clearing it first.  (This may be disabled by the titeInhibit resource).  This combines the effects of the 1047  and 1048  modes.  Use this with terminfo-based applications rather than the 47  mod";
 
-                    this.activeOutputType = OutputType.Alternate;
+                    this.activeBufferType = BufferType.Alternate;
                 } else {
                     // TODO: Add Implementation
                     status = "unhandled";

@@ -79,8 +79,8 @@ export enum ScreenMode {
     Dark = "dark",
 }
 
-export enum OutputType {
-    Standard,
+export enum BufferType {
+    Normal,
     Alternate,
 }
 
