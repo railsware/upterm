@@ -70,9 +70,10 @@ export class SessionComponent extends React.Component<Props, {}> {
 
         return (
             <div className="session"
-                ref="session"
-                style={css.session(this.props.isFocused)}
-                onClick={this.handleClick.bind(this)}>
+                 data-status={lastJob && lastJob.status}
+                 ref="session"
+                 style={css.session(this.props.isFocused)}
+                 onClick={this.handleClick.bind(this)}>
 
                 <div className="jobs" style={css.jobs(this.props.isFocused)}>
                     {jobs}
