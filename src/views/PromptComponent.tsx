@@ -75,7 +75,7 @@ export class PromptComponent extends React.Component<Props, State> {
                 <div className="square rhombus"/>
             </div>
             <div
-                className="prompt prompt-content"
+                className="prompt-content"
                 onInput={this.handleInput.bind(this)}
                 onDrop={this.handleDrop.bind(this)}
                 onBlur={() => this.setState({...this.state, caretPositionFromPreviousFocus: getCaretPosition(this.commandNode)})}

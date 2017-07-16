@@ -6,7 +6,7 @@ import {userFriendlyPath} from "../src/utils/Common";
 const timeout = 50000;
 
 class Page {
-    private promptSelector = ".prompt";
+    private promptSelector = ".prompt-content";
 
     constructor(private client: SpectronClient) {}
 
