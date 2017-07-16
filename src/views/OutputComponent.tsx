@@ -98,7 +98,7 @@ export class OutputComponent extends React.Component<Props, State> {
                 return undefined;
             } else {
                 return (
-                    <RowComponent key={index} index={index} row={row!}/>
+                    <RowComponent key={index} index={index} row={row}/>
                 );
             }
         });

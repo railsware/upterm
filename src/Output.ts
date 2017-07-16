@@ -692,6 +692,7 @@ export class Output extends events.EventEmitter {
     public isOriginModeSet = false;
     public isCursorKeysModeSet = false;
     public isAutowrapModeSet = true;
+    private scrollback = List<List<Char>>();
     private storage = List<List<Char>>();
     private _attributes: i.Attributes = {...defaultAttributes, color: e.Color.White, weight: e.Weight.Normal};
     private _margins: Margins = {top: 0, left: 0};
@@ -699,7 +700,11 @@ export class Output extends events.EventEmitter {
     private parser: ANSIParser;
     private tabStopIndices = _.range(8, 300, 8);
 
-    constructor(terminalDevice: TerminalLikeDevice, public dimensions: Dimensions) {
+    constructor(
+        terminalDevice: TerminalLikeDevice,
+        public dimensions: Dimensions,
+        private scrollbackSize = 300,
+    ) {
         super();
         this.parser = new ANSIParser(terminalDevice, this);
     }
@@ -709,8 +714,20 @@ export class Output extends events.EventEmitter {
         this.emit("data");
     }
 
-    map<T>(callback: (line: List<Char>, index: number) => T): T[] {
-        return this.storage.map(callback).toArray();
+    map<T>(callback: (row: List<Char>, index: number) => T): T[] {
+        const result: T[] = [];
+        let index = 0;
+
+        this.scrollback.forEach(row => {
+            result.push(callback(row!, index));
+            ++index;
+        });
+        this.storage.forEach(row => {
+            result.push(callback(row!, index));
+            ++index;
+        });
+
+        return result;
     }
 
     writeOne(char: string): void {
@@ -989,6 +1006,15 @@ export class Output extends events.EventEmitter {
             } else {
                 break;
             }
+        }
+
+        if (this.size > this.dimensions.rows) {
+            const newStorage = this.storage.takeLast(this.dimensions.rows).toList();
+            const rowsToMoveToScrollback = this.storage.skipLast(this.dimensions.rows).toList();
+            this.scrollback = this.scrollback.concat(rowsToMoveToScrollback).takeLast(this.scrollbackSize).toList();
+
+            this.storage = newStorage;
+            this.cursorRowIndex = this.size - 1;
         }
     }
 
