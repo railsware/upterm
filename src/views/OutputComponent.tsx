@@ -6,7 +6,7 @@ import {List} from "immutable";
 import * as css from "./css/styles";
 import {fontAwesome} from "./css/FontAwesome";
 import {Job} from "../shell/Job";
-import {OutputType, Status} from "../Enums";
+import {Status} from "../Enums";
 
 const CharGroupComponent = ({group}: {group: Char[]}) => {
     const attributes = group[0].attributes;

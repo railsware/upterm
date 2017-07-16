@@ -693,7 +693,7 @@ export class Output extends events.EventEmitter {
     public isCursorKeysModeSet = false;
     public isAutowrapModeSet = true;
     private scrollback = List<List<Char>>();
-    private storage = List<List<Char>>();
+    private page = List<List<Char>>();
     private _attributes: i.Attributes = {...defaultAttributes, color: e.Color.White, weight: e.Weight.Normal};
     private _margins: Margins = {top: 0, left: 0};
     private savedState: SavedState | undefined;
@@ -722,7 +722,7 @@ export class Output extends events.EventEmitter {
             result.push(callback(row!, index));
             ++index;
         });
-        this.storage.forEach(row => {
+        this.page.forEach(row => {
             result.push(callback(row!, index));
             ++index;
         });
@@ -789,13 +789,13 @@ export class Output extends events.EventEmitter {
     }
 
     scrollDown(count: number) {
-        times(count, () => this.storage = this.storage.insert(this.cursorRowIndex, this.emptyLine));
-        times(count, () => this.storage = this.storage.delete(this.marginBottom));
+        times(count, () => this.page = this.page.insert(this.cursorRowIndex, this.emptyLine));
+        times(count, () => this.page = this.page.delete(this.marginBottom));
     }
 
     scrollUp(count: number, deletedLine = this._margins.top) {
-        times(count, () => this.storage = this.storage.splice((this._margins.bottom || 0) + 1, 0, this.emptyLine).toList());
-        this.storage = this.storage.splice(deletedLine, count).toList();
+        times(count, () => this.page = this.page.splice((this._margins.bottom || 0) + 1, 0, this.emptyLine).toList());
+        this.page = this.page.splice(deletedLine, count).toList();
     }
 
     get attributes(): i.Attributes {
@@ -811,7 +811,7 @@ export class Output extends events.EventEmitter {
     }
 
     toLines(): string[] {
-        return this.storage.map(row => row!.map(char => char!.value).join("")).toArray();
+        return this.page.map(row => row!.map(char => char!.value).join("")).toArray();
     }
 
     toString(): string {
@@ -856,21 +856,21 @@ export class Output extends events.EventEmitter {
     }
 
     deleteRight(n: number) {
-        this.storage = this.storage.update(
+        this.page = this.page.update(
             this.cursorRowIndex,
             row => row.splice(this.cursorColumnIndex, n).concat(this.spaces(n)).toList(),
         );
     }
 
     insertSpaceRight(n: number) {
-        this.storage = this.storage.update(
+        this.page = this.page.update(
             this.cursorRowIndex,
             row => row.splice(this.cursorColumnIndex, 0).concat(this.spaces(n)).toList(),
         );
     }
 
     eraseRight(n: number) {
-        this.storage = this.storage.update(
+        this.page = this.page.update(
             this.cursorRowIndex,
             row => row.take(this.cursorColumnIndex)
                 .concat(this.spaces(n), row.skip(this.cursorColumnIndex + n))
@@ -879,27 +879,27 @@ export class Output extends events.EventEmitter {
     }
 
     clearRow() {
-        this.storage = this.storage.set(this.cursorRowIndex, this.emptyLine);
+        this.page = this.page.set(this.cursorRowIndex, this.emptyLine);
     }
 
     clearRowToEnd() {
-        const oldRow = this.storage.get(this.cursorRowIndex);
+        const oldRow = this.page.get(this.cursorRowIndex);
         const newHead = oldRow.splice(this.cursorColumnIndex, this.lastColumnIndex);
         const newTail = this.spaces(this.dimensions.columns - this.cursorColumnIndex);
         const newRow = newHead.concat(newTail).toList();
 
-        this.storage = this.storage.set(this.cursorRowIndex, newRow);
+        this.page = this.page.set(this.cursorRowIndex, newRow);
     }
 
     clearRowToBeginning() {
         const count = this.cursorColumnIndex + 1;
-        this.storage = this.storage.update(
+        this.page = this.page.update(
             this.cursorRowIndex,
             row => this.spaces(count).concat(row.skip(count)).toList());
     }
 
     clear() {
-        this.storage = List<List<Char>>();
+        this.page = List<List<Char>>();
         this.moveCursorAbsolute({rowIndex: 0, columnIndex: 0});
     }
 
@@ -907,16 +907,16 @@ export class Output extends events.EventEmitter {
         this.clearRowToBeginning();
         const replacement = Array(this.cursorRowIndex).fill(this.emptyLine);
 
-        this.storage = this.storage.splice(0, this.cursorRowIndex, ...replacement).toList();
+        this.page = this.page.splice(0, this.cursorRowIndex, ...replacement).toList();
     }
 
     clearToEnd() {
         this.clearRowToEnd();
-        this.storage = this.storage.splice(this.cursorRowIndex + 1, this.size - this.cursorRowIndex).toList();
+        this.page = this.page.splice(this.cursorRowIndex + 1, this.size - this.cursorRowIndex).toList();
     }
 
     get size(): number {
-        return this.storage.size;
+        return this.page.size;
     }
 
     isEmpty(): boolean {
@@ -940,7 +940,7 @@ export class Output extends events.EventEmitter {
     }
 
     at(position: RowColumn): Char {
-        return this.storage.getIn([position.rowIndex, position.columnIndex]);
+        return this.page.getIn([position.rowIndex, position.columnIndex]);
     }
 
     saveCurrentState() {
@@ -991,24 +991,24 @@ export class Output extends events.EventEmitter {
 
     private set(char: Char): void {
         this.ensureCursorRowExists();
-        this.storage = this.storage.setIn([this.cursorRowIndex, this.cursorColumnIndex], char);
+        this.page = this.page.setIn([this.cursorRowIndex, this.cursorColumnIndex], char);
     }
 
     private ensureCursorRowExists(): void {
         for (let index = this.cursorRowIndex; index >= 0; --index) {
-            if (!this.storage.get(index)) {
-                this.storage = this.storage.set(index, this.emptyLine);
+            if (!this.page.get(index)) {
+                this.page = this.page.set(index, this.emptyLine);
             } else {
                 break;
             }
         }
 
         if (this.size > this.dimensions.rows) {
-            const newStorage = this.storage.takeLast(this.dimensions.rows).toList();
-            const rowsToMoveToScrollback = this.storage.skipLast(this.dimensions.rows).toList();
+            const newStorage = this.page.takeLast(this.dimensions.rows).toList();
+            const rowsToMoveToScrollback = this.page.skipLast(this.dimensions.rows).toList();
             this.scrollback = this.scrollback.concat(rowsToMoveToScrollback).takeLast(this.scrollbackSize).toList();
 
-            this.storage = newStorage;
+            this.page = newStorage;
             this.cursorRowIndex = this.size - 1;
         }
     }
