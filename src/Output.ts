@@ -167,7 +167,7 @@ export class Output extends events.EventEmitter {
     constructor(private terminalDevice: TerminalLikeDevice, public dimensions: Dimensions) {
         super();
 
-        this.normalBuffer = new Buffer(this,200);
+        this.normalBuffer = new Buffer(this, 200);
         this.alternateBuffer = new Buffer(this, 0);
 
         this.parser = new ansiParserConstructor({
