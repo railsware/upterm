@@ -25,10 +25,8 @@ export class FooterComponent extends React.Component<Props, {}> {
     render() {
         return (
             <div className="footer">
-                <span className="status-bar">
-                    <span className="present-directory">{userFriendlyPath(this.props.session.directory)}</span>
-                    <VcsDataComponent data={watchManager.vcsDataFor(this.props.session.directory)}/>
-                </span>
+                <span className="present-directory">{userFriendlyPath(this.props.session.directory)}</span>
+                <VcsDataComponent data={watchManager.vcsDataFor(this.props.session.directory)}/>
             </div>
         );
     }

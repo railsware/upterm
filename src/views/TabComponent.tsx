@@ -128,7 +128,7 @@ export class Tab {
         }
         return {
             width: window.innerWidth - (2 * css.contentPadding),
-            height: window.innerHeight - css.titleBarHeight - css.footerHeight - css.contentPadding,
+            height: window.innerHeight - css.titleBarHeight - css.footerHeight,
         };
     }
 }
