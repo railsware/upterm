@@ -121,7 +121,7 @@ describe("ANSI parser", () => {
         it("sets the correct foreground color", () => {
             terminal.output.write(`${sgr([38, 2, 255, 100, 0])}A${sgr([0])}`);
 
-            const firstChar = terminal.output.at({rowIndex: 0, columnIndex: 0});
+            const firstChar = terminal.output.activeBuffer.at({rowIndex: 0, columnIndex: 0});
             expect(firstChar.attributes.color).to.eql([255, 100, 0]);
         });
     });

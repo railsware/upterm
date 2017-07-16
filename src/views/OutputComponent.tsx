@@ -57,10 +57,11 @@ interface Props {
 export class OutputComponent extends React.Component<Props, {}> {
     render() {
         const output = this.props.job.output;
-        const showCursor = this.props.job.status === Status.InProgress && (output._showCursor || output._blinkCursor);
-        const cursorComponent = showCursor ? <span className="cursor" data-row-index={output.cursorRowIndex} style={css.cursor(output.cursorRowIndex, output.cursorColumnIndex, output.scrollbackSize)}/> : undefined;
+        const buffer = output.activeBuffer;
+        const showCursor = this.props.job.status === Status.InProgress && (buffer._showCursor || buffer._blinkCursor);
+        const cursorComponent = showCursor ? <span className="cursor" data-row-index={buffer.cursorRowIndex} style={css.cursor(buffer.cursorRowIndex, buffer.cursorColumnIndex, buffer.scrollbackSize)}/> : undefined;
 
-        const rowComponents = output.map((row, index) => <RowComponent key={index} index={index} row={row}/>);
+        const rowComponents = buffer.map((row, index) => <RowComponent key={index} index={index} row={row}/>);
 
         return (
             <div className="output"
