@@ -8,7 +8,7 @@ import {currentBranchName, GitDirectoryPath, repositoryState, RepositoryState} f
 const GIT_WATCHER_EVENT_NAME = "git-data-changed";
 
 class GitWatcher extends EventEmitter {
-    static INTERVAL = 5000;
+    static INTERVAL = 3000;
     timer: NodeJS.Timer;
 
     constructor(private directory: string) {
