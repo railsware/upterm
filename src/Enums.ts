@@ -100,11 +100,6 @@ export enum LogLevel {
     Error = "error",
 }
 
-export enum SplitDirection {
-    Vertical,
-    Horizontal,
-}
-
 export enum KeyboardAction {
     // CLI commands
     cliRunCommand,
@@ -124,7 +119,6 @@ export enum KeyboardAction {
     tabNext,
     tabClose,
     // pane commands
-    paneSplitHorizontally,
     paneSplitVertically,
     panePrevious,
     paneNext,

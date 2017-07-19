@@ -78,9 +78,11 @@
     }
 
     .shutter {
-      grid-area: jobs;
       z-index: 1;
       pointer-events: none;
+      grid-row-start: jobs;
+      grid-row-end: footer;
+      grid-column: 1;
     }
 
     .jobs {
@@ -133,10 +135,8 @@
       position: absolute;
       top: 0;
       bottom: var(--footer-height);
-      left: 0;
-      right: 0;
-      padding-left: var(--content-padding);
-      padding-right: var(--content-padding);
+      left: var(--content-padding);
+      right: var(--content-padding);
       z-index: 4;
     }
 

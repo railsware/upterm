@@ -6,7 +6,7 @@ import {ipcRenderer} from "electron";
 import {remote} from "electron";
 import * as css from "./css/styles";
 import {saveWindowBounds} from "./ViewUtils";
-import {PaneTree, Pane} from "../utils/PaneTree";
+import {Pane} from "../utils/PaneTree";
 import {SearchComponent} from "./SearchComponent";
 import {isMenuShortcut, isKeybindingForEvent} from "./keyevents/Keybindings";
 import {KeyboardAction} from "../Enums";
@@ -36,7 +36,7 @@ export class ApplicationComponent extends React.Component<{}, ApplicationState> 
                 .on("devtools-closed", () => this.recalculateDimensions());
 
             ipcRenderer.on("change-working-directory", (_event: Event, directory: string) =>
-                this.focusedTab().focusedPane.session.directory = directory,
+                this.focusedTab.focusedPane.session.directory = directory,
             );
 
             window.onbeforeunload = () => {
@@ -80,7 +80,7 @@ export class ApplicationComponent extends React.Component<{}, ApplicationState> 
     }
 
     closeFocusedTab() {
-        this.closeTab(this.focusedTab());
+        this.closeTab(this.focusedTab);
 
         this.forceUpdate();
     }
@@ -106,10 +106,10 @@ export class ApplicationComponent extends React.Component<{}, ApplicationState> 
     }
 
     closeFocusedPane() {
-        this.focusedTab().closeFocusedPane();
+        this.focusedTab.closeFocusedPane();
 
-        if (this.focusedTab().panes.size === 0) {
-            this.closeTab(this.focusedTab());
+        if (this.focusedTab.panes.size === 0) {
+            this.closeTab(this.focusedTab);
         }
 
         this.forceUpdate();
@@ -119,8 +119,8 @@ export class ApplicationComponent extends React.Component<{}, ApplicationState> 
         search: SearchComponent,
         event: UserEvent,
     ) {
-        const currentJob = this.focusedTab().focusedPane.session.currentJob;
-        const promptComponent = this.focusedTab().focusedPane.sessionComponent().promptComponent;
+        const currentJob = this.focusedTab.focusedPane.session.currentJob;
+        const promptComponent = this.focusedTab.focusedPane.sessionComponent.promptComponent;
 
         // Pasted data
         if (event instanceof ClipboardEvent) {
@@ -184,7 +184,7 @@ export class ApplicationComponent extends React.Component<{}, ApplicationState> 
 
         // Console clear
         if (isKeybindingForEvent(event, KeyboardAction.cliClearJobs) && promptComponent) {
-            this.focusedTab().focusedPane.session.clearJobs();
+            this.focusedTab.focusedPane.session.clearJobs();
 
             event.stopPropagation();
             event.preventDefault();
@@ -328,39 +328,34 @@ export class ApplicationComponent extends React.Component<{}, ApplicationState> 
                     <ul style={css.tabs}>{tabs}</ul>
                     <SearchComponent/>
                 </div>
-                <div className="sessions" style={css.sessions(this.focusedTab().panes)}>
-                    {this.renderPanes(this.focusedTab().panes)}
+                <div className="sessions" style={css.sessions(this.focusedTab.panes)}>
+                    {this.focusedTab.panes.children.map(pane => this.renderPanes(pane))}
                 </div>
             </div>
         );
     }
 
-    focusedTab(): Tab {
+    get focusedTab(): Tab {
         return this.state.tabs[this.state.focusedTabIndex];
     }
 
-    private renderPanes(tree: PaneTree): JSX.Element {
-        if (tree instanceof Pane) {
-            const pane = tree;
-            const session = pane.session;
-            const isFocused = pane === this.focusedTab().focusedPane;
+    private renderPanes(pane: Pane): JSX.Element {
+        const session = pane.session;
+        const isFocused = pane === this.focusedTab.focusedPane;
 
-            return (
-                <SessionComponent
-                    session={session}
-                    key={session.id}
-                    ref={sessionComponent => { pane.setSessionComponent(sessionComponent!); }}
-                    isFocused={isFocused}
-                    updateFooter={isFocused ? () => this.forceUpdate() : undefined}
-                    focus={() => {
-                        this.focusedTab().activatePane(pane);
-                        this.forceUpdate();
-                    }}>
-                </SessionComponent>
-            );
-        } else {
-            return <div>{tree.children.map(child => this.renderPanes(child))}</div>;
-        }
+        return (
+            <SessionComponent
+                session={session}
+                key={session.id}
+                ref={sessionComponent => { pane.setSessionComponent(sessionComponent!); }}
+                isFocused={isFocused}
+                updateFooter={isFocused ? () => this.forceUpdate() : undefined}
+                focus={() => {
+                    this.focusedTab.focusPane(pane);
+                    this.forceUpdate();
+                }}>
+            </SessionComponent>
+        );
     }
 
     private recalculateDimensions() {

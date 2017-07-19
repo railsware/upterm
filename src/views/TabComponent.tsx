@@ -4,8 +4,7 @@ import {Session} from "../shell/Session";
 import {ApplicationComponent} from "./1_ApplicationComponent";
 import * as css from "./css/styles";
 import {fontAwesome} from "./css/FontAwesome";
-import {SplitDirection} from "../Enums";
-import {Pane, RowList, PaneList} from "../utils/PaneTree";
+import {Pane, PaneList} from "../utils/PaneTree";
 
 export interface TabProps {
     isFocused: boolean;
@@ -31,19 +30,23 @@ export class TabComponent extends React.Component<TabProps, TabState> {
     }
 
     render() {
-        return <li style={css.tab(this.state.hover !== TabHoverState.Nothing, this.props.isFocused)}
-                   onClick={this.props.activate}
-                   onMouseEnter={() => this.setState({hover: TabHoverState.Tab})}
-                   onMouseLeave={() => this.setState({hover: TabHoverState.Nothing})}>
-            <span
-                style={css.tabClose(this.state.hover)}
-                onClick={this.props.closeHandler}
-                onMouseEnter={() => this.setState({hover: TabHoverState.Close})}
-                onMouseLeave={() => this.setState({hover: TabHoverState.Tab})}
-            >{fontAwesome.times}</span>
-            <span style={css.commandSign}>⌘</span>
-            <span>{this.props.position}</span>
-        </li>;
+        return (
+            <li style={css.tab(this.state.hover !== TabHoverState.Nothing, this.props.isFocused)}
+                onClick={this.props.activate}
+                onMouseEnter={() => this.setState({hover: TabHoverState.Tab})}
+                onMouseLeave={() => this.setState({hover: TabHoverState.Nothing})}>
+
+                <span style={css.tabClose(this.state.hover)}
+                      onClick={this.props.closeHandler}
+                      onMouseEnter={() => this.setState({hover: TabHoverState.Close})}
+                      onMouseLeave={() => this.setState({hover: TabHoverState.Tab})}>
+                    {fontAwesome.times}
+                </span>
+
+                <span style={css.commandSign}>⌘</span>
+                <span>{this.props.position}</span>
+            </li>
+        );
     }
 }
 
@@ -54,17 +57,14 @@ export class Tab {
     constructor(private application: ApplicationComponent) {
         const pane = new Pane(new Session(this.application, this.contentDimensions));
 
-        this.panes = new RowList([pane]);
+        this.panes = new PaneList([pane]);
         this._focusedPane = pane;
     }
 
-    addPane(direction: SplitDirection): void {
+    addPane(): void {
         const session = new Session(this.application, this.contentDimensions);
-        const pane = new Pane(session);
 
-        this.panes.add(pane, this.focusedPane, direction);
-
-        this._focusedPane = pane;
+        this._focusedPane = this.panes.add(session);
     }
 
     closeFocusedPane(): void {
@@ -75,13 +75,7 @@ export class Tab {
         this.focusedPane.session.removeAllListeners();
 
         const focused = this.focusedPane;
-        const previousPane = this.panes.previous(focused);
-        if (previousPane.session.id === focused.session.id) {
-            // The firse pane was removed, so focus the nextone
-            this._focusedPane = this.panes.next(focused);
-        } else {
-            this._focusedPane = previousPane;
-        }
+        this._focusedPane = this.panes.previous(focused);
         this.panes.remove(focused);
     }
 
@@ -95,20 +89,24 @@ export class Tab {
         return this._focusedPane;
     }
 
-    activatePane(pane: Pane): void {
+    focusPane(pane: Pane): void {
         this._focusedPane = pane;
+        const promptComponent = this._focusedPane.sessionComponent.promptComponent;
+        if (promptComponent) {
+            promptComponent.focus();
+        }
     }
 
-    activatePreviousPane(): void {
-        this._focusedPane = this.panes.previous(this.focusedPane);
+    focusPreviousPane(): void {
+        this.focusPane(this.panes.previous(this.focusedPane));
     }
 
-    activateNextPane(): void {
-        this._focusedPane = this.panes.next(this.focusedPane);
+    focusNextPane(): void {
+        this.focusPane(this.panes.next(this.focusedPane));
     }
 
     updateAllPanesDimensions(): void {
-        this.panes.forEach(pane => pane.session.dimensions = this.contentDimensions);
+        this.panes.children.forEach(pane => pane.session.dimensions = this.contentDimensions);
     }
 
     private get contentDimensions(): Dimensions {

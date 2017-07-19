@@ -128,10 +128,6 @@ export const KeybindingsForMenu: KeybindingMenuType[] = [
     },
     // pane commands
     {
-        action: KeyboardAction.paneSplitHorizontally,
-        accelerator: `Alt+-`,
-    },
-    {
         action: KeyboardAction.paneSplitVertically,
         accelerator: `Alt+\\`,
     },

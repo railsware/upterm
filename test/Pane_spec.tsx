@@ -8,12 +8,12 @@ import {SplitDirection} from "../src/Enums";
 describe("Tab", () => {
     it("can close panes and have the remaining panes get focused", done => {
         const application: ApplicationComponent = shallow(<ApplicationComponent />).instance() as ApplicationComponent;
-        application.state.tabs[0].addPane(SplitDirection.Vertical);
-        application.state.tabs[0].activatePreviousPane();
+        application.state.tabs[0].addPane();
+        application.state.tabs[0].focusPreviousPane();
         application.state.tabs[0].closeFocusedPane();
         let paneCount = 0;
         let lastPane: any;
-        application.state.tabs[0].panes.forEach(pane => {
+        application.state.tabs[0].panes.children.forEach(pane => {
             paneCount++;
             lastPane = pane;
         });

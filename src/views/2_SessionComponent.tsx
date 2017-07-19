@@ -20,7 +20,7 @@ const FOOTER_HEIGHT = 50;
 
 export class SessionComponent extends React.Component<Props, {}> {
     RENDER_JOBS_COUNT = 25;
-    promptComponent: PromptComponent;
+    promptComponent: PromptComponent | undefined;
 
     constructor(props: Props) {
         super(props);

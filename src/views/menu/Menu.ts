@@ -1,4 +1,4 @@
-import {KeyboardAction, SplitDirection} from "../../Enums";
+import {KeyboardAction} from "../../Enums";
 import {remote} from "electron";
 import {getAcceleratorForAction} from "../keyevents/Keybindings";
 import {ApplicationComponent} from "../1_ApplicationComponent";
@@ -138,18 +138,10 @@ export function buildMenuTemplate(
             label: "Pane",
             submenu: [
                 {
-                    label: "Split Horizontally",
-                    accelerator: getAcceleratorForAction(KeyboardAction.paneSplitHorizontally),
-                    click: () => {
-                        application.focusedTab().addPane(SplitDirection.Horizontal);
-                        application.forceUpdate();
-                    },
-                },
-                {
                     label: "Split Vertically",
                     accelerator: getAcceleratorForAction(KeyboardAction.paneSplitVertically),
                     click: () => {
-                        application.focusedTab().addPane(SplitDirection.Vertical);
+                        application.focusedTab.addPane();
                         application.forceUpdate();
                     },
                 },
@@ -160,7 +152,7 @@ export function buildMenuTemplate(
                     label: "Previous",
                     accelerator: getAcceleratorForAction(KeyboardAction.panePrevious),
                     click: () => {
-                        application.focusedTab().activatePreviousPane();
+                        application.focusedTab.focusPreviousPane();
                         application.forceUpdate();
                     },
                 },
@@ -168,7 +160,7 @@ export function buildMenuTemplate(
                     label: "Next",
                     accelerator: getAcceleratorForAction(KeyboardAction.paneNext),
                     click: () => {
-                        application.focusedTab().activateNextPane();
+                        application.focusedTab.focusNextPane();
                         application.forceUpdate();
                     },
                 },

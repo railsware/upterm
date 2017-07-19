@@ -4,7 +4,7 @@ import {TabHoverState} from "../TabComponent";
 import {darken, lighten, failurize, alpha} from "./functions";
 import {Attributes} from "../../Interfaces";
 import {CSSObject} from "./definitions";
-import {ColumnList, PaneList} from "../../utils/PaneTree";
+import {PaneList} from "../../utils/PaneTree";
 import {CSSProperties} from "react";
 
 const jobBackgroundColor = colors.black;
@@ -54,17 +54,10 @@ const decorationWidth = 30;
 const searchInputColor = lighten(backgroundColor, 15);
 
 function sessionsGridTemplate(list: PaneList): CSSObject {
-    if (list instanceof ColumnList) {
-        return {
-            gridTemplateColumns: `repeat(${list.children.length}, calc(100% / ${list.children.length}))`,
-            gridTemplateRows: "100%",
-        };
-    } else {
-        return {
-            gridTemplateRows: `repeat(${list.children.length}, calc(100% / ${list.children.length}))`,
-            gridTemplateColumns: "100%",
-        };
-    }
+    return {
+        gridTemplateColumns: `repeat(${list.children.length}, calc(100% / ${list.children.length}))`,
+        gridTemplateRows: "100%",
+    };
 }
 
 function tabCloseButtonColor(hover: TabHoverState) {
@@ -267,7 +260,7 @@ export const charGroup = (attributes: Attributes) => {
 
 export const cursor = (rowIndex: number, columnIndex: number, scrollbackSize: number) => ({
     top: rowIndex * rowHeight + (scrollbackSize * rowHeight),
-    left: columnIndex * letterWidth + contentPadding,
+    left: columnIndex * letterWidth,
     height: rowHeight,
     width: letterWidth,
 });
