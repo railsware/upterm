@@ -8,6 +8,7 @@ import {currentBranchName, GitDirectoryPath, repositoryState, RepositoryState} f
 const GIT_WATCHER_EVENT_NAME = "git-data-changed";
 
 class GitWatcher extends EventEmitter {
+    static INTERVAL = 5000;
     timer: NodeJS.Timer;
 
     constructor(private directory: string) {
@@ -22,14 +23,14 @@ class GitWatcher extends EventEmitter {
 
     watch() {
         this.updateGitData();
-        this.timer = setInterval(() => this.updateGitData(), 5000);
+        this.timer = setInterval(() => this.updateGitData(), GitWatcher.INTERVAL);
     }
 
     private async updateGitData() {
         const state = await repositoryState(this.directory);
 
         if (state === RepositoryState.NotRepository) {
-            const data: VcsData = { kind: "not-repository" };
+            const data: VcsData = {kind: "not-repository"};
             this.emit(GIT_WATCHER_EVENT_NAME, data);
         } else {
             const data: VcsData = {
@@ -78,7 +79,7 @@ class WatchManager implements EnvironmentObserverPlugin {
             this.directoryToDetails.set(directory, {
                 listeners: new Set([session]),
                 watcher: watcher,
-                data: { kind: "not-repository" },
+                data: {kind: "not-repository"},
             });
 
             watcher.watch();
@@ -100,7 +101,7 @@ class WatchManager implements EnvironmentObserverPlugin {
         if (details) {
             return details.data;
         } else {
-            return { kind: "not-repository" };
+            return {kind: "not-repository"};
         }
     }
 }
