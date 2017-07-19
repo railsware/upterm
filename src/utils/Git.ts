@@ -128,18 +128,38 @@ export async function currentBranchName(directory: GitDirectoryPath): Promise<st
     return output.trim();
 }
 
+export enum RepositoryState {
+    Clean = "clean",
+    Dirty = "dirty",
+    NotRepository = "not-repository",
+}
+
 /**
  * @link https://stackoverflow.com/questions/3878624/how-do-i-programmatically-determine-if-there-are-uncommited-changes
  */
-export async function hasUncommittedChanges(directory: GitDirectoryPath): Promise<boolean> {
-    return new Promise<boolean>(resolve => {
+export async function repositoryState(directory: string): Promise<RepositoryState> {
+    return new Promise<RepositoryState>((resolve, reject) => {
         const process = ChildProcess.spawn(
             "git",
             ["diff-index", "--quiet", "HEAD", "--"],
             {cwd: directory},
         );
 
-        process.once("exit", code => resolve(code !== 0));
+        process.once("exit", code => {
+            switch (code) {
+                case 0:
+                    resolve(RepositoryState.Clean);
+                    break;
+                case 1:
+                    resolve(RepositoryState.Dirty);
+                    break;
+                case 128:
+                    resolve(RepositoryState.NotRepository);
+                    break;
+                default:
+                    reject(`Unknown Git code: ${code}.`);
+            }
+        });
     });
 }
 

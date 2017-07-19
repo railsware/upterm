@@ -3,8 +3,7 @@ import {PluginManager} from "../PluginManager";
 import {EnvironmentObserverPlugin} from "../Interfaces";
 import * as _ from "lodash";
 import {EventEmitter} from "events";
-import * as Git from "../utils/Git";
-import {currentBranchName, hasUncommittedChanges} from "../utils/Git";
+import {currentBranchName, GitDirectoryPath, repositoryState, RepositoryState} from "../utils/Git";
 
 const GIT_WATCHER_EVENT_NAME = "git-data-changed";
 
@@ -27,15 +26,17 @@ class GitWatcher extends EventEmitter {
     }
 
     private async updateGitData() {
-        if (Git.isGitDirectory(this.directory)) {
-            const data: VcsData = {
-                kind: "repository",
-                branch: await currentBranchName(this.directory),
-                status: (await hasUncommittedChanges(this.directory) ? "dirty" : "clean"),
-            };
+        const state = await repositoryState(this.directory);
+
+        if (state === RepositoryState.NotRepository) {
+            const data: VcsData = { kind: "not-repository" };
             this.emit(GIT_WATCHER_EVENT_NAME, data);
         } else {
-            const data: VcsData = { kind: "not-repository" };
+            const data: VcsData = {
+                kind: "repository",
+                branch: await currentBranchName(<GitDirectoryPath>this.directory),
+                status: state,
+            };
             this.emit(GIT_WATCHER_EVENT_NAME, data);
         }
     }
