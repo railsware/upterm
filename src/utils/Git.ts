@@ -3,6 +3,7 @@ import * as Path from "path";
 import * as fs from "fs";
 import {executeCommand} from "../PTY";
 import * as _ from "lodash";
+import * as ChildProcess from "child_process";
 
 export class Branch {
     constructor(private refName: string, private _isCurrent: boolean) {
@@ -128,13 +129,15 @@ export async function currentBranchName(directory: GitDirectoryPath): Promise<st
 }
 
 export async function hasUncommittedChanges(directory: GitDirectoryPath): Promise<boolean> {
-    const output = await executeCommand(
-        "git",
-        ["status", "--untracked-files=no", "--porcelain"],
-        directory,
-    );
+    return new Promise<boolean>(resolve => {
+        const process = ChildProcess.spawn(
+            "git",
+            ["diff-index", "--quiet", "HEAD", "--"],
+            {cwd: directory},
+        );
 
-    return output.trim().length !== 0;
+        process.once("exit", code => resolve(code !== 0));
+    });
 }
 
 export async function branches({
