@@ -128,6 +128,9 @@ export async function currentBranchName(directory: GitDirectoryPath): Promise<st
     return output.trim();
 }
 
+/**
+ * @link https://stackoverflow.com/questions/3878624/how-do-i-programmatically-determine-if-there-are-uncommited-changes
+ */
 export async function hasUncommittedChanges(directory: GitDirectoryPath): Promise<boolean> {
     return new Promise<boolean>(resolve => {
         const process = ChildProcess.spawn(

@@ -1,22 +1,18 @@
 import {Session} from "../shell/Session";
 import {PluginManager} from "../PluginManager";
 import {EnvironmentObserverPlugin} from "../Interfaces";
-import * as Path from "path";
 import * as _ from "lodash";
 import {EventEmitter} from "events";
-import {debounce} from "../Decorators";
 import * as Git from "../utils/Git";
-import {currentBranchName, GitDirectoryPath, hasUncommittedChanges} from "../utils/Git";
+import {currentBranchName, hasUncommittedChanges} from "../utils/Git";
 
 const GIT_WATCHER_EVENT_NAME = "git-data-changed";
 
 class GitWatcher extends EventEmitter {
     timer: NodeJS.Timer;
-    gitDirectory: string;
 
     constructor(private directory: string) {
         super();
-        this.gitDirectory = Path.join(this.directory, ".git");
     }
 
     stopWatching() {
@@ -26,23 +22,22 @@ class GitWatcher extends EventEmitter {
     }
 
     watch() {
+        this.updateGitData();
+        this.timer = setInterval(() => this.updateGitData(), 5000);
+    }
+
+    private async updateGitData() {
         if (Git.isGitDirectory(this.directory)) {
-            this.timer = setInterval(() => this.updateGitData(<any>this.directory), 2000);
+            const data: VcsData = {
+                kind: "repository",
+                branch: await currentBranchName(this.directory),
+                status: (await hasUncommittedChanges(this.directory) ? "dirty" : "clean"),
+            };
+            this.emit(GIT_WATCHER_EVENT_NAME, data);
         } else {
             const data: VcsData = { kind: "not-repository" };
             this.emit(GIT_WATCHER_EVENT_NAME, data);
         }
-    }
-
-    @debounce(1000 / 60)
-    private async updateGitData(directory: GitDirectoryPath) {
-        const data: VcsData = {
-            kind: "repository",
-            branch: await currentBranchName(directory),
-            status: (await hasUncommittedChanges(directory) ? "dirty" : "clean"),
-        };
-
-        this.emit(GIT_WATCHER_EVENT_NAME, data);
     }
 }
 
