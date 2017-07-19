@@ -1,7 +1,6 @@
 import {Session} from "../shell/Session";
 import {PluginManager} from "../PluginManager";
 import {EnvironmentObserverPlugin} from "../Interfaces";
-import {watch, FSWatcher} from "chokidar";
 import * as Path from "path";
 import * as _ from "lodash";
 import {EventEmitter} from "events";
@@ -12,10 +11,7 @@ import {currentBranchName, GitDirectoryPath, hasUncommittedChanges} from "../uti
 const GIT_WATCHER_EVENT_NAME = "git-data-changed";
 
 class GitWatcher extends EventEmitter {
-    GIT_HEAD_FILE_NAME = Path.join(".git", "HEAD");
-    GIT_HEADS_DIRECTORY_NAME = Path.join(".git", "refs", "heads");
-
-    watcher: FSWatcher;
+    timer: NodeJS.Timer;
     gitDirectory: string;
 
     constructor(private directory: string) {
@@ -24,28 +20,14 @@ class GitWatcher extends EventEmitter {
     }
 
     stopWatching() {
-        if (this.watcher) {
-            this.watcher.close();
+        if (this.timer) {
+            clearInterval(this.timer);
         }
     }
 
     watch() {
         if (Git.isGitDirectory(this.directory)) {
-            this.updateGitData(this.directory);
-            this.watcher = watch(this.directory, {ignoreInitial: true, ignored: Path.join(this.directory, "node_modules", "**")});
-
-            this.watcher.on(
-                "all",
-                (_type: string, fileName: string) => {
-                    if (!fileName.startsWith(".git") ||
-                        fileName === this.GIT_HEAD_FILE_NAME ||
-                        fileName.startsWith(this.GIT_HEADS_DIRECTORY_NAME)) {
-                        if (Git.isGitDirectory(this.directory)) {
-                            this.updateGitData(this.directory);
-                        }
-                    }
-                },
-            );
+            this.timer = setInterval(() => this.updateGitData(<any>this.directory), 2000);
         } else {
             const data: VcsData = { kind: "not-repository" };
             this.emit(GIT_WATCHER_EVENT_NAME, data);
