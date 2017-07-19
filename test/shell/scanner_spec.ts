@@ -178,4 +178,9 @@ describe("scan", () => {
         expect(tokens[1]).to.be.an.instanceof(Invalid);
         expect(tokens.map(token => token.value)).to.eql(["cd", "'"]);
     });
+
+    it("handles file descriptor redirection", () => {
+        const tokens = scan("find / -name x 2>/dev/null");
+        expect(tokens.map(token => token.value)).to.eql(["find", "/", "-name", "x", "2>", "/dev/null"]);
+    });
 });

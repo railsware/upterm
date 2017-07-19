@@ -183,7 +183,7 @@ const patterns = [
         tokenConstructor: InputRedirectionSymbol,
     },
     {
-        regularExpression: /^(\s*>)/,
+        regularExpression: /^(\s*[012]?>)/,
         tokenConstructor: OutputRedirectionSymbol,
     },
     {
