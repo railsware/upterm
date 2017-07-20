@@ -55,6 +55,10 @@ interface Props {
 }
 
 export class OutputComponent extends React.Component<Props, {}> {
+    componentDidMount() {
+        this.props.job.on("data", () => this.forceUpdate());
+    }
+
     render() {
         const output = this.props.job.output;
         const buffer = output.activeBuffer;

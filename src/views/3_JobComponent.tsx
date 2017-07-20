@@ -24,9 +24,7 @@ export class JobComponent extends React.Component<Props, State> {
     }
 
     componentDidMount() {
-        this.props.job
-            .on("data", () => this.forceUpdate())
-            .on("status", () => this.forceUpdate());
+        this.props.job.on("status", () => this.forceUpdate());
     }
 
     shouldComponentUpdate(nextProps: Props, nextState: State) {
