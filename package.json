@@ -77,7 +77,7 @@
     "prestart": "npm install && npm run compile",
     "start": "concurrently --kill-others -s first \"tsc --watch\" \"cross-env NODE_ENV=development npm run electron\"",
     "test": "npm run lint && npm run compile && npm run unit-tests && npm run ui-tests && npm run integration-tests",
-    "unit-tests": "electron-mocha --require ts-node/register $(find test -name '*_spec.ts')",
+    "unit-tests": "find test -name '*_spec.ts'",
     "ui-tests": "electron-mocha --require ts-node/register $(find test -name '*_spec.tsx')",
     "integration-tests": "electron-mocha --require ts-node/register test/e2e.ts",
     "update-dependencies": "ncu -u",
