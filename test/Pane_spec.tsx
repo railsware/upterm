@@ -3,7 +3,6 @@ import {expect} from "chai";
 import {ApplicationComponent} from "../src/views/1_ApplicationComponent";
 import * as React from "react";
 import {shallow} from "enzyme";
-import {SplitDirection} from "../src/Enums";
 
 describe("Tab", () => {
     it("can close panes and have the remaining panes get focused", done => {
