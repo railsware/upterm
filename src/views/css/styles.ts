@@ -48,6 +48,7 @@ const cssVariables = {
     "--text-color": colors.white,
     "--black-color": colors.black,
     "--white-color": colors.white,
+    "--green-color": colors.green,
 };
 
 const decorationWidth = 30;

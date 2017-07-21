@@ -4,7 +4,7 @@ import {ApplicationComponent} from "../src/views/1_ApplicationComponent";
 import * as React from "react";
 import {shallow} from "enzyme";
 
-describe("Tab", () => {
+describe.skip("Tab", () => {
     it("can close panes and have the remaining panes get focused", done => {
         const application: ApplicationComponent = shallow(<ApplicationComponent />).instance() as ApplicationComponent;
         application.state.tabs[0].addPane();
