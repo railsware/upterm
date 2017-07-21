@@ -8,9 +8,7 @@ cache:
 deploy:
   skip_cleanup: true
   provider: script
-  script: bash housekeeping/deploy.sh
-  on:
-    branch: release
+  script: npm run pack
 env:
   global:
     # GH_TOKEN

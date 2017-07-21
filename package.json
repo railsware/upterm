@@ -2,7 +2,7 @@
   "name": "upterm",
   "productName": "Upterm",
   "description": "A terminal emulator for the 21st century.",
-  "version": "0.2.160",
+  "version": "0.2.161",
   "main": "compiled/src/main/Main.js",
   "author": "Volodymyr Shatskyi <shockone89@gmail.com>",
   "repository": {
@@ -73,7 +73,6 @@
     "preinstall": "npm prune",
     "postinstall": "electron-builder install-app-deps",
     "pack": "npm run compile && build",
-    "release": "build --publish always --draft=false",
     "electron": "electron .",
     "prestart": "npm install && npm run compile",
     "start": "concurrently --kill-others -s first \"tsc --watch\" \"cross-env NODE_ENV=development npm run electron\"",
