@@ -72,11 +72,11 @@
   "scripts": {
     "preinstall": "npm prune",
     "postinstall": "electron-builder install-app-deps",
-    "pack": "npm run compile && build",
+    "pack": "build",
     "electron": "electron .",
     "prestart": "npm install && npm run compile",
     "start": "concurrently --kill-others -s first \"tsc --watch\" \"cross-env NODE_ENV=development npm run electron\"",
-    "test": "npm run lint && npm run unit-tests && npm run ui-tests && npm run integration-tests && build --publish never",
+    "test": "npm run lint && npm run unit-tests && npm run ui-tests && npm run integration-tests",
     "unit-tests": "electron-mocha --require ts-node/register $(find test -name '*_spec.ts')",
     "ui-tests": "electron-mocha --require ts-node/register $(find test -name '*_spec.tsx')",
     "integration-tests": "npm run compile && electron-mocha --require ts-node/register test/e2e.ts",

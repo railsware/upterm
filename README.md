@@ -42,11 +42,7 @@ As with macOS's `brew` install, the AUR may also be outdated. To install the lat
 
 ###### Linux *(Others)*
 
-* `git clone https://github.com/railsware/upterm.git`
-* `cd upterm`
-* `npm install`
-* `npm run pack`
-* Run the `*.AppImage` file located in the `dist/` subdirectory.
+* Download and open the AppImage file from the [releases](https://github.com/railsware/upterm/releases) page.
 
 ###### Windows
 
