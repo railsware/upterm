@@ -64,7 +64,7 @@ const ReleaseComponent = () => {
         return (
             <span
                 className="release-component-link"
-                onClick={() => shell.openExternal("https://github.com/railsware/upterm/releases")}>
+                onClick={() => shell.openExternal("http://l.rw.rw/upterm_releases")}>
                 Download New Release
             </span>
         );
