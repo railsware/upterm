@@ -58,7 +58,6 @@
     "electron": "1.7.2",
     "electron-builder": "19.13.0",
     "electron-mocha": "4.0.0",
-    "electron-rebuild": "1.5.11",
     "enzyme": "2.9.1",
     "mkdirp": "0.5.1",
     "mocha": "3.4.2",
@@ -72,7 +71,7 @@
   },
   "scripts": {
     "preinstall": "npm prune",
-    "postinstall": "electron-rebuild",
+    "postinstall": "electron-builder install-app-deps",
     "pack": "npm run compile && build",
     "release": "build --publish always --draft=false",
     "electron": "electron .",
