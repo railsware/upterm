@@ -21,7 +21,8 @@ const VcsDataComponent = ({data}: { data: VcsData }) => {
 
 class ReleaseTracker {
     private static _instance: ReleaseTracker;
-    isUpdateAvailable = true;
+    isUpdateAvailable = false;
+    private currentVersion = "v" + remote.app.getVersion();
     private INTERVAL = 1000 * 60 * 60 * 12;
 
     static get instance() {
@@ -30,44 +31,36 @@ class ReleaseTracker {
         }
 
         return this._instance;
-    };
+    }
 
     private constructor() {
-        setInterval(
-            () => {
-                let version = "v0.2.161";
-                https.get(
-                    {
-                        host: 'api.github.com',
-                        path: '/repos/railsware/upterm/releases/latest',
-                        headers: {
-                            'User-Agent': 'Upterm',
-                        },
-                    },
-                    (response) => {
-                        // Continuously update stream with data
-                        var body = '';
-                        response.on('data', function(d) {
-                            body += d;
-                        });
-                        response.on('end', function() {
-                            // Data reception is done, do whatever with it!
-                            var parsed = JSON.parse(body);
-                            version = parsed['tag_name'];
-                            console.log(parsed['tag_name']);
-                        });
-                    }
-                );
-                const currentVersion = remote.app.getVersion();
-                this.isUpdateAvailable = version !== 'v' + currentVersion;
+        this.checkUpdate();
+        setInterval(() => this.checkUpdate(), this.INTERVAL);
+    }
+
+    private checkUpdate() {
+        https.get(
+            {
+                host: "api.github.com",
+                path: "/repos/railsware/upterm/releases/latest",
+                headers: {
+                    "User-Agent": "Upterm",
+                },
             },
-            this.INTERVAL,
+            (response) => {
+                let body = "";
+                response.on("data", data => body += data);
+                response.on("end", () => {
+                    const parsed = JSON.parse(body);
+                    this.isUpdateAvailable = parsed.tag_name !== this.currentVersion;
+                });
+            },
         );
     }
 }
 
 const ReleaseComponent = () => {
-    if (ReleaseTracker.instance.isUpdateAvailable) {
+    if (process.env.NODE_ENV === "production" && ReleaseTracker.instance.isUpdateAvailable) {
         return (
             <span
                 className="release-component-link"
@@ -76,6 +69,7 @@ const ReleaseComponent = () => {
             </span>
         );
     } else {
+        /* tslint:disable:no-null-keyword */
         return null;
     }
 };
