@@ -56,7 +56,12 @@ interface Props {
 
 export class OutputComponent extends React.Component<Props, {}> {
     componentDidMount() {
-        this.props.job.on("data", () => this.forceUpdate());
+        this.props.job.once("data", () => this.forceUpdate());
+    }
+
+    componentDidUpdate() {
+        this.props.job.once("data", () => this.forceUpdate());
+
     }
 
     render() {
