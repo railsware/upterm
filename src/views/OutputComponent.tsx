@@ -61,7 +61,6 @@ export class OutputComponent extends React.Component<Props, {}> {
 
     componentDidUpdate() {
         this.props.job.once("data", () => this.forceUpdate());
-
     }
 
     render() {

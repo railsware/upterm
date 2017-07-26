@@ -6,7 +6,7 @@ export type KeybindingType = {
     keybinding: (e: KeyboardEvent) => boolean,
 };
 
-function isMeta(e: KeyboardEvent): boolean {
+function isCtrlOrCmd(e: KeyboardEvent): boolean {
     /**
      * Decides if a keyboard event contains the meta key for all platforms
      * Linux does not support the metaKey so it can be manually changed here
@@ -71,13 +71,13 @@ export const KeybindingsForActions: KeybindingType[] = [
     // pane command
     {
         action: KeyboardAction.paneClose,
-        keybinding: (e: KeyboardEvent) => isMeta(e) && e.keyCode === KeyCode.D,
+        keybinding: (e: KeyboardEvent) => e.ctrlKey && e.keyCode === KeyCode.D,
     },
     // tab commands
     {
         action: KeyboardAction.tabFocus,
         keybinding: (e: KeyboardEvent) => {
-            return ((e.ctrlKey || isMeta(e)) && e.keyCode >= KeyCode.One && e.keyCode <= KeyCode.Nine);
+            return ((e.ctrlKey || isCtrlOrCmd(e)) && e.keyCode >= KeyCode.One && e.keyCode <= KeyCode.Nine);
         },
     },
     // search commands
