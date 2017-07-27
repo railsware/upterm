@@ -346,7 +346,7 @@ export class ApplicationComponent extends React.Component<{}, ApplicationState> 
                     <ul style={css.tabs}>{tabs}</ul>
                     <SearchComponent/>
                 </div>
-                <div className="sessions" style={css.sessions(this.focusedTab.panes)}>
+                <div className="panes" style={css.sessions(this.focusedTab.panes)}>
                     {paneComponents}
                 </div>
             </div>
