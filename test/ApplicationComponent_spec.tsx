@@ -1,6 +1,6 @@
 import "mocha";
 import {expect} from "chai";
-import {ApplicationComponent} from "../src/views/1_ApplicationComponent";
+import {ApplicationComponent} from "../src/views/ApplicationComponent";
 import * as React from "react";
 import {shallow} from "enzyme";
 

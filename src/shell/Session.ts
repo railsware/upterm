@@ -5,7 +5,7 @@ import {History} from "./History";
 import {EmitterWithUniqueID} from "../EmitterWithUniqueID";
 import {PluginManager} from "../PluginManager";
 import {Status} from "../Enums";
-import {ApplicationComponent} from "../views/1_ApplicationComponent";
+import {ApplicationComponent} from "../views/ApplicationComponent";
 import {Environment, processEnvironment} from "./Environment";
 import {
     homeDirectory, normalizeDirectory,

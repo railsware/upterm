@@ -1,7 +1,7 @@
 import {KeyboardAction} from "../../Enums";
 import {remote} from "electron";
 import {getAcceleratorForAction} from "../keyevents/Keybindings";
-import {ApplicationComponent} from "../1_ApplicationComponent";
+import {ApplicationComponent} from "../ApplicationComponent";
 
 export function buildMenuTemplate(
     app: Electron.App,

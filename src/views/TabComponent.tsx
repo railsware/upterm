@@ -1,7 +1,7 @@
 /* tslint:disable:no-unused-variable */
 import * as React from "react";
 import {Session} from "../shell/Session";
-import {ApplicationComponent} from "./1_ApplicationComponent";
+import {ApplicationComponent} from "./ApplicationComponent";
 import * as css from "./css/styles";
 import {fontAwesome} from "./css/FontAwesome";
 import {Pane, PaneList} from "../utils/PaneTree";

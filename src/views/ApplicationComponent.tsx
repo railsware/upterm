@@ -1,4 +1,4 @@
-import {SessionComponent} from "./2_SessionComponent";
+import {PaneComponent} from "./PaneComponent";
 import {TabComponent, TabProps, Tab} from "./TabComponent";
 import * as React from "react";
 import * as _ from "lodash";
@@ -344,7 +344,7 @@ export class ApplicationComponent extends React.Component<{}, ApplicationState> 
         const isFocused = pane === this.focusedTab.focusedPane;
 
         return (
-            <SessionComponent
+            <PaneComponent
                 session={session}
                 key={session.id}
                 ref={sessionComponent => { pane.setSessionComponent(sessionComponent!); }}
@@ -354,7 +354,7 @@ export class ApplicationComponent extends React.Component<{}, ApplicationState> 
                     this.focusedTab.focusPane(pane);
                     this.forceUpdate();
                 }}>
-            </SessionComponent>
+            </PaneComponent>
         );
     }
 

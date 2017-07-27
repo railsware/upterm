@@ -6,7 +6,7 @@ process.env.TERM = "xterm-256color";
 import {loadAliasesFromConfig} from "../shell/Aliases";
 const reactDOM = require("react-dom");
 import * as React from "react";
-import {ApplicationComponent} from "./1_ApplicationComponent";
+import {ApplicationComponent} from "./ApplicationComponent";
 import {loadAllPlugins} from "../PluginManager";
 import {loadEnvironment} from "../shell/Environment";
 import {UserEvent} from "../Interfaces";

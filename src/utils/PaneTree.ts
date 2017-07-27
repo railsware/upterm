@@ -1,21 +1,21 @@
 import {Session} from "../shell/Session";
-import {SessionComponent} from "../views/2_SessionComponent";
+import {PaneComponent} from "../views/PaneComponent";
 import * as _ from "lodash";
 
 export class Pane {
     readonly session: Session;
     readonly size = 1;
-    private _sessionComponent: SessionComponent;
+    private _sessionComponent: PaneComponent;
 
     constructor(session: Session) {
         this.session = session;
     }
 
-    setSessionComponent(component: SessionComponent) {
+    setSessionComponent(component: PaneComponent) {
         this._sessionComponent = component;
     }
 
-    get sessionComponent(): SessionComponent {
+    get sessionComponent(): PaneComponent {
         return this._sessionComponent;
     }
 }

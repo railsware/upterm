@@ -2,7 +2,7 @@ import * as React from "react";
 import * as _ from "lodash";
 import {Session} from "../shell/Session";
 import {Job} from "../shell/Job";
-import {JobComponent} from "./3_JobComponent";
+import {JobComponent} from "./JobComponent";
 import * as css from "./css/styles";
 import {PromptComponent} from "./PromptComponent";
 import {FooterComponent} from "./FooterComponent";
@@ -18,7 +18,7 @@ interface Props {
 // The height to snap to bottom when scroll. TODO: Make this the actual height
 const FOOTER_HEIGHT = 50;
 
-export class SessionComponent extends React.Component<Props, {}> {
+export class PaneComponent extends React.Component<Props, {}> {
     RENDER_JOBS_COUNT = 25;
     promptComponent: PromptComponent | undefined;
 
