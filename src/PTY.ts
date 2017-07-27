@@ -78,7 +78,7 @@ export function executeCommand(
             if (error) {
                 reject(error);
             } else {
-                resolve(output);
+                resolve(output.toString());
             }
         });
     });
