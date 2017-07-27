@@ -1,5 +1,4 @@
-import {PaneComponent} from "./PaneComponent";
-import {TabComponent, TabProps, Tab} from "./TabComponent";
+import {TabHeaderComponent, Props, Tab} from "./TabHeaderComponent";
 import * as React from "react";
 import * as _ from "lodash";
 import {ipcRenderer} from "electron";
@@ -11,6 +10,7 @@ import {isMenuShortcut, isKeybindingForEvent} from "./keyevents/Keybindings";
 import {KeyboardAction} from "../Enums";
 import {UserEvent} from "../Interfaces";
 import {isModifierKey} from "./ViewUtils";
+import {TabComponent} from "./TabComponent";
 
 type ApplicationState = {
     tabs: Tab[];
@@ -298,11 +298,11 @@ export class ApplicationComponent extends React.Component<{}, ApplicationState> 
     }
 
     render() {
-        let tabs: React.ReactElement<TabProps>[] | undefined;
+        let tabs: React.ReactElement<Props>[] | undefined;
 
         if (this.state.tabs.length > 1) {
             tabs = this.state.tabs.map((_tab: Tab, index: number) =>
-                <TabComponent
+                <TabHeaderComponent
                     isFocused={index === this.state.focusedTabIndex}
                     key={index}
                     position={index + 1}
@@ -321,34 +321,13 @@ export class ApplicationComponent extends React.Component<{}, ApplicationState> 
             );
         }
 
-        const paneComponents = this.focusedTab.panes.children.map(pane => {
-            const session = pane.session;
-            const isFocused = pane === this.focusedTab.focusedPane;
-
-            return (
-                <PaneComponent
-                    session={session}
-                    key={session.id}
-                    ref={sessionComponent => { pane.setSessionComponent(sessionComponent!); }}
-                    isFocused={isFocused}
-                    updateFooter={isFocused ? () => this.forceUpdate() : undefined}
-                    focus={() => {
-                        this.focusedTab.focusPane(pane);
-                        this.forceUpdate();
-                    }}>
-                </PaneComponent>
-            );
-        });
-
         return (
             <div className="application" style={css.application}>
                 <div className="title-bar">
                     <ul style={css.tabs}>{tabs}</ul>
                     <SearchComponent/>
                 </div>
-                <div className="panes" style={css.sessions(this.focusedTab.panes)}>
-                    {paneComponents}
-                </div>
+                {[this.focusedTab].map((tab, index) => <TabComponent tab={tab} key={index}/>)}
             </div>
         );
     }

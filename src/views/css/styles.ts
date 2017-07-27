@@ -1,6 +1,6 @@
 import {Weight, Brightness, Color} from "../../Enums";
 import {colors, colorValue} from "./colors";
-import {TabHoverState} from "../TabComponent";
+import {TabHoverState} from "../TabHeaderComponent";
 import {darken, lighten, failurize, alpha} from "./functions";
 import {Attributes} from "../../Interfaces";
 import {CSSObject} from "./definitions";
