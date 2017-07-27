@@ -328,8 +328,7 @@ export class ApplicationComponent extends React.Component<{}, ApplicationState> 
                     <SearchComponent/>
                 </div>
                 {this.state.tabs.map((tab, index) =>
-                    <TabComponent tab={tab} isFocused={index === this.state.focusedTabIndex} key={index}/>
-                )}
+                    <TabComponent tab={tab} isFocused={index === this.state.focusedTabIndex} key={index}/>)}
             </div>
         );
     }
