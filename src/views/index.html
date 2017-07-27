@@ -1,278 +1,323 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="utf-8"/>
-  <title>Upterm</title>
+    <meta charset="utf-8"/>
+    <title>Upterm</title>
 
-  <script>require("../../src/views/Main.js")</script>
+    <script>require("../../src/views/Main.js")</script>
 
-  <style>
-    * {
-      box-sizing: border-box;
-    }
+    <style>
+        * {
+            box-sizing: border-box;
+        }
 
-    ::-webkit-scrollbar {
-      display: none;
-    }
+        ::-webkit-scrollbar {
+            display: none;
+        }
 
-    html {
-      -webkit-backface-visibility: hidden;
-    }
+        html {
+            -webkit-backface-visibility: hidden;
+        }
 
-    body {
-      margin: 0;
-    }
+        body {
+            margin: 0;
+        }
 
-    @font-face {
-      font-family: "FontAwesome";
-      src: url(../../../node_modules/font-awesome/fonts/fontawesome-webfont.ttf) format("truetype");
-    }
+        @font-face {
+            font-family: "FontAwesome";
+            src: url(../../../node_modules/font-awesome/fonts/fontawesome-webfont.ttf) format("truetype");
+        }
 
-    @keyframes progress-bar-stripes {
-      from {
-        background-position: 0 0;
-      }
-      to {
-        background-position: 30px 0;
-      }
-    }
+        @keyframes progress-bar-stripes {
+            from {
+                background-position: 0 0;
+            }
+            to {
+                background-position: 30px 0;
+            }
+        }
 
-    .application {
-      display: grid;
-      grid-template-areas: "title-bar" "tab";
-      font-size: var(--font-size);
-      font-family: var(--font-family);
-      background-color: var(--background-color);
-      color: var(--text-color);
+        .application {
+            display: grid;
+            grid-template-areas: "title-bar" "tab";
+            font-size: var(--font-size);
+            font-family: var(--font-family);
+            background-color: var(--background-color);
+            color: var(--text-color);
 
-      --session-height: calc(100vh - var(--title-bar-height));
-      --prompt-font-size: calc(var(--font-size) * 1.2);
-    }
+            --session-height: calc(100vh - var(--title-bar-height));
+            --prompt-font-size: calc(var(--font-size) * 1.2);
+        }
 
-    .title-bar {
-      grid-area: title-bar;
-      height: var(--title-bar-height);
-      -webkit-app-region: drag;
-    }
+        .title-bar {
+            grid-area: title-bar;
+            height: var(--title-bar-height);
+            -webkit-app-region: drag;
+        }
 
-    .tab {
-      grid-area: tab;
-    }
+        .tab-header {
+            background-color: var(--black-color);
+            opacity: 0.3;
 
-    .tab[data-focused=false] {
-        display: none;
-    }
+            position: relative;
+            height: var(--title-bar-height);
+            flex: auto;
+            display: inline-block;
+            text-align: center;
+            padding-top: 2px;
+        }
 
-    .panes {
-      grid-area: tab;
-      display: grid;
-      height: var(--session-height);
-      border-left: var(--background-color);
-    }
+        .tab-header[data-focused=true] {
+            opacity: 1;
+        }
 
-    .session {
-      position: relative;
-      outline: none;
-      overflow-y: scroll;
-      display: grid;
-      grid-template-areas: "jobs" "prompt" "footer";
-      grid-template-rows: auto var(--prompt-height) var(--footer-height);
-      height: var(--session-height);
-    }
+        .tab-header:hover {
+            background-color: var(--background-color);
+            opacity: 1;
+        }
 
-    .session[data-status=in-progress] {
-      grid-template-areas: "jobs" "footer";
-      grid-template-rows: auto var(--footer-height);
-    }
+        .tab-header .close-button {
+            color: transparent;
 
-    .shutter {
-      z-index: 1;
-      pointer-events: none;
-      grid-row-start: jobs;
-      grid-row-end: footer;
-      grid-column: 1;
-    }
+            --margin: calc(var(--title-bar-height) - var(--font-size));
 
-    .jobs {
-      grid-area: jobs;
-      overflow-y: scroll;
-      display: flex;
-      flex-direction: column-reverse;
-    }
+            font-family: FontAwesome;
+            position: absolute;
+            left: var(--margin);
+            top: calc(var(--margin) / 2);
+        }
 
-    .output-cut {
-      --height: calc(var(--font-size) * 2.6);
-      position: relative;
-      left: calc(0px - var(--content-padding));
-      width: calc(100% + var(--content-padding));
-      height: var(--height);
-      padding-top: calc(calc(var(--height) - var(--font-size)) / 3);
-      text-align: center;
-      cursor: pointer;
-    }
+        .tab-header:hover .close-button {
+            color: var(--white-color);
+        }
 
-    .job {
-      padding: var(--content-padding);
-      background-color: var(--job-background-color);
-      margin-top: var(--font-size);
-    }
+        .tab-header:hover .close-button:hover {
+            color: var(--red-color);
+        }
 
-    .job[data-status=failed] {
-      --job-background-color: var(--failed-job-background-color);
-    }
+        .tab {
+            grid-area: tab;
+        }
 
-    .job-header {
-      color: var(--job-background-color);
-      filter: brightness(260%);
-      font-size: var(--prompt-font-size);
-      padding-bottom: 3px;
-    }
+        .tab[data-focused=false] {
+            display: none;
+        }
 
-    .output {
-      white-space: pre-wrap;
-      position: relative;
-    }
+        .panes {
+            grid-area: tab;
+            display: grid;
+            height: var(--session-height);
+            border-left: var(--background-color);
+        }
 
-    .output[data-screen-mode=light] {
-      background-color: var(--white-color);
-      color: var(--black-color);
-    }
+        .session {
+            position: relative;
+            outline: none;
+            overflow-y: scroll;
+            display: grid;
+            grid-template-areas: "jobs" "prompt" "footer";
+            grid-template-rows: auto var(--prompt-height) var(--footer-height);
+            height: var(--session-height);
+        }
 
-    .job[data-status=in-progress] .output[data-buffer-type=alternate] {
-      background-color: var(--job-background-color);
-      position: absolute;
-      top: 0;
-      bottom: var(--footer-height);
-      left: var(--content-padding);
-      right: var(--content-padding);
-      z-index: 4;
-    }
+        .session[data-status=in-progress] {
+            grid-template-areas: "jobs" "footer";
+            grid-template-rows: auto var(--footer-height);
+        }
 
-    .job[data-status=success] .output[data-buffer-type=alternate],
-    .job[data-status=failed] .output[data-buffer-type=alternate] {
-      zoom: 0.1;
-    }
+        .shutter {
+            z-index: 1;
+            pointer-events: none;
+            grid-row-start: jobs;
+            grid-row-end: footer;
+            grid-column: 1;
+        }
 
-    .output .cursor {
-      position: absolute;
-      background-color: var(--white-color);
-      opacity: 0.6;
-    }
+        .jobs {
+            grid-area: jobs;
+            overflow-y: scroll;
+            display: flex;
+            flex-direction: column-reverse;
+        }
 
-    .output .row {
-      height: var(--row-height);
-    }
+        .output-cut {
+            --height: calc(var(--font-size) * 2.6);
+            position: relative;
+            left: calc(0px - var(--content-padding));
+            width: calc(100% + var(--content-padding));
+            height: var(--height);
+            padding-top: calc(calc(var(--height) - var(--font-size)) / 3);
+            text-align: center;
+            cursor: pointer;
+        }
 
-    .output .row .char-group {
-      display: inline-block;
-      height: var(--row-height);
-    }
+        .job {
+            padding: var(--content-padding);
+            background-color: var(--job-background-color);
+            margin-top: var(--font-size);
+        }
 
-    .session .prompt {
-      grid-area: prompt;
-      padding-top: 10px;
-      line-height: 1.3;
-      display: grid;
-      grid-template-areas: "prompt-decoration prompt-content";
-      grid-template-columns: calc(var(--prompt-font-size) * 2) auto;
-      height: var(--prompt-font-size);
-    }
+        .job[data-status=failed] {
+            --job-background-color: var(--failed-job-background-color);
+        }
 
-    .session .prompt-decoration {
-      grid-area: prompt-decoration;
-      position: relative;
-      overflow: hidden;
-      z-index: 2;
-    }
+        .job-header {
+            color: var(--job-background-color);
+            filter: brightness(260%);
+            font-size: var(--prompt-font-size);
+            padding-bottom: 3px;
+        }
 
-    .session .prompt-decoration .square {
-      position: absolute;
-      display: inline-block;
-      --size: calc(var(--prompt-font-size) * 1.3);
-      width: var(--size);
-      height: var(--size);
-      background-color: var(--text-color);
-      z-index: 1;
-      filter: brightness(50%);
-    }
+        .output {
+            white-space: pre-wrap;
+            position: relative;
+        }
 
-    .session .prompt-decoration .rhombus {
-      left: calc(var(--prompt-font-size) * 0.39);
-      transform: rotate(45deg);
-    }
+        .output[data-screen-mode=light] {
+            background-color: var(--white-color);
+            color: var(--black-color);
+        }
 
-    .session .prompt-content {
-      grid-area: prompt-content;
-      font-size: var(--prompt-font-size);
-      padding-left: calc(var(--prompt-font-size) / 2);
-      white-space: pre-wrap;
-      -webkit-appearance: none;
-      outline: none;
-      z-index: 2;
-    }
+        .job[data-status=in-progress] .output[data-buffer-type=alternate] {
+            background-color: var(--job-background-color);
+            position: absolute;
+            top: 0;
+            bottom: var(--footer-height);
+            left: var(--content-padding);
+            right: var(--content-padding);
+            z-index: 4;
+        }
 
-    .session .prompt-content.autocompleted-preview {
-      filter: brightness(50%);
-      z-index: 1;
-    }
+        .job[data-status=success] .output[data-buffer-type=alternate],
+        .job[data-status=failed] .output[data-buffer-type=alternate] {
+            zoom: 0.1;
+        }
 
-    .autocomplete {
-      position: absolute;
-      bottom: calc(var(--footer-height) + var(--prompt-height));
-      min-width: 300px;
-      box-shadow: 0 2px 8px 1px rgba(0, 0, 0, 0.3);
-      background-color: var(--background-color);
-    }
+        .output .cursor {
+            position: absolute;
+            background-color: var(--white-color);
+            opacity: 0.6;
+        }
 
-    .footer {
-      grid-area: footer;
-      height: var(--footer-height);
-      opacity: 0.7;
-      padding: calc(calc(var(--footer-height) - var(--font-size)) / 2) var(--content-padding);
-      background-color: #111;
-    }
+        .output .row {
+            height: var(--row-height);
+        }
 
-    .footer span {
-        margin-right: 1.5em;
-    }
+        .output .row .char-group {
+            display: inline-block;
+            height: var(--row-height);
+        }
 
-    .footer .present-directory:before {
-      font-family: "FontAwesome";
-      padding-right: 5px;
-      content: "\f114";
-    }
+        .session .prompt {
+            grid-area: prompt;
+            padding-top: 10px;
+            line-height: 1.3;
+            display: grid;
+            grid-template-areas: "prompt-decoration prompt-content";
+            grid-template-columns: calc(var(--prompt-font-size) * 2) auto;
+            height: var(--prompt-font-size);
+        }
 
-    .footer .present-directory {
-      padding-right: 10px;
-    }
+        .session .prompt-decoration {
+            grid-area: prompt-decoration;
+            position: relative;
+            overflow: hidden;
+            z-index: 2;
+        }
 
-    .footer .vcs-data:before {
-      padding-right: 5px;
-      font-family: "FontAwesome";
-      content: "\f126";
-    }
+        .session .prompt-decoration .square {
+            position: absolute;
+            display: inline-block;
+            --size: calc(var(--prompt-font-size) * 1.3);
+            width: var(--size);
+            height: var(--size);
+            background-color: var(--text-color);
+            z-index: 1;
+            filter: brightness(50%);
+        }
 
-    .footer .vcs-data {
-      padding-right: 8px;
-    }
-    .footer .release-component-link {
-      cursor: pointer;
-      color: var(--green-color);
-      float: right;
-    }
+        .session .prompt-decoration .rhombus {
+            left: calc(var(--prompt-font-size) * 0.39);
+            transform: rotate(45deg);
+        }
 
-    /* inline styles can't really handle pseudo elements, so they still need classes */
-    .jsonTreeParentNode:before {
-      content: "\0025B8 \0000a0";
-      margin-left: -1.2em;
-    }
-    .jsonTreeParentNode.expanded:before {
-      content: "\0025BE \0000a0";
-    }
-    .underlineOnHover:hover {
-      text-decoration: underline;
-    }
-  </style>
+        .session .prompt-content {
+            grid-area: prompt-content;
+            font-size: var(--prompt-font-size);
+            padding-left: calc(var(--prompt-font-size) / 2);
+            white-space: pre-wrap;
+            -webkit-appearance: none;
+            outline: none;
+            z-index: 2;
+        }
+
+        .session .prompt-content.autocompleted-preview {
+            filter: brightness(50%);
+            z-index: 1;
+        }
+
+        .autocomplete {
+            position: absolute;
+            bottom: calc(var(--footer-height) + var(--prompt-height));
+            min-width: 300px;
+            box-shadow: 0 2px 8px 1px rgba(0, 0, 0, 0.3);
+            background-color: var(--background-color);
+        }
+
+        .footer {
+            grid-area: footer;
+            height: var(--footer-height);
+            opacity: 0.7;
+            padding: calc(calc(var(--footer-height) - var(--font-size)) / 2) var(--content-padding);
+            background-color: #111;
+        }
+
+        .footer span {
+            margin-right: 1.5em;
+        }
+
+        .footer .present-directory:before {
+            font-family: "FontAwesome";
+            padding-right: 5px;
+            content: "\f114";
+        }
+
+        .footer .present-directory {
+            padding-right: 10px;
+        }
+
+        .footer .vcs-data:before {
+            padding-right: 5px;
+            font-family: "FontAwesome";
+            content: "\f126";
+        }
+
+        .footer .vcs-data {
+            padding-right: 8px;
+        }
+
+        .footer .release-component-link {
+            cursor: pointer;
+            color: var(--green-color);
+            float: right;
+        }
+
+        /* inline styles can't really handle pseudo elements, so they still need classes */
+        .jsonTreeParentNode:before {
+            content: "\0025B8 \0000a0";
+            margin-left: -1.2em;
+        }
+
+        .jsonTreeParentNode.expanded:before {
+            content: "\0025BE \0000a0";
+        }
+
+        .underlineOnHover:hover {
+            text-decoration: underline;
+        }
+    </style>
 </head>
-<body><div id="react-entry-point"></div></body>
+<body>
+<div id="react-entry-point"></div>
+</body>
 </html>

@@ -13,33 +13,19 @@ export interface Props {
     closeHandler: React.EventHandler<React.MouseEvent<HTMLSpanElement>>;
 }
 
-export enum TabHoverState {
-    Nothing,
-    Tab,
-    Close,
-}
-
-interface State {
-    hover: TabHoverState;
-}
-
-export class TabHeaderComponent extends React.Component<Props, State> {
+export class TabHeaderComponent extends React.Component<Props, {}> {
     constructor() {
         super();
-        this.state = {hover: TabHoverState.Nothing};
     }
 
     render() {
         return (
-            <li style={css.tab(this.state.hover !== TabHoverState.Nothing, this.props.isFocused)}
-                onClick={this.props.activate}
-                onMouseEnter={() => this.setState({hover: TabHoverState.Tab})}
-                onMouseLeave={() => this.setState({hover: TabHoverState.Nothing})}>
+            <li className="tab-header"
+                data-focused={this.props.isFocused}
+                onClick={this.props.activate}>
 
-                <span style={css.tabClose(this.state.hover)}
-                      onClick={this.props.closeHandler}
-                      onMouseEnter={() => this.setState({hover: TabHoverState.Close})}
-                      onMouseLeave={() => this.setState({hover: TabHoverState.Tab})}>
+                <span className="close-button"
+                      onClick={this.props.closeHandler}>
                     {fontAwesome.times}
                 </span>
 

@@ -1,6 +1,5 @@
 import {Weight, Brightness, Color} from "../../Enums";
 import {colors, colorValue} from "./colors";
-import {TabHoverState} from "../TabHeaderComponent";
 import {darken, lighten, failurize, alpha} from "./functions";
 import {Attributes} from "../../Interfaces";
 import {CSSObject} from "./definitions";
@@ -46,9 +45,15 @@ const cssVariables = {
     "--job-background-color": jobBackgroundColor,
     "--failed-job-background-color": failurize(jobBackgroundColor),
     "--text-color": colors.white,
+
     "--black-color": colors.black,
+    "--red-color": colors.red,
     "--white-color": colors.white,
     "--green-color": colors.green,
+    "--yellow-color": colors.yellow,
+    "--blue-color": colors.blue,
+    "--magenta-color": colors.magenta,
+    "--cyan-color": colors.cyan,
 };
 
 const decorationWidth = 30;
@@ -59,16 +64,6 @@ function sessionsGridTemplate(list: PaneList): CSSObject {
         gridTemplateColumns: `repeat(${list.children.length}, calc(100% / ${list.children.length}))`,
         gridTemplateRows: "100%",
     };
-}
-
-function tabCloseButtonColor(hover: TabHoverState) {
-    if (hover === TabHoverState.Close) {
-        return colors.red;
-    } else if (hover === TabHoverState.Tab) {
-        return colors.white;
-    } else {
-        return "transparent";
-    }
 }
 
 export const application = {
@@ -193,31 +188,6 @@ export const searchInput = {
     width: 120,
     paddingLeft: fontSize,
     color: colors.white,
-};
-
-export const tab = (isHovered: boolean, isFocused: boolean): CSSProperties => {
-    return {
-        backgroundColor: isHovered ? backgroundColor : colors.black,
-        opacity: (isHovered || isFocused) ? 1 : 0.3,
-        position: "relative",
-        height: titleBarHeight,
-        flex: "auto",
-        display: "inline-block",
-        textAlign: "center",
-        paddingTop: 2,
-    };
-};
-
-export const tabClose = (hover: TabHoverState): CSSProperties => {
-    const margin = titleBarHeight - fontSize;
-
-    return {
-        fontFamily: "FontAwesome",
-        color: tabCloseButtonColor(hover),
-        position: "absolute",
-        left: margin,
-        top: margin / 2,
-    };
 };
 
 export const commandSign = {
