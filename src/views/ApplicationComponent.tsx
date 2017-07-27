@@ -6,7 +6,6 @@ import {ipcRenderer} from "electron";
 import {remote} from "electron";
 import * as css from "./css/styles";
 import {saveWindowBounds} from "./ViewUtils";
-import {Pane} from "../utils/PaneTree";
 import {SearchComponent} from "./SearchComponent";
 import {isMenuShortcut, isKeybindingForEvent} from "./keyevents/Keybindings";
 import {KeyboardAction} from "../Enums";
@@ -322,6 +321,25 @@ export class ApplicationComponent extends React.Component<{}, ApplicationState> 
             );
         }
 
+        const paneComponents = this.focusedTab.panes.children.map(pane => {
+            const session = pane.session;
+            const isFocused = pane === this.focusedTab.focusedPane;
+
+            return (
+                <PaneComponent
+                    session={session}
+                    key={session.id}
+                    ref={sessionComponent => { pane.setSessionComponent(sessionComponent!); }}
+                    isFocused={isFocused}
+                    updateFooter={isFocused ? () => this.forceUpdate() : undefined}
+                    focus={() => {
+                        this.focusedTab.focusPane(pane);
+                        this.forceUpdate();
+                    }}>
+                </PaneComponent>
+            );
+        });
+
         return (
             <div className="application" style={css.application}>
                 <div className="title-bar">
@@ -329,7 +347,7 @@ export class ApplicationComponent extends React.Component<{}, ApplicationState> 
                     <SearchComponent/>
                 </div>
                 <div className="sessions" style={css.sessions(this.focusedTab.panes)}>
-                    {this.focusedTab.panes.children.map(pane => this.renderPanes(pane))}
+                    {paneComponents}
                 </div>
             </div>
         );
@@ -337,25 +355,6 @@ export class ApplicationComponent extends React.Component<{}, ApplicationState> 
 
     get focusedTab(): Tab {
         return this.state.tabs[this.state.focusedTabIndex];
-    }
-
-    private renderPanes(pane: Pane): JSX.Element {
-        const session = pane.session;
-        const isFocused = pane === this.focusedTab.focusedPane;
-
-        return (
-            <PaneComponent
-                session={session}
-                key={session.id}
-                ref={sessionComponent => { pane.setSessionComponent(sessionComponent!); }}
-                isFocused={isFocused}
-                updateFooter={isFocused ? () => this.forceUpdate() : undefined}
-                focus={() => {
-                    this.focusedTab.focusPane(pane);
-                    this.forceUpdate();
-                }}>
-            </PaneComponent>
-        );
     }
 
     private recalculateDimensions() {
