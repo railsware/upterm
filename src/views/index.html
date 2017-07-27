@@ -39,7 +39,7 @@
 
     .application {
       display: grid;
-      grid-template-areas: "title-bar" "panes";
+      grid-template-areas: "title-bar" "tab";
       font-size: var(--font-size);
       font-family: var(--font-family);
       background-color: var(--background-color);
@@ -55,8 +55,16 @@
       -webkit-app-region: drag;
     }
 
+    .tab {
+      grid-area: tab;
+    }
+
+    .tab[data-focused=false] {
+        display: none;
+    }
+
     .panes {
-      grid-area: panes;
+      grid-area: tab;
       display: grid;
       height: var(--session-height);
       border-left: var(--background-color);

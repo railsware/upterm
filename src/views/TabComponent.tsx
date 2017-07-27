@@ -5,6 +5,7 @@ import * as css from "./css/styles";
 
 type Props = {
     tab: Tab;
+    isFocused: boolean;
 };
 
 export class TabComponent extends React.Component<Props, {}> {
@@ -30,7 +31,7 @@ export class TabComponent extends React.Component<Props, {}> {
         });
 
         return (
-            <div className="tab">
+            <div className="tab" data-focused={this.props.isFocused}>
                 <div className="panes" style={css.sessions(this.props.tab.panes)}>
                     {paneComponents}
                 </div>
