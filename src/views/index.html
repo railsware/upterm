@@ -47,7 +47,7 @@
 
             --title-bar-height: 24px;
             --footer-height: calc(var(--font-size) * 2);
-            --prompt-height: 42px;
+            --prompt-height: calc(var(--font-size) * 3);
             --session-height: calc(100vh - var(--title-bar-height));
             --prompt-font-size: calc(var(--font-size) * 1.2);
         }
@@ -254,7 +254,7 @@
 
         .pane .prompt {
             grid-area: prompt;
-            padding-top: 10px;
+            padding-top: calc(calc(var(--prompt-height) - var(--prompt-font-size)) / 2.5);
             line-height: 1.3;
             display: grid;
             grid-template-areas: "prompt-decoration prompt-content";
