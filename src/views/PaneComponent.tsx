@@ -18,9 +18,6 @@ interface Props {
     updateFooter: (() => void) | undefined; // Only the focused session can update the status bar.
 }
 
-// The height to snap to bottom when scroll. TODO: Make this the actual height
-const FOOTER_HEIGHT = 50;
-
 export class PaneComponent extends React.Component<Props, {}> {
     RENDER_JOBS_COUNT = 25;
     promptComponent: PromptComponent | undefined;
@@ -34,8 +31,8 @@ export class PaneComponent extends React.Component<Props, {}> {
 
         this.props.session
             .on("jobs-changed", () => {
-                if (this.paneRef) {
-                    if (this.paneRef.scrollHeight - this.paneRef.offsetHeight - this.paneRef.scrollTop > FOOTER_HEIGHT) {
+                if (this.paneRef && this.footerRef) {
+                    if (this.paneRef.scrollHeight - this.paneRef.offsetHeight - this.paneRef.scrollTop > this.footerRef.clientHeight) {
                         // If we are already close to the bottom,
                         // scroll all the way to the bottom
                         this.paneRef.scrollTop = this.paneRef.scrollHeight;
