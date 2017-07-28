@@ -17,7 +17,7 @@ command descriptions, value of the previous directory (`cd -`), etc.
 
 ###### Compatibility
 
-We aim to be compatible at least with [VT100](https://en.wikipedia.org/wiki/VT100). All the programs (emacs, ssh, vim) should work as expected.
+All programs command-line programs (including emacs, ssh and vim) should work as expected. If you experience any glitches, please [create an issue](https://github.com/railsware/upterm/issues/new).
 
 Install
 ------------
