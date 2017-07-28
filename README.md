@@ -17,7 +17,7 @@ command descriptions, value of the previous directory (`cd -`), etc.
 
 ###### Compatibility
 
-All programs command-line programs (including emacs, ssh and vim) should work as expected. If you experience any glitches, please [create an issue](https://github.com/railsware/upterm/issues/new).
+All command-line programs (including emacs, ssh and vim) should work as expected. If you experience any glitches, please [create an issue](https://github.com/railsware/upterm/issues/new).
 
 Install
 ------------
