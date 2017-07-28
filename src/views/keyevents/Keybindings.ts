@@ -172,6 +172,18 @@ export const KeybindingsForMenu: KeybindingMenuType[] = [
         action: KeyboardAction.editFindClose,
         accelerator: "Esc",
     },
+    {
+        action: KeyboardAction.increaseFontSize,
+        accelerator: `${CmdOrCtrl}+Plus`,
+    },
+    {
+        action: KeyboardAction.decreaseFontSize,
+        accelerator: `${CmdOrCtrl}+-`,
+    },
+    {
+        action: KeyboardAction.resetFontSize,
+        accelerator: `${CmdOrCtrl}+0`,
+    },
     // view commands
     {
         action: KeyboardAction.viewReload,

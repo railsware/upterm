@@ -5,34 +5,17 @@ import {Attributes} from "../../Interfaces";
 import {CSSObject} from "./definitions";
 import {PaneList} from "../../utils/PaneTree";
 import {CSSProperties} from "react";
+import {FontService} from "../../services/FontService";
 
 const jobBackgroundColor = colors.black;
 const backgroundColor = darken(jobBackgroundColor, 4);
 const fontFamily = "'Hack', 'Fira Code', 'Menlo', monospace";
-const fontSize = 14;
 export const contentPadding = 10;
 
-function getLetterSize(size: number, fontFamily: string) {
-    const height = size + 2;
-
-    // document is not defined in tests.
-    if (typeof document !== "undefined") {
-        const canvas = document.createElement("canvas");
-        const context = canvas.getContext("2d")!;
-        context.font = `${size}px ${fontFamily}`;
-        const metrics = context.measureText("m");
-        return {width: metrics.width, height: height};
-    } else {
-        return {width: (size / 2) + 1.5, height: height};
-    }
-}
-
-export const letterSize = getLetterSize(fontSize, fontFamily);
-
-export const application = {
-    "--font-size": `${fontSize}px`,
+export const application = () => ({
+    "--font-size": `${FontService.instance.font.size}px`,
     "--font-family": fontFamily,
-    "--row-height": `${letterSize.height}px`,
+    "--row-height": `${FontService.instance.font.letterHeight}px`,
     "--content-padding": `${contentPadding}px`,
     "--search-input-color": lighten(backgroundColor, 15),
     "--background-color": backgroundColor,
@@ -48,7 +31,7 @@ export const application = {
     "--blue-color": colors.blue,
     "--magenta-color": colors.magenta,
     "--cyan-color": colors.cyan,
-};
+});
 
 export const jobs = (isSessionFocused: boolean): CSSObject => ({
     ...(isSessionFocused ? {} : {pointerEvents: "none"}),
@@ -147,10 +130,10 @@ export const charGroup = (attributes: Attributes) => {
 };
 
 export const cursor = (rowIndex: number, columnIndex: number, scrollbackSize: number) => ({
-    top: rowIndex * letterSize.height + (scrollbackSize * letterSize.height),
-    left: columnIndex * letterSize.width,
-    height: letterSize.height,
-    width: letterSize.width,
+    top: rowIndex * FontService.instance.font.letterHeight + (scrollbackSize * FontService.instance.font.letterHeight),
+    left: columnIndex * FontService.instance.font.letterWidth,
+    height: FontService.instance.font.letterHeight,
+    width: FontService.instance.font.letterWidth,
 });
 
 export const actions = {

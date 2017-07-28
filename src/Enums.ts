@@ -132,6 +132,9 @@ export enum KeyboardAction {
     editSelectAll,
     editFind,
     editFindClose,
+    increaseFontSize,
+    decreaseFontSize,
+    resetFontSize,
     // view commands
     viewReload,
     viewToggleFullScreen,

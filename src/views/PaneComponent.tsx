@@ -10,6 +10,7 @@ import {userFriendlyPath} from "../utils/Common";
 import {watchManager} from "../plugins/GitWatcher";
 import {shell} from "electron";
 import {ReleaseTracker} from "../services/ReleaseTracker";
+import {FontService} from "../services/FontService";
 
 interface Props {
     session: Session;
@@ -110,8 +111,8 @@ export class PaneComponent extends React.Component<Props, {}> {
 
     private get dimensions(): Dimensions {
         return {
-            columns: Math.floor(this.size.width / css.letterSize.width),
-            rows: Math.floor(this.size.height / css.letterSize.height),
+            columns: Math.floor(this.size.width / FontService.instance.font.letterWidth),
+            rows: Math.floor(this.size.height / FontService.instance.font.letterHeight),
         };
     }
 

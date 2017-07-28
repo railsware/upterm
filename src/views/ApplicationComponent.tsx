@@ -11,6 +11,7 @@ import {KeyboardAction} from "../Enums";
 import {UserEvent} from "../Interfaces";
 import {isModifierKey} from "./ViewUtils";
 import {TabComponent} from "./TabComponent";
+import {FontService} from "../services/FontService";
 
 type ApplicationState = {
     tabs: Tab[];
@@ -37,6 +38,8 @@ export class ApplicationComponent extends React.Component<{}, ApplicationState> 
             ipcRenderer.on("change-working-directory", (_event: Event, directory: string) =>
                 this.focusedTab.focusedPane.session.directory = directory,
             );
+
+            FontService.instance.onChange(() => this.forceUpdate());
 
             window.onbeforeunload = () => {
                 electronWindow
@@ -322,7 +325,7 @@ export class ApplicationComponent extends React.Component<{}, ApplicationState> 
         }
 
         return (
-            <div className="application" style={css.application}>
+            <div className="application" style={css.application()}>
                 <div className="title-bar">
                     <ul style={css.tabs}>{tabs}</ul>
                     <SearchComponent/>
