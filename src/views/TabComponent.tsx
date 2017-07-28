@@ -6,6 +6,8 @@ import * as css from "./css/styles";
 import {fontAwesome} from "./css/FontAwesome";
 import {Pane, PaneList} from "../utils/PaneTree";
 
+const os = require("os");
+
 export interface TabProps {
     isFocused: boolean;
     activate: () => void;
@@ -43,8 +45,8 @@ export class TabComponent extends React.Component<TabProps, TabState> {
                     {fontAwesome.times}
                 </span>
 
-                <span style={css.commandSign}>⌘</span>
-                <span>{this.props.position}</span>
+                <span style={os.platform() === "darwin" ? css.commandSign : css.vertAlignMiddle}>{os.platform() === "darwin" ? "⌘" : "Ctrl+"}</span>
+                <span style={css.vertAlignMiddle}>{this.props.position}</span>
             </li>
         );
     }
