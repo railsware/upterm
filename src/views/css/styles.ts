@@ -33,7 +33,10 @@ function getLetterWidth(size: number, fontFamily: string) {
 
 export const letterWidth = getLetterWidth(fontSize, fontFamily);
 
-const cssVariables = {
+const decorationWidth = 30;
+const searchInputColor = lighten(backgroundColor, 15);
+
+export const application = {
     "--font-size": `${fontSize}px`,
     "--font-family": fontFamily,
     "--title-bar-height": `${titleBarHeight}px`,
@@ -54,20 +57,6 @@ const cssVariables = {
     "--blue-color": colors.blue,
     "--magenta-color": colors.magenta,
     "--cyan-color": colors.cyan,
-};
-
-const decorationWidth = 30;
-const searchInputColor = lighten(backgroundColor, 15);
-
-function sessionsGridTemplate(list: PaneList): CSSObject {
-    return {
-        gridTemplateColumns: `repeat(${list.children.length}, calc(100% / ${list.children.length}))`,
-        gridTemplateRows: "100%",
-    };
-}
-
-export const application = {
-    ...cssVariables,
 };
 
 export const jobs = (isSessionFocused: boolean): CSSObject => ({
@@ -132,7 +121,8 @@ export const footer = {
 };
 
 export const sessions = (list: PaneList) => ({
-    ...sessionsGridTemplate(list),
+    gridTemplateColumns: `repeat(${list.children.length}, calc(100% / ${list.children.length}))`,
+    gridTemplateRows: "100%",
 });
 
 export const session = (isFocused: boolean) => {
