@@ -39,7 +39,10 @@ export class ApplicationComponent extends React.Component<{}, ApplicationState> 
                 this.focusedTab.focusedPane.session.directory = directory,
             );
 
-            FontService.instance.onChange(() => this.forceUpdate());
+            FontService.instance.onChange(() => {
+                this.forceUpdate();
+                this.recalculateDimensions();
+            });
 
             window.onbeforeunload = () => {
                 electronWindow
