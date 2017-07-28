@@ -14,24 +14,26 @@ const promptFontSize = fontSize * 1.1;
 export const contentPadding = 10;
 const suggestionSize = 2 * fontSize;
 export const titleBarHeight = 24;
-export const rowHeight = fontSize + 2;
 const promptHeight = 42;
 export const footerHeight = fontSize * 2;
 const promptLetterWidth = promptFontSize / 2 + 1.5;
 
-function getLetterWidth(size: number, fontFamily: string) {
+function getLetterSize(size: number, fontFamily: string) {
+    const height = size + 2;
+
     // document is not defined in tests.
     if (typeof document !== "undefined") {
         const canvas = document.createElement("canvas");
         const context = canvas.getContext("2d")!;
         context.font = `${size}px ${fontFamily}`;
-        return context.measureText("m").width;
+        const metrics = context.measureText("m");
+        return {width: metrics.width, height: height};
     } else {
-        return (size / 2) + 1.5;
+        return {width: (size / 2) + 1.5, height: height};
     }
 }
 
-export const letterWidth = getLetterWidth(fontSize, fontFamily);
+export const letterSize = getLetterSize(fontSize, fontFamily);
 
 const decorationWidth = 30;
 const searchInputColor = lighten(backgroundColor, 15);
@@ -40,7 +42,7 @@ export const application = {
     "--font-size": `${fontSize}px`,
     "--font-family": fontFamily,
     "--title-bar-height": `${titleBarHeight}px`,
-    "--row-height": `${rowHeight}px`,
+    "--row-height": `${letterSize.height}px`,
     "--prompt-height": `${promptHeight}px`,
     "--footer-height": `${footerHeight}px`,
     "--content-padding": `${contentPadding}px`,
@@ -220,10 +222,10 @@ export const charGroup = (attributes: Attributes) => {
 };
 
 export const cursor = (rowIndex: number, columnIndex: number, scrollbackSize: number) => ({
-    top: rowIndex * rowHeight + (scrollbackSize * rowHeight),
-    left: columnIndex * letterWidth,
-    height: rowHeight,
-    width: letterWidth,
+    top: rowIndex * letterSize.height + (scrollbackSize * letterSize.height),
+    left: columnIndex * letterSize.width,
+    height: letterSize.height,
+    width: letterSize.width,
 });
 
 export const actions = {

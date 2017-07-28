@@ -97,8 +97,8 @@ export class Tab {
 
     private get contentDimensions(): Dimensions {
         return {
-            columns: Math.floor(this.contentSize.width / css.letterWidth),
-            rows: Math.floor(this.contentSize.height / css.rowHeight),
+            columns: Math.floor(this.contentSize.width / css.letterSize.width),
+            rows: Math.floor(this.contentSize.height / css.letterSize.height),
         };
     }
 
