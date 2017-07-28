@@ -14,7 +14,6 @@ const promptFontSize = fontSize * 1.1;
 export const contentPadding = 10;
 const suggestionSize = 2 * fontSize;
 export const titleBarHeight = 24;
-const promptHeight = 42;
 export const footerHeight = fontSize * 2;
 const promptLetterWidth = promptFontSize / 2 + 1.5;
 
@@ -43,7 +42,6 @@ export const application = {
     "--font-family": fontFamily,
     "--title-bar-height": `${titleBarHeight}px`,
     "--row-height": `${letterSize.height}px`,
-    "--prompt-height": `${promptHeight}px`,
     "--footer-height": `${footerHeight}px`,
     "--content-padding": `${contentPadding}px`,
     "--background-color": backgroundColor,
