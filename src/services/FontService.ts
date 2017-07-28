@@ -8,8 +8,8 @@ interface FontInfo {
 function getLetterSize(size: number, fontFamily: string) {
     const height = size + 2;
 
-    // document is not defined in tests.
-    if (typeof document !== "undefined") {
+    // Not defined in tests.
+    if (typeof document.createElement !== "undefined") {
         const canvas = document.createElement("canvas");
         const context = canvas.getContext("2d")!;
         context.font = `${size}px ${fontFamily}`;
