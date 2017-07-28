@@ -27,6 +27,8 @@ export class PaneComponent extends React.Component<Props, {}> {
     }
 
     componentDidMount() {
+        this.updateSessionDimensions();
+
         this.props.session
             .on("jobs-changed", () => {
                 if (this.paneRef) {
@@ -84,6 +86,10 @@ export class PaneComponent extends React.Component<Props, {}> {
         );
     }
 
+    updateSessionDimensions(): void {
+        this.props.session.dimensions = this.dimensions;
+    }
+
     private get paneRef() {
         return this.refs.pane as HTMLDivElement | undefined;
     }
@@ -91,6 +97,28 @@ export class PaneComponent extends React.Component<Props, {}> {
     private handleClick() {
         if (!this.props.isFocused) {
             this.props.focus();
+        }
+    }
+
+    private get dimensions(): Dimensions {
+        return {
+            columns: Math.floor(this.size.width / css.letterSize.width),
+            rows: Math.floor(this.size.height / css.letterSize.height),
+        };
+    }
+
+    private get size(): Size {
+        if (this.paneRef) {
+            return {
+                width: this.paneRef.clientWidth - (2 * css.contentPadding),
+                height: this.paneRef.clientHeight - css.titleBarHeight - css.footerHeight,
+            };
+        } else {
+            // For tests that are run in electron-mocha
+            return {
+                width: 800,
+                height: 600,
+            };
         }
     }
 }

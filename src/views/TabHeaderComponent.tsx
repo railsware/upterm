@@ -41,14 +41,14 @@ export class Tab {
     private _focusedPane: Pane;
 
     constructor(private application: ApplicationComponent) {
-        const pane = new Pane(new Session(this.application, this.contentDimensions));
+        const pane = new Pane(new Session(this.application));
 
         this.panes = new PaneList([pane]);
         this._focusedPane = pane;
     }
 
     addPane(): void {
-        const session = new Session(this.application, this.contentDimensions);
+        const session = new Session(this.application);
 
         this._focusedPane = this.panes.add(session);
     }
@@ -92,27 +92,6 @@ export class Tab {
     }
 
     updateAllPanesDimensions(): void {
-        this.panes.children.forEach(pane => pane.session.dimensions = this.contentDimensions);
-    }
-
-    private get contentDimensions(): Dimensions {
-        return {
-            columns: Math.floor(this.contentSize.width / css.letterSize.width),
-            rows: Math.floor(this.contentSize.height / css.letterSize.height),
-        };
-    }
-
-    private get contentSize(): Size {
-        // For tests that are run in electron-mocha
-        if (typeof window === "undefined") {
-            return {
-                width: 0,
-                height: 0,
-            };
-        }
-        return {
-            width: window.innerWidth - (2 * css.contentPadding),
-            height: window.innerHeight - css.titleBarHeight - css.footerHeight,
-        };
+        this.panes.children.forEach(pane => pane.paneComponent.updateSessionDimensions());
     }
 }

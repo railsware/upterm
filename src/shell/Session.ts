@@ -24,7 +24,7 @@ export class Session extends EmitterWithUniqueID {
     history = History;
     historicalPresentDirectoriesStack = new OrderedSet<string>();
 
-    constructor(private application: ApplicationComponent, private _dimensions: Dimensions) {
+    constructor(private application: ApplicationComponent, private _dimensions: Dimensions = {columns: 80, rows: 25}) {
         super();
 
         // TODO: We want to deserialize properties only for the first instance
