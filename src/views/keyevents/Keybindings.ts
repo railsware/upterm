@@ -129,15 +129,15 @@ export const KeybindingsForMenu: KeybindingMenuType[] = [
     // pane commands
     {
         action: KeyboardAction.paneSplitVertically,
-        accelerator: `Alt+\\`,
+        accelerator: `${CmdOrCtrl}+\\`,
     },
     {
         action: KeyboardAction.panePrevious,
-        accelerator: `Alt+[`,
+        accelerator: `${CmdOrCtrl}++{`,
     },
     {
         action: KeyboardAction.paneNext,
-        accelerator: `Alt+]`,
+        accelerator: `${CmdOrCtrl}++}`,
     },
     // edit/clipboard commands
     {
