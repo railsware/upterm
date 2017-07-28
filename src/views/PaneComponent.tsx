@@ -59,10 +59,6 @@ export class PaneComponent extends React.Component<Props, {}> {
         const lastJob = _.last(this.props.session.jobs);
         const lastJobInProgress = lastJob && lastJob.status === Status.InProgress;
 
-        if (lastJob) {
-            lastJob.once("end", () => this.forceUpdate());
-        }
-
         const promptComponent = lastJobInProgress ? undefined : <PromptComponent
             key={this.props.session.jobs.length}
             ref={component => { this.promptComponent = component!; }}
