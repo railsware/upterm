@@ -15,7 +15,7 @@ const SuggestionComponent = ({suggestion, onHover, onClick, isHighlighted}: Sugg
         onMouseOver={onHover}
         onClick={onClick}>
 
-        <i style={{...css.suggestionIcon, ...suggestion.style.css} as any}>{suggestion.style.value}</i>
+        <i className="suggestion-icon" style={suggestion.style.css}>{suggestion.style.value}</i>
         <span style={css.autocomplete.value}>{suggestion.displayValue}</span>
         <span style={css.autocomplete.synopsis}>{suggestion.synopsis}</span>
     </li>;

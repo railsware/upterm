@@ -12,7 +12,6 @@ const fontFamily = "'Hack', 'Fira Code', 'Menlo', monospace";
 const fontSize = 14;
 const promptFontSize = fontSize * 1.1;
 export const contentPadding = 10;
-const suggestionSize = 2 * fontSize;
 const promptLetterWidth = promptFontSize / 2 + 1.5;
 
 function getLetterSize(size: number, fontFamily: string) {
@@ -58,20 +57,6 @@ export const application = {
 export const jobs = (isSessionFocused: boolean): CSSObject => ({
     ...(isSessionFocused ? {} : {pointerEvents: "none"}),
 });
-
-export const suggestionIcon = {
-    fontFamily: "FontAwesome",
-    display: "inline-block",
-    width: suggestionSize,
-    height: suggestionSize,
-    lineHeight: "2em",
-    verticalAlign: "middle",
-    textAlign: "center",
-    fontStyle: "normal",
-    opacity: .5,
-    marginRight: 10,
-    backgroundColor: "rgba(0, 0, 0, 0.15)",
-};
 
 export const autocomplete = {
     box: (caretPosition: number): CSSProperties => {
