@@ -29,7 +29,7 @@ export class PaneComponent extends React.Component<Props, {}> {
     componentDidMount() {
         this.props.session
             .on("jobs-changed", () => {
-                const s = (this.refs as any).session;
+                const s = (this.refs as any).pane;
                 if (s) {
                     if (s.scrollHeight - s.offsetHeight - s.scrollTop > FOOTER_HEIGHT) {
                         // If we are already close to the bottom,
@@ -69,16 +69,16 @@ export class PaneComponent extends React.Component<Props, {}> {
         />;
 
         return (
-            <div className="session"
+            <div className="pane"
                  data-status={lastJob && lastJob.status}
-                 ref="session"
-                 style={css.session(this.props.isFocused)}
+                 ref="pane"
+                 style={css.pane(this.props.isFocused)}
                  onClick={this.handleClick.bind(this)}>
 
                 <div className="jobs" style={css.jobs(this.props.isFocused)}>
                     {jobs}
                 </div>
-                <div className="shutter" style={css.sessionShutter(this.props.isFocused)}/>
+                <div className="shutter" style={css.paneShutter(this.props.isFocused)}/>
                 {promptComponent}
                 <FooterComponent session={this.props.session}/>
             </div>

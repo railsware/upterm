@@ -125,7 +125,7 @@ export const sessions = (list: PaneList) => ({
     gridTemplateRows: "100%",
 });
 
-export const session = (isFocused: boolean) => {
+export const pane = (isFocused: boolean) => {
     const styles: CSSObject = {};
 
     if (!isFocused) {
@@ -136,7 +136,7 @@ export const session = (isFocused: boolean) => {
     return styles;
 };
 
-export const sessionShutter = (isFocused: boolean) => ({
+export const paneShutter = (isFocused: boolean) => ({
     backgroundColor: colors.white,
     opacity: isFocused ? 0 : 0.2,
 });

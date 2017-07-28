@@ -110,7 +110,7 @@
             border-left: var(--background-color);
         }
 
-        .session {
+        .pane {
             position: relative;
             outline: none;
             overflow-y: scroll;
@@ -120,7 +120,7 @@
             height: var(--session-height);
         }
 
-        .session[data-status=in-progress] {
+        .pane[data-status=in-progress] {
             grid-template-areas: "jobs" "footer";
             grid-template-rows: auto var(--footer-height);
         }
@@ -208,7 +208,7 @@
             height: var(--row-height);
         }
 
-        .session .prompt {
+        .pane .prompt {
             grid-area: prompt;
             padding-top: 10px;
             line-height: 1.3;
@@ -218,14 +218,14 @@
             height: var(--prompt-font-size);
         }
 
-        .session .prompt-decoration {
+        .pane .prompt-decoration {
             grid-area: prompt-decoration;
             position: relative;
             overflow: hidden;
             z-index: 2;
         }
 
-        .session .prompt-decoration .square {
+        .pane .prompt-decoration .square {
             position: absolute;
             display: inline-block;
             --size: calc(var(--prompt-font-size) * 1.3);
@@ -236,12 +236,12 @@
             filter: brightness(50%);
         }
 
-        .session .prompt-decoration .rhombus {
+        .pane .prompt-decoration .rhombus {
             left: calc(var(--prompt-font-size) * 0.39);
             transform: rotate(45deg);
         }
 
-        .session .prompt-content {
+        .pane .prompt-content {
             grid-area: prompt-content;
             font-size: var(--prompt-font-size);
             padding-left: calc(var(--prompt-font-size) / 2);
@@ -251,7 +251,7 @@
             z-index: 2;
         }
 
-        .session .prompt-content.autocompleted-preview {
+        .pane .prompt-content.autocompleted-preview {
             filter: brightness(50%);
             z-index: 1;
         }
