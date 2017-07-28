@@ -9,12 +9,11 @@ import {FontService} from "../../services/FontService";
 
 const jobBackgroundColor = colors.black;
 const backgroundColor = darken(jobBackgroundColor, 4);
-const fontFamily = "'Hack', 'Fira Code', 'Menlo', monospace";
 export const contentPadding = 10;
 
 export const application = () => ({
     "--font-size": `${FontService.instance.font.size}px`,
-    "--font-family": fontFamily,
+    "--font-family": FontService.instance.font.family,
     "--row-height": `${FontService.instance.font.letterHeight}px`,
     "--content-padding": `${contentPadding}px`,
     "--search-input-color": lighten(backgroundColor, 15),
