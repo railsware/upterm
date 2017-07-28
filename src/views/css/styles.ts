@@ -15,9 +15,9 @@ export const contentPadding = 10;
 const suggestionSize = 2 * fontSize;
 export const titleBarHeight = 24;
 export const rowHeight = fontSize + 2;
-export const promptHeight = 42;
+const promptHeight = 42;
 export const footerHeight = fontSize * 2;
-export const promptLetterWidth = promptFontSize / 2 + 1.5;
+const promptLetterWidth = promptFontSize / 2 + 1.5;
 
 function getLetterWidth(size: number, fontFamily: string) {
     // document is not defined in tests.
