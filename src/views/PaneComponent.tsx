@@ -29,12 +29,11 @@ export class PaneComponent extends React.Component<Props, {}> {
     componentDidMount() {
         this.props.session
             .on("jobs-changed", () => {
-                const s = (this.refs as any).pane;
-                if (s) {
-                    if (s.scrollHeight - s.offsetHeight - s.scrollTop > FOOTER_HEIGHT) {
+                if (this.paneRef) {
+                    if (this.paneRef.scrollHeight - this.paneRef.offsetHeight - this.paneRef.scrollTop > FOOTER_HEIGHT) {
                         // If we are already close to the bottom,
                         // scroll all the way to the bottom
-                        s.scrollTop = s.scrollHeight;
+                        this.paneRef.scrollTop = this.paneRef.scrollHeight;
                     }
                 }
                 if (this.props.updateFooter) {
@@ -83,6 +82,10 @@ export class PaneComponent extends React.Component<Props, {}> {
                 <FooterComponent session={this.props.session}/>
             </div>
         );
+    }
+
+    private get paneRef() {
+        return this.refs.pane as HTMLDivElement | undefined;
     }
 
     private handleClick() {
