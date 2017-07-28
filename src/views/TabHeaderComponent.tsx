@@ -2,7 +2,6 @@
 import * as React from "react";
 import {Session} from "../shell/Session";
 import {ApplicationComponent} from "./ApplicationComponent";
-import * as css from "./css/styles";
 import {fontAwesome} from "./css/FontAwesome";
 import {Pane, PaneList} from "../utils/PaneTree";
 
@@ -29,8 +28,7 @@ export class TabHeaderComponent extends React.Component<Props, {}> {
                     {fontAwesome.times}
                 </span>
 
-                <span style={css.commandSign}>⌘</span>
-                <span>{this.props.position}</span>
+                <span>⌘{this.props.position}</span>
             </li>
         );
     }

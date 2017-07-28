@@ -112,11 +112,6 @@ export const tabs = {
     paddingRight: 129,
 };
 
-export const commandSign = {
-    fontSize: fontSize + 3,
-    verticalAlign: "middle",
-};
-
 // To display even empty rows. The height might need tweaking.
 // TODO: Remove if we always have a fixed output width.
 export const charGroup = (attributes: Attributes) => {
