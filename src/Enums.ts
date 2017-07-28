@@ -119,7 +119,7 @@ export enum KeyboardAction {
     tabNext,
     tabClose,
     // pane commands
-    paneSplitVertically,
+    otherPane,
     panePrevious,
     paneNext,
     paneClose,

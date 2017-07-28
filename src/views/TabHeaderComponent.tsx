@@ -45,10 +45,11 @@ export class Tab {
         this._focusedPane = pane;
     }
 
-    addPane(): void {
+    otherPane(): void {
         const session = new Session(this.application);
 
-        this._focusedPane = this.panes.add(session);
+        this.panes.add(session);
+        this.focusPane(this.panes.next(this.focusedPane));
     }
 
     closeFocusedPane(): void {
@@ -59,7 +60,7 @@ export class Tab {
         this.focusedPane.session.removeAllListeners();
 
         const focused = this.focusedPane;
-        this._focusedPane = this.panes.previous(focused);
+        this._focusedPane = this.panes.next(focused);
         this.panes.remove(focused);
     }
 
@@ -75,18 +76,15 @@ export class Tab {
 
     focusPane(pane: Pane): void {
         this._focusedPane = pane;
-        const promptComponent = this._focusedPane.paneComponent.promptComponent;
+        const paneComponent = this._focusedPane.paneComponent;
+        if (!paneComponent) {
+            return;
+        }
+
+        const promptComponent = paneComponent.promptComponent;
         if (promptComponent) {
             promptComponent.focus();
         }
-    }
-
-    focusPreviousPane(): void {
-        this.focusPane(this.panes.previous(this.focusedPane));
-    }
-
-    focusNextPane(): void {
-        this.focusPane(this.panes.next(this.focusedPane));
     }
 
     updateAllPanesDimensions(): void {

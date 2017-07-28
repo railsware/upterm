@@ -95,6 +95,14 @@ export function buildMenuTemplate(
             label: "View",
             submenu: [
                 {
+                    label: "Other Pane",
+                    accelerator: getAcceleratorForAction(KeyboardAction.otherPane),
+                    click: () => {
+                        application.focusedTab.otherPane();
+                        application.forceUpdate();
+                    },
+                },
+                {
                     label: "Reload",
                     accelerator: getAcceleratorForAction(KeyboardAction.viewReload),
                     click: () => {
@@ -156,41 +164,6 @@ export function buildMenuTemplate(
                         application.closeFocusedTab();
                         application.forceUpdate();
                     },
-                },
-            ],
-        },
-        {
-            label: "Pane",
-            submenu: [
-                {
-                    label: "Split Vertically",
-                    accelerator: getAcceleratorForAction(KeyboardAction.paneSplitVertically),
-                    click: () => {
-                        application.focusedTab.addPane();
-                        application.forceUpdate();
-                    },
-                },
-                {
-                    type: "separator",
-                },
-                {
-                    label: "Previous",
-                    accelerator: getAcceleratorForAction(KeyboardAction.panePrevious),
-                    click: () => {
-                        application.focusedTab.focusPreviousPane();
-                        application.forceUpdate();
-                    },
-                },
-                {
-                    label: "Next",
-                    accelerator: getAcceleratorForAction(KeyboardAction.paneNext),
-                    click: () => {
-                        application.focusedTab.focusNextPane();
-                        application.forceUpdate();
-                    },
-                },
-                {
-                    type: "separator",
                 },
             ],
         },

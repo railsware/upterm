@@ -7,8 +7,8 @@ import {shallow} from "enzyme";
 describe.skip("Tab", () => {
     it("can close panes and have the remaining panes get focused", done => {
         const application: ApplicationComponent = shallow(<ApplicationComponent />).instance() as ApplicationComponent;
-        application.state.tabs[0].addPane();
-        application.state.tabs[0].focusPreviousPane();
+        application.state.tabs[0].otherPane();
+        application.state.tabs[0].otherPane();
         application.state.tabs[0].closeFocusedPane();
         let paneCount = 0;
         let lastPane: any;

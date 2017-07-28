@@ -126,19 +126,6 @@ export const KeybindingsForMenu: KeybindingMenuType[] = [
         action: KeyboardAction.tabClose,
         accelerator: `${CmdOrCtrl}+W`,
     },
-    // pane commands
-    {
-        action: KeyboardAction.paneSplitVertically,
-        accelerator: `${CmdOrCtrl}+\\`,
-    },
-    {
-        action: KeyboardAction.panePrevious,
-        accelerator: `${CmdOrCtrl}++{`,
-    },
-    {
-        action: KeyboardAction.paneNext,
-        accelerator: `${CmdOrCtrl}++}`,
-    },
     // edit/clipboard commands
     {
         action: KeyboardAction.clipboardCopy,
@@ -192,6 +179,10 @@ export const KeybindingsForMenu: KeybindingMenuType[] = [
     {
         action: KeyboardAction.viewToggleFullScreen,
         accelerator: "Ctrl+Shift+F",
+    },
+    {
+        action: KeyboardAction.otherPane,
+        accelerator: `${CmdOrCtrl}+\\`,
     },
     // Upterm commands
     {

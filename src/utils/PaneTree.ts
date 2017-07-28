@@ -1,6 +1,5 @@
 import {Session} from "../shell/Session";
 import {PaneComponent} from "../views/PaneComponent";
-import * as _ from "lodash";
 
 export class Pane {
     readonly session: Session;
@@ -31,8 +30,6 @@ export class PaneList {
         if (this.children.length < 2) {
             this.children.push(new Pane(session));
         }
-
-        return _.last(this.children)!;
     }
 
     remove(pane: Pane) {
@@ -41,14 +38,6 @@ export class PaneList {
 
     get size(): number {
         return this.children.length;
-    }
-
-    /**
-     * Returns the pane previous to the 'pane' argument provided.
-     */
-    previous(pane: Pane): Pane {
-        const index = (this.children.indexOf(pane) + this.children.length - 1) % this.children.length;
-        return this.children[index];
     }
 
     /**
