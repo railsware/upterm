@@ -293,6 +293,16 @@
             background-color: var(--background-color);
         }
 
+        .autocomplete .suggestion {
+            list-style-type: none;
+            padding: 2px;
+            cursor: pointer;
+        }
+
+        .autocomplete .suggestion[data-highlighted=true] {
+            background-color: #383E4A;
+        }
+
         .footer {
             grid-area: footer;
             height: var(--footer-height);

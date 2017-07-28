@@ -10,7 +10,8 @@ interface SuggestionProps {
 }
 
 const SuggestionComponent = ({suggestion, onHover, onClick, isHighlighted}: SuggestionProps) =>
-    <li style={css.autocomplete.item(isHighlighted)}
+    <li className="suggestion"
+        data-highlighted={isHighlighted}
         onMouseOver={onHover}
         onClick={onClick}>
 

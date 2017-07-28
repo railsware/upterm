@@ -89,19 +89,6 @@ export const autocomplete = {
     value: {
         paddingRight: 30,
     },
-    item: (isHighlighted: boolean) => {
-        const style: CSSObject = {
-            listStyleType: "none",
-            padding: 2,
-            cursor: "pointer",
-        };
-
-        if (isHighlighted) {
-            style.backgroundColor = "#383E4A";
-        }
-
-        return style;
-    },
     suggestionsList: {
         maxHeight: 300,
         overflow: "auto",
