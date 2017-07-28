@@ -5,18 +5,18 @@ import * as _ from "lodash";
 export class Pane {
     readonly session: Session;
     readonly size = 1;
-    private _sessionComponent: PaneComponent;
+    private _paneComponent: PaneComponent;
 
     constructor(session: Session) {
         this.session = session;
     }
 
-    setSessionComponent(component: PaneComponent) {
-        this._sessionComponent = component;
+    setPaneComponent(component: PaneComponent) {
+        this._paneComponent = component;
     }
 
-    get sessionComponent(): PaneComponent {
-        return this._sessionComponent;
+    get paneComponent(): PaneComponent {
+        return this._paneComponent;
     }
 }
 

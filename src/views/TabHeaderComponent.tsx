@@ -77,7 +77,7 @@ export class Tab {
 
     focusPane(pane: Pane): void {
         this._focusedPane = pane;
-        const promptComponent = this._focusedPane.sessionComponent.promptComponent;
+        const promptComponent = this._focusedPane.paneComponent.promptComponent;
         if (promptComponent) {
             promptComponent.focus();
         }

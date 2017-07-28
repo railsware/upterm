@@ -19,7 +19,7 @@ export class TabComponent extends React.Component<Props, {}> {
                 <PaneComponent
                     session={session}
                     key={session.id}
-                    ref={sessionComponent => { pane.setSessionComponent(sessionComponent!); }}
+                    ref={paneComponent => { pane.setPaneComponent(paneComponent!); }}
                     isFocused={isFocused}
                     updateFooter={isFocused ? () => this.forceUpdate() : undefined}
                     focus={() => {
