@@ -10,9 +10,7 @@ const jobBackgroundColor = colors.black;
 const backgroundColor = darken(jobBackgroundColor, 4);
 const fontFamily = "'Hack', 'Fira Code', 'Menlo', monospace";
 const fontSize = 14;
-const promptFontSize = fontSize * 1.1;
 export const contentPadding = 10;
-const promptLetterWidth = promptFontSize / 2 + 1.5;
 
 function getLetterSize(size: number, fontFamily: string) {
     const height = size + 2;
@@ -30,8 +28,6 @@ function getLetterSize(size: number, fontFamily: string) {
 }
 
 export const letterSize = getLetterSize(fontSize, fontFamily);
-
-const decorationWidth = 30;
 
 export const application = {
     "--font-size": `${fontSize}px`,
@@ -59,11 +55,6 @@ export const jobs = (isSessionFocused: boolean): CSSObject => ({
 });
 
 export const autocomplete = {
-    box: (caretPosition: number): CSSProperties => {
-        return {
-            left: decorationWidth + (caretPosition * promptLetterWidth),
-        };
-    },
     synopsis: {
         float: "right",
         opacity: 0.5,

@@ -286,11 +286,13 @@
         }
 
         .autocomplete {
+            --prompt-letter-width: calc(calc(var(--prompt-font-size) / 2) + 1.5px);
             position: absolute;
             bottom: calc(var(--footer-height) + var(--prompt-height));
             min-width: 300px;
             box-shadow: 0 2px 8px 1px rgba(0, 0, 0, 0.3);
             background-color: var(--background-color);
+            left: calc(30px + calc(var(--caret-position) * var(--prompt-letter-width)));
         }
 
         .autocomplete .suggestion {
