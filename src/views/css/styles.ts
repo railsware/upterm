@@ -1,6 +1,6 @@
 import {Weight, Brightness, Color} from "../../Enums";
 import {colors, colorValue} from "./colors";
-import {darken, lighten, failurize, alpha} from "./functions";
+import {darken, failurize, alpha, lighten} from "./functions";
 import {Attributes} from "../../Interfaces";
 import {CSSObject} from "./definitions";
 import {PaneList} from "../../utils/PaneTree";
@@ -13,8 +13,6 @@ const fontSize = 14;
 const promptFontSize = fontSize * 1.1;
 export const contentPadding = 10;
 const suggestionSize = 2 * fontSize;
-export const titleBarHeight = 24;
-export const footerHeight = fontSize * 2;
 const promptLetterWidth = promptFontSize / 2 + 1.5;
 
 function getLetterSize(size: number, fontFamily: string) {
@@ -35,15 +33,13 @@ function getLetterSize(size: number, fontFamily: string) {
 export const letterSize = getLetterSize(fontSize, fontFamily);
 
 const decorationWidth = 30;
-const searchInputColor = lighten(backgroundColor, 15);
 
 export const application = {
     "--font-size": `${fontSize}px`,
     "--font-family": fontFamily,
-    "--title-bar-height": `${titleBarHeight}px`,
     "--row-height": `${letterSize.height}px`,
-    "--footer-height": `${footerHeight}px`,
     "--content-padding": `${contentPadding}px`,
+    "--search-input-color": lighten(backgroundColor, 15),
     "--background-color": backgroundColor,
     "--job-background-color": jobBackgroundColor,
     "--failed-job-background-color": failurize(jobBackgroundColor),
@@ -151,33 +147,6 @@ export const tabs = {
     listStyle: "none",
     paddingLeft: 68,
     paddingRight: 129,
-};
-
-const searchInputHeight = titleBarHeight - 6;
-export const search: CSSProperties = {
-    position: "absolute",
-    right: 4,
-    top: (titleBarHeight - searchInputHeight) / 2,
-};
-
-export const searchIcon: CSSProperties = {
-    position: "relative",
-    left: fontSize,
-    top: -1,
-    fontSize: fontSize - 4,
-    fontFamily: "FontAwesome",
-};
-
-export const searchInput = {
-    backgroundColor: searchInputColor,
-    border: 0,
-    borderRadius: 3,
-    WebkitAppearance: "none",
-    outline: "none",
-    height: searchInputHeight,
-    width: 120,
-    paddingLeft: fontSize,
-    color: colors.white,
 };
 
 export const commandSign = {

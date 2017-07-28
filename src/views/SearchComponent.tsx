@@ -1,5 +1,4 @@
 import * as React from "react";
-import * as css from "./css/styles";
 import {remote} from "electron";
 import {fontAwesome} from "./css/FontAwesome";
 
@@ -14,11 +13,11 @@ export class SearchComponent extends React.Component<{}, {}> {
 
     render() {
         return (
-            <div style={css.search}>
-                <span style={css.searchIcon}>{fontAwesome.search}</span>
+            <div className="search">
+                <span className="search-icon">{fontAwesome.search}</span>
                 <input
                     ref="input"
-                    style={css.searchInput}
+                    className="search-input"
                     onInput={(event: any) => this.handleInput(event)}
                     type="search"/>
             </div>

@@ -45,6 +45,8 @@
             background-color: var(--background-color);
             color: var(--text-color);
 
+            --title-bar-height: 24px;
+            --footer-height: calc(var(--font-size) * 2);
             --prompt-height: 42px;
             --session-height: calc(100vh - var(--title-bar-height));
             --prompt-font-size: calc(var(--font-size) * 1.2);
@@ -54,6 +56,33 @@
             grid-area: title-bar;
             height: var(--title-bar-height);
             -webkit-app-region: drag;
+        }
+
+        .title-bar .search {
+            position: absolute;
+            right: 4px;
+            top: 2px;
+        }
+
+        .title-bar .search .search-icon {
+            position: relative;
+            left: var(--font-size);
+            top: -1px;
+            font-size: calc(var(--font-size) - 4px);
+            font-family: FontAwesome;
+        }
+
+        .title-bar .search .search-input {
+            --search-input-height: calc(var(--title-bar-height) - 6px);
+            background-color: var(--search-input-color);
+            border: 0;
+            border-radius: 3px;
+            -webkit-appearance: none;
+            outline: none;
+            height: var(--search-input-height);
+            width: 120px;
+            padding-left: var(--font-size);
+            color: var(--white-color);
         }
 
         .tab-header {
