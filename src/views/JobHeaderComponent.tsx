@@ -18,10 +18,8 @@ export class JobHeaderComponent extends React.Component<Props, {}> {
         let prettifyToggle: any;
 
         if (this.props.showPrettifyToggle) {
-            prettifyToggle = <PrettifyToggleComponent
-                prettifyToggler={this.props.prettifyToggler}
-                isPrettified={this.props.isPrettified}
-            />;
+            prettifyToggle = <PrettifyToggleComponent prettifyToggler={this.props.prettifyToggler}
+                                                      isPrettified={this.props.isPrettified}/>;
         }
 
         return <div className="job-header">

@@ -158,22 +158,6 @@ export const actions = {
     textAlign: "right",
 };
 
-export const action = {
-    textAlign: "center",
-    width: fontSize,
-    display: "inline-block",
-    margin: "0 3px",
-    cursor: "pointer",
-    fontFamily: "FontAwesome",
-};
-
-export const prettifyToggle = (isEnabled: boolean) => {
-    return {
-        ...action,
-        color: isEnabled ? colors.green : colors.white,
-    };
-};
-
 export const image = {
     maxHeight: "90vh",
     maxWidth: "100vh",

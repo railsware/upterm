@@ -197,6 +197,20 @@
             padding-bottom: 3px;
         }
 
+        .job-header .prettify-toggle {
+            text-align: center;
+            width: 1em;
+            display: inline-block;
+            margin: 0 3px;
+            cursor: pointer;
+            font-family: FontAwesome;
+            color: var(--white-color);
+        }
+
+        .job-header .prettify-toggle[data-enabled=true] {
+            color: var(--green-color);
+        }
+
         .output {
             white-space: pre-wrap;
             position: relative;

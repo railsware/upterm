@@ -1,5 +1,4 @@
 import * as React from "react";
-import * as css from "./css/styles";
 import {fontAwesome} from "./css/FontAwesome";
 
 interface Props {
@@ -7,7 +6,7 @@ interface Props {
     isPrettified: boolean;
 }
 
-export const PrettifyToggleComponent = (props: Props) => <span
-    style={css.prettifyToggle(props.isPrettified)}
-    onClick={props.prettifyToggler}
->{fontAwesome.magic}</span>;
+export const PrettifyToggleComponent = (props: Props) =>
+    <span className="prettify-toggle" data-enabled={props.isPrettified} onClick={props.prettifyToggler}>
+        {fontAwesome.magic}
+    </span>;
