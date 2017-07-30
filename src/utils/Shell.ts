@@ -1,10 +1,7 @@
 import {basename} from "path";
-import {readFileSync, statSync} from "fs";
 import * as Path from "path";
-import {EOL} from "os";
 import {resolveFile, io, isWindows, filterAsync, homeDirectory} from "./Common";
 import {executeCommandWithShellConfig} from "../PTY";
-import * as _ from "lodash";
 
 abstract class Shell {
     abstract get executableName(): string;
@@ -13,7 +10,6 @@ abstract class Shell {
     abstract get executeCommandSwitches(): string[];
     abstract get interactiveCommandSwitches(): string[];
     abstract get preCommandModifiers(): string[];
-    abstract get historyFileName(): string;
     abstract get commandExecutorPath(): string;
     abstract get environmentCommand(): string;
     abstract loadAliases(): Promise<string[]>;
@@ -23,21 +19,6 @@ abstract class Shell {
     async existingConfigFiles(): Promise<string[]> {
         const resolvedConfigFiles = this.configFiles.map(fileName => resolveFile(homeDirectory, fileName));
         return await filterAsync(resolvedConfigFiles, io.fileExists);
-    }
-
-    loadHistory(): { lastModified: Date, commands: string[] } {
-        const path = process.env.HISTFILE || Path.join(homeDirectory, this.historyFileName);
-        try {
-            return {
-                lastModified: statSync(path).mtime,
-                commands: readFileSync(path).toString().trim().split(EOL).reverse().map(line => _.last(line.split(";"))!),
-            };
-        } catch (error) {
-            return {
-                lastModified: new Date(0),
-                commands: [],
-            };
-        }
     }
 }
 
@@ -93,10 +74,6 @@ class Bash extends UnixShell {
     get preCommandModifiers(): string[] {
         return [];
     }
-
-    get historyFileName(): string {
-        return ".bash_history";
-    }
 }
 
 class ZSH extends UnixShell {
@@ -133,10 +110,6 @@ class ZSH extends UnixShell {
             "command",
         ];
     }
-
-    get historyFileName(): string {
-        return ".zsh_history";
-    }
 }
 
 class Cmd extends Shell {
@@ -167,10 +140,6 @@ class Cmd extends Shell {
 
     get preCommandModifiers(): string[] {
         return [];
-    }
-
-    get historyFileName(): string {
-        return "";
     }
 
     get commandExecutorPath() {
