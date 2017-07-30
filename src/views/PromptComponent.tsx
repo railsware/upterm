@@ -105,7 +105,7 @@ export class PromptComponent extends React.Component<Props, State> {
     }
 
     async appendLastLArgumentOfPreviousCommand(): Promise<void> {
-        const latestHistoryRecord = HistoryService.latest;
+        const latestHistoryRecord = HistoryService.instance.latest;
 
         if (latestHistoryRecord) {
             this.setText(this.prompt.value + _.last(scan(latestHistoryRecord.command))!.value);
@@ -121,14 +121,14 @@ export class PromptComponent extends React.Component<Props, State> {
     }
 
     setPreviousHistoryItem(): void {
-        const previousHistoryRecord = HistoryService.getPrevious();
+        const previousHistoryRecord = HistoryService.instance.getPrevious();
         if (previousHistoryRecord) {
             this.setText(previousHistoryRecord.command);
         }
     }
 
     setNextHistoryItem(): void {
-        const nextHistoryRecord = HistoryService.getNext();
+        const nextHistoryRecord = HistoryService.instance.getNext();
         if (nextHistoryRecord) {
             this.setText(nextHistoryRecord.command);
         } else {
@@ -154,10 +154,6 @@ export class PromptComponent extends React.Component<Props, State> {
     async applySuggestion(): Promise<void> {
         this.setText(this.valueWithCurrentSuggestion);
         await this.getSuggestions();
-    }
-
-    appendText(text: string): void {
-        this.setText(this.prompt.value.concat(text));
     }
 
     scrollIntoView(): void {

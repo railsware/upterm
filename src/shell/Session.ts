@@ -108,13 +108,13 @@ export class Session extends EmitterWithUniqueID {
     private async serialize() {
         return Promise.all([
             outputJSON(presentWorkingDirectoryFilePath, this.directory),
-            outputFile(historyFilePath, HistoryService.serialize()),
+            outputFile(historyFilePath, HistoryService.instance.serialize()),
         ]);
     }
 
     private deserialize(): void {
         this.directory = this.readSerialized(presentWorkingDirectoryFilePath, homeDirectory);
-        HistoryService.deserialize();
+        HistoryService.instance.deserialize();
     }
 
     private readSerialized<T>(file: string, defaultValue: T): T {

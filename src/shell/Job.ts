@@ -35,7 +35,7 @@ export class Job extends EmitterWithUniqueID implements TerminalLikeDevice {
             sessionID: this.session.id,
         };
 
-        HistoryService.add(historyRecord);
+        HistoryService.instance.add(historyRecord);
 
         await Promise.all(PluginManager.preexecPlugins.map(plugin => plugin(this)));
 

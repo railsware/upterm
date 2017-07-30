@@ -26,19 +26,28 @@ const readHistoryFileData = (): HistoryRecord[] => {
 };
 
 export class HistoryService {
-    static pointer: number = 0;
-    private static maxEntriesCount: number = 5000;
-    private static storage: HistoryRecord[] = [];
+    private static _instance: HistoryService;
+    pointer: number = 0;
+    private maxEntriesCount: number = 5000;
+    private storage: HistoryRecord[] = [];
 
-    static get all(): HistoryRecord[] {
+    static get instance() {
+        if (!this._instance) {
+            this._instance = new HistoryService();
+        }
+
+        return this._instance;
+    }
+
+    get all(): HistoryRecord[] {
         return this.storage;
     }
 
-    static get latest(): HistoryRecord | undefined {
+    get latest(): HistoryRecord | undefined {
         return this.at(-1);
     }
 
-    static add(entry: HistoryRecord): void {
+    add(entry: HistoryRecord): void {
         this.remove(entry);
         this.storage.unshift(entry);
 
@@ -49,7 +58,7 @@ export class HistoryService {
         this.pointer = 0;
     }
 
-    static getPrevious(): HistoryRecord | undefined {
+    getPrevious(): HistoryRecord | undefined {
         if (this.pointer < this.count) {
             this.pointer += 1;
         }
@@ -57,7 +66,7 @@ export class HistoryService {
         return this.at(-this.pointer);
     }
 
-    static getNext(): HistoryRecord | undefined {
+    getNext(): HistoryRecord | undefined {
         if (this.pointer > 0) {
             this.pointer -= 1;
         }
@@ -65,19 +74,19 @@ export class HistoryService {
         return this.at(-this.pointer);
     }
 
-    static serialize(): string {
-        return csvStringify(HistoryService.storage.map(record => Object.values(record)));
+    serialize(): string {
+        return csvStringify(this.all.map(record => Object.values(record)));
     }
 
-    static deserialize(): void {
+    deserialize(): void {
         this.storage = readHistoryFileData();
     }
 
-    private static get count(): number {
+    private get count(): number {
         return this.storage.length;
     }
 
-    private static at(position: number): HistoryRecord | undefined {
+    private at(position: number): HistoryRecord | undefined {
         if (position < 0) {
             return this.storage[-(position + 1)];
         }
@@ -85,7 +94,7 @@ export class HistoryService {
         return this.storage[this.count - 1];
     }
 
-    private static remove(entry: HistoryRecord): void {
+    private remove(entry: HistoryRecord): void {
         const duplicateIndex = this.storage.indexOf(entry);
         if (duplicateIndex !== -1) {
             this.storage.splice(duplicateIndex, 1);
