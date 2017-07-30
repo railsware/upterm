@@ -25,6 +25,8 @@
   "dependencies": {
     "child-process-promise": "2.2.1",
     "chokidar": "1.7.0",
+    "csv-parse": "1.2.1",
+    "csv-stringify": "1.0.4",
     "dirStat": "0.0.2",
     "font-awesome": "4.7.0",
     "fs-extra": "4.0.0",

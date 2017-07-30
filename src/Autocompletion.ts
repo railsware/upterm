@@ -29,7 +29,7 @@ export async function getSuggestions({
     historicalPresentDirectoriesStack,
     aliases,
 }: GetSuggestionsOptions): Promise<SuggestionWithDefaults[]> {
-    const prefixMatchesInHistory = History.all.filter(line => fuzzyMatch(currentText, line));
+    const prefixMatchesInHistory: string[] = History.all.map(historyRecord => historyRecord.command).filter(command => fuzzyMatch(currentText, command));
     const suggestionsFromHistory = prefixMatchesInHistory.map(match => ({
         value: match,
         promptSerializer: replaceAllPromptSerializer,

@@ -105,7 +105,11 @@ export class PromptComponent extends React.Component<Props, State> {
     }
 
     async appendLastLArgumentOfPreviousCommand(): Promise<void> {
-        this.setText(this.prompt.value + _.last(scan(History.latest))!.value);
+        const latestHistoryRecord = History.latest;
+
+        if (latestHistoryRecord) {
+            this.setText(this.prompt.value + _.last(scan(latestHistoryRecord.command))!.value);
+        }
     }
 
     async execute(promptText: string): Promise<void> {
@@ -117,11 +121,19 @@ export class PromptComponent extends React.Component<Props, State> {
     }
 
     setPreviousHistoryItem(): void {
-        this.setText(History.getPrevious());
+        const previousHistoryRecord = History.getPrevious();
+        if (previousHistoryRecord) {
+            this.setText(previousHistoryRecord.command);
+        }
     }
 
     setNextHistoryItem(): void {
-        this.setText(History.getNext());
+        const nextHistoryRecord = History.getNext();
+        if (nextHistoryRecord) {
+            this.setText(nextHistoryRecord.command);
+        } else {
+            this.setText("");
+        }
     }
 
     focusPreviousSuggestion(): void {

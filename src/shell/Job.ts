@@ -12,7 +12,7 @@ import {Status} from "../Enums";
 import {Environment} from "./Environment";
 import {normalizeKey} from "../utils/Common";
 import {TerminalLikeDevice} from "../Interfaces";
-import {History} from "./History";
+import {History, HistoryRecord} from "./History";
 
 export class Job extends EmitterWithUniqueID implements TerminalLikeDevice {
     public status: Status = Status.InProgress;
@@ -27,7 +27,16 @@ export class Job extends EmitterWithUniqueID implements TerminalLikeDevice {
     }
 
     async execute(): Promise<void> {
-        History.add(this.prompt.value);
+        const historyRecord: HistoryRecord = {
+            command: this.prompt.value,
+            expandedCommand: this.prompt.value,
+            timestamp: Date.now(),
+            directory: this.environment.pwd,
+            sessionID: this.session.id,
+        };
+
+        History.add(historyRecord);
+
         await Promise.all(PluginManager.preexecPlugins.map(plugin => plugin(this)));
 
         try {
@@ -74,7 +83,7 @@ export class Job extends EmitterWithUniqueID implements TerminalLikeDevice {
     }
 
     // Writes to the process' STDIN.
-    write(input: string|KeyboardEvent) {
+    write(input: string | KeyboardEvent) {
         let text: string;
 
         if (typeof input === "string") {

@@ -1,50 +1,52 @@
-import {readFileSync, statSync} from "fs";
-import {flatten, orderBy} from "lodash";
-import {loginShell} from "../utils/Shell";
+import {readFileSync} from "fs";
 import {historyFilePath} from "../utils/Common";
-import * as _ from "lodash";
+const csvParse: any = require("csv-parse/lib/sync");
+const csvStringify: any = require("csv-stringify/lib/sync");
 
-const readHistoryFileData = () => {
+export interface HistoryRecord {
+    command: string;
+    expandedCommand: string;
+    timestamp: number;
+    directory: string;
+    sessionID: number;
+}
+
+const readHistoryFileData = (): HistoryRecord[] => {
     try {
-        return {
-            lastModified: statSync(historyFilePath).mtime,
-            commands: JSON.parse(readFileSync(historyFilePath).toString()),
-        };
+        return csvParse(readFileSync(historyFilePath).toString()).map((array: string[]) => ({
+            command: array[0],
+            expandedCommand: array[1],
+            timestamp: array[2],
+            directory: array[3],
+            sessionID: array[4],
+        }));
     } catch (e) {
-        return {
-            lastModified: new Date(0),
-            commands: [],
-        };
+        return [];
     }
 };
 
 export class History {
     static pointer: number = 0;
     private static maxEntriesCount: number = 5000;
-    private static storage: string[] = [];
-    private static defaultEntry = "";
+    private static storage: HistoryRecord[] = [];
 
-    static get all(): string[] {
+    static get all(): HistoryRecord[] {
         return this.storage;
     }
 
-    static get latest(): string {
+    static get latest(): HistoryRecord | undefined {
         return this.at(-1);
     }
 
-    static at(position: number): string {
-        if (position === 0) {
-            return this.defaultEntry;
-        }
-
+    static at(position: number): HistoryRecord | undefined {
         if (position < 0) {
-            return this.storage[-(position + 1)] || this.defaultEntry;
+            return this.storage[-(position + 1)];
         }
 
-        return this.storage[this.count - 1] || this.defaultEntry;
+        return this.storage[this.count - 1];
     }
 
-    static add(entry: string): void {
+    static add(entry: HistoryRecord): void {
         this.remove(entry);
         this.storage.unshift(entry);
 
@@ -55,7 +57,7 @@ export class History {
         this.pointer = 0;
     }
 
-    static getPrevious(): string {
+    static getPrevious(): HistoryRecord | undefined {
         if (this.pointer < this.count) {
             this.pointer += 1;
         }
@@ -63,7 +65,7 @@ export class History {
         return this.at(-this.pointer);
     }
 
-    static getNext(): string {
+    static getNext(): HistoryRecord | undefined {
         if (this.pointer > 0) {
             this.pointer -= 1;
         }
@@ -76,14 +78,14 @@ export class History {
     }
 
     static serialize(): string {
-        return JSON.stringify(History.storage);
+        return csvStringify(History.storage.map(record => Object.values(record)));
     }
 
     static deserialize(): void {
-        this.storage = _.uniq(flatten(orderBy([loginShell.loadHistory(), readHistoryFileData()], history => history.lastModified, "desc").map(history => history.commands)));
+        this.storage = readHistoryFileData();
     }
 
-    private static remove(entry: string): void {
+    private static remove(entry: HistoryRecord): void {
         const duplicateIndex = this.storage.indexOf(entry);
         if (duplicateIndex !== -1) {
             this.storage.splice(duplicateIndex, 1);
