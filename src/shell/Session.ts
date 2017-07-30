@@ -21,7 +21,6 @@ export class Session extends EmitterWithUniqueID {
     jobs: Array<Job> = [];
     readonly environment = new Environment(processEnvironment);
     readonly aliases = new Aliases(aliasesFromConfig);
-    history = History;
     historicalPresentDirectoriesStack = new OrderedSet<string>();
 
     constructor(private application: ApplicationComponent, private _dimensions: Dimensions = {columns: 80, rows: 25}) {
@@ -109,7 +108,7 @@ export class Session extends EmitterWithUniqueID {
     private async serialize() {
         return Promise.all([
             outputJSON(presentWorkingDirectoryFilePath, this.directory),
-            outputFile(historyFilePath, this.history.serialize()),
+            outputFile(historyFilePath, History.serialize()),
         ]);
     }
 
