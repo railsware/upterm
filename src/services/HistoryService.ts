@@ -1,5 +1,6 @@
 import {readFileSync} from "fs";
 import {historyFilePath} from "../utils/Common";
+import {outputFile} from "fs-extra";
 const csvParse: any = require("csv-parse/lib/sync");
 const csvStringify: any = require("csv-stringify/lib/sync");
 
@@ -35,6 +36,7 @@ export class HistoryService {
     pointer: number = 0;
     private maxRecordsCount: number = 5000;
     private storage: HistoryRecord[] = [];
+    private listeners: Array<(record: HistoryRecord) => void> = [];
 
     static get instance() {
         if (!this._instance) {
@@ -52,14 +54,16 @@ export class HistoryService {
         return this.at(-1);
     }
 
-    add(record: HistoryRecordWithoutID): void {
-        this.storage.unshift({id: this.nextID, ...record});
+    add(recordWithoutID: HistoryRecordWithoutID): void {
+        const record = {id: this.nextID, ...recordWithoutID};
+        this.storage.unshift(record);
 
         if (this.count > this.maxRecordsCount) {
             this.storage.splice(this.maxRecordsCount - 1);
         }
 
         this.pointer = 0;
+        this.listeners.forEach(listener => listener(record));
     }
 
     getPrevious(): HistoryRecord | undefined {
@@ -86,6 +90,10 @@ export class HistoryService {
         this.storage = readHistoryFileData();
     }
 
+    onChange(callback: (record: HistoryRecord) => void) {
+        this.listeners.push(callback);
+    }
+
     private get count(): number {
         return this.storage.length;
     }
@@ -106,3 +114,5 @@ export class HistoryService {
         }
     }
 }
+
+HistoryService.instance.onChange(_record => outputFile(historyFilePath, HistoryService.instance.serialize()));

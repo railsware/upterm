@@ -1,5 +1,5 @@
 import {readFileSync} from "fs";
-import {outputFile, outputJSON} from "fs-extra";
+import {outputJSON} from "fs-extra";
 import {Job} from "./Job";
 import {HistoryService} from "../services/HistoryService";
 import {EmitterWithUniqueID} from "../EmitterWithUniqueID";
@@ -9,7 +9,7 @@ import {ApplicationComponent} from "../views/ApplicationComponent";
 import {Environment, processEnvironment} from "./Environment";
 import {
     homeDirectory, normalizeDirectory,
-    presentWorkingDirectoryFilePath, historyFilePath,
+    presentWorkingDirectoryFilePath,
 } from "../utils/Common";
 import {remote} from "electron";
 import {OrderedSet} from "../utils/OrderedSet";
@@ -48,7 +48,7 @@ export class Session extends EmitterWithUniqueID {
                 remote.app.dock.bounce("informational");
                 remote.app.dock.setBadge(job.status === Status.Success ? "1" : "✕");
                 /* tslint:disable:no-unused-expression */
-                new Notification("Command has been completed", { body: job.prompt.value });
+                new Notification("Command has been completed", {body: job.prompt.value});
             }
         });
 
@@ -106,10 +106,7 @@ export class Session extends EmitterWithUniqueID {
     }
 
     private async serialize() {
-        return Promise.all([
-            outputJSON(presentWorkingDirectoryFilePath, this.directory),
-            outputFile(historyFilePath, HistoryService.instance.serialize()),
-        ]);
+        return outputJSON(presentWorkingDirectoryFilePath, this.directory);
     }
 
     private deserialize(): void {
