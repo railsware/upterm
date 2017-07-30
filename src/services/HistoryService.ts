@@ -86,12 +86,12 @@ export class HistoryService {
         return csvStringify(this.all.map(record => Object.values(record)));
     }
 
-    deserialize(): void {
-        this.storage = readHistoryFileData();
-    }
-
     onChange(callback: (record: HistoryRecord) => void) {
         this.listeners.push(callback);
+    }
+
+    private constructor() {
+        this.storage = readHistoryFileData();
     }
 
     private get count(): number {
