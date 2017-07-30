@@ -1,6 +1,6 @@
 import {leafNodeAt, ASTNode} from "./shell/Parser";
 import * as _ from "lodash";
-import {History} from "./shell/History";
+import {HistoryService} from "./services/HistoryService";
 import {
     styles, replaceAllPromptSerializer, Suggestion,
     SuggestionWithDefaults, addDefaultAttributeValues,
@@ -29,7 +29,7 @@ export async function getSuggestions({
     historicalPresentDirectoriesStack,
     aliases,
 }: GetSuggestionsOptions): Promise<SuggestionWithDefaults[]> {
-    const prefixMatchesInHistory: string[] = History.all.map(historyRecord => historyRecord.command).filter(command => fuzzyMatch(currentText, command));
+    const prefixMatchesInHistory: string[] = HistoryService.all.map(historyRecord => historyRecord.command).filter(command => fuzzyMatch(currentText, command));
     const suggestionsFromHistory = prefixMatchesInHistory.map(match => ({
         value: match,
         promptSerializer: replaceAllPromptSerializer,

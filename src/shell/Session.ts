@@ -1,7 +1,7 @@
 import {readFileSync} from "fs";
 import {outputFile, outputJSON} from "fs-extra";
 import {Job} from "./Job";
-import {History} from "./History";
+import {HistoryService} from "../services/HistoryService";
 import {EmitterWithUniqueID} from "../EmitterWithUniqueID";
 import {PluginManager} from "../PluginManager";
 import {Status} from "../Enums";
@@ -108,13 +108,13 @@ export class Session extends EmitterWithUniqueID {
     private async serialize() {
         return Promise.all([
             outputJSON(presentWorkingDirectoryFilePath, this.directory),
-            outputFile(historyFilePath, History.serialize()),
+            outputFile(historyFilePath, HistoryService.serialize()),
         ]);
     }
 
     private deserialize(): void {
         this.directory = this.readSerialized(presentWorkingDirectoryFilePath, homeDirectory);
-        History.deserialize();
+        HistoryService.deserialize();
     }
 
     private readSerialized<T>(file: string, defaultValue: T): T {

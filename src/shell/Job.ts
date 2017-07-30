@@ -12,7 +12,7 @@ import {Status} from "../Enums";
 import {Environment} from "./Environment";
 import {normalizeKey} from "../utils/Common";
 import {TerminalLikeDevice} from "../Interfaces";
-import {History, HistoryRecord} from "./History";
+import {HistoryService, HistoryRecord} from "../services/HistoryService";
 
 export class Job extends EmitterWithUniqueID implements TerminalLikeDevice {
     public status: Status = Status.InProgress;
@@ -35,7 +35,7 @@ export class Job extends EmitterWithUniqueID implements TerminalLikeDevice {
             sessionID: this.session.id,
         };
 
-        History.add(historyRecord);
+        HistoryService.add(historyRecord);
 
         await Promise.all(PluginManager.preexecPlugins.map(plugin => plugin(this)));
 

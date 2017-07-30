@@ -25,7 +25,7 @@ const readHistoryFileData = (): HistoryRecord[] => {
     }
 };
 
-export class History {
+export class HistoryService {
     static pointer: number = 0;
     private static maxEntriesCount: number = 5000;
     private static storage: HistoryRecord[] = [];
@@ -66,7 +66,7 @@ export class History {
     }
 
     static serialize(): string {
-        return csvStringify(History.storage.map(record => Object.values(record)));
+        return csvStringify(HistoryService.storage.map(record => Object.values(record)));
     }
 
     static deserialize(): void {

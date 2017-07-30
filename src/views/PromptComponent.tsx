@@ -1,7 +1,7 @@
 import * as _ from "lodash";
 import * as React from "react";
 import {AutocompleteComponent} from "./AutocompleteComponent";
-import {History} from "../shell/History";
+import {HistoryService} from "../services/HistoryService";
 import {getCaretPosition, setCaretPosition} from "./ViewUtils";
 import {Prompt} from "../shell/Prompt";
 import {SuggestionWithDefaults} from "../plugins/autocompletion_utils/Common";
@@ -105,7 +105,7 @@ export class PromptComponent extends React.Component<Props, State> {
     }
 
     async appendLastLArgumentOfPreviousCommand(): Promise<void> {
-        const latestHistoryRecord = History.latest;
+        const latestHistoryRecord = HistoryService.latest;
 
         if (latestHistoryRecord) {
             this.setText(this.prompt.value + _.last(scan(latestHistoryRecord.command))!.value);
@@ -121,14 +121,14 @@ export class PromptComponent extends React.Component<Props, State> {
     }
 
     setPreviousHistoryItem(): void {
-        const previousHistoryRecord = History.getPrevious();
+        const previousHistoryRecord = HistoryService.getPrevious();
         if (previousHistoryRecord) {
             this.setText(previousHistoryRecord.command);
         }
     }
 
     setNextHistoryItem(): void {
-        const nextHistoryRecord = History.getNext();
+        const nextHistoryRecord = HistoryService.getNext();
         if (nextHistoryRecord) {
             this.setText(nextHistoryRecord.command);
         } else {
