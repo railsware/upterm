@@ -29,7 +29,7 @@ export class Job extends EmitterWithUniqueID implements TerminalLikeDevice {
     async execute(): Promise<void> {
         HistoryService.instance.add({
             command: this.prompt.value,
-            expandedCommand: this.prompt.value,
+            expandedCommand: this.prompt.expandedTokens.map(t => t.escapedValue).join(" "),
             timestamp: Date.now(),
             directory: this.environment.pwd,
             sessionID: this.session.id,
