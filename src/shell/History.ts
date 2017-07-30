@@ -38,14 +38,6 @@ export class History {
         return this.at(-1);
     }
 
-    static at(position: number): HistoryRecord | undefined {
-        if (position < 0) {
-            return this.storage[-(position + 1)];
-        }
-
-        return this.storage[this.count - 1];
-    }
-
     static add(entry: HistoryRecord): void {
         this.remove(entry);
         this.storage.unshift(entry);
@@ -73,16 +65,24 @@ export class History {
         return this.at(-this.pointer);
     }
 
-    private static get count(): number {
-        return this.storage.length;
-    }
-
     static serialize(): string {
         return csvStringify(History.storage.map(record => Object.values(record)));
     }
 
     static deserialize(): void {
         this.storage = readHistoryFileData();
+    }
+
+    private static get count(): number {
+        return this.storage.length;
+    }
+
+    private static at(position: number): HistoryRecord | undefined {
+        if (position < 0) {
+            return this.storage[-(position + 1)];
+        }
+
+        return this.storage[this.count - 1];
     }
 
     private static remove(entry: HistoryRecord): void {
