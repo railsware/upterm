@@ -20,6 +20,7 @@ interface State {
     previousKeyCode: number;
     caretPositionFromPreviousFocus: number;
     suggestions: SuggestionWithDefaults[];
+    displayedHistoryRecordID: number | undefined;
 }
 
 export class PromptComponent extends React.Component<Props, State> {
@@ -35,6 +36,7 @@ export class PromptComponent extends React.Component<Props, State> {
             previousKeyCode: KeyCode.Escape,
             caretPositionFromPreviousFocus: 0,
             suggestions: [],
+            displayedHistoryRecordID: undefined,
         };
     }
 
@@ -121,18 +123,31 @@ export class PromptComponent extends React.Component<Props, State> {
     }
 
     setPreviousHistoryItem(): void {
-        const previousHistoryRecord = HistoryService.instance.getPrevious();
-        if (previousHistoryRecord) {
-            this.setText(previousHistoryRecord.command);
+        if (this.state.displayedHistoryRecordID) {
+            const previousHistoryRecord = HistoryService.instance.getPreviousTo(this.state.displayedHistoryRecordID);
+            if (previousHistoryRecord) {
+                this.setText(previousHistoryRecord.command);
+                this.setState({displayedHistoryRecordID: previousHistoryRecord.id});
+            }
+        } else {
+            const previousHistoryRecord = HistoryService.instance.latest;
+            if (previousHistoryRecord) {
+                this.setText(previousHistoryRecord.command);
+                this.setState({displayedHistoryRecordID: previousHistoryRecord.id});
+            }
         }
     }
 
     setNextHistoryItem(): void {
-        const nextHistoryRecord = HistoryService.instance.getNext();
-        if (nextHistoryRecord) {
-            this.setText(nextHistoryRecord.command);
-        } else {
-            this.setText("");
+        if (this.state.displayedHistoryRecordID) {
+            const nextHistoryRecord = HistoryService.instance.getNextTo(this.state.displayedHistoryRecordID);
+            if (nextHistoryRecord) {
+                this.setText(nextHistoryRecord.command);
+                this.setState({displayedHistoryRecordID: nextHistoryRecord.id});
+            } else {
+                this.setText("");
+                this.setState({displayedHistoryRecordID: undefined});
+            }
         }
     }
 

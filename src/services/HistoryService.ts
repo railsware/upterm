@@ -1,6 +1,8 @@
 import {readFileSync} from "fs";
 import {historyFilePath} from "../utils/Common";
 import {outputFile} from "fs-extra";
+import * as _ from "lodash";
+
 const csvParse: any = require("csv-parse/lib/sync");
 const csvStringify: any = require("csv-stringify/lib/sync");
 
@@ -33,7 +35,6 @@ const readHistoryFileData = (): HistoryRecord[] => {
 
 export class HistoryService {
     private static _instance: HistoryService;
-    pointer: number = 0;
     private maxRecordsCount: number = 5000;
     private storage: HistoryRecord[] = [];
     private listeners: Array<(record: HistoryRecord) => void> = [];
@@ -51,35 +52,28 @@ export class HistoryService {
     }
 
     get latest(): HistoryRecord | undefined {
-        return this.at(-1);
+        return _.last(this.storage);
     }
 
     add(recordWithoutID: HistoryRecordWithoutID): void {
         const record = {id: this.nextID, ...recordWithoutID};
         this.storage.unshift(record);
 
-        if (this.count > this.maxRecordsCount) {
+        if (this.storage.length > this.maxRecordsCount) {
             this.storage.splice(this.maxRecordsCount - 1);
         }
 
-        this.pointer = 0;
         this.listeners.forEach(listener => listener(record));
     }
 
-    getPrevious(): HistoryRecord | undefined {
-        if (this.pointer < this.count) {
-            this.pointer += 1;
-        }
-
-        return this.at(-this.pointer);
+    getPreviousTo(currentRecordID: number): HistoryRecord | undefined {
+        const currentRecordIndex = this.all.findIndex(record => record.id === currentRecordID);
+        return this.storage[currentRecordIndex + 1];
     }
 
-    getNext(): HistoryRecord | undefined {
-        if (this.pointer > 0) {
-            this.pointer -= 1;
-        }
-
-        return this.at(-this.pointer);
+    getNextTo(currentRecordID: number): HistoryRecord | undefined {
+        const currentRecordIndex = this.all.findIndex(record => record.id === currentRecordID);
+        return this.storage[currentRecordIndex - 1];
     }
 
     serialize(): string {
@@ -92,18 +86,6 @@ export class HistoryService {
 
     private constructor() {
         this.storage = readHistoryFileData();
-    }
-
-    private get count(): number {
-        return this.storage.length;
-    }
-
-    private at(position: number): HistoryRecord | undefined {
-        if (position < 0) {
-            return this.storage[-(position + 1)];
-        }
-
-        return this.storage[this.count - 1];
     }
 
     private get nextID(): number {
