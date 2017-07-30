@@ -12,7 +12,7 @@ import {Status} from "../Enums";
 import {Environment} from "./Environment";
 import {normalizeKey} from "../utils/Common";
 import {TerminalLikeDevice} from "../Interfaces";
-import {HistoryService, HistoryRecord} from "../services/HistoryService";
+import {HistoryService} from "../services/HistoryService";
 
 export class Job extends EmitterWithUniqueID implements TerminalLikeDevice {
     public status: Status = Status.InProgress;
@@ -27,15 +27,13 @@ export class Job extends EmitterWithUniqueID implements TerminalLikeDevice {
     }
 
     async execute(): Promise<void> {
-        const historyRecord: HistoryRecord = {
+        HistoryService.instance.add({
             command: this.prompt.value,
             expandedCommand: this.prompt.value,
             timestamp: Date.now(),
             directory: this.environment.pwd,
             sessionID: this.session.id,
-        };
-
-        HistoryService.instance.add(historyRecord);
+        });
 
         await Promise.all(PluginManager.preexecPlugins.map(plugin => plugin(this)));
 

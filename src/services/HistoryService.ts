@@ -3,12 +3,16 @@ import {historyFilePath} from "../utils/Common";
 const csvParse: any = require("csv-parse/lib/sync");
 const csvStringify: any = require("csv-stringify/lib/sync");
 
-export interface HistoryRecord {
+interface HistoryRecordWithoutID {
     command: string;
     expandedCommand: string;
     timestamp: number;
     directory: string;
     sessionID: number;
+}
+
+interface HistoryRecord extends HistoryRecordWithoutID {
+    id: number;
 }
 
 const readHistoryFileData = (): HistoryRecord[] => {
@@ -28,7 +32,7 @@ const readHistoryFileData = (): HistoryRecord[] => {
 export class HistoryService {
     private static _instance: HistoryService;
     pointer: number = 0;
-    private maxEntriesCount: number = 5000;
+    private maxRecordsCount: number = 5000;
     private storage: HistoryRecord[] = [];
 
     static get instance() {
@@ -47,12 +51,11 @@ export class HistoryService {
         return this.at(-1);
     }
 
-    add(entry: HistoryRecord): void {
-        this.remove(entry);
-        this.storage.unshift(entry);
+    add(record: HistoryRecordWithoutID): void {
+        this.storage.unshift({id: this.nextID, ...record});
 
-        if (this.count > this.maxEntriesCount) {
-            this.storage.splice(this.maxEntriesCount - 1);
+        if (this.count > this.maxRecordsCount) {
+            this.storage.splice(this.maxRecordsCount - 1);
         }
 
         this.pointer = 0;
@@ -94,10 +97,11 @@ export class HistoryService {
         return this.storage[this.count - 1];
     }
 
-    private remove(entry: HistoryRecord): void {
-        const duplicateIndex = this.storage.indexOf(entry);
-        if (duplicateIndex !== -1) {
-            this.storage.splice(duplicateIndex, 1);
+    private get nextID(): number {
+        if (this.latest) {
+            return this.latest.id + 1;
+        } else {
+            return 1;
         }
     }
 }
