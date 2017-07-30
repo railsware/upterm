@@ -1,6 +1,5 @@
-import {readFileSync} from "fs";
+import {appendFileSync, readFileSync} from "fs";
 import {historyFilePath} from "../utils/Common";
-import {outputFile} from "fs-extra";
 import * as _ from "lodash";
 
 const csvParse: any = require("csv-parse/lib/sync");
@@ -57,10 +56,10 @@ export class HistoryService {
 
     add(recordWithoutID: HistoryRecordWithoutID): void {
         const record = {id: this.nextID, ...recordWithoutID};
-        this.storage.unshift(record);
+        this.storage.push(record);
 
         if (this.storage.length > this.maxRecordsCount) {
-            this.storage.splice(this.maxRecordsCount - 1);
+            this.storage.shift();
         }
 
         this.listeners.forEach(listener => listener(record));
@@ -68,16 +67,12 @@ export class HistoryService {
 
     getPreviousTo(currentRecordID: number): HistoryRecord | undefined {
         const currentRecordIndex = this.all.findIndex(record => record.id === currentRecordID);
-        return this.storage[currentRecordIndex + 1];
+        return this.storage[currentRecordIndex - 1];
     }
 
     getNextTo(currentRecordID: number): HistoryRecord | undefined {
         const currentRecordIndex = this.all.findIndex(record => record.id === currentRecordID);
-        return this.storage[currentRecordIndex - 1];
-    }
-
-    serialize(): string {
-        return csvStringify(this.all.map(record => Object.values(record)));
+        return this.storage[currentRecordIndex + 1];
     }
 
     onChange(callback: (record: HistoryRecord) => void) {
@@ -97,4 +92,4 @@ export class HistoryService {
     }
 }
 
-HistoryService.instance.onChange(_record => outputFile(historyFilePath, HistoryService.instance.serialize()));
+HistoryService.instance.onChange(record => appendFileSync(historyFilePath, csvStringify([Object.values(record)])));
