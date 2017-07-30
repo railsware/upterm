@@ -18,11 +18,12 @@ interface HistoryRecord extends HistoryRecordWithoutID {
 const readHistoryFileData = (): HistoryRecord[] => {
     try {
         return csvParse(readFileSync(historyFilePath).toString()).map((array: string[]) => ({
-            command: array[0],
-            expandedCommand: array[1],
-            timestamp: array[2],
-            directory: array[3],
-            sessionID: array[4],
+            id: Number.parseInt(array[0]),
+            command: array[1],
+            expandedCommand: array[2],
+            timestamp: Number.parseInt(array[3]),
+            directory: array[4],
+            sessionID: Number.parseInt(array[5]),
         }));
     } catch (e) {
         return [];
