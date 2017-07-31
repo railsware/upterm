@@ -279,7 +279,7 @@ export function escapeFilePath(unescaped: string): string {
 
 const baseConfigDirectory = Path.join(homeDirectory, ".upterm");
 export const presentWorkingDirectoryFilePath = Path.join(baseConfigDirectory, "presentWorkingDirectory");
-export const historyFilePath = Path.join(baseConfigDirectory, "history");
+export const historyFilePath = Path.join(baseConfigDirectory, "history.csv");
 export const windowBoundsFilePath = Path.join(baseConfigDirectory, "windowBounds");
 
 export function fuzzyMatch(input: string, candidate: string): boolean {

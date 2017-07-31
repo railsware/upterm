@@ -1,7 +1,6 @@
 import {readFileSync} from "fs";
-import {outputFile, outputJSON} from "fs-extra";
+import {outputJSON} from "fs-extra";
 import {Job} from "./Job";
-import {History} from "./History";
 import {EmitterWithUniqueID} from "../EmitterWithUniqueID";
 import {PluginManager} from "../PluginManager";
 import {Status} from "../Enums";
@@ -9,7 +8,7 @@ import {ApplicationComponent} from "../views/ApplicationComponent";
 import {Environment, processEnvironment} from "./Environment";
 import {
     homeDirectory, normalizeDirectory,
-    presentWorkingDirectoryFilePath, historyFilePath,
+    presentWorkingDirectoryFilePath,
 } from "../utils/Common";
 import {remote} from "electron";
 import {OrderedSet} from "../utils/OrderedSet";
@@ -21,7 +20,6 @@ export class Session extends EmitterWithUniqueID {
     jobs: Array<Job> = [];
     readonly environment = new Environment(processEnvironment);
     readonly aliases = new Aliases(aliasesFromConfig);
-    history = History;
     historicalPresentDirectoriesStack = new OrderedSet<string>();
 
     constructor(private application: ApplicationComponent, private _dimensions: Dimensions = {columns: 80, rows: 25}) {
@@ -49,7 +47,7 @@ export class Session extends EmitterWithUniqueID {
                 remote.app.dock.bounce("informational");
                 remote.app.dock.setBadge(job.status === Status.Success ? "1" : "✕");
                 /* tslint:disable:no-unused-expression */
-                new Notification("Command has been completed", { body: job.prompt.value });
+                new Notification("Command has been completed", {body: job.prompt.value});
             }
         });
 
@@ -107,15 +105,11 @@ export class Session extends EmitterWithUniqueID {
     }
 
     private async serialize() {
-        return Promise.all([
-            outputJSON(presentWorkingDirectoryFilePath, this.directory),
-            outputFile(historyFilePath, this.history.serialize()),
-        ]);
+        return outputJSON(presentWorkingDirectoryFilePath, this.directory);
     }
 
     private deserialize(): void {
         this.directory = this.readSerialized(presentWorkingDirectoryFilePath, homeDirectory);
-        History.deserialize();
     }
 
     private readSerialized<T>(file: string, defaultValue: T): T {
