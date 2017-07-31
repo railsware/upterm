@@ -2,8 +2,8 @@ import {appendFileSync, readFileSync} from "fs";
 import {historyFilePath} from "../utils/Common";
 import * as _ from "lodash";
 
-const csvParse: any = require("csv-parse/lib/sync");
-const csvStringify: any = require("csv-stringify/lib/sync");
+import csvParse = require("csv-parse/lib/sync");
+import * as csvStringify from "csv-stringify";
 
 interface HistoryRecordWithoutID {
     command: string;
@@ -92,4 +92,7 @@ export class HistoryService {
     }
 }
 
-HistoryService.instance.onChange(record => appendFileSync(historyFilePath, csvStringify([Object.values(record)])));
+HistoryService.instance.onChange(record => csvStringify(
+    [Object.values(record)],
+    (_error, output) => appendFileSync(historyFilePath, output),
+));
