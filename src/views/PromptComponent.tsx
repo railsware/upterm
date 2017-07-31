@@ -1,7 +1,7 @@
 import * as _ from "lodash";
 import * as React from "react";
 import {AutocompleteComponent} from "./AutocompleteComponent";
-import {History} from "../shell/History";
+import {HistoryService} from "../services/HistoryService";
 import {getCaretPosition, setCaretPosition} from "./ViewUtils";
 import {Prompt} from "../shell/Prompt";
 import {SuggestionWithDefaults} from "../plugins/autocompletion_utils/Common";
@@ -20,6 +20,7 @@ interface State {
     previousKeyCode: number;
     caretPositionFromPreviousFocus: number;
     suggestions: SuggestionWithDefaults[];
+    displayedHistoryRecordID: number | undefined;
 }
 
 export class PromptComponent extends React.Component<Props, State> {
@@ -35,6 +36,7 @@ export class PromptComponent extends React.Component<Props, State> {
             previousKeyCode: KeyCode.Escape,
             caretPositionFromPreviousFocus: 0,
             suggestions: [],
+            displayedHistoryRecordID: undefined,
         };
     }
 
@@ -105,7 +107,11 @@ export class PromptComponent extends React.Component<Props, State> {
     }
 
     async appendLastLArgumentOfPreviousCommand(): Promise<void> {
-        this.setText(this.prompt.value + _.last(scan(History.latest))!.value);
+        const latestHistoryRecord = HistoryService.instance.latest;
+
+        if (latestHistoryRecord) {
+            this.setText(this.prompt.value + _.last(scan(latestHistoryRecord.command))!.value);
+        }
     }
 
     async execute(promptText: string): Promise<void> {
@@ -117,11 +123,32 @@ export class PromptComponent extends React.Component<Props, State> {
     }
 
     setPreviousHistoryItem(): void {
-        this.setText(History.getPrevious());
+        if (this.state.displayedHistoryRecordID) {
+            const previousHistoryRecord = HistoryService.instance.getPreviousTo(this.state.displayedHistoryRecordID);
+            if (previousHistoryRecord) {
+                this.setText(previousHistoryRecord.command);
+                this.setState({displayedHistoryRecordID: previousHistoryRecord.id});
+            }
+        } else {
+            const previousHistoryRecord = HistoryService.instance.latest;
+            if (previousHistoryRecord) {
+                this.setText(previousHistoryRecord.command);
+                this.setState({displayedHistoryRecordID: previousHistoryRecord.id});
+            }
+        }
     }
 
     setNextHistoryItem(): void {
-        this.setText(History.getNext());
+        if (this.state.displayedHistoryRecordID) {
+            const nextHistoryRecord = HistoryService.instance.getNextTo(this.state.displayedHistoryRecordID);
+            if (nextHistoryRecord) {
+                this.setText(nextHistoryRecord.command);
+                this.setState({displayedHistoryRecordID: nextHistoryRecord.id});
+            } else {
+                this.setText("");
+                this.setState({displayedHistoryRecordID: undefined});
+            }
+        }
     }
 
     focusPreviousSuggestion(): void {
@@ -142,10 +169,6 @@ export class PromptComponent extends React.Component<Props, State> {
     async applySuggestion(): Promise<void> {
         this.setText(this.valueWithCurrentSuggestion);
         await this.getSuggestions();
-    }
-
-    appendText(text: string): void {
-        this.setText(this.prompt.value.concat(text));
     }
 
     scrollIntoView(): void {
