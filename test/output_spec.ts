@@ -14,6 +14,7 @@ type CSIFinalCharacter = "A" | "B" | "C" | "D" | "E" | "F" | "R" | "m" | "n";
 
 const esc = `\x1b`;
 const ri = `${esc}M`;
+const ich = `${esc}[1@`;
 const dl = (rows: number) => `${esc}[${rows}M`;
 const dch = (n: number) => `${esc}[${n}P`;
 const cup = (row: number, column: number) => `${esc}[${row};${column}H`;
@@ -115,6 +116,12 @@ describe("ANSI parser", () => {
         terminal.output.write("something");
 
         expect(terminal.output.toString().trim()).to.eql("something");
+    });
+
+    it("ICH", () => {
+        terminal.output.write(`123${cup(1, 1)}${ich}0`);
+
+        expect(terminal.output.toString().trim()).to.eql("0123");
     });
 
     describe("true color", () => {

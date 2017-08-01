@@ -876,7 +876,7 @@ class Buffer {
     insertSpaceRight(n: number) {
         this.page = this.page.update(
             this.cursorRowIndex,
-            row => row.splice(this.cursorColumnIndex, 0).concat(this.spaces(n)).toList(),
+            row => row.splice(this.cursorColumnIndex, 0, this.spaces(n)).toList(),
         );
     }
 
