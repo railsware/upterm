@@ -727,7 +727,9 @@ class Buffer {
     private savedState: SavedState | undefined;
     private tabStopIndices = _.range(8, 300, 8);
 
-    constructor(private output: Output, private maxScrollbackSize: number) {}
+    constructor(private output: Output, private maxScrollbackSize: number) {
+        this.ensureCursorRowExists();
+    }
 
     map<T>(callback: (row: List<Char>, index: number) => T): T[] {
         const result: T[] = [];

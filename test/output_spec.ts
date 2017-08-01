@@ -1,3 +1,5 @@
+/// <reference path="../typings/Interfaces.d.ts" />
+
 import "mocha";
 import {expect} from "chai";
 import {Output} from "../src/Output";
@@ -5,9 +7,13 @@ import {TerminalLikeDevice} from "../src/Interfaces";
 import {readFileSync} from "fs";
 
 class DummyTerminal implements TerminalLikeDevice {
-    output: Output = new Output(this, {columns: 80, rows: 80});
+    output: Output;
     written = "";
     write = (input: string) => this.written += input;
+
+    constructor(dimensions: Dimensions = {columns: 80, rows: 80}) {
+        this.output = new Output(this, dimensions);
+    }
 }
 
 type CSIFinalCharacter = "A" | "B" | "C" | "D" | "E" | "F" | "R" | "m" | "n";
@@ -28,15 +34,17 @@ const sgr = (params: number[]) => {
     return csi(params, "m");
 };
 
-describe("ANSI parser", () => {
-    let terminal: DummyTerminal;
+describe("Output", () => {
+    it("contains the first row even if there was no input (to show cursor on)", () => {
+        const terminal = new DummyTerminal({columns: 5, rows: 5});
 
-    beforeEach(() => {
-        terminal = new DummyTerminal();
+        expect(terminal.output.toLines()).to.eql([
+            "     ",
+        ]);
     });
 
     it("wraps long strings", () => {
-        terminal.output.dimensions = {columns: 5, rows: 5};
+        const terminal = new DummyTerminal({columns: 5, rows: 5});
         terminal.output.write("0123456789");
 
         expect(terminal.output.toLines()).to.eql([
@@ -47,7 +55,7 @@ describe("ANSI parser", () => {
 
     describe("movements", () => {
         it("can move down", () => {
-            terminal.output.dimensions = {columns: 11, rows: 2};
+            const terminal = new DummyTerminal({columns: 11, rows: 2});
             terminal.output.write(`first${csi([1], "B")}second`);
 
             expect(terminal.output.toLines()).to.eql([
@@ -57,7 +65,7 @@ describe("ANSI parser", () => {
         });
 
         it("stays at the same line after writing last column character", () => {
-            terminal.output.dimensions = {columns: 10, rows: 5};
+            const terminal = new DummyTerminal({columns: 10, rows: 5});
             terminal.output.write(`${esc}[1;10H*${esc}[5D*`);
 
             expect(terminal.output.toString()).to.eql("    *    *");
@@ -65,7 +73,7 @@ describe("ANSI parser", () => {
         });
 
         it("doesn't move outside of the current page", () => {
-            terminal.output.dimensions = {columns: 10, rows: 5};
+            const terminal = new DummyTerminal({columns: 10, rows: 5});
             terminal.output.write(`1\r\n2\r\n3\r\n4\r\n5\r\n6\r\n7${esc}[1;1H42`);
 
             expect(terminal.output.toLines()).to.eql([
@@ -81,7 +89,7 @@ describe("ANSI parser", () => {
 
         describe("Reverse Index", () => {
             it("scrolls down when cursor is at the beginning of page", () => {
-                terminal.output.dimensions = {columns: 10, rows: 5};
+                const terminal = new DummyTerminal({columns: 10, rows: 5});
                 terminal.output.write(`1\r\n2\r\n3\r\n4\r\n5\r\n6\r\n7${cup(1, 1)}${ri}`);
 
                 expect(terminal.output.toLines()).to.eql([
@@ -96,7 +104,7 @@ describe("ANSI parser", () => {
             });
 
             it("scrolls down scrolling region", () => {
-                terminal.output.dimensions = {columns: 10, rows: 5};
+                const terminal = new DummyTerminal({columns: 10, rows: 5});
                 terminal.output.write(`1\r\n2\r\n3\r\n4\r\n5\r\n6\r\n7${decstbm(1, 3)}${cup(1, 1)}${ri}`);
 
                 expect(terminal.output.toLines()).to.eql([
@@ -113,12 +121,14 @@ describe("ANSI parser", () => {
     });
 
     it("can parse an ASCII string", () => {
+        const terminal = new DummyTerminal();
         terminal.output.write("something");
 
         expect(terminal.output.toString().trim()).to.eql("something");
     });
 
     it("ICH", () => {
+        const terminal = new DummyTerminal();
         terminal.output.write(`123${cup(1, 1)}${ich}0`);
 
         expect(terminal.output.toString().trim()).to.eql("0123");
@@ -126,6 +136,7 @@ describe("ANSI parser", () => {
 
     describe("true color", () => {
         it("sets the correct foreground color", () => {
+            const terminal = new DummyTerminal();
             terminal.output.write(`${sgr([38, 2, 255, 100, 0])}A${sgr([0])}`);
 
             const firstChar = terminal.output.activeBuffer.at({rowIndex: 0, columnIndex: 0});
@@ -137,6 +148,7 @@ describe("ANSI parser", () => {
         describe("Device Status Report (DSR)", () => {
             describe("Report Cursor Position (CPR)", () => {
                 it("report cursor position", () => {
+                    const terminal = new DummyTerminal();
                     terminal.output.write(`some text${csi([6], "n")}`);
 
                     expect(terminal.written).to.eql(`${csi([1, 10], "R")}`);
@@ -147,7 +159,7 @@ describe("ANSI parser", () => {
         describe("DL", () => {
             // A temporary test. Can be removed when we have a test for the real behavior.
             it("doesn't fail", () => {
-                terminal.output.dimensions = {columns: 10, rows: 5};
+                const terminal = new DummyTerminal({columns: 10, rows: 5});
                 const input = `1\r\n2\r\n3${cup(3, 1)}${dl(1)}`;
                 terminal.output.write(input);
 
@@ -157,7 +169,7 @@ describe("ANSI parser", () => {
 
         describe("DCH", () => {
             it("Removes chars from cursor position", () => {
-                terminal.output.dimensions = {columns: 10, rows: 5};
+                const terminal = new DummyTerminal({columns: 10, rows: 5});
                 const input = `1234567890${cup(1, 2)}${dch(2)}`;
                 terminal.output.write(input);
 
@@ -169,7 +181,7 @@ describe("ANSI parser", () => {
 
         describe("DECSEL", () => {
             it("Erases line to right", () => {
-                terminal.output.dimensions = {columns: 10, rows: 5};
+                const terminal = new DummyTerminal({columns: 10, rows: 5});
                 const input = `1234567890${cup(1, 5)}${decsel(0)}`;
                 terminal.output.write(input);
 
@@ -185,7 +197,7 @@ describe("ANSI parser", () => {
             const input = readFileSync(`${__dirname}/test_files/vttest/${fileName}`).toString();
 
             return it(fileName, () => {
-
+                const terminal = new DummyTerminal();
                 terminal.output.write(input);
                 const actualOutput = terminal.output.toLines();
 
