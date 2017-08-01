@@ -10,7 +10,7 @@ import {PluginManager} from "../PluginManager";
 import {EmitterWithUniqueID} from "../EmitterWithUniqueID";
 import {Status} from "../Enums";
 import {Environment} from "./Environment";
-import {normalizeKey} from "../utils/Common";
+import {normalizeProcessInput} from "../utils/Common";
 import {TerminalLikeDevice} from "../Interfaces";
 import {HistoryService} from "../services/HistoryService";
 
@@ -82,39 +82,7 @@ export class Job extends EmitterWithUniqueID implements TerminalLikeDevice {
 
     // Writes to the process' STDIN.
     write(input: string | KeyboardEvent) {
-        let text: string;
-
-        if (typeof input === "string") {
-            text = input;
-        } else {
-            if (input.ctrlKey) {
-                /**
-                 * @link https://unix.stackexchange.com/a/158298/201739
-                 */
-                text = String.fromCharCode(input.keyCode - 64);
-            } else if (input.altKey) {
-                /**
-                 * The alt key can mean two things:
-                 *   - send an escape character before special keys such as cursor-keys, or
-                 *   - act as an extended shift, allowing you to enter codes for Latin-1 values from 160 to 255.
-                 *
-                 * We currently don't support the second one since it's less frequently used.
-                 * For future reference, the correct extended code would be keyCode + 160.
-                 * @link http://invisible-island.net/ncurses/ncurses.faq.html#bash_meta_mode
-                 */
-                let char = String.fromCharCode(input.keyCode);
-                if (input.shiftKey) {
-                    char = char.toUpperCase();
-                } else {
-                    char = char.toLowerCase();
-                }
-                text = `\x1b${char}`;
-            } else {
-                text = normalizeKey(input.key, this.output.isCursorKeysModeSet);
-            }
-        }
-
-        (this.pty as PTY).write(text);
+        this.pty!.write(normalizeProcessInput(input, this.output.isCursorKeysModeSet));
     }
 
     get session(): Session {

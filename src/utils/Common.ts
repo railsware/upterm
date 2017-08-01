@@ -204,10 +204,46 @@ export function ss3(char: string) {
     return `\x1bO${char}`;
 }
 
+export function normalizeProcessInput(input: string | KeyboardEvent, isCursorKeysModeSet: boolean): string {
+    let text: string;
+
+    if (typeof input === "string") {
+        text = input;
+    } else {
+        if (input.ctrlKey) {
+            /**
+             * @link https://unix.stackexchange.com/a/158298/201739
+             */
+            text = String.fromCharCode(input.key.toUpperCase().charCodeAt(0) - 64);
+        } else if (input.altKey) {
+            /**
+             * The alt key can mean two things:
+             *   - send an escape character before special keys such as cursor-keys, or
+             *   - act as an extended shift, allowing you to enter codes for Latin-1 values from 160 to 255.
+             *
+             * We currently don't support the second one since it's less frequently used.
+             * For future reference, the correct extended code would be keyCode + 160.
+             * @link http://invisible-island.net/ncurses/ncurses.faq.html#bash_meta_mode
+             */
+            let char = String.fromCharCode(input.keyCode);
+            if (input.shiftKey) {
+                char = char.toUpperCase();
+            } else {
+                char = char.toLowerCase();
+            }
+            text = `\x1b${char}`;
+        } else {
+            text = normalizeKey(input.key, isCursorKeysModeSet);
+        }
+    }
+
+    return text;
+}
+
 /**
  * @link https://www.w3.org/TR/uievents/#widl-KeyboardEvent-key
  */
-export function normalizeKey(key: string, isCursorKeysModeSet: boolean): string {
+function normalizeKey(key: string, isCursorKeysModeSet: boolean): string {
     switch (key) {
         case "Backspace":
             return String.fromCharCode(127);
