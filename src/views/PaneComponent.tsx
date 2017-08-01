@@ -70,7 +70,6 @@ export class PaneComponent extends React.Component<Props, {}> {
             <div className="pane"
                  data-status={lastJob && lastJob.status}
                  ref="pane"
-                 style={css.pane(this.props.isFocused)}
                  onClick={this.handleClick.bind(this)}>
 
                 <div className="jobs" style={css.jobs(this.props.isFocused)}>
@@ -88,7 +87,10 @@ export class PaneComponent extends React.Component<Props, {}> {
     }
 
     resizeSession(): void {
-        this.props.session.dimensions = this.dimensions;
+        this.props.session.dimensions = {
+            columns: Math.floor(this.size.width / FontService.instance.font.letterWidth),
+            rows: Math.floor(this.size.height / FontService.instance.font.letterHeight),
+        };
     }
 
     private get paneRef() {
@@ -103,13 +105,6 @@ export class PaneComponent extends React.Component<Props, {}> {
         if (!this.props.isFocused) {
             this.props.focus();
         }
-    }
-
-    private get dimensions(): Dimensions {
-        return {
-            columns: Math.floor(this.size.width / FontService.instance.font.letterWidth),
-            rows: Math.floor(this.size.height / FontService.instance.font.letterHeight),
-        };
     }
 
     private get size(): Size {

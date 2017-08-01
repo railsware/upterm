@@ -14,7 +14,7 @@ export class Pane {
         this._paneComponent = component;
     }
 
-    get paneComponent(): PaneComponent {
+    get paneComponent(): PaneComponent | undefined {
         return this._paneComponent;
     }
 }
@@ -26,10 +26,13 @@ export class PaneList {
         this.children = children;
     }
 
-    add(session: Session) {
+    add(session: Session): boolean {
         if (this.children.length < 2) {
             this.children.push(new Pane(session));
+            return true;
         }
+
+        return false;
     }
 
     remove(pane: Pane) {

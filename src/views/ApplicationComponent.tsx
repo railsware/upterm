@@ -125,7 +125,8 @@ export class ApplicationComponent extends React.Component<{}, ApplicationState> 
         event: UserEvent,
     ) {
         const currentJob = this.focusedTab.focusedPane.session.currentJob;
-        const promptComponent = this.focusedTab.focusedPane.paneComponent.promptComponent;
+        const paneComponent = this.focusedTab.focusedPane.paneComponent;
+        const promptComponent = paneComponent && paneComponent.promptComponent;
 
         // Pasted data
         if (event instanceof ClipboardEvent) {

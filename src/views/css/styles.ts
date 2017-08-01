@@ -1,6 +1,6 @@
 import {Weight, Brightness, Color} from "../../Enums";
 import {colors, colorValue} from "./colors";
-import {darken, failurize, alpha, lighten} from "./functions";
+import {darken, failurize, lighten} from "./functions";
 import {Attributes} from "../../Interfaces";
 import {CSSObject} from "./definitions";
 import {PaneList} from "../../utils/PaneTree";
@@ -65,17 +65,6 @@ export const sessions = (list: PaneList) => ({
     gridTemplateColumns: `repeat(${list.children.length}, calc(100% / ${list.children.length}))`,
     gridTemplateRows: "100%",
 });
-
-export const pane = (isFocused: boolean) => {
-    const styles: CSSObject = {};
-
-    if (!isFocused) {
-        styles.boxShadow = `0 0 0 1px ${alpha(colors.white, 0.3)}`;
-        styles.margin = "0 1px 0 0";
-    }
-
-    return styles;
-};
 
 export const paneShutter = (isFocused: boolean) => ({
     backgroundColor: colors.white,

@@ -48,7 +48,9 @@ export class Tab {
     otherPane(): void {
         const session = new Session(this.application);
 
-        this.panes.add(session);
+        if (this.panes.add(session)) {
+            setTimeout(() => this.resizeSessions(), 100);
+        }
         this.focusPane(this.panes.next(this.focusedPane));
     }
 
@@ -62,6 +64,7 @@ export class Tab {
         const focused = this.focusedPane;
         this._focusedPane = this.panes.next(focused);
         this.panes.remove(focused);
+        setTimeout(() => this.resizeSessions(), 100);
     }
 
     closeAllPanes(): void {
@@ -88,6 +91,6 @@ export class Tab {
     }
 
     resizeSessions(): void {
-        this.panes.children.forEach(pane => pane.paneComponent.resizeSession());
+        this.panes.children.forEach(pane => pane.paneComponent && pane.paneComponent.resizeSession());
     }
 }
