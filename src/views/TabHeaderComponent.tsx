@@ -87,7 +87,7 @@ export class Tab {
         }
     }
 
-    updateAllPanesDimensions(): void {
-        this.panes.children.forEach(pane => pane.paneComponent.updateSessionDimensions());
+    resizeSessions(): void {
+        this.panes.children.forEach(pane => pane.paneComponent.resizeSession());
     }
 }

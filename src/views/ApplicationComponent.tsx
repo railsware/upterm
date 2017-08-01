@@ -29,11 +29,11 @@ export class ApplicationComponent extends React.Component<{}, ApplicationState> 
                 .on("move", () => saveWindowBounds(electronWindow))
                 .on("resize", () => {
                     saveWindowBounds(electronWindow);
-                    this.recalculateDimensions();
+                    this.resizeSessions();
                 })
                 .webContents
-                .on("devtools-opened", () => this.recalculateDimensions())
-                .on("devtools-closed", () => this.recalculateDimensions());
+                .on("devtools-opened", () => this.resizeSessions())
+                .on("devtools-closed", () => this.resizeSessions());
 
             ipcRenderer.on("change-working-directory", (_event: Event, directory: string) =>
                 this.focusedTab.focusedPane.session.directory = directory,
@@ -41,7 +41,7 @@ export class ApplicationComponent extends React.Component<{}, ApplicationState> 
 
             FontService.instance.onChange(() => {
                 this.forceUpdate();
-                this.recalculateDimensions();
+                this.resizeSessions();
             });
 
             window.onbeforeunload = () => {
@@ -343,9 +343,9 @@ export class ApplicationComponent extends React.Component<{}, ApplicationState> 
         return this.state.tabs[this.state.focusedTabIndex];
     }
 
-    private recalculateDimensions() {
+    private resizeSessions() {
         for (const tab of this.state.tabs) {
-            tab.updateAllPanesDimensions();
+            tab.resizeSessions();
         }
     }
 

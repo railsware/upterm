@@ -28,7 +28,7 @@ export class PaneComponent extends React.Component<Props, {}> {
     }
 
     componentDidMount() {
-        this.updateSessionDimensions();
+        this.resizeSession();
 
         this.props.session
             .on("jobs-changed", () => {
@@ -87,7 +87,7 @@ export class PaneComponent extends React.Component<Props, {}> {
         );
     }
 
-    updateSessionDimensions(): void {
+    resizeSession(): void {
         this.props.session.dimensions = this.dimensions;
     }
 
