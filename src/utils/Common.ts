@@ -211,6 +211,11 @@ export function normalizeKey(key: string, isCursorKeysModeSet: boolean): string 
     switch (key) {
         case "Backspace":
             return String.fromCharCode(127);
+        case "Delete":
+            /**
+             * @link http://www.macfreek.nl/memory/Backspace_and_Delete_key_reversed
+             */
+            return csi("3~");
         case "Tab":
             return String.fromCharCode(KeyCode.Tab);
         case "Enter":
@@ -274,7 +279,7 @@ export function mapObject<T, R>(object: Dictionary<T>, mapper: (key: string, val
 }
 
 export function escapeFilePath(unescaped: string): string {
-  return unescaped.replace(/([\s'"\[\]<>#$%^&*()])/g, "\\$1");
+    return unescaped.replace(/([\s'"\[\]<>#$%^&*()])/g, "\\$1");
 }
 
 const baseConfigDirectory = Path.join(homeDirectory, ".upterm");
