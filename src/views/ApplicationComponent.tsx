@@ -214,22 +214,15 @@ export class ApplicationComponent extends React.Component<{}, ApplicationState> 
     }
 
     closeFocusedSession() {
-        this.closeSession(
-            this.state.focusedTabIndex,
-            this.state.tabs[this.state.focusedTabIndex].focusedSessionIndex,
-        );
-    }
-
-    closeSession(tabIndex: number, sessionIndex: number) {
         const state = this.cloneState();
-        const tabState = state.tabs[tabIndex];
+        const tabState = state.tabs[state.focusedTabIndex];
 
         if (tabState.sessions.length === 1) {
-            this.closeTab(tabIndex);
+            this.closeFocusedTab();
         } else {
-            tabState.sessions[sessionIndex].prepareForClosing();
+            tabState.sessions[tabState.focusedSessionIndex].prepareForClosing();
 
-            tabState.sessions.splice(sessionIndex, 1);
+            tabState.sessions.splice(tabState.focusedSessionIndex, 1);
             tabState.focusedSessionIndex = 0;
 
             this.setState(state, () => this.resizeFocusedTabSessions());
