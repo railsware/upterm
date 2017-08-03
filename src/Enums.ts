@@ -118,11 +118,11 @@ export enum KeyboardAction {
     tabPrevious,
     tabNext,
     tabClose,
-    // pane commands
-    otherPane,
-    panePrevious,
-    paneNext,
-    paneClose,
+    // session commands
+    otherSession,
+    sessionPrevious,
+    sessionNext,
+    sessionClose,
     // edit/clipboard commands
     clipboardCopy,
     clipboardCut,
@@ -144,5 +144,4 @@ export enum KeyboardAction {
     uptermHideOthers,
     // developer
     developerToggleTools,
-    developerToggleDebugMode,
 }

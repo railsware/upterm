@@ -1,6 +1,5 @@
-import {TabHeaderComponent, Props, Tab} from "./TabHeaderComponent";
+import {TabHeaderComponent, Props} from "./TabHeaderComponent";
 import * as React from "react";
-import * as _ from "lodash";
 import {ipcRenderer} from "electron";
 import {remote} from "electron";
 import * as css from "./css/styles";
@@ -12,13 +11,19 @@ import {UserEvent} from "../Interfaces";
 import {isModifierKey} from "./ViewUtils";
 import {TabComponent} from "./TabComponent";
 import {FontService} from "../services/FontService";
+import {Session} from "../shell/Session";
 
 type ApplicationState = {
-    tabs: Tab[];
+    tabs: Array<{
+        sessions: Session[];
+        focusedSessionIndex: number;
+    }>;
     focusedTabIndex: number;
 };
 
 export class ApplicationComponent extends React.Component<{}, ApplicationState> {
+    tabComponents: TabComponent[];
+
     constructor(props: {}) {
         super(props);
         // Necessary because "remote" does not exist in electron-mocha tests
@@ -29,19 +34,19 @@ export class ApplicationComponent extends React.Component<{}, ApplicationState> 
                 .on("move", () => saveWindowBounds(electronWindow))
                 .on("resize", () => {
                     saveWindowBounds(electronWindow);
-                    this.resizeSessions();
+                    this.resizeAllSessions();
                 })
                 .webContents
-                .on("devtools-opened", () => this.resizeSessions())
-                .on("devtools-closed", () => this.resizeSessions());
+                .on("devtools-opened", () => this.resizeAllSessions())
+                .on("devtools-closed", () => this.resizeAllSessions());
 
             ipcRenderer.on("change-working-directory", (_event: Event, directory: string) =>
-                this.focusedTab.focusedPane.session.directory = directory,
+                this.focusedSession.directory = directory,
             );
 
             FontService.instance.onChange(() => {
                 this.forceUpdate();
-                this.resizeSessions();
+                this.resizeAllSessions();
             });
 
             window.onbeforeunload = () => {
@@ -52,81 +57,195 @@ export class ApplicationComponent extends React.Component<{}, ApplicationState> 
                     .removeAllListeners("devtools-closed")
                     .removeAllListeners("found-in-page");
 
-                this.closeAllTabs();
+                this.state.tabs.forEach(tab => tab.sessions.forEach(session => session.prepareForClosing()));
             };
         }
 
+        const session = new Session(this);
+
         this.state = {
-            tabs: [new Tab(this)],
+            tabs: [{
+                sessions: [session],
+                focusedSessionIndex: 0,
+            }],
             focusedTabIndex: 0,
         };
     }
 
+    render() {
+        let tabs: React.ReactElement<Props>[] | undefined;
+
+        if (this.state.tabs.length > 1) {
+            tabs = this.state.tabs.map((_tab, index: number) =>
+                <TabHeaderComponent
+                    isFocused={index === this.state.focusedTabIndex}
+                    key={index}
+                    position={index + 1}
+                    activate={() => this.setState({focusedTabIndex: index})}
+                    closeHandler={(event: React.MouseEvent<HTMLSpanElement>) => {
+                        this.closeTab(index);
+                        event.stopPropagation();
+                        event.preventDefault();
+                    }}
+                />,
+            );
+        }
+
+        this.tabComponents = [];
+
+        return (
+            <div className="application" style={css.application()}>
+                <div className="title-bar">
+                    <ul style={css.tabs}>{tabs}</ul>
+                    <SearchComponent/>
+                </div>
+                {this.state.tabs.map((tabProps, index) =>
+                    <TabComponent {...tabProps}
+                                  isFocused={index === this.state.focusedTabIndex}
+                                  key={index}
+                                  onSessionFocus={(sessionIndex: number) => {
+                                      const state = this.cloneState();
+                                      state.tabs[state.focusedTabIndex].focusedSessionIndex = sessionIndex;
+                                      this.setState(state);
+                                  }}
+                                  ref={tabComponent => this.tabComponents[index] = tabComponent!}/>)}
+            </div>
+        );
+    }
+
+    /**
+     * Tab methods.
+     */
+
+    get focusedTab() {
+        return this.state.tabs[this.state.focusedTabIndex];
+    }
+
+    get focusedTabComponent() {
+        return this.tabComponents[this.state.focusedTabIndex];
+    }
+
     addTab(): void {
         if (this.state.tabs.length < 9) {
-            const newTabs = [...this.state.tabs, new Tab(this)];
-            this.setState({
-                tabs: newTabs,
-                focusedTabIndex: newTabs.length - 1,
+            const session = new Session(this);
+
+            const state = this.cloneState();
+            state.tabs.push({
+                sessions: [session],
+                focusedSessionIndex: 0,
             });
+            state.focusedTabIndex = state.tabs.length - 1;
+
+            this.setState(state);
         } else {
             remote.shell.beep();
         }
     }
 
-    focusTab(position: OneBasedPosition): void {
-        const index = position === 9 ? this.state.tabs.length - 1 : position - 1;
+    focusPreviousTab() {
+        if (this.state.focusedTabIndex !== 0) {
+            this.focusTab(this.state.focusedTabIndex - 1);
+        }
+    }
+
+    focusNextTab() {
+        if (this.state.focusedTabIndex !== this.state.tabs.length - 1) {
+            this.focusTab(this.state.focusedTabIndex + 1);
+        }
+    }
+
+    focusTab(index: number): void {
+        if (index === 8) {
+            index = this.state.tabs.length - 1;
+        }
 
         if (this.state.tabs.length > index) {
-            this.setState({focusedTabIndex: index} as ApplicationState);
+            this.setState({focusedTabIndex: index});
         } else {
             remote.shell.beep();
         }
     }
 
     closeFocusedTab() {
-        this.closeTab(this.focusedTab);
-
-        this.forceUpdate();
+        this.closeTab(this.state.focusedTabIndex);
     }
 
-    activatePreviousTab() {
-        let newPosition = this.state.focusedTabIndex - 1;
+    closeTab(index: number, quit = true): void {
+        const state = this.cloneState();
+        state.tabs[index].sessions.forEach(session => session.prepareForClosing());
 
-        if (newPosition < 0) {
-            newPosition = this.state.tabs.length - 1;
+        state.tabs.splice(index, 1);
+        state.focusedTabIndex = Math.max(0, index - 1);
+
+        if (state.tabs.length === 0 && quit) {
+            ipcRenderer.send("quit");
+        } else {
+            this.setState(state);
         }
-
-        this.focusTab(newPosition + 1);
     }
 
-    activateNextTab() {
-        let newPosition = this.state.focusedTabIndex + 1;
+    resizeFocusedTabSessions(): void {
+        this.focusedTabComponent.sessionComponents.forEach(sessionComponent => sessionComponent.resizeSession());
+    }
 
-        if (newPosition >= this.state.tabs.length) {
-            newPosition = 0;
+    /**
+     * Session methods.
+     */
+
+    get focusedSession() {
+        return this.focusedTab.sessions[this.focusedTab.focusedSessionIndex];
+    }
+
+    otherSession(): void {
+        const state = this.cloneState();
+        const tabState = state.tabs[state.focusedTabIndex];
+
+        if (this.focusedTab.sessions.length < 2) {
+            const session = new Session(this);
+            tabState.sessions.push(session);
+            tabState.focusedSessionIndex = 1;
+
+            this.setState(state, () => this.resizeFocusedTabSessions());
+        } else {
+            // Change 1 to 0 or 0 to 1.
+            tabState.focusedSessionIndex = Math.abs(tabState.focusedSessionIndex - 1);
+            this.setState(state);
         }
-
-        this.focusTab(newPosition + 1);
     }
 
-    closeFocusedPane() {
-        this.focusedTab.closeFocusedPane();
+    closeFocusedSession() {
+        this.closeSession(
+            this.state.focusedTabIndex,
+            this.state.tabs[this.state.focusedTabIndex].focusedSessionIndex,
+        );
+    }
 
-        if (this.focusedTab.panes.size === 0) {
-            this.closeTab(this.focusedTab);
+    closeSession(tabIndex: number, sessionIndex: number) {
+        const state = this.cloneState();
+        const tabState = state.tabs[tabIndex];
+
+        if (tabState.sessions.length === 1) {
+            this.closeTab(tabIndex);
+        } else {
+            tabState.sessions[sessionIndex].prepareForClosing();
+
+            tabState.sessions.splice(sessionIndex, 1);
+            tabState.focusedSessionIndex = 0;
+
+            this.setState(state, () => this.resizeFocusedTabSessions());
         }
-
-        this.forceUpdate();
     }
 
-    handleUserEvent(
-        search: SearchComponent,
-        event: UserEvent,
-    ) {
-        const currentJob = this.focusedTab.focusedPane.session.currentJob;
-        const paneComponent = this.focusedTab.focusedPane.paneComponent;
-        const promptComponent = paneComponent && paneComponent.promptComponent;
+    resizeAllSessions() {
+        this.tabComponents.forEach(tabComponent => {
+            tabComponent.sessionComponents.forEach(sessionComponent => sessionComponent.resizeSession());
+        });
+    }
+
+    handleUserEvent(search: SearchComponent, event: UserEvent) {
+        const currentJob = this.focusedSession.currentJob;
+        const sessionComponent = this.focusedTabComponent.focusedSessionComponent;
+        const promptComponent = sessionComponent && sessionComponent.promptComponent;
 
         // Pasted data
         if (event instanceof ClipboardEvent) {
@@ -153,35 +272,19 @@ export class ApplicationComponent extends React.Component<{}, ApplicationState> 
             return;
         }
 
-        // Close focused pane
-        if (isKeybindingForEvent(event, KeyboardAction.paneClose) && promptComponent) {
-            this.closeFocusedPane();
-
-            this.forceUpdate();
+        // Close focused session
+        if (isKeybindingForEvent(event, KeyboardAction.sessionClose) && promptComponent) {
+            this.closeFocusedSession();
 
             event.stopPropagation();
             event.preventDefault();
             return;
         }
 
-        // Change focussed tab
+        // Change focused tab
         if (isKeybindingForEvent(event, KeyboardAction.tabFocus)) {
             const position = parseInt(event.key, 10);
-            this.focusTab(position);
-
-            event.stopPropagation();
-            event.preventDefault();
-            return;
-        }
-
-        // Enable debug mode
-        if (isKeybindingForEvent(event, KeyboardAction.developerToggleDebugMode)) {
-            window.DEBUG = !window.DEBUG;
-
-            require("devtron").install();
-            console.log(`Debugging mode has been ${window.DEBUG ? "enabled" : "disabled"}.`);
-
-            this.forceUpdate();
+            this.focusTab(position - 1);
 
             event.stopPropagation();
             event.preventDefault();
@@ -190,7 +293,7 @@ export class ApplicationComponent extends React.Component<{}, ApplicationState> 
 
         // Console clear
         if (isKeybindingForEvent(event, KeyboardAction.cliClearJobs) && promptComponent) {
-            this.focusedTab.focusedPane.session.clearJobs();
+            this.focusedSession.clearJobs();
 
             event.stopPropagation();
             event.preventDefault();
@@ -304,75 +407,17 @@ export class ApplicationComponent extends React.Component<{}, ApplicationState> 
         promptComponent.setPreviousKeyCode(event);
     }
 
-    render() {
-        let tabs: React.ReactElement<Props>[] | undefined;
-
-        if (this.state.tabs.length > 1) {
-            tabs = this.state.tabs.map((_tab: Tab, index: number) =>
-                <TabHeaderComponent
-                    isFocused={index === this.state.focusedTabIndex}
-                    key={index}
-                    position={index + 1}
-                    activate={() => {
-                        this.setState({
-                            focusedTabIndex: index,
-                        } as ApplicationState);
-                    }}
-                    closeHandler={(event: React.MouseEvent<HTMLSpanElement>) => {
-                        this.closeTab(this.state.tabs[index]);
-                        this.forceUpdate();
-                        event.stopPropagation();
-                        event.preventDefault();
-                    }}
-                />,
-            );
-        }
-
-        return (
-            <div className="application" style={css.application()}>
-                <div className="title-bar">
-                    <ul style={css.tabs}>{tabs}</ul>
-                    <SearchComponent/>
-                </div>
-                {this.state.tabs.map((tab, index) =>
-                    <TabComponent tab={tab} isFocused={index === this.state.focusedTabIndex} key={index}/>)}
-            </div>
-        );
-    }
-
-    get focusedTab(): Tab {
-        return this.state.tabs[this.state.focusedTabIndex];
-    }
-
-    private resizeSessions() {
-        for (const tab of this.state.tabs) {
-            tab.resizeSessions();
-        }
-    }
-
-    private closeTab(tab: Tab, quit = true): void {
-        tab.closeAllPanes();
-        const newTabs = _.without(this.state.tabs, tab);
-
-        if (newTabs.length === 0 && quit) {
-            ipcRenderer.send("quit");
-        }
-
-        let newIndex = this.state.focusedTabIndex;
-        if (newIndex > 0 && this.state.tabs.indexOf(tab) <= this.state.focusedTabIndex) {
-            newIndex -= 1;
-        }
-
-        this.setState({
-            tabs: newTabs,
-            focusedTabIndex: newIndex,
-        });
-    }
-
-    private closeAllTabs(): void {
-        // Can't use forEach here because closeTab changes the array being iterated.
-        while (this.state.tabs.length) {
-            this.closeTab(this.state.tabs[0], false);
-        }
+    /**
+     * Return a deep clone of the state in order not to
+     * accidentally mutate it.
+     */
+    private cloneState(): ApplicationState {
+        return {
+            tabs: this.state.tabs.map(tab => ({
+                sessions: tab.sessions.slice(),
+                focusedSessionIndex: tab.focusedSessionIndex,
+            })),
+            focusedTabIndex: this.state.focusedTabIndex,
+        };
     }
 }

@@ -77,9 +77,18 @@ export class Session extends EmitterWithUniqueID {
         this.emit("jobs-changed");
     }
 
+    prepareForClosing() {
+        this.jobs.forEach(job => {
+            job.removeAllListeners();
+            job.interrupt();
+        });
+
+        this.removeAllListeners();
+    }
+
     close(): void {
-        // FIXME: executing `sleep 5 && exit` and switching to another pane will close an incorrect one.
-        this.application.closeFocusedPane();
+        // FIXME: executing `sleep 5 && exit` and switching to another session will close an incorrect one.
+        this.application.closeFocusedSession();
     }
 
     get directory(): string {

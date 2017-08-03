@@ -17,7 +17,7 @@ describe("ApplicationComponent", () => {
         const application: ApplicationComponent = shallow(<ApplicationComponent />).instance() as ApplicationComponent;
         application.addTab();
         application.addTab();
-        application.focusTab(3);
+        application.focusTab(2);
         expect(application.state.focusedTabIndex).to.eql(2);
         application.closeFocusedTab();
         expect(application.state.focusedTabIndex).to.eql(1);

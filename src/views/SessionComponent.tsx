@@ -16,10 +16,9 @@ interface Props {
     session: Session;
     isFocused: boolean;
     focus: () => void;
-    updateFooter: (() => void) | undefined; // Only the focused session can update the status bar.
 }
 
-export class PaneComponent extends React.Component<Props, {}> {
+export class SessionComponent extends React.Component<Props, {}> {
     RENDER_JOBS_COUNT = 25;
     promptComponent: PromptComponent | undefined;
 
@@ -32,18 +31,16 @@ export class PaneComponent extends React.Component<Props, {}> {
 
         this.props.session
             .on("jobs-changed", () => {
-                if (this.paneRef && this.footerRef) {
-                    if (this.paneRef.scrollHeight - this.paneRef.offsetHeight - this.paneRef.scrollTop > this.footerRef.clientHeight) {
+                if (this.sessionRef && this.footerRef) {
+                    if (this.sessionRef.scrollHeight - this.sessionRef.offsetHeight - this.sessionRef.scrollTop > this.footerRef.clientHeight) {
                         // If we are already close to the bottom,
                         // scroll all the way to the bottom
-                        this.paneRef.scrollTop = this.paneRef.scrollHeight;
+                        this.sessionRef.scrollTop = this.sessionRef.scrollHeight;
                     }
                 }
-                if (this.props.updateFooter) {
-                    this.props.updateFooter();
-                }
+                this.forceUpdate();
             })
-            .on("vcs-data", () => this.props.updateFooter && this.props.updateFooter());
+            .on("vcs-data", () => this.forceUpdate());
     }
 
     render() {
@@ -61,26 +58,28 @@ export class PaneComponent extends React.Component<Props, {}> {
 
         const promptComponent = lastJobInProgress ? undefined : <PromptComponent
             key={this.props.session.jobs.length}
-            ref={component => { this.promptComponent = component!; }}
+            ref={component => {
+                this.promptComponent = component!;
+            }}
             session={this.props.session}
-            isFocused={true}
+            isFocused={this.props.isFocused}
         />;
 
         return (
-            <div className="pane"
+            <div className="session"
                  data-status={lastJob && lastJob.status}
-                 ref="pane"
+                 ref="session"
                  onClick={this.handleClick.bind(this)}>
 
                 <div className="jobs" style={css.jobs(this.props.isFocused)}>
                     {jobs}
                 </div>
-                <div className="shutter" style={css.paneShutter(this.props.isFocused)}/>
+                <div className="shutter" style={css.sessionShutter(this.props.isFocused)}/>
                 {promptComponent}
                 <div className="footer" ref="footer">
                     <span className="present-directory">{userFriendlyPath(this.props.session.directory)}</span>
                     <VcsDataComponent data={watchManager.vcsDataFor(this.props.session.directory)}/>
-                    <ReleaseComponent />
+                    <ReleaseComponent/>
                 </div>
             </div>
         );
@@ -93,8 +92,8 @@ export class PaneComponent extends React.Component<Props, {}> {
         };
     }
 
-    private get paneRef() {
-        return this.refs.pane as HTMLDivElement | undefined;
+    private get sessionRef() {
+        return this.refs.session as HTMLDivElement | undefined;
     }
 
     private get footerRef() {
@@ -108,10 +107,10 @@ export class PaneComponent extends React.Component<Props, {}> {
     }
 
     private get size(): Size {
-        if (this.paneRef && this.footerRef) {
+        if (this.sessionRef && this.footerRef) {
             return {
-                width: this.paneRef.clientWidth - (2 * css.contentPadding),
-                height: this.paneRef.clientHeight - this.footerRef.clientHeight,
+                width: this.sessionRef.clientWidth - (2 * css.contentPadding),
+                height: this.sessionRef.clientHeight - this.footerRef.clientHeight,
             };
         } else {
             // For tests that are run in electron-mocha

@@ -95,11 +95,10 @@ export function buildMenuTemplate(
             label: "View",
             submenu: [
                 {
-                    label: "Other Pane",
-                    accelerator: getAcceleratorForAction(KeyboardAction.otherPane),
+                    label: "Other Session",
+                    accelerator: getAcceleratorForAction(KeyboardAction.otherSession),
                     click: () => {
-                        application.focusedTab.otherPane();
-                        application.forceUpdate();
+                        application.otherSession();
                     },
                 },
                 {
@@ -142,7 +141,7 @@ export function buildMenuTemplate(
                     label: "Previous",
                     accelerator: getAcceleratorForAction(KeyboardAction.tabPrevious),
                     click: () => {
-                        application.activatePreviousTab();
+                        application.focusPreviousTab();
                         application.forceUpdate();
                     },
                 },
@@ -150,7 +149,7 @@ export function buildMenuTemplate(
                     label: "Next",
                     accelerator: getAcceleratorForAction(KeyboardAction.tabNext),
                     click: () => {
-                        application.activateNextTab();
+                        application.focusNextTab();
                         application.forceUpdate();
                     },
                 },

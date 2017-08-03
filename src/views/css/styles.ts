@@ -3,9 +3,9 @@ import {colors, colorValue} from "./colors";
 import {darken, failurize, lighten} from "./functions";
 import {Attributes} from "../../Interfaces";
 import {CSSObject} from "./definitions";
-import {PaneList} from "../../utils/PaneTree";
 import {CSSProperties} from "react";
 import {FontService} from "../../services/FontService";
+import {Session} from "../../shell/Session";
 
 const jobBackgroundColor = colors.black;
 const backgroundColor = darken(jobBackgroundColor, 4);
@@ -61,12 +61,12 @@ export const footer = {
     }),
 };
 
-export const sessions = (list: PaneList) => ({
-    gridTemplateColumns: `repeat(${list.children.length}, calc(100% / ${list.children.length}))`,
+export const sessions = (sessions: Session[]) => ({
+    gridTemplateColumns: `repeat(${sessions.length}, calc(100% / ${sessions.length}))`,
     gridTemplateRows: "100%",
 });
 
-export const paneShutter = (isFocused: boolean) => ({
+export const sessionShutter = (isFocused: boolean) => ({
     backgroundColor: colors.white,
     opacity: isFocused ? 0 : 0.2,
 });

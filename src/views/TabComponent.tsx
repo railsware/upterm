@@ -1,39 +1,52 @@
-import {Tab} from "./TabHeaderComponent";
-import {PaneComponent} from "./PaneComponent";
+import {SessionComponent} from "./SessionComponent";
 import * as React from "react";
 import * as css from "./css/styles";
+import {Session} from "../shell/Session";
 
 type Props = {
-    tab: Tab;
+    sessions: Session[];
+    focusedSessionIndex: number;
     isFocused: boolean;
+    onSessionFocus: (index: number) => void
 };
 
 export class TabComponent extends React.Component<Props, {}> {
-    render() {
+    sessionComponents: SessionComponent[];
+    focusedSessionComponent: SessionComponent | undefined;
 
-        const paneComponents = this.props.tab.panes.children.map(pane => {
-            const session = pane.session;
-            const isFocused = pane === this.props.tab.focusedPane;
+    render() {
+        this.sessionComponents = [];
+        const sessionComponents = this.props.sessions.map((session, index) => {
+            const isFocused = this.props.isFocused && index === this.props.focusedSessionIndex;
 
             return (
-                <PaneComponent
+                <SessionComponent
                     session={session}
                     key={session.id}
-                    ref={paneComponent => { pane.setPaneComponent(paneComponent!); }}
+                    ref={sessionComponent => {
+                        // Unmount.
+                        if (!sessionComponent) {
+                            return;
+                        }
+
+                        if (isFocused) {
+                            this.focusedSessionComponent = sessionComponent!;
+                        }
+                        this.sessionComponents[index] = sessionComponent!;
+                    }}
                     isFocused={isFocused}
-                    updateFooter={isFocused ? () => this.forceUpdate() : undefined}
                     focus={() => {
-                        this.props.tab.focusPane(pane);
+                        this.props.onSessionFocus(index);
                         this.forceUpdate();
                     }}>
-                </PaneComponent>
+                </SessionComponent>
             );
         });
 
         return (
             <div className="tab" data-focused={this.props.isFocused}>
-                <div className="panes" style={css.sessions(this.props.tab.panes)}>
-                    {paneComponents}
+                <div className="sessions" style={css.sessions(this.props.sessions)}>
+                    {sessionComponents}
                 </div>
             </div>
         );

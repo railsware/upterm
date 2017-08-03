@@ -68,9 +68,9 @@ export const KeybindingsForActions: KeybindingType[] = [
             return (e.ctrlKey && e.keyCode === KeyCode.N) || (e.keyCode === KeyCode.Down);
         },
     },
-    // pane command
+    // session command
     {
-        action: KeyboardAction.paneClose,
+        action: KeyboardAction.sessionClose,
         keybinding: (e: KeyboardEvent) => e.ctrlKey && e.keyCode === KeyCode.D,
     },
     // tab commands
@@ -116,11 +116,11 @@ export const KeybindingsForMenu: KeybindingMenuType[] = [
     },
     {
         action: KeyboardAction.tabPrevious,
-        accelerator: `${CmdOrCtrl}+]`,
+        accelerator: `${CmdOrCtrl}+[`,
     },
     {
         action: KeyboardAction.tabNext,
-        accelerator: `${CmdOrCtrl}+[`,
+        accelerator: `${CmdOrCtrl}+]`,
     },
     {
         action: KeyboardAction.tabClose,
@@ -181,7 +181,7 @@ export const KeybindingsForMenu: KeybindingMenuType[] = [
         accelerator: "Ctrl+Shift+F",
     },
     {
-        action: KeyboardAction.otherPane,
+        action: KeyboardAction.otherSession,
         accelerator: `${CmdOrCtrl}+\\`,
     },
     // Upterm commands
@@ -201,10 +201,6 @@ export const KeybindingsForMenu: KeybindingMenuType[] = [
     {
         action: KeyboardAction.developerToggleTools,
         accelerator: `${CmdOrCtrl}+Alt+I`,
-    },
-    {
-        action: KeyboardAction.developerToggleDebugMode,
-        accelerator: `${CmdOrCtrl}+Shift+D`,
     },
 ];
 
