@@ -1,6 +1,6 @@
 import * as React from "react";
 import * as _ from "lodash";
-import {Session} from "../shell/Session";
+import {SessionID} from "../shell/Session";
 import {Job} from "../shell/Job";
 import {JobComponent} from "./JobComponent";
 import * as css from "./css/styles";
@@ -13,7 +13,7 @@ import {colors} from "./css/colors";
 import {Subscription} from "rxjs/Subscription";
 
 interface Props {
-    session: Session;
+    sessionID: SessionID;
     isFocused: boolean;
     focus: () => void;
 }
@@ -29,38 +29,37 @@ export class SessionComponent extends React.Component<Props, {}> {
     componentDidMount() {
         this.resizeSession();
 
-        this.props.session
-            .on("jobs-changed", () => {
-                if (this.sessionRef && this.footerRef) {
-                    if (this.sessionRef.scrollHeight - this.sessionRef.offsetHeight - this.sessionRef.scrollTop > this.footerRef.clientHeight) {
-                        // If we are already close to the bottom,
-                        // scroll all the way to the bottom
-                        this.sessionRef.scrollTop = this.sessionRef.scrollHeight;
-                    }
+        this.session.on("jobs-changed", () => {
+            if (this.sessionRef && this.footerRef) {
+                if (this.sessionRef.scrollHeight - this.sessionRef.offsetHeight - this.sessionRef.scrollTop > this.footerRef.clientHeight) {
+                    // If we are already close to the bottom,
+                    // scroll all the way to the bottom
+                    this.sessionRef.scrollTop = this.sessionRef.scrollHeight;
                 }
-                this.forceUpdate();
-            });
+            }
+            this.forceUpdate();
+        });
     }
 
     render() {
-        const jobs = _.takeRight(this.props.session.jobs, this.RENDER_JOBS_COUNT).slice().reverse().map((job: Job, index: number) =>
+        const jobs = _.takeRight(this.session.jobs, this.RENDER_JOBS_COUNT).slice().reverse().map((job: Job, index: number) =>
             <JobComponent
                 key={job.id}
                 job={job}
                 jobStatus={job.status}
-                isFocused={this.props.isFocused && index === this.props.session.jobs.length - 1}
+                isFocused={this.props.isFocused && index === this.session.jobs.length - 1}
             />,
         );
 
-        const lastJob = _.last(this.props.session.jobs);
+        const lastJob = _.last(this.session.jobs);
         const lastJobInProgress = lastJob && lastJob.status === Status.InProgress;
 
         const promptComponent = lastJobInProgress ? undefined : <PromptComponent
-            key={this.props.session.jobs.length}
+            key={this.session.jobs.length}
             ref={component => {
                 this.promptComponent = component!;
             }}
-            session={this.props.session}
+            session={this.session}
             isFocused={this.props.isFocused}
         />;
 
@@ -76,8 +75,8 @@ export class SessionComponent extends React.Component<Props, {}> {
                 {this.props.isFocused ? null : <div className="shutter"/>}
                 {promptComponent}
                 <div className="footer" ref="footer">
-                    <span className="present-directory">{userFriendlyPath(this.props.session.directory)}</span>
-                    <GitStatusComponent directory={this.props.session.directory}/>
+                    <span className="present-directory">{userFriendlyPath(this.session.directory)}</span>
+                    <GitStatusComponent directory={this.session.directory}/>
                     <ReleaseComponent/>
                 </div>
             </div>
@@ -85,10 +84,14 @@ export class SessionComponent extends React.Component<Props, {}> {
     }
 
     resizeSession(): void {
-        this.props.session.dimensions = {
+        this.session.dimensions = {
             columns: Math.floor(this.size.width / services.font.letterWidth),
             rows: Math.floor(this.size.height / services.font.letterHeight),
         };
+    }
+
+    private get session() {
+        return services.sessions.get(this.props.sessionID);
     }
 
     private get sessionRef() {

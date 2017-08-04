@@ -1,15 +1,15 @@
 function getLetterSize(size: number, fontFamily: string) {
     const height = size + 2;
 
-    // Not defined in tests.
-    if (typeof document.createElement !== "undefined") {
+    if (process.env.NODE_ENV === "test") {
+
+        return {width: (size / 2) + 1.5, height: height};
+    } else {
         const canvas = document.createElement("canvas");
         const context = canvas.getContext("2d")!;
         context.font = `${size}px ${fontFamily}`;
         const metrics = context.measureText("m");
         return {width: metrics.width, height: height};
-    } else {
-        return {width: (size / 2) + 1.5, height: height};
     }
 }
 

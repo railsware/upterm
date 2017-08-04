@@ -1,7 +1,7 @@
 import {readFileSync} from "fs";
 import {outputJSON} from "fs-extra";
 import {Job} from "./Job";
-import {EmitterWithUniqueID} from "../EmitterWithUniqueID";
+import * as events from "events";
 import {PluginManager} from "../PluginManager";
 import {Status} from "../Enums";
 import {ApplicationComponent} from "../views/ApplicationComponent";
@@ -16,7 +16,10 @@ import {Aliases, aliasesFromConfig} from "./Aliases";
 import * as _ from "lodash";
 import {Prompt} from "./Prompt";
 
-export class Session extends EmitterWithUniqueID {
+export type SessionID = number & {__isSessionID: true};
+
+export class Session extends events.EventEmitter {
+    readonly id: SessionID = <SessionID>Date.now();
     jobs: Array<Job> = [];
     readonly environment = new Environment(processEnvironment);
     readonly aliases = new Aliases(aliasesFromConfig);
@@ -75,15 +78,6 @@ export class Session extends EmitterWithUniqueID {
     clearJobs(): void {
         this.jobs = [];
         this.emit("jobs-changed");
-    }
-
-    prepareForClosing() {
-        this.jobs.forEach(job => {
-            job.removeAllListeners();
-            job.interrupt();
-        });
-
-        this.removeAllListeners();
     }
 
     close(): void {

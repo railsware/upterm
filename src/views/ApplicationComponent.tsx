@@ -10,14 +10,12 @@ import {KeyboardAction} from "../Enums";
 import {UserEvent} from "../Interfaces";
 import {isModifierKey} from "./ViewUtils";
 import {TabComponent} from "./TabComponent";
-import {Session} from "../shell/Session";
+import {SessionID} from "../shell/Session";
 import {services} from "../services";
+import * as _ from "lodash";
 
 type ApplicationState = {
-    tabs: Array<{
-        sessions: Session[];
-        focusedSessionIndex: number;
-    }>;
+    tabs: Array<{sessionIDs: SessionID[]; focusedSessionID: SessionID}>;
     focusedTabIndex: number;
 };
 
@@ -57,16 +55,16 @@ export class ApplicationComponent extends React.Component<{}, ApplicationState> 
                     .removeAllListeners("devtools-closed")
                     .removeAllListeners("found-in-page");
 
-                this.state.tabs.forEach(tab => tab.sessions.forEach(session => session.prepareForClosing()));
+                services.sessions.closeAll();
             };
         }
 
-        const session = new Session(this);
+        const id = services.sessions.create(this);
 
         this.state = {
             tabs: [{
-                sessions: [session],
-                focusedSessionIndex: 0,
+                sessionIDs: [id],
+                focusedSessionID: id,
             }],
             focusedTabIndex: 0,
         };
@@ -103,9 +101,9 @@ export class ApplicationComponent extends React.Component<{}, ApplicationState> 
                     <TabComponent {...tabProps}
                                   isFocused={index === this.state.focusedTabIndex}
                                   key={index}
-                                  onSessionFocus={(sessionIndex: number) => {
+                                  onSessionFocus={(id: SessionID) => {
                                       const state = this.cloneState();
-                                      state.tabs[state.focusedTabIndex].focusedSessionIndex = sessionIndex;
+                                      state.tabs[state.focusedTabIndex].focusedSessionID = id;
                                       this.setState(state);
                                   }}
                                   ref={tabComponent => this.tabComponents[index] = tabComponent!}/>)}
@@ -127,12 +125,12 @@ export class ApplicationComponent extends React.Component<{}, ApplicationState> 
 
     addTab(): void {
         if (this.state.tabs.length < 9) {
-            const session = new Session(this);
+            const id = services.sessions.create(this);
 
             const state = this.cloneState();
             state.tabs.push({
-                sessions: [session],
-                focusedSessionIndex: 0,
+                sessionIDs: [id],
+                focusedSessionID: id,
             });
             state.focusedTabIndex = state.tabs.length - 1;
 
@@ -172,7 +170,7 @@ export class ApplicationComponent extends React.Component<{}, ApplicationState> 
 
     closeTab(index: number, quit = true): void {
         const state = this.cloneState();
-        state.tabs[index].sessions.forEach(session => session.prepareForClosing());
+        state.tabs[index].sessionIDs.forEach(id => services.sessions.close(id));
 
         state.tabs.splice(index, 1);
         state.focusedTabIndex = Math.max(0, index - 1);
@@ -193,22 +191,21 @@ export class ApplicationComponent extends React.Component<{}, ApplicationState> 
      */
 
     get focusedSession() {
-        return this.focusedTab.sessions[this.focusedTab.focusedSessionIndex];
+        return services.sessions.get(this.focusedTab.focusedSessionID);
     }
 
     otherSession(): void {
         const state = this.cloneState();
         const tabState = state.tabs[state.focusedTabIndex];
 
-        if (this.focusedTab.sessions.length < 2) {
-            const session = new Session(this);
-            tabState.sessions.push(session);
-            tabState.focusedSessionIndex = 1;
+        if (this.focusedTab.sessionIDs.length < 2) {
+            const id = services.sessions.create(this);
+            tabState.sessionIDs.push(id);
+            tabState.focusedSessionID = id;
 
             this.setState(state, () => this.resizeFocusedTabSessions());
         } else {
-            // Change 1 to 0 or 0 to 1.
-            tabState.focusedSessionIndex = Math.abs(tabState.focusedSessionIndex - 1);
+            tabState.focusedSessionID = tabState.sessionIDs.find(id => id !== tabState.focusedSessionID)!;
             this.setState(state);
         }
     }
@@ -217,13 +214,14 @@ export class ApplicationComponent extends React.Component<{}, ApplicationState> 
         const state = this.cloneState();
         const tabState = state.tabs[state.focusedTabIndex];
 
-        if (tabState.sessions.length === 1) {
+        if (tabState.sessionIDs.length === 1) {
             this.closeFocusedTab();
         } else {
-            tabState.sessions[tabState.focusedSessionIndex].prepareForClosing();
+            services.sessions.close(tabState.focusedSessionID);
 
-            tabState.sessions.splice(tabState.focusedSessionIndex, 1);
-            tabState.focusedSessionIndex = 0;
+            const index = tabState.sessionIDs.findIndex(id => id === tabState.focusedSessionID);
+            tabState.sessionIDs.splice(index, 1);
+            tabState.focusedSessionID = tabState.sessionIDs[0];
 
             this.setState(state, () => this.resizeFocusedTabSessions());
         }
@@ -405,12 +403,6 @@ export class ApplicationComponent extends React.Component<{}, ApplicationState> 
      * accidentally mutate it.
      */
     private cloneState(): ApplicationState {
-        return {
-            tabs: this.state.tabs.map(tab => ({
-                sessions: tab.sessions.slice(),
-                focusedSessionIndex: tab.focusedSessionIndex,
-            })),
-            focusedTabIndex: this.state.focusedTabIndex,
-        };
+        return _.cloneDeep(this.state);
     }
 }

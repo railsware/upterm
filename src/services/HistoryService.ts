@@ -3,13 +3,14 @@ import {historyFilePath} from "../utils/Common";
 import * as _ from "lodash";
 
 import csvParse = require("csv-parse/lib/sync");
+import {SessionID} from "../shell/Session";
 
 interface HistoryRecordWithoutID {
     command: string;
     expandedCommand: string;
     timestamp: number;
     directory: string;
-    sessionID: number;
+    sessionID: SessionID;
 }
 
 export interface HistoryRecord extends HistoryRecordWithoutID {

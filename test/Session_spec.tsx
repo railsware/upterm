@@ -12,9 +12,9 @@ describe.skip("Tab", () => {
         application.closeFocusedSession();
         let sessionCount = 0;
         let lastSession: any;
-        application.state.tabs[0].sessions.forEach(session => {
+        application.state.tabs[0].sessionIDs.forEach(id => {
             sessionCount++;
-            lastSession = session;
+            lastSession = id;
         });
         expect(sessionCount).to.eql(1);
         expect(application.focusedSession.id).to.eql(lastSession.session.id);

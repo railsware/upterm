@@ -1,12 +1,12 @@
 import {SessionComponent} from "./SessionComponent";
 import * as React from "react";
-import {Session} from "../shell/Session";
+import {SessionID} from "../shell/Session";
 
 type Props = {
-    sessions: Session[];
-    focusedSessionIndex: number;
+    sessionIDs: SessionID[];
+    focusedSessionID: SessionID;
     isFocused: boolean;
-    onSessionFocus: (index: number) => void
+    onSessionFocus: (id: SessionID) => void
 };
 
 export class TabComponent extends React.Component<Props, {}> {
@@ -15,13 +15,13 @@ export class TabComponent extends React.Component<Props, {}> {
 
     render() {
         this.sessionComponents = [];
-        const sessionComponents = this.props.sessions.map((session, index) => {
-            const isFocused = this.props.isFocused && index === this.props.focusedSessionIndex;
+        const sessionComponents = this.props.sessionIDs.map((id, index) => {
+            const isFocused = this.props.isFocused && id === this.props.focusedSessionID;
 
             return (
                 <SessionComponent
-                    session={session}
-                    key={session.id}
+                    sessionID={id}
+                    key={id}
                     ref={sessionComponent => {
                         // Unmount.
                         if (!sessionComponent) {
@@ -35,7 +35,7 @@ export class TabComponent extends React.Component<Props, {}> {
                     }}
                     isFocused={isFocused}
                     focus={() => {
-                        this.props.onSessionFocus(index);
+                        this.props.onSessionFocus(id);
                         this.forceUpdate();
                     }}>
                 </SessionComponent>
@@ -44,7 +44,7 @@ export class TabComponent extends React.Component<Props, {}> {
 
         return (
             <div className="tab" data-focused={this.props.isFocused}>
-                <div className="sessions" data-side-by-side={this.props.sessions.length === 2}>
+                <div className="sessions" data-side-by-side={this.props.sessionIDs.length === 2}>
                     {sessionComponents}
                 </div>
             </div>

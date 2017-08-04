@@ -3,10 +3,15 @@ import * as https from "https";
 
 export class UpdatesService {
     isAvailable = false;
-    private currentVersion = "v" + remote.app.getVersion();
+    private currentVersion: string;
     private INTERVAL = 1000 * 60 * 60 * 12;
 
     constructor() {
+        if (process.env.NODE_ENV === "test") {
+            return;
+        }
+
+        this.currentVersion = "v" + remote.app.getVersion();
         this.checkUpdate();
         setInterval(() => this.checkUpdate(), this.INTERVAL);
     }
