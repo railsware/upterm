@@ -1,6 +1,5 @@
 import {SessionComponent} from "./SessionComponent";
 import * as React from "react";
-import * as css from "./css/styles";
 import {Session} from "../shell/Session";
 
 type Props = {
@@ -45,7 +44,7 @@ export class TabComponent extends React.Component<Props, {}> {
 
         return (
             <div className="tab" data-focused={this.props.isFocused}>
-                <div className="sessions" style={css.sessions(this.props.sessions)}>
+                <div className="sessions" data-side-by-side={this.props.sessions.length === 2}>
                     {sessionComponents}
                 </div>
             </div>

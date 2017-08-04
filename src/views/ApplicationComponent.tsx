@@ -96,7 +96,7 @@ export class ApplicationComponent extends React.Component<{}, ApplicationState> 
         return (
             <div className="application" style={css.application()}>
                 <div className="title-bar">
-                    <ul style={css.tabs}>{tabs}</ul>
+                    <ul className="tabs">{tabs}</ul>
                     <SearchComponent/>
                 </div>
                 {this.state.tabs.map((tabProps, index) =>

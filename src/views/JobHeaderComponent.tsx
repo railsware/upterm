@@ -1,7 +1,6 @@
 import * as React from "react";
 import {PrettifyToggleComponent} from "./PrettifyToggleComponent";
 import {Job} from "../shell/Job";
-import * as css from "./css/styles";
 
 interface Props {
     job: Job;
@@ -24,7 +23,7 @@ export class JobHeaderComponent extends React.Component<Props, {}> {
 
         return <div className="job-header">
             <div>{this.props.job.prompt.value}</div>
-            <div style={css.actions}>{prettifyToggle}</div>
+            <div className="job-actions">{prettifyToggle}</div>
         </div>;
     }
 }

@@ -69,9 +69,11 @@ export class OutputComponent extends React.Component<Props, {}> {
         const showCursor = this.props.job.status === Status.InProgress && (buffer._showCursor || buffer._blinkCursor);
         const cursorComponent = showCursor
             ? <span className="cursor"
-                    data-row-index={buffer.cursorRowIndex}
-                    data-column-index={buffer.cursorColumnIndex}
-                    style={css.cursor(buffer.cursorRowIndex, buffer.cursorColumnIndex, buffer.scrollbackSize)}/>
+                    style={{
+                        "--scrollback-size": buffer.scrollbackSize,
+                        "--row-index": buffer.cursorRowIndex,
+                        "--column-index": buffer.cursorColumnIndex,
+                    }}/>
             : undefined;
 
         const rowComponents = buffer.map((row, index) => <RowComponent key={index} index={index} row={row}/>);

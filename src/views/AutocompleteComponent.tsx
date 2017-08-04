@@ -1,6 +1,5 @@
 import * as React from "react";
 import {SuggestionWithDefaults} from "../plugins/autocompletion_utils/Common";
-import * as css from "./css/styles";
 
 interface SuggestionProps {
     suggestion: SuggestionWithDefaults;
@@ -16,8 +15,8 @@ const SuggestionComponent = ({suggestion, onHover, onClick, isHighlighted}: Sugg
         onClick={onClick}>
 
         <i className="suggestion-icon" style={suggestion.style.css}>{suggestion.style.value}</i>
-        <span style={css.autocomplete.value}>{suggestion.displayValue}</span>
-        <span style={css.autocomplete.synopsis}>{suggestion.synopsis}</span>
+        <span>{suggestion.displayValue}</span>
+        <span className="suggestion-synopsis">{suggestion.synopsis}</span>
     </li>;
 
 interface AutocompleteProps {
@@ -43,7 +42,7 @@ export class AutocompleteComponent extends React.Component<AutocompleteProps, {}
 
         return (
             <div className="autocomplete" style={{"--caret-position": this.props.caretPosition}}>
-                <ul style={css.autocomplete.suggestionsList}>{suggestionViews}</ul>
+                <ul className="suggestions-list">{suggestionViews}</ul>
             </div>
         );
     }

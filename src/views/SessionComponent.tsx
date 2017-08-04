@@ -11,6 +11,7 @@ import {watchManager} from "../plugins/GitWatcher";
 import {shell} from "electron";
 import {ReleaseTracker} from "../services/ReleaseTracker";
 import {FontService} from "../services/FontService";
+import {colors} from "./css/colors";
 
 interface Props {
     session: Session;
@@ -71,10 +72,10 @@ export class SessionComponent extends React.Component<Props, {}> {
                  ref="session"
                  onClick={this.handleClick.bind(this)}>
 
-                <div className="jobs" style={css.jobs(this.props.isFocused)}>
+                <div className="jobs">
                     {jobs}
                 </div>
-                <div className="shutter" style={css.sessionShutter(this.props.isFocused)}/>
+                {this.props.isFocused ? null : <div className="shutter"/>}
                 {promptComponent}
                 <div className="footer" ref="footer">
                     <span className="present-directory">{userFriendlyPath(this.props.session.directory)}</span>
@@ -125,7 +126,7 @@ export class SessionComponent extends React.Component<Props, {}> {
 const VcsDataComponent = ({data}: { data: VcsData }) => {
     if (data.kind === "repository") {
         return (
-            <span className="vcs-data" style={css.footer.status(data.status)}>
+            <span className="vcs-data" style={{color: data.status === "dirty" ? colors.blue : colors.white}}>
                 {data.branch}
             </span>
         );
@@ -144,7 +145,6 @@ const ReleaseComponent = () => {
             </span>
         );
     } else {
-        /* tslint:disable:no-null-keyword */
         return null;
     }
 };

@@ -86,12 +86,24 @@
             color: var(--white-color);
         }
 
+        .title-bar .tabs {
+            justify-content: center;
+            display: flex;
+            -webkit-margin-before: 0;
+            -webkit-margin-after: 0;
+            -webkit-padding-start: 0;
+            -webkit-user-select: none;
+            list-style: none;
+            padding-left: 68px;
+            padding-right: 129px;
+        }
+
         .tab-header {
             opacity: 0.3;
-
             position: relative;
             height: var(--title-bar-height);
-            width: 200px;
+            max-width: 200px;
+            flex-grow: 1;
             display: inline-block;
             text-align: center;
             padding-top: 2px;
@@ -137,8 +149,13 @@
         .sessions {
             grid-area: tab;
             display: grid;
+            grid-template-rows: 100%;
             height: var(--session-height);
             border-left: var(--background-color);
+        }
+
+        .sessions[data-side-by-side=true] {
+            grid-template-columns: 1fr 1fr;
         }
 
         .session {
@@ -159,9 +176,11 @@
         .shutter {
             z-index: 5;
             pointer-events: none;
+            background-color: var(--white-color);
             grid-row-start: jobs;
             grid-row-end: footer;
             grid-column: 1;
+            opacity: 0.2;
         }
 
         .jobs {
@@ -199,7 +218,12 @@
             padding-bottom: 3px;
         }
 
-        .job-header .prettify-toggle {
+        .job-header .job-actions {
+            margin-right: 15px;
+            text-align: right;
+        }
+
+        .job-header .job-actions .prettify-toggle {
             text-align: center;
             width: 1em;
             display: inline-block;
@@ -209,7 +233,7 @@
             color: var(--white-color);
         }
 
-        .job-header .prettify-toggle[data-enabled=true] {
+        .job-header .job-actions .prettify-toggle[data-enabled=true] {
             color: var(--green-color);
         }
 
@@ -239,18 +263,26 @@
         }
 
         .output .cursor {
+            --scrollback-offset: calc(var(--scrollback-size) * var(--letter-height));
+            --row-offset: calc(var(--row-index) * var(--letter-height));
+            --column-offset: calc(var(--column-index) * var(--letter-width));
+
             position: absolute;
             background-color: var(--white-color);
             opacity: 0.6;
+            top: calc(var(--scrollback-offset) + var(--row-offset));
+            left: var(--column-offset);
+            height: var(--letter-height);
+            width: var(--letter-width);
         }
 
         .output .row {
-            height: var(--row-height);
+            height: var(--letter-height);
         }
 
         .output .row .char-group {
             display: inline-block;
-            height: var(--row-height);
+            height: var(--letter-height);
         }
 
         .session .prompt {
@@ -311,6 +343,13 @@
             left: calc(30px + calc(var(--caret-position) * var(--prompt-letter-width)));
         }
 
+        .autocomplete .suggestions-list {
+            max-height: 300px;
+            overflow: auto;
+            padding: 0;
+            margin: 0;
+        }
+
         .autocomplete .suggestion {
             list-style-type: none;
             padding: 2px;
@@ -333,6 +372,15 @@
             opacity: 0.5;
             margin-right: 10px;
             background-color: rgba(0, 0, 0, 0.15);
+        }
+
+        .autocomplete .suggestion .suggestion-synopsis {
+            float: right;
+            opacity: 0.5;
+            font-size: 0.8em;
+            padding-left: 30px;
+            margin-top: 0.65em;
+            margin-right: 5px;
         }
 
         .footer {

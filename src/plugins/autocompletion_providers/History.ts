@@ -27,5 +27,6 @@ export function getMatchingHistoryRecords(currentText: string, pwd: string) {
     return HistoryService.instance.all
         .filter(record => cdIntoRelativePathFilter(record, pwd))
         .map(record => record.command)
-        .filter(command => fuzzyMatch(currentText, command));
+        .filter(command => fuzzyMatch(currentText, command))
+        .reverse();
 }

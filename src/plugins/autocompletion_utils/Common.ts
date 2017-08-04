@@ -7,11 +7,10 @@ import * as Path from "path";
 import * as _ from "lodash";
 import {fontAwesome} from "../../views/css/FontAwesome";
 import {colors} from "../../views/css/colors";
-import {CSSObject} from "../../views/css/definitions";
 import {StatusCode} from "../../utils/Git";
 import {ASTNode, leafNodeAt, serializeReplacing} from "../../shell/Parser";
 
-type SuggestionStyle = { value: string; css: CSSObject};
+type SuggestionStyle = { value: string; css: Object};
 
 interface PromptSerializerContext {
     ast: ASTNode;

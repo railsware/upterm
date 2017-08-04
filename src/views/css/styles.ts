@@ -2,10 +2,7 @@ import {Weight, Brightness, Color} from "../../Enums";
 import {colors, colorValue, textColor} from "./colors";
 import {darken, failurize, lighten} from "./functions";
 import {Attributes} from "../../Interfaces";
-import {CSSObject} from "./definitions";
-import {CSSProperties} from "react";
 import {FontService} from "../../services/FontService";
-import {Session} from "../../shell/Session";
 
 const jobBackgroundColor = colors.black;
 const backgroundColor = darken(jobBackgroundColor, 4);
@@ -14,7 +11,8 @@ export const contentPadding = 10;
 export const application = () => ({
     "--font-size": `${FontService.instance.font.size}px`,
     "--font-family": FontService.instance.font.family,
-    "--row-height": `${FontService.instance.font.letterHeight}px`,
+    "--letter-width": `${FontService.instance.font.letterWidth}px`,
+    "--letter-height": `${FontService.instance.font.letterHeight}px`,
     "--content-padding": `${contentPadding}px`,
     "--search-input-color": lighten(backgroundColor, 15),
     "--background-color": backgroundColor,
@@ -32,61 +30,8 @@ export const application = () => ({
     "--cyan-color": colors.cyan,
 });
 
-export const jobs = (isSessionFocused: boolean): CSSObject => ({
-    ...(isSessionFocused ? {} : {pointerEvents: "none"}),
-});
-
-export const autocomplete = {
-    synopsis: {
-        float: "right",
-        opacity: 0.5,
-        fontSize: "0.8em",
-        marginTop: "0.65em",
-        marginRight: 5,
-    },
-    value: {
-        paddingRight: 30,
-    },
-    suggestionsList: {
-        maxHeight: 300,
-        overflow: "auto",
-        padding: 0,
-        margin: 0,
-    } as CSSProperties,
-};
-
-export const footer = {
-    status: (status: VcsStatus) => ({
-        color: status === "dirty" ? colors.blue : colors.white,
-    }),
-};
-
-export const sessions = (sessions: Session[]) => ({
-    gridTemplateColumns: `repeat(${sessions.length}, calc(100% / ${sessions.length}))`,
-    gridTemplateRows: "100%",
-});
-
-export const sessionShutter = (isFocused: boolean) => ({
-    backgroundColor: colors.white,
-    opacity: isFocused ? 0 : 0.2,
-});
-
-export const tabs = {
-    justifyContent: "center" as "center",
-    display: "flex",
-    WebkitMarginBefore: 0,
-    WebkitMarginAfter: 0,
-    WebkitPaddingStart: 0,
-    WebkitUserSelect: "none",
-    listStyle: "none",
-    paddingLeft: 68,
-    paddingRight: 129,
-};
-
-// To display even empty rows. The height might need tweaking.
-// TODO: Remove if we always have a fixed output width.
 export const charGroup = (attributes: Attributes) => {
-    const styles: CSSObject = {
+    const styles: any = {
         color: colorValue(attributes.color, {isBright: attributes.brightness === Brightness.Bright}),
         backgroundColor: colorValue(attributes.backgroundColor, {isBright: false}),
     };
@@ -115,21 +60,4 @@ export const charGroup = (attributes: Attributes) => {
     }
 
     return styles;
-};
-
-export const cursor = (rowIndex: number, columnIndex: number, scrollbackSize: number) => ({
-    top: rowIndex * FontService.instance.font.letterHeight + (scrollbackSize * FontService.instance.font.letterHeight),
-    left: columnIndex * FontService.instance.font.letterWidth,
-    height: FontService.instance.font.letterHeight,
-    width: FontService.instance.font.letterWidth,
-});
-
-export const actions = {
-    marginRight: 15,
-    textAlign: "right",
-};
-
-export const image = {
-    maxHeight: "90vh",
-    maxWidth: "100vh",
 };
