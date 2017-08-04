@@ -9,6 +9,8 @@ import {Status} from "../Enums";
 import {userFriendlyPath} from "../utils/Common";
 import {shell} from "electron";
 import {services} from "../services/index";
+import {colors} from "./css/colors";
+import {Subscription} from "rxjs/Subscription";
 
 interface Props {
     session: Session;
@@ -75,7 +77,7 @@ export class SessionComponent extends React.Component<Props, {}> {
                 {promptComponent}
                 <div className="footer" ref="footer">
                     <span className="present-directory">{userFriendlyPath(this.props.session.directory)}</span>
-                    <VcsDataComponent directory={this.props.session.directory}/>
+                    <GitStatusComponent directory={this.props.session.directory}/>
                     <ReleaseComponent/>
                 </div>
             </div>
@@ -119,17 +121,50 @@ export class SessionComponent extends React.Component<Props, {}> {
     }
 }
 
-class VcsDataComponent extends React.Component<{ directory: string }, {}> {
+type GitStatusProps = { directory: string };
+
+class GitStatusComponent extends React.Component<GitStatusProps, GitState> {
+    private subscription: Subscription;
+
+    constructor(props: GitStatusProps) {
+        super(props);
+
+        this.state = {
+            kind: "not-repository",
+        };
+    }
+
+    componentDidMount() {
+        this.subscribe(this.props.directory);
+    }
+
+    componentWillUpdate(nextProps: GitStatusProps) {
+        if (this.props.directory !== nextProps.directory) {
+            this.subscription.unsubscribe();
+            this.subscribe(nextProps.directory);
+        }
+    }
+
+    componentWillUnmount() {
+        this.subscription.unsubscribe();
+    }
+
     render() {
-        // if (data.kind === "repository") {
-        //     return (
-        //         <span className="vcs-data" style={{color: data.status === "dirty" ? colors.blue : colors.white}}>
-        //         {data.branch}
-        //     </span>
-        //     );
-        // } else {
+        if (this.state.kind === "repository") {
+            return (
+                <span className="vcs-data" style={{color: this.state.status === "dirty" ? colors.blue : colors.white}}>
+                {this.state.branch}
+            </span>
+            );
+        } else {
             return null;
-        // }
+        }
+    }
+
+    private subscribe(directory: string) {
+        this.subscription = services.git.observableFor(directory).subscribe((data: GitState) => {
+            this.setState(data);
+        });
     }
 }
 

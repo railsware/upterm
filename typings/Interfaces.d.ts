@@ -18,18 +18,11 @@ interface RowColumn {
     rowIndex: number;
 }
 
-type VcsStatus = "dirty" | "clean";
-
-type VcsData = {
+type GitState = {
   kind: "repository",
   branch: string,
-  status: VcsStatus;
+  status: "dirty" | "clean";
 } | { kind: "not-repository"; };
-
-interface FileChanges {
-  stagedChanges: string;
-  unstagedChanges: string;
-}
 
 interface Margins {
     top: number;

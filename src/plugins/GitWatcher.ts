@@ -30,10 +30,10 @@ class GitWatcher extends EventEmitter {
         const state = await repositoryState(this.directory);
 
         if (state === RepositoryState.NotRepository) {
-            const data: VcsData = {kind: "not-repository"};
+            const data: GitState = {kind: "not-repository"};
             this.emit(GIT_WATCHER_EVENT_NAME, data);
         } else {
-            const data: VcsData = {
+            const data: GitState = {
                 kind: "repository",
                 branch: await currentBranchName(<GitDirectoryPath>this.directory),
                 status: state,
@@ -46,7 +46,7 @@ class GitWatcher extends EventEmitter {
 interface WatchesValue {
     listeners: Set<Session>;
     watcher: GitWatcher;
-    data: VcsData;
+    data: GitState;
 }
 
 class WatchManager implements EnvironmentObserverPlugin {
@@ -84,7 +84,7 @@ class WatchManager implements EnvironmentObserverPlugin {
 
             watcher.watch();
 
-            watcher.on(GIT_WATCHER_EVENT_NAME, (data: VcsData) => {
+            watcher.on(GIT_WATCHER_EVENT_NAME, (data: GitState) => {
                 const details = this.directoryToDetails.get(directory);
 
                 if (details && !_.isEqual(data, details.data)) {
@@ -95,7 +95,7 @@ class WatchManager implements EnvironmentObserverPlugin {
         }
     }
 
-    vcsDataFor(directory: string): VcsData {
+    vcsDataFor(directory: string): GitState {
         const details = this.directoryToDetails.get(directory);
 
         if (details) {
