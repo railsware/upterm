@@ -1,6 +1,7 @@
 import {Observable} from "rxjs/Observable";
-import {Observer} from "rxjs/Observer";
 import {BehaviorSubject} from "rxjs/BehaviorSubject";
+import "rxjs/add/observable/timer";
+import "rxjs/add/operator/concatMap";
 import "rxjs/add/operator/share";
 import "rxjs/add/operator/distinct";
 import "rxjs/add/operator/multicast";
@@ -9,17 +10,17 @@ import {currentBranchName, GitDirectoryPath, repositoryState, RepositoryState} f
 
 const INTERVAL = 2000;
 
-async function getState(directory: string, callback: (state: GitState) => void) {
+async function getState(directory: string): Promise<GitState> {
     const state = await repositoryState(directory);
 
     if (state === RepositoryState.NotRepository) {
-        callback({kind: "not-repository"});
+        return {kind: "not-repository"};
     } else {
-        callback({
+        return {
             kind: "repository",
             branch: await currentBranchName(<GitDirectoryPath>directory),
             status: state,
-        });
+        };
     }
 }
 
@@ -28,13 +29,9 @@ export class GitService {
 
     observableFor(directory: string): Observable<GitState> {
         if (!this.observables.has(directory)) {
-            const subscribe = (observer: Observer<GitState>) => {
-                getState(directory, state => observer.next(state));
-                const timer = setInterval(() => getState(directory, state => observer.next(state)), INTERVAL);
-
-                return () => clearInterval(timer);
-            };
-            const observable = Observable.create(subscribe)
+            const observable = Observable
+                .timer(0, INTERVAL)
+                .concatMap(() => getState(directory))
                 // Don't emit if a value didn't change.
                 .distinct(JSON.stringify)
                 // Remember the last value to emit immediately to new subscriptions.
