@@ -13,7 +13,7 @@ export function alpha(color: string, percent: number) {
 }
 
 export function failurize(color: string) {
-    return tinyColor(color).spin(140).saturate(15).toHexString();
+    return tinyColor(color).spin(140).saturate(25).toHexString();
 }
 
 export function toDOMString(pixels: number) {
