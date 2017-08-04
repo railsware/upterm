@@ -17,19 +17,14 @@ const fontSize = 14;
 const fontFamily = "'Hack', 'Fira Code', 'Menlo', monospace";
 
 export class FontService {
-    private static _instance: FontService;
     size: number;
     letterWidth: number;
     letterHeight: number;
     family: string;
     private listeners: Array<() => void> = [];
 
-    static get instance() {
-        if (!this._instance) {
-            this._instance = new FontService();
-        }
-
-        return this._instance;
+    constructor() {
+        this.updateFont(fontSize, fontFamily);
     }
 
     onChange(callback: () => void) {
@@ -49,10 +44,6 @@ export class FontService {
     decreaseSize() {
         this.updateFont(Math.max(4, this.size - 1), fontFamily);
         this.notifyListeners();
-    }
-
-    private constructor() {
-        this.updateFont(fontSize, fontFamily);
     }
 
     private updateFont(size: number, family: string) {

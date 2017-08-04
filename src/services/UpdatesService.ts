@@ -2,20 +2,11 @@ import {remote} from "electron";
 import * as https from "https";
 
 export class UpdatesService {
-    private static _instance: UpdatesService;
     isAvailable = false;
     private currentVersion = "v" + remote.app.getVersion();
     private INTERVAL = 1000 * 60 * 60 * 12;
 
-    static get instance() {
-        if (!this._instance) {
-            this._instance = new UpdatesService();
-        }
-
-        return this._instance;
-    }
-
-    private constructor() {
+    constructor() {
         this.checkUpdate();
         setInterval(() => this.checkUpdate(), this.INTERVAL);
     }

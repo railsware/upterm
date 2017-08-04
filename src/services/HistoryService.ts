@@ -1,9 +1,8 @@
-import {appendFileSync, readFileSync} from "fs";
+import {readFileSync} from "fs";
 import {historyFilePath} from "../utils/Common";
 import * as _ from "lodash";
 
 import csvParse = require("csv-parse/lib/sync");
-import * as csvStringify from "csv-stringify";
 
 interface HistoryRecordWithoutID {
     command: string;
@@ -33,17 +32,12 @@ const readHistoryFileData = (): HistoryRecord[] => {
 };
 
 export class HistoryService {
-    private static _instance: HistoryService;
     private maxRecordsCount: number = 5000;
     private storage: HistoryRecord[] = [];
     private listeners: Array<(record: HistoryRecord) => void> = [];
 
-    static get instance() {
-        if (!this._instance) {
-            this._instance = new HistoryService();
-        }
-
-        return this._instance;
+    constructor() {
+        this.storage = readHistoryFileData();
     }
 
     get all(): HistoryRecord[] {
@@ -79,10 +73,6 @@ export class HistoryService {
         this.listeners.push(callback);
     }
 
-    private constructor() {
-        this.storage = readHistoryFileData();
-    }
-
     private get nextID(): number {
         if (this.latest) {
             return this.latest.id + 1;
@@ -91,8 +81,3 @@ export class HistoryService {
         }
     }
 }
-
-HistoryService.instance.onChange(record => csvStringify(
-    [Object.values(record)],
-    (_error, output) => appendFileSync(historyFilePath, output),
-));
