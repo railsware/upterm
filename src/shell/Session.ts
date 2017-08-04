@@ -42,6 +42,7 @@ export class Session extends events.EventEmitter {
         job.execute();
 
         job.once("end", () => {
+            this.emit("job-finished");
             this.emit("jobs-changed");
 
             const electronWindow = remote.BrowserWindow.getAllWindows()[0];
