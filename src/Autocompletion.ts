@@ -1,6 +1,5 @@
 import {leafNodeAt, ASTNode} from "./shell/Parser";
 import * as _ from "lodash";
-import {HistoryService} from "./services/HistoryService";
 import {
     styles, replaceAllPromptSerializer, Suggestion,
     SuggestionWithDefaults, addDefaultAttributeValues,
@@ -9,8 +8,9 @@ import {Environment} from "./shell/Environment";
 import {OrderedSet} from "./utils/OrderedSet";
 import {Aliases} from "./shell/Aliases";
 import {fuzzyMatch} from "./utils/Common";
+import {getMatchingHistoryRecords} from "./plugins/autocompletion_providers/History";
 
-export const suggestionsLimit = 5;
+const suggestionsLimit = 7;
 
 type GetSuggestionsOptions = {
     currentText: string;
@@ -29,8 +29,7 @@ export async function getSuggestions({
     historicalPresentDirectoriesStack,
     aliases,
 }: GetSuggestionsOptions): Promise<SuggestionWithDefaults[]> {
-    const prefixMatchesInHistory: string[] = HistoryService.instance.all.map(historyRecord => historyRecord.command).filter(command => fuzzyMatch(currentText, command));
-    const suggestionsFromHistory = prefixMatchesInHistory.map(match => ({
+    const suggestionsFromHistory = getMatchingHistoryRecords(currentText, environment.pwd).map(match => ({
         value: match,
         promptSerializer: replaceAllPromptSerializer,
         isFiltered: true,

@@ -13,7 +13,7 @@ interface HistoryRecordWithoutID {
     sessionID: number;
 }
 
-interface HistoryRecord extends HistoryRecordWithoutID {
+export interface HistoryRecord extends HistoryRecordWithoutID {
     id: number;
 }
 
