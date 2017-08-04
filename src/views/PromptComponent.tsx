@@ -1,7 +1,6 @@
 import * as _ from "lodash";
 import * as React from "react";
 import {AutocompleteComponent} from "./AutocompleteComponent";
-import {HistoryService} from "../services/HistoryService";
 import {getCaretPosition, setCaretPosition} from "./ViewUtils";
 import {Prompt} from "../shell/Prompt";
 import {SuggestionWithDefaults} from "../plugins/autocompletion_utils/Common";
@@ -9,6 +8,7 @@ import {KeyCode} from "../Enums";
 import {getSuggestions} from "../Autocompletion";
 import {scan} from "../shell/Scanner";
 import {Session} from "../shell/Session";
+import {services} from "../services/index";
 
 interface Props {
     session: Session;
@@ -107,7 +107,7 @@ export class PromptComponent extends React.Component<Props, State> {
     }
 
     async appendLastLArgumentOfPreviousCommand(): Promise<void> {
-        const latestHistoryRecord = HistoryService.instance.latest;
+        const latestHistoryRecord = services.history.latest;
 
         if (latestHistoryRecord) {
             this.setText(this.prompt.value + _.last(scan(latestHistoryRecord.command))!.value);
@@ -124,13 +124,13 @@ export class PromptComponent extends React.Component<Props, State> {
 
     setPreviousHistoryItem(): void {
         if (this.state.displayedHistoryRecordID) {
-            const previousHistoryRecord = HistoryService.instance.getPreviousTo(this.state.displayedHistoryRecordID);
+            const previousHistoryRecord = services.history.getPreviousTo(this.state.displayedHistoryRecordID);
             if (previousHistoryRecord) {
                 this.setText(previousHistoryRecord.command);
                 this.setState({displayedHistoryRecordID: previousHistoryRecord.id});
             }
         } else {
-            const previousHistoryRecord = HistoryService.instance.latest;
+            const previousHistoryRecord = services.history.latest;
             if (previousHistoryRecord) {
                 this.setText(previousHistoryRecord.command);
                 this.setState({displayedHistoryRecordID: previousHistoryRecord.id});
@@ -140,7 +140,7 @@ export class PromptComponent extends React.Component<Props, State> {
 
     setNextHistoryItem(): void {
         if (this.state.displayedHistoryRecordID) {
-            const nextHistoryRecord = HistoryService.instance.getNextTo(this.state.displayedHistoryRecordID);
+            const nextHistoryRecord = services.history.getNextTo(this.state.displayedHistoryRecordID);
             if (nextHistoryRecord) {
                 this.setText(nextHistoryRecord.command);
                 this.setState({displayedHistoryRecordID: nextHistoryRecord.id});

@@ -10,8 +10,8 @@ import {KeyboardAction} from "../Enums";
 import {UserEvent} from "../Interfaces";
 import {isModifierKey} from "./ViewUtils";
 import {TabComponent} from "./TabComponent";
-import {FontService} from "../services/FontService";
 import {Session} from "../shell/Session";
+import {services} from "../services";
 
 type ApplicationState = {
     tabs: Array<{
@@ -44,7 +44,7 @@ export class ApplicationComponent extends React.Component<{}, ApplicationState> 
                 this.focusedSession.directory = directory,
             );
 
-            FontService.instance.onChange(() => {
+            services.font.onChange(() => {
                 this.forceUpdate();
                 this.resizeAllSessions();
             });

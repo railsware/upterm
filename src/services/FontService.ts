@@ -1,10 +1,3 @@
-interface FontInfo {
-    size: number;
-    letterWidth: number;
-    letterHeight: number;
-    family: string;
-}
-
 function getLetterSize(size: number, fontFamily: string) {
     const height = size + 2;
 
@@ -25,8 +18,11 @@ const fontFamily = "'Hack', 'Fira Code', 'Menlo', monospace";
 
 export class FontService {
     private static _instance: FontService;
-    font: FontInfo;
-    private listeners: Array<(font: FontInfo) => void> = [];
+    size: number;
+    letterWidth: number;
+    letterHeight: number;
+    family: string;
+    private listeners: Array<() => void> = [];
 
     static get instance() {
         if (!this._instance) {
@@ -36,7 +32,7 @@ export class FontService {
         return this._instance;
     }
 
-    onChange(callback: (font: FontInfo) => void) {
+    onChange(callback: () => void) {
         this.listeners.push(callback);
     }
 
@@ -46,12 +42,12 @@ export class FontService {
     }
 
     increaseSize() {
-        this.updateFont(this.font.size + 1, fontFamily);
+        this.updateFont(this.size + 1, fontFamily);
         this.notifyListeners();
     }
 
     decreaseSize() {
-        this.updateFont(Math.max(4, this.font.size - 1), fontFamily);
+        this.updateFont(Math.max(4, this.size - 1), fontFamily);
         this.notifyListeners();
     }
 
@@ -62,17 +58,15 @@ export class FontService {
     private updateFont(size: number, family: string) {
         const letterSize = getLetterSize(size, family);
 
-        this.font = {
-            size: size,
-            family: family,
-            letterWidth: letterSize.width,
-            letterHeight: letterSize.height,
-        };
+        this.size = size;
+        this.family = family;
+        this.letterWidth = letterSize.width;
+        this.letterHeight = letterSize.height;
     }
 
     private notifyListeners() {
         this.listeners.forEach(listener => {
-            listener(this.font);
+            listener();
         });
     }
 }

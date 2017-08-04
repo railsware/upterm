@@ -12,7 +12,7 @@ import {Status} from "../Enums";
 import {Environment} from "./Environment";
 import {normalizeProcessInput} from "../utils/Common";
 import {TerminalLikeDevice} from "../Interfaces";
-import {HistoryService} from "../services/HistoryService";
+import {services} from "../services/index";
 
 export class Job extends EmitterWithUniqueID implements TerminalLikeDevice {
     public status: Status = Status.InProgress;
@@ -27,7 +27,7 @@ export class Job extends EmitterWithUniqueID implements TerminalLikeDevice {
     }
 
     async execute(): Promise<void> {
-        HistoryService.instance.add({
+        services.history.add({
             command: this.prompt.value,
             expandedCommand: this.prompt.expandedTokens.map(t => t.escapedValue).join(" "),
             timestamp: Date.now(),

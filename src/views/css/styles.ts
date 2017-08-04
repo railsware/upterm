@@ -2,17 +2,17 @@ import {Weight, Brightness, Color} from "../../Enums";
 import {colors, colorValue, textColor} from "./colors";
 import {darken, failurize, lighten} from "./functions";
 import {Attributes} from "../../Interfaces";
-import {FontService} from "../../services/FontService";
+import {services} from "../../services/index";
 
 const jobBackgroundColor = colors.black;
 const backgroundColor = darken(jobBackgroundColor, 4);
 export const contentPadding = 10;
 
 export const application = () => ({
-    "--font-size": `${FontService.instance.font.size}px`,
-    "--font-family": FontService.instance.font.family,
-    "--letter-width": `${FontService.instance.font.letterWidth}px`,
-    "--letter-height": `${FontService.instance.font.letterHeight}px`,
+    "--font-size": `${services.font.size}px`,
+    "--font-family": services.font.family,
+    "--letter-width": `${services.font.letterWidth}px`,
+    "--letter-height": `${services.font.letterHeight}px`,
     "--content-padding": `${contentPadding}px`,
     "--search-input-color": lighten(backgroundColor, 15),
     "--background-color": backgroundColor,

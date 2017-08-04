@@ -2,7 +2,7 @@ import {KeyboardAction} from "../../Enums";
 import {remote} from "electron";
 import {getAcceleratorForAction} from "../keyevents/Keybindings";
 import {ApplicationComponent} from "../ApplicationComponent";
-import {FontService} from "../../services/FontService";
+import {services} from "../../services";
 
 export function buildMenuTemplate(
     app: Electron.App,
@@ -72,21 +72,21 @@ export function buildMenuTemplate(
                     label: "Increase Font Size",
                     accelerator: getAcceleratorForAction(KeyboardAction.increaseFontSize),
                     click: () => {
-                        FontService.instance.increaseSize();
+                        services.font.increaseSize();
                     },
                 },
                 {
                     label: "Decrease Font Size",
                     accelerator: getAcceleratorForAction(KeyboardAction.decreaseFontSize),
                     click: () => {
-                        FontService.instance.decreaseSize();
+                        services.font.decreaseSize();
                     },
                 },
                 {
                     label: "Reset Font Size",
                     accelerator: getAcceleratorForAction(KeyboardAction.resetFontSize),
                     click: () => {
-                        FontService.instance.resetSize();
+                        services.font.resetSize();
                     },
                 },
             ],

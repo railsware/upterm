@@ -9,9 +9,8 @@ import {Status} from "../Enums";
 import {userFriendlyPath} from "../utils/Common";
 import {watchManager} from "../plugins/GitWatcher";
 import {shell} from "electron";
-import {ReleaseTracker} from "../services/ReleaseTracker";
-import {FontService} from "../services/FontService";
 import {colors} from "./css/colors";
+import {services} from "../services/index";
 
 interface Props {
     session: Session;
@@ -88,8 +87,8 @@ export class SessionComponent extends React.Component<Props, {}> {
 
     resizeSession(): void {
         this.props.session.dimensions = {
-            columns: Math.floor(this.size.width / FontService.instance.font.letterWidth),
-            rows: Math.floor(this.size.height / FontService.instance.font.letterHeight),
+            columns: Math.floor(this.size.width / services.font.letterWidth),
+            rows: Math.floor(this.size.height / services.font.letterHeight),
         };
     }
 
@@ -136,7 +135,7 @@ const VcsDataComponent = ({data}: { data: VcsData }) => {
 };
 
 const ReleaseComponent = () => {
-    if (process.env.NODE_ENV === "production" && ReleaseTracker.instance.isUpdateAvailable) {
+    if (process.env.NODE_ENV === "production" && services.updates.isAvailable) {
         return (
             <span
                 className="release-component-link"

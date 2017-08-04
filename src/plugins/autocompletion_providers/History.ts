@@ -1,7 +1,8 @@
-import {HistoryRecord, HistoryService} from "../../services/HistoryService";
+import {HistoryRecord} from "../../services/HistoryService";
 import {fuzzyMatch} from "../../utils/Common";
 import {scan} from "../../shell/Scanner";
 import {isAbsolute} from "path";
+import {services} from "../../services/index";
 
 function cdIntoRelativePathFilter(record: HistoryRecord, pwd: string): boolean {
     if (record.directory === pwd) {
@@ -24,7 +25,7 @@ function cdIntoRelativePathFilter(record: HistoryRecord, pwd: string): boolean {
 }
 
 export function getMatchingHistoryRecords(currentText: string, pwd: string) {
-    return HistoryService.instance.all
+    return services.history.all
         .filter(record => cdIntoRelativePathFilter(record, pwd))
         .map(record => record.command)
         .filter(command => fuzzyMatch(currentText, command))
