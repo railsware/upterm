@@ -1,5 +1,5 @@
 import {Weight, Brightness, Color} from "../../Enums";
-import {colors, colorValue} from "./colors";
+import {colors, colorValue, textColor} from "./colors";
 import {darken, failurize, lighten} from "./functions";
 import {Attributes} from "../../Interfaces";
 import {CSSObject} from "./definitions";
@@ -20,7 +20,7 @@ export const application = () => ({
     "--background-color": backgroundColor,
     "--job-background-color": jobBackgroundColor,
     "--failed-job-background-color": failurize(jobBackgroundColor),
-    "--text-color": colors.white,
+    "--text-color": textColor,
 
     "--black-color": colors.black,
     "--red-color": colors.red,

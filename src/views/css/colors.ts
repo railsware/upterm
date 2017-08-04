@@ -1,10 +1,12 @@
 import * as _ from "lodash";
 import {ColorCode} from "../../Interfaces";
 
+export const textColor = "#EEE";
+
 export const colors = {
-    black: "#292C33",
+    black: "#333",
     red: "#BF6E7C",
-    white: "#aebcda",
+    white: "#999",
     green: "#88B379",
     yellow: "#D9BD86",
     blue: "#66A5DF",
