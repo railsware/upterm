@@ -3,7 +3,7 @@ import {BehaviorSubject} from "rxjs/BehaviorSubject";
 import "rxjs/add/observable/timer";
 import "rxjs/add/operator/concatMap";
 import "rxjs/add/operator/share";
-import "rxjs/add/operator/distinct";
+import "rxjs/add/operator/distinctUntilChanged";
 import "rxjs/add/operator/multicast";
 
 import {currentBranchName, GitDirectoryPath, repositoryState, RepositoryState} from "../utils/Git";
@@ -29,7 +29,7 @@ function createObservable(directory: string) {
         .timer(0, INTERVAL)
         .concatMap(() => getState(directory))
         // Don't emit if a value didn't change.
-        .distinct(JSON.stringify)
+        .distinctUntilChanged((x, y) => JSON.stringify(x) === JSON.stringify(y))
         // Remember the last value to emit immediately to new subscriptions.
         .multicast(new BehaviorSubject<GitState>({kind: "not-repository"}))
         // Automatically stop checking git status when there are no subscriptions anymore.
