@@ -173,7 +173,7 @@ export async function branches({
         "git",
         ["for-each-ref", "refs/heads ", tags ? "refs/tags " : "",
         "--format='%(HEAD)%(refname:strip=2)'", "|",
-        "sed", "-r", "'s/^.{1}//'"],
+        "sed", "'s/^.{1}//'"],
         directory,
     );
     const promiseRemotes = linedOutputOf(
