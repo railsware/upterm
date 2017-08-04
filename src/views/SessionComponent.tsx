@@ -7,9 +7,7 @@ import * as css from "./css/styles";
 import {PromptComponent} from "./PromptComponent";
 import {Status} from "../Enums";
 import {userFriendlyPath} from "../utils/Common";
-import {watchManager} from "../plugins/GitWatcher";
 import {shell} from "electron";
-import {colors} from "./css/colors";
 import {services} from "../services/index";
 
 interface Props {
@@ -39,8 +37,7 @@ export class SessionComponent extends React.Component<Props, {}> {
                     }
                 }
                 this.forceUpdate();
-            })
-            .on("vcs-data", () => this.forceUpdate());
+            });
     }
 
     render() {
@@ -78,7 +75,7 @@ export class SessionComponent extends React.Component<Props, {}> {
                 {promptComponent}
                 <div className="footer" ref="footer">
                     <span className="present-directory">{userFriendlyPath(this.props.session.directory)}</span>
-                    <VcsDataComponent data={watchManager.vcsDataFor(this.props.session.directory)}/>
+                    <VcsDataComponent directory={this.props.session.directory}/>
                     <ReleaseComponent/>
                 </div>
             </div>
@@ -122,17 +119,19 @@ export class SessionComponent extends React.Component<Props, {}> {
     }
 }
 
-const VcsDataComponent = ({data}: { data: VcsData }) => {
-    if (data.kind === "repository") {
-        return (
-            <span className="vcs-data" style={{color: data.status === "dirty" ? colors.blue : colors.white}}>
-                {data.branch}
-            </span>
-        );
-    } else {
-        return <div/>;
+class VcsDataComponent extends React.Component<{ directory: string }, {}> {
+    render() {
+        // if (data.kind === "repository") {
+        //     return (
+        //         <span className="vcs-data" style={{color: data.status === "dirty" ? colors.blue : colors.white}}>
+        //         {data.branch}
+        //     </span>
+        //     );
+        // } else {
+            return null;
+        // }
     }
-};
+}
 
 const ReleaseComponent = () => {
     if (process.env.NODE_ENV === "production" && services.updates.isAvailable) {
