@@ -27,7 +27,6 @@ const CharGroupComponent = ({group}: {group: Char[]}) => {
 };
 
 interface RowProps {
-    index: number;
     row: List<Char>;
 }
 
@@ -43,7 +42,7 @@ export class RowComponent extends React.Component<RowProps, {}> {
         );
 
         return (
-            <div className="row" data-index={this.props.index} ref={(div: HTMLDivElement | null) => div && div.scrollIntoViewIfNeeded()}>
+            <div className="row">
                 {charGroupComponents}
             </div>
         );
@@ -76,7 +75,7 @@ export class OutputComponent extends React.Component<Props, {}> {
                     }}/>
             : undefined;
 
-        const rowComponents = buffer.map((row, index) => <RowComponent key={index} index={index} row={row}/>);
+        const rowComponents = buffer.map(row => <RowComponent key={row.hashCode()} row={row}/>);
 
         return (
             <div className="output"
