@@ -71,7 +71,7 @@ export class PromptComponent extends React.Component<Props, State> {
             }
         }
 
-        return <div className="prompt" ref="wrapper">
+        return <div className="prompt">
             <div className="prompt-decoration">
                 <div className="square"/>
                 <div className="square rhombus"/>
@@ -91,7 +91,6 @@ export class PromptComponent extends React.Component<Props, State> {
     }
 
     focus(): void {
-        this.scrollIntoView();
         this.commandNode.focus();
     }
 
@@ -171,10 +170,6 @@ export class PromptComponent extends React.Component<Props, State> {
         await this.getSuggestions();
     }
 
-    scrollIntoView(): void {
-        this.wrapperNode.scrollIntoView(true);
-    }
-
     private setText(text: string): void {
         this.prompt.setValue(text);
         this.setDOMValueProgrammatically(text);
@@ -183,11 +178,6 @@ export class PromptComponent extends React.Component<Props, State> {
     private get commandNode(): HTMLInputElement {
         /* tslint:disable:no-string-literal */
         return this.refs["command"] as HTMLInputElement;
-    }
-
-    private get wrapperNode(): Element {
-        /* tslint:disable:no-string-literal */
-        return this.refs["wrapper"] as Element;
     }
 
     private setDOMValueProgrammatically(text: string): void {

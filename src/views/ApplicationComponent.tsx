@@ -377,7 +377,6 @@ export class ApplicationComponent extends React.Component<{}, ApplicationState> 
             }
         } else {
             if (isKeybindingForEvent(event, KeyboardAction.cliHistoryPrevious)) {
-                promptComponent.scrollIntoView();
                 promptComponent.setPreviousHistoryItem();
 
                 event.stopPropagation();
@@ -386,7 +385,6 @@ export class ApplicationComponent extends React.Component<{}, ApplicationState> 
             }
 
             if (isKeybindingForEvent(event, KeyboardAction.cliHistoryNext)) {
-                promptComponent.scrollIntoView();
                 promptComponent.setNextHistoryItem();
 
                 event.stopPropagation();
