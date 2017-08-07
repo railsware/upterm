@@ -11,15 +11,6 @@ const CharGroupComponent = ({group}: {group: Char[]}) => {
     return (
         <span
             className="char-group"
-            data-color={attributes.color}
-            data-background-color={attributes.backgroundColor}
-            data-brightness={attributes.brightness}
-            data-weight={attributes.weight}
-            data-underline={attributes.underline}
-            data-crossed-out={attributes.crossedOut}
-            data-blinking={attributes.blinking}
-            data-cursor={attributes.cursor}
-            data-inverse={attributes.inverse}
             style={css.charGroup(attributes)}>
         {group.map(char => char.value).join("")}
         </span>
