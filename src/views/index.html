@@ -160,17 +160,7 @@
 
         .session {
             position: relative;
-            outline: none;
-            overflow-y: scroll;
-            display: grid;
-            grid-template-areas: "jobs" "prompt" "footer";
-            grid-template-rows: auto var(--prompt-height) var(--footer-height);
             height: var(--session-height);
-        }
-
-        .session[data-status=in-progress] {
-            grid-template-areas: "jobs" "footer";
-            grid-template-rows: auto var(--footer-height);
         }
 
         .shutter {
@@ -183,11 +173,15 @@
             opacity: 0.2;
         }
 
-        .jobs {
-            grid-area: jobs;
+        .session .jobs {
             overflow-y: scroll;
             display: flex;
             flex-direction: column-reverse;
+            height: calc(calc(var(--session-height) - var(--prompt-height)) - var(--footer-height));
+        }
+
+        .session[data-status=in-progress] .jobs {
+            height: calc(var(--session-height) - var(--footer-height));
         }
 
         .output-cut {
@@ -286,13 +280,15 @@
         }
 
         .session .prompt {
-            grid-area: prompt;
-            padding-top: calc(calc(var(--prompt-height) - var(--prompt-font-size)) / 2.5);
+            position: absolute;
+            bottom: var(--footer-height);
+            height: var(--prompt-height);
+            width: 100%;
+            padding: calc(calc(var(--prompt-height) - var(--prompt-font-size)) / 2.5) 0;
             line-height: 1.3;
             display: grid;
             grid-template-areas: "prompt-decoration prompt-content";
             grid-template-columns: calc(var(--prompt-font-size) * 2) auto;
-            height: var(--prompt-font-size);
         }
 
         .session .prompt-decoration {
@@ -336,7 +332,7 @@
         .autocomplete {
             --prompt-letter-width: calc(calc(var(--prompt-font-size) / 2) + 1.5px);
             position: absolute;
-            bottom: calc(var(--footer-height) + var(--prompt-height));
+            bottom: var(--prompt-height);
             min-width: 300px;
             box-shadow: 0 2px 8px 1px rgba(0, 0, 0, 0.3);
             background-color: var(--background-color);
@@ -384,8 +380,10 @@
         }
 
         .footer {
-            grid-area: footer;
+            position: absolute;
+            bottom: 0;
             height: var(--footer-height);
+            width: 100%;
             opacity: 0.7;
             padding: calc(calc(var(--footer-height) - var(--font-size)) / 2) var(--content-padding);
             background-color: #111;
