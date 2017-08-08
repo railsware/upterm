@@ -25,6 +25,11 @@ export class JobComponent extends React.Component<Props, State> {
 
     componentDidMount() {
         this.props.job.on("status", () => this.forceUpdate());
+        /**
+         * Without this a job is below viewport when you
+         * scroll up and then execute a job.
+         */
+        requestAnimationFrame(() => this.jobNode.scrollIntoView());
     }
 
     shouldComponentUpdate(nextProps: Props, nextState: State) {
@@ -43,7 +48,7 @@ export class JobComponent extends React.Component<Props, State> {
         }
 
         return (
-            <div className={"job"} data-status={this.props.job.status}>
+            <div className={"job"} data-status={this.props.job.status} ref="job">
                 <JobHeaderComponent
                     job={this.props.job}
                     showPrettifyToggle={canBePrettified}
@@ -56,5 +61,10 @@ export class JobComponent extends React.Component<Props, State> {
                 {output}
             </div>
         );
+    }
+
+    private get jobNode(): HTMLDivElement {
+        /* tslint:disable:no-string-literal */
+        return this.refs["job"] as HTMLDivElement;
     }
 }
