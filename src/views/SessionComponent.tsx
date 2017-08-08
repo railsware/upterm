@@ -28,17 +28,7 @@ export class SessionComponent extends React.Component<Props, {}> {
 
     componentDidMount() {
         this.resizeSession();
-
-        this.session.on("jobs-changed", () => {
-            if (this.sessionRef && this.footerRef) {
-                if (this.sessionRef.scrollHeight - this.sessionRef.offsetHeight - this.sessionRef.scrollTop > this.footerRef.clientHeight) {
-                    // If we are already close to the bottom,
-                    // scroll all the way to the bottom
-                    this.sessionRef.scrollTop = this.sessionRef.scrollHeight;
-                }
-            }
-            this.forceUpdate();
-        });
+        this.session.on("jobs-changed", () => this.forceUpdate());
     }
 
     render() {
