@@ -322,20 +322,20 @@ export class ApplicationComponent extends React.Component<{}, ApplicationState> 
             return;
         }
 
-        promptComponent.focus();
-
-        // Append last argument to prompt
-        if (isKeybindingForEvent(event, KeyboardAction.cliAppendLastArgumentOfPreviousCommand)) {
-            promptComponent.appendLastLArgumentOfPreviousCommand();
+        // CLI execute command
+        if (isKeybindingForEvent(event, KeyboardAction.cliRunCommand)) {
+            promptComponent.execute((event.target as HTMLElement).innerText);
 
             event.stopPropagation();
             event.preventDefault();
             return;
         }
 
-        // CLI execute command
-        if (isKeybindingForEvent(event, KeyboardAction.cliRunCommand)) {
-            promptComponent.execute((event.target as HTMLElement).innerText);
+        promptComponent.focus();
+
+        // Append last argument to prompt
+        if (isKeybindingForEvent(event, KeyboardAction.cliAppendLastArgumentOfPreviousCommand)) {
+            promptComponent.appendLastLArgumentOfPreviousCommand();
 
             event.stopPropagation();
             event.preventDefault();

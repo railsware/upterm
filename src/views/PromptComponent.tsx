@@ -91,7 +91,7 @@ export class PromptComponent extends React.Component<Props, State> {
     }
 
     focus(): void {
-        this.commandNode.focus();
+        requestAnimationFrame(() => this.commandNode.focus());
     }
 
     clear(): void {
