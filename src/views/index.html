@@ -159,7 +159,7 @@
         }
 
         .session {
-            contain: paint;
+            contain: strict;
             height: var(--session-height);
         }
 
@@ -291,6 +291,7 @@
 
         .session .prompt {
             position: absolute;
+            contain: layout;
             bottom: var(--footer-height);
             height: var(--prompt-height);
             width: 100%;
@@ -299,6 +300,10 @@
             display: grid;
             grid-template-areas: "prompt-decoration prompt-content";
             grid-template-columns: calc(var(--prompt-font-size) * 2) auto;
+        }
+
+        .session[data-status=in-progress] .prompt {
+            opacity: 0;
         }
 
         .session .prompt-decoration {

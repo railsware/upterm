@@ -5,7 +5,6 @@ import {Job} from "../shell/Job";
 import {JobComponent} from "./JobComponent";
 import * as css from "./css/styles";
 import {PromptComponent} from "./PromptComponent";
-import {Status} from "../Enums";
 import {userFriendlyPath} from "../utils/Common";
 import {shell} from "electron";
 import {services} from "../services/index";
@@ -42,16 +41,6 @@ export class SessionComponent extends React.Component<Props, {}> {
         );
 
         const lastJob = _.last(this.session.jobs);
-        const lastJobInProgress = lastJob && lastJob.status === Status.InProgress;
-
-        const promptComponent = lastJobInProgress ? undefined : <PromptComponent
-            key={this.session.jobs.length}
-            ref={component => {
-                this.promptComponent = component!;
-            }}
-            session={this.session}
-            isFocused={this.props.isFocused}
-        />;
 
         return (
             <div className="session"
@@ -63,7 +52,12 @@ export class SessionComponent extends React.Component<Props, {}> {
                     {jobs}
                 </div>
                 {this.props.isFocused ? null : <div className="shutter"/>}
-                {promptComponent}
+                <PromptComponent
+                    key={this.session.jobs.length}
+                    ref={component => this.promptComponent = component!}
+                    session={this.session}
+                    isFocused={this.props.isFocused}
+                />
                 <div className="footer" ref="footer">
                     <span className="present-directory">{userFriendlyPath(this.session.directory)}</span>
                     <GitStatusComponent directory={this.session.directory}/>
