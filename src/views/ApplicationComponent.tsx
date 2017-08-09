@@ -322,6 +322,8 @@ export class ApplicationComponent extends React.Component<{}, ApplicationState> 
             return;
         }
 
+        promptComponent.focus();
+
         // CLI execute command
         if (isKeybindingForEvent(event, KeyboardAction.cliRunCommand)) {
             promptComponent.execute((event.target as HTMLElement).innerText);

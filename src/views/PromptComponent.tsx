@@ -93,6 +93,10 @@ export class PromptComponent extends React.Component<Props, State> {
     }
 
     focus(): void {
+        if (document.activeElement === this.commandNode) {
+            return;
+        }
+
         requestAnimationFrame(() => {
             this.commandNode.focus();
             if (this.prompt.value) {
