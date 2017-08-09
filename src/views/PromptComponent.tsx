@@ -97,12 +97,11 @@ export class PromptComponent extends React.Component<Props, State> {
             return;
         }
 
-        requestAnimationFrame(() => {
-            this.commandNode.focus();
-            if (this.prompt.value) {
-                setCaretPosition(this.commandNode, this.state.caretPositionFromPreviousFocus);
-            }
-        });
+        this.commandNode.focus();
+
+        if (this.prompt.value) {
+            setCaretPosition(this.commandNode, this.state.caretPositionFromPreviousFocus);
+        }
     }
 
     clear(): void {
