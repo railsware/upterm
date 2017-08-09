@@ -1,15 +1,5 @@
-import * as _ from "lodash";
 import {Attributes} from "./Interfaces";
 import {Brightness, Weight, Color} from "./Enums";
-
-export const attributesFlyweight = _.memoize(
-    (attributes: Attributes): Attributes => Object.freeze({...attributes}),
-    (attributes: Dictionary<any>) => {
-        const ordered: Dictionary<any> = {};
-        Object.keys(attributes).sort().forEach(key => ordered[key] = attributes[key]);
-        return JSON.stringify(ordered);
-    },
-);
 
 export const defaultAttributes = Object.freeze({
     inverse: false,
@@ -35,6 +25,6 @@ export function createChar(char: string, attributes: Attributes): Char {
 
     return {
         value: char,
-        attributes: attributesFlyweight(attributes),
+        attributes: attributes,
     };
 }

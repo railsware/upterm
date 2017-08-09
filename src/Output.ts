@@ -1,5 +1,5 @@
 import * as events from "events";
-import {attributesFlyweight, defaultAttributes, createChar, Char} from "./Char";
+import {defaultAttributes, createChar, Char} from "./Char";
 import * as i from "./Interfaces";
 import * as e from "./Enums";
 import {List} from "immutable";
@@ -824,7 +824,7 @@ class Buffer {
     }
 
     setAttributes(attributes: i.Attributes): void {
-        this._attributes = attributesFlyweight({...this._attributes, ...attributes});
+        this._attributes = {...this._attributes, ...attributes};
     }
 
     toLines(): string[] {
