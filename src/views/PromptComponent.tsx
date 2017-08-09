@@ -42,7 +42,9 @@ export class PromptComponent extends React.Component<Props, State> {
 
     componentDidMount() {
         this.focus();
-        this.setDOMValueProgrammatically(this.prompt.value);
+        if (this.prompt.value) {
+            this.setDOMValueProgrammatically(this.prompt.value);
+        }
     }
 
     componentDidUpdate(prevProps: Props) {
@@ -81,10 +83,6 @@ export class PromptComponent extends React.Component<Props, State> {
                 onInput={this.handleInput.bind(this)}
                 onDrop={this.handleDrop.bind(this)}
                 onBlur={() => this.setState({...this.state, caretPositionFromPreviousFocus: getCaretPosition(this.commandNode)})}
-                onFocus={() => {
-                    console.log("on focus");
-                    setCaretPosition(this.commandNode, this.state.caretPositionFromPreviousFocus);
-                }}
                 ref="command"
                 contentEditable={true}
             />
@@ -96,7 +94,9 @@ export class PromptComponent extends React.Component<Props, State> {
     focus(): void {
         requestAnimationFrame(() => {
             this.commandNode.focus();
-            setCaretPosition(this.commandNode, this.state.caretPositionFromPreviousFocus);
+            if (this.prompt.value) {
+                setCaretPosition(this.commandNode, this.state.caretPositionFromPreviousFocus);
+            }
         });
     }
 

@@ -331,8 +331,6 @@ export class ApplicationComponent extends React.Component<{}, ApplicationState> 
             return;
         }
 
-        promptComponent.focus();
-
         // Append last argument to prompt
         if (isKeybindingForEvent(event, KeyboardAction.cliAppendLastArgumentOfPreviousCommand)) {
             promptComponent.appendLastLArgumentOfPreviousCommand();

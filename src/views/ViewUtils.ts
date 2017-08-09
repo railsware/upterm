@@ -2,19 +2,11 @@ import {KeyCode} from "../Enums";
 import {windowBoundsFilePath} from "../utils/Common";
 import {outputJSON} from "fs-extra";
 
-export function stopBubblingUp(event: Event): Event {
-    event.stopPropagation();
-    event.preventDefault();
-
-    return event;
-}
-
 export function isModifierKey(event: KeyboardEvent) {
     return [KeyCode.Shift, KeyCode.Ctrl, KeyCode.Meta, KeyCode.Alt, KeyCode.CapsLock, KeyCode.AltGraph].includes(event.keyCode);
 }
 
 export function setCaretPosition(node: Node, position: number) {
-    console.log(position);
     const selection = window.getSelection();
     const range = document.createRange();
 
