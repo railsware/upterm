@@ -14,6 +14,7 @@ export function isModifierKey(event: KeyboardEvent) {
 }
 
 export function setCaretPosition(node: Node, position: number) {
+    console.log(position);
     const selection = window.getSelection();
     const range = document.createRange();
 
