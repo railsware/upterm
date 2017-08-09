@@ -80,10 +80,7 @@ export class PromptComponent extends React.Component<Props, State> {
                 className="prompt-content"
                 onInput={this.handleInput.bind(this)}
                 onDrop={this.handleDrop.bind(this)}
-                onBlur={() => this.setState({
-                    ...this.state,
-                    caretPositionFromPreviousFocus: getCaretPosition(this.commandNode)
-                })}
+                onBlur={() => this.setState({...this.state, caretPositionFromPreviousFocus: getCaretPosition(this.commandNode)})}
                 ref="command"
                 contentEditable={true}
             />
