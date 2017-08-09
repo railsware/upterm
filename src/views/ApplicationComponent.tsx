@@ -6,7 +6,7 @@ import * as css from "./css/styles";
 import {saveWindowBounds} from "./ViewUtils";
 import {SearchComponent} from "./SearchComponent";
 import {isMenuShortcut, isKeybindingForEvent} from "./keyevents/Keybindings";
-import {KeyboardAction} from "../Enums";
+import {KeyboardAction, Status} from "../Enums";
 import {UserEvent} from "../Interfaces";
 import {isModifierKey} from "./ViewUtils";
 import {TabComponent} from "./TabComponent";
@@ -236,7 +236,12 @@ export class ApplicationComponent extends React.Component<{}, ApplicationState> 
     handleUserEvent(search: SearchComponent, event: UserEvent) {
         const currentJob = this.focusedSession.currentJob;
         const sessionComponent = this.focusedTabComponent.focusedSessionComponent;
-        const promptComponent = sessionComponent && sessionComponent.promptComponent;
+        if (!sessionComponent) {
+            return;
+        }
+
+        const isJobRunning = sessionComponent.status === Status.InProgress;
+        const promptComponent = sessionComponent.promptComponent;
 
         // Pasted data
         if (event instanceof ClipboardEvent) {
@@ -244,7 +249,7 @@ export class ApplicationComponent extends React.Component<{}, ApplicationState> 
                 return;
             }
 
-            if (promptComponent) {
+            if (!isJobRunning) {
                 promptComponent.focus();
                 document.execCommand("inserttext", false, event.clipboardData.getData("text/plain"));
             }
@@ -264,7 +269,7 @@ export class ApplicationComponent extends React.Component<{}, ApplicationState> 
         }
 
         // Close focused session
-        if (isKeybindingForEvent(event, KeyboardAction.sessionClose) && promptComponent) {
+        if (!isJobRunning && isKeybindingForEvent(event, KeyboardAction.sessionClose)) {
             this.closeFocusedSession();
 
             event.stopPropagation();
@@ -283,7 +288,7 @@ export class ApplicationComponent extends React.Component<{}, ApplicationState> 
         }
 
         // Console clear
-        if (isKeybindingForEvent(event, KeyboardAction.cliClearJobs) && promptComponent) {
+        if (!isJobRunning && isKeybindingForEvent(event, KeyboardAction.cliClearJobs)) {
             this.focusedSession.clearJobs();
 
             event.stopPropagation();
@@ -318,7 +323,7 @@ export class ApplicationComponent extends React.Component<{}, ApplicationState> 
             return;
         }
 
-        if (!promptComponent) {
+        if (isJobRunning) {
             return;
         }
 

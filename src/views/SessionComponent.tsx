@@ -19,7 +19,7 @@ interface Props {
 
 export class SessionComponent extends React.Component<Props, {}> {
     RENDER_JOBS_COUNT = 25;
-    promptComponent: PromptComponent | undefined;
+    promptComponent: PromptComponent;
 
     constructor(props: Props) {
         super(props);
@@ -40,11 +40,9 @@ export class SessionComponent extends React.Component<Props, {}> {
             />,
         );
 
-        const lastJob = _.last(this.session.jobs);
-
         return (
             <div className="session"
-                 data-status={lastJob && lastJob.status}
+                 data-status={this.status}
                  ref="session"
                  onClick={this.handleClick.bind(this)}>
 
@@ -71,6 +69,11 @@ export class SessionComponent extends React.Component<Props, {}> {
             columns: Math.floor(this.size.width / services.font.letterWidth),
             rows: Math.floor(this.size.height / services.font.letterHeight),
         };
+    }
+
+    get status() {
+        const lastJob = _.last(this.session.jobs);
+        return lastJob && lastJob.status;
     }
 
     private get session() {
