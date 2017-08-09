@@ -53,7 +53,6 @@ export class SessionComponent extends React.Component<Props, {}> {
                 </div>
                 {this.props.isFocused ? null : <div className="shutter"/>}
                 <PromptComponent
-                    key={this.session.jobs.length}
                     ref={component => this.promptComponent = component!}
                     session={this.session}
                     isFocused={this.props.isFocused}

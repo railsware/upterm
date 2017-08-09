@@ -42,9 +42,7 @@ export class PromptComponent extends React.Component<Props, State> {
 
     componentDidMount() {
         this.focus();
-        if (this.prompt.value) {
-            this.setDOMValueProgrammatically(this.prompt.value);
-        }
+        this.setDOMValueProgrammatically(this.prompt.value);
     }
 
     componentDidUpdate(prevProps: Props) {
@@ -82,7 +80,10 @@ export class PromptComponent extends React.Component<Props, State> {
                 className="prompt-content"
                 onInput={this.handleInput.bind(this)}
                 onDrop={this.handleDrop.bind(this)}
-                onBlur={() => this.setState({...this.state, caretPositionFromPreviousFocus: getCaretPosition(this.commandNode)})}
+                onBlur={() => this.setState({
+                    ...this.state,
+                    caretPositionFromPreviousFocus: getCaretPosition(this.commandNode)
+                })}
                 ref="command"
                 contentEditable={true}
             />
@@ -124,6 +125,14 @@ export class PromptComponent extends React.Component<Props, State> {
 
         if (!this.isEmpty()) {
             this.props.session.createJob(this.prompt);
+            this.setDOMValueProgrammatically("");
+            this.setState({
+                highlightedSuggestionIndex: 0,
+                previousKeyCode: KeyCode.Escape,
+                caretPositionFromPreviousFocus: 0,
+                suggestions: [],
+                displayedHistoryRecordID: undefined,
+            });
         }
     }
 
@@ -195,8 +204,9 @@ export class PromptComponent extends React.Component<Props, State> {
          */
         (this.state as any).caretPositionFromPreviousFocus = newCaretPosition;
 
-        console.log("setDOMValueProgrammatically", text);
-        setCaretPosition(this.commandNode, newCaretPosition);
+        if (text.length) {
+            setCaretPosition(this.commandNode, newCaretPosition);
+        }
         this.forceUpdate();
     }
 
