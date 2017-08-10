@@ -30,7 +30,7 @@ async function getState(directory: string): Promise<GitState> {
 function createObservable(directory: string) {
     return Observable
         .timer(0, INTERVAL)
-        .merge(services.sessions.jobFinishedObservable.filter(session => session.directory === directory))
+        .merge(services.sessions.jobFinishedObservable.filter(job => job.session.directory === directory))
         .concatMap(() => getState(directory))
         // Don't emit if a value didn't change.
         .distinctUntilChanged((x, y) => JSON.stringify(x) === JSON.stringify(y))

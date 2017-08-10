@@ -53,6 +53,8 @@ document.addEventListener(
 
         document.body.addEventListener("keydown", userEventHandler, true);
         document.body.addEventListener("paste", userEventHandler, true);
+
+        require("../plugins/JobFinishedNotifications");
     },
     false,
 );

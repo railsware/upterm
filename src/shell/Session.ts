@@ -10,7 +10,6 @@ import {
     homeDirectory, normalizeDirectory,
     presentWorkingDirectoryFilePath,
 } from "../utils/Common";
-import {remote} from "electron";
 import {OrderedSet} from "../utils/OrderedSet";
 import {Aliases, aliasesFromConfig} from "./Aliases";
 import * as _ from "lodash";
@@ -44,15 +43,6 @@ export class Session extends events.EventEmitter {
         job.once("end", () => {
             this.emit("job-finished");
             this.emit("jobs-changed");
-
-            const electronWindow = remote.BrowserWindow.getAllWindows()[0];
-
-            if (remote.app.dock && !electronWindow.isFocused()) {
-                remote.app.dock.bounce("informational");
-                remote.app.dock.setBadge(job.status === Status.Success ? "1" : "✕");
-                /* tslint:disable:no-unused-expression */
-                new Notification("Command has been completed", {body: job.prompt.value});
-            }
         });
 
         this.jobs = this.jobs.concat(job);
