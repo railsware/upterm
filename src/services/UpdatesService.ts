@@ -17,6 +17,10 @@ export class UpdatesService {
     }
 
     private checkUpdate() {
+        if (this.isAvailable || !navigator.onLine) {
+            return;
+        }
+
         https.get(
             {
                 host: "api.github.com",
