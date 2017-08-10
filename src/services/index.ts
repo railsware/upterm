@@ -2,9 +2,6 @@ import {FontService} from "./FontService";
 import {HistoryService} from "./HistoryService";
 import {UpdatesService} from "./UpdatesService";
 import {GitService} from "./GitService";
-import {appendFileSync} from "fs";
-import {historyFilePath} from "../utils/Common";
-import * as csvStringify from "csv-stringify";
 import {SessionsService} from "./SessionsService";
 
 // To help IDE with "find usages" and "go to definition".
@@ -23,8 +20,3 @@ export const services: Services = {
     git: new GitService(),
     sessions: new SessionsService(),
 };
-
-services.history.onChange(record => csvStringify(
-    [Object.values(record)],
-    (_error, output) => appendFileSync(historyFilePath, output),
-));

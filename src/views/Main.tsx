@@ -56,6 +56,7 @@ document.addEventListener(
 
         require("../plugins/JobFinishedNotifications");
         require("../plugins/UpdateLastPresentWorkingDirectory");
+        require("../plugins/SaveHistory");
     },
     false,
 );
