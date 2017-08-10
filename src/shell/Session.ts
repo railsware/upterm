@@ -45,7 +45,7 @@ export class Session extends events.EventEmitter {
             this.emit("jobs-changed");
         });
 
-        this.jobs = this.jobs.concat(job);
+        this.jobs.push(job);
         this.emit("jobs-changed");
     }
 
