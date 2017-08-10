@@ -12,10 +12,10 @@ import {Status} from "../Enums";
 import {Environment} from "./Environment";
 import {normalizeProcessInput} from "../utils/Common";
 import {TerminalLikeDevice} from "../Interfaces";
-import {services} from "../services/index";
 
 export class Job extends EmitterWithUniqueID implements TerminalLikeDevice {
     public status: Status = Status.InProgress;
+    readonly startTime = Date.now();
     private readonly _output: Output;
     private readonly throttledDataEmitter = _.throttle(() => this.emit("data"), 1000 / 60);
     private pty: PTY | undefined;
@@ -27,14 +27,6 @@ export class Job extends EmitterWithUniqueID implements TerminalLikeDevice {
     }
 
     async execute(): Promise<void> {
-        services.history.add({
-            command: this.prompt.value,
-            expandedCommand: this.prompt.expandedTokens.map(t => t.escapedValue).join(" "),
-            timestamp: Date.now(),
-            directory: this.environment.pwd,
-            sessionID: this.session.id,
-        });
-
         await Promise.all(PluginManager.preexecPlugins.map(plugin => plugin(this)));
 
         try {
@@ -117,7 +109,6 @@ export class Job extends EmitterWithUniqueID implements TerminalLikeDevice {
     }
 
     get environment(): Environment {
-        // TODO: implement inline environment variable setting.
         return this.session.environment;
     }
 

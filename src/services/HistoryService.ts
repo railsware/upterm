@@ -4,7 +4,6 @@ import * as _ from "lodash";
 
 import csvParse = require("csv-parse/lib/sync");
 import {SessionID} from "../shell/Session";
-import {Subject} from "rxjs/Subject";
 
 interface HistoryRecordWithoutID {
     command: string;
@@ -34,7 +33,6 @@ const readHistoryFileData = (): HistoryRecord[] => {
 };
 
 export class HistoryService {
-    readonly onNewRecord = new Subject<HistoryRecord>();
     private maxRecordsCount: number = 5000;
     private storage: HistoryRecord[] = [];
 
@@ -50,7 +48,7 @@ export class HistoryService {
         return _.last(this.storage);
     }
 
-    add(recordWithoutID: HistoryRecordWithoutID): void {
+    add(recordWithoutID: HistoryRecordWithoutID) {
         const record = {id: this.nextID, ...recordWithoutID};
         this.storage.push(record);
 
@@ -58,7 +56,7 @@ export class HistoryService {
             this.storage.shift();
         }
 
-        this.onNewRecord.next(record);
+        return record;
     }
 
     getPreviousTo(currentRecordID: number): HistoryRecord | undefined {
