@@ -55,6 +55,7 @@ document.addEventListener(
         document.body.addEventListener("paste", userEventHandler, true);
 
         require("../plugins/JobFinishedNotifications");
+        require("../plugins/UpdateLastPresentWorkingDirectory");
     },
     false,
 );

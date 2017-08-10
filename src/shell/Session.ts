@@ -1,5 +1,4 @@
 import {readFileSync} from "fs";
-import {outputJSON} from "fs-extra";
 import {Job} from "./Job";
 import * as events from "events";
 import {PluginManager} from "../PluginManager";
@@ -29,10 +28,6 @@ export class Session extends events.EventEmitter {
         // TODO: We want to deserialize properties only for the first instance
         // TODO: of Session for the application.
         this.deserialize();
-
-        this.on("jobs-changed", () => this.serialize());
-
-        this.clearJobs();
     }
 
     createJob(prompt: Prompt): void {
@@ -91,10 +86,6 @@ export class Session extends events.EventEmitter {
         PluginManager.environmentObservers.forEach(observer =>
             observer.presentWorkingDirectoryDidChange(this, normalizedDirectory),
         );
-    }
-
-    private async serialize() {
-        return outputJSON(presentWorkingDirectoryFilePath, this.directory);
     }
 
     private deserialize(): void {
