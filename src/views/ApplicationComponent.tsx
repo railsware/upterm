@@ -234,7 +234,6 @@ export class ApplicationComponent extends React.Component<{}, ApplicationState> 
     }
 
     handleUserEvent(search: SearchComponent, event: UserEvent) {
-        const currentJob = this.focusedSession.currentJob;
         const sessionComponent = this.focusedTabComponent.focusedSessionComponent;
         if (!sessionComponent) {
             return;
@@ -249,13 +248,11 @@ export class ApplicationComponent extends React.Component<{}, ApplicationState> 
                 return;
             }
 
-            if (!isJobRunning) {
+            if (isJobRunning) {
+                this.focusedSession.lastJob!.write(event.clipboardData.getData("text/plain"));
+            } else {
                 promptComponent.focus();
                 document.execCommand("inserttext", false, event.clipboardData.getData("text/plain"));
-            }
-
-            if (currentJob) {
-                currentJob.write(event.clipboardData.getData("text/plain"));
             }
 
             event.stopPropagation();
@@ -315,8 +312,8 @@ export class ApplicationComponent extends React.Component<{}, ApplicationState> 
             return;
         }
 
-        if (currentJob && currentJob.isRunningPty()) {
-            currentJob.write(event);
+        if (isJobRunning && this.focusedSession.lastJob!.isRunningPty()) {
+            this.focusedSession.lastJob!.write(event);
 
             event.stopPropagation();
             event.preventDefault();

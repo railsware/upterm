@@ -68,10 +68,6 @@ export class Job extends EmitterWithUniqueID implements TerminalLikeDevice {
         this.emit("end");
     }
 
-    isInProgress(): boolean {
-        return this.status === Status.InProgress;
-    }
-
     isRunningPty(): boolean {
         return this.pty !== undefined;
     }

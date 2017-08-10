@@ -3,7 +3,6 @@ import {ApplicationComponent} from "../views/ApplicationComponent";
 import {Observable} from "rxjs/Observable";
 import {Subject} from "rxjs/Subject";
 import "rxjs/add/observable/fromEvent";
-import * as _ from "lodash";
 import {Job} from "../shell/Job";
 
 
@@ -16,7 +15,7 @@ export class SessionsService {
         this.sessions.set(session.id, session);
 
         Observable.fromEvent(session, "job-finished").subscribe(
-            () => this.jobFinishedObservable.next(_.last(session.jobs)!),
+            () => this.jobFinishedObservable.next(session.lastJob!),
         );
 
         return session.id;

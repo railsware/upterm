@@ -72,8 +72,8 @@ export class SessionComponent extends React.Component<Props, {}> {
     }
 
     get status() {
-        const lastJob = _.last(this.session.jobs);
-        return lastJob && lastJob.status;
+        const job = this.session.lastJob;
+        return job && job.status;
     }
 
     private get session() {

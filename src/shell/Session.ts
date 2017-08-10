@@ -3,7 +3,6 @@ import {outputJSON} from "fs-extra";
 import {Job} from "./Job";
 import * as events from "events";
 import {PluginManager} from "../PluginManager";
-import {Status} from "../Enums";
 import {ApplicationComponent} from "../views/ApplicationComponent";
 import {Environment, processEnvironment} from "./Environment";
 import {
@@ -58,12 +57,8 @@ export class Session extends events.EventEmitter {
         this.jobs.forEach(job => job.resize());
     }
 
-    get currentJob(): Job | undefined {
-        const lastJob = _.last(this.jobs);
-
-        if (lastJob && lastJob.status === Status.InProgress) {
-            return lastJob;
-        }
+    get lastJob(): Job | undefined {
+        return _.last(this.jobs);
     }
 
     clearJobs(): void {
