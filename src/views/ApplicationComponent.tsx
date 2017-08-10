@@ -28,6 +28,8 @@ export class ApplicationComponent extends React.Component<{}, ApplicationState> 
         if (remote) {
             const electronWindow = remote.BrowserWindow.getAllWindows()[0];
 
+            electronWindow.on("focus", () => remote.app.dock && remote.app.dock.setBadge(""));
+
             electronWindow
                 .on("move", () => saveWindowBounds(electronWindow))
                 .on("resize", () => {

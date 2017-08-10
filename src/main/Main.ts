@@ -30,8 +30,6 @@ app.on("ready", () => {
 
     browserWindow.loadURL("file://" + __dirname + "/../views/index.html");
 
-    browserWindow.on("focus", () => app.dock && app.dock.setBadge(""));
-
     browserWindow.webContents.on("did-finish-load", () => {
         browserWindow.show();
         browserWindow.focus();
