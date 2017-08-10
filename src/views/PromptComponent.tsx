@@ -80,7 +80,10 @@ export class PromptComponent extends React.Component<Props, State> {
                 className="prompt-content"
                 onInput={this.handleInput.bind(this)}
                 onDrop={this.handleDrop.bind(this)}
-                onBlur={() => this.setState({...this.state, caretPositionFromPreviousFocus: getCaretPosition(this.commandNode)})}
+                onBlur={() => this.setState({
+                    ...this.state,
+                    caretPositionFromPreviousFocus: getCaretPosition(this.commandNode)
+                })}
                 ref="command"
                 contentEditable={true}
             />
@@ -137,27 +140,38 @@ export class PromptComponent extends React.Component<Props, State> {
     }
 
     setPreviousHistoryItem(): void {
-        if (this.state.displayedHistoryRecordID) {
-            const previousHistoryRecord = services.history.getPreviousTo(this.state.displayedHistoryRecordID);
-            if (previousHistoryRecord) {
-                this.setText(previousHistoryRecord.command);
-                this.setState({displayedHistoryRecordID: previousHistoryRecord.id});
+        const currentID = this.state.displayedHistoryRecordID;
+        if (currentID) {
+            const currentRecord = services.history.get(currentID);
+            const previousRecord = _.findLast(
+                services.history.all,
+                record => record.id < currentID && record.command !== currentRecord.command,
+            );
+
+            if (previousRecord) {
+                this.setText(previousRecord.command);
+                this.setState({displayedHistoryRecordID: previousRecord.id});
             }
         } else {
-            const previousHistoryRecord = services.history.latest;
-            if (previousHistoryRecord) {
-                this.setText(previousHistoryRecord.command);
-                this.setState({displayedHistoryRecordID: previousHistoryRecord.id});
+            const previousRecord = services.history.latest;
+            if (previousRecord) {
+                this.setText(previousRecord.command);
+                this.setState({displayedHistoryRecordID: previousRecord.id});
             }
         }
     }
 
     setNextHistoryItem(): void {
-        if (this.state.displayedHistoryRecordID) {
-            const nextHistoryRecord = services.history.getNextTo(this.state.displayedHistoryRecordID);
-            if (nextHistoryRecord) {
-                this.setText(nextHistoryRecord.command);
-                this.setState({displayedHistoryRecordID: nextHistoryRecord.id});
+        const currentID = this.state.displayedHistoryRecordID;
+        if (currentID) {
+            const currentRecord = services.history.get(currentID);
+            const nextRecord = _.find(
+                services.history.all,
+                record => record.id > currentID && record.command !== currentRecord.command,
+            );
+            if (nextRecord) {
+                this.setText(nextRecord.command);
+                this.setState({displayedHistoryRecordID: nextRecord.id});
             } else {
                 this.setText("");
                 this.setState({displayedHistoryRecordID: undefined});

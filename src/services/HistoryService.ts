@@ -59,14 +59,8 @@ export class HistoryService {
         return record;
     }
 
-    getPreviousTo(currentRecordID: number): HistoryRecord | undefined {
-        const currentRecordIndex = this.all.findIndex(record => record.id === currentRecordID);
-        return this.storage[currentRecordIndex - 1];
-    }
-
-    getNextTo(currentRecordID: number): HistoryRecord | undefined {
-        const currentRecordIndex = this.all.findIndex(record => record.id === currentRecordID);
-        return this.storage[currentRecordIndex + 1];
+    get(id: number): HistoryRecord {
+        return this.all.find(record => record.id === id)!;
     }
 
     private get nextID(): number {
