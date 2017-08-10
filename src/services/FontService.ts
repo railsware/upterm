@@ -1,3 +1,5 @@
+import {Subject} from "rxjs/Subject";
+
 function getLetterSize(size: number, fontFamily: string) {
     const height = size + 2;
 
@@ -21,29 +23,25 @@ export class FontService {
     letterWidth: number;
     letterHeight: number;
     family: string;
-    private listeners: Array<() => void> = [];
+    readonly changes = new Subject<void>();
 
     constructor() {
         this.updateFont(fontSize, fontFamily);
     }
 
-    onChange(callback: () => void) {
-        this.listeners.push(callback);
-    }
-
     resetSize() {
         this.updateFont(fontSize, fontFamily);
-        this.notifyListeners();
+        this.changes.next();
     }
 
     increaseSize() {
         this.updateFont(this.size + 1, fontFamily);
-        this.notifyListeners();
+        this.changes.next();
     }
 
     decreaseSize() {
         this.updateFont(Math.max(4, this.size - 1), fontFamily);
-        this.notifyListeners();
+        this.changes.next();
     }
 
     private updateFont(size: number, family: string) {
@@ -53,11 +51,5 @@ export class FontService {
         this.family = family;
         this.letterWidth = letterSize.width;
         this.letterHeight = letterSize.height;
-    }
-
-    private notifyListeners() {
-        this.listeners.forEach(listener => {
-            listener();
-        });
     }
 }

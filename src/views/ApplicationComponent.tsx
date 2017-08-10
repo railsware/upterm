@@ -42,7 +42,7 @@ export class ApplicationComponent extends React.Component<{}, ApplicationState> 
                 this.focusedSession.directory = directory,
             );
 
-            services.font.onChange(() => {
+            services.font.changes.subscribe(() => {
                 this.forceUpdate();
                 this.resizeAllSessions();
             });
