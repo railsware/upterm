@@ -1,5 +1,4 @@
 import {HistoryRecord} from "../../services/HistoryService";
-import {fuzzyMatch} from "../../utils/Common";
 import {scan} from "../../shell/Scanner";
 import {isAbsolute} from "path";
 import {services} from "../../services/index";
@@ -30,8 +29,8 @@ const historyTrie = new HistoryTrie();
 services.history.all.forEach(record => historyTrie.add(record.command));
 services.history.onNewRecord.subscribe(record => historyTrie.add(record.command));
 
-export function getHistorySuggestions(currentText: string, pwd: string, limit: number): Suggestion[] {
-    const trieSuggestions = historyTrie.getContinuationsFor(currentText).map(continuation => ({
+export function getHistorySuggestions(input: string, pwd: string, limit: number): Suggestion[] {
+    const trieSuggestions = historyTrie.getContinuationsFor(input).map(continuation => ({
         value: continuation.value,
         space: continuation.space,
         description: `×${continuation.occurrences}`,
@@ -45,7 +44,7 @@ export function getHistorySuggestions(currentText: string, pwd: string, limit: n
         return services.history.all
             .filter(record => cdIntoRelativePathFilter(record, pwd))
             .map(record => record.command)
-            .filter(command => fuzzyMatch(currentText, command))
+            .filter(command => command.toLowerCase().includes(input.toLowerCase()))
             .map(command => ({
                 value: command.trim(),
                 promptSerializer: replaceAllPromptSerializer,

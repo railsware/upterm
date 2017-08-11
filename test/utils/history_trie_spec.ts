@@ -8,7 +8,7 @@ function getSuggestions(history: string[], input: string): string[] {
     return trie.getContinuationsFor(input).map(prefix => prefix.value + (prefix.space ? " " : ""));
 }
 
-describe.only("HistoryTrie", () => {
+describe("HistoryTrie", () => {
     it("finds next common prefixes", () => {
         const history = [
             "git commit",

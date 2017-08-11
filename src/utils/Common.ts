@@ -325,13 +325,13 @@ export const windowBoundsFilePath = Path.join(baseConfigDirectory, "windowBounds
 
 export function fuzzyMatch(input: string, candidate: string): boolean {
     function tokenize(string: string) {
-        return string.split(/-|_| |:|\//);
+        return string.split(/-|_|:|\//);
     }
 
     const lowerCasedInput = input.toLowerCase();
 
-    // A user wants to match by an exact substring.
-    if (candidate.toLowerCase().includes(lowerCasedInput)) {
+    // A user wants to match by an exact prefix.
+    if (candidate.toLowerCase().startsWith(lowerCasedInput)) {
         return true;
     }
 
