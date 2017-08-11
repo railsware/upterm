@@ -1010,7 +1010,7 @@ class Buffer {
     private ensureCursorRowExists(): void {
         for (let index = this.cursorRowIndex; index >= 0; --index) {
             if (!this.page.get(index)) {
-                this.page = this.page.set(index, this.emptyLine);
+                this.page = this.page.set(index, this.spaces(this.dimensions.columns, defaultAttributes));
             } else {
                 break;
             }
@@ -1042,8 +1042,8 @@ class Buffer {
         return this.spaces(this.dimensions.columns);
     }
 
-    private spaces(n: number) {
-        return List.of(...Array(n).fill(createChar(" ", this.attributes)));
+    private spaces(n: number, attributes = this.attributes) {
+        return List.of(...Array(n).fill(createChar(" ", attributes)));
     }
 
     get dimensions() {

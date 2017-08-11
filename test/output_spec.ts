@@ -144,6 +144,14 @@ describe("Output", () => {
         });
     });
 
+    it("uses default attributes to fill in new lines", () => {
+        const terminal = new DummyTerminal();
+        terminal.output.write(`${sgr([46])}${cup(2, 1)}`);
+
+        const firstChar = terminal.output.activeBuffer.at({rowIndex: 1, columnIndex: 0});
+        expect(firstChar.attributes.backgroundColor).to.eql(0);
+    });
+
     describe("CSI", () => {
         describe("Device Status Report (DSR)", () => {
             describe("Report Cursor Position (CPR)", () => {
