@@ -42,7 +42,6 @@ export class PromptComponent extends React.Component<Props, State> {
 
     componentDidMount() {
         this.focus();
-        this.setDOMValueProgrammatically(this.prompt.value);
     }
 
     componentDidUpdate(prevProps: Props) {
@@ -221,7 +220,8 @@ export class PromptComponent extends React.Component<Props, State> {
         if (text.length) {
             setCaretPosition(this.commandNode, newCaretPosition);
         }
-        this.forceUpdate();
+
+        this.setState({suggestions: [], highlightedSuggestionIndex: 0});
     }
 
     private isEmpty(): boolean {
