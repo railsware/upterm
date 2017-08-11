@@ -1,4 +1,5 @@
 interface TrieNode {
+    value: string;
     occurrences: number;
     children: Map<string, TrieNode>;
 }
@@ -11,11 +12,15 @@ function tokenize(string: string) {
     return string.split(" ");
 }
 
+function getFormattedValue(node: TrieNode) {
+    return node.value + (node.children.size ? " " : "");
+}
+
 export class HistoryTrie {
     private root: Map<string, TrieNode> = new Map();
 
     add(input: string | string[], map: Map<string, TrieNode> = this.root) {
-        const tokens = (typeof input === "string") ? tokenize(input) : input;
+        const tokens = (typeof input === "string") ? tokenize(input.trim()) : input;
         const token = tokens[0];
 
         if (!token) {
@@ -23,7 +28,7 @@ export class HistoryTrie {
         }
 
         if (!map.has(token)) {
-            map.set(token, {occurrences: 0, children: new Map()});
+            map.set(token, {value: token, occurrences: 0, children: new Map()});
         }
 
         const value = map.get(token)!;
@@ -41,36 +46,36 @@ export class HistoryTrie {
             return [];
         }
 
-        const continuations: string[] = [];
+        const continuationNodes: TrieNode[] = [];
 
-        for (let key of parentNode.children.keys()) {
-            if (key.startsWith(currentToken)) {
-                continuations.push(key);
+        for (let node of parentNode.children.values()) {
+            if (node.value.startsWith(currentToken)) {
+                continuationNodes.push(node);
             }
         }
 
-        if (continuations.length === 0) {
+        if (continuationNodes.length === 0) {
             return [];
         }
 
-        const isContinuationNonAmbiguous = continuations.length === 1;
+        const isContinuationNonAmbiguous = continuationNodes.length === 1;
 
         if (isContinuationNonAmbiguous) {
-            const continuation = continuations[0];
-            const continuationNode = parentNode.children.get(continuation)!;
-            const longestNonAmbiguousPrefix = this.getLongestNonAmbiguousPrefix(continuationNode, [continuation]);
+            const continuationNode = continuationNodes[0];
+            const longestNonAmbiguousPrefix = this.getLongestNonAmbiguousPrefix(continuationNode, [continuationNode.value]);
+            const formattedValue = getFormattedValue(continuationNode);
 
-            if (longestNonAmbiguousPrefix !== continuation) {
-                return [continuation, longestNonAmbiguousPrefix];
+            if (longestNonAmbiguousPrefix !== formattedValue) {
+                return [formattedValue, longestNonAmbiguousPrefix];
             } else {
-                return [continuation];
+                return [formattedValue];
             }
         } else {
-            return continuations;
+            return continuationNodes.map(node => getFormattedValue(node));
         }
     }
 
-    private getNodeAt(path: string[], node: TrieNode = {occurrences: 0, children: this.root}): TrieNode | undefined {
+    private getNodeAt(path: string[], node: TrieNode = {value: "", occurrences: 0, children: this.root}): TrieNode | undefined {
         const token = path[0];
 
         if (!token) {
@@ -88,7 +93,7 @@ export class HistoryTrie {
             path.push(key);
             return this.getLongestNonAmbiguousPrefix(node.children.get(key)!, path);
         } else {
-            return untokenize(path);
+            return untokenize(path) + (node.children.size ? " " : "");
         }
     }
 }

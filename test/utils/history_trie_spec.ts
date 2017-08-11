@@ -8,7 +8,7 @@ function getSuggestions(history: string[], input: string): string[] {
     return trie.getContinuationsFor(input).map(prefix => prefix);
 }
 
-describe("HistoryTrie", () => {
+describe.only("HistoryTrie", () => {
     it("finds next common prefixes", () => {
         const history = [
             "git commit",
@@ -30,7 +30,7 @@ describe("HistoryTrie", () => {
         ];
         const input = "gi";
         const suggestions = [
-            "git",
+            "git ",
         ];
 
         expect(getSuggestions(history, input)).to.eql(suggestions);
@@ -57,7 +57,7 @@ describe("HistoryTrie", () => {
         const input = "git c";
         const suggestions = [
             "commit",
-            "checkout",
+            "checkout ",
         ];
 
         expect(getSuggestions(history, input)).to.eql(suggestions);
@@ -70,7 +70,7 @@ describe("HistoryTrie", () => {
         ];
         const input = "git ch";
         const suggestions = [
-            "checkout",
+            "checkout ",
             "checkout master --option",
         ];
 
