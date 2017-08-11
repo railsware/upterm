@@ -108,7 +108,7 @@ export class HistoryTrie {
             const continuation = getContinuation(node);
 
             return {
-                value: untokenize(path.concat([continuation.value])),
+                value: untokenize(path),
                 occurrences: continuation.occurrences,
                 space: continuation.space,
             };
