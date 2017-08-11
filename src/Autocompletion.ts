@@ -1,9 +1,6 @@
 import {leafNodeAt, ASTNode} from "./shell/Parser";
 import * as _ from "lodash";
-import {
-    styles, replaceAllPromptSerializer, Suggestion,
-    SuggestionWithDefaults, addDefaultAttributeValues,
-} from "./plugins/autocompletion_utils/Common";
+import {Suggestion, SuggestionWithDefaults, addDefaultAttributeValues} from "./plugins/autocompletion_utils/Common";
 import {Environment} from "./shell/Environment";
 import {OrderedSet} from "./utils/OrderedSet";
 import {Aliases} from "./shell/Aliases";
@@ -29,12 +26,7 @@ export async function getSuggestions({
     historicalPresentDirectoriesStack,
     aliases,
 }: GetSuggestionsOptions): Promise<SuggestionWithDefaults[]> {
-    const suggestionsFromHistory = getMatchingHistoryRecords(currentText, environment.pwd).map(match => ({
-        value: match,
-        promptSerializer: replaceAllPromptSerializer,
-        isFiltered: true,
-        style: styles.history,
-    }));
+    const suggestionsFromHistory = getMatchingHistoryRecords(currentText, environment.pwd);
 
     const firstThreeFromHistory = suggestionsFromHistory.slice(0, 3);
     const remainderFromHistory = suggestionsFromHistory.slice(3);
