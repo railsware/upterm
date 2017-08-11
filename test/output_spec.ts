@@ -197,6 +197,16 @@ describe("Output", () => {
                     "1234      ",
                 ]);
             });
+
+            it("Correctly erases line to right from beginning", () => {
+                const terminal = new DummyTerminal({columns: 10, rows: 5});
+                const input = `1234567890${cup(1, 1)}${decsel(0)}`;
+                terminal.output.write(input);
+
+                expect(terminal.output.toLines()).to.deep.equal([
+                    "          ",
+                ]);
+            });
         });
     });
 

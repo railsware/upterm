@@ -897,8 +897,9 @@ class Buffer {
 
     clearRowToEnd() {
         const oldRow = this.page.get(this.cursorRowIndex);
-        const newHead = oldRow.splice(this.cursorColumnIndex, this.lastColumnIndex);
-        const newTail = this.spaces(this.dimensions.columns - this.cursorColumnIndex);
+        const charsToDeleteCount = this.dimensions.columns - this.cursorColumnIndex;
+        const newHead = oldRow.splice(this.cursorColumnIndex, charsToDeleteCount);
+        const newTail = this.spaces(charsToDeleteCount);
         const newRow = newHead.concat(newTail).toList();
 
         this.page = this.page.set(this.cursorRowIndex, newRow);
