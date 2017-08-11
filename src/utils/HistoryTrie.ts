@@ -1,7 +1,15 @@
+import * as _ from "lodash";
+
 interface TrieNode {
     value: string;
     occurrences: number;
     children: Map<string, TrieNode>;
+}
+
+interface Continuation {
+    value: string;
+    occurrences: number;
+    space: boolean;
 }
 
 function untokenize(tokens: string[]): string {
@@ -12,8 +20,12 @@ function tokenize(string: string) {
     return string.split(" ");
 }
 
-function getFormattedValue(node: TrieNode) {
-    return node.value + (node.children.size ? " " : "");
+function getContinuation(node: TrieNode): Continuation {
+    return {
+        value: node.value,
+        occurrences: node.occurrences,
+        space: node.children.size > 0,
+    };
 }
 
 export class HistoryTrie {
@@ -36,7 +48,7 @@ export class HistoryTrie {
         this.add(tokens.slice(1), value.children);
     }
 
-    getContinuationsFor(input: string): string[] {
+    getContinuationsFor(input: string): Continuation[] {
         const tokens = tokenize(input);
         const path = tokens.slice(0, -1);
         const currentToken = tokens[tokens.length - 1];
@@ -62,16 +74,16 @@ export class HistoryTrie {
 
         if (isContinuationNonAmbiguous) {
             const continuationNode = continuationNodes[0];
-            const longestNonAmbiguousPrefix = this.getLongestNonAmbiguousPrefix(continuationNode, [continuationNode.value]);
-            const formattedValue = getFormattedValue(continuationNode);
+            const longestNonAmbiguousContinuation = this.getLongestNonAmbiguousPrefix(continuationNode, [continuationNode.value]);
+            const continuation = getContinuation(continuationNode);
 
-            if (longestNonAmbiguousPrefix !== formattedValue) {
-                return [formattedValue, longestNonAmbiguousPrefix];
+            if (longestNonAmbiguousContinuation.value !== continuation.value) {
+                return [continuation, longestNonAmbiguousContinuation];
             } else {
-                return [formattedValue];
+                return [continuation];
             }
         } else {
-            return continuationNodes.map(node => getFormattedValue(node));
+            return _.sortBy(continuationNodes, node => -node.occurrences).map(node => getContinuation(node));
         }
     }
 
@@ -87,13 +99,19 @@ export class HistoryTrie {
         }
     }
 
-    private getLongestNonAmbiguousPrefix(node: TrieNode, path: string[]): string {
+    private getLongestNonAmbiguousPrefix(node: TrieNode, path: string[]): Continuation {
         if (node.children.size === 1) {
             const key = node.children.keys().next().value;
             path.push(key);
             return this.getLongestNonAmbiguousPrefix(node.children.get(key)!, path);
         } else {
-            return untokenize(path) + (node.children.size ? " " : "");
+            const continuation = getContinuation(node);
+
+            return {
+                value: untokenize(path.concat([continuation.value])),
+                occurrences: continuation.occurrences,
+                space: continuation.space,
+            };
         }
     }
 }

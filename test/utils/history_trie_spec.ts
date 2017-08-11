@@ -5,7 +5,7 @@ import {HistoryTrie} from "../../src/utils/HistoryTrie";
 function getSuggestions(history: string[], input: string): string[] {
     const trie = new HistoryTrie();
     history.forEach(string => trie.add(string));
-    return trie.getContinuationsFor(input).map(prefix => prefix);
+    return trie.getContinuationsFor(input).map(prefix => prefix.value + (prefix.space ? " " : ""));
 }
 
 describe.only("HistoryTrie", () => {

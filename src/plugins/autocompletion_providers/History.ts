@@ -31,7 +31,9 @@ services.history.all.forEach(record => historyTrie.add(record.command));
 
 export function getHistorySuggestions(currentText: string, pwd: string, limit: number): Suggestion[] {
     const trieSuggestions = historyTrie.getContinuationsFor(currentText).map(continuation => ({
-        value: continuation,
+        value: continuation.value,
+        space: continuation.space,
+        description: `×${continuation.occurrences}`,
         isFiltered: true,
         style: styles.history,
     }));
