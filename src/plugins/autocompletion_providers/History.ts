@@ -47,7 +47,7 @@ export function getHistorySuggestions(currentText: string, pwd: string, limit: n
             .map(record => record.command)
             .filter(command => fuzzyMatch(currentText, command))
             .map(command => ({
-                value: command,
+                value: command.trim(),
                 promptSerializer: replaceAllPromptSerializer,
                 isFiltered: true,
                 style: styles.history,
