@@ -52,6 +52,11 @@ export class HistoryTrie {
 
     getContinuationsFor(input: string): Continuation[] {
         const tokens = tokenize(input);
+
+        if (!tokens.length) {
+            return [];
+        }
+
         const path = tokens.slice(0, -1);
         const currentToken = tokens[tokens.length - 1];
         const parentNode = this.getNodeAt(path);

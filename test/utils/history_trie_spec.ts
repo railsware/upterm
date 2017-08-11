@@ -117,4 +117,14 @@ describe("HistoryTrie", () => {
 
         expect(getSuggestions(history, input)).to.eql(suggestions);
     });
+
+    it("gives no results for empty input", () => {
+        const history = [
+            "git log",
+        ];
+        const input = "";
+        const suggestions: string[] = [];
+
+        expect(getSuggestions(history, input)).to.eql(suggestions);
+    });
 });
