@@ -103,4 +103,18 @@ describe.only("HistoryTrie", () => {
 
         expect(getSuggestions(history, input)).to.eql(suggestions);
     });
+
+    it("considers a string literal a single token", () => {
+        const history = [
+            "git commit -m 'first message'",
+            "git commit -m 'second message'",
+        ];
+        const input = "git commit -m ";
+        const suggestions = [
+            "'first message'",
+            "'second message'",
+        ];
+
+        expect(getSuggestions(history, input)).to.eql(suggestions);
+    });
 });

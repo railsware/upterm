@@ -1,5 +1,6 @@
 import * as _ from "lodash";
 import {fuzzyMatch} from "./Common";
+import {scan} from "../shell/Scanner";
 
 interface TrieNode {
     value: string;
@@ -18,7 +19,7 @@ function untokenize(tokens: string[]): string {
 }
 
 function tokenize(string: string) {
-    return string.split(" ");
+    return scan(string).map(token => token.escapedValue);
 }
 
 function getContinuation(node: TrieNode): Continuation {
