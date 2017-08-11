@@ -29,7 +29,7 @@ function cdIntoRelativePathFilter(record: HistoryRecord, pwd: string): boolean {
 const historyTrie = new HistoryTrie();
 services.history.all.forEach(record => historyTrie.add(record.command));
 
-export function getMatchingHistoryRecords(currentText: string, pwd: string): Suggestion[] {
+export function getHistorySuggestions(currentText: string, pwd: string, limit: number): Suggestion[] {
     const trieSuggestions = historyTrie.getContinuationsFor(currentText).map(continuation => ({
         value: continuation,
         isFiltered: true,
@@ -49,6 +49,7 @@ export function getMatchingHistoryRecords(currentText: string, pwd: string): Sug
                 isFiltered: true,
                 style: styles.history,
             }))
-            .reverse();
+            .reverse()
+            .slice(0, limit);
     }
 }

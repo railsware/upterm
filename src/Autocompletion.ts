@@ -5,9 +5,9 @@ import {Environment} from "./shell/Environment";
 import {OrderedSet} from "./utils/OrderedSet";
 import {Aliases} from "./shell/Aliases";
 import {fuzzyMatch} from "./utils/Common";
-import {getMatchingHistoryRecords} from "./plugins/autocompletion_providers/History";
+import {getHistorySuggestions} from "./plugins/autocompletion_providers/History";
 
-const suggestionsLimit = 7;
+const SUGGESTIONS_LIMIT = 7;
 
 type GetSuggestionsOptions = {
     currentText: string;
@@ -26,19 +26,15 @@ export async function getSuggestions({
     historicalPresentDirectoriesStack,
     aliases,
 }: GetSuggestionsOptions): Promise<SuggestionWithDefaults[]> {
-    const suggestionsFromHistory = getMatchingHistoryRecords(currentText, environment.pwd);
-
-    const firstThreeFromHistory = suggestionsFromHistory.slice(0, 3);
-    const remainderFromHistory = suggestionsFromHistory.slice(3);
-
     const node = leafNodeAt(currentCaretPosition, ast);
     const suggestions = await node.suggestions({
         environment: environment,
         historicalPresentDirectoriesStack: historicalPresentDirectoriesStack,
         aliases: aliases,
     });
+    const historySuggestions = getHistorySuggestions(currentText, environment.pwd, suggestions.length ? 3 : SUGGESTIONS_LIMIT);
 
-    const uniqueSuggestions = _.uniqBy([...firstThreeFromHistory, ...suggestions, ...remainderFromHistory], suggestion => suggestion.value);
+    const uniqueSuggestions = _.uniqBy([...historySuggestions, ...suggestions], suggestion => suggestion.value);
     const applicableSuggestions: Suggestion[] = uniqueSuggestions.filter(suggestion => suggestion.isFiltered || fuzzyMatch(node.value, suggestion.value));
 
     if (applicableSuggestions.length === 1) {
@@ -53,5 +49,5 @@ export async function getSuggestions({
         }
     }
 
-    return applicableSuggestions.slice(0, suggestionsLimit).map(addDefaultAttributeValues);
+    return applicableSuggestions.slice(0, SUGGESTIONS_LIMIT).map(addDefaultAttributeValues);
 }
