@@ -45,6 +45,11 @@ abstract class LeafNode extends ASTNode {
     }
 
     get followingSpaces(): string {
+        // Consists only of spaces. They're considered preceding.
+        if (this.token.raw.match(/^(\s*)$/)) {
+            return "";
+        }
+
         const match = this.token.raw.match(/(\s*)$/);
         if (match) {
             return match[1];
