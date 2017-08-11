@@ -30,9 +30,9 @@ function getContinuation(node: TrieNode): Continuation {
 }
 
 export class HistoryTrie {
-    private root: Map<string, TrieNode> = new Map();
+    private root: TrieNode = {value: "", occurrences: 0, children: new Map()};
 
-    add(input: string | string[], map: Map<string, TrieNode> = this.root) {
+    add(input: string | string[], node: TrieNode = this.root) {
         const tokens = (typeof input === "string") ? tokenize(input.trim()) : input;
         const token = tokens[0];
 
@@ -40,13 +40,13 @@ export class HistoryTrie {
             return;
         }
 
-        if (!map.has(token)) {
-            map.set(token, {value: token, occurrences: 0, children: new Map()});
+        if (!node.children.has(token)) {
+            node.children.set(token, {value: token, occurrences: 0, children: new Map()});
         }
 
-        const value = map.get(token)!;
+        const value = node.children.get(token)!;
         value.occurrences += 1;
-        this.add(tokens.slice(1), value.children);
+        this.add(tokens.slice(1), value);
     }
 
     getContinuationsFor(input: string): Continuation[] {
@@ -88,7 +88,7 @@ export class HistoryTrie {
         }
     }
 
-    private getNodeAt(path: string[], node: TrieNode = {value: "", occurrences: 0, children: this.root}): TrieNode | undefined {
+    private getNodeAt(path: string[], node: TrieNode = this.root): TrieNode | undefined {
         const token = path[0];
 
         if (!token) {
