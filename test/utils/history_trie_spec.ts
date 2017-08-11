@@ -76,4 +76,19 @@ describe.only("HistoryTrie", () => {
 
         expect(getSuggestions(history, input)).to.eql(suggestions);
     });
+
+    it("is ordered by frequency", () => {
+        const history = [
+            "git status",
+            "git pull",
+            "git pull",
+        ];
+        const input = "git ";
+        const suggestions = [
+            "pull",
+            "status",
+        ];
+
+        expect(getSuggestions(history, input)).to.eql(suggestions);
+    });
 });
