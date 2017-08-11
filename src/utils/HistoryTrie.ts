@@ -1,4 +1,5 @@
 import * as _ from "lodash";
+import {fuzzyMatch} from "./Common";
 
 interface TrieNode {
     value: string;
@@ -61,7 +62,7 @@ export class HistoryTrie {
         const continuationNodes: TrieNode[] = [];
 
         for (let node of parentNode.children.values()) {
-            if (node.value.startsWith(currentToken)) {
+            if (fuzzyMatch(currentToken, node.value)) {
                 continuationNodes.push(node);
             }
         }

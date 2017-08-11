@@ -91,4 +91,16 @@ describe.only("HistoryTrie", () => {
 
         expect(getSuggestions(history, input)).to.eql(suggestions);
     });
+
+    it("is fuzzy matches", () => {
+        const history = [
+            "git cherry-pick",
+        ];
+        const input = "git pi";
+        const suggestions = [
+            "cherry-pick",
+        ];
+
+        expect(getSuggestions(history, input)).to.eql(suggestions);
+    });
 });
