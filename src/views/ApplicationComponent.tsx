@@ -23,44 +23,27 @@ export class ApplicationComponent extends React.Component<{}, ApplicationState> 
 
     constructor(props: {}) {
         super(props);
-        // Necessary because "remote" does not exist in electron-mocha tests
-        services.window.onResize.subscribe(() => this.resizeAllSessions());
 
-        if (remote) {
-            const electronWindow = remote.BrowserWindow.getAllWindows()[0];
-
-            ipcRenderer.on("change-working-directory", (_event: Event, directory: string) =>
-                this.focusedSession.directory = directory,
-            );
-
-            services.font.changes.subscribe(() => {
-                this.forceUpdate();
-                this.resizeAllSessions();
-            });
-
-            services.sessions.onClose.subscribe(id => this.removeSessionFromState(id));
-
-            window.onbeforeunload = () => {
-                electronWindow
-                    .removeAllListeners()
-                    .webContents
-                    .removeAllListeners("devtools-opened")
-                    .removeAllListeners("devtools-closed")
-                    .removeAllListeners("found-in-page");
-
-                services.sessions.closeAll();
-            };
-        }
-
-        const id = services.sessions.create();
-
+        const sessionID = services.sessions.create();
         this.state = {
             tabs: [{
-                sessionIDs: [id],
-                focusedSessionID: id,
+                sessionIDs: [sessionID],
+                focusedSessionID: sessionID,
             }],
             focusedTabIndex: 0,
         };
+
+        services.window.onResize.subscribe(() => this.resizeAllSessions());
+        services.window.onClose.subscribe(() => services.sessions.closeAll());
+        services.sessions.onClose.subscribe(id => this.removeSessionFromState(id));
+        services.font.onChange.subscribe(() => {
+            this.forceUpdate();
+            this.resizeAllSessions();
+        });
+
+        ipcRenderer.on("change-working-directory", (_event: Event, directory: string) =>
+            this.focusedSession.directory = directory,
+        );
     }
 
     render() {

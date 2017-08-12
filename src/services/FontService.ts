@@ -23,7 +23,7 @@ export class FontService {
     letterWidth: number;
     letterHeight: number;
     family: string;
-    readonly changes = new Subject<void>();
+    readonly onChange = new Subject<void>();
 
     constructor() {
         this.updateFont(fontSize, fontFamily);
@@ -31,17 +31,17 @@ export class FontService {
 
     resetSize() {
         this.updateFont(fontSize, fontFamily);
-        this.changes.next();
+        this.onChange.next();
     }
 
     increaseSize() {
         this.updateFont(this.size + 1, fontFamily);
-        this.changes.next();
+        this.onChange.next();
     }
 
     decreaseSize() {
         this.updateFont(Math.max(4, this.size - 1), fontFamily);
-        this.changes.next();
+        this.onChange.next();
     }
 
     private updateFont(size: number, family: string) {
