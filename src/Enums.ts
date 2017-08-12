@@ -136,9 +136,7 @@ export enum KeyboardAction {
     // view commands
     viewToggleFullScreen,
     // Upterm commands
-    uptermHide,
     uptermQuit,
-    uptermHideOthers,
     // developer
-    developerToggleTools,
+    toggleDeveloperTools,
 }

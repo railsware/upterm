@@ -110,7 +110,7 @@ export function buildMenuTemplate(
                 },
                 {
                     label: "Toggle Developer Tools",
-                    accelerator: getAcceleratorForAction(KeyboardAction.developerToggleTools),
+                    accelerator: getAcceleratorForAction(KeyboardAction.toggleDeveloperTools),
                     click: () => {
                         browserWindow.webContents.toggleDevTools();
                     },

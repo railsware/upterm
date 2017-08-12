@@ -173,30 +173,21 @@ export const KeybindingsForMenu: KeybindingMenuType[] = [
     },
     // view commands
     {
+        action: KeyboardAction.otherSession,
+        accelerator: `${CmdOrCtrl}+\\`,
+    },
+    {
         action: KeyboardAction.viewToggleFullScreen,
         accelerator: "Ctrl+Shift+F",
     },
     {
-        action: KeyboardAction.otherSession,
-        accelerator: `${CmdOrCtrl}+\\`,
+        action: KeyboardAction.toggleDeveloperTools,
+        accelerator: `${CmdOrCtrl}+Alt+I`,
     },
     // Upterm commands
     {
-        action: KeyboardAction.uptermHide,
-        accelerator: `${CmdOrCtrl}+H`,
-    },
-    {
         action: KeyboardAction.uptermQuit,
         accelerator: `${CmdOrCtrl}+Q`,
-    },
-    {
-        action: KeyboardAction.uptermHideOthers,
-        accelerator: `${CmdOrCtrl}+Alt+H`,
-    },
-    // developer
-    {
-        action: KeyboardAction.developerToggleTools,
-        accelerator: `${CmdOrCtrl}+Alt+I`,
     },
 ];
 
