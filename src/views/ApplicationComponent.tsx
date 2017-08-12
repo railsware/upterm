@@ -3,7 +3,6 @@ import * as React from "react";
 import {ipcRenderer} from "electron";
 import {remote} from "electron";
 import * as css from "./css/styles";
-import {saveWindowBounds} from "./ViewUtils";
 import {SearchComponent} from "./SearchComponent";
 import {isMenuShortcut, isKeybindingForEvent} from "./keyevents/Keybindings";
 import {KeyboardAction, Status} from "../Enums";
@@ -25,18 +24,10 @@ export class ApplicationComponent extends React.Component<{}, ApplicationState> 
     constructor(props: {}) {
         super(props);
         // Necessary because "remote" does not exist in electron-mocha tests
+        services.window.onResize.subscribe(() => this.resizeAllSessions());
+
         if (remote) {
             const electronWindow = remote.BrowserWindow.getAllWindows()[0];
-
-            electronWindow
-                .on("move", () => saveWindowBounds(electronWindow))
-                .on("resize", () => {
-                    saveWindowBounds(electronWindow);
-                    this.resizeAllSessions();
-                })
-                .webContents
-                .on("devtools-opened", () => this.resizeAllSessions())
-                .on("devtools-closed", () => this.resizeAllSessions());
 
             ipcRenderer.on("change-working-directory", (_event: Event, directory: string) =>
                 this.focusedSession.directory = directory,

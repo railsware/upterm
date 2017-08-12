@@ -3,6 +3,7 @@ import {HistoryService} from "./HistoryService";
 import {UpdatesService} from "./UpdatesService";
 import {GitService} from "./GitService";
 import {SessionsService} from "./SessionsService";
+import {WindowService} from "./WindowService";
 
 // To help IDE with "find usages" and "go to definition".
 interface Services {
@@ -11,6 +12,7 @@ interface Services {
     updates: UpdatesService;
     git: GitService;
     sessions: SessionsService;
+    window: WindowService;
 }
 
 export const services: Services = {
@@ -19,4 +21,5 @@ export const services: Services = {
     updates: new UpdatesService,
     git: new GitService(),
     sessions: new SessionsService(),
+    window: new WindowService(),
 };

@@ -1,6 +1,4 @@
 import {KeyCode} from "../Enums";
-import {windowBoundsFilePath} from "../utils/Common";
-import {outputJSON} from "fs-extra";
 
 export function isModifierKey(event: KeyboardEvent) {
     return [KeyCode.Shift, KeyCode.Ctrl, KeyCode.Meta, KeyCode.Alt, KeyCode.CapsLock, KeyCode.AltGraph].includes(event.keyCode);
@@ -35,8 +33,4 @@ export function getCaretPosition(element: Node): number {
     } else {
         return 0;
     }
-}
-
-export function saveWindowBounds(browserWindow: Electron.BrowserWindow) {
-    return outputJSON(windowBoundsFilePath, browserWindow.getBounds());
 }
