@@ -1,5 +1,10 @@
-import {KeyCode, KeyboardAction} from "../../Enums";
+import {KeyCode, KeyboardAction, Status} from "../../Enums";
 import {error} from "../../utils/Common";
+import {SearchComponent} from "../SearchComponent";
+import {UserEvent} from "../../Interfaces";
+import {isModifierKey} from "../ViewUtils";
+import {services} from "../../services/index";
+import {ApplicationComponent} from "../ApplicationComponent";
 
 export type KeybindingType = {
     action: KeyboardAction,
@@ -230,4 +235,169 @@ function toAccelerator(event: KeyboardEvent): string {
     parts.push(event.key.toUpperCase());
 
     return parts.join("+");
+}
+
+export function handleUserEvent(application: ApplicationComponent, search: SearchComponent, event: UserEvent) {
+    const sessionComponent = application.focusedTabComponent.focusedSessionComponent;
+    if (!sessionComponent) {
+        return;
+    }
+
+    const isJobRunning = sessionComponent.status === Status.InProgress;
+    const promptComponent = sessionComponent.promptComponent;
+
+    // Pasted data
+    if (event instanceof ClipboardEvent) {
+        if (search.isFocused) {
+            return;
+        }
+
+        if (isJobRunning) {
+            application.focusedSession.lastJob!.write(event.clipboardData.getData("text/plain"));
+        } else {
+            promptComponent.focus();
+            document.execCommand("inserttext", false, event.clipboardData.getData("text/plain"));
+        }
+
+        event.stopPropagation();
+        event.preventDefault();
+
+        return;
+    }
+
+    if (isModifierKey(event) || isMenuShortcut(event)) {
+        return;
+    }
+
+    // Close focused session
+    if (!isJobRunning && isKeybindingForEvent(event, KeyboardAction.sessionClose)) {
+        services.sessions.close(application.focusedSession.id);
+
+        event.stopPropagation();
+        event.preventDefault();
+        return;
+    }
+
+    // Change focused tab
+    if (isKeybindingForEvent(event, KeyboardAction.tabFocus)) {
+        const position = parseInt(event.key, 10);
+        application.focusTab(position - 1);
+
+        event.stopPropagation();
+        event.preventDefault();
+        return;
+    }
+
+    // Console clear
+    if (!isJobRunning && isKeybindingForEvent(event, KeyboardAction.cliClearJobs)) {
+        application.focusedSession.clearJobs();
+
+        event.stopPropagation();
+        event.preventDefault();
+        return;
+    }
+
+    if (event.metaKey) {
+        event.stopPropagation();
+        // Don't prevent default to be able to open developer tools and such.
+        return;
+    }
+
+    if (search.isFocused) {
+        // Search close
+        if (isKeybindingForEvent(event, KeyboardAction.editFindClose)) {
+            search.clearSelection();
+
+            event.stopPropagation();
+            event.preventDefault();
+            return;
+        }
+
+        return;
+    }
+
+    if (isJobRunning && application.focusedSession.lastJob!.isRunningPty()) {
+        application.focusedSession.lastJob!.write(event);
+
+        event.stopPropagation();
+        event.preventDefault();
+        return;
+    }
+
+    if (isJobRunning) {
+        return;
+    }
+
+    promptComponent.focus();
+
+    // CLI execute command
+    if (isKeybindingForEvent(event, KeyboardAction.cliRunCommand)) {
+        promptComponent.execute((event.target as HTMLElement).innerText);
+
+        event.stopPropagation();
+        event.preventDefault();
+        return;
+    }
+
+    // Append last argument to prompt
+    if (isKeybindingForEvent(event, KeyboardAction.cliAppendLastArgumentOfPreviousCommand)) {
+        promptComponent.appendLastLArgumentOfPreviousCommand();
+
+        event.stopPropagation();
+        event.preventDefault();
+        return;
+    }
+
+    // CLI clear
+    if (isKeybindingForEvent(event, KeyboardAction.cliClearText)) {
+        promptComponent.clear();
+
+        event.stopPropagation();
+        event.preventDefault();
+        return;
+    }
+
+    if (promptComponent.isAutocompleteShown()) {
+        if (isKeybindingForEvent(event, KeyboardAction.autocompleteInsertCompletion)) {
+            promptComponent.applySuggestion();
+
+            event.stopPropagation();
+            event.preventDefault();
+            return;
+        }
+
+        if (isKeybindingForEvent(event, KeyboardAction.autocompletePreviousSuggestion)) {
+            promptComponent.focusPreviousSuggestion();
+
+            event.stopPropagation();
+            event.preventDefault();
+            return;
+        }
+
+        if (isKeybindingForEvent(event, KeyboardAction.autocompleteNextSuggestion)) {
+            promptComponent.focusNextSuggestion();
+
+            event.stopPropagation();
+            event.preventDefault();
+            return;
+        }
+    } else {
+        if (isKeybindingForEvent(event, KeyboardAction.cliHistoryPrevious)) {
+            promptComponent.setPreviousHistoryItem();
+
+            event.stopPropagation();
+            event.preventDefault();
+            return;
+        }
+
+        if (isKeybindingForEvent(event, KeyboardAction.cliHistoryNext)) {
+            promptComponent.setNextHistoryItem();
+
+            event.stopPropagation();
+            event.preventDefault();
+            return;
+        }
+    }
+
+    promptComponent.setPreviousKeyCode(event);
 }

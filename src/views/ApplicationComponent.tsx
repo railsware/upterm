@@ -4,10 +4,6 @@ import {ipcRenderer} from "electron";
 import {remote} from "electron";
 import * as css from "./css/styles";
 import {SearchComponent} from "./SearchComponent";
-import {isMenuShortcut, isKeybindingForEvent} from "./keyevents/Keybindings";
-import {KeyboardAction, Status} from "../Enums";
-import {UserEvent} from "../Interfaces";
-import {isModifierKey} from "./ViewUtils";
 import {TabComponent} from "./TabComponent";
 import {SessionID} from "../shell/Session";
 import {services} from "../services";
@@ -91,10 +87,6 @@ export class ApplicationComponent extends React.Component<{}, ApplicationState> 
      * Tab methods.
      */
 
-    get focusedTab() {
-        return this.state.tabs[this.state.focusedTabIndex];
-    }
-
     get focusedTabComponent() {
         return this.tabComponents[this.state.focusedTabIndex];
     }
@@ -145,207 +137,38 @@ export class ApplicationComponent extends React.Component<{}, ApplicationState> 
         services.sessions.close(sessionIDs);
     }
 
-    resizeFocusedTabSessions(): void {
-        this.focusedTabComponent.sessionComponents.forEach(sessionComponent => sessionComponent.resizeSession());
-    }
-
-    resizeTabSessions(tabIndex: number): void {
-        this.tabComponents[tabIndex].sessionComponents.forEach(sessionComponent => sessionComponent.resizeSession());
-    }
-
     /**
      * Session methods.
      */
 
     get focusedSession() {
-        return services.sessions.get(this.focusedTab.focusedSessionID);
+        return services.sessions.get(this.state.tabs[this.state.focusedTabIndex].focusedSessionID);
     }
 
     otherSession(): void {
         const state = this.cloneState();
         const tabState = state.tabs[state.focusedTabIndex];
 
-        if (this.focusedTab.sessionIDs.length < 2) {
+        if (tabState.sessionIDs.length < 2) {
             const id = services.sessions.create();
             tabState.sessionIDs.push(id);
             tabState.focusedSessionID = id;
 
-            this.setState(state, () => this.resizeFocusedTabSessions());
+            this.setState(state, () => this.resizeTabSessions(state.focusedTabIndex));
         } else {
             tabState.focusedSessionID = tabState.sessionIDs.find(id => id !== tabState.focusedSessionID)!;
             this.setState(state);
         }
     }
 
-    resizeAllSessions() {
+    private resizeTabSessions(tabIndex: number): void {
+        this.tabComponents[tabIndex].sessionComponents.forEach(sessionComponent => sessionComponent.resizeSession());
+    }
+
+    private resizeAllSessions() {
         this.tabComponents.forEach(tabComponent => {
             tabComponent.sessionComponents.forEach(sessionComponent => sessionComponent.resizeSession());
         });
-    }
-
-    handleUserEvent(search: SearchComponent, event: UserEvent) {
-        const sessionComponent = this.focusedTabComponent.focusedSessionComponent;
-        if (!sessionComponent) {
-            return;
-        }
-
-        const isJobRunning = sessionComponent.status === Status.InProgress;
-        const promptComponent = sessionComponent.promptComponent;
-
-        // Pasted data
-        if (event instanceof ClipboardEvent) {
-            if (search.isFocused) {
-                return;
-            }
-
-            if (isJobRunning) {
-                this.focusedSession.lastJob!.write(event.clipboardData.getData("text/plain"));
-            } else {
-                promptComponent.focus();
-                document.execCommand("inserttext", false, event.clipboardData.getData("text/plain"));
-            }
-
-            event.stopPropagation();
-            event.preventDefault();
-
-            return;
-        }
-
-        if (isModifierKey(event) || isMenuShortcut(event)) {
-            return;
-        }
-
-        // Close focused session
-        if (!isJobRunning && isKeybindingForEvent(event, KeyboardAction.sessionClose)) {
-            services.sessions.close(this.focusedSession.id);
-
-            event.stopPropagation();
-            event.preventDefault();
-            return;
-        }
-
-        // Change focused tab
-        if (isKeybindingForEvent(event, KeyboardAction.tabFocus)) {
-            const position = parseInt(event.key, 10);
-            this.focusTab(position - 1);
-
-            event.stopPropagation();
-            event.preventDefault();
-            return;
-        }
-
-        // Console clear
-        if (!isJobRunning && isKeybindingForEvent(event, KeyboardAction.cliClearJobs)) {
-            this.focusedSession.clearJobs();
-
-            event.stopPropagation();
-            event.preventDefault();
-            return;
-        }
-
-        if (event.metaKey) {
-            event.stopPropagation();
-            // Don't prevent default to be able to open developer tools and such.
-            return;
-        }
-
-        if (search.isFocused) {
-            // Search close
-            if (isKeybindingForEvent(event, KeyboardAction.editFindClose)) {
-                search.clearSelection();
-
-                event.stopPropagation();
-                event.preventDefault();
-                return;
-            }
-
-            return;
-        }
-
-        if (isJobRunning && this.focusedSession.lastJob!.isRunningPty()) {
-            this.focusedSession.lastJob!.write(event);
-
-            event.stopPropagation();
-            event.preventDefault();
-            return;
-        }
-
-        if (isJobRunning) {
-            return;
-        }
-
-        promptComponent.focus();
-
-        // CLI execute command
-        if (isKeybindingForEvent(event, KeyboardAction.cliRunCommand)) {
-            promptComponent.execute((event.target as HTMLElement).innerText);
-
-            event.stopPropagation();
-            event.preventDefault();
-            return;
-        }
-
-        // Append last argument to prompt
-        if (isKeybindingForEvent(event, KeyboardAction.cliAppendLastArgumentOfPreviousCommand)) {
-            promptComponent.appendLastLArgumentOfPreviousCommand();
-
-            event.stopPropagation();
-            event.preventDefault();
-            return;
-        }
-
-        // CLI clear
-        if (isKeybindingForEvent(event, KeyboardAction.cliClearText)) {
-            promptComponent.clear();
-
-            event.stopPropagation();
-            event.preventDefault();
-            return;
-        }
-
-        if (promptComponent.isAutocompleteShown()) {
-            if (isKeybindingForEvent(event, KeyboardAction.autocompleteInsertCompletion)) {
-                promptComponent.applySuggestion();
-
-                event.stopPropagation();
-                event.preventDefault();
-                return;
-            }
-
-            if (isKeybindingForEvent(event, KeyboardAction.autocompletePreviousSuggestion)) {
-                promptComponent.focusPreviousSuggestion();
-
-                event.stopPropagation();
-                event.preventDefault();
-                return;
-            }
-
-            if (isKeybindingForEvent(event, KeyboardAction.autocompleteNextSuggestion)) {
-                promptComponent.focusNextSuggestion();
-
-                event.stopPropagation();
-                event.preventDefault();
-                return;
-            }
-        } else {
-            if (isKeybindingForEvent(event, KeyboardAction.cliHistoryPrevious)) {
-                promptComponent.setPreviousHistoryItem();
-
-                event.stopPropagation();
-                event.preventDefault();
-                return;
-            }
-
-            if (isKeybindingForEvent(event, KeyboardAction.cliHistoryNext)) {
-                promptComponent.setNextHistoryItem();
-
-                event.stopPropagation();
-                event.preventDefault();
-                return;
-            }
-        }
-
-        promptComponent.setPreviousKeyCode(event);
     }
 
     private removeSessionFromState(id: SessionID) {

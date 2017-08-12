@@ -1,3 +1,5 @@
+import {handleUserEvent} from "./keyevents/Keybindings";
+
 process.env.NODE_ENV = process.env.NODE_ENV || "production";
 process.env.LANG = process.env.LANG || "en_US.UTF-8";
 process.env.COLORTERM = "truecolor";
@@ -46,7 +48,8 @@ document.addEventListener(
         const template = buildMenuTemplate(remote.app, browserWindow, application);
         remote.Menu.setApplicationMenu(remote.Menu.buildFromTemplate(template));
 
-        const userEventHandler = (event: UserEvent) => application.handleUserEvent(
+        const userEventHandler = (event: UserEvent) => handleUserEvent(
+            application,
             window.search,
             event,
         );
