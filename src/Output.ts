@@ -51,7 +51,6 @@ function or1(value: number | undefined) {
 }
 
 
-// TODO: Move to
 function logPosition(buffer: Buffer) {
     const position = {rowIndex: buffer.cursorRowIndex, columnIndex: buffer.cursorColumnIndex};
     const char = buffer.at(position);

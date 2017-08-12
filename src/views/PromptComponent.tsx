@@ -51,44 +51,45 @@ export class PromptComponent extends React.Component<Props, State> {
     }
 
     render() {
-        // FIXME: write better types.
-        let autocomplete: any;
-        let autocompletedPreview: any;
-
-        if (this.showAutocomplete()) {
-            autocomplete = <AutocompleteComponent
+        const showAutocomplete = this.showAutocomplete();
+        const autocomplete = showAutocomplete ?
+            <AutocompleteComponent
                 suggestions={this.state.suggestions}
                 caretPosition={getCaretPosition(this.commandNode)}
                 onSuggestionHover={index => this.setState({...this.state, highlightedSuggestionIndex: index})}
                 onSuggestionClick={this.applySuggestion.bind(this)}
                 highlightedIndex={this.state.highlightedSuggestionIndex}
                 ref="autocomplete"
-            />;
-            const completed = this.valueWithCurrentSuggestion;
-            if (completed.trim() !== this.prompt.value && completed.startsWith(this.prompt.value)) {
-                autocompletedPreview = <div className="autocompleted-preview prompt-content">{completed}</div>;
-            }
-        }
+            /> :
+            null;
 
-        return <div className="prompt">
-            <div className="prompt-decoration">
-                <div className="square"/>
-                <div className="square rhombus"/>
+        const completed = showAutocomplete ? this.valueWithCurrentSuggestion : "";
+        const showAutocompletedPreview = showAutocomplete && completed.trim() !== this.prompt.value && completed.startsWith(this.prompt.value);
+        const autocompletedPreview = showAutocompletedPreview ?
+            <div className="autocompleted-preview prompt-content">{completed}</div> :
+            null;
+
+        return (
+            <div className="prompt">
+                <div className="prompt-decoration">
+                    <div className="square"/>
+                    <div className="square rhombus"/>
+                </div>
+                <div
+                    className="prompt-content"
+                    onInput={this.handleInput.bind(this)}
+                    onDrop={this.handleDrop.bind(this)}
+                    onBlur={() => this.setState({
+                        ...this.state,
+                        caretPositionFromPreviousFocus: getCaretPosition(this.commandNode),
+                    })}
+                    ref="command"
+                    contentEditable={true}
+                />
+                {autocompletedPreview}
+                {autocomplete}
             </div>
-            <div
-                className="prompt-content"
-                onInput={this.handleInput.bind(this)}
-                onDrop={this.handleDrop.bind(this)}
-                onBlur={() => this.setState({
-                    ...this.state,
-                    caretPositionFromPreviousFocus: getCaretPosition(this.commandNode),
-                })}
-                ref="command"
-                contentEditable={true}
-            />
-            {autocompletedPreview}
-            {autocomplete}
-        </div>;
+        );
     }
 
     focus(): void {
