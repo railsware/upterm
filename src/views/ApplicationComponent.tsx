@@ -390,13 +390,13 @@ export class ApplicationComponent extends React.Component<{}, ApplicationState> 
         }
     }
 
-    private removeTabFromState(index: number, quit = true): void {
+    private removeTabFromState(index: number): void {
         const state = this.cloneState();
 
         state.tabs.splice(index, 1);
         state.focusedTabIndex = Math.max(0, index - 1);
 
-        if (state.tabs.length === 0 && quit) {
+        if (state.tabs.length === 0) {
             ipcRenderer.send("quit");
         } else {
             this.setState(state);

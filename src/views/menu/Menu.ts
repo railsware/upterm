@@ -102,13 +102,6 @@ export function buildMenuTemplate(
                     },
                 },
                 {
-                    label: "Reload",
-                    accelerator: getAcceleratorForAction(KeyboardAction.viewReload),
-                    click: () => {
-                        browserWindow.reload();
-                    },
-                },
-                {
                     label: "Toggle Full Screen",
                     accelerator: getAcceleratorForAction(KeyboardAction.viewToggleFullScreen),
                     click: () => {

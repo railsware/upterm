@@ -120,8 +120,6 @@ export enum KeyboardAction {
     tabClose,
     // session commands
     otherSession,
-    sessionPrevious,
-    sessionNext,
     sessionClose,
     // edit/clipboard commands
     clipboardCopy,
@@ -136,7 +134,6 @@ export enum KeyboardAction {
     decreaseFontSize,
     resetFontSize,
     // view commands
-    viewReload,
     viewToggleFullScreen,
     // Upterm commands
     uptermHide,
