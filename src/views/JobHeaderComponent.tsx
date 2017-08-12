@@ -10,20 +10,19 @@ interface Props {
 }
 
 
-// TODO: Make sure we only update the view when the model changes.
 export class JobHeaderComponent extends React.Component<Props, {}> {
     render() {
-        // FIXME: write better types.
-        let prettifyToggle: any;
+        const prettifyToggle = this.props.showPrettifyToggle ?
+            <PrettifyToggleComponent prettifyToggler={this.props.prettifyToggler} isPrettified={this.props.isPrettified}/> :
+            null;
 
-        if (this.props.showPrettifyToggle) {
-            prettifyToggle = <PrettifyToggleComponent prettifyToggler={this.props.prettifyToggler}
-                                                      isPrettified={this.props.isPrettified}/>;
-        }
-
-        return <div className="job-header">
-            <div>{this.props.job.prompt.value}</div>
-            <div className="job-actions">{prettifyToggle}</div>
-        </div>;
+        return (
+            <div className="job-header">
+                <div>{this.props.job.prompt.value}</div>
+                <div className="job-actions">
+                    {prettifyToggle}
+                </div>
+            </div>
+        );
     }
 }
