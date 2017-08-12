@@ -2,7 +2,6 @@ import {readFileSync} from "fs";
 import {Job} from "./Job";
 import * as events from "events";
 import {PluginManager} from "../PluginManager";
-import {ApplicationComponent} from "../views/ApplicationComponent";
 import {Environment, processEnvironment} from "./Environment";
 import {
     homeDirectory, normalizeDirectory,
@@ -12,6 +11,7 @@ import {OrderedSet} from "../utils/OrderedSet";
 import {Aliases, aliasesFromConfig} from "./Aliases";
 import * as _ from "lodash";
 import {Prompt} from "./Prompt";
+import {services} from "../services/index";
 
 export type SessionID = number & {__isSessionID: true};
 
@@ -22,7 +22,7 @@ export class Session extends events.EventEmitter {
     readonly aliases = new Aliases(aliasesFromConfig);
     historicalPresentDirectoriesStack = new OrderedSet<string>();
 
-    constructor(private application: ApplicationComponent, private _dimensions: Dimensions = {columns: 80, rows: 25}) {
+    constructor(private _dimensions: Dimensions = {columns: 80, rows: 25}) {
         super();
 
         // TODO: We want to deserialize properties only for the first instance
@@ -62,8 +62,7 @@ export class Session extends events.EventEmitter {
     }
 
     close(): void {
-        // FIXME: executing `sleep 5 && exit` and switching to another session will close an incorrect one.
-        this.application.closeFocusedSession();
+        services.sessions.close(this.id);
     }
 
     get directory(): string {

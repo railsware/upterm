@@ -142,7 +142,6 @@ export function buildMenuTemplate(
                     accelerator: getAcceleratorForAction(KeyboardAction.tabPrevious),
                     click: () => {
                         application.focusPreviousTab();
-                        application.forceUpdate();
                     },
                 },
                 {
@@ -150,7 +149,6 @@ export function buildMenuTemplate(
                     accelerator: getAcceleratorForAction(KeyboardAction.tabNext),
                     click: () => {
                         application.focusNextTab();
-                        application.forceUpdate();
                     },
                 },
                 {
@@ -161,7 +159,6 @@ export function buildMenuTemplate(
                     accelerator: getAcceleratorForAction(KeyboardAction.tabClose),
                     click: () => {
                         application.closeFocusedTab();
-                        application.forceUpdate();
                     },
                 },
             ],
