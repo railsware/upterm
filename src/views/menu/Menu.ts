@@ -9,7 +9,7 @@ export function buildMenuTemplate(
     browserWindow: Electron.BrowserWindow,
     application: ApplicationComponent,
 ): Electron.MenuItemConstructorOptions[] {
-    const template: Electron.MenuItemConstructorOptions[] = [
+    return [
         {
             label: "Upterm",
             submenu: [
@@ -169,5 +169,4 @@ export function buildMenuTemplate(
             ],
         },
     ];
-    return template;
 }
