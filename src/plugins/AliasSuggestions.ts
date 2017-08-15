@@ -1,7 +1,6 @@
-import {PluginManager} from "../../PluginManager";
-import {Job} from "../../shell/Job";
+import {services} from "../services/index";
 
-PluginManager.registerPreexecPlugin(async function (job: Job): Promise<void> {
+services.jobs.onStart.subscribe(job => {
     const input = job.prompt.value;
     const alias = job.session.aliases.getNameByValue(input);
 

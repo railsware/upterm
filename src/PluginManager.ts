@@ -1,4 +1,4 @@
-import {Prettyfier, EnvironmentObserverPlugin, AutocompletionProvider, PreexecPlugin} from "./Interfaces";
+import {Prettyfier, EnvironmentObserverPlugin, AutocompletionProvider} from "./Interfaces";
 import * as Path from "path";
 import {io} from "./utils/Common";
 import {environmentVariableSuggestions, anyFilesSuggestionsProvider} from "../src/plugins/autocompletion_utils/Common";
@@ -11,7 +11,6 @@ export class PluginManager {
     private static _prettyfiers: Prettyfier[] = [];
     private static _environmentObservers: EnvironmentObserverPlugin[] = [];
     private static _autocompletionProviders: Dictionary<AutocompletionProvider> = {};
-    private static _preexecPlugins: PreexecPlugin[] = [];
 
     static registerPrettyfier(prettyfier: Prettyfier): void {
         this._prettyfiers.push(prettyfier);
@@ -35,14 +34,6 @@ export class PluginManager {
 
     static autocompletionProviderFor(commandName: string): AutocompletionProvider {
         return this._autocompletionProviders[commandName] || defaultAutocompletionProvider;
-    }
-
-    static registerPreexecPlugin(plugin: PreexecPlugin): void {
-        this._preexecPlugins.push(plugin);
-    }
-
-    static get preexecPlugins(): PreexecPlugin[] {
-        return this._preexecPlugins;
     }
 }
 

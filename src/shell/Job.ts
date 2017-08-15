@@ -27,8 +27,6 @@ export class Job extends EmitterWithUniqueID implements TerminalLikeDevice {
     }
 
     async execute(): Promise<void> {
-        await Promise.all(PluginManager.preexecPlugins.map(plugin => plugin(this)));
-
         try {
             await CommandExecutor.execute(this);
 

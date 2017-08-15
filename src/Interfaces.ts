@@ -51,10 +51,6 @@ export interface EnvironmentObserverPlugin {
     presentWorkingDirectoryDidChange: (session: Session, directory: string) => void;
 }
 
-export interface PreexecPlugin {
-    (job: Job): Promise<void>;
-}
-
 export interface TerminalLikeDevice {
     output: Output;
     write: (input: string | KeyboardEvent) => void;

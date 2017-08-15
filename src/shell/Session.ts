@@ -40,6 +40,8 @@ export class Session extends events.EventEmitter {
         });
 
         this.jobs.push(job);
+
+        this.emit("job-started");
         this.emit("jobs-changed");
     }
 

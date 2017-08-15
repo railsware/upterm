@@ -61,6 +61,7 @@ document.addEventListener(
         require("../plugins/UpdateLastPresentWorkingDirectory");
         require("../plugins/SaveHistory");
         require("../plugins/SaveWindowBounds");
+        require("../plugins/AliasSuggestions");
     },
     false,
 );
