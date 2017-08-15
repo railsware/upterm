@@ -9,8 +9,10 @@ services.sessions.afterJob.subscribe(job => {
         remote.app.dock.bounce("informational");
         remote.app.dock.setBadge(job.status === Status.Success ? "1" : "✕");
 
+        const title = job.status === Status.Success ? "Completed" : "Failed";
+
         /* tslint:disable:no-unused-expression */
-        new Notification("Command has been completed", {body: job.prompt.value});
+        new Notification(title, {body: job.prompt.value});
     }
 });
 
