@@ -2,11 +2,10 @@ import {Session, SessionID} from "../shell/Session";
 import {Observable} from "rxjs/Observable";
 import {Subject} from "rxjs/Subject";
 import "rxjs/add/observable/fromEvent";
-import {Job} from "../shell/Job";
+import {services} from "./index";
 
 
 export class SessionsService {
-    readonly afterJob = new Subject<Job>();
     readonly onClose = new Subject<SessionID>();
     private readonly sessions: Map<SessionID, Session> = new Map;
 
@@ -15,7 +14,7 @@ export class SessionsService {
         this.sessions.set(session.id, session);
 
         Observable.fromEvent(session, "job-finished").subscribe(
-            () => this.afterJob.next(session.lastJob!),
+            () => services.jobs.onFinish.next(session.lastJob!),
         );
 
         return session.id;

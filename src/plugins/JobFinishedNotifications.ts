@@ -2,7 +2,7 @@ import {services} from "../services/index";
 import {remote} from "electron";
 import {Status} from "../Enums";
 
-services.sessions.afterJob.subscribe(job => {
+services.jobs.onFinish.subscribe(job => {
     const electronWindow = remote.BrowserWindow.getAllWindows()[0];
 
     if (remote.app.dock && !electronWindow.isFocused()) {

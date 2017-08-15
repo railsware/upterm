@@ -3,7 +3,7 @@ import {historyFilePath} from "../utils/Common";
 import * as csvStringify from "csv-stringify";
 import {services} from "../services/index";
 
-services.sessions.afterJob.subscribe(job => services.history.add({
+services.jobs.onFinish.subscribe(job => services.history.add({
     command: job.prompt.value,
     expandedCommand: job.prompt.expandedTokens.map(t => t.escapedValue).join(" "),
     timestamp: job.startTime,
