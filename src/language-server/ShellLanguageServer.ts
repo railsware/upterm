@@ -21,6 +21,11 @@ import {
     BaseLanguageClient, CloseAction, ErrorAction,
     createMonacoServices, createConnection as createClientConnection,
 } from "monaco-languageclient";
+import {SessionID} from "../shell/Session";
+import {getSuggestions} from "../Autocompletion";
+import {services} from "../services/index";
+import {scan} from "../shell/Scanner";
+import {CompleteCommand} from "../shell/Parser";
 const ReconnectingWebSocket = require("reconnecting-websocket");
 
 export function start(reader: MessageReader, writer: MessageWriter): ShellLanguageServer {
@@ -132,20 +137,30 @@ export class ShellLanguageServer {
         return this.languageService.doResolve(item);
     }
 
-    protected async completion(_params: TextDocumentPositionParams): Promise<CompletionList> {
-        const item = {
-            label: "git",
-            detail: "SOmethisanfosjfd oijf owaej",
-        };
+    protected async completion(params: TextDocumentPositionParams): Promise<CompletionList> {
+        const sessionID: SessionID = <SessionID>Number.parseInt(params.textDocument.uri.match(/inmemory:\/\/(\d+)\.sh/)![1]);
+        const session = services.sessions.get(sessionID);
+        const text = this.documents.get(params.textDocument.uri).getText();
+        console.log(`completion called for "${text}"`);
 
-        const items = [item];
+        const ast = new CompleteCommand(scan(text));
+
+        const suggestions = await getSuggestions({
+            currentText: text,
+            currentCaretPosition: params.position.character,
+            ast: ast,
+            environment: session.environment,
+            historicalPresentDirectoriesStack: session.historicalPresentDirectoriesStack,
+            aliases: session.aliases,
+        });
 
         return {
             isIncomplete: false,
-            items: items,
+            items: suggestions.map(suggestion => ({
+                label: suggestion.value,
+                detail: suggestion.description,
+            })),
         };
-        // console.log("completing");
-        // const document = this.documents.get(params.textDocument.uri);
         // const shellDocument = this.getShellDocument(document);
         // return this.languageService.doComplete(document, params.position, shellDocument);
     }
