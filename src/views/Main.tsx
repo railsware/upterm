@@ -35,33 +35,35 @@ document.addEventListener(
     false,
 );
 
-document.addEventListener(
-    "DOMContentLoaded",
-    async () => {
-        // FIXME: Remove loadAllPlugins after switching to Webpack (because all the files will be loaded at start anyway).
-        await Promise.all([loadAllPlugins(), loadEnvironment(), loadAliasesFromConfig()]);
-        const application: ApplicationComponent = reactDOM.render(
-            <ApplicationComponent/>,
-            document.getElementById("react-entry-point"),
-        );
+async function main() {
+    // FIXME: Remove loadAllPlugins after switching to Webpack (because all the files will be loaded at start anyway).
+    await Promise.all([loadAllPlugins(), loadEnvironment(), loadAliasesFromConfig()]);
+    const application: ApplicationComponent = reactDOM.render(
+        <ApplicationComponent/>,
+        document.getElementById("react-entry-point"),
+    );
 
-        const template = buildMenuTemplate(remote.app, browserWindow, application);
-        remote.Menu.setApplicationMenu(remote.Menu.buildFromTemplate(template));
+    const template = buildMenuTemplate(remote.app, browserWindow, application);
+    remote.Menu.setApplicationMenu(remote.Menu.buildFromTemplate(template));
 
-        const userEventHandler = (event: UserEvent) => handleUserEvent(
-            application,
-            window.search,
-            event,
-        );
+    const userEventHandler = (event: UserEvent) => handleUserEvent(
+        application,
+        window.search,
+        event,
+    );
 
-        document.body.addEventListener("keydown", userEventHandler, true);
-        document.body.addEventListener("paste", userEventHandler, true);
+    document.body.addEventListener("keydown", userEventHandler, true);
+    document.body.addEventListener("paste", userEventHandler, true);
 
-        require("../plugins/JobFinishedNotifications");
-        require("../plugins/UpdateLastPresentWorkingDirectory");
-        require("../plugins/SaveHistory");
-        require("../plugins/SaveWindowBounds");
-        require("../plugins/AliasSuggestions");
-    },
-    false,
-);
+    require("../plugins/JobFinishedNotifications");
+    require("../plugins/UpdateLastPresentWorkingDirectory");
+    require("../plugins/SaveHistory");
+    require("../plugins/SaveWindowBounds");
+    require("../plugins/AliasSuggestions");
+}
+
+if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", main, false);
+} else {
+    main();
+}

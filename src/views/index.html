@@ -484,8 +484,7 @@
     self.module = undefined;
     // workaround monaco-typescript not understanding the environment
     self.process.browser = true;
-    amdRequire(['vs/editor/editor.main'], () => {});
-    require("../../src/views/Main.js");
+    amdRequire(['vs/editor/editor.main'], () => require("../../src/views/Main.js"));
 </script>
 </html>
 
