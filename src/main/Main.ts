@@ -35,6 +35,8 @@ app.on("ready", () => {
         browserWindow.focus();
     });
 
+    browserWindow.webContents.openDevTools();
+
     app.on("open-file", (_event, file) => browserWindow.webContents.send("change-working-directory", file));
 });
 

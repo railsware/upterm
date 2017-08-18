@@ -242,9 +242,9 @@ server.on("upgrade", (request: http.IncomingMessage, socket: net.Socket, head: B
 
 // register Monaco languages
 monaco.languages.register({
-    id: "json",
-    extensions: [".json", ".bowerrc", ".jshintrc", ".jscsrc", ".eslintrc", ".babelrc"],
-    aliases: ["JSON", "json"],
+    id: "shell",
+    extensions: [".sh"],
+    aliases: ["shell"],
     mimetypes: ["application/json"],
 });
 
