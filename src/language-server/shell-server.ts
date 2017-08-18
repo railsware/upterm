@@ -23,20 +23,20 @@ import {
 } from "monaco-languageclient";
 const ReconnectingWebSocket = require("reconnecting-websocket");
 
-export function start(reader: MessageReader, writer: MessageWriter): JsonServer {
+export function start(reader: MessageReader, writer: MessageWriter): ShellServer {
     const connection = createConnection(reader, writer);
-    const server = new JsonServer(connection);
+    const server = new ShellServer(connection);
     server.start();
     return server;
 }
 
-export class JsonServer {
+export class ShellServer {
 
     protected workspaceRoot: Uri | undefined;
 
     protected readonly documents = new TextDocuments();
 
-    protected readonly jsonService: LanguageService = getLanguageService({
+    protected readonly languageService: LanguageService = getLanguageService({
         schemaRequestService: this.resovleSchema.bind(this),
     });
 
@@ -98,19 +98,19 @@ export class JsonServer {
 
     protected format(params: DocumentRangeFormattingParams): TextEdit[] {
         const document = this.documents.get(params.textDocument.uri);
-        return this.jsonService.format(document, params.range, params.options);
+        return this.languageService.format(document, params.range, params.options);
     }
 
     protected findDocumentSymbols(params: DocumentSymbolParams): SymbolInformation[] {
         const document = this.documents.get(params.textDocument.uri);
-        const jsonDocument = this.getJSONDocument(document);
-        return this.jsonService.findDocumentSymbols(document, jsonDocument);
+        const shellDocument = this.getShellDocument(document);
+        return this.languageService.findDocumentSymbols(document, shellDocument);
     }
 
     protected hover(params: TextDocumentPositionParams): Thenable<Hover> {
         const document = this.documents.get(params.textDocument.uri);
-        const jsonDocument = this.getJSONDocument(document);
-        return this.jsonService.doHover(document, params.position, jsonDocument);
+        const shellDocument = this.getShellDocument(document);
+        return this.languageService.doHover(document, params.position, shellDocument);
     }
 
     protected resovleSchema(url: string): Promise<string> {
@@ -130,18 +130,18 @@ export class JsonServer {
     }
 
     protected resolveCompletion(item: CompletionItem): Thenable<CompletionItem> {
-        return this.jsonService.doResolve(item);
+        return this.languageService.doResolve(item);
     }
 
     protected completion(params: TextDocumentPositionParams): Thenable<CompletionList> {
-        console.error("completing");
+        console.log("completing");
         const document = this.documents.get(params.textDocument.uri);
-        const jsonDocument = this.getJSONDocument(document);
-        return this.jsonService.doComplete(document, params.position, jsonDocument);
+        const shellDocument = this.getShellDocument(document);
+        return this.languageService.doComplete(document, params.position, shellDocument);
     }
 
     protected validate(document: TextDocument): void {
-        console.error("validating");
+        console.log("validating");
         this.cleanPendingValidation(document);
         this.pendingValidationRequests.set(document.uri, setTimeout(() => {
             this.pendingValidationRequests.delete(document.uri);
@@ -162,8 +162,8 @@ export class JsonServer {
             this.cleanDiagnostics(document);
             return;
         }
-        const jsonDocument = this.getJSONDocument(document);
-        this.jsonService.doValidation(document, jsonDocument).then(diagnostics =>
+        const shellDocument = this.getShellDocument(document);
+        this.languageService.doValidation(document, shellDocument).then(diagnostics =>
             this.sendDiagnostics(document, diagnostics),
         );
     }
@@ -178,8 +178,8 @@ export class JsonServer {
         });
     }
 
-    protected getJSONDocument(document: TextDocument): JSONDocument {
-        return this.jsonService.parseJSONDocument(document);
+    protected getShellDocument(document: TextDocument): JSONDocument {
+        return this.languageService.parseJSONDocument(document);
     }
 
 }
