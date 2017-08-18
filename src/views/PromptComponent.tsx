@@ -55,8 +55,7 @@ export class PromptComponent extends React.Component<Props, State> {
         });
         monaco.editor.setTheme("myTheme");
         this.editor = monaco.editor.create(this.promptNode, {
-            value: "",
-            language: "javascript",
+            model: monaco.editor.createModel("", "json", monaco.Uri.parse(`inmemory://${this.props.session.id}.json`)),
             lineNumbers: "off",
             fontSize: 16,
             minimap: { enabled: false },
