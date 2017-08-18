@@ -265,14 +265,6 @@ server.on("upgrade", (request: http.IncomingMessage, socket: net.Socket, head: B
  * Client.
  */
 
-// register Monaco languages
-monaco.languages.register({
-    id: "shell",
-    extensions: [".sh"],
-    aliases: ["shell"],
-    mimetypes: ["application/json"],
-});
-
 // create the web socket
 const serverUrl = "ws://localhost:3000//sampleServer";
 const webSocket = createWebSocket(serverUrl);
@@ -293,7 +285,7 @@ function createLanguageClient(connection: MessageConnection): BaseLanguageClient
         name: "Sample Language Client",
         clientOptions: {
             // use a language id as a document selector
-            documentSelector: ["json"],
+            documentSelector: ["shell"],
             // disable the default error handler
             errorHandler: {
                 error: () => ErrorAction.Continue,
@@ -321,3 +313,32 @@ function createWebSocket(url: string): WebSocket {
     };
     return new ReconnectingWebSocket(url, undefined, socketOptions);
 }
+
+monaco.languages.register({
+    id: "shell",
+});
+
+monaco.languages.setMonarchTokensProvider("shell", {
+    tokenizer: ({
+        root: [
+            [/^\w+/, "executable"],
+            [/--?[\w=]+/, "option-name"],
+            [/ \w+/, "argument"],
+        ],
+    }),
+} as any);
+
+monaco.editor.defineTheme("upterm-prompt-theme", {
+    base: "vs-dark",
+    inherit: true,
+    rules: [
+        { token: "executable", foreground: "1ea81e" },
+        { token: "option-name", foreground: "7492ff", fontStyle: "bold" },
+        { token: "argument", foreground: "ebf9f9" },
+    ],
+    colors: {
+        "editor.foreground": "#EEE",
+        "editor.background": "#292929",
+        "editor.lineHighlightBackground": "#292929",
+    },
+} as any);

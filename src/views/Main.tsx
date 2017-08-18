@@ -36,6 +36,9 @@ document.addEventListener(
 );
 
 async function main() {
+    // Should be required befor mounting Application.
+    require("../language-server/ShellLanguageServer");
+
     // FIXME: Remove loadAllPlugins after switching to Webpack (because all the files will be loaded at start anyway).
     await Promise.all([loadAllPlugins(), loadEnvironment(), loadAliasesFromConfig()]);
     const application: ApplicationComponent = reactDOM.render(
@@ -55,7 +58,6 @@ async function main() {
     document.body.addEventListener("keydown", userEventHandler, true);
     document.body.addEventListener("paste", userEventHandler, true);
 
-    require("../language-server/ShellLanguageServer");
     require("../plugins/JobFinishedNotifications");
     require("../plugins/UpdateLastPresentWorkingDirectory");
     require("../plugins/SaveHistory");

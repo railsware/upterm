@@ -43,19 +43,11 @@ export class PromptComponent extends React.Component<Props, State> {
     }
 
     componentDidMount() {
-        monaco.editor.defineTheme("myTheme", {
-            base: "vs-dark",
-            inherit: true,
-            rules: [],
-            colors: {
-                "editor.foreground": "#EEE",
-                "editor.background": "#292929",
-                "editor.lineHighlightBackground": "#292929",
-            },
-        });
-        monaco.editor.setTheme("myTheme");
+        const model = monaco.editor.createModel("", "shell", monaco.Uri.parse(`inmemory://${this.props.session.id}.sh`));
+
         this.editor = monaco.editor.create(this.promptNode, {
-            model: monaco.editor.createModel("", "json", monaco.Uri.parse(`inmemory://${this.props.session.id}.sh`)),
+            theme: "upterm-prompt-theme",
+            model: model,
             lineNumbers: "off",
             fontSize: 16,
             minimap: { enabled: false },
