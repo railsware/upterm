@@ -49,5 +49,5 @@ export async function getSuggestions({
         }
     }
 
-    return applicableSuggestions.slice(0, SUGGESTIONS_LIMIT).map(addDefaultAttributeValues);
+    return applicableSuggestions.map(addDefaultAttributeValues);
 }
