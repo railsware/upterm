@@ -23,14 +23,14 @@ import {
 } from "monaco-languageclient";
 const ReconnectingWebSocket = require("reconnecting-websocket");
 
-export function start(reader: MessageReader, writer: MessageWriter): ShellServer {
+export function start(reader: MessageReader, writer: MessageWriter): ShellLanguageServer {
     const connection = createConnection(reader, writer);
-    const server = new ShellServer(connection);
+    const server = new ShellLanguageServer(connection);
     server.start();
     return server;
 }
 
-export class ShellServer {
+export class ShellLanguageServer {
 
     protected workspaceRoot: Uri | undefined;
 
@@ -45,7 +45,6 @@ export class ShellServer {
     constructor(
         protected readonly connection: IConnection,
     ) {
-        console.error("starting");
         this.documents.listen(this.connection);
         this.documents.onDidChangeContent(change =>
             this.validate(change.document),
@@ -133,20 +132,31 @@ export class ShellServer {
         return this.languageService.doResolve(item);
     }
 
-    protected completion(params: TextDocumentPositionParams): Thenable<CompletionList> {
-        console.log("completing");
-        const document = this.documents.get(params.textDocument.uri);
-        const shellDocument = this.getShellDocument(document);
-        return this.languageService.doComplete(document, params.position, shellDocument);
+    protected async completion(_params: TextDocumentPositionParams): Promise<CompletionList> {
+        const item = {
+            label: "git",
+            detail: "SOmethisanfosjfd oijf owaej",
+        };
+
+        const items = [item];
+
+        return {
+            isIncomplete: false,
+            items: items,
+        };
+        // console.log("completing");
+        // const document = this.documents.get(params.textDocument.uri);
+        // const shellDocument = this.getShellDocument(document);
+        // return this.languageService.doComplete(document, params.position, shellDocument);
     }
 
-    protected validate(document: TextDocument): void {
-        console.log("validating");
-        this.cleanPendingValidation(document);
-        this.pendingValidationRequests.set(document.uri, setTimeout(() => {
-            this.pendingValidationRequests.delete(document.uri);
-            this.doValidate(document);
-        }));
+    protected validate(_document: TextDocument): void {
+        // console.log("validating");
+        // this.cleanPendingValidation(document);
+        // this.pendingValidationRequests.set(document.uri, setTimeout(() => {
+        //     this.pendingValidationRequests.delete(document.uri);
+        //     this.doValidate(document);
+        // }));
     }
 
     protected cleanPendingValidation(document: TextDocument): void {

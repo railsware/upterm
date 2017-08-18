@@ -55,7 +55,7 @@ async function main() {
     document.body.addEventListener("keydown", userEventHandler, true);
     document.body.addEventListener("paste", userEventHandler, true);
 
-    require("../language-server/shell-server");
+    require("../language-server/ShellLanguageServer");
     require("../plugins/JobFinishedNotifications");
     require("../plugins/UpdateLastPresentWorkingDirectory");
     require("../plugins/SaveHistory");
