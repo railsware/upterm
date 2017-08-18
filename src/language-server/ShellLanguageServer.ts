@@ -315,10 +315,6 @@ import CompletionItemKind = monaco.languages.CompletionItemKind;
 //     return new ReconnectingWebSocket(url, undefined, socketOptions);
 // }
 
-monaco.languages.register({
-    id: "shell",
-});
-
 monaco.languages.setMonarchTokensProvider("shell", {
     tokenizer: ({
         root: [
@@ -329,9 +325,24 @@ monaco.languages.setMonarchTokensProvider("shell", {
     }),
 } as any);
 
+monaco.languages.register({
+    id: "shell",
+});
+
+monaco.languages.setLanguageConfiguration("shell", {
+    brackets: [
+        ["'", "'"],
+        ['"', '"'],
+        ["`", "`"],
+        ["(", ")"],
+        ["[", "]"],
+        ["{", "}"],
+    ],
+});
+
 monaco.languages.registerCompletionItemProvider("shell", {
-    triggerCharacters: [" "],
-    provideCompletionItems: async function(model, position): Promise<monaco.languages.CompletionList> {
+    triggerCharacters: [" ", "/"],
+    provideCompletionItems: async function (model, position): Promise<monaco.languages.CompletionList> {
         model.getValue();
         const uri = model.uri.toString();
         const sessionID: SessionID = <SessionID>Number.parseInt(uri.match(/inmemory:\/\/(\d+)\.sh/)![1]);
@@ -365,9 +376,9 @@ monaco.editor.defineTheme("upterm-prompt-theme", {
     base: "vs-dark",
     inherit: true,
     rules: [
-        { token: "executable", foreground: "1ea81e" },
-        { token: "option-name", foreground: "7492ff", fontStyle: "bold" },
-        { token: "argument", foreground: "ebf9f9" },
+        {token: "executable", foreground: "1ea81e"},
+        {token: "option-name", foreground: "7492ff", fontStyle: "bold"},
+        {token: "argument", foreground: "ebf9f9"},
     ],
     colors: {
         "editor.foreground": "#EEE",
