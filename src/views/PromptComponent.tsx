@@ -66,17 +66,7 @@ export class PromptComponent extends React.Component<Props, State> {
     }
 
     focus(): void {
-        if (document.activeElement === this.commandNode) {
-            return;
-        }
-
         this.editor.focus();
-
-        // this.commandNode.focus();
-
-        // if (this.prompt.value) {
-        //     setCaretPosition(this.commandNode, this.state.caretPositionFromPreviousFocus);
-        // }
     }
 
     clear(): void {
@@ -144,7 +134,7 @@ export class PromptComponent extends React.Component<Props, State> {
         }
     }
 
-    private setValue(value: string): void {
+    setValue(value: string): void {
         this.editor.setValue(value);
         this.prompt.setValue(value);
     }
