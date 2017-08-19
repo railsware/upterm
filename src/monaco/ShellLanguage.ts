@@ -61,7 +61,7 @@ monaco.editor.onDidCreateModel(model => {
 
         const executables = await io.executablesInPaths(session.environment.path);
 
-        if (!executables.includes(commandName)) {
+        if (!executables.includes(commandName) && !session.aliases.has(commandName)) {
             monaco.editor.setModelMarkers(model, "upterm", [{
                 severity: monaco.Severity.Error,
                 message: `Executable ${commandName} doesn't exist in $PATH.`,
