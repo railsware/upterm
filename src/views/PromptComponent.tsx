@@ -2,11 +2,7 @@
 
 import * as _ from "lodash";
 import * as React from "react";
-import {getCaretPosition} from "./ViewUtils";
 import {Prompt} from "../shell/Prompt";
-import {SuggestionWithDefaults} from "../plugins/autocompletion_utils/Common";
-import {KeyCode} from "../Enums";
-import {getSuggestions} from "../Autocompletion";
 import {scan} from "../shell/Scanner";
 import {Session} from "../shell/Session";
 import {services} from "../services/index";
@@ -17,10 +13,6 @@ interface Props {
 }
 
 interface State {
-    highlightedSuggestionIndex: number;
-    previousKeyCode: number;
-    caretPositionFromPreviousFocus: number;
-    suggestions: SuggestionWithDefaults[];
     displayedHistoryRecordID: number | undefined;
 }
 
@@ -34,10 +26,6 @@ export class PromptComponent extends React.Component<Props, State> {
         this.prompt = new Prompt(this.props.session);
 
         this.state = {
-            highlightedSuggestionIndex: 0,
-            previousKeyCode: KeyCode.Escape,
-            caretPositionFromPreviousFocus: 0,
-            suggestions: [],
             displayedHistoryRecordID: undefined,
         };
     }
@@ -95,13 +83,6 @@ export class PromptComponent extends React.Component<Props, State> {
         this.setText("");
     }
 
-    setPreviousKeyCode(event: KeyboardEvent) {
-        this.setState({
-            ...this.state,
-            previousKeyCode: event.keyCode,
-        });
-    }
-
     async appendLastLArgumentOfPreviousCommand(): Promise<void> {
         const latestHistoryRecord = services.history.latest;
 
@@ -119,10 +100,6 @@ export class PromptComponent extends React.Component<Props, State> {
             this.editor.setValue("");
             this.setDOMValueProgrammatically("");
             this.setState({
-                highlightedSuggestionIndex: 0,
-                previousKeyCode: KeyCode.Escape,
-                caretPositionFromPreviousFocus: 0,
-                suggestions: [],
                 displayedHistoryRecordID: undefined,
             });
         }
@@ -168,26 +145,6 @@ export class PromptComponent extends React.Component<Props, State> {
         }
     }
 
-    focusPreviousSuggestion(): void {
-        const index = Math.max(0, this.state.highlightedSuggestionIndex - 1);
-        this.setState({...this.state, highlightedSuggestionIndex: index});
-    }
-
-    focusNextSuggestion(): void {
-        const index = Math.min(this.state.suggestions.length - 1, this.state.highlightedSuggestionIndex + 1);
-        this.setState({...this.state, highlightedSuggestionIndex: index});
-    }
-
-    isAutocompleteShown(): boolean {
-        /* tslint:disable:no-string-literal */
-        return !!this.refs["autocomplete"];
-    }
-
-    async applySuggestion(): Promise<void> {
-        this.setText(this.valueWithCurrentSuggestion);
-        await this.getSuggestions();
-    }
-
     private setText(text: string): void {
         this.prompt.setValue(text);
         this.setDOMValueProgrammatically(text);
@@ -221,28 +178,5 @@ export class PromptComponent extends React.Component<Props, State> {
 
     private isEmpty(): boolean {
         return this.prompt.value.replace(/\s/g, "").length === 0;
-    }
-
-    private get valueWithCurrentSuggestion(): string {
-        const suggestion = this.state.suggestions[this.state.suggestions.length - 1 - this.state.highlightedSuggestionIndex];
-
-        return suggestion.promptSerializer({
-            ast: this.prompt.ast,
-            caretPosition: getCaretPosition(this.commandNode),
-            suggestion: suggestion,
-        });
-    }
-
-    private async getSuggestions() {
-        let suggestions = await getSuggestions({
-            currentText: this.prompt.value,
-            currentCaretPosition: getCaretPosition(this.commandNode),
-            ast: this.prompt.ast,
-            environment: this.props.session.environment,
-            historicalPresentDirectoriesStack: this.props.session.historicalPresentDirectoriesStack,
-            aliases: this.props.session.aliases,
-        });
-
-        this.setState({...this.state, highlightedSuggestionIndex: suggestions.length - 1, suggestions: suggestions});
     }
 }
