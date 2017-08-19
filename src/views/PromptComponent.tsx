@@ -144,11 +144,6 @@ export class PromptComponent extends React.Component<Props, State> {
         return this.refs["prompt-content"] as HTMLDivElement;
     }
 
-    private get commandNode(): HTMLInputElement {
-        /* tslint:disable:no-string-literal */
-        return this.refs["command"] as HTMLInputElement;
-    }
-
     private isEmpty(): boolean {
         return this.prompt.value.replace(/\s/g, "").length === 0;
     }

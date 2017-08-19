@@ -356,47 +356,19 @@ export function handleUserEvent(application: ApplicationComponent, search: Searc
         return;
     }
 
-    // if (promptComponent.isAutocompleteShown()) {
-    //     if (isKeybindingForEvent(event, KeyboardAction.autocompleteInsertCompletion)) {
-    //         promptComponent.applySuggestion();
+    // if (isKeybindingForEvent(event, KeyboardAction.cliHistoryPrevious)) {
+    //     promptComponent.setPreviousHistoryItem();
     //
-    //         event.stopPropagation();
-    //         event.preventDefault();
-    //         return;
-    //     }
-    //
-    //     if (isKeybindingForEvent(event, KeyboardAction.autocompletePreviousSuggestion)) {
-    //         promptComponent.focusPreviousSuggestion();
-    //
-    //         event.stopPropagation();
-    //         event.preventDefault();
-    //         return;
-    //     }
-    //
-    //     if (isKeybindingForEvent(event, KeyboardAction.autocompleteNextSuggestion)) {
-    //         promptComponent.focusNextSuggestion();
-    //
-    //         event.stopPropagation();
-    //         event.preventDefault();
-    //         return;
-    //     }
-    // } else {
-    //     if (isKeybindingForEvent(event, KeyboardAction.cliHistoryPrevious)) {
-    //         promptComponent.setPreviousHistoryItem();
-    //
-    //         event.stopPropagation();
-    //         event.preventDefault();
-    //         return;
-    //     }
-    //
-    //     if (isKeybindingForEvent(event, KeyboardAction.cliHistoryNext)) {
-    //         promptComponent.setNextHistoryItem();
-    //
-    //         event.stopPropagation();
-    //         event.preventDefault();
-    //         return;
-    //     }
+    //     event.stopPropagation();
+    //     event.preventDefault();
+    //     return;
     // }
-
-    // promptComponent.setPreviousKeyCode(event);
+    //
+    // if (isKeybindingForEvent(event, KeyboardAction.cliHistoryNext)) {
+    //     promptComponent.setNextHistoryItem();
+    //
+    //     event.stopPropagation();
+    //     event.preventDefault();
+    //     return;
+    // }
 }
