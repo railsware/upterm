@@ -39,7 +39,11 @@ monaco.editor.onDidCreateModel(model => {
         if (value.length === 0) {
             return;
         }
-        const commandName = value.split(" ")[0];
+        const tokens = scan(value);
+        if (tokens.length < 2) {
+            return;
+        }
+        const commandName = tokens[0].value;
 
         const uri = model.uri.toString();
         const sessionID: SessionID = <SessionID>Number.parseInt(uri.match(/inmemory:\/\/(\d+)\.sh/)![1]);
