@@ -45,7 +45,7 @@ export class PromptComponent extends React.Component<Props, State> {
     componentDidMount() {
         const model = monaco.editor.createModel("", "shell", monaco.Uri.parse(`inmemory://${this.props.session.id}.sh`));
 
-        this.editor = monaco.editor.create(this.promptNode, {
+        this.editor = monaco.editor.create(this.promptContentNode, {
             theme: "upterm-prompt-theme",
             model: model,
             lineNumbers: "off",
@@ -67,7 +67,12 @@ export class PromptComponent extends React.Component<Props, State> {
 
     render() {
         return (
-            <div className="prompt" ref="prompt">
+            <div className="prompt">
+                <div className="prompt-decoration">
+                    <div className="square"/>
+                    <div className="square rhombus"/>
+                </div>
+                <div className="prompt-content" ref="prompt-content"/>
             </div>
         );
     }
@@ -188,9 +193,9 @@ export class PromptComponent extends React.Component<Props, State> {
         this.setDOMValueProgrammatically(text);
     }
 
-    private get promptNode(): HTMLDivElement {
+    private get promptContentNode(): HTMLDivElement {
         /* tslint:disable:no-string-literal */
-        return this.refs["prompt"] as HTMLDivElement;
+        return this.refs["prompt-content"] as HTMLDivElement;
     }
 
     private get commandNode(): HTMLInputElement {
