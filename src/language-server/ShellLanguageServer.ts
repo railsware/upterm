@@ -7,14 +7,24 @@ import CompletionItemKind = monaco.languages.CompletionItemKind;
 import {io} from "../utils/Common";
 
 monaco.languages.setMonarchTokensProvider("shell", {
-    tokenizer: ({
+    tokenizer: {
         root: [
-            [/^\w+/, "executable"],
-            [/--?[\w=]+/, "option-name"],
-            [/ \w+/, "argument"],
+            {
+                regex: /^\w+/,
+                action: {token: "executable"},
+            },
+            {
+                regex: /--?[\w=]+/,
+                action: {token: "option-name"},
+            },
+            {
+                regex: / \w+/,
+                action: {token: "argument"},
+            },
         ],
-    }),
-} as any);
+    },
+    tokenPostfix: ".shell",
+});
 
 monaco.languages.register({
     id: "shell",
@@ -109,4 +119,4 @@ monaco.editor.defineTheme("upterm-prompt-theme", {
         "editor.background": "#292929",
         "editor.lineHighlightBackground": "#292929",
     },
-} as any);
+});
