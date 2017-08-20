@@ -356,19 +356,19 @@ export function handleUserEvent(application: ApplicationComponent, search: Searc
         return;
     }
 
-    // if (isKeybindingForEvent(event, KeyboardAction.cliHistoryPrevious)) {
-    //     promptComponent.setPreviousHistoryItem();
-    //
-    //     event.stopPropagation();
-    //     event.preventDefault();
-    //     return;
-    // }
-    //
-    // if (isKeybindingForEvent(event, KeyboardAction.cliHistoryNext)) {
-    //     promptComponent.setNextHistoryItem();
-    //
-    //     event.stopPropagation();
-    //     event.preventDefault();
-    //     return;
-    // }
+    if (promptComponent.shouldNavigateHistory() && isKeybindingForEvent(event, KeyboardAction.cliHistoryPrevious)) {
+        promptComponent.setPreviousHistoryItem();
+
+        event.stopPropagation();
+        event.preventDefault();
+        return;
+    }
+
+    if (promptComponent.shouldNavigateHistory() && isKeybindingForEvent(event, KeyboardAction.cliHistoryNext)) {
+        promptComponent.setNextHistoryItem();
+
+        event.stopPropagation();
+        event.preventDefault();
+        return;
+    }
 }

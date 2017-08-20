@@ -94,6 +94,10 @@ export class PromptComponent extends React.Component<Props, State> {
         }
     }
 
+    shouldNavigateHistory() {
+        return this.state.displayedHistoryRecordID || this.editor.getValue() === "";
+    }
+
     setPreviousHistoryItem(): void {
         const currentID = this.state.displayedHistoryRecordID;
         if (currentID) {
@@ -136,6 +140,7 @@ export class PromptComponent extends React.Component<Props, State> {
 
     setValue(value: string): void {
         this.editor.setValue(value);
+        this.editor.setPosition({lineNumber: 1, column: value.length + 1});
         this.prompt.setValue(value);
     }
 
