@@ -79,14 +79,12 @@ export const suggestionFromFlagParagraph = (paragraph: string[]): Suggestion | u
     const shortFlagWithoutArgument = paragraph[0].match(/^ *-(\w) *(.*)$/);
     if (shortFlagWithArgument) {
         const flag = shortFlagWithArgument[1];
-        const argument = shortFlagWithArgument[2];
         const detail = combineManPageLines(paragraph.slice(1));
 
         return {
             label: `-${flag}`,
             style: styles.option,
             detail: detail,
-            displayValue: `-${flag} ${argument}`,
             space: true,
         };
     } else if (shortFlagWithoutArgument) {

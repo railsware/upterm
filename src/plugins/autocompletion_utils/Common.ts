@@ -16,7 +16,6 @@ interface RequiredSuggestionAttributes {
 }
 
 interface AdditionalSuggestionAttributes {
-    displayValue: string;
     detail: string;
     style: SuggestionStyle;
     space: boolean;
@@ -306,9 +305,11 @@ export const combineShortFlags = (suggestionsProvider: AutocompletionProvider) =
                         reShortFlag.test(s.label) && !token.includes(s.label.slice(1))
                             && s.space)
                     .map(s =>
-                        ({label: token + s.label.slice(1),
-                            displayValue: s.displayValue, detail: s.detail,
-                            style: s.style}));
+                        ({
+                            label: token + s.label.slice(1),
+                            detail: s.detail,
+                            style: s.style,
+                        }));
         } else {
             return suggestions;
         }

@@ -329,7 +329,7 @@ const fileValueSuggestions = provide(async context => {
         const optionValue = token.slice(tokenValue.length);
         const fileSuggestions = await anyFilesSuggestions(optionValue, workingDirectory);
         return fileSuggestions.map(item =>
-                ({label: tokenValue + item.label, displayValue: item.displayValue,
+                ({label: tokenValue + item.label,
                     style: io.directoryExists(workingDirectory + item.label) ? styles.directory : styles.optionValue}));
     } else {
         return [];
@@ -346,7 +346,6 @@ const excludeFromSuggestions = provide(async context => {
         const fileSuggestions = await anyFilesSuggestions(optionValue, workingDirectory);
         return fileSuggestions.map(item => ({
             label: tokenValue + item.label,
-            displayValue: item.displayValue,
             style: io.directoryExists(workingDirectory + item.label) ? styles.directory : styles.optionValue,
         }));
     } else {
@@ -363,7 +362,7 @@ const excludeDirSuggestions = provide(async context => {
         const optionValue = token.slice(tokenValue.length);
         const directorySuggestions = await directoriesSuggestions(optionValue, workingDirectory);
         return directorySuggestions.map(item =>
-                ({label: tokenValue + item.label, displayValue: item.displayValue,
+                ({label: tokenValue + item.label,
                     style: styles.directory}));
     } else {
         return [];
