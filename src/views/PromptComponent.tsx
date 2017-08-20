@@ -45,6 +45,8 @@ export class PromptComponent extends React.Component<Props, State> {
             },
             overviewRulerLanes: 0,
         });
+
+        this.focus();
     }
 
     componentDidUpdate(prevProps: Props) {

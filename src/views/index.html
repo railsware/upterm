@@ -337,61 +337,6 @@
             z-index: 2;
         }
 
-        .session .prompt-content.autocompleted-preview {
-            filter: brightness(50%);
-            z-index: 1;
-        }
-
-        .autocomplete {
-            --prompt-letter-width: calc(calc(var(--prompt-font-size) / 2) + 1.5px);
-            position: absolute;
-            bottom: var(--prompt-height);
-            min-width: 300px;
-            box-shadow: 0 2px 8px 1px rgba(0, 0, 0, 0.3);
-            background-color: var(--background-color);
-            left: calc(30px + calc(var(--caret-position) * var(--prompt-letter-width)));
-        }
-
-        .autocomplete .suggestions-list {
-            max-height: 300px;
-            overflow: auto;
-            padding: 0;
-            margin: 0;
-        }
-
-        .autocomplete .suggestion {
-            list-style-type: none;
-            padding: 2px;
-            cursor: pointer;
-        }
-
-        .autocomplete .suggestion[data-highlighted=true] {
-            background-color: #383E4A;
-        }
-
-        .autocomplete .suggestion .suggestion-icon {
-            font-family: FontAwesome;
-            display: inline-block;
-            width: 2em;
-            height: 2em;
-            line-height: 2em;
-            vertical-align: middle;
-            text-align: center;
-            font-style: normal;
-            opacity: 0.5;
-            margin-right: 10px;
-            background-color: rgba(0, 0, 0, 0.15);
-        }
-
-        .autocomplete .suggestion .suggestion-synopsis {
-            float: right;
-            opacity: 0.5;
-            font-size: 0.8em;
-            padding-left: 30px;
-            margin-top: 0.65em;
-            margin-right: 5px;
-        }
-
         .footer {
             position: absolute;
             bottom: 0;
