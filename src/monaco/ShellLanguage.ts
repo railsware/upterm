@@ -6,20 +6,45 @@ import {CompleteCommand} from "../shell/Parser";
 import {io} from "../utils/Common";
 
 monaco.languages.setMonarchTokensProvider("shell", {
+    word:  /[a-zA-Z0-9\u0080-\uFFFF+~!@#%^&*_=,.:/?\\-]+/,
     escapes:  /\\(?:[btnfr\\"']|[0-7][0-7]?|[0-3][0-7]{2})/,
     tokenizer: {
         root: [
             {
-                regex: /^\w+/,
-                action: {token: "executable"},
+                regex: /\s+/,
+                action: {token: "spaces"},
             },
             {
-                regex: /--?[\w=]+/,
-                action: {token: "option-name"},
+                regex: /\|/,
+                action: {token: "pipe"},
             },
             {
-                regex: / \w+/,
-                action: {token: "argument"},
+                regex: /;/,
+                action: {token: "semicolon"},
+            },
+            {
+                regex: /&&/,
+                action: {token: "and"},
+            },
+            {
+                regex: /\|\|/,
+                action: {token: "or"},
+            },
+            {
+                regex: />>/,
+                action: {token: "appending-output-redirection-symbol"},
+            },
+            {
+                regex: /</,
+                action: {token: "input-redirection-symbol"},
+            },
+            {
+                regex: />/,
+                action: {token: "output-redirection-symbol"},
+            },
+            {
+                regex: /@word/,
+                action: {token: "word"},
             },
 
             // strings: recover on non-terminated strings
@@ -108,3 +133,13 @@ monaco.languages.registerCompletionItemProvider("shell", {
         });
     },
 });
+
+// https://github.com/Microsoft/monaco-editor/issues/346#issuecomment-277215371
+export function getTokensAtLine(model: any, lineNumber: number) {
+    // Force line's state to be accurate
+    model.getLineTokens(lineNumber, /*inaccurateTokensAcceptable*/false);
+    // Get the tokenization state at the beginning of this line
+    const freshState = model._lines[lineNumber - 1].getState().clone();
+    // Get the human readable tokens on this line
+    return model._tokenizationSupport.tokenize(model.getLineContent(lineNumber), freshState, 0).tokens;
+}
