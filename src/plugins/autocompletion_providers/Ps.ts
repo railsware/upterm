@@ -174,7 +174,7 @@ const longFlagSuggestions = provide(async context => {
     for (let i of longOptions) {
         const flag = "--" + i.flag;
         suggestions.push({label: flag,
-            displayValue: flag, detail: i.description,
+            detail: i.description,
             style: styles.option});
         if (i.providers && token.startsWith(flag)) {
             let providerSuggestions = await i.providers(context);
