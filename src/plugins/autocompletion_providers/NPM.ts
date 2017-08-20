@@ -1,5 +1,5 @@
 import * as Path from "path";
-import {styles, commandWithSubcommands} from "../autocompletion_utils/Common";
+import {commandWithSubcommands} from "../autocompletion_utils/Common";
 import {io, mapObject} from "../../utils/Common";
 import {PluginManager} from "../../PluginManager";
 import {AutocompletionContext} from "../../Interfaces";
@@ -155,7 +155,6 @@ const npmCommandConfig = [
                 return mapObject(parsed, (key: string, value: string) => ({
                     label: key,
                     description: value,
-                    style: styles.command,
                 }));
             } else {
                 return [];

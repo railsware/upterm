@@ -1,4 +1,4 @@
-import {styles, Suggestion} from "../plugins/autocompletion_utils/Common";
+import {Suggestion} from "../plugins/autocompletion_utils/Common";
 
 export const combineManPageLines = (lines: string[]) => lines
     .map(line => line.trim())
@@ -83,7 +83,6 @@ export const suggestionFromFlagParagraph = (paragraph: string[]): Suggestion | u
 
         return {
             label: `-${flag}`,
-            style: styles.option,
             detail: detail,
         };
     } else if (shortFlagWithoutArgument) {
@@ -92,7 +91,6 @@ export const suggestionFromFlagParagraph = (paragraph: string[]): Suggestion | u
 
         return {
             label: `-${flag}`,
-            style: styles.option,
             detail: detail,
         };
     } else {

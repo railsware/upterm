@@ -3,7 +3,7 @@ import {scan} from "../../shell/Scanner";
 import {isAbsolute} from "path";
 import {services} from "../../services/index";
 import {HistoryTrie} from "../../utils/HistoryTrie";
-import {styles, Suggestion} from "../autocompletion_utils/Common";
+import {Suggestion} from "../autocompletion_utils/Common";
 
 function cdIntoRelativePathFilter(record: HistoryRecord, pwd: string): boolean {
     if (record.directory === pwd) {
@@ -32,10 +32,7 @@ services.history.onNewRecord.subscribe(record => historyTrie.add(record.command)
 export function getHistorySuggestions(input: string, pwd: string): Suggestion[] {
     const trieSuggestions = historyTrie.getContinuationsFor(input).map(continuation => ({
         label: continuation.value,
-        space: continuation.space,
         description: `×${continuation.occurrences}`,
-        isFiltered: true,
-        style: styles.history,
     }));
 
     if (trieSuggestions.length) {
@@ -47,8 +44,6 @@ export function getHistorySuggestions(input: string, pwd: string): Suggestion[] 
             .filter(command => command.toLowerCase().includes(input.toLowerCase()))
             .map(command => ({
                 label: command.trim(),
-                isFiltered: true,
-                style: styles.history,
             }))
             .reverse();
     }

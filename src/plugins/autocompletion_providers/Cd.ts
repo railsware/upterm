@@ -1,5 +1,5 @@
 import {expandHistoricalDirectory} from "../../shell/BuiltInCommands";
-import {styles, directoriesSuggestionsProvider, Suggestion} from "../autocompletion_utils/Common";
+import {directoriesSuggestionsProvider, Suggestion} from "../autocompletion_utils/Common";
 import * as _ from "lodash";
 import {PluginManager} from "../../PluginManager";
 
@@ -15,7 +15,6 @@ PluginManager.registerAutocompletionProvider("cd", async(context) => {
             .map(alias => ({
                 label: alias,
                 description: expandHistoricalDirectory(alias, context.historicalPresentDirectoriesStack),
-                style: styles.directory,
             }));
 
         suggestions.push(...historicalDirectoryAliases);

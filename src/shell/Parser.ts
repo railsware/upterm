@@ -9,7 +9,6 @@ import {PluginManager} from "../PluginManager";
 import {Aliases} from "./Aliases";
 import {combine} from "../plugins/autocompletion_utils/Combine";
 import {
-    styles,
     anyFilesSuggestions,
     environmentVariableSuggestions,
     executableFilesSuggestions, Suggestion,
@@ -332,9 +331,9 @@ export class CommandWord extends LeafNode {
         const executables = await io.executablesInPaths(environment.path);
 
         return [
-            ...mapObject(aliases.toObject(), (key, value) => ({label: key, detail: value, style: styles.alias, space: true})),
-            ...loginShell.preCommandModifiers.map(modifier => ({label: modifier, style: styles.func, space: true})),
-            ...executables.map(name => ({label: name, detail: commandDescriptions[name] || "", style: styles.executable, space: true})),
+            ...mapObject(aliases.toObject(), (key, value) => ({label: key, detail: value})),
+            ...loginShell.preCommandModifiers.map(modifier => ({label: modifier})),
+            ...executables.map(name => ({label: name, detail: commandDescriptions[name] || ""})),
             ...relativeExecutablesSuggestions,
         ];
     }

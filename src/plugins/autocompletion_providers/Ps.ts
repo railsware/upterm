@@ -1,6 +1,6 @@
 import {PluginManager} from "../../PluginManager";
 import {
-    shortFlag, mapSuggestions, styles, provide, Suggestion,
+    shortFlag, mapSuggestions, provide, Suggestion,
 }
     from "../autocompletion_utils/Common";
 import {combine} from "../autocompletion_utils/Combine";
@@ -25,7 +25,7 @@ const shortOptions = combine(mapObject(
     },
     (option, info) => {
         return mapSuggestions(shortFlag(option),
-                              suggestion => ({...suggestion, description: info.description}));
+            suggestion => ({...suggestion, description: info.description}));
     },
 ));
 
@@ -36,16 +36,16 @@ interface TokenInfo {
 }
 
 const argInfo = (context: AutocompletionContext): TokenInfo => {
-        const token: string = context.argument.value;
-        const flag = token.substring(0, token.indexOf("=") + 1);
-        let params: string[] = [];
-        let start = flag;
-        if (token.includes(",")) {
-            params = token.substring(start.length, token.lastIndexOf(",")).split(",");
-            start = token.substring(0, token.lastIndexOf(",") + 1);
-        }
-        return <TokenInfo>{params: params, start: start};
-    };
+    const token: string = context.argument.value;
+    const flag = token.substring(0, token.indexOf("=") + 1);
+    let params: string[] = [];
+    let start = flag;
+    if (token.includes(",")) {
+        params = token.substring(start.length, token.lastIndexOf(",")).split(",");
+        start = token.substring(0, token.lastIndexOf(",") + 1);
+    }
+    return <TokenInfo>{params: params, start: start};
+};
 
 interface LongFlagItem {
     flag: string;
@@ -59,9 +59,10 @@ const realUserSuggestions = provide(async context => {
     return users
         .filter(i => !arg.params.includes(i.ruser))
         .map(i =>
-            ({label: arg.start + i.ruser, displayValue: i.ruser,
+            ({
+                label: arg.start + i.ruser, displayValue: i.ruser,
                 description: `User '${i.ruser}' with id '${i.ruserid}'`,
-                style: styles.optionValue}));
+            }));
 });
 
 const effectiveUserSuggestions = provide(async context => {
@@ -70,9 +71,10 @@ const effectiveUserSuggestions = provide(async context => {
     return users
         .filter(i => !arg.params.includes(i.euser))
         .map(i =>
-            ({label: arg.start + i.euser, displayValue: i.euser,
-                description: `User '${i.euser}' with id '${i.euserid}'`,
-                style: styles.optionValue}));
+            ({
+                label: arg.start + i.euser, displayValue: i.euser,
+                description: `User '${i.euser}' with id '${i.euserid}'`
+            }));
 });
 
 const effectiveGroupSuggestions = provide(async context => {
@@ -81,9 +83,10 @@ const effectiveGroupSuggestions = provide(async context => {
     return groups
         .filter(i => !arg.params.includes(i.egroup))
         .map(i =>
-            ({label: arg.start + i.egroup, displayValue: i.egroup,
-                description: `Group '${i.egroup}' with id '${i.egroupid}'`,
-                style: styles.optionValue}));
+            ({
+                label: arg.start + i.egroup, displayValue: i.egroup,
+                description: `Group '${i.egroup}' with id '${i.egroupid}'`
+            }));
 });
 
 const realGroupSuggestions = provide(async context => {
@@ -92,9 +95,10 @@ const realGroupSuggestions = provide(async context => {
     return groups
         .filter(i => !arg.params.includes(i.rgroup))
         .map(i =>
-            ({label: arg.start + i.rgroup, displayValue: i.rgroup,
+            ({
+                label: arg.start + i.rgroup, displayValue: i.rgroup,
                 description: `Group '${i.rgroup}' with id '${i.rgroupid}'`,
-                style: styles.optionValue}));
+            }));
 });
 
 const terminalSuggestions = provide(async context => {
@@ -102,9 +106,10 @@ const terminalSuggestions = provide(async context => {
     const terminals = await Process.terminals();
     return terminals
         .filter(i => !arg.params.includes(i.name))
-        .map(i => ({label: arg.start + i.name, displayValue: i.name,
+        .map(i => ({
+            label: arg.start + i.name, displayValue: i.name,
             description: `Terminal '${i.name}' with ruser '${i.ruser}'`,
-            style: styles.optionValue}));
+        }));
 });
 
 const processSuggestions = provide(async context => {
@@ -112,10 +117,11 @@ const processSuggestions = provide(async context => {
     const processes = await Process.processes();
     return processes
         .filter(i => !arg.params.includes(i.pid))
-        .map(i => ({label: arg.start + i.pid, displayValue: i.pid,
+        .map(i => ({
+            label: arg.start + i.pid, displayValue: i.pid,
             description: `Process with command '${i.cmd.slice(0, 25)}'
                                 and ruser '${i.ruser}'`,
-            style: styles.optionValue}));
+        }));
 });
 
 const sessionSuggestions = provide(async context => {
@@ -123,10 +129,11 @@ const sessionSuggestions = provide(async context => {
     const sessions = await Process.sessions();
     return sessions
         .filter(i => !arg.params.includes(i.sid))
-        .map(i => ({label: arg.start + i.sid, displayValue: i.sid,
+        .map(i => ({
+            label: arg.start + i.sid, displayValue: i.sid,
             description: `Session '${i.sid}' with ruser '${i.ruser}'
                                 and rgroup '${i.rgroup}'`,
-            style: styles.optionValue}));
+        }));
 });
 
 const longOptions: LongFlagItem[] = [
@@ -173,9 +180,7 @@ const longFlagSuggestions = provide(async context => {
     const token: string = context.argument.value;
     for (let i of longOptions) {
         const flag = "--" + i.flag;
-        suggestions.push({label: flag,
-            detail: i.description,
-            style: styles.option});
+        suggestions.push({label: flag, detail: i.description});
         if (i.providers && token.startsWith(flag)) {
             let providerSuggestions = await i.providers(context);
             suggestions = [...suggestions, ...providerSuggestions];
