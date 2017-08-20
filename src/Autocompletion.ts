@@ -3,7 +3,6 @@ import * as _ from "lodash";
 import {Environment} from "./shell/Environment";
 import {OrderedSet} from "./utils/OrderedSet";
 import {Aliases} from "./shell/Aliases";
-import {getHistorySuggestions} from "./plugins/autocompletion_providers/History";
 
 type GetSuggestionsOptions = {
     currentText: string;
@@ -15,7 +14,6 @@ type GetSuggestionsOptions = {
 };
 
 export async function getSuggestions({
-    currentText,
     currentCaretPosition,
     ast,
     environment,
@@ -28,9 +26,8 @@ export async function getSuggestions({
         historicalPresentDirectoriesStack: historicalPresentDirectoriesStack,
         aliases: aliases,
     });
-    const historySuggestions = getHistorySuggestions(currentText, environment.pwd);
 
-    const uniqueSuggestions = _.uniqBy([...historySuggestions, ...suggestions], suggestion => suggestion.value);
+    const uniqueSuggestions = _.uniqBy(suggestions, suggestion => suggestion.value);
 
     return {
         isIncomplete: false,

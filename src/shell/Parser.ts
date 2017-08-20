@@ -332,9 +332,9 @@ export class CommandWord extends LeafNode {
         const executables = await io.executablesInPaths(environment.path);
 
         return [
-            ...mapObject(aliases.toObject(), (key, value) => ({value: key, description: value, style: styles.alias, space: true})),
+            ...mapObject(aliases.toObject(), (key, value) => ({value: key, detail: value, style: styles.alias, space: true})),
             ...loginShell.preCommandModifiers.map(modifier => ({value: modifier, style: styles.func, space: true})),
-            ...executables.map(name => ({value: name, description: commandDescriptions[name] || "", style: styles.executable, space: true})),
+            ...executables.map(name => ({value: name, detail: commandDescriptions[name] || "", style: styles.executable, space: true})),
             ...relativeExecutablesSuggestions,
         ];
     }
