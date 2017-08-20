@@ -6,7 +6,7 @@ monaco.editor.defineTheme("upterm-prompt-theme", {
     rules: [
         {token: "string", foreground: colors.green.slice(1)},
         {token: "string.invalid", foreground: colors.red.slice(1)},
-        {token: "executable", foreground: colors.blue.slice(1), fontStyle: "bold"},
+        {token: "executable", foreground: colors.blue.slice(1)},
         {token: "option-name", foreground: colors.yellow.slice(1)},
         {token: "argument", foreground: textColor.slice(1)},
     ],
