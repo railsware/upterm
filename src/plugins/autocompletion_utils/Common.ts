@@ -6,15 +6,11 @@ import * as modeToPermissions from "mode-to-permissions";
 import * as Path from "path";
 import * as _ from "lodash";
 
-interface RequiredSuggestionAttributes {
+export interface Suggestion {
     label: string;
+    kind?: monaco.languages.CompletionItemKind;
+    detail?: string;
 }
-
-interface AdditionalSuggestionAttributes {
-    detail: string;
-}
-
-export type Suggestion = RequiredSuggestionAttributes & Partial<AdditionalSuggestionAttributes>;
 
 export function provide(provider: AutocompletionProvider): AutocompletionProvider {
     return provider;
@@ -36,7 +32,7 @@ const filesSuggestions = (filter: (info: FileInfo) => boolean) => async(tokenVal
             const value = `..${Path.sep}`.repeat(numberOfParts);
             const description = pwdParts.slice(0, -numberOfParts).join(Path.sep) || Path.sep;
 
-            return {label: value, description: description};
+            return {label: value, detail: description, kind: monaco.languages.CompletionItemKind.Folder};
         });
     }
 
@@ -54,10 +50,12 @@ const filesSuggestions = (filter: (info: FileInfo) => boolean) => async(tokenVal
             if (info.stat.isDirectory()) {
                 return {
                     label: joinPath(tokenDirectory, escapedName + Path.sep),
+                    kind: monaco.languages.CompletionItemKind.Folder,
                 };
             } else {
                 return {
                     label: joinPath(tokenDirectory, escapedName),
+                    kind: monaco.languages.CompletionItemKind.File,
                 };
             }
         });
@@ -77,7 +75,7 @@ export const directoriesSuggestionsProvider = filesSuggestionsProvider(info => i
 export const environmentVariableSuggestions = provide(async context => {
     if (context.argument.value.startsWith("$")) {
         return context.environment.map((key, value) =>
-            ({label: "$" + key, description: value}),
+            ({label: "$" + key, description: value, kind: monaco.languages.CompletionItemKind.Variable}),
         );
     } else {
         return [];
@@ -100,11 +98,11 @@ export const longAndShortFlag = (name: string, shortName = name[0]) => provide(a
 
     const value = context.argument.value === shortValue ? shortValue : longValue;
 
-    return [{label: value}];
+    return [{label: value, kind: monaco.languages.CompletionItemKind.Enum}];
 });
 
-export const shortFlag = (char: string) => unique(async() => [{label: `-${char}`}]);
-export const longFlag = (name: string) => unique(async() => [{label: `--${name}`}]);
+export const shortFlag = (char: string) => unique(async() => [{label: `-${char}`, kind: monaco.languages.CompletionItemKind.Enum}]);
+export const longFlag = (name: string) => unique(async() => [{label: `--${name}`, kind: monaco.languages.CompletionItemKind.Enum}]);
 
 export const mapSuggestions = (provider: AutocompletionProvider, mapper: (suggestion: Suggestion) => Suggestion) => provide(async context => (await provider(context)).map(mapper));
 

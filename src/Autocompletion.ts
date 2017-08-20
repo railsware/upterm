@@ -34,7 +34,7 @@ export async function getSuggestions({
         items: uniqueSuggestions.map(suggestion => ({
             label: suggestion.label,
             detail: suggestion.detail,
-            kind: monaco.languages.CompletionItemKind.Snippet,
+            kind: suggestion.kind || monaco.languages.CompletionItemKind.Snippet,
         })),
     };
 }

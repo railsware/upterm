@@ -309,10 +309,10 @@ const fromData = (commandsData: BrewCommandData[]) =>
         const suggestions = commandsData
             .map(command => ({
                 label: command.name,
-                description: command.description || "",
+                detail: command.description || "",
             }));
 
-        return sortBy(suggestions, suggestion => !suggestion.description);
+        return sortBy(suggestions, suggestion => !suggestion.detail);
     });
 
 let getProvider = (context: AutocompletionContext,
