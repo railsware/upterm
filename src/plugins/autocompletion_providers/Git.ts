@@ -249,7 +249,7 @@ const commonMergeOptions = combine([
 const remotes = provide(async context => {
     if (Git.isGitDirectory(context.environment.pwd)) {
         const names = await Git.remotes(context.environment.pwd);
-        return names.map(name => ({value: name, style: styles.branch}));
+        return names.map(name => ({label: name, style: styles.branch}));
     }
 
     return [];
@@ -258,7 +258,7 @@ const remotes = provide(async context => {
 const configVariables = unique(provide(async context => {
     const variables = await Git.configVariables(context.environment.pwd);
 
-    return variables.map(variable => ({value: variable.name, description: variable.value, style: styles.option}));
+    return variables.map(variable => ({label: variable.name, description: variable.value, style: styles.option}));
 }));
 
 const branchesExceptCurrent = provide(async context => {
@@ -269,7 +269,7 @@ const branchesExceptCurrent = provide(async context => {
             tags: false,
         }));
         const nonCurrentBranches = allBranches.filter(branch => !branch.isCurrent());
-        return nonCurrentBranches.map(branch => ({value: branch.toString(), style: styles.branch}));
+        return nonCurrentBranches.map(branch => ({label: branch.toString(), style: styles.branch}));
     } else {
         return [];
     }
@@ -279,7 +279,7 @@ const branchAlias = provide(async context => {
     if (doesLookLikeBranchAlias(context.argument.value)) {
         let nameOfAlias = (await linedOutputOf("git", ["name-rev", "--name-only", canonizeBranchAlias(context.argument.value)], context.environment.pwd))[0];
         if (nameOfAlias && !nameOfAlias.startsWith("Could not get")) {
-            return [{value: context.argument.value, synopsis: nameOfAlias, style: styles.branch}];
+            return [{label: context.argument.value, synopsis: nameOfAlias, style: styles.branch}];
         }
     }
 
@@ -289,7 +289,7 @@ const branchAlias = provide(async context => {
 const notStagedFiles = unique(provide(async context => {
     if (Git.isGitDirectory(context.environment.pwd)) {
         const fileStatuses = await Git.status(context.environment.pwd);
-        return fileStatuses.map(fileStatus => ({value: fileStatus.value, style: styles.gitFileStatus(fileStatus.code)}));
+        return fileStatuses.map(fileStatus => ({label: fileStatus.value, style: styles.gitFileStatus(fileStatus.code)}));
     } else {
         return [];
     }

@@ -13,7 +13,7 @@ PluginManager.registerAutocompletionProvider("cd", async(context) => {
         const historicalDirectoryAliases = ["-", "-2", "-3", "-4", "-5", "-6", "-7", "-8", "-9"]
             .slice(0, context.historicalPresentDirectoriesStack.size)
             .map(alias => ({
-                value: alias,
+                label: alias,
                 description: expandHistoricalDirectory(alias, context.historicalPresentDirectoriesStack),
                 style: styles.directory,
             }));

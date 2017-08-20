@@ -313,7 +313,7 @@ const fixedValueSuggestions = provide(async context => {
         return [];
     }
     return optionValues.map(item => ({
-        value: "--" + item.flag + "=" + item.displayValue,
+        label: "--" + item.flag + "=" + item.displayValue,
         displayValue: item.displayValue,
         description: item.description,
         style: styles.optionValue,
@@ -329,8 +329,8 @@ const fileValueSuggestions = provide(async context => {
         const optionValue = token.slice(tokenValue.length);
         const fileSuggestions = await anyFilesSuggestions(optionValue, workingDirectory);
         return fileSuggestions.map(item =>
-                ({value: tokenValue + item.value, displayValue: item.displayValue,
-                    style: io.directoryExists(workingDirectory + item.value) ? styles.directory : styles.optionValue}));
+                ({label: tokenValue + item.label, displayValue: item.displayValue,
+                    style: io.directoryExists(workingDirectory + item.label) ? styles.directory : styles.optionValue}));
     } else {
         return [];
     }
@@ -345,9 +345,9 @@ const excludeFromSuggestions = provide(async context => {
         const optionValue = token.slice(tokenValue.length);
         const fileSuggestions = await anyFilesSuggestions(optionValue, workingDirectory);
         return fileSuggestions.map(item => ({
-            value: tokenValue + item.value,
+            label: tokenValue + item.label,
             displayValue: item.displayValue,
-            style: io.directoryExists(workingDirectory + item.value) ? styles.directory : styles.optionValue,
+            style: io.directoryExists(workingDirectory + item.label) ? styles.directory : styles.optionValue,
         }));
     } else {
         return [];
@@ -363,7 +363,7 @@ const excludeDirSuggestions = provide(async context => {
         const optionValue = token.slice(tokenValue.length);
         const directorySuggestions = await directoriesSuggestions(optionValue, workingDirectory);
         return directorySuggestions.map(item =>
-                ({value: tokenValue + item.value, displayValue: item.displayValue,
+                ({label: tokenValue + item.label, displayValue: item.displayValue,
                     style: styles.directory}));
     } else {
         return [];

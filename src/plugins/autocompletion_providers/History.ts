@@ -31,7 +31,7 @@ services.history.onNewRecord.subscribe(record => historyTrie.add(record.command)
 
 export function getHistorySuggestions(input: string, pwd: string): Suggestion[] {
     const trieSuggestions = historyTrie.getContinuationsFor(input).map(continuation => ({
-        value: continuation.value,
+        label: continuation.value,
         space: continuation.space,
         description: `×${continuation.occurrences}`,
         isFiltered: true,
@@ -46,7 +46,7 @@ export function getHistorySuggestions(input: string, pwd: string): Suggestion[] 
             .map(record => record.command)
             .filter(command => command.toLowerCase().includes(input.toLowerCase()))
             .map(command => ({
-                value: command.trim(),
+                label: command.trim(),
                 isFiltered: true,
                 style: styles.history,
             }))

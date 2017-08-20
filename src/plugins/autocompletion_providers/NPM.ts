@@ -153,7 +153,7 @@ const npmCommandConfig = [
             if (await io.fileExists(packageFilePath)) {
                 const parsed = JSON.parse(await io.readFile(packageFilePath)).scripts || {};
                 return mapObject(parsed, (key: string, value: string) => ({
-                    value: key,
+                    label: key,
                     description: value,
                     style: styles.command,
                 }));

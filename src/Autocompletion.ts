@@ -27,12 +27,12 @@ export async function getSuggestions({
         aliases: aliases,
     });
 
-    const uniqueSuggestions = _.uniqBy(suggestions, suggestion => suggestion.value);
+    const uniqueSuggestions = _.uniqBy(suggestions, suggestion => suggestion.label);
 
     return {
         isIncomplete: false,
         items: uniqueSuggestions.map(suggestion => ({
-            label: suggestion.value,
+            label: suggestion.label,
             detail: suggestion.detail,
             kind: monaco.languages.CompletionItemKind.Snippet,
         })),

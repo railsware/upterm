@@ -46,10 +46,8 @@ const formulaSuggestions = async(formulae: FormulaAttributes[],
         formula.name.startsWith(query) ||
         formula.path.startsWith(query))
         .map(formula => ({
-            value: formula.name,
+            label: formula.name,
             displayValue: formula.name,
-            synopsis: formula.path,
-            description: "",
             style: styles.command,
         }));
 };
@@ -312,7 +310,7 @@ const fromData = (commandsData: BrewCommandData[]) =>
     contextIndependent(async() => {
         const suggestions = commandsData
             .map(command => ({
-                value: command.name,
+                label: command.name,
                 description: command.description || "",
                 style: styles.command,
                 space: true,

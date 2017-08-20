@@ -83,7 +83,7 @@ export const suggestionFromFlagParagraph = (paragraph: string[]): Suggestion | u
         const detail = combineManPageLines(paragraph.slice(1));
 
         return {
-            value: `-${flag}`,
+            label: `-${flag}`,
             style: styles.option,
             detail: detail,
             displayValue: `-${flag} ${argument}`,
@@ -94,7 +94,7 @@ export const suggestionFromFlagParagraph = (paragraph: string[]): Suggestion | u
         const detail = combineManPageLines([shortFlagWithoutArgument[2], ...paragraph.slice(1)]);
 
         return {
-            value: `-${flag}`,
+            label: `-${flag}`,
             style: styles.option,
             detail: detail,
         };

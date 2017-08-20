@@ -12,7 +12,7 @@ import {StatusCode} from "../../utils/Git";
 type SuggestionStyle = { value: string; css: Object};
 
 interface RequiredSuggestionAttributes {
-    value: string;
+    label: string;
 }
 
 interface AdditionalSuggestionAttributes {
@@ -116,7 +116,7 @@ export const styles = {
 
 export const unique = (provider: AutocompletionProvider) => provide(async context => {
     const suggestions = await provider(context);
-    return suggestions.filter(suggestion => !context.argument.command.hasArgument(suggestion.value, context.argument));
+    return suggestions.filter(suggestion => !context.argument.command.hasArgument(suggestion.label, context.argument));
 });
 
 const filesSuggestions = (filter: (info: FileInfo) => boolean) => async(tokenValue: string, directory: string): Promise<Suggestion[]> => {
@@ -130,7 +130,7 @@ const filesSuggestions = (filter: (info: FileInfo) => boolean) => async(tokenVal
             const value = `..${Path.sep}`.repeat(numberOfParts);
             const description = pwdParts.slice(0, -numberOfParts).join(Path.sep) || Path.sep;
 
-            return {value: value, description: description, style: styles.directory};
+            return {label: value, description: description, style: styles.directory};
         });
     }
 
@@ -147,13 +147,13 @@ const filesSuggestions = (filter: (info: FileInfo) => boolean) => async(tokenVal
 
             if (info.stat.isDirectory()) {
                 return {
-                    value: joinPath(tokenDirectory, escapedName + Path.sep),
+                    label: joinPath(tokenDirectory, escapedName + Path.sep),
                     displayValue: info.name + Path.sep,
                     style: styles.directory,
                 };
             } else {
                 return {
-                    value: joinPath(tokenDirectory, escapedName),
+                    label: joinPath(tokenDirectory, escapedName),
                     displayValue: info.name,
                     style: styles.file(info, joinPath(directoryPath, escapedName)),
                 };
@@ -175,7 +175,7 @@ export const directoriesSuggestionsProvider = filesSuggestionsProvider(info => i
 export const environmentVariableSuggestions = provide(async context => {
     if (context.argument.value.startsWith("$")) {
         return context.environment.map((key, value) =>
-            ({value: "$" + key, description: value, style: styles.environmentVariable}),
+            ({label: "$" + key, description: value, style: styles.environmentVariable}),
         );
     } else {
         return [];
@@ -255,11 +255,11 @@ export const longAndShortFlag = (name: string, shortName = name[0]) => provide(a
 
     const value = context.argument.value === shortValue ? shortValue : longValue;
 
-    return [{value: value, displayValue: `${shortValue} ${longValue}`, style: styles.option}];
+    return [{label: value, displayValue: `${shortValue} ${longValue}`, style: styles.option}];
 });
 
-export const shortFlag = (char: string) => unique(async() => [{value: `-${char}`, style: styles.option}]);
-export const longFlag = (name: string) => unique(async() => [{value: `--${name}`, style: styles.option}]);
+export const shortFlag = (char: string) => unique(async() => [{label: `-${char}`, style: styles.option}]);
+export const longFlag = (name: string) => unique(async() => [{label: `--${name}`, style: styles.option}]);
 
 export const mapSuggestions = (provider: AutocompletionProvider, mapper: (suggestion: Suggestion) => Suggestion) => provide(async context => (await provider(context)).map(mapper));
 
@@ -275,7 +275,7 @@ export const commandWithSubcommands = (subCommands: SubcommandConfig[]) => {
     return async (context: AutocompletionContext) => {
         if (context.argument.position === 1) {
             return subCommands.map(({ name, description, synopsis, provider, style }) => ({
-                value: name,
+                label: name,
                 description,
                 synopsis,
                 style: style || styles.command,
@@ -303,10 +303,10 @@ export const combineShortFlags = (suggestionsProvider: AutocompletionProvider) =
         if (reShortFlags.test(token)) {
             return suggestions
                     .filter(s =>
-                        reShortFlag.test(s.value) && !token.includes(s.value.slice(1))
+                        reShortFlag.test(s.label) && !token.includes(s.label.slice(1))
                             && s.space)
                     .map(s =>
-                        ({value: token + s.value.slice(1),
+                        ({label: token + s.label.slice(1),
                             displayValue: s.displayValue, detail: s.detail,
                             style: s.style}));
         } else {
