@@ -1,11 +1,10 @@
 import * as events from "events";
 import {scan, Token, expandAliases} from "./Scanner";
-import {ASTNode, CompleteCommand} from "./Parser";
+import {CompleteCommand} from "./Parser";
 import {Session} from "./Session";
 
 export class Prompt extends events.EventEmitter {
     private _value = "";
-    private _ast: CompleteCommand;
     private _expandedAst: CompleteCommand;
 
     constructor(private session: Session) {
@@ -20,12 +19,7 @@ export class Prompt extends events.EventEmitter {
         this._value = value;
 
         const tokens = scan(this.value);
-        this._ast = new CompleteCommand(tokens);
         this._expandedAst = new CompleteCommand(expandAliases(tokens, this.session.aliases));
-    }
-
-    get ast(): ASTNode {
-        return this._ast;
     }
 
     get expandedTokens(): Token[] {
