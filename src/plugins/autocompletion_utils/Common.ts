@@ -108,16 +108,16 @@ export const mapSuggestions = (provider: AutocompletionProvider, mapper: (sugges
 
 export interface SubcommandConfig {
     name: string;
-    description?: string;
+    detail?: string;
     provider?: AutocompletionProvider;
 }
 
 export const commandWithSubcommands = (subCommands: SubcommandConfig[]) => {
     return async (context: AutocompletionContext) => {
         if (context.argument.position === 1) {
-            return subCommands.map(({ name, description, provider }) => ({
+            return subCommands.map(({ name, detail, provider }) => ({
                 label: name,
-                description,
+                detail,
                 space: provider !== undefined,
             }));
         } else if (context.argument.position === 2) {
