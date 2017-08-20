@@ -3,7 +3,7 @@ import {scan} from "../../shell/Scanner";
 import {isAbsolute} from "path";
 import {services} from "../../services/index";
 import {HistoryTrie} from "../../utils/HistoryTrie";
-import {replaceAllPromptSerializer, styles, Suggestion} from "../autocompletion_utils/Common";
+import {styles, Suggestion} from "../autocompletion_utils/Common";
 
 function cdIntoRelativePathFilter(record: HistoryRecord, pwd: string): boolean {
     if (record.directory === pwd) {
@@ -47,7 +47,6 @@ export function getHistorySuggestions(input: string, pwd: string): Suggestion[] 
             .filter(command => command.toLowerCase().includes(input.toLowerCase()))
             .map(command => ({
                 value: command.trim(),
-                promptSerializer: replaceAllPromptSerializer,
                 isFiltered: true,
                 style: styles.history,
             }))

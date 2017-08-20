@@ -8,17 +8,8 @@ import * as _ from "lodash";
 import {fontAwesome} from "../../views/css/FontAwesome";
 import {colors} from "../../views/css/colors";
 import {StatusCode} from "../../utils/Git";
-import {ASTNode} from "../../shell/Parser";
 
 type SuggestionStyle = { value: string; css: Object};
-
-interface PromptSerializerContext {
-    ast: ASTNode;
-    caretPosition: number;
-    suggestion: SuggestionWithDefaults;
-}
-
-type PromptSerializer = (context: PromptSerializerContext) => string;
 
 interface RequiredSuggestionAttributes {
     value: string;
@@ -31,17 +22,13 @@ interface AdditionalSuggestionAttributes {
     isFiltered: boolean;
     style: SuggestionStyle;
     space: boolean;
-    promptSerializer: PromptSerializer;
 }
 
 export type Suggestion = RequiredSuggestionAttributes & Partial<AdditionalSuggestionAttributes>;
-export type SuggestionWithDefaults = RequiredSuggestionAttributes & AdditionalSuggestionAttributes;
 
 export function provide(provider: AutocompletionProvider): AutocompletionProvider {
     return provider;
 }
-
-export const replaceAllPromptSerializer: PromptSerializer = (context: PromptSerializerContext) =>  context.suggestion.value;
 
 export const styles = {
     executable: {
