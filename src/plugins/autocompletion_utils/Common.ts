@@ -17,7 +17,7 @@ interface RequiredSuggestionAttributes {
 
 interface AdditionalSuggestionAttributes {
     displayValue: string;
-    description: string;
+    detail: string;
     style: SuggestionStyle;
     space: boolean;
 }
@@ -307,7 +307,7 @@ export const combineShortFlags = (suggestionsProvider: AutocompletionProvider) =
                             && s.space)
                     .map(s =>
                         ({value: token + s.value.slice(1),
-                            displayValue: s.displayValue, description: s.description,
+                            displayValue: s.displayValue, detail: s.detail,
                             style: s.style}));
         } else {
             return suggestions;

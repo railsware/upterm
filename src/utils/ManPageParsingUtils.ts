@@ -80,23 +80,23 @@ export const suggestionFromFlagParagraph = (paragraph: string[]): Suggestion | u
     if (shortFlagWithArgument) {
         const flag = shortFlagWithArgument[1];
         const argument = shortFlagWithArgument[2];
-        const description = combineManPageLines(paragraph.slice(1));
+        const detail = combineManPageLines(paragraph.slice(1));
 
         return {
             value: `-${flag}`,
             style: styles.option,
-            description,
+            detail: detail,
             displayValue: `-${flag} ${argument}`,
             space: true,
         };
     } else if (shortFlagWithoutArgument) {
         const flag = shortFlagWithoutArgument[1];
-        const description = combineManPageLines([shortFlagWithoutArgument[2], ...paragraph.slice(1)]);
+        const detail = combineManPageLines([shortFlagWithoutArgument[2], ...paragraph.slice(1)]);
 
         return {
             value: `-${flag}`,
             style: styles.option,
-            description,
+            detail: detail,
         };
     } else {
         return undefined;
