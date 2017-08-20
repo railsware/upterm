@@ -6,6 +6,7 @@ import {CompleteCommand} from "../shell/Parser";
 import {io} from "../utils/Common";
 
 monaco.languages.setMonarchTokensProvider("shell", {
+    escapes:  /\\(?:[btnfr\\"']|[0-7][0-7]?|[0-3][0-7]{2})/,
     tokenizer: {
         root: [
             {
@@ -20,10 +21,23 @@ monaco.languages.setMonarchTokensProvider("shell", {
                 regex: / \w+/,
                 action: {token: "argument"},
             },
+
+            // strings: recover on non-terminated strings
+            [/"([^"\\]|\\.)*$/, "string.invalid" ],  // non-teminated string
+            [/'([^'\\]|\\.)*$/, "string.invalid" ],  // non-teminated string
+            [/"/,  "string", '@string."' ],
+            [/'/,  "string", "@string.'" ],
+        ],
+        string: [
+            [/[^\\"']+/, "string"],
+            [/@escapes/, "string.escape"],
+            [/\\./,      "string.escape.invalid"],
+            [/["']/,     { cases: { "$#==$S2" : { token: "string", next: "@pop" },
+                "@default": "string" }} ],
         ],
     },
     tokenPostfix: ".shell",
-});
+} as any);
 
 monaco.languages.register({
     id: "shell",
@@ -63,7 +77,7 @@ monaco.editor.onDidCreateModel(model => {
         if (!executables.includes(commandName) && !session.aliases.has(commandName)) {
             monaco.editor.setModelMarkers(model, "upterm", [{
                 severity: monaco.Severity.Error,
-                message: `Executable ${commandName} doesn't exist in $PATH.`,
+                message: `Executable ${commandName} doesn"t exist in $PATH.`,
                 startLineNumber: 1,
                 startColumn: 1,
                 endLineNumber: 1,

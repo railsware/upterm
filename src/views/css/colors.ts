@@ -1,7 +1,6 @@
 import * as _ from "lodash";
 import {ColorCode} from "../../Interfaces";
-
-export const textColor = "#EEE";
+import {darken} from "./functions";
 
 export const colors = {
     black: "#333",
@@ -82,3 +81,6 @@ export function colorValue(color: ColorCode, options = {isBright: false}) {
         }
     }
 }
+export const textColor = "#EEEEEE";
+export const backgroundColor = darken(colors.black, 4);
+

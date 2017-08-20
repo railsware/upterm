@@ -1,11 +1,10 @@
 import {Weight, Brightness, Color} from "../../Enums";
-import {colors, colorValue, textColor} from "./colors";
-import {darken, failurize, lighten} from "./functions";
+import {backgroundColor, colors, colorValue, textColor} from "./colors";
+import {failurize, lighten} from "./functions";
 import {Attributes} from "../../Interfaces";
 import {services} from "../../services/index";
 
 const jobBackgroundColor = colors.black;
-const backgroundColor = darken(jobBackgroundColor, 4);
 export const contentPadding = 10;
 
 export const application = () => ({
