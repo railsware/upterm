@@ -29,7 +29,7 @@ const historyTrie = new HistoryTrie();
 services.history.all.forEach(record => historyTrie.add(record.command));
 services.history.onNewRecord.subscribe(record => historyTrie.add(record.command));
 
-export function getHistorySuggestions(input: string, pwd: string, limit: number): Suggestion[] {
+export function getHistorySuggestions(input: string, pwd: string): Suggestion[] {
     const trieSuggestions = historyTrie.getContinuationsFor(input).map(continuation => ({
         value: continuation.value,
         space: continuation.space,
@@ -51,7 +51,6 @@ export function getHistorySuggestions(input: string, pwd: string, limit: number)
                 isFiltered: true,
                 style: styles.history,
             }))
-            .reverse()
-            .slice(0, limit);
+            .reverse();
     }
 }
