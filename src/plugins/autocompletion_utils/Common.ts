@@ -1,4 +1,4 @@
-import {io, resolveDirectory, directoryName, joinPath, escapeFilePath} from "../../utils/Common";
+import {io, resolveDirectory, directoryName, escapeFilePath} from "../../utils/Common";
 import {
     FileInfo, AutocompletionContext, AutocompletionProvider,
 } from "../../Interfaces";
@@ -49,12 +49,12 @@ const filesSuggestions = (filter: (info: FileInfo) => boolean) => async(tokenVal
 
             if (info.stat.isDirectory()) {
                 return {
-                    label: joinPath(tokenDirectory, escapedName + Path.sep),
+                    label: escapedName,
                     kind: monaco.languages.CompletionItemKind.Folder,
                 };
             } else {
                 return {
-                    label: joinPath(tokenDirectory, escapedName),
+                    label: tokenDirectory,
                     kind: monaco.languages.CompletionItemKind.File,
                 };
             }
