@@ -18,8 +18,6 @@ interface RequiredSuggestionAttributes {
 interface AdditionalSuggestionAttributes {
     displayValue: string;
     description: string;
-    synopsis: string;
-    isFiltered: boolean;
     style: SuggestionStyle;
     space: boolean;
 }
