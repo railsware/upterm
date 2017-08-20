@@ -31,10 +31,6 @@ export async function getSuggestions({
 
     return {
         isIncomplete: false,
-        items: uniqueSuggestions.map(suggestion => ({
-            label: suggestion.label,
-            detail: suggestion.detail,
-            kind: suggestion.kind || monaco.languages.CompletionItemKind.Snippet,
-        })),
+        items: <any>uniqueSuggestions,
     };
 }
