@@ -18,7 +18,6 @@ interface RequiredSuggestionAttributes {
 interface AdditionalSuggestionAttributes {
     detail: string;
     style: SuggestionStyle;
-    space: boolean;
 }
 
 export type Suggestion = RequiredSuggestionAttributes & Partial<AdditionalSuggestionAttributes>;
@@ -302,8 +301,7 @@ export const combineShortFlags = (suggestionsProvider: AutocompletionProvider) =
         if (reShortFlags.test(token)) {
             return suggestions
                     .filter(s =>
-                        reShortFlag.test(s.label) && !token.includes(s.label.slice(1))
-                            && s.space)
+                        reShortFlag.test(s.label) && !token.includes(s.label.slice(1)))
                     .map(s =>
                         ({
                             label: token + s.label.slice(1),

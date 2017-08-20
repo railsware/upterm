@@ -85,7 +85,6 @@ export const suggestionFromFlagParagraph = (paragraph: string[]): Suggestion | u
             label: `-${flag}`,
             style: styles.option,
             detail: detail,
-            space: true,
         };
     } else if (shortFlagWithoutArgument) {
         const flag = shortFlagWithoutArgument[1];
