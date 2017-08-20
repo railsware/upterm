@@ -1,6 +1,6 @@
 import {leafNodeAt, ASTNode} from "./shell/Parser";
 import * as _ from "lodash";
-import {Suggestion, SuggestionWithDefaults, addDefaultAttributeValues} from "./plugins/autocompletion_utils/Common";
+import {Suggestion} from "./plugins/autocompletion_utils/Common";
 import {Environment} from "./shell/Environment";
 import {OrderedSet} from "./utils/OrderedSet";
 import {Aliases} from "./shell/Aliases";
@@ -25,7 +25,7 @@ export async function getSuggestions({
     environment,
     historicalPresentDirectoriesStack,
     aliases,
-}: GetSuggestionsOptions): Promise<SuggestionWithDefaults[]> {
+}: GetSuggestionsOptions): Promise<monaco.languages.CompletionList> {
     const node = leafNodeAt(currentCaretPosition, ast);
     const suggestions = await node.suggestions({
         environment: environment,
@@ -37,17 +37,12 @@ export async function getSuggestions({
     const uniqueSuggestions = _.uniqBy([...historySuggestions, ...suggestions], suggestion => suggestion.value);
     const applicableSuggestions: Suggestion[] = uniqueSuggestions.filter(suggestion => suggestion.isFiltered || fuzzyMatch(node.value, suggestion.value));
 
-    if (applicableSuggestions.length === 1) {
-        const suggestion = applicableSuggestions[0];
-
-        /**
-         * The suggestion would simply duplicate the prompt value without providing no
-         * additional information. Skipping it for clarity.
-         */
-        if (node.value === suggestion.value && (suggestion.description && suggestion.description.length === 0) && (suggestion.synopsis && suggestion.synopsis.length === 0)) {
-            return [];
-        }
-    }
-
-    return applicableSuggestions.map(addDefaultAttributeValues);
+    return {
+        isIncomplete: false,
+        items: applicableSuggestions.map(suggestion => ({
+            label: suggestion.value,
+            detail: suggestion.description,
+            kind: monaco.languages.CompletionItemKind.Snippet,
+        })),
+    };
 }

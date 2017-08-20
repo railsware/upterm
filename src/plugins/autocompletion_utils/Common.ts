@@ -8,7 +8,7 @@ import * as _ from "lodash";
 import {fontAwesome} from "../../views/css/FontAwesome";
 import {colors} from "../../views/css/colors";
 import {StatusCode} from "../../utils/Git";
-import {ASTNode, leafNodeAt, serializeReplacing} from "../../shell/Parser";
+import {ASTNode} from "../../shell/Parser";
 
 type SuggestionStyle = { value: string; css: Object};
 
@@ -40,24 +40,6 @@ export type SuggestionWithDefaults = RequiredSuggestionAttributes & AdditionalSu
 export function provide(provider: AutocompletionProvider): AutocompletionProvider {
     return provider;
 }
-
-export function addDefaultAttributeValues(suggestion: Suggestion): SuggestionWithDefaults {
-    return {
-        value: suggestion.value,
-        displayValue: suggestion.displayValue || suggestion.value,
-        description: suggestion.description || "",
-        synopsis: _.truncate(suggestion.description, {length: 50, separator: " "}),
-        isFiltered: suggestion.isFiltered || false,
-        style: suggestion.style || {value: "", css: {}},
-        space: suggestion.space || false,
-        promptSerializer: suggestion.promptSerializer || defaultPromptSerializer,
-    };
-}
-
-const defaultPromptSerializer: PromptSerializer = (context: PromptSerializerContext): string => {
-    const node = leafNodeAt(context.caretPosition, context.ast);
-    return serializeReplacing(context.ast, node, context.suggestion.value + (context.suggestion.space ? " " : ""));
-};
 
 export const replaceAllPromptSerializer: PromptSerializer = (context: PromptSerializerContext) =>  context.suggestion.value;
 

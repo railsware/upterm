@@ -3,7 +3,6 @@ import {getSuggestions} from "../Autocompletion";
 import {services} from "../services/index";
 import {scan} from "../shell/Scanner";
 import {CompleteCommand} from "../shell/Parser";
-import CompletionItemKind = monaco.languages.CompletionItemKind;
 import {io} from "../utils/Common";
 
 monaco.languages.setMonarchTokensProvider("shell", {
@@ -85,7 +84,7 @@ monaco.languages.registerCompletionItemProvider("shell", {
 
         const ast = new CompleteCommand(scan(text));
 
-        const suggestions = await getSuggestions({
+        return getSuggestions({
             currentText: text,
             currentCaretPosition: position.column - 1,
             ast: ast,
@@ -93,14 +92,5 @@ monaco.languages.registerCompletionItemProvider("shell", {
             historicalPresentDirectoriesStack: session.historicalPresentDirectoriesStack,
             aliases: session.aliases,
         });
-
-        return {
-            isIncomplete: false,
-            items: suggestions.map(suggestion => ({
-                label: suggestion.value,
-                kind: CompletionItemKind.Field,
-                detail: suggestion.description,
-            })),
-        };
     },
 });
