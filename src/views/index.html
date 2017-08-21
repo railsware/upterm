@@ -287,12 +287,13 @@
         }
 
         .session .prompt {
+            --prompt-padding: calc(calc(var(--prompt-height) - var(--prompt-font-size)) / 2.5);
             position: absolute;
             contain: layout;
             bottom: var(--footer-height);
             height: var(--prompt-height);
             width: 100%;
-            padding: calc(calc(var(--prompt-height) - var(--prompt-font-size)) / 2.5) 0;
+            padding-top: var(--prompt-padding);
             line-height: 1.3;
             display: grid;
             grid-template-areas: "prompt-decoration prompt-content";
@@ -305,25 +306,26 @@
         }
 
         .session .prompt-decoration {
+            --decoration-height: calc(var(--prompt-font-size) * 1.3);
             grid-area: prompt-decoration;
             position: relative;
             overflow: hidden;
+            height: var(--decoration-height);
             z-index: 2;
         }
 
         .session .prompt-decoration .square {
             position: absolute;
             display: inline-block;
-            --size: calc(var(--prompt-font-size) * 1.3);
-            width: var(--size);
-            height: var(--size);
+            width: var(--decoration-height);
+            height: var(--decoration-height);
             background-color: var(--text-color);
             z-index: 1;
             filter: brightness(50%);
         }
 
         .session .prompt-decoration .rhombus {
-            left: calc(var(--prompt-font-size) * 0.39);
+            left: calc(var(--decoration-height) * 0.39);
             transform: rotate(45deg);
         }
 
