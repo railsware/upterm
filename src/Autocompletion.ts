@@ -31,6 +31,9 @@ export async function getSuggestions({
 
     return {
         isIncomplete: false,
-        items: <any>uniqueSuggestions,
+        items: uniqueSuggestions.map(suggestion => ({
+            ...suggestion,
+            kind: suggestion.kind || monaco.languages.CompletionItemKind.Interface,
+        })),
     };
 }
