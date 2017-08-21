@@ -53,6 +53,15 @@ export class PromptComponent extends React.Component<Props, State> {
             iconsInSuggestions: false,
         });
 
+        services.font.onChange.subscribe(() => {
+            this.editor.updateOptions({
+                fontSize: services.font.size * 1.2,
+                fontFamily: services.font.family,
+                suggestFontSize: services.font.size,
+            });
+            this.editor.layout();
+        });
+
         this.editor.addCommand(
             monaco.KeyCode.UpArrow,
             () => this.setPreviousHistoryItem(),
