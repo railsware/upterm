@@ -119,13 +119,24 @@ type BranchesOptions = {
 };
 
 export async function currentBranchName(directory: GitDirectoryPath): Promise<string> {
-    const output = await executeCommand(
-        "git",
-        ['"symbolic-ref"', '"--short"', '"-q"', '"HEAD"'],
-        directory,
-    );
+    try {
+        const output = await executeCommand(
+            "git",
+            ['"symbolic-ref"', '"--short"', '"-q"', '"HEAD"'],
+            directory,
+        );
 
-    return output.trim();
+        return output.trim();
+    } catch (error) {
+        // Doesn't have a name.
+        const output = await executeCommand(
+            "git",
+            ['"rev-parse"', '"--short"', '"HEAD"'],
+            directory,
+        );
+
+        return output.trim();
+    }
 }
 
 export enum RepositoryState {
