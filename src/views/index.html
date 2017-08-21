@@ -393,8 +393,12 @@
             text-decoration: underline;
         }
 
-        .monaco-editor .suggest-widget .monaco-list .monaco-list-row .icon {
-            filter: grayscale(80%);
+        /* A workaround for https://github.com/Microsoft/monaco-editor/issues/434 */
+        .monaco-editor .suggest-widget.no-icons .icon {
+            display: none !important;
+        }
+        .monaco-editor .suggest-widget .monaco-list .monaco-list-row {
+            padding-left: 5px;
         }
     </style>
 </head>

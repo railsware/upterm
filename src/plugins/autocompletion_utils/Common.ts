@@ -8,7 +8,6 @@ import * as _ from "lodash";
 
 export interface Suggestion {
     label: string;
-    kind?: monaco.languages.CompletionItemKind;
     detail?: string;
 }
 
@@ -32,7 +31,7 @@ const filesSuggestions = (filter: (info: FileInfo) => boolean) => async(tokenVal
             const value = `..${Path.sep}`.repeat(numberOfParts);
             const description = pwdParts.slice(0, -numberOfParts).join(Path.sep) || Path.sep;
 
-            return {label: value, detail: description, kind: monaco.languages.CompletionItemKind.Folder};
+            return {label: value, detail: description};
         });
     }
 
@@ -48,15 +47,9 @@ const filesSuggestions = (filter: (info: FileInfo) => boolean) => async(tokenVal
             const escapedName: string = escapeFilePath(info.name);
 
             if (info.stat.isDirectory()) {
-                return {
-                    label: escapedName,
-                    kind: monaco.languages.CompletionItemKind.Folder,
-                };
+                return {label: escapedName};
             } else {
-                return {
-                    label: tokenDirectory,
-                    kind: monaco.languages.CompletionItemKind.File,
-                };
+                return {label: tokenDirectory};
             }
         });
 };
@@ -75,7 +68,7 @@ export const directoriesSuggestionsProvider = filesSuggestionsProvider(info => i
 export const environmentVariableSuggestions = provide(async context => {
     if (context.argument.value.startsWith("$")) {
         return context.environment.map((key, value) =>
-            ({label: "$" + key, description: value, kind: monaco.languages.CompletionItemKind.Variable}),
+            ({label: "$" + key, description: value}),
         );
     } else {
         return [];
@@ -98,11 +91,11 @@ export const longAndShortFlag = (name: string, shortName = name[0]) => provide(a
 
     const value = context.argument.value === shortValue ? shortValue : longValue;
 
-    return [{label: value, kind: monaco.languages.CompletionItemKind.Enum}];
+    return [{label: value}];
 });
 
-export const shortFlag = (char: string) => unique(async() => [{label: `-${char}`, kind: monaco.languages.CompletionItemKind.Enum}]);
-export const longFlag = (name: string) => unique(async() => [{label: `--${name}`, kind: monaco.languages.CompletionItemKind.Enum}]);
+export const shortFlag = (char: string) => unique(async() => [{label: `-${char}`}]);
+export const longFlag = (name: string) => unique(async() => [{label: `--${name}`}]);
 
 export const mapSuggestions = (provider: AutocompletionProvider, mapper: (suggestion: Suggestion) => Suggestion) => provide(async context => (await provider(context)).map(mapper));
 

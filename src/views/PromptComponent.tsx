@@ -50,6 +50,7 @@ export class PromptComponent extends React.Component<Props, State> {
             quickSuggestionsDelay: 0,
             parameterHints: true,
             fontLigatures: true,
+            iconsInSuggestions: false,
         });
 
         this.editor.addCommand(

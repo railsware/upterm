@@ -33,7 +33,7 @@ export async function getSuggestions({
         isIncomplete: false,
         items: uniqueSuggestions.map(suggestion => ({
             ...suggestion,
-            kind: suggestion.kind || monaco.languages.CompletionItemKind.Interface,
+            kind: monaco.languages.CompletionItemKind.Interface,
         })),
     };
 }

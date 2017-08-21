@@ -15,7 +15,6 @@ PluginManager.registerAutocompletionProvider("cd", async(context) => {
             .map(alias => ({
                 label: alias,
                 detail: expandHistoricalDirectory(alias, context.historicalPresentDirectoriesStack),
-                kind: monaco.languages.CompletionItemKind.Folder,
             }));
 
         suggestions.push(...historicalDirectoryAliases);
