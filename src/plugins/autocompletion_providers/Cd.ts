@@ -23,7 +23,7 @@ PluginManager.registerAutocompletionProvider("cd", async(context) => {
 
     if (context.argument.value.length > 0) {
         const cdpathDirectories = _.flatten(await Promise.all(context.environment.cdpath
-            .map(async(directory) => (await directoriesSuggestionsProvider(context, directory)).map(suggestion => ({...suggestion, description: `In ${directory}`})))));
+            .map(async(directory) => (await directoriesSuggestionsProvider(context, directory)))));
 
         suggestions.push(...cdpathDirectories);
     }
