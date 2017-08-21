@@ -356,17 +356,7 @@ export function handleUserEvent(application: ApplicationComponent, search: Searc
         return;
     }
 
-    if (event.keyCode === KeyCode.Tab && promptComponent.isInHistorySearch()) {
-        promptComponent.applyHistorySearch();
-        return;
-    }
-
-    if (event.keyCode === KeyCode.Escape && promptComponent.isInHistorySearch()) {
-        promptComponent.cancelHistorySearch();
-        return;
-    }
-
-    if (event.ctrlKey && event.keyCode === KeyCode.R) {
+    if (event.ctrlKey && event.keyCode === KeyCode.R && !promptComponent.isInHistorySearch()) {
         promptComponent.startHistorySearch();
 
         event.stopPropagation();
@@ -374,19 +364,13 @@ export function handleUserEvent(application: ApplicationComponent, search: Searc
         return;
     }
 
-    if (promptComponent.shouldNavigateHistory() && isKeybindingForEvent(event, KeyboardAction.cliHistoryPrevious)) {
-        promptComponent.setPreviousHistoryItem();
-
-        event.stopPropagation();
-        event.preventDefault();
+    if (event.keyCode === KeyCode.Tab && promptComponent.isInHistorySearch()) {
+        promptComponent.applyHistorySearch();
         return;
     }
 
-    if (promptComponent.shouldNavigateHistory() && isKeybindingForEvent(event, KeyboardAction.cliHistoryNext)) {
-        promptComponent.setNextHistoryItem();
-
-        event.stopPropagation();
-        event.preventDefault();
+    if (event.keyCode === KeyCode.Escape && promptComponent.isInHistorySearch()) {
+        promptComponent.cancelHistorySearch();
         return;
     }
 }

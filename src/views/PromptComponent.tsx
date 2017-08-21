@@ -40,7 +40,7 @@ export class PromptComponent extends React.Component<Props, State> {
             fontSize: services.font.size * 1.2,
             fontFamily: services.font.family,
             suggestFontSize: services.font.size,
-            minimap: { enabled: false },
+            minimap: {enabled: false},
             scrollbar: {
                 vertical: "hidden",
                 horizontal: "hidden",
@@ -49,7 +49,29 @@ export class PromptComponent extends React.Component<Props, State> {
             quickSuggestions: true,
             quickSuggestionsDelay: 0,
             parameterHints: true,
+            fontLigatures: true,
         });
+
+        this.editor.addCommand(
+            monaco.KeyCode.UpArrow,
+            () => this.setPreviousHistoryItem(),
+            "!suggestWidgetVisible",
+        );
+        this.editor.addCommand(
+            monaco.KeyMod.WinCtrl | monaco.KeyCode.KEY_P,
+            () => this.setPreviousHistoryItem(),
+            "!suggestWidgetVisible",
+        );
+        this.editor.addCommand(
+            monaco.KeyCode.DownArrow,
+            () => this.setNextHistoryItem(),
+            "!suggestWidgetVisible",
+        );
+        this.editor.addCommand(
+            monaco.KeyMod.WinCtrl | monaco.KeyCode.KEY_N,
+            () => this.setNextHistoryItem(),
+            "!suggestWidgetVisible",
+        );
 
         this.focus();
     }
@@ -124,11 +146,14 @@ export class PromptComponent extends React.Component<Props, State> {
         }
     }
 
-    shouldNavigateHistory() {
-        return this.state.displayedHistoryRecordID || this.editor.getValue() === "";
+    setValue(value: string): void {
+        this.editor.setValue(value);
+        this.editor.setPosition({lineNumber: 1, column: value.length + 1});
+        this.prompt.setValue(value);
+        this.focus();
     }
 
-    setPreviousHistoryItem(): void {
+    private setPreviousHistoryItem(): void {
         const currentID = this.state.displayedHistoryRecordID;
         if (currentID) {
             const currentRecord = services.history.get(currentID);
@@ -150,7 +175,7 @@ export class PromptComponent extends React.Component<Props, State> {
         }
     }
 
-    setNextHistoryItem(): void {
+    private setNextHistoryItem(): void {
         const currentID = this.state.displayedHistoryRecordID;
         if (currentID) {
             const currentRecord = services.history.get(currentID);
@@ -166,13 +191,6 @@ export class PromptComponent extends React.Component<Props, State> {
                 this.setState({displayedHistoryRecordID: undefined});
             }
         }
-    }
-
-    setValue(value: string): void {
-        this.editor.setValue(value);
-        this.editor.setPosition({lineNumber: 1, column: value.length + 1});
-        this.prompt.setValue(value);
-        this.focus();
     }
 
     private get promptContentNode(): HTMLDivElement {
