@@ -356,6 +356,16 @@ export function handleUserEvent(application: ApplicationComponent, search: Searc
         return;
     }
 
+    if (event.keyCode === KeyCode.Tab && promptComponent.isInHistorySearch()) {
+        promptComponent.applyHistorySearch();
+        return;
+    }
+
+    if (event.keyCode === KeyCode.Escape && promptComponent.isInHistorySearch()) {
+        promptComponent.cancelHistorySearch();
+        return;
+    }
+
     if (event.ctrlKey && event.keyCode === KeyCode.R) {
         promptComponent.startHistorySearch();
 

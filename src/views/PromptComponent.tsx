@@ -74,7 +74,25 @@ export class PromptComponent extends React.Component<Props, State> {
 
     startHistorySearch() {
         this.editor.setModel(this.historyModel);
+        this.setValue(this.model.getValue());
         this.triggerSuggest();
+    }
+
+    applyHistorySearch() {
+        // Give it some time to apply a suggestion.
+        setTimeout(
+            () => this.cancelHistorySearch(),
+            200,
+        );
+    }
+
+    cancelHistorySearch() {
+        this.editor.setModel(this.model);
+        this.setValue(this.historyModel.getValue());
+    }
+
+    isInHistorySearch(): boolean {
+        return this.editor.getModel() === this.historyModel;
     }
 
     focus(): void {
@@ -99,7 +117,6 @@ export class PromptComponent extends React.Component<Props, State> {
 
         if (!this.isEmpty()) {
             this.props.session.createJob(this.prompt);
-            this.editor.setModel(this.model);
             this.editor.setValue("");
             this.setState({
                 displayedHistoryRecordID: undefined,
@@ -155,6 +172,7 @@ export class PromptComponent extends React.Component<Props, State> {
         this.editor.setValue(value);
         this.editor.setPosition({lineNumber: 1, column: value.length + 1});
         this.prompt.setValue(value);
+        this.focus();
     }
 
     private get promptContentNode(): HTMLDivElement {
@@ -167,6 +185,6 @@ export class PromptComponent extends React.Component<Props, State> {
     }
 
     private triggerSuggest() {
-        this.editor.trigger("", "editor.action.triggerSuggest", {});
+        this.editor.trigger(this.editor.getValue(), "editor.action.triggerSuggest", {});
     }
 }
