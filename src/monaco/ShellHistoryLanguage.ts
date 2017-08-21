@@ -1,7 +1,7 @@
 import {services} from "../services/index";
 import * as _ from "lodash";
 
-monaco.languages.setMonarchTokensProvider("shell", {
+monaco.languages.setMonarchTokensProvider("shell-history", {
     tokenizer: {
         root: [
             {
