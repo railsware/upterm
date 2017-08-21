@@ -279,7 +279,7 @@ const branchAlias = provide(async context => {
     if (doesLookLikeBranchAlias(context.argument.value)) {
         let nameOfAlias = (await linedOutputOf("git", ["name-rev", "--name-only", canonizeBranchAlias(context.argument.value)], context.environment.pwd))[0];
         if (nameOfAlias && !nameOfAlias.startsWith("Could not get")) {
-            return [{label: context.argument.value, synopsis: nameOfAlias}];
+            return [{label: context.argument.value, detail: nameOfAlias}];
         }
     }
 

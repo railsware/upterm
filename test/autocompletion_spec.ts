@@ -16,13 +16,8 @@ import {fontAwesome} from "../src/views/css/FontAwesome";
 describe("Autocompletion suggestions", () => {
     it("includes aliases", async () => {
         const expectedSuggestions = [{
-            value: "myAlias",
-            displayValue: "myAlias",
-            description: "expandedAlias",
-            synopsis: "expandedAlias",
-            isFiltered: false,
-            style: styles.alias,
-            space: true,
+            label: "myAlias",
+            detail: "myAlias",
         }];
 
         const suggestions = await getSuggestions({

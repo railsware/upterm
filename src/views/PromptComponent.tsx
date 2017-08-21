@@ -19,8 +19,8 @@ interface State {
 export class PromptComponent extends React.Component<Props, State> {
     private prompt: Prompt;
     private editor: monaco.editor.IStandaloneCodeEditor;
-    private model = monaco.editor.createModel("", "shell", monaco.Uri.parse(`inmemory://${this.props.session.id}.shell`));
-    private historyModel = monaco.editor.createModel("", "shell-history", monaco.Uri.parse(`inmemory://${this.props.session.id}.history`));
+    private model = monaco.editor.createModel("", "shell", monaco.Uri.parse(`shell://${this.props.session.id}`));
+    private historyModel = monaco.editor.createModel("", "shell-history", monaco.Uri.parse(`shell-history://${this.props.session.id}`));
 
     /* tslint:disable:member-ordering */
     constructor(props: Props) {
