@@ -356,6 +356,14 @@ export function handleUserEvent(application: ApplicationComponent, search: Searc
         return;
     }
 
+    if (event.ctrlKey && event.keyCode === KeyCode.R) {
+        promptComponent.startHistorySearch();
+
+        event.stopPropagation();
+        event.preventDefault();
+        return;
+    }
+
     if (promptComponent.shouldNavigateHistory() && isKeybindingForEvent(event, KeyboardAction.cliHistoryPrevious)) {
         promptComponent.setPreviousHistoryItem();
 

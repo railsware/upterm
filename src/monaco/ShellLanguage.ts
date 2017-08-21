@@ -81,6 +81,10 @@ monaco.languages.setLanguageConfiguration("shell", {
 
 monaco.editor.onDidCreateModel(model => {
     model.onDidChangeContent(async () => {
+        if (!model.uri.toString().endsWith(".shell")) {
+            return;
+        }
+
         monaco.editor.setModelMarkers(model, "upterm", []);
 
         const value = model.getValue();
@@ -94,7 +98,7 @@ monaco.editor.onDidCreateModel(model => {
         const commandName = tokens[0].value;
 
         const uri = model.uri.toString();
-        const sessionID: SessionID = <SessionID>Number.parseInt(uri.match(/inmemory:\/\/(\d+)\.sh/)![1]);
+        const sessionID: SessionID = <SessionID>Number.parseInt(uri.match(/inmemory:\/\/(\d+)\.shell/)![1]);
         const session = services.sessions.get(sessionID);
 
         const executables = await io.executablesInPaths(session.environment.path);
@@ -117,7 +121,7 @@ monaco.languages.registerCompletionItemProvider("shell", {
     provideCompletionItems: async function (model, position): Promise<monaco.languages.CompletionList> {
         model.getValue();
         const uri = model.uri.toString();
-        const sessionID: SessionID = <SessionID>Number.parseInt(uri.match(/inmemory:\/\/(\d+)\.sh/)![1]);
+        const sessionID: SessionID = <SessionID>Number.parseInt(uri.match(/inmemory:\/\/(\d+)\.shell/)![1]);
         const session = services.sessions.get(sessionID);
         const text = model.getValue();
 

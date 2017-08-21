@@ -39,6 +39,7 @@ async function main() {
     // Should be required before mounting Application.
     require("../monaco/PromptTheme");
     require("../monaco/ShellLanguage");
+    require("../monaco/ShellHistoryLanguage");
 
     // FIXME: Remove loadAllPlugins after switching to Webpack (because all the files will be loaded at start anyway).
     await Promise.all([loadAllPlugins(), loadEnvironment(), loadAliasesFromConfig()]);

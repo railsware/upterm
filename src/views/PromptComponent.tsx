@@ -19,6 +19,8 @@ interface State {
 export class PromptComponent extends React.Component<Props, State> {
     private prompt: Prompt;
     private editor: monaco.editor.IStandaloneCodeEditor;
+    private model = monaco.editor.createModel("", "shell", monaco.Uri.parse(`inmemory://${this.props.session.id}.shell`));
+    private historyModel = monaco.editor.createModel("", "shell-history", monaco.Uri.parse(`inmemory://${this.props.session.id}.history`));
 
     /* tslint:disable:member-ordering */
     constructor(props: Props) {
@@ -31,19 +33,22 @@ export class PromptComponent extends React.Component<Props, State> {
     }
 
     componentDidMount() {
-        const model = monaco.editor.createModel("", "shell", monaco.Uri.parse(`inmemory://${this.props.session.id}.sh`));
-
         this.editor = monaco.editor.create(this.promptContentNode, {
             theme: "upterm-prompt-theme",
-            model: model,
+            model: this.model,
             lineNumbers: "off",
-            fontSize: 16,
+            fontSize: services.font.size * 1.2,
+            fontFamily: services.font.family,
+            suggestFontSize: services.font.size,
             minimap: { enabled: false },
             scrollbar: {
                 vertical: "hidden",
                 horizontal: "hidden",
             },
             overviewRulerLanes: 0,
+            quickSuggestions: true,
+            quickSuggestionsDelay: 0,
+            parameterHints: true,
         });
 
         this.focus();
@@ -65,6 +70,11 @@ export class PromptComponent extends React.Component<Props, State> {
                 <div className="prompt-content" ref="prompt-content"/>
             </div>
         );
+    }
+
+    startHistorySearch() {
+        this.editor.setModel(this.historyModel);
+        this.triggerSuggest();
     }
 
     focus(): void {
@@ -89,6 +99,7 @@ export class PromptComponent extends React.Component<Props, State> {
 
         if (!this.isEmpty()) {
             this.props.session.createJob(this.prompt);
+            this.editor.setModel(this.model);
             this.editor.setValue("");
             this.setState({
                 displayedHistoryRecordID: undefined,
@@ -153,5 +164,9 @@ export class PromptComponent extends React.Component<Props, State> {
 
     private isEmpty(): boolean {
         return this.prompt.value.replace(/\s/g, "").length === 0;
+    }
+
+    private triggerSuggest() {
+        this.editor.trigger("", "editor.action.triggerSuggest", {});
     }
 }
