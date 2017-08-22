@@ -25,7 +25,7 @@ const shortOptions = combine(mapObject(
     },
     (option, info) => {
         return mapSuggestions(shortFlag(option),
-            suggestion => ({...suggestion, description: info.description}));
+                              suggestion => ({...suggestion, description: info.description}));
     },
 ));
 
@@ -73,7 +73,7 @@ const effectiveUserSuggestions = provide(async context => {
         .map(i =>
             ({
                 label: arg.start + i.euser, displayValue: i.euser,
-                description: `User '${i.euser}' with id '${i.euserid}'`
+                description: `User '${i.euser}' with id '${i.euserid}'`,
             }));
 });
 
@@ -85,7 +85,7 @@ const effectiveGroupSuggestions = provide(async context => {
         .map(i =>
             ({
                 label: arg.start + i.egroup, displayValue: i.egroup,
-                description: `Group '${i.egroup}' with id '${i.egroupid}'`
+                description: `Group '${i.egroup}' with id '${i.egroupid}'`,
             }));
 });
 

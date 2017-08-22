@@ -225,7 +225,7 @@ const extendedRegexOption = combine([
         longAndShortFlag("extended-regexp", "E"),
         suggestion => ({
             ...suggestion,
-            description: `Interpret <pattern> (defined using --regexp=<pattern> as an extended regular expression`
+            description: `Interpret <pattern> (defined using --regexp=<pattern> as an extended regular expression`,
         })),
 ]);
 
@@ -234,7 +234,7 @@ const fixedStringsOption = combine([
         longAndShortFlag("fixed-strings", "F"),
         suggestion => ({
             ...suggestion,
-            description: `Interpret <pattern> (defined using --regexp=<pattern>) as a list of fixed strings, separated by new-lines lines, any of which is to be matched`
+            description: `Interpret <pattern> (defined using --regexp=<pattern>) as a list of fixed strings, separated by new-lines lines, any of which is to be matched`,
         })),
 ]);
 

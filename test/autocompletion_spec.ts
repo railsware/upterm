@@ -7,7 +7,6 @@ import {Aliases} from "../src/shell/Aliases";
 import {CommandWord} from "../src/shell/Parser";
 import {Word} from "../src/shell/Scanner";
 import {
-    styles,
     anyFilesSuggestions,
 } from "../src/plugins/autocompletion_utils/Common";
 import {join} from "path";
