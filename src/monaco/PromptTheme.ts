@@ -19,5 +19,7 @@ monaco.editor.defineTheme("upterm-prompt-theme", {
         "editor.foreground": textColor,
         "editor.background": backgroundColor,
         "editor.lineHighlightBackground": backgroundColor,
+        "editorSuggestWidget.background": backgroundColor,
+        "editorSuggestWidget.highlightForeground": colors.blue,
     },
 });
