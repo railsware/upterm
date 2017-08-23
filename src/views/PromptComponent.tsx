@@ -51,6 +51,7 @@ export class PromptComponent extends React.Component<Props, State> {
             parameterHints: true,
             fontLigatures: true,
             iconsInSuggestions: false,
+            wordBasedSuggestions: false,
         });
 
         services.font.onChange.subscribe(() => {
@@ -111,11 +112,8 @@ export class PromptComponent extends React.Component<Props, State> {
     }
 
     applyHistorySearch() {
-        // Give it some time to apply a suggestion.
-        setTimeout(
-            () => this.cancelHistorySearch(),
-            200,
-        );
+        this.editor.trigger("", "acceptSelectedSuggestion", {});
+        this.cancelHistorySearch();
     }
 
     cancelHistorySearch() {

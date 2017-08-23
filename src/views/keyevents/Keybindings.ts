@@ -366,6 +366,9 @@ export function handleUserEvent(application: ApplicationComponent, search: Searc
 
     if (event.keyCode === KeyCode.Tab && promptComponent.isInHistorySearch()) {
         promptComponent.applyHistorySearch();
+
+        event.stopPropagation();
+        event.preventDefault();
         return;
     }
 
