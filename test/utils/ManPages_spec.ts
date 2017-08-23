@@ -8,7 +8,6 @@ import {
   extractManPageSectionParagraphs,
   suggestionFromFlagParagraph,
 } from "../../src/utils/ManPageParsingUtils";
-import {styles} from "../../src/plugins/autocompletion_utils/Common";
 
 describe("man page line combiner", () => {
   it("combines lines with correct spacing", () => {
@@ -118,9 +117,8 @@ describe("suggestion parser", () => {
       "   -f  flag with",
       "       description",
     ])).to.eql({
-      value: "-f",
-      style: styles.option,
-      description: "flag with description",
+      label: "-f",
+      detail: "flag with description",
     });
   });
 
@@ -130,11 +128,8 @@ describe("suggestion parser", () => {
       "       flag with",
       "       description",
     ])).to.eql({
-      value: "-f",
-      style: styles.option,
-      description: "flag with description",
-      displayValue: "-f arg",
-      space: true,
+      label: "-f",
+      detail: "flag with description",
     });
   });
 

@@ -6,7 +6,7 @@ import {userFriendlyPath} from "../src/utils/Common";
 const timeout = 50000;
 
 class Page {
-    private promptSelector = ".prompt-content";
+    private promptSelector = ".monaco-editor";
 
     constructor(private client: SpectronClient) {}
 
@@ -15,7 +15,10 @@ class Page {
     }
 
     executeCommand(command: string) {
-        return this.prompt.setValue(`${command}\n`);
+        return new Promise(resolve => {
+            this.client.keys(command + "\n");
+            setTimeout(() => resolve(), 500);
+        });
     }
 
     get prompt() {
