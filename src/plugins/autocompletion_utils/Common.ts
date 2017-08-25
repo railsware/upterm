@@ -1,7 +1,5 @@
-import {io, resolveDirectory, directoryName, escapeFilePath, userFriendlyPath} from "../../utils/Common";
-import {
-    FileInfo, AutocompletionContext, AutocompletionProvider,
-} from "../../Interfaces";
+import {directoryName, escapeFilePath, io, resolveDirectory, userFriendlyPath} from "../../utils/Common";
+import {AutocompletionContext, AutocompletionProvider, FileInfo} from "../../Interfaces";
 import * as modeToPermissions from "mode-to-permissions";
 import * as Path from "path";
 import * as _ from "lodash";
