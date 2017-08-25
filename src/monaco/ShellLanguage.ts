@@ -8,6 +8,7 @@ import {io} from "../utils/Common";
 monaco.languages.setMonarchTokensProvider("shell", {
     word: /[a-zA-Z0-9\u0080-\uFFFF+~!@#$%^&*_=,.:/?\\-]+/,
     escapes: /\\(?:[btnfr\\"']|[0-7][0-7]?|[0-3][0-7]{2})/,
+    defaultToken: "invalid",
     tokenizer: {
         root: [
             {
@@ -15,42 +16,41 @@ monaco.languages.setMonarchTokensProvider("shell", {
                 action: {token: "spaces"},
             },
             {
+                regex: /@word/,
+                action: {token: "command-name", next: "@command"},
+            },
+        ],
+        command: [
+            [/\s+/, "spaces"],
+            [/@word/, "argument"],
+            {
                 regex: /\|/,
-                action: {token: "pipe"},
+                action: {token: "pipe", next: "@pop"},
             },
             {
                 regex: /;/,
-                action: {token: "semicolon"},
+                action: {token: "semicolon", next: "@pop"},
             },
             {
                 regex: /&&/,
-                action: {token: "and"},
+                action: {token: "and", next: "@pop"},
             },
             {
                 regex: /\|\|/,
-                action: {token: "or"},
+                action: {token: "or", next: "@pop"},
             },
             {
                 regex: />>/,
-                action: {token: "appending-output-redirection-symbol"},
+                action: {token: "appending-output-redirection-symbol", next: "@redirect"},
             },
             {
                 regex: /</,
-                action: {token: "input-redirection-symbol"},
+                action: {token: "input-redirection-symbol", next: "@redirect"},
             },
             {
                 regex: />/,
-                action: {token: "output-redirection-symbol"},
+                action: {token: "output-redirection-symbol", next: "@redirect"},
             },
-            {
-                regex: /^@word/,
-                action: {token: "command-name"},
-            },
-            {
-                regex: /@word/,
-                action: {token: "word"},
-            },
-
             // strings: recover on non-terminated strings
             [/"([^"\\]|\\.)*$/, "string.invalid"],  // non-teminated string
             [/'([^'\\]|\\.)*$/, "string.invalid"],  // non-teminated string
@@ -68,6 +68,18 @@ monaco.languages.setMonarchTokensProvider("shell", {
                 },
             }],
         ],
+
+        redirect: [
+            {
+                regex: /\s+/,
+                action: {token: "spaces"},
+            },
+            {
+                regex: /@word/,
+                action: {token: "redirect-path", next: "@pop"},
+            },
+        ],
+
     },
     tokenPostfix: ".shell",
 } as any);

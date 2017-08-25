@@ -10,6 +10,7 @@ monaco.languages.setMonarchTokensProvider("shell-history", {
             },
         ],
     },
+    defaultToken: "invalid",
     tokenPostfix: ".shell-history",
 });
 
