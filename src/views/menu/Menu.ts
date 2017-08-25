@@ -163,14 +163,14 @@ export function buildMenuTemplate(
                     label: "GitHub Repository",
                     click: () => {
                         /* tslint:disable:no-unused-expression */
-                        remote.shell.openExternal("https://github.com/railsware/upterm");
+                        remote.shell.openExternal("http://l.rw.rw/upterm_repository");
                     },
                 },
                 {
                     label: "Leave Feedback",
                     click: () => {
                         /* tslint:disable:no-unused-expression */
-                        remote.shell.openExternal("https://github.com/railsware/upterm/issues/new");
+                        remote.shell.openExternal("http://l.rw.rw/upterm_leave_feedback");
                     },
                 },
             ],
