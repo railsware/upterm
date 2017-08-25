@@ -7,7 +7,7 @@ import {io} from "../utils/Common";
 
 monaco.languages.setMonarchTokensProvider("shell", {
     variableName: /[a-zA-Z][a-zA-Z0-9_]*/,
-    word: /[a-zA-Z0-9\u0080-\uFFFF+~!@#%^&*_,.:/?\\-]+/,
+    word: /[a-zA-Z0-9\u0080-\uFFFF+~!@#%^*_,.:/?\\-]+/,
     escapes: /\\(?:[btnfr\\"']|[0-7][0-7]?|[0-3][0-7]{2})/,
     defaultToken: "invalid",
     tokenizer: {
@@ -29,6 +29,10 @@ monaco.languages.setMonarchTokensProvider("shell", {
             [/\s+/, "spaces"],
             [/@word/, "argument"],
             {
+                regex: /\|\|/,
+                action: {token: "or", next: "@pop"},
+            },
+            {
                 regex: /\|/,
                 action: {token: "pipe", next: "@pop"},
             },
@@ -39,10 +43,6 @@ monaco.languages.setMonarchTokensProvider("shell", {
             {
                 regex: /&&/,
                 action: {token: "and", next: "@pop"},
-            },
-            {
-                regex: /\|\|/,
-                action: {token: "or", next: "@pop"},
             },
             {
                 regex: />>/,

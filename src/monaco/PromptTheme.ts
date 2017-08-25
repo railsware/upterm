@@ -8,7 +8,7 @@ monaco.editor.defineTheme("upterm-prompt-theme", {
         {token: "string.invalid", foreground: colors.red.slice(1)},
         {token: "variable-name", foreground: colors.yellow.slice(1)},
         {token: "variable-value", foreground: textColor.slice(1)},
-        {token: "command-name", foreground: colors.green.slice(1), fontStyle: "bold"},
+        {token: "command-name", foreground: colors.blue.slice(1), fontStyle: "bold"},
         {token: "argument", foreground: textColor.slice(1)},
         {token: "redirect-path", foreground: colors.yellow.slice(1)},
         {token: "pipe", foreground: colors.yellow.slice(1)},
