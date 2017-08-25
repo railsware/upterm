@@ -40,6 +40,8 @@ interface OptionData {
     detail: string;
     shortFlag?: string;
     noShortFlag?: boolean;
+    kind?: monaco.languages.CompletionItemKind;
+    insertText?: string | monaco.languages.SnippetString;
 }
 
 const commitOptionsData: OptionData[] = [
@@ -47,6 +49,8 @@ const commitOptionsData: OptionData[] = [
         longFlag: "message",
         detail: "Use the given <msg> as the commit message. If multiple -m options are given, their values are\
          concatenated as separate paragraphs.",
+        kind: monaco.languages.CompletionItemKind.Snippet,
+        insertText: {value: "--message \"$0\""},
     },
     {
         longFlag: "all",
@@ -186,9 +190,9 @@ const commitOptionsData: OptionData[] = [
     },
 ];
 
-const commitOptions = combine(commitOptionsData.map(({ longFlag, shortFlag, noShortFlag, detail }) => {
+const commitOptions = combine(commitOptionsData.map(({ longFlag, shortFlag, noShortFlag, detail, kind, insertText }) => {
     const provider = noShortFlag ? Common.longFlag(longFlag) : longAndShortFlag(longFlag, shortFlag);
-    return mapSuggestions(provider, suggestion => ({...suggestion, detail}));
+    return mapSuggestions(provider, suggestion => ({...suggestion, detail, kind, insertText}));
 }));
 
 const pushOptions = combine([

@@ -4,9 +4,67 @@ import * as modeToPermissions from "mode-to-permissions";
 import * as Path from "path";
 import * as _ from "lodash";
 
+// Copy of monaco.languages.CompletionItem, but with optional `kind`.
 export interface Suggestion {
+    /**
+     * The label of this completion item. By default
+     * this is also the text that is inserted when selecting
+     * this completion.
+     */
     label: string;
+    /**
+     * The kind of this completion item. Based on the kind
+     * an icon is chosen by the editor.
+     */
+    kind?: monaco.languages.CompletionItemKind;
+    /**
+     * A human-readable string with additional information
+     * about this item, like type or symbol information.
+     */
     detail?: string;
+    /**
+     * A human-readable string that represents a doc-comment.
+     */
+    documentation?: string;
+    /**
+     * A string that should be used when comparing this item
+     * with other items. When `falsy` the [label](#CompletionItem.label)
+     * is used.
+     */
+    sortText?: string;
+    /**
+     * A string that should be used when filtering a set of
+     * completion items. When `falsy` the [label](#CompletionItem.label)
+     * is used.
+     */
+    filterText?: string;
+    /**
+     * A string or snippet that should be inserted in a document when selecting
+     * this completion. When `falsy` the [label](#CompletionItem.label)
+     * is used.
+     */
+    insertText?: string | monaco.languages.SnippetString;
+    /**
+     * A range of text that should be replaced by this completion item.
+     *
+     * Defaults to a range from the start of the [current word](#TextDocument.getWordRangeAtPosition) to the
+     * current position.
+     *
+     * *Note:* The range must be a [single line](#Range.isSingleLine) and it must
+     * [contain](#Range.contains) the position at which completion has been [requested](#CompletionItemProvider.provideCompletionItems).
+     */
+    range?: monaco.Range;
+    /**
+     * @deprecated **Deprecated** in favor of `CompletionItem.insertText` and `CompletionItem.range`.
+     *
+     * ~~An [edit](#TextEdit) which is applied to a document when selecting
+     * this completion. When an edit is provided the value of
+     * [insertText](#CompletionItem.insertText) is ignored.~~
+     *
+     * ~~The [range](#Range) of the edit must be single-line and on the same
+     * line completions were [requested](#CompletionItemProvider.provideCompletionItems) at.~~
+     */
+    textEdit?: monaco.editor.ISingleEditOperation;
 }
 
 export function provide(provider: AutocompletionProvider): AutocompletionProvider {
