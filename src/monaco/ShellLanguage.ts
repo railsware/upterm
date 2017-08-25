@@ -138,17 +138,12 @@ monaco.editor.onDidCreateModel(model => {
     }
 
     model.onDidChangeContent(async () => {
-        monaco.editor.setModelMarkers(model, "upterm", []);
-
         const value = model.getValue();
-
-        if (value.length === 0) {
-            return;
-        }
 
         const sessionID: SessionID = <SessionID>Number.parseInt(model.uri.authority);
         const session = services.sessions.get(sessionID);
         const executables = await io.executablesInPaths(session.environment.path);
+        const markers: monaco.editor.IMarkerData[] = [];
 
         monaco.editor.tokenize(value, "shell").forEach((lineTokens, lineIndex) => {
             lineTokens.forEach((token, tokenIndex) => {
@@ -172,14 +167,16 @@ monaco.editor.onDidCreateModel(model => {
                 const commandName = model.getValueInRange(tokenRange);
 
                 if (!executables.includes(commandName) && !session.aliases.has(commandName)) {
-                    monaco.editor.setModelMarkers(model, "upterm", [{
+                    markers.push({
                         severity: monaco.Severity.Error,
                         message: `Executable ${commandName} doesn't exist in $PATH.`,
                         ...tokenRange,
-                    }]);
+                    });
                 }
             });
         });
+
+        monaco.editor.setModelMarkers(model, "upterm", markers);
     });
 });
 
