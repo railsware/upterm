@@ -50,7 +50,7 @@ const commitOptionsData: OptionData[] = [
         detail: "Use the given <msg> as the commit message. If multiple -m options are given, their values are\
          concatenated as separate paragraphs.",
         kind: monaco.languages.CompletionItemKind.Snippet,
-        insertText: {value: "--message \"$0\""},
+        insertText: {value: "--message \"${0:Commit message}\""},
     },
     {
         longFlag: "all",

@@ -6,6 +6,7 @@ monaco.editor.defineTheme("upterm-prompt-theme", {
     rules: [
         {token: "string", foreground: colors.green.slice(1)},
         {token: "string.invalid", foreground: colors.red.slice(1)},
+        {token: "command-name", foreground: colors.green.slice(1)},
         {token: "word", foreground: textColor.slice(1)},
         {token: "pipe", foreground: colors.yellow.slice(1)},
         {token: "semicolon", foreground: colors.yellow.slice(1)},

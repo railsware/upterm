@@ -43,6 +43,10 @@ monaco.languages.setMonarchTokensProvider("shell", {
                 action: {token: "output-redirection-symbol"},
             },
             {
+                regex: /^@word/,
+                action: {token: "command-name"},
+            },
+            {
                 regex: /@word/,
                 action: {token: "word"},
             },
