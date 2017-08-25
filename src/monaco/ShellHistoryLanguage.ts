@@ -29,3 +29,7 @@ monaco.languages.registerCompletionItemProvider("shell-history", {
         };
     },
 });
+
+monaco.languages.setLanguageConfiguration("shell-history", {
+    wordPattern: /.*/g,
+});
