@@ -6,7 +6,8 @@ import {CompleteCommand} from "../shell/Parser";
 import {io} from "../utils/Common";
 
 monaco.languages.setMonarchTokensProvider("shell", {
-    word: /[a-zA-Z0-9\u0080-\uFFFF+~!@#$%^&*_,.:/?\\-]+/,
+    variableName: /[a-zA-Z][a-zA-Z0-9_]*/,
+    word: /[a-zA-Z0-9\u0080-\uFFFF+~!@#%^&*_,.:/?\\-]+/,
     escapes: /\\(?:[btnfr\\"']|[0-7][0-7]?|[0-3][0-7]{2})/,
     defaultToken: "invalid",
     tokenizer: {
@@ -16,8 +17,8 @@ monaco.languages.setMonarchTokensProvider("shell", {
                 action: {token: "spaces"},
             },
             {
-                regex: /@word=/,
-                action: {token: "variable-assignment-lhs", next: "@variableValue"},
+                regex: /@variableName=/,
+                action: {token: "variable-name", next: "@variableValue"},
             },
             {
                 regex: /@word/,
@@ -57,17 +58,6 @@ monaco.languages.setMonarchTokensProvider("shell", {
             },
             { include: "@allowStringLiterals" },
         ],
-        string: [
-            [/[^\\"']+/, "string"],
-            [/@escapes/, "string.escape"],
-            [/\\./,      "string.escape.invalid"],
-            [/["']/, {
-                cases: {
-                    "$#==$S2": {token: "string", next: "@pop"},
-                    "@default": "string",
-                },
-            }],
-        ],
         redirect: [
             {
                 regex: /\s+/,
@@ -81,7 +71,7 @@ monaco.languages.setMonarchTokensProvider("shell", {
         variableValue: [
             {
                 regex: /@word/,
-                action: {token: "variable-assignment-rhs", next: "@pop"},
+                action: {token: "variable-value", next: "@pop"},
             },
             { include: "@allowStringLiterals" },
         ],
@@ -89,8 +79,22 @@ monaco.languages.setMonarchTokensProvider("shell", {
             // strings: recover on non-terminated strings
             [/"([^"\\]|\\.)*$/, "string.invalid"],  // non-teminated string
             [/'([^'\\]|\\.)*$/, "string.invalid"],  // non-teminated string
-            [/"/, "string", '@string."'],
-            [/'/, "string", "@string.'"],
+            [/"/, "string", "@doubleQuotedString"],
+            [/'/, "string", "@singleQuotedString"],
+        ],
+        singleQuotedString: [
+            [/[^\\']+/, "string"],
+            [/@escapes/, "string.escape"],
+            [/\\./,      "string.escape.invalid"],
+            [/'/, "string", "@pop"],
+        ],
+        doubleQuotedString: [
+            [/\$@variableName/, "variable-name"],
+            [/\${@variableName}/, "variable-name"],
+            [/[^\\"$]+/, "string"],
+            [/@escapes/, "string.escape"],
+            [/\\./,      "string.escape.invalid"],
+            [/"/, "string", "@pop"],
         ],
 
     },

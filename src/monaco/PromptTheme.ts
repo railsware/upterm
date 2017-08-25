@@ -6,8 +6,8 @@ monaco.editor.defineTheme("upterm-prompt-theme", {
     rules: [
         {token: "string", foreground: colors.green.slice(1)},
         {token: "string.invalid", foreground: colors.red.slice(1)},
-        {token: "variable-assignment-lhs", foreground: colors.yellow.slice(1)},
-        {token: "variable-assignment-rhs", foreground: textColor.slice(1)},
+        {token: "variable-name", foreground: colors.yellow.slice(1)},
+        {token: "variable-value", foreground: textColor.slice(1)},
         {token: "command-name", foreground: colors.green.slice(1), fontStyle: "bold"},
         {token: "argument", foreground: textColor.slice(1)},
         {token: "redirect-path", foreground: colors.yellow.slice(1)},
