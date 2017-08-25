@@ -37,7 +37,7 @@ export class PromptComponent extends React.Component<Props, State> {
             theme: "upterm-prompt-theme",
             model: this.model,
             lineNumbers: "off",
-            fontSize: services.font.size * 1.2,
+            fontSize: services.font.size + 2,
             fontFamily: services.font.family,
             suggestFontSize: services.font.size,
             minimap: {enabled: false},

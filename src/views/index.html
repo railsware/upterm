@@ -46,7 +46,7 @@
             --footer-height: calc(var(--font-size) * 2);
             --prompt-height: calc(var(--font-size) * 3);
             --session-height: calc(100vh - var(--title-bar-height));
-            --prompt-font-size: calc(var(--font-size) * 1.2);
+            --prompt-font-size: calc(var(--font-size) + 2px);
         }
 
         .title-bar {
@@ -332,7 +332,6 @@
         .session .prompt-content {
             grid-area: prompt-content;
             font-size: var(--prompt-font-size);
-            padding-left: calc(var(--prompt-font-size) / 2);
             white-space: pre-wrap;
             -webkit-appearance: none;
             outline: none;
