@@ -111,9 +111,14 @@ export class PromptComponent extends React.Component<Props, State> {
         this.triggerSuggest();
     }
 
-    applyHistorySearch() {
+    acceptSelectedSuggestion() {
         this.editor.trigger("", "acceptSelectedSuggestion", {});
-        this.cancelHistorySearch();
+
+        if (this.isInHistorySearch()) {
+            this.cancelHistorySearch();
+        } else {
+            this.triggerSuggest();
+        }
     }
 
     cancelHistorySearch() {

@@ -47,7 +47,7 @@ const filesSuggestions = (filter: (info: FileInfo) => boolean) => async(tokenVal
             const escapedName: string = escapeFilePath(info.name);
 
             if (info.stat.isDirectory()) {
-                return {label: escapedName};
+                return {label: escapedName + "/"};
             } else {
                 return {label: tokenDirectory};
             }
