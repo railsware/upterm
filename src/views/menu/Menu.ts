@@ -166,6 +166,13 @@ export function buildMenuTemplate(
                         remote.shell.openExternal("https://github.com/railsware/upterm");
                     },
                 },
+                {
+                    label: "Leave Feedback",
+                    click: () => {
+                        /* tslint:disable:no-unused-expression */
+                        remote.shell.openExternal("https://github.com/railsware/upterm/issues/new");
+                    },
+                },
             ],
         },
     ];
