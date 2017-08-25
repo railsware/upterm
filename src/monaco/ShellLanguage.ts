@@ -6,8 +6,8 @@ import {CompleteCommand} from "../shell/Parser";
 import {io} from "../utils/Common";
 
 monaco.languages.setMonarchTokensProvider("shell", {
-    word:  /[a-zA-Z0-9\u0080-\uFFFF+~!@#%^&*_=,.:/?\\-]+/,
-    escapes:  /\\(?:[btnfr\\"']|[0-7][0-7]?|[0-3][0-7]{2})/,
+    word: /[a-zA-Z0-9\u0080-\uFFFF+~!@#$%^&*_=,.:/?\\-]+/,
+    escapes: /\\(?:[btnfr\\"']|[0-7][0-7]?|[0-3][0-7]{2})/,
     tokenizer: {
         root: [
             {
@@ -48,17 +48,21 @@ monaco.languages.setMonarchTokensProvider("shell", {
             },
 
             // strings: recover on non-terminated strings
-            [/"([^"\\]|\\.)*$/, "string.invalid" ],  // non-teminated string
-            [/'([^'\\]|\\.)*$/, "string.invalid" ],  // non-teminated string
-            [/"/,  "string", '@string."' ],
-            [/'/,  "string", "@string.'" ],
+            [/"([^"\\]|\\.)*$/, "string.invalid"],  // non-teminated string
+            [/'([^'\\]|\\.)*$/, "string.invalid"],  // non-teminated string
+            [/"/, "string", '@string."'],
+            [/'/, "string", "@string.'"],
         ],
         string: [
             [/[^\\"']+/, "string"],
             [/@escapes/, "string.escape"],
             [/\\./,      "string.escape.invalid"],
-            [/["']/,     { cases: { "$#==$S2" : { token: "string", next: "@pop" },
-                "@default": "string" }} ],
+            [/["']/, {
+                cases: {
+                    "$#==$S2": {token: "string", next: "@pop"},
+                    "@default": "string",
+                },
+            }],
         ],
     },
     tokenPostfix: ".shell",
@@ -77,6 +81,7 @@ monaco.languages.setLanguageConfiguration("shell", {
         ["[", "]"],
         ["{", "}"],
     ],
+    wordPattern: /(-?\d*\.\d\w*\$)|([^\-\`\~\!\@\#\%\^\&\*\(\)\=\+\[\{\]\}\\\|\;\:\'\"\,\.\<\>\/\?\s]+)/g,
 });
 
 monaco.editor.onDidCreateModel(model => {
@@ -116,7 +121,7 @@ monaco.editor.onDidCreateModel(model => {
 });
 
 monaco.languages.registerCompletionItemProvider("shell", {
-    triggerCharacters: [" ", "/"],
+    triggerCharacters: [" ", "/", "$", "-"],
     provideCompletionItems: async function (model, position): Promise<monaco.languages.CompletionList> {
         model.getValue();
         const sessionID: SessionID = <SessionID>Number.parseInt(model.uri.authority);

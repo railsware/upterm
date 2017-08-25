@@ -68,7 +68,7 @@ export const directoriesSuggestionsProvider = filesSuggestionsProvider(info => i
 export const environmentVariableSuggestions = provide(async context => {
     if (context.argument.value.startsWith("$")) {
         return context.environment.map((key, value) =>
-            ({label: "$" + key, description: value}),
+            ({label: "$" + key, detail: value}),
         );
     } else {
         return [];
