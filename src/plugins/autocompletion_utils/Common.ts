@@ -78,7 +78,11 @@ export const unique = (provider: AutocompletionProvider) => provide(async contex
 
 const filesSuggestions = (filter: (info: FileInfo) => boolean) => async (tokenValue: string, directory: string): Promise<Suggestion[]> => {
     const parentDirectory = userFriendlyPath(directory.replace(/\/$/, "").split(Path.sep).slice(0, -1).join(Path.sep));
-    const suggestions = [{label: "../", detail: parentDirectory}];
+    const suggestions: Suggestion[] = [];
+
+    if (_.last(tokenValue.split(Path.sep))!.startsWith(".")) {
+        suggestions.push({label: "../", detail: parentDirectory});
+    }
 
     const tokenDirectory = directoryName(tokenValue);
     const basePath = tokenValue.slice(tokenDirectory.length);

@@ -121,7 +121,7 @@ monaco.editor.onDidCreateModel(model => {
 });
 
 monaco.languages.registerCompletionItemProvider("shell", {
-    triggerCharacters: [" ", "/", "$", "-"],
+    triggerCharacters: [" ", "/", "$", "-", "."],
     provideCompletionItems: async function (model, position): Promise<monaco.languages.CompletionList> {
         model.getValue();
         const sessionID: SessionID = <SessionID>Number.parseInt(model.uri.authority);
