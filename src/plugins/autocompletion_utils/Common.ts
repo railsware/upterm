@@ -1,4 +1,4 @@
-import {io, resolveDirectory, directoryName, escapeFilePath} from "../../utils/Common";
+import {io, resolveDirectory, directoryName, escapeFilePath, userFriendlyPath} from "../../utils/Common";
 import {
     FileInfo, AutocompletionContext, AutocompletionProvider,
 } from "../../Interfaces";
@@ -20,20 +20,9 @@ export const unique = (provider: AutocompletionProvider) => provide(async contex
     return suggestions.filter(suggestion => !context.argument.command.hasArgument(suggestion.label, context.argument));
 });
 
-const filesSuggestions = (filter: (info: FileInfo) => boolean) => async(tokenValue: string, directory: string): Promise<Suggestion[]> => {
-    /**
-     * Parent folders.
-     */
-    if (tokenValue.endsWith("..")) {
-        const pwdParts = directory.replace(/\/$/, "").split(Path.sep);
-
-        return _.range(1, pwdParts.length).map(numberOfParts => {
-            const value = `..${Path.sep}`.repeat(numberOfParts);
-            const description = pwdParts.slice(0, -numberOfParts).join(Path.sep) || Path.sep;
-
-            return {label: value, detail: description};
-        });
-    }
+const filesSuggestions = (filter: (info: FileInfo) => boolean) => async (tokenValue: string, directory: string): Promise<Suggestion[]> => {
+    const parentDirectory = userFriendlyPath(directory.replace(/\/$/, "").split(Path.sep).slice(0, -1).join(Path.sep));
+    const suggestions = [{label: "../", detail: parentDirectory}];
 
     const tokenDirectory = directoryName(tokenValue);
     const basePath = tokenValue.slice(tokenDirectory.length);
@@ -51,7 +40,7 @@ const filesSuggestions = (filter: (info: FileInfo) => boolean) => async(tokenVal
             } else {
                 return {label: escapedName};
             }
-        });
+        }).concat(suggestions);
 };
 
 const filesSuggestionsProvider =
