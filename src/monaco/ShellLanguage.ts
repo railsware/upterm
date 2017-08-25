@@ -6,7 +6,7 @@ import {CompleteCommand} from "../shell/Parser";
 import {io} from "../utils/Common";
 
 monaco.languages.setMonarchTokensProvider("shell", {
-    word: /[a-zA-Z0-9\u0080-\uFFFF+~!@#$%^&*_=,.:/?\\-]+/,
+    word: /[a-zA-Z0-9\u0080-\uFFFF+~!@#$%^&*_,.:/?\\-]+/,
     escapes: /\\(?:[btnfr\\"']|[0-7][0-7]?|[0-3][0-7]{2})/,
     defaultToken: "invalid",
     tokenizer: {
@@ -14,6 +14,10 @@ monaco.languages.setMonarchTokensProvider("shell", {
             {
                 regex: /\s+/,
                 action: {token: "spaces"},
+            },
+            {
+                regex: /@word=/,
+                action: {token: "variable-assignment-lhs", next: "@variableValue"},
             },
             {
                 regex: /@word/,
@@ -51,11 +55,7 @@ monaco.languages.setMonarchTokensProvider("shell", {
                 regex: />/,
                 action: {token: "output-redirection-symbol", next: "@redirect"},
             },
-            // strings: recover on non-terminated strings
-            [/"([^"\\]|\\.)*$/, "string.invalid"],  // non-teminated string
-            [/'([^'\\]|\\.)*$/, "string.invalid"],  // non-teminated string
-            [/"/, "string", '@string."'],
-            [/'/, "string", "@string.'"],
+            { include: "@allowStringLiterals" },
         ],
         string: [
             [/[^\\"']+/, "string"],
@@ -68,7 +68,6 @@ monaco.languages.setMonarchTokensProvider("shell", {
                 },
             }],
         ],
-
         redirect: [
             {
                 regex: /\s+/,
@@ -78,6 +77,20 @@ monaco.languages.setMonarchTokensProvider("shell", {
                 regex: /@word/,
                 action: {token: "redirect-path", next: "@pop"},
             },
+        ],
+        variableValue: [
+            {
+                regex: /@word/,
+                action: {token: "variable-assignment-rhs", next: "@pop"},
+            },
+            { include: "@allowStringLiterals" },
+        ],
+        allowStringLiterals: [
+            // strings: recover on non-terminated strings
+            [/"([^"\\]|\\.)*$/, "string.invalid"],  // non-teminated string
+            [/'([^'\\]|\\.)*$/, "string.invalid"],  // non-teminated string
+            [/"/, "string", '@string."'],
+            [/'/, "string", "@string.'"],
         ],
 
     },
