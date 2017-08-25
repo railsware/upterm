@@ -126,30 +126,45 @@ monaco.editor.onDidCreateModel(model => {
         monaco.editor.setModelMarkers(model, "upterm", []);
 
         const value = model.getValue();
+
         if (value.length === 0) {
             return;
         }
-        const tokens = scan(value);
-        if (tokens.length < 2) {
-            return;
-        }
-        const commandName = tokens[0].value;
 
         const sessionID: SessionID = <SessionID>Number.parseInt(model.uri.authority);
         const session = services.sessions.get(sessionID);
-
         const executables = await io.executablesInPaths(session.environment.path);
 
-        if (!executables.includes(commandName) && !session.aliases.has(commandName)) {
-            monaco.editor.setModelMarkers(model, "upterm", [{
-                severity: monaco.Severity.Error,
-                message: `Executable ${commandName} doesn't exist in $PATH.`,
-                startLineNumber: 1,
-                startColumn: 1,
-                endLineNumber: 1,
-                endColumn: commandName.length + 1,
-            }]);
-        }
+        monaco.editor.tokenize(value, "shell").forEach((lineTokens, lineIndex) => {
+            lineTokens.forEach((token, tokenIndex) => {
+                if (token.type !== "command-name.shell") {
+                    return;
+                }
+
+                const nextToken = lineTokens[tokenIndex + 1];
+
+                // Possibly still writing command name.
+                if (!nextToken) {
+                    return;
+                }
+
+                const tokenRange = {
+                    startLineNumber: lineIndex + 1,
+                    endLineNumber: lineIndex + 1,
+                    startColumn: token.offset + 1,
+                    endColumn: nextToken ? (nextToken.offset + 1) : Infinity,
+                };
+                const commandName = model.getValueInRange(tokenRange);
+
+                if (!executables.includes(commandName) && !session.aliases.has(commandName)) {
+                    monaco.editor.setModelMarkers(model, "upterm", [{
+                        severity: monaco.Severity.Error,
+                        message: `Executable ${commandName} doesn't exist in $PATH.`,
+                        ...tokenRange,
+                    }]);
+                }
+            });
+        });
     });
 });
 
