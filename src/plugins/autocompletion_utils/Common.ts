@@ -49,7 +49,7 @@ const filesSuggestions = (filter: (info: FileInfo) => boolean) => async(tokenVal
             if (info.stat.isDirectory()) {
                 return {label: escapedName + "/"};
             } else {
-                return {label: tokenDirectory};
+                return {label: escapedName};
             }
         });
 };
