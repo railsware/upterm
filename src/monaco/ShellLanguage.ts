@@ -81,7 +81,7 @@ monaco.languages.setLanguageConfiguration("shell", {
         ["[", "]"],
         ["{", "}"],
     ],
-    wordPattern: /(\d*\.\d\w*\$)|([^\`\~\!\@\#\%\^\&\*\(\)\=\+\[\{\]\}\\\|\;\:\'\"\,\.\<\>\/\?\s]+)/g,
+    wordPattern: /(\d*\.\d\w*\$)|([^\`\~\!\#\%\^\&\*\(\)\=\+\[\{\]\}\\\|\;\:\'\"\,\<\>\/\?\s]+)/g,
 });
 
 monaco.editor.onDidCreateModel(model => {
