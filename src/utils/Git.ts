@@ -183,24 +183,20 @@ export async function branches({
     const promiseHeadsTags = linedOutputOf(
         "git",
         ["for-each-ref", "refs/heads ", tags ? "refs/tags " : "",
-        "--format='%(HEAD)%(refname:strip=2)'", "|",
-        "sed", "'s/^.{1}//'"],
+        "--format='%(refname:strip=2)'"],
         directory,
     );
     const promiseRemotes = linedOutputOf(
         "git",
         ["for-each-ref", "refs/remotes",
-        "--format='%(HEAD)%(refname:strip=3)'", "|",
-        "sed", "'s/^.{1}//'"],
+        "--format='%(refname:strip=3)'"],
         directory,
     );
     let promiseBranches = [promiseHeadsTags];
     if (remotes)
         promiseBranches.push(promiseRemotes);
-    // Wait until the two concurrent promise requests resolve before continuing.
     const allBranches = _.flatten(await Promise.all(promiseBranches));
-    return allBranches.map(b => {
-        const branch = b.trim();
+    return allBranches.map(branch => {
         return new Branch(branch, branch === currentBranch);
     });
 }
