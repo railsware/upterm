@@ -73,12 +73,27 @@ monaco.languages.setMonarchTokensProvider("shell", {
                 regex: /@word/,
                 action: {token: "variable-value", next: "@pop"},
             },
-            { include: "@allowStringLiterals" },
+            {include: "@checkInvalidStringLiteral"},
+            {
+                regex: /"/,
+                action: {token: "string", switchTo: "@doubleQuotedString"},
+            },
+            {
+                regex: /'/,
+                action: {token: "string", switchTo: "@singleQuotedString"},
+            },
+            {
+                regex: /.*/,
+                action: {token: "invalid"},
+            },
         ],
-        allowStringLiterals: [
+        checkInvalidStringLiteral: [
             // strings: recover on non-terminated strings
             [/"([^"\\]|\\.)*$/, "string.invalid"],  // non-teminated string
             [/'([^'\\]|\\.)*$/, "string.invalid"],  // non-teminated string
+        ],
+        allowStringLiterals: [
+            {include: "@checkInvalidStringLiteral"},
             [/"/, "string", "@doubleQuotedString"],
             [/'/, "string", "@singleQuotedString"],
         ],
