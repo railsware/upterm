@@ -199,6 +199,14 @@ const pushOptions = combine([
     longFlag("force-with-lease"),
 ]);
 
+const resetOptions = combine([
+    "soft",
+    "mixed",
+    "hard",
+    "merge",
+    "keep",
+].map(longFlag));
+
 const statusOptions = combine([
     longFlag("short"),
 ]);
@@ -455,7 +463,7 @@ const commandsData: SubcommandConfig[] = [
     {
         name: "reset",
         detail: "Reset current HEAD to the specified state.",
-        provider: emptyProvider,
+        provider: resetOptions,
     },
     {
         name: "revert",
