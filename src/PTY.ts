@@ -69,7 +69,7 @@ export function executeCommand(
     return new Promise((resolve, reject) => {
         const options = {
             ...execOptions,
-            env: _.extend({PWD: directory}, process.env),
+            env: _.extend({PWD: directory, SHLVL: 1}, process.env),
             cwd: directory,
             shell: loginShell.commandExecutorPath,
         };
