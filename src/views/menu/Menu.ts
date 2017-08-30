@@ -13,6 +13,7 @@ export function buildMenuTemplate(
         {
             label: "Upterm",
             submenu: [
+                {role: "about"},
                 {
                     label: "Quit",
                     accelerator: getAcceleratorForAction(KeyboardAction.uptermQuit),
