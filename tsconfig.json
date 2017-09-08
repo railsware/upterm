@@ -13,8 +13,6 @@
     "strictNullChecks": true,
     "noImplicitThis": true,
     "inlineSourceMap": true,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
     "lib": ["es2015", "es2017", "dom"]
   },
   "exclude": [
