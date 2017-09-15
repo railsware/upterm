@@ -1,9 +1,8 @@
 import * as Git from "../../utils/Git";
 import {
     longAndShortFlag, longFlag, mapSuggestions, unique,
-    emptyProvider, SubcommandConfig, commandWithSubcommands, provide,
+    emptyProvider, SubcommandConfig, commandWithSubcommands, provide, Suggestion, staticSuggestionsProvider,
 } from "../autocompletion_utils/Common";
-import * as Common from "../autocompletion_utils/Common";
 import {combine} from "../autocompletion_utils/Combine";
 import {PluginManager} from "../../PluginManager";
 import {linedOutputOf, executeCommand} from "../../PTY";
@@ -30,138 +29,160 @@ function canonizeBranchAlias(alias: string) {
     return alias;
 }
 
-interface OptionData {
-    longFlag: string;
-    detail: string;
-    shortFlag?: string;
-    noShortFlag?: boolean;
-    kind?: monaco.languages.CompletionItemKind;
-    insertText?: string | monaco.languages.SnippetString;
-}
-
-const commitOptionsData: OptionData[] = [
+const commitOptions: Suggestion[] = [
     {
-        longFlag: "message",
+        label: "--message",
         detail: descriptions.git.commit.message,
         kind: monaco.languages.CompletionItemKind.Snippet,
         insertText: {value: "--message \"${0:Commit message}\""},
     },
     {
-        longFlag: "all",
+        label: "-m",
+        detail: descriptions.git.commit.message,
+        kind: monaco.languages.CompletionItemKind.Snippet,
+        insertText: {value: "--message \"${0:Commit message}\""},
+    },
+    {
+        label: "--all",
         detail: descriptions.git.commit.all,
     },
     {
-        longFlag: "patch",
+        label: "-a",
+        detail: descriptions.git.commit.all,
+    },
+    {
+        label: "--patch",
         detail: descriptions.git.commit.patch,
     },
     {
-        longFlag: "null",
-        detail: descriptions.git.commit.NULL,
-        shortFlag: "z",
+        label: "-p",
+        detail: descriptions.git.commit.patch,
     },
     {
-        longFlag: "template",
+        label: "--null",
+        detail: descriptions.git.commit.NULL,
+    },
+    {
+        label: "-z",
+        detail: descriptions.git.commit.NULL,
+    },
+    {
+        label: "--template",
         detail: descriptions.git.commit.template,
     },
     {
-        longFlag: "signoff",
+        label: "-t",
+        detail: descriptions.git.commit.template,
+    },
+    {
+        label: "--signoff",
         detail: descriptions.git.commit.signoff,
     },
     {
-        longFlag: "no-verify",
+        label: "-s",
+        detail: descriptions.git.commit.signoff,
+    },
+    {
+        label: "--no-verify",
         detail: descriptions.git.commit.noVerify,
     },
     {
-        longFlag: "edit",
+        label: "-n",
+        detail: descriptions.git.commit.noVerify,
+    },
+    {
+        label: "--edit",
         detail: descriptions.git.commit.edit,
     },
     {
-        longFlag: "include",
+        label: "-e",
+        detail: descriptions.git.commit.edit,
+    },
+    {
+        label: "--include",
         detail: descriptions.git.commit.include,
     },
     {
-        longFlag: "only",
+        label: "-i",
+        detail: descriptions.git.commit.include,
+    },
+    {
+        label: "--only",
         detail: descriptions.git.commit.only,
     },
     {
-        longFlag: "verbose",
+        label: "-o",
+        detail: descriptions.git.commit.only,
+    },
+    {
+        label: "--verbose",
         detail: descriptions.git.commit.verbose,
     },
     {
-        longFlag: "quiet",
+        label: "-v",
+        detail: descriptions.git.commit.verbose,
+    },
+    {
+        label: "--quiet",
         detail: descriptions.git.commit.quiet,
     },
     {
-        longFlag: "reset-author",
+        label: "-q",
+        detail: descriptions.git.commit.quiet,
+    },
+    {
+        label: "--reset-author",
         detail: descriptions.git.commit.resetAuthor,
-        noShortFlag: true,
     },
     {
-        longFlag: "short",
+        label: "--short",
         detail: descriptions.git.commit.short,
-        noShortFlag: true,
     },
     {
-        longFlag: "branch",
+        label: "--branch",
         detail: descriptions.git.commit.branch,
-        noShortFlag: true,
     },
     {
-        longFlag: "porcelain",
+        label: "--porcelain",
         detail: descriptions.git.commit.porcelain,
-        noShortFlag: true,
     },
     {
-        longFlag: "long",
+        label: "--long",
         detail: descriptions.git.commit.long,
-        noShortFlag: true,
     },
     {
-        longFlag: "allow-empty",
+        label: "--allow-empty",
         detail: descriptions.git.commit.allowEmpty,
-        noShortFlag: true,
     },
     {
-        longFlag: "allow-empty-message",
+        label: "--allow-empty-message",
         detail: descriptions.git.commit.allowEmptyMessage,
-        noShortFlag: true,
     },
     {
-        longFlag: "no-edit",
+        label: "--no-edit",
         detail: descriptions.git.commit.noEdit,
-        noShortFlag: true,
     },
     {
-        longFlag: "no-post-rewrite",
+        label: "--no-post-rewrite",
         detail: descriptions.git.commit.noPostRewrite,
-        noShortFlag: true,
     },
     {
-        longFlag: "dry-run",
+        label: "--dry-run",
         detail: descriptions.git.commit.dryRun,
-        noShortFlag: true,
     },
     {
-        longFlag: "status",
+        label: "--status",
         detail: descriptions.git.commit.status,
-        noShortFlag: true,
     },
     {
-        longFlag: "no-status",
+        label: "--no-status",
         detail: descriptions.git.commit.noStatus,
-        noShortFlag: true,
     },
     {
-        longFlag: "no-gpg-sign",
+        label: "--no-gpg-sign",
         detail: descriptions.git.commit.noGpgSign,
-        noShortFlag: true,
     },
 ];
-
-const commitOptions = combine(commitOptionsData.map(({ longFlag, shortFlag, noShortFlag, detail, kind, insertText }) => {
-    const provider = noShortFlag ? Common.longFlag(longFlag) : longAndShortFlag(longFlag, shortFlag);
-    return mapSuggestions(provider, suggestion => ({...suggestion, detail, kind, insertText}));
-}));
 
 const pushOptions = combine([
     longFlag("force-with-lease"),
@@ -334,7 +355,7 @@ const commandsData: SubcommandConfig[] = [
     {
         name: "commit",
         detail: "Record changes to the repository.",
-        provider: commitOptions,
+        provider: staticSuggestionsProvider(commitOptions),
     },
     {
         name: "config",

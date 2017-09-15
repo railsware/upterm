@@ -128,6 +128,10 @@ export function contextIndependent(provider: () => Promise<Suggestion[]>) {
     return _.memoize(provider, () => "");
 }
 
+export function staticSuggestionsProvider(suggestions: Suggestion[]) {
+    return contextIndependent(async () => suggestions);
+}
+
 export const emptyProvider = provide(async() => []);
 
 export const longAndShortFlag = (name: string, shortName = name[0]) => provide(async context => {

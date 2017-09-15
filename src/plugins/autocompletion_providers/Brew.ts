@@ -1,6 +1,6 @@
 import {
     longFlag, contextIndependent,
-    emptyProvider, shortFlag, provide, Suggestion,
+    emptyProvider, shortFlag, provide, Suggestion, staticSuggestionsProvider,
 } from "../autocompletion_utils/Common";
 import {combine} from "../autocompletion_utils/Combine";
 import {PluginManager} from "../../PluginManager";
@@ -304,16 +304,10 @@ const brewCommands: BrewCommandData[] = [
     },
 ];
 
-const fromData = (commandsData: BrewCommandData[]) =>
-    contextIndependent(async() => {
-        const suggestions = commandsData
-            .map(command => ({
-                label: command.name,
-                detail: command.description || "",
-            }));
-
-        return sortBy(suggestions, suggestion => !suggestion.detail);
-    });
+const fromData = (commandsData: BrewCommandData[]) => {
+    const suggestions = sortBy(commandsData.map(command => ({ label: command.name, detail: command.description || "", })), suggestion => !suggestion.detail);
+    return staticSuggestionsProvider(suggestions);
+};
 
 let getProvider = (context: AutocompletionContext,
                    commandData: BrewCommandData[],
