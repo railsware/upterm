@@ -49,7 +49,6 @@ export class PromptComponent extends React.Component<Props, State> {
             quickSuggestions: true,
             quickSuggestionsDelay: 0,
             parameterHints: true,
-            fontLigatures: true,
             iconsInSuggestions: false,
             wordBasedSuggestions: false,
         });
