@@ -1,6 +1,6 @@
 import {Prettyfier, EnvironmentObserverPlugin, AutocompletionProvider} from "./Interfaces";
 import * as Path from "path";
-import {io} from "./utils/Common";
+import {commandExists, io} from "./utils/Common";
 import {environmentVariableSuggestions, anyFilesSuggestionsProvider} from "../src/plugins/autocompletion_utils/Common";
 import {combine} from "../src/plugins/autocompletion_utils/Combine";
 
@@ -29,14 +29,17 @@ export class PluginManager {
     }
 
     static registerAutocompletionProvider(commandName: string, provider: AutocompletionProvider): void {
-        this._autocompletionProviders[commandName] = provider;
+        commandExists(commandName)
+        .then(exists => {
+            if (exists)
+                this._autocompletionProviders[commandName] = provider;
+        });
     }
 
     static autocompletionProviderFor(commandName: string): AutocompletionProvider {
         return this._autocompletionProviders[commandName] || defaultAutocompletionProvider;
     }
 }
-
 
 export async function loadAllPlugins(): Promise<void> {
     const pluginsDirectory = Path.join(__dirname, "plugins");

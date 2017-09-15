@@ -6,6 +6,7 @@ import * as _ from "lodash";
 import * as fs from "fs-extra";
 import {KeyCode} from "./../Enums";
 import {EnvironmentPath} from "../shell/Environment";
+import {executeCommand} from "../PTY";
 
 interface FSExtraWalkObject {
     path: string;
@@ -89,6 +90,24 @@ export const io = {
         return _.uniq(_.flatten(allFiles));
     },
     realPath: fs.realpath,
+};
+
+export const commandExists = async (commandName: string): Promise<boolean> => {
+    let result = false;
+    try {
+        const output = await executeCommand(
+            "command",
+            ['"-v"', commandName],
+            ".",
+        );
+        if (output)
+            result = true;
+    } catch (error) {
+        if (!error.message.startsWith("Command failed: command"))
+            throw error;
+    } finally {
+        return result;
+    }
 };
 
 /**
