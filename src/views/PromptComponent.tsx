@@ -82,6 +82,30 @@ export class PromptComponent extends React.Component<Props, State> {
             () => this.setNextHistoryItem(),
             "!suggestWidgetVisible",
         );
+        this.addShortcut(
+            monaco.KeyMod.WinCtrl | monaco.KeyCode.KEY_B,
+            "cursorLeft",
+        );
+        this.addShortcut(
+            monaco.KeyMod.Alt | monaco.KeyCode.KEY_B,
+            "cursorWordStartLeft",
+        );
+        this.addShortcut(
+            monaco.KeyMod.WinCtrl | monaco.KeyCode.KEY_F,
+            "cursorRight",
+        );
+        this.addShortcut(
+            monaco.KeyMod.Alt | monaco.KeyCode.KEY_F,
+            "cursorWordEndRight",
+        );
+        this.addShortcut(
+            monaco.KeyMod.WinCtrl | monaco.KeyCode.KEY_W,
+            "deleteWordLeft",
+        );
+        this.addShortcut(
+            monaco.KeyMod.Alt | monaco.KeyCode.KEY_D,
+            "deleteWordRight",
+        );
 
         this.focus();
     }
@@ -216,5 +240,13 @@ export class PromptComponent extends React.Component<Props, State> {
 
     private triggerSuggest() {
         this.editor.trigger(this.editor.getValue(), "editor.action.triggerSuggest", {});
+    }
+
+    private addShortcut(keybinding: number, handlerId: string) {
+        this.editor.addCommand(
+            keybinding,
+            () => this.editor.trigger("", handlerId, {}),
+            "",
+        );
     }
 }
