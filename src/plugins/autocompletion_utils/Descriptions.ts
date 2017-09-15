@@ -99,5 +99,9 @@ export const descriptions = {
             column:
                 "Display untracked files in columns. See configuration variable column.status for option syntax.--column and --no-column without options are equivalent to always and never respectively.",
         },
+        push: {
+            all: "Push all branches (i.e. refs under refs/heads/); cannot be used with other <refspec>.",
+            prune: "Remove remote branches that don't have a local counterpart.",
+        }
     },
 };

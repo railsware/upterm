@@ -279,8 +279,18 @@ const commitOptions: Suggestion[] = [
 
 const pushOptions: Suggestion[] = [
     {
+        label: "--all",
+        detail: descriptions.git.push.all,
+    },
+    {
+        label: "--prune",
+        detail: descriptions.git.push.prune,
+    },
+    {
+        label: "--force",
+    },
+    {
         label: "--force-with-lease",
-        detail: descriptions.git.commit.noGpgSign,
     },
 ];
 
@@ -299,6 +309,39 @@ const resetOptions: Suggestion[] = [
     },
     {
         label: "--keep",
+    },
+];
+
+const stashOptions: Suggestion[] = [
+    {
+        label: "list",
+    },
+    {
+        label: "show",
+    },
+    {
+        label: "drop",
+    },
+    {
+        label: "pop",
+    },
+    {
+        label: "apply",
+    },
+    {
+        label: "save",
+    },
+    {
+        label: "push",
+    },
+    {
+        label: "clear",
+    },
+    {
+        label: "create",
+    },
+    {
+        label: "store",
     },
 ];
 
@@ -715,6 +758,7 @@ const commandsData: SubcommandConfig[] = [
     {
         name: "stash",
         detail: descriptions.git.subcommands.stash,
+        provider: staticSuggestionsProvider(stashOptions),
     },
     {
         name: "status",
