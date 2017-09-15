@@ -18,7 +18,7 @@ interface Props {
 }
 
 export class SessionComponent extends React.Component<Props, {}> {
-    RENDER_JOBS_COUNT = 25;
+    RENDER_JOBS_COUNT = 10;
     promptComponent: PromptComponent;
 
     constructor(props: Props) {
