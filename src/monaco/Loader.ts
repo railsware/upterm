@@ -21,7 +21,7 @@ export function requireMonaco(callback: () => void) {
         }
 
         amdRequire.config({
-            baseUrl: uriFromPath(path.join(__dirname, "../../../node_modules/monaco-editor/min")),
+            baseUrl: uriFromPath(path.join(__dirname, "../../../node_modules/monaco-editor/dev")),
         });
         // workaround monaco-css not understanding the environment
         (self as any).module = undefined;

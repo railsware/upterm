@@ -34,7 +34,7 @@
     "klaw": "2.1.0",
     "lodash": "4.17.4",
     "mode-to-permissions": "0.0.2",
-    "monaco-editor": "0.10.0",
+    "monaco-editor": "vlad-shatskyi/monaco-editor",
     "node-ansiparser": "2.2.0",
     "node-pty": "0.7.0",
     "react": "15.6.1",
