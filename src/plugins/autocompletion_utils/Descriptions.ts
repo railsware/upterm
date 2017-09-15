@@ -86,5 +86,18 @@ export const descriptions = {
             noStatus: "Do not include the output of git-status(1) in the commit message template when using an editor to prepare the default commit message.",
             noGpgSign: "Countermand commit.gpgSign configuration variable that is set to force each and every commit to be signed.",
         },
+        status: {
+            short: "Give the output in the short-format.",
+            branch: "Show the branch and tracking info even in short-format.",
+            porcelain: "Give the output in an easy-to-parse format for scripts. This is similar to the short output, but will remain stable across Git versions and regardless of user configuration. See below for details. The version parameter is used to specify the format version. This is optional and defaults to the original version v1 format.",
+            long: "Give the output in the long-format. This is the default.",
+            verbose: "In addition to the names of files that have been changed, also show the textual changes that are staged to be committed (i.e., like the output of git diff --cached). If -v is specified twice, then also show the changes in the working tree that have not yet been staged (i.e., like the output of git diff).",
+            untrackedFiles: "Show untracked files. The mode parameter is used to specify the handling of untracked files. It is optional: it defaults to all, and if specified, it must be stuck to the option (e.g.  -uno, but not -u no). The possible options are: o   no - Show no untracked files. o   normal - Shows untracked files and directories. o   all - Also shows individual files in untracked directories. When -u option is not used, untracked files and directories are shown (i.e. the same as specifying normal), to help you avoid forgetting to add newly created files. Because it takes extra work to find untracked files in the filesystem, this mode may take some time in a large working tree. Consider enabling untracked cache and split index if supported (see git update-index --untracked-cache and git update-index --split-index), Otherwise you can use no to have git status return more quickly without showing untracked files. The default can be changed using the status.showUntrackedFiles configuration variable documented in git-config(1).",
+            ignoreSubmodules: 'Ignore changes to submodules when looking for changes. <when> can be either "none", "untracked", "dirty" or "all", which is the default. Using "none" will consider the submodule modified when it either contains untracked or modified files or its HEAD differs from the commit recorded in the superproject and can be used to override any settings of the ignore option in git- config(1) or gitmodules(5). When "untracked" is used submodules are not considered dirty when they only contain untracked content (but they are still scanned for modified content). Using "dirty" ignores all changes to the work tree of submodules, only changes to the commits stored in the superproject are shown (this was the behavior before 1.7.0). Using "all" hides all changes to submodules (and suppresses the output of submodule summaries when the config option status.submoduleSummary is set).',
+            ignored: "Show ignored files as well.",
+            terminateWithNull: "Terminate entries with NUL, instead of LF. This implies the --porcelain=v1 output format if no other format is given.",
+            column:
+                "Display untracked files in columns. See configuration variable column.status for option syntax.--column and --no-column without options are equivalent to always and never respectively.",
+        },
     },
 };

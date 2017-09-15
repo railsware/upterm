@@ -304,7 +304,64 @@ const resetOptions: Suggestion[] = [
 
 const statusOptions: Suggestion[] = [
     {
+        label: "-s",
+        detail: descriptions.git.status.short,
+    },
+    {
         label: "--short",
+        detail: descriptions.git.status.short,
+    },
+    {
+        label: "-b",
+        detail: descriptions.git.status.branch,
+    },
+    {
+        label: "--branch",
+        detail: descriptions.git.status.branch,
+    },
+    {
+        label: "--porcelain",
+        detail: descriptions.git.status.porcelain,
+    },
+    {
+        label: "--long",
+        detail: descriptions.git.status.long,
+    },
+    {
+        label: "-v",
+        detail: descriptions.git.status.verbose,
+    },
+    {
+        label: "--verbose",
+        detail: descriptions.git.status.verbose,
+    },
+    {
+        label: "-u",
+        detail: descriptions.git.status.untrackedFiles,
+    },
+    {
+        label: "--untracked-files",
+        detail: descriptions.git.status.untrackedFiles,
+    },
+    {
+        label: "--ignore-submodules",
+        detail: descriptions.git.status.ignoreSubmodules,
+    },
+    {
+        label: "--ignored",
+        detail: descriptions.git.status.ignored,
+    },
+    {
+        label: "-z",
+        detail: descriptions.git.status.terminateWithNull,
+    },
+    {
+        label: "--column",
+        detail: descriptions.git.status.column,
+    },
+    {
+        label: "--no-column",
+        detail: descriptions.git.status.column,
     },
 ];
 
