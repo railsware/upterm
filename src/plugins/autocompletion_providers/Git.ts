@@ -18,16 +18,107 @@ import {descriptions} from "../autocompletion_utils/Descriptions";
 
 const addOptions: Suggestion[] = [
     {
-        label: "--patch",
-        detail: descriptions.git.add.patch,
-    },
-    {
         label: "-p",
         detail: descriptions.git.add.patch,
     },
     {
+        label: "--patch",
+        detail: descriptions.git.add.patch,
+    },
+    {
+        label: "-i",
+        detail: descriptions.git.add.interactive,
+    },
+    {
         label: "--interactive",
         detail: descriptions.git.add.interactive,
+    },
+    {
+        label: "-n",
+        detail: descriptions.git.add.dryRun,
+    },
+    {
+        label: "--dry-run",
+        detail: descriptions.git.add.dryRun,
+    },
+    {
+        label: "-v",
+        detail: descriptions.git.add.verbose,
+    },
+    {
+        label: "--verbose",
+    },
+    {
+        label: "-f",
+        detail: descriptions.git.add.force,
+    },
+    {
+        label: "--force",
+        detail: descriptions.git.add.force,
+    },
+    {
+        label: "-e",
+        detail: descriptions.git.add.edit,
+    },
+    {
+        label: "--edit",
+        detail: descriptions.git.add.edit,
+    },
+    {
+        label: "-u",
+        detail: descriptions.git.add.update,
+    },
+    {
+        label: "--update",
+        detail: descriptions.git.add.update,
+    },
+    {
+        label: "-A",
+        detail: descriptions.git.add.noIgnoreRemoval,
+    },
+    {
+        label: "--all",
+        detail: descriptions.git.add.noIgnoreRemoval,
+    },
+    {
+        label: "--no-ignore-removal",
+        detail: descriptions.git.add.noIgnoreRemoval,
+    },
+    {
+        label: "--no-all",
+        detail: descriptions.git.add.ignoreRemoval,
+    },
+    {
+        label: "--ignore-removal",
+        detail: descriptions.git.add.ignoreRemoval,
+    },
+    {
+        label: "-N",
+        detail: descriptions.git.add.intentToAdd,
+    },
+    {
+        label: "--intent-to-add",
+        detail: descriptions.git.add.intentToAdd,
+    },
+    {
+        label: "--refresh",
+        detail: descriptions.git.add.refresh,
+    },
+    {
+        label: "--ignore-errors",
+        detail: descriptions.git.add.ignoreErrors,
+    },
+    {
+        label: "--ignore-missing",
+        detail: descriptions.git.add.ignoreMissing,
+    },
+    {
+        label: "--chmod=",
+        detail: descriptions.git.add.chmod,
+    },
+    {
+        label: "--",
+        detail: descriptions.git.add.separator,
     },
 ];
 
