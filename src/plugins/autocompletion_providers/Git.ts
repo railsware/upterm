@@ -1,33 +1,35 @@
 import * as Git from "../../utils/Git";
 import {
-    longAndShortFlag, longFlag, mapSuggestions, unique,
-    emptyProvider, SubcommandConfig, commandWithSubcommands, provide, Suggestion, staticSuggestionsProvider,
+    commandWithSubcommands,
+    emptyProvider,
+    longFlag,
+    provide,
+    staticSuggestionsProvider,
+    SubcommandConfig,
+    Suggestion,
+    unique,
 } from "../autocompletion_utils/Common";
 import {combine} from "../autocompletion_utils/Combine";
 import {PluginManager} from "../../PluginManager";
-import {linedOutputOf, executeCommand} from "../../PTY";
-import {find, sortBy, once} from "lodash";
+import {executeCommand, linedOutputOf} from "../../PTY";
+import {find, once, sortBy} from "lodash";
 import {homeDirectory} from "../../utils/Common";
 import {descriptions} from "../autocompletion_utils/Descriptions";
 
-const addOptions = combine([
-    mapSuggestions(longAndShortFlag("patch"), suggestion => ({...suggestion, detail: descriptions.git.add.patch})),
-    mapSuggestions(longFlag("interactive"), suggestion => ({...suggestion, detail: descriptions.git.add.interactive})),
-]);
-
-function doesLookLikeBranchAlias(word: string) {
-    if (!word) return false;
-    return word.startsWith("-") || word.includes("@") || word.includes("HEAD") || /\d/.test(word);
-}
-
-function canonizeBranchAlias(alias: string) {
-    if (alias[0] === "-") {
-        const steps = parseInt(alias.slice(1), 10) || 1;
-        alias = `@{-${steps}}`;
-    }
-
-    return alias;
-}
+const addOptions: Suggestion[] = [
+    {
+        label: "--patch",
+        detail: descriptions.git.add.patch,
+    },
+    {
+        label: "-p",
+        detail: descriptions.git.add.patch,
+    },
+    {
+        label: "--interactive",
+        detail: descriptions.git.add.interactive,
+    },
+];
 
 const commitOptions: Suggestion[] = [
     {
@@ -40,7 +42,7 @@ const commitOptions: Suggestion[] = [
         label: "-m",
         detail: descriptions.git.commit.message,
         kind: monaco.languages.CompletionItemKind.Snippet,
-        insertText: {value: "--message \"${0:Commit message}\""},
+        insertText: {value: "-m \"${0:Commit message}\""},
     },
     {
         label: "--all",
@@ -184,68 +186,179 @@ const commitOptions: Suggestion[] = [
     },
 ];
 
-const pushOptions = combine([
-    longFlag("force-with-lease"),
-]);
+const pushOptions: Suggestion[] = [
+    {
+        label: "--force-with-lease",
+        detail: descriptions.git.commit.noGpgSign,
+    },
+];
 
-const resetOptions = combine([
-    "soft",
-    "mixed",
-    "hard",
-    "merge",
-    "keep",
-].map(longFlag));
+const resetOptions: Suggestion[] = [
+    {
+        label: "--soft",
+    },
+    {
+        label: "--mixed",
+    },
+    {
+        label: "--hard",
+    },
+    {
+        label: "--merge",
+    },
+    {
+        label: "--keep",
+    },
+];
 
-const statusOptions = combine([
-    longFlag("short"),
-]);
+const statusOptions: Suggestion[] = [
+    {
+        label: "--short",
+    },
+];
 
-const configOptions = combine([
-    longFlag("global"),
-    longFlag("system"),
-    longAndShortFlag("list"),
-    longAndShortFlag("edit"),
-]);
+const configOptions: Suggestion[] = [
+    {
+        label: "--global",
+    },
+    {
+        label: "--system",
+    },
+    {
+        label: "--list",
+    },
+    {
+        label: "-l",
+    },
+    {
+        label: "--edit",
+    },
+    {
+        label: "-e",
+    },
+];
 
-const fetchOptions = combine([
-    "quiet",
-    "verbose",
-    "append",
-    "upload-pack",
-    "force",
-    "keep",
-    "depth=",
-    "tags",
-    "no-tags",
-    "all",
-    "prune",
-    "dry-run",
-    "recurse-submodules=",
-].map(longFlag));
+const fetchOptions: Suggestion[] = [
+    {
+        label: "--quiet",
+    },
+    {
+        label: "--verbose",
+    },
+    {
+        label: "--append",
+    },
+    {
+        label: "--upload-pack",
+    },
+    {
+        label: "--force",
+    },
+    {
+        label: "--keep",
+    },
+    {
+        label: "--depth=",
+    },
+    {
+        label: "--tags",
+    },
+    {
+        label: "--no-tags",
+    },
+    {
+        label: "--all",
+    },
+    {
+        label: "--prune",
+    },
+    {
+        label: "--dry-run",
+    },
+    {
+        label: "--recurse-submodules=",
+    },
+];
 
-const commonMergeOptions = combine([
-    "no-commit",
-    "no-stat",
-    "log",
-    "no-log",
-    "squash",
-    "strategy",
-    "commit",
-    "stat",
-    "no-squash",
-    "ff",
-    "no-ff",
-    "ff-only",
-    "edit",
-    "no-edit",
-    "verify-signatures",
-    "no-verify-signatures",
-    "gpg-sign",
-    "quiet",
-    "verbose",
-    "progress",
-    "no-progress",
-].map(longFlag));
+const commonMergeOptions: Suggestion[] = [
+    {
+        label: "--no-commit",
+    },
+    {
+        label: "--no-stat",
+    },
+    {
+        label: "--log",
+    },
+    {
+        label: "--no-log",
+    },
+    {
+        label: "--squash",
+    },
+    {
+        label: "--strategy",
+    },
+    {
+        label: "--commit",
+    },
+    {
+        label: "--stat",
+    },
+    {
+        label: "--no-squash",
+    },
+    {
+        label: "--ff",
+    },
+    {
+        label: "--no-ff",
+    },
+    {
+        label: "--ff-only",
+    },
+    {
+        label: "--edit",
+    },
+    {
+        label: "--no-edit",
+    },
+    {
+        label: "--verify-signatures",
+    },
+    {
+        label: "--no-verify-signatures",
+    },
+    {
+        label: "--gpg-sign",
+    },
+    {
+        label: "--quiet",
+    },
+    {
+        label: "--verbose",
+    },
+    {
+        label: "--progress",
+    },
+    {
+        label: "--no-progress",
+    },
+];
+
+function doesLookLikeBranchAlias(word: string) {
+    if (!word) return false;
+    return word.startsWith("-") || word.includes("@") || word.includes("HEAD") || /\d/.test(word);
+}
+
+function canonizeBranchAlias(alias: string) {
+    if (alias[0] === "-") {
+        const steps = parseInt(alias.slice(1), 10) || 1;
+        alias = `@{-${steps}}`;
+    }
+
+    return alias;
+}
 
 const remotes = provide(async context => {
     if (Git.isGitDirectory(context.environment.pwd)) {
@@ -300,7 +413,7 @@ const commandsData: SubcommandConfig[] = [
     {
         name: "add",
         detail: "Add file contents to the index.",
-        provider: combine([notStagedFiles, addOptions]),
+        provider: combine([notStagedFiles, staticSuggestionsProvider(addOptions)]),
     },
     {
         name: "am",
@@ -360,7 +473,7 @@ const commandsData: SubcommandConfig[] = [
     {
         name: "config",
         detail: "Get and set repository or global options",
-        provider: combine([configVariables, configOptions]),
+        provider: combine([configVariables, staticSuggestionsProvider(configOptions)]),
     },
     {
         name: "describe",
@@ -375,7 +488,7 @@ const commandsData: SubcommandConfig[] = [
     {
         name: "fetch",
         detail: "Download objects and refs from another repository.",
-        provider: combine([remotes, fetchOptions]),
+        provider: combine([remotes, staticSuggestionsProvider(fetchOptions)]),
     },
     {
         name: "format-patch",
@@ -413,7 +526,7 @@ const commandsData: SubcommandConfig[] = [
         provider: combine([
             branchesExceptCurrent,
             branchAlias,
-            commonMergeOptions,
+            staticSuggestionsProvider(commonMergeOptions),
             longFlag("rerere-autoupdate"),
             longFlag("no-rerere-autoupdate"),
             longFlag("abort"),
@@ -435,14 +548,14 @@ const commandsData: SubcommandConfig[] = [
         provider: combine([
             longFlag("rebase"),
             longFlag("no-rebase"),
-            commonMergeOptions,
-            fetchOptions,
+            staticSuggestionsProvider(commonMergeOptions),
+            staticSuggestionsProvider(fetchOptions),
         ]),
     },
     {
         name: "push",
         detail: "Update remote refs along with associated objects.",
-        provider: pushOptions,
+        provider: staticSuggestionsProvider(pushOptions),
     },
     {
         name: "rebase",
@@ -452,7 +565,7 @@ const commandsData: SubcommandConfig[] = [
     {
         name: "reset",
         detail: "Reset current HEAD to the specified state.",
-        provider: resetOptions,
+        provider: staticSuggestionsProvider(resetOptions),
     },
     {
         name: "revert",
@@ -482,7 +595,7 @@ const commandsData: SubcommandConfig[] = [
     {
         name: "status",
         detail: "Show the working tree status.",
-        provider: statusOptions,
+        provider: staticSuggestionsProvider(statusOptions),
     },
     {
         name: "submodule",
