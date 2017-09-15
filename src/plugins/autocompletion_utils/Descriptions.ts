@@ -105,6 +105,6 @@ export const descriptions = {
         push: {
             all: "Push all branches (i.e. refs under refs/heads/); cannot be used with other <refspec>.",
             prune: "Remove remote branches that don't have a local counterpart.",
-        }
+        },
     },
 };

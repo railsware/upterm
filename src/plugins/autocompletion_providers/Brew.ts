@@ -1,10 +1,14 @@
 import {
-    longFlag, contextIndependent,
-    emptyProvider, shortFlag, provide, Suggestion, staticSuggestionsProvider,
+    emptyProvider,
+    longFlag,
+    provide,
+    shortFlag,
+    staticSuggestionsProvider,
+    Suggestion,
 } from "../autocompletion_utils/Common";
 import {combine} from "../autocompletion_utils/Combine";
 import {PluginManager} from "../../PluginManager";
-import {AutocompletionProvider, AutocompletionContext} from "../../Interfaces";
+import {AutocompletionContext, AutocompletionProvider} from "../../Interfaces";
 import {executeCommand} from "../../PTY";
 import {concat, find, memoize, sortBy} from "lodash";
 import {homeDirectory} from "../../utils/Common";
@@ -305,7 +309,10 @@ const brewCommands: BrewCommandData[] = [
 ];
 
 const fromData = (commandsData: BrewCommandData[]) => {
-    const suggestions = sortBy(commandsData.map(command => ({ label: command.name, detail: command.description || "", })), suggestion => !suggestion.detail);
+    const suggestions = sortBy(
+        commandsData.map(command => ({label: command.name, detail: command.description || ""})),
+        suggestion => !suggestion.detail,
+    );
     return staticSuggestionsProvider(suggestions);
 };
 
