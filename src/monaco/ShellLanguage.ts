@@ -28,6 +28,7 @@ monaco.languages.setMonarchTokensProvider("shell", {
         command: [
             [/\s+/, "spaces"],
             [/@word/, "argument"],
+            [/[=[\]]/, "argument"],
             {
                 regex: /\|\|/,
                 action: {token: "or", next: "@pop"},
