@@ -33,7 +33,12 @@ The contents of these files should be as follows.
             "type": "node",
             "request": "launch",
             "name": "Electron Main",
+            // Mac OS & Linux process runtime executable
             "runtimeExecutable": "${workspaceRoot}/node_modules/.bin/electron",
+            "windows": {
+                // Windows process runtime executable
+                "runtimeExecutable": "${workspaceRoot}\\node_modules\\.bin\\electron.cmd"
+            },
             "program": "${workspaceRoot}/compiled/src/main/Main.js",
             "protocol": "inspector",
             "stopOnEntry": false,
@@ -54,7 +59,12 @@ The contents of these files should be as follows.
             "name": "Debug renderer process",
             "type": "chrome",
             "request": "launch",
+            // Mac OS & Linux process runtime executable
             "runtimeExecutable": "${workspaceRoot}/node_modules/.bin/electron",
+            "windows": {
+                // Windows process runtime executable
+                "runtimeExecutable": "${workspaceRoot}\\node_modules\\.bin\\electron.cmd"
+            },
             "runtimeArgs": [
                 "${workspaceRoot}/",
                 "--enable-logging",
@@ -67,28 +77,38 @@ The contents of these files should be as follows.
     ]
 }
 ```
-Note. On Windows the `runtimeExecutable` parameter should be changed to:
-`${workspaceRoot}/node_modules/.bin/electron.cmd`
 
 <b>b. tasks.json</b>
 ```
 {
-    "version": "0.1.0",
-    "command": "npm",
-    "isShellCommand": true,
-    "args": [],
-    "showOutput": "always",
-    "echoCommand": true,
+    "version": "2.0.0",
+    "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "new"
+    },
     "tasks": [
         {
+            // Custom prestart task i.e. npm run prestart.
             "taskName": "prestart",
-            "args": ["run", "prestart"],
-            "suppressTaskName": true
+            "command": "npm",
+            "args": [
+                "run",
+                "prestart"
+            ],
+            "type": "shell",
+            "group": "build",
+            // Specify tsc problem matcher.
+            "problemMatcher": ["$tsc-watch"]
         },
         {
-            "taskName": "compile",
-            "args": ["run", "compile"],
-            "suppressTaskName": true
+            // Default compile task from package.json i.e. npm run compile.
+            "type": "npm",
+            "script": "compile",
+            "group": "build",
+            // Specify tsc problem matcher.
+            "problemMatcher": ["$tsc-watch"]
         }
     ]
 }
@@ -102,7 +122,9 @@ To build the project in vscode open the activity search box by selecting the `‚å
 
 ![prestart task launch](images/launch_task_prestart.png "prestart task launch")
 
-Note. If the code has been modified and no updates to dependent node modules were made you can compile the project by entering `task compile` into the search box. Or from the command line run `npn run compile`.
+If the code has been modified and no updates to dependent node modules were made you can compile the project by entering `task compile` into the search box. Or from the command line run `npn run compile`.
+
+Note. The compile task is a npm script defined in `package.json` which vscode detects and displays as `npm: compile` in the search box.
 
 ## Step 4. Debug the project
 
@@ -115,4 +137,4 @@ To enter debugging mode select the <b>Debug</b> icon on the left hand side menu.
 To launch a debug session, from the top left hand side of the <b>Debug</b> window select `Debug rendered process` and press the Play button.
 Note. A breakpoint needs to be placed in the code prior to launching a debug session, to allow stepping through code.
 
-These instructions were tested on vscode version 1.12.1.
+These instructions were tested on vscode version 1.16.0.
