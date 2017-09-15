@@ -400,6 +400,18 @@
         .monaco-editor .suggest-widget .monaco-list .monaco-list-row {
             padding-left: 5px;
         }
+
+        /* Display detail for all suggestions, not only for the focused one. */
+        .monaco-editor .suggest-widget .monaco-list .monaco-list-row>.contents>.main>.type-label {
+            display: inline !important;
+            opacity: .3 !important;
+            margin-left: 2em !important;
+        }
+
+        /* Change info icon color from blue to gray. */
+        .monaco-editor .suggest-widget .monaco-list .monaco-list-row>.contents>.main>.readMore {
+            background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxNiIgaGVpZ2h0PSIxNiI+PHBhdGggZD0iTTggMWMtMy44NjUgMC03IDMuMTM1LTcgN3MzLjEzNSA3IDcgNyA3LTMuMTM1IDctNy0zLjEzNS03LTctN3ptMSAxMmgtMnYtN2gydjd6bTAtOGgtMnYtMmgydjJ6IiBmaWxsPSIjRkZGRkZGMzAiLz48cGF0aCBkPSJNNyA2aDJ2N2gtMnYtN3ptMC0xaDJ2LTJoLTJ2MnoiIGZpbGw9IiNGRkZGRkYxMCIvPjwvc3ZnPg==") !important;
+        }
     </style>
 </head>
 <body>
