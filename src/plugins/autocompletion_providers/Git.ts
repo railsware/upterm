@@ -418,17 +418,14 @@ const commandsData: SubcommandConfig[] = [
     {
         name: "am",
         detail: descriptions.git.subcommands.am,
-        provider: emptyProvider,
     },
     {
         name: "archive",
         detail: descriptions.git.subcommands.archive,
-        provider: emptyProvider,
     },
     {
         name: "bisect",
         detail: descriptions.git.subcommands.bisect,
-        provider: emptyProvider,
     },
     {
         name: "branch",
@@ -438,7 +435,6 @@ const commandsData: SubcommandConfig[] = [
     {
         name: "bundle",
         detail: descriptions.git.subcommands.bundle,
-        provider: emptyProvider,
     },
     {
         name: "checkout",
@@ -448,22 +444,18 @@ const commandsData: SubcommandConfig[] = [
     {
         name: "cherry-pick",
         detail: descriptions.git.subcommands.cherryPick,
-        provider: emptyProvider,
     },
     {
         name: "citool",
         detail: descriptions.git.subcommands.citool,
-        provider: emptyProvider,
     },
     {
         name: "clean",
         detail: descriptions.git.subcommands.clean,
-        provider: emptyProvider,
     },
     {
         name: "clone",
         detail: descriptions.git.subcommands.clone,
-        provider: emptyProvider,
     },
     {
         name: "commit",
@@ -478,12 +470,10 @@ const commandsData: SubcommandConfig[] = [
     {
         name: "describe",
         detail: descriptions.git.subcommands.describe,
-        provider: emptyProvider,
     },
     {
         name: "diff",
         detail: descriptions.git.subcommands.diff,
-        provider: emptyProvider,
     },
     {
         name: "fetch",
@@ -493,32 +483,26 @@ const commandsData: SubcommandConfig[] = [
     {
         name: "format-patch",
         detail: descriptions.git.subcommands.formatPatch,
-        provider: emptyProvider,
     },
     {
         name: "gc",
         detail: descriptions.git.subcommands.gc,
-        provider: emptyProvider,
     },
     {
         name: "grep",
         detail: descriptions.git.subcommands.grep,
-        provider: emptyProvider,
     },
     {
         name: "gui",
         detail: descriptions.git.subcommands.gui,
-        provider: emptyProvider,
     },
     {
         name: "init",
         detail: descriptions.git.subcommands.init,
-        provider: emptyProvider,
     },
     {
         name: "log",
         detail: descriptions.git.subcommands.log,
-        provider: emptyProvider,
     },
     {
         name: "merge",
@@ -535,12 +519,10 @@ const commandsData: SubcommandConfig[] = [
     {
         name: "mv",
         detail: descriptions.git.subcommands.mv,
-        provider: emptyProvider,
     },
     {
         name: "notes",
         detail: descriptions.git.subcommands.notes,
-        provider: emptyProvider,
     },
     {
         name: "pull",
@@ -560,7 +542,6 @@ const commandsData: SubcommandConfig[] = [
     {
         name: "rebase",
         detail: descriptions.git.subcommands.rebase,
-        provider: emptyProvider,
     },
     {
         name: "reset",
@@ -570,27 +551,22 @@ const commandsData: SubcommandConfig[] = [
     {
         name: "revert",
         detail: descriptions.git.subcommands.revert,
-        provider: emptyProvider,
     },
     {
         name: "rm",
         detail: descriptions.git.subcommands.rm,
-        provider: emptyProvider,
     },
     {
         name: "shortlog",
         detail: descriptions.git.subcommands.shortlog,
-        provider: emptyProvider,
     },
     {
         name: "show",
         detail: descriptions.git.subcommands.show,
-        provider: emptyProvider,
     },
     {
         name: "stash",
         detail: descriptions.git.subcommands.stash,
-        provider: emptyProvider,
     },
     {
         name: "status",
@@ -600,17 +576,14 @@ const commandsData: SubcommandConfig[] = [
     {
         name: "submodule",
         detail: descriptions.git.subcommands.submodule,
-        provider: emptyProvider,
     },
     {
         name: "tag",
         detail: descriptions.git.subcommands.tag,
-        provider: emptyProvider,
     },
     {
         name: "worktree",
         detail: descriptions.git.subcommands.worktree,
-        provider: emptyProvider,
     },
 ];
 
