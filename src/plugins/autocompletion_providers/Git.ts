@@ -471,6 +471,13 @@ const fetchOptions: Suggestion[] = [
     },
 ];
 
+const checkoutOptions: Suggestion[] = [
+    {
+        label: "-b",
+        detail: descriptions.git.checkout.branch,
+    },
+];
+
 const commonMergeOptions: Suggestion[] = [
     {
         label: "--no-commit",
@@ -630,7 +637,7 @@ const commandsData: SubcommandConfig[] = [
     {
         name: "checkout",
         detail: descriptions.git.subcommands.checkout,
-        provider: combine([branchesExceptCurrent, branchAlias, notStagedFiles]),
+        provider: combine([branchesExceptCurrent, branchAlias, notStagedFiles, staticSuggestionsProvider(checkoutOptions)]),
     },
     {
         name: "cherry-pick",

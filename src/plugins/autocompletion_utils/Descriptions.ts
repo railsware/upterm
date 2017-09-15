@@ -59,6 +59,9 @@ export const descriptions = {
             separator: "This option can be used to separate command-line options from the list of files, (useful when filenames might be mistaken for command-line options).",
             verbose: "Be verbose.",
         },
+        checkout: {
+            branch: "Create a new branch and start it at <start_point>; see git-branch(1) for details.",
+        },
         commit: {
             message: "Use the given <msg> as the commit message. If multiple -m options are given, their values are concatenated as separate paragraphs.",
             all: "Tell the command to automatically stage files that have been modified and deleted, but new files you have not told Git about are not affected.",
