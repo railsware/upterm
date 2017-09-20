@@ -134,7 +134,7 @@ export const KeybindingsForMenu: KeybindingMenuType[] = [
     // edit/clipboard commands
     {
         action: KeyboardAction.clipboardCopy,
-        accelerator: process.platform === "darwin" ? "Command+C" : "Ctrl+Shift+C",
+        accelerator: process.platform === "darwin" ? "Cmd+C" : "Ctrl+Shift+C",
     },
     {
         action: KeyboardAction.clipboardCut,
@@ -232,7 +232,10 @@ function toAccelerator(event: KeyboardEvent): string {
         parts.push("Alt");
     }
 
-    parts.push(event.key.toUpperCase());
+    // Cmd+Alt+I generates event.key Dead, but its code is KeyI.
+    const key = event.key === "Dead" ? event.code.slice(3) : event.key.toUpperCase();
+
+    parts.push(key);
 
     return parts.join("+");
 }
@@ -293,12 +296,6 @@ export function handleUserEvent(application: ApplicationComponent, search: Searc
 
         event.stopPropagation();
         event.preventDefault();
-        return;
-    }
-
-    if (event.metaKey) {
-        event.stopPropagation();
-        // Don't prevent default to be able to open developer tools and such.
         return;
     }
 
