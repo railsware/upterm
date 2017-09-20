@@ -1,5 +1,6 @@
 import {directoryName, escapeFilePath, io, resolveDirectory, userFriendlyPath} from "../../utils/Common";
 import {AutocompletionContext, AutocompletionProvider, FileInfo} from "../../Interfaces";
+import {combine} from "./Combine";
 import * as modeToPermissions from "mode-to-permissions";
 import * as Path from "path";
 import * as _ from "lodash";
@@ -133,6 +134,14 @@ export function staticSuggestionsProvider(suggestions: Suggestion[]) {
 }
 
 export const emptyProvider = provide(async() => []);
+
+export const defaultAutocompletionProvider = provide(async context => {
+    if (context.argument.value.length) {
+        return combine([environmentVariableSuggestions, anyFilesSuggestionsProvider])(context);
+    } else {
+        return [];
+    }
+});
 
 export const longAndShortFlag = (name: string, shortName = name[0]) => provide(async context => {
     const longValue = `--${name}`;
