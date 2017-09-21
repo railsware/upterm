@@ -303,6 +303,7 @@ export function handleUserEvent(application: ApplicationComponent, search: Searc
         // Search close
         if (isKeybindingForEvent(event, KeyboardAction.editFindClose)) {
             search.clearSelection();
+            promptComponent.focus();
 
             event.stopPropagation();
             event.preventDefault();
