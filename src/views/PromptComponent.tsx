@@ -82,6 +82,11 @@ export class PromptComponent extends React.Component<Props, State> {
             () => this.setNextHistoryItem(),
             "!suggestWidgetVisible",
         );
+        this.editor.addCommand(
+            monaco.KeyMod.CtrlCmd | monaco.KeyCode.KEY_F,
+            () => (document.querySelector("input[type=search]") as HTMLInputElement).select(),
+            "editorFocus",
+        );
         this.addShortcut(
             monaco.KeyMod.WinCtrl | monaco.KeyCode.KEY_B,
             "cursorLeft",
