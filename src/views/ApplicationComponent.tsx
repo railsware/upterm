@@ -10,7 +10,7 @@ import {services} from "../services";
 import * as _ from "lodash";
 
 type ApplicationState = {
-    tabs: Array<{sessionIDs: SessionID[]; focusedSessionID: SessionID}>;
+    tabs: Array<{id: number, sessionIDs: SessionID[]; focusedSessionID: SessionID}>;
     focusedTabIndex: number;
 };
 
@@ -23,6 +23,7 @@ export class ApplicationComponent extends React.Component<{}, ApplicationState> 
         const sessionID = services.sessions.create();
         this.state = {
             tabs: [{
+                id: Date.now(),
                 sessionIDs: [sessionID],
                 focusedSessionID: sessionID,
             }],
@@ -46,10 +47,10 @@ export class ApplicationComponent extends React.Component<{}, ApplicationState> 
         let tabs: React.ReactElement<Props>[] | undefined;
 
         if (this.state.tabs.length > 1) {
-            tabs = this.state.tabs.map((_tab, index: number) =>
+            tabs = this.state.tabs.map((tab, index: number) =>
                 <TabHeaderComponent
                     isFocused={index === this.state.focusedTabIndex}
-                    key={index}
+                    key={tab.id}
                     position={index + 1}
                     activate={() => this.setState({focusedTabIndex: index})}
                     closeHandler={(event: React.MouseEvent<HTMLSpanElement>) => {
@@ -72,7 +73,7 @@ export class ApplicationComponent extends React.Component<{}, ApplicationState> 
                 {this.state.tabs.map((tabProps, index) =>
                     <TabComponent {...tabProps}
                                   isFocused={index === this.state.focusedTabIndex}
-                                  key={index}
+                                  key={tabProps.id}
                                   onSessionFocus={(id: SessionID) => {
                                       const state = this.cloneState();
                                       state.tabs[state.focusedTabIndex].focusedSessionID = id;
@@ -97,6 +98,7 @@ export class ApplicationComponent extends React.Component<{}, ApplicationState> 
 
             const state = this.cloneState();
             state.tabs.push({
+                id: Date.now(),
                 sessionIDs: [id],
                 focusedSessionID: id,
             });
