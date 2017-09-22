@@ -123,7 +123,7 @@ export class PromptComponent extends React.Component<Props, State> {
         }
 
         if (prevState.mode !== this.state.mode) {
-            if (this.isInHistorySearchMode()) {
+            if (this.isInHistorySearchMode) {
                 this.editor.setModel(this.historyModel);
                 this.setValue(this.model.getValue());
                 this.triggerSuggest();
@@ -153,14 +153,14 @@ export class PromptComponent extends React.Component<Props, State> {
     acceptSelectedSuggestion() {
         this.editor.trigger("", "acceptSelectedSuggestion", {});
 
-        if (this.isInHistorySearchMode()) {
+        if (this.isInHistorySearchMode) {
             this.setNormalMode();
         } else {
             this.triggerSuggest();
         }
     }
 
-    isInHistorySearchMode(): boolean {
+    get isInHistorySearchMode(): boolean {
         return this.state.mode === Mode.HistorySearch;
     }
 
@@ -173,7 +173,7 @@ export class PromptComponent extends React.Component<Props, State> {
     }
 
     onReturnKeyPress(): void {
-        if (this.isInHistorySearchMode()) {
+        if (this.isInHistorySearchMode) {
             this.acceptSelectedSuggestion();
         } else {
             this.execute();

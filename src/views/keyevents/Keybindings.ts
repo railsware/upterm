@@ -350,7 +350,7 @@ export function handleUserEvent(application: ApplicationComponent, search: Searc
         return;
     }
 
-    if (event.ctrlKey && event.keyCode === KeyCode.R && !promptComponent.isInHistorySearchMode()) {
+    if (event.ctrlKey && event.keyCode === KeyCode.R && !promptComponent.isInHistorySearchMode) {
         promptComponent.setHistorySearchMode();
 
         event.stopPropagation();
@@ -366,7 +366,7 @@ export function handleUserEvent(application: ApplicationComponent, search: Searc
         return;
     }
 
-    if (event.keyCode === KeyCode.Escape && promptComponent.isInHistorySearchMode()) {
+    if (event.keyCode === KeyCode.Escape && promptComponent.isInHistorySearchMode) {
         promptComponent.setNormalMode();
         return;
     }
