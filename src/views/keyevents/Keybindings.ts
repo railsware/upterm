@@ -265,7 +265,7 @@ export function handleUserEvent(application: ApplicationComponent, search: Searc
         // Search close
         if (isKeybindingForEvent(event, KeyboardAction.editFindClose)) {
             search.clearSelection();
-            promptComponent.focus();
+            search.blur();
 
             event.stopPropagation();
             event.preventDefault();

@@ -33,6 +33,10 @@ export class SearchComponent extends React.Component<{}, {}> {
         this.input.value = "";
     }
 
+    blur() {
+        this.input.blur();
+    }
+
     private handleInput(event: React.KeyboardEvent<HTMLInputElement>) {
         const text = (event.target as HTMLInputElement).value;
 
