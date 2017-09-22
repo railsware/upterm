@@ -310,6 +310,7 @@
         }
 
         .session .prompt:before {
+            z-index: 2; /* Without this left pane prompt overlaps right pane prompt. */
             grid-area: prompt-decoration;
             filter: brightness(50%);
         }
@@ -387,7 +388,7 @@
         }
 
         .session .prompt[data-mode=history-search] .suggest-widget {
-            width: 800px !important;
+            width: 600px !important;
         }
 
         /* A workaround for https://github.com/Microsoft/monaco-editor/issues/434 */
