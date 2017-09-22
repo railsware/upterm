@@ -23,8 +23,8 @@ monaco.languages.registerCompletionItemProvider("shell-history", {
     provideCompletionItems: () => {
         return {
             isIncomplete: false,
-            items: _.uniq(services.history.all.map(record => record.command)).reverse().map(command => ({
-                label: command,
+            items: _.uniqBy(services.history.all, record => record.command).map(record => ({
+                label: record.command,
                 kind: monaco.languages.CompletionItemKind.Text,
             })),
         };
