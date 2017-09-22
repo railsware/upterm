@@ -22,11 +22,12 @@ monaco.languages.setMonarchTokensProvider("shell", {
             },
             {
                 regex: /@word/,
-                action: {token: "command-name", next: "@command"},
+                action: {token: "command-name", next: "@arguments"},
             },
         ],
-        command: [
+        arguments: [
             [/\s+/, "spaces"],
+            [/\$@variableName/, "variable-name"],
             [/@word/, "argument"],
             [/[=[\]]/, "argument"],
             {
