@@ -113,6 +113,10 @@ export class PromptComponent extends React.Component<Props, State> {
             monaco.KeyMod.Alt | monaco.KeyCode.KEY_D,
             "deleteWordRight",
         );
+        this.addShortcut(
+            monaco.KeyMod.WinCtrl | monaco.KeyCode.KEY_D,
+            "deleteRight",
+        );
 
         this.focus();
     }

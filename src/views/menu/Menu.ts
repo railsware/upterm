@@ -144,14 +144,14 @@ export function buildMenuTemplate(
                     type: "separator",
                 },
                 {
-                    label: "Previous",
+                    label: "Previous Tab",
                     accelerator: getAcceleratorForAction(KeyboardAction.tabPrevious),
                     click: () => {
                         application.focusPreviousTab();
                     },
                 },
                 {
-                    label: "Next",
+                    label: "Next Tab",
                     accelerator: getAcceleratorForAction(KeyboardAction.tabNext),
                     click: () => {
                         application.focusNextTab();
@@ -161,7 +161,7 @@ export function buildMenuTemplate(
                     type: "separator",
                 },
                 {
-                    label: "Close",
+                    label: "Close Current Tab",
                     click: () => {
                         application.closeFocusedTab();
                     },
