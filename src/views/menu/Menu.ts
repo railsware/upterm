@@ -96,13 +96,6 @@ export function buildMenuTemplate(
             label: "View",
             submenu: [
                 {
-                    label: "Other Session",
-                    accelerator: getAcceleratorForAction(KeyboardAction.otherSession),
-                    click: () => {
-                        application.otherSession();
-                    },
-                },
-                {
                     label: "Toggle Full Screen",
                     accelerator: getAcceleratorForAction(KeyboardAction.viewToggleFullScreen),
                     click: () => {
@@ -114,6 +107,25 @@ export function buildMenuTemplate(
                     accelerator: getAcceleratorForAction(KeyboardAction.toggleDeveloperTools),
                     click: () => {
                         browserWindow.webContents.toggleDevTools();
+                    },
+                },
+            ],
+        },
+        {
+            label: "Session",
+            submenu: [
+                {
+                    label: "Other Session",
+                    accelerator: getAcceleratorForAction(KeyboardAction.otherSession),
+                    click: () => {
+                        application.otherSession();
+                    },
+                },
+                {
+                    label: "Close Current Session",
+                    accelerator: getAcceleratorForAction(KeyboardAction.sessionClose),
+                    click: () => {
+                        application.closeFocusedSession();
                     },
                 },
             ],
@@ -150,7 +162,6 @@ export function buildMenuTemplate(
                 },
                 {
                     label: "Close",
-                    accelerator: getAcceleratorForAction(KeyboardAction.tabClose),
                     click: () => {
                         application.closeFocusedTab();
                     },

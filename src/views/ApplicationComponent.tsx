@@ -147,6 +147,10 @@ export class ApplicationComponent extends React.Component<{}, ApplicationState> 
         return services.sessions.get(this.state.tabs[this.state.focusedTabIndex].focusedSessionID);
     }
 
+    closeFocusedSession() {
+        services.sessions.close(this.focusedSession.id);
+    }
+
     otherSession(): void {
         const state = this.cloneState();
         const tabState = state.tabs[state.focusedTabIndex];

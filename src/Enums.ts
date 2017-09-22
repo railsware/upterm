@@ -116,7 +116,6 @@ export enum KeyboardAction {
     tabFocus,
     tabPrevious,
     tabNext,
-    tabClose,
     // session commands
     otherSession,
     sessionClose,

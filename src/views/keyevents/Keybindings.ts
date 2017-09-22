@@ -69,11 +69,6 @@ export const KeybindingsForActions: KeybindingType[] = [
             return (e.ctrlKey && e.keyCode === KeyCode.N) || (e.keyCode === KeyCode.Down);
         },
     },
-    // session command
-    {
-        action: KeyboardAction.sessionClose,
-        keybinding: (e: KeyboardEvent) => e.ctrlKey && e.keyCode === KeyCode.D,
-    },
     // tab commands
     {
         action: KeyboardAction.tabFocus,
@@ -124,7 +119,7 @@ export const KeybindingsForMenu: KeybindingMenuType[] = [
         accelerator: `${CmdOrCtrl}+]`,
     },
     {
-        action: KeyboardAction.tabClose,
+        action: KeyboardAction.sessionClose,
         accelerator: `${CmdOrCtrl}+W`,
     },
     // edit/clipboard commands
@@ -264,15 +259,6 @@ export function handleUserEvent(application: ApplicationComponent, search: Searc
     }
 
     if (isModifierKey(event) || isMenuShortcut(event)) {
-        return;
-    }
-
-    // Close focused session
-    if (!isJobRunning && isKeybindingForEvent(event, KeyboardAction.sessionClose)) {
-        services.sessions.close(application.focusedSession.id);
-
-        event.stopPropagation();
-        event.preventDefault();
         return;
     }
 
