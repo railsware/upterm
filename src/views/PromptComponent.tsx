@@ -12,8 +12,14 @@ interface Props {
     isFocused: boolean;
 }
 
+enum Mode {
+    Normal = "normal",
+    HistorySearch = "history-search",
+}
+
 interface State {
     displayedHistoryRecordID: number | undefined;
+    mode: Mode;
 }
 
 export class PromptComponent extends React.Component<Props, State> {
@@ -29,6 +35,7 @@ export class PromptComponent extends React.Component<Props, State> {
 
         this.state = {
             displayedHistoryRecordID: undefined,
+            mode: Mode.Normal,
         };
     }
 
@@ -118,7 +125,7 @@ export class PromptComponent extends React.Component<Props, State> {
 
     render() {
         return (
-            <div className="prompt">
+            <div className="prompt" data-mode={this.state.mode}>
                 <div className="prompt-decoration">
                     <div className="square"/>
                     <div className="square rhombus"/>
@@ -132,6 +139,7 @@ export class PromptComponent extends React.Component<Props, State> {
         this.editor.setModel(this.historyModel);
         this.setValue(this.model.getValue());
         this.triggerSuggest();
+        this.setState({mode: Mode.HistorySearch});
     }
 
     acceptSelectedSuggestion() {
@@ -147,6 +155,7 @@ export class PromptComponent extends React.Component<Props, State> {
     cancelHistorySearch() {
         this.editor.setModel(this.model);
         this.setValue(this.historyModel.getValue());
+        this.setState({mode: Mode.Normal});
     }
 
     isInHistorySearch(): boolean {
