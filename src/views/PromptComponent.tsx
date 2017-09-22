@@ -117,9 +117,20 @@ export class PromptComponent extends React.Component<Props, State> {
         this.focus();
     }
 
-    componentDidUpdate(prevProps: Props) {
+    componentDidUpdate(prevProps: Props, prevState: State) {
         if (!prevProps.isFocused && this.props.isFocused) {
             this.focus();
+        }
+
+        if (prevState.mode !== this.state.mode) {
+            if (this.isInHistorySearchMode()) {
+                this.editor.setModel(this.historyModel);
+                this.setValue(this.model.getValue());
+                this.triggerSuggest();
+            } else {
+                this.editor.setModel(this.model);
+                this.setValue(this.historyModel.getValue());
+            }
         }
     }
 
@@ -131,31 +142,26 @@ export class PromptComponent extends React.Component<Props, State> {
         );
     }
 
-    startHistorySearch() {
-        this.editor.setModel(this.historyModel);
-        this.setValue(this.model.getValue());
-        this.triggerSuggest();
+    setHistorySearchMode() {
         this.setState({mode: Mode.HistorySearch});
+    }
+
+    setNormalMode() {
+        this.setState({mode: Mode.Normal});
     }
 
     acceptSelectedSuggestion() {
         this.editor.trigger("", "acceptSelectedSuggestion", {});
 
-        if (this.isInHistorySearch()) {
-            this.cancelHistorySearch();
+        if (this.isInHistorySearchMode()) {
+            this.setNormalMode();
         } else {
             this.triggerSuggest();
         }
     }
 
-    cancelHistorySearch() {
-        this.editor.setModel(this.model);
-        this.setValue(this.historyModel.getValue());
-        this.setState({mode: Mode.Normal});
-    }
-
-    isInHistorySearch(): boolean {
-        return this.editor.getModel() === this.historyModel;
+    isInHistorySearchMode(): boolean {
+        return this.state.mode === Mode.HistorySearch;
     }
 
     focus(): void {
@@ -166,6 +172,14 @@ export class PromptComponent extends React.Component<Props, State> {
         this.setValue("");
     }
 
+    onReturnKeyPress(): void {
+        if (this.isInHistorySearchMode()) {
+            this.acceptSelectedSuggestion();
+        } else {
+            this.execute();
+        }
+    }
+
     async appendLastLArgumentOfPreviousCommand(): Promise<void> {
         const latestHistoryRecord = services.history.latest;
 
@@ -174,8 +188,15 @@ export class PromptComponent extends React.Component<Props, State> {
         }
     }
 
-    async execute(promptText: string): Promise<void> {
-        promptText = this.editor.getValue();
+    setValue(value: string): void {
+        this.editor.setValue(value);
+        this.editor.setPosition({lineNumber: 1, column: value.length + 1});
+        this.prompt.setValue(value);
+        this.focus();
+    }
+
+    private async execute(): Promise<void> {
+        let promptText = this.editor.getValue();
         this.prompt.setValue(promptText);
 
         if (!this.isEmpty()) {
@@ -185,13 +206,6 @@ export class PromptComponent extends React.Component<Props, State> {
                 displayedHistoryRecordID: undefined,
             });
         }
-    }
-
-    setValue(value: string): void {
-        this.editor.setValue(value);
-        this.editor.setPosition({lineNumber: 1, column: value.length + 1});
-        this.prompt.setValue(value);
-        this.focus();
     }
 
     private setPreviousHistoryItem(): void {

@@ -28,10 +28,6 @@ function isCtrlOrCmd(e: KeyboardEvent): boolean {
 export const KeybindingsForActions: KeybindingType[] = [
     // CLI commands
     {
-        action: KeyboardAction.cliRunCommand,
-        keybinding: (e: KeyboardEvent) => e.keyCode === KeyCode.CarriageReturn,
-    },
-    {
         action: KeyboardAction.cliClearJobs,
         keybinding: (e: KeyboardEvent) => e.ctrlKey && e.keyCode === KeyCode.L,
     },
@@ -328,8 +324,8 @@ export function handleUserEvent(application: ApplicationComponent, search: Searc
     promptComponent.focus();
 
     // CLI execute command
-    if (isKeybindingForEvent(event, KeyboardAction.cliRunCommand)) {
-        promptComponent.execute((event.target as HTMLElement).innerText);
+    if (event.keyCode === KeyCode.CarriageReturn) {
+        promptComponent.onReturnKeyPress();
 
         event.stopPropagation();
         event.preventDefault();
@@ -354,8 +350,8 @@ export function handleUserEvent(application: ApplicationComponent, search: Searc
         return;
     }
 
-    if (event.ctrlKey && event.keyCode === KeyCode.R && !promptComponent.isInHistorySearch()) {
-        promptComponent.startHistorySearch();
+    if (event.ctrlKey && event.keyCode === KeyCode.R && !promptComponent.isInHistorySearchMode()) {
+        promptComponent.setHistorySearchMode();
 
         event.stopPropagation();
         event.preventDefault();
@@ -370,8 +366,8 @@ export function handleUserEvent(application: ApplicationComponent, search: Searc
         return;
     }
 
-    if (event.keyCode === KeyCode.Escape && promptComponent.isInHistorySearch()) {
-        promptComponent.cancelHistorySearch();
+    if (event.keyCode === KeyCode.Escape && promptComponent.isInHistorySearchMode()) {
+        promptComponent.setNormalMode();
         return;
     }
 }

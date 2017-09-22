@@ -102,7 +102,6 @@ export enum LogLevel {
 
 export enum KeyboardAction {
     // CLI commands
-    cliRunCommand,
     cliClearJobs,
     cliClearText,
     cliAppendLastArgumentOfPreviousCommand,
