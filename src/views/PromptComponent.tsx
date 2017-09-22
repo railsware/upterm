@@ -118,6 +118,10 @@ export class PromptComponent extends React.Component<Props, State> {
             "deleteRight",
         );
 
+        this.unbindDefaultAction("editor.action.outdentLines");
+        this.unbindDefaultAction("editor.action.indentLines");
+        this.unbindDefaultAction("actions.find");
+
         this.focus();
     }
 
@@ -271,5 +275,9 @@ export class PromptComponent extends React.Component<Props, State> {
             () => this.editor.trigger("", handlerId, {}),
             "",
         );
+    }
+
+    private unbindDefaultAction(handlerId: string) {
+        (this.editor as any)._standaloneKeybindingService.addDynamicKeybinding(`-${handlerId}`);
     }
 }
