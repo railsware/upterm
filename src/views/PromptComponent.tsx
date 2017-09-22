@@ -121,6 +121,7 @@ export class PromptComponent extends React.Component<Props, State> {
         this.unbindDefaultAction("editor.action.outdentLines");
         this.unbindDefaultAction("editor.action.indentLines");
         this.unbindDefaultAction("actions.find");
+        this.unbindDefaultAction("editor.action.gotoLine");
 
         this.focus();
     }
