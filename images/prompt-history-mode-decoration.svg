@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 130 22"
+     preserveAspectRatio="xMidYMid meet">
+  <path d="M 0 22 L 120 22 L 130 11 L 120 0 L 0 0 z"
+        fill="#EEEEEE"/>
+  <text x="5" y="15" font-size="16" style="font-variant: small-caps; letter-spacing: 1.3px">
+    history search
+  </text>
+</svg>

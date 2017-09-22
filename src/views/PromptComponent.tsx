@@ -126,10 +126,6 @@ export class PromptComponent extends React.Component<Props, State> {
     render() {
         return (
             <div className="prompt" data-mode={this.state.mode}>
-                <div className="prompt-decoration">
-                    <div className="square"/>
-                    <div className="square rhombus"/>
-                </div>
                 <div className="prompt-content" ref="prompt-content"/>
             </div>
         );
