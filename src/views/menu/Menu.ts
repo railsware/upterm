@@ -27,14 +27,9 @@ export function buildMenuTemplate(
             label: "Edit",
             submenu: [
                 {
-                    label: "Undo",
-                    accelerator: getAcceleratorForAction(KeyboardAction.editUndo),
-                    role: "undo",
-                },
-                {
-                    label: "Redo",
-                    accelerator: getAcceleratorForAction(KeyboardAction.editRedo),
-                    role: "redo",
+                    label: "Copy",
+                    accelerator: getAcceleratorForAction(KeyboardAction.clipboardCopy),
+                    role: "copy",
                 },
                 {
                     label: "Find",
@@ -42,29 +37,6 @@ export function buildMenuTemplate(
                     click: () => {
                         (document.querySelector("input[type=search]") as HTMLInputElement).select();
                     },
-                },
-                {
-                    type: "separator",
-                },
-                {
-                    label: "Cut",
-                    accelerator: getAcceleratorForAction(KeyboardAction.clipboardCut),
-                    role: "cut",
-                },
-                {
-                    label: "Copy",
-                    accelerator: getAcceleratorForAction(KeyboardAction.clipboardCopy),
-                    role: "copy",
-                },
-                {
-                    label: "Paste",
-                    accelerator: getAcceleratorForAction(KeyboardAction.clipboardPaste),
-                    role: "paste",
-                },
-                {
-                    label: "Select All",
-                    accelerator: getAcceleratorForAction(KeyboardAction.editSelectAll),
-                    role: "selectall",
                 },
                 {
                     type: "separator",

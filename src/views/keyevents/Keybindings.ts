@@ -128,26 +128,6 @@ export const KeybindingsForMenu: KeybindingMenuType[] = [
         accelerator: process.platform === "darwin" ? "Cmd+C" : "Ctrl+Shift+C",
     },
     {
-        action: KeyboardAction.clipboardCut,
-        accelerator: `${CmdOrCtrl}+X`,
-    },
-    {
-        action: KeyboardAction.clipboardPaste,
-        accelerator: `${CmdOrCtrl}+V`,
-    },
-    {
-        action: KeyboardAction.editUndo,
-        accelerator: `${CmdOrCtrl}+Z`,
-    },
-    {
-        action: KeyboardAction.editRedo,
-        accelerator: `${CmdOrCtrl}+Shift+Z`,
-    },
-    {
-        action: KeyboardAction.editSelectAll,
-        accelerator: `${CmdOrCtrl}+A`,
-    },
-    {
         action: KeyboardAction.editFind,
         accelerator: `${CmdOrCtrl}+F`,
     },

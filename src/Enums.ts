@@ -121,11 +121,6 @@ export enum KeyboardAction {
     sessionClose,
     // edit/clipboard commands
     clipboardCopy,
-    clipboardCut,
-    clipboardPaste,
-    editUndo,
-    editRedo,
-    editSelectAll,
     editFind,
     editFindClose,
     increaseFontSize,
