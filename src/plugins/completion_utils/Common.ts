@@ -187,24 +187,3 @@ export const commandWithSubcommands = (subCommands: SubcommandConfig[]) => {
         return [];
     };
 };
-
-export const combineShortFlags = (suggestionsProvider: AutocompletionProvider) => {
-    return async (context: AutocompletionContext) => {
-        const token = context.argument.value;
-        const reShortFlag = new RegExp(/^\-[a-zA-Z]$/);
-        const reShortFlags = new RegExp(/^\-[a-zA-Z]+$/);
-        const suggestions = await suggestionsProvider(context);
-        if (reShortFlags.test(token)) {
-            return suggestions
-                    .filter(s =>
-                        reShortFlag.test(s.label) && !token.includes(s.label.slice(1)))
-                    .map(s =>
-                        ({
-                            label: token + s.label.slice(1),
-                            detail: s.detail,
-                        }));
-        } else {
-            return suggestions;
-        }
-    };
-};

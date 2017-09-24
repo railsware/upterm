@@ -3,6 +3,6 @@ import {directoriesSuggestionsProvider} from "../completion_utils/Common";
 import {combine} from "../completion_utils/Combine";
 import {manPageOptions} from "../../utils/ManPages";
 
-const lsOptions = manPageOptions("ls");
+const findOptions = manPageOptions("find");
 
-PluginManager.registerAutocompletionProvider("ls", combine([directoriesSuggestionsProvider, lsOptions]));
+PluginManager.registerAutocompletionProvider("find", combine([directoriesSuggestionsProvider, findOptions]));
