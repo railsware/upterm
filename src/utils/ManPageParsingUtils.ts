@@ -1,4 +1,4 @@
-import {Suggestion} from "../plugins/autocompletion_utils/Common";
+import {Suggestion} from "../plugins/completion_utils/Common";
 
 export const combineManPageLines = (lines: string[]) => lines
     .map(line => line.trim())

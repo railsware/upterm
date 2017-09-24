@@ -2,8 +2,8 @@ import {PluginManager} from "../../PluginManager";
 import {
     longFlag, longAndShortFlag, mapSuggestions, anyFilesSuggestionsProvider,
     anyFilesSuggestions, directoriesSuggestions, provide,
-} from "../autocompletion_utils/Common";
-import {combine} from "../autocompletion_utils/Combine";
+} from "../completion_utils/Common";
+import {combine} from "../completion_utils/Combine";
 import {mapObject} from "../../utils/Common";
 
 // Grep option suggestions based on linux  man file:

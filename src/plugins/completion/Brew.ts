@@ -5,8 +5,8 @@ import {
     shortFlag,
     staticSuggestionsProvider,
     Suggestion,
-} from "../autocompletion_utils/Common";
-import {combine} from "../autocompletion_utils/Combine";
+} from "../completion_utils/Common";
+import {combine} from "../completion_utils/Combine";
 import {PluginManager} from "../../PluginManager";
 import {AutocompletionContext, AutocompletionProvider} from "../../Interfaces";
 import {executeCommand} from "../../PTY";

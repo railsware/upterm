@@ -1,6 +1,6 @@
 import {PluginManager} from "../../PluginManager";
 import {linedOutputOf} from "../../PTY";
-import {commandWithSubcommands, emptyProvider, SubcommandConfig} from "../autocompletion_utils/Common";
+import {commandWithSubcommands, emptyProvider, SubcommandConfig} from "../completion_utils/Common";
 import {once} from "lodash";
 import {homeDirectory} from "../../utils/Common";
 

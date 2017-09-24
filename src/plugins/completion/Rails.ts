@@ -1,4 +1,4 @@
-import {commandWithSubcommands} from "../autocompletion_utils/Common";
+import {commandWithSubcommands} from "../completion_utils/Common";
 import {PluginManager} from "../../PluginManager";
 
 const railsCommandConfig = [

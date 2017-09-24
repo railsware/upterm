@@ -1,18 +1,18 @@
 import * as Scanner from "./Scanner";
 import * as _ from "lodash";
 import {memoizeAccessor} from "../Decorators";
-import {commandDescriptions} from "../plugins/autocompletion_providers/Executable";
+import {commandDescriptions} from "../plugins/completion/Executable";
 import {io, mapObject} from "../utils/Common";
 import {loginShell} from "../utils/Shell";
 import {PreliminaryAutocompletionContext} from "../Interfaces";
 import {PluginManager} from "../PluginManager";
 import {Aliases} from "./Aliases";
-import {combine} from "../plugins/autocompletion_utils/Combine";
+import {combine} from "../plugins/completion_utils/Combine";
 import {
     anyFilesSuggestions,
     environmentVariableSuggestions,
     executableFilesSuggestions, Suggestion,
-} from "../plugins/autocompletion_utils/Common";
+} from "../plugins/completion_utils/Common";
 
 
 export abstract class ASTNode {

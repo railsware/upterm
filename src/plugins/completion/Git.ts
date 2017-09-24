@@ -8,13 +8,13 @@ import {
     SubcommandConfig,
     Suggestion,
     unique,
-} from "../autocompletion_utils/Common";
-import {combine} from "../autocompletion_utils/Combine";
+} from "../completion_utils/Common";
+import {combine} from "../completion_utils/Combine";
 import {PluginManager} from "../../PluginManager";
 import {executeCommand, linedOutputOf} from "../../PTY";
 import {find, once, sortBy} from "lodash";
 import {homeDirectory} from "../../utils/Common";
-import {descriptions} from "../autocompletion_utils/Descriptions";
+import {descriptions} from "../completion_utils/Descriptions";
 
 const addOptions: Suggestion[] = [
     {

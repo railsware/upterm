@@ -1,7 +1,7 @@
 import {Prettyfier, EnvironmentObserverPlugin, AutocompletionProvider} from "./Interfaces";
 import * as Path from "path";
 import {io} from "./utils/Common";
-import { defaultAutocompletionProvider } from "./plugins/autocompletion_utils/Common";
+import { defaultAutocompletionProvider } from "./plugins/completion_utils/Common";
 
 // FIXME: Technical debt: register all the plugin types via single method.
 export class PluginManager {

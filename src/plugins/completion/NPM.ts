@@ -1,5 +1,5 @@
 import * as Path from "path";
-import {commandWithSubcommands} from "../autocompletion_utils/Common";
+import {commandWithSubcommands} from "../completion_utils/Common";
 import {io, mapObject} from "../../utils/Common";
 import {PluginManager} from "../../PluginManager";
 import {AutocompletionContext} from "../../Interfaces";

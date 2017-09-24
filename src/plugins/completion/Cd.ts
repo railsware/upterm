@@ -1,4 +1,4 @@
-import {directoriesSuggestionsProvider, Suggestion} from "../autocompletion_utils/Common";
+import {directoriesSuggestionsProvider, Suggestion} from "../completion_utils/Common";
 import * as _ from "lodash";
 import {PluginManager} from "../../PluginManager";
 import {join} from "path";

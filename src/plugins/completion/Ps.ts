@@ -1,6 +1,6 @@
 import {PluginManager} from "../../PluginManager";
-import {combine} from "../autocompletion_utils/Combine";
-import {provide, Suggestion} from "../autocompletion_utils/Common";
+import {combine} from "../completion_utils/Combine";
+import {provide, Suggestion} from "../completion_utils/Common";
 import {AutocompletionContext, AutocompletionProvider} from "../../Interfaces";
 import * as Process from "../../utils/Process";
 import {find} from "lodash";

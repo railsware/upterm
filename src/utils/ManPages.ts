@@ -1,5 +1,5 @@
 import {execFile} from "child-process-promise";
-import {contextIndependent, unique, Suggestion} from "../plugins/autocompletion_utils/Common";
+import {contextIndependent, unique, Suggestion} from "../plugins/completion_utils/Common";
 import {
     preprocessManPage,
     extractManPageSections,

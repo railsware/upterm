@@ -3,7 +3,7 @@ import {scan} from "../../shell/Scanner";
 import {isAbsolute} from "path";
 import {services} from "../../services/index";
 import {HistoryTrie} from "../../utils/HistoryTrie";
-import {Suggestion} from "../autocompletion_utils/Common";
+import {Suggestion} from "../completion_utils/Common";
 
 function cdIntoRelativePathFilter(record: HistoryRecord, pwd: string): boolean {
     if (record.directory === pwd) {
