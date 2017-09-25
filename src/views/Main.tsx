@@ -1,5 +1,6 @@
 import {handleUserEvent} from "./keyevents/Keybindings";
 
+process.env.PATH = "/usr/local/bin:" + process.env.PATH;
 process.env.NODE_ENV = process.env.NODE_ENV || "production";
 process.env.LANG = process.env.LANG || "en_US.UTF-8";
 process.env.COLORTERM = "truecolor";
