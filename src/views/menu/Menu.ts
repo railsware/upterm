@@ -32,6 +32,11 @@ export function buildMenuTemplate(
                     role: "copy",
                 },
                 {
+                    label: "Paste",
+                    accelerator: getAcceleratorForAction(KeyboardAction.clipboardPaste),
+                    role: "paste",
+                },
+                {
                     label: "Find",
                     accelerator: getAcceleratorForAction(KeyboardAction.editFind),
                     click: () => {
