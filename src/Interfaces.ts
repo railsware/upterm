@@ -57,3 +57,5 @@ export interface TerminalLikeDevice {
 }
 
 export type UserEvent = KeyboardEvent | ClipboardEvent;
+
+export type MouseEvent = DragEvent;
