@@ -56,7 +56,6 @@
         }
 
         .title-bar .search {
-            position: absolute;
             right: 4px;
             top: 2px;
         }
@@ -71,6 +70,7 @@
 
         .title-bar .search .search-input {
             --search-input-height: calc(var(--title-bar-height) - 6px);
+            -webkit-app-region: no-drag;
             font-size: var(--font-size);
             background-color: var(--search-input-color);
             border: 0;
@@ -81,6 +81,27 @@
             width: 10em;
             padding-left: var(--font-size);
             color: var(--white-color);
+        }
+
+        .title-bar .navButtons {
+            -webkit-app-region: no-drag;
+            position: absolute;
+            right: 4px;
+            top: 2px;
+        }
+
+        .title-bar .navButtons button {
+            position: relative;
+            height: 24px;
+            width: 29px;
+            background-color: transparent;
+            border: none;
+            color: #F1F1F1;
+            font-size: 17px;
+        }
+
+        .title-bar .navButtons button:hover {
+            background-color: #3F3F41;
         }
 
         .title-bar .tabs {

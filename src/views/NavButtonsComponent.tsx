@@ -12,6 +12,7 @@ export class NavButtonsComponent extends React.Component<Props, {}> {
         super();
     }
     render() {
+        // button space not right (big square, small text)
         return (
             <div className="navButtons">
                 <button id="min-btn" onClick={this.props.minimize}>-</button>
