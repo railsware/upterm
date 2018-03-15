@@ -10,10 +10,6 @@ export interface Props {
 }
 
 export class TabHeaderComponent extends React.Component<Props, {}> {
-    constructor() {
-        super();
-    }
-
     render() {
         return (
             <li className="tab-header"
