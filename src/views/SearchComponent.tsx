@@ -5,8 +5,8 @@ import {fontAwesome} from "./css/FontAwesome";
 export class SearchComponent extends React.Component<{}, {}> {
     private webContents: Electron.WebContents = remote.BrowserWindow.getAllWindows()[0].webContents;
 
-    constructor() {
-        super();
+    constructor(props: any) {
+        super(props);
         // FIXME: find a better design.
         window.search = this;
     }
