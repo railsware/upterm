@@ -204,6 +204,11 @@ export class PromptComponent extends React.Component<Props, State> {
         this.focus();
     }
 
+    insertValueInPlace(value: string): void {
+        this.editor.trigger("keyboard", "type", {text: value});
+        this.focus();
+    }
+
     private async execute(): Promise<void> {
         let promptText = this.editor.getValue();
         this.prompt.setValue(promptText);
