@@ -1,3 +1,4 @@
+import { type } from "os";
 import {TabHeaderComponent, Props} from "./TabHeaderComponent";
 import * as React from "react";
 import {ipcRenderer} from "electron";
@@ -69,28 +70,9 @@ export class ApplicationComponent extends React.Component<{}, ApplicationState> 
             <div className="application" style={css.application()}>
                 <div className="title-bar">
                     <ul className="tabs">{tabs}</ul>
+                    {this.isMacOS() && this.renderNavButtons()}
                     <SearchComponent/>
-                    <NavButtonsComponent
-                        minimize={(event: React.MouseEvent<HTMLSpanElement>) => {
-                            let window = remote.getCurrentWindow();
-                            event.stopPropagation();
-                            window.minimize();
-                        }}
-                        maximize={(event: React.MouseEvent<HTMLSpanElement>) => {
-                            let window = remote.getCurrentWindow();
-                            event.stopPropagation();
-                            if (window.isMaximized()) {
-                                window.restore();
-                            } else {
-                                window.maximize();
-                            }
-                        }}
-                        close={(event: React.MouseEvent<HTMLSpanElement>) => {
-                            let window = remote.getCurrentWindow();
-                            event.stopPropagation();
-                            window.close();
-                        }}
-                    />
+                    {!this.isMacOS() && this.renderNavButtons()}
                 </div>
                 {this.state.tabs.map((tabProps, index) =>
                     <TabComponent {...tabProps}
@@ -104,6 +86,40 @@ export class ApplicationComponent extends React.Component<{}, ApplicationState> 
                                   ref={tabComponent => this.tabComponents[index] = tabComponent!}/>)}
             </div>
         );
+    }
+
+    renderNavButtons() {
+      return (
+        <NavButtonsComponent
+            minimize={(event: React.MouseEvent<HTMLSpanElement>) => {
+                let window = remote.getCurrentWindow();
+                event.stopPropagation();
+                window.minimize();
+            }}
+            maximize={(event: React.MouseEvent<HTMLSpanElement>) => {
+                let window = remote.getCurrentWindow();
+                event.stopPropagation();
+                if (window.isMaximized()) {
+                    window.restore();
+                } else {
+                    window.maximize();
+                }
+            }}
+            close={(event: React.MouseEvent<HTMLSpanElement>) => {
+                let window = remote.getCurrentWindow();
+                event.stopPropagation();
+                window.close();
+            }}
+        />
+      );
+    }
+
+    /**
+    * is Mac OS
+    */
+
+    isMacOS() {
+      return 'Darwin' === type();
     }
 
     /**

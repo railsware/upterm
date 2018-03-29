@@ -8,9 +8,6 @@ export interface Props {
 }
 
 export class NavButtonsComponent extends React.Component<Props, {}> {
-    constructor() {
-        super();
-    }
     render() {
         // button space not right (big square, small text)
         return (
