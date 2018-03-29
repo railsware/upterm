@@ -1,15 +1,15 @@
 interface IntersectionObserverEntry {
     readonly time: number;
-    readonly rootBounds: ClientRect;
-    readonly boundingClientRect: ClientRect;
-    readonly intersectionRect: ClientRect;
+    readonly rootBounds: ClientRect | DOMRect;
+    readonly boundingClientRect: ClientRect | DOMRect;
+    readonly intersectionRect: ClientRect | DOMRect;
     readonly intersectionRatio: number;
     readonly target: Element;
 }
 
 interface IntersectionObserverInit {
     // The root to use for intersection. If not provided, use the top-level document’s viewport.
-    root?: Element;
+    root?: Element | null;
     // Same as margin, can be 1, 2, 3 or 4 components, possibly negative lengths.  If an explicit
     // root element is specified, components may be percentages of the root element size.  If no
     // explicit root element is specified, using a percentage here is an error.
