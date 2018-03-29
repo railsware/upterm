@@ -1,4 +1,4 @@
-FROM node:6.10.3
+FROM node:8.11.0
 
 RUN mkdir /upterm
 WORKDIR /upterm
