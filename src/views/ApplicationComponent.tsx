@@ -1,3 +1,5 @@
+import {type as osType} from "os";
+import * as classNames from "classnames";
 import {TabHeaderComponent, Props} from "./TabHeaderComponent";
 import * as React from "react";
 import {ipcRenderer} from "electron";
@@ -8,6 +10,7 @@ import {TabComponent} from "./TabComponent";
 import {SessionID} from "../shell/Session";
 import {services} from "../services";
 import * as _ from "lodash";
+import {NavButtonsComponent} from "./NavButtonsComponent";
 
 type ApplicationState = {
     tabs: Array<{id: number, sessionIDs: SessionID[]; focusedSessionID: SessionID}>;
@@ -66,9 +69,30 @@ export class ApplicationComponent extends React.Component<{}, ApplicationState> 
 
         return (
             <div className="application" style={css.application()}>
-                <div className="title-bar">
-                    <ul className="tabs">{tabs}</ul>
+                <div className={classNames("title-bar", {"reversed": this.isMacOS()})}>
                     <SearchComponent/>
+                    <ul className="tabs">{tabs}</ul>
+                    <NavButtonsComponent
+                        minimize={(event: React.MouseEvent<HTMLSpanElement>) => {
+                            let window = remote.getCurrentWindow();
+                            event.stopPropagation();
+                            window.minimize();
+                        }}
+                        maximize={(event: React.MouseEvent<HTMLSpanElement>) => {
+                            let window = remote.getCurrentWindow();
+                            event.stopPropagation();
+                            if (window.isMaximized()) {
+                                window.restore();
+                            } else {
+                                window.maximize();
+                            }
+                        }}
+                        close={(event: React.MouseEvent<HTMLSpanElement>) => {
+                            let window = remote.getCurrentWindow();
+                            event.stopPropagation();
+                            window.close();
+                        }}
+                    />
                 </div>
                 {this.state.tabs.map((tabProps, index) =>
                     <TabComponent {...tabProps}
@@ -82,6 +106,14 @@ export class ApplicationComponent extends React.Component<{}, ApplicationState> 
                                   ref={tabComponent => this.tabComponents[index] = tabComponent!}/>)}
             </div>
         );
+    }
+
+    /**
+     * is Mac OS
+     */
+
+    isMacOS() {
+      return "Darwin" === osType();
     }
 
     /**

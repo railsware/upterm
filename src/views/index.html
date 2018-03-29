@@ -50,15 +50,18 @@
         }
 
         .title-bar {
+            display: flex;
             grid-area: title-bar;
             height: var(--title-bar-height);
             -webkit-app-region: drag;
         }
 
         .title-bar .search {
-            position: absolute;
-            right: 4px;
-            top: 2px;
+            margin-top: 3px;
+        }
+
+        .title-bar.reversed .search {
+            order: 3;
         }
 
         .title-bar .search .search-icon {
@@ -71,6 +74,7 @@
 
         .title-bar .search .search-input {
             --search-input-height: calc(var(--title-bar-height) - 6px);
+            -webkit-app-region: no-drag;
             font-size: var(--font-size);
             background-color: var(--search-input-color);
             border: 0;
@@ -83,9 +87,48 @@
             color: var(--white-color);
         }
 
+        .title-bar .nav-buttons {
+            display: flex;
+            flex: 0 0 auto;
+            -webkit-app-region: no-drag;
+            right: 4px;
+            top: 2px;
+        }
+
+        .title-bar .nav-buttons button {
+            position: relative;
+            height: 24px;
+            width: 29px;
+            background-color: transparent;
+            border: none;
+            color: #F1F1F1;
+            font-size: 17px;
+        }
+
+        .title-bar .nav-buttons button:hover {
+            background-color: #3F3F41;
+        }
+
+        .title-bar.reversed .min-nav-button {
+            order: 2;
+        }
+
+        .title-bar.reversed .max-nav-button {
+            order: 3;
+        }
+
+        .title-bar.reversed .close-nav-button {
+            order: 1;
+        }
+
+        .title-bar.reversed .nav-buttons {
+            order: 1;
+        }
+
         .title-bar .tabs {
             justify-content: center;
             display: flex;
+            flex: 1;
             -webkit-margin-before: 0;
             -webkit-margin-after: 0;
             -webkit-padding-start: 0;
@@ -93,6 +136,10 @@
             list-style: none;
             padding-left: 68px;
             padding-right: 129px;
+        }
+
+        .title-bar.reversed .tabs {
+            order: 2;
         }
 
         .tab-header {
@@ -388,7 +435,7 @@
         }
 
         .session .prompt[data-mode=history-search] .suggest-widget {
-            width: 600px !important;
+            width: 500px !important;
         }
 
         /* A workaround for https://github.com/Microsoft/monaco-editor/issues/434 */
@@ -422,4 +469,3 @@
 </script>
 
 </html>
-
