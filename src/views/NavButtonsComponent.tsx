@@ -11,10 +11,10 @@ export class NavButtonsComponent extends React.Component<Props, {}> {
     render() {
         // button space not right (big square, small text)
         return (
-            <div className="navButtons">
-                <button id="min-btn" onClick={this.props.minimize}>-</button>
-                <button id="max-btn" onClick={this.props.maximize}>+</button>
-                <button id="close-btn" onClick={this.props.close}>x</button>
+            <div className="nav-buttons">
+                <button id="min-btn" className="min-nav-button" onClick={this.props.minimize}>-</button>
+                <button id="max-btn" className="max-nav-button" onClick={this.props.maximize}>+</button>
+                <button id="close-btn" className="close-nav-button" onClick={this.props.close}>x</button>
             </div>
         );
     }

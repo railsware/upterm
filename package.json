@@ -23,8 +23,10 @@
     "console"
   ],
   "dependencies": {
+    "@types/classnames": "2.2.3",
     "child-process-promise": "2.2.1",
     "chokidar": "2.0.3",
+    "classnames": "2.2.5",
     "csv-parse": "2.1.0",
     "csv-stringify": "2.0.4",
     "dirStat": "0.0.2",

@@ -50,6 +50,7 @@
         }
 
         .title-bar {
+            display: flex;
             grid-area: title-bar;
             height: var(--title-bar-height);
             -webkit-app-region: drag;
@@ -57,7 +58,10 @@
 
         .title-bar .search {
             margin-top: 3px;
-            width: 150px;
+        }
+
+        .title-bar.reversed .search {
+            order: 3;
         }
 
         .title-bar .search .search-icon {
@@ -83,15 +87,15 @@
             color: var(--white-color);
         }
 
-        .title-bar .navButtons {
+        .title-bar .nav-buttons {
+            display: flex;
+            flex: 0 0 auto;
             -webkit-app-region: no-drag;
-            position: absolute;
             right: 4px;
             top: 2px;
-            width: 87px;
         }
 
-        .title-bar .navButtons button {
+        .title-bar .nav-buttons button {
             position: relative;
             height: 24px;
             width: 29px;
@@ -101,13 +105,30 @@
             font-size: 17px;
         }
 
-        .title-bar .navButtons button:hover {
+        .title-bar .nav-buttons button:hover {
             background-color: #3F3F41;
+        }
+
+        .title-bar.reversed .min-nav-button {
+            order: 2;
+        }
+
+        .title-bar.reversed .max-nav-button {
+            order: 3;
+        }
+
+        .title-bar.reversed .close-nav-button {
+            order: 1;
+        }
+
+        .title-bar.reversed .nav-buttons {
+            order: 1;
         }
 
         .title-bar .tabs {
             justify-content: center;
             display: flex;
+            flex: 1;
             -webkit-margin-before: 0;
             -webkit-margin-after: 0;
             -webkit-padding-start: 0;
@@ -115,6 +136,10 @@
             list-style: none;
             padding-left: 68px;
             padding-right: 129px;
+        }
+
+        .title-bar.reversed .tabs {
+            order: 2;
         }
 
         .tab-header {

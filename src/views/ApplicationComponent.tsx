@@ -1,4 +1,5 @@
 import { type } from "os";
+import * as classNames from "classnames";
 import {TabHeaderComponent, Props} from "./TabHeaderComponent";
 import * as React from "react";
 import {ipcRenderer} from "electron";
@@ -68,11 +69,30 @@ export class ApplicationComponent extends React.Component<{}, ApplicationState> 
 
         return (
             <div className="application" style={css.application()}>
-                <div className="title-bar">
-                    <ul className="tabs">{tabs}</ul>
-                    {this.isMacOS() && this.renderNavButtons()}
+                <div className={classNames("title-bar", {"reversed": this.isMacOS()})}>
                     <SearchComponent/>
-                    {!this.isMacOS() && this.renderNavButtons()}
+                    <ul className="tabs">{tabs}</ul>
+                    <NavButtonsComponent
+                        minimize={(event: React.MouseEvent<HTMLSpanElement>) => {
+                            let window = remote.getCurrentWindow();
+                            event.stopPropagation();
+                            window.minimize();
+                        }}
+                        maximize={(event: React.MouseEvent<HTMLSpanElement>) => {
+                            let window = remote.getCurrentWindow();
+                            event.stopPropagation();
+                            if (window.isMaximized()) {
+                                window.restore();
+                            } else {
+                                window.maximize();
+                            }
+                        }}
+                        close={(event: React.MouseEvent<HTMLSpanElement>) => {
+                            let window = remote.getCurrentWindow();
+                            event.stopPropagation();
+                            window.close();
+                        }}
+                    />
                 </div>
                 {this.state.tabs.map((tabProps, index) =>
                     <TabComponent {...tabProps}
@@ -88,38 +108,12 @@ export class ApplicationComponent extends React.Component<{}, ApplicationState> 
         );
     }
 
-    renderNavButtons() {
-      return (
-        <NavButtonsComponent
-            minimize={(event: React.MouseEvent<HTMLSpanElement>) => {
-                let window = remote.getCurrentWindow();
-                event.stopPropagation();
-                window.minimize();
-            }}
-            maximize={(event: React.MouseEvent<HTMLSpanElement>) => {
-                let window = remote.getCurrentWindow();
-                event.stopPropagation();
-                if (window.isMaximized()) {
-                    window.restore();
-                } else {
-                    window.maximize();
-                }
-            }}
-            close={(event: React.MouseEvent<HTMLSpanElement>) => {
-                let window = remote.getCurrentWindow();
-                event.stopPropagation();
-                window.close();
-            }}
-        />
-      );
-    }
-
     /**
-    * is Mac OS
-    */
+     * is Mac OS
+     */
 
     isMacOS() {
-      return 'Darwin' === type();
+      return "Darwin" === type();
     }
 
     /**
