@@ -23,7 +23,6 @@
     "console"
   ],
   "dependencies": {
-    "@types/classnames": "2.2.3",
     "child-process-promise": "2.2.1",
     "chokidar": "2.0.3",
     "classnames": "2.2.5",
@@ -47,6 +46,7 @@
   "devDependencies": {
     "@types/chai": "4.1.2",
     "@types/chokidar": "1.7.5",
+    "@types/classnames": "2.2.3",
     "@types/csv-parse": "1.1.11",
     "@types/csv-stringify": "1.4.2",
     "@types/enzyme": "3.1.9",
