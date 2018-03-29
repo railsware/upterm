@@ -1,4 +1,4 @@
-import { type } from "os";
+import {type as osType} from "os";
 import * as classNames from "classnames";
 import {TabHeaderComponent, Props} from "./TabHeaderComponent";
 import * as React from "react";
@@ -113,7 +113,7 @@ export class ApplicationComponent extends React.Component<{}, ApplicationState> 
      */
 
     isMacOS() {
-      return "Darwin" === type();
+      return "Darwin" === osType();
     }
 
     /**
