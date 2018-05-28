@@ -4,6 +4,8 @@
 What Is It?
 -----------
 
+**[Upterm is looking for maintainers](https://github.com/railsware/upterm/issues/1301)**
+
 Upterm (formerly Black Screen) is an IDE in the world of terminals. Strictly speaking, it's both a
 terminal emulator and an *interactive* shell based on [Electron](http://electron.atom.io/).
 
