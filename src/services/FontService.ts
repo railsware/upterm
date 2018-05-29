@@ -15,8 +15,8 @@ function getLetterSize(size: number, fontFamily: string) {
     }
 }
 
-const fontSize = 14;
-const fontFamily = "'Hack', 'Fira Code', 'Menlo', monospace";
+const fontSize = 16;
+const fontFamily = "'Ubuntu Mono', 'Fira Code', 'Menlo', monospace";
 
 export class FontService {
     size: number;
