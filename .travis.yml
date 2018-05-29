@@ -19,6 +19,8 @@ deploy:
   skip_cleanup: true
   provider: script
   script: npm run pack
+  on:
+    branch: master
 
 env:
   global:
