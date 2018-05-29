@@ -20,7 +20,7 @@ deploy:
   provider: script
   script: npm run pack
   on:
-    branch: master
+    tags: true
 
 env:
   global:
