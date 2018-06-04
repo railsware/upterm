@@ -13,7 +13,12 @@ export function buildMenuTemplate(
         {
             label: "Upterm",
             submenu: [
-                {role: "about"},
+                { role: "about" },
+                { type: "separator" },
+                { role: "hide" },
+                { role: "hideothers" },
+                { role: "unhide" },
+                { type: "separator" },
                 {
                     label: "Quit",
                     accelerator: getAcceleratorForAction(KeyboardAction.uptermQuit),
@@ -143,6 +148,13 @@ export function buildMenuTemplate(
                         application.closeFocusedTab();
                     },
                 },
+            ],
+        },
+        {
+            role: "window",
+            submenu: [
+                { role: "minimize" },
+                { role: "close" },
             ],
         },
         {
