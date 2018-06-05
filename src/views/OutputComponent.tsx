@@ -11,7 +11,7 @@ const CharGroupComponent = ({group}: {group: Char[]}) => {
     return (
         <span
             className="char-group"
-            style={attributes ? css.charGroup(attributes) : null}>
+            style={attributes && css.charGroup(attributes)}>
         {group.map(char => char.value).join("")}
         </span>
     );
