@@ -81,7 +81,7 @@ export class ApplicationComponent extends React.Component<{}, ApplicationState> 
                         maximize={(event: React.MouseEvent<HTMLSpanElement>) => {
                             let window = remote.getCurrentWindow();
                             event.stopPropagation();
-                            if (this.isMacOS()) {
+                            if (this.isMacOS() && !event.altKey) {
                                 if (window.isFullScreen()) {
                                     window.setFullScreen(false);
                                 } else {
