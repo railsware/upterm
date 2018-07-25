@@ -10,7 +10,7 @@ app.on("ready", () => {
             experimentalFeatures: true,
             experimentalCanvasFeatures: true,
         },
-        frame: false,
+        titleBarStyle: "hidden",
         resizable: true,
         minWidth: 500,
         minHeight: 300,
