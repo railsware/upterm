@@ -14,7 +14,7 @@ import {
 // TODO: Handle nested options. Unblocks:
 // dd
 
-const manPageToOptions = async (command: string, section="DESCRIPTION"): Promise<Suggestion[]> => {
+const manPageToOptions = async (command: string, section = "DESCRIPTION"): Promise<Suggestion[]> => {
     // use execFile to prevent a command like "; echo test" from running the "echo test"
     const {stdout, stderr} =  await execFile("man", [command], {});
     if (stderr) {
@@ -39,4 +39,4 @@ const manPageToOptions = async (command: string, section="DESCRIPTION"): Promise
     return manDescriptionParagraphs.map(suggestionFromFlagParagraph).filter((s: Suggestion | undefined) => s !== undefined) as Suggestion[];
 };
 
-export const manPageOptions = (command: string, section="DESCRIPTION") => unique(contextIndependent(() => manPageToOptions(command, section)));
+export const manPageOptions = (command: string, section = "DESCRIPTION") => unique(contextIndependent(() => manPageToOptions(command, section)));
