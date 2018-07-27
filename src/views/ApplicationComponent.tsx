@@ -10,7 +10,6 @@ import {TabComponent} from "./TabComponent";
 import {SessionID} from "../shell/Session";
 import {services} from "../services";
 import * as _ from "lodash";
-import {NavButtonsComponent} from "./NavButtonsComponent";
 
 type ApplicationState = {
     tabs: Array<{id: number, sessionIDs: SessionID[]; focusedSessionID: SessionID}>;
@@ -72,35 +71,6 @@ export class ApplicationComponent extends React.Component<{}, ApplicationState> 
                 <div className={classNames("title-bar", {"reversed": this.isMacOS()})}>
                     <SearchComponent/>
                     <ul className="tabs">{tabs}</ul>
-                    <NavButtonsComponent
-                        minimize={(event: React.MouseEvent<HTMLSpanElement>) => {
-                            let window = remote.getCurrentWindow();
-                            event.stopPropagation();
-                            window.minimize();
-                        }}
-                        maximize={(event: React.MouseEvent<HTMLSpanElement>) => {
-                            let window = remote.getCurrentWindow();
-                            event.stopPropagation();
-                            if (this.isMacOS() && !event.altKey) {
-                                if (window.isFullScreen()) {
-                                    window.setFullScreen(false);
-                                } else {
-                                    window.setFullScreen(true);
-                                }
-                            } else {
-                                if (window.isMaximized()) {
-                                    window.restore();
-                                } else {
-                                    window.maximize();
-                                }
-                            }
-                        }}
-                        close={(event: React.MouseEvent<HTMLSpanElement>) => {
-                            let window = remote.getCurrentWindow();
-                            event.stopPropagation();
-                            window.close();
-                        }}
-                    />
                 </div>
                 {this.state.tabs.map((tabProps, index) =>
                     <TabComponent {...tabProps}
