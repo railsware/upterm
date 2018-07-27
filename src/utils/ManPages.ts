@@ -14,7 +14,7 @@ import {
 // TODO: Handle nested options. Unblocks:
 // dd
 
-const manPageToOptions = async (command: string): Promise<Suggestion[]> => {
+const manPageToOptions = async (command: string, section = "DESCRIPTION"): Promise<Suggestion[]> => {
     // use execFile to prevent a command like "; echo test" from running the "echo test"
     const {stdout, stderr} =  await execFile("man", [command], {});
     if (stderr) {
@@ -25,13 +25,18 @@ const manPageToOptions = async (command: string): Promise<Suggestion[]> => {
 
     const manSections = extractManPageSections(manContents);
 
+    // Make sure section is in manSections
+    if (!(section in manSections)) {
+        throw `Error in retrieving section "${section}" from man page: ${command}`;
+    }
+
     // Split the description section (which contains the flags) into paragraphs
     /* tslint:disable:no-string-literal */
-    const manDescriptionParagraphs: string[][] = extractManPageSectionParagraphs(manSections["DESCRIPTION"]);
+    const manDescriptionParagraphs: string[][] = extractManPageSectionParagraphs(manSections[section]);
     /* tslint:enable:no-string-literal */
 
     // Extract the paragraphs that describe flags, and parse out the flag data
     return manDescriptionParagraphs.map(suggestionFromFlagParagraph).filter((s: Suggestion | undefined) => s !== undefined) as Suggestion[];
 };
 
-export const manPageOptions = (command: string) => unique(contextIndependent(() => manPageToOptions(command)));
+export const manPageOptions = (command: string, section = "DESCRIPTION") => unique(contextIndependent(() => manPageToOptions(command, section)));
