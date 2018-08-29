@@ -200,7 +200,7 @@ export class PromptComponent extends React.Component<Props, State> {
     setValue(value: string): void {
         this.editor.setValue(value);
         this.editor.setPosition({lineNumber: 1, column: value.length + 1});
-        this.prompt.setValue(value);
+        this.prompt.value = value;
         this.focus();
     }
 
@@ -211,7 +211,7 @@ export class PromptComponent extends React.Component<Props, State> {
 
     private async execute(): Promise<void> {
         let promptText = this.editor.getValue();
-        this.prompt.setValue(promptText);
+        this.prompt.value = promptText;
 
         if (!this.isEmpty()) {
             this.props.session.createJob(this.prompt);
