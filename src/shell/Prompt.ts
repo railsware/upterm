@@ -4,7 +4,7 @@ import {CompleteCommand} from "./Parser";
 import {Session} from "./Session";
 
 export class Prompt extends events.EventEmitter {
-    private _value = "";
+
     private _expandedAst: CompleteCommand;
 
     constructor(private session: Session) {
@@ -12,11 +12,11 @@ export class Prompt extends events.EventEmitter {
     }
 
     get value(): string {
-        return this._value;
+        return this.value;
     }
 
-    setValue(value: string): void {
-        this._value = value;
+    set value(value: string) {
+        this.value = value;
 
         const tokens = scan(this.value);
         this._expandedAst = new CompleteCommand(expandAliases(tokens, this.session.aliases));
