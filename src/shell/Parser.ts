@@ -21,6 +21,8 @@ export abstract class ASTNode {
     abstract get fullEnd(): number;
 }
 
+const isEndOfCommand = (token: Scanner.Token) => token instanceof Scanner.Semicolon || token instanceof Scanner.NewLine;
+
 abstract class LeafNode extends ASTNode {
     constructor(private token: Scanner.Token) {
         super();
@@ -86,11 +88,14 @@ abstract class BranchNode extends ASTNode {
     }
 }
 
+/**
+ * The whole command, the input string.
+ */
 export class CompleteCommand extends BranchNode {
     @memoizeAccessor
     get children(): ASTNode[] {
         const lastChild = _.last(this.tokens)!;
-        const endsWithSeparator = lastChild instanceof Scanner.Semicolon;
+        const endsWithSeparator = isEndOfCommand(lastChild);
 
         if (endsWithSeparator) {
             return [
@@ -117,7 +122,7 @@ export class CompleteCommand extends BranchNode {
 class List extends BranchNode {
     @memoizeAccessor
     get children(): ASTNode[] {
-        const separatorOpIndex = _.findLastIndex(this.tokens, token => token instanceof Scanner.Semicolon);
+        const separatorOpIndex = _.findLastIndex(this.tokens, isEndOfCommand);
 
         if (separatorOpIndex !== -1) {
             return [

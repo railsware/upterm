@@ -147,6 +147,16 @@ export class DoubleQuotedStringLiteral extends StringLiteral {
     }
 }
 
+export class NewLine extends Token {
+    get value() {
+        return this.raw;
+    }
+
+    get escapedValue() {
+        return this.value as EscapedShellWord;
+    }
+}
+
 export class Invalid extends Token {
     get value() {
         return this.raw.trim();
@@ -157,7 +167,13 @@ export class Invalid extends Token {
     }
 }
 
+// All these regex start ^ so that we can look only at the first token. Maybe that should
+// be part of the scanner so that the regex can be just for the token
 const patterns = [
+    {
+        regularExpression: /^(\n)/,
+        tokenConstructor: NewLine,
+    },
     {
         regularExpression: /^(\s*\|\s*)/,
         tokenConstructor: Pipe,
