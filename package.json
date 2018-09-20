@@ -67,7 +67,7 @@
     "electron-mocha": "6.0.4",
     "enzyme": "3.3.0",
     "mkdirp": "0.5.1",
-    "mocha": "5.1.1",
+    "mocha": "5.2.0",
     "npm-check-updates": "2.14.2",
     "react-addons-test-utils": "15.6.2",
     "rimraf": "2.6.2",
