@@ -21,12 +21,12 @@ export interface HistoryRecord extends HistoryRecordWithoutID {
 const readHistoryFileData = (): HistoryRecord[] => {
     try {
         return csvParse(readFileSync(historyFilePath).toString()).map((array: string[]) => ({
-            id: Number.parseInt(array[0]),
+            id: Number.parseInt(array[0], 10),
             command: array[1],
             expandedCommand: array[2],
-            timestamp: Number.parseInt(array[3]),
+            timestamp: Number.parseInt(array[3], 10),
             directory: array[4],
-            sessionID: Number.parseInt(array[5]),
+            sessionID: Number.parseInt(array[5], 10),
         }));
     } catch (e) {
         return [];

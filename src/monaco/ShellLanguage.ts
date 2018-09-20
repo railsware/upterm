@@ -142,7 +142,7 @@ monaco.editor.onDidCreateModel(model => {
     model.onDidChangeContent(async () => {
         const value = model.getValue();
 
-        const sessionID: SessionID = <SessionID>Number.parseInt(model.uri.authority);
+        const sessionID: SessionID = <SessionID>Number.parseInt(model.uri.authority, 10);
         const session = services.sessions.get(sessionID);
         const executables = await io.executablesInPaths(session.environment.path);
         const markers: monaco.editor.IMarkerData[] = [];
@@ -186,7 +186,7 @@ monaco.languages.registerCompletionItemProvider("shell", {
     triggerCharacters: [" ", "/", "$", "-", "."],
     provideCompletionItems: async function (model, position): Promise<monaco.languages.CompletionList> {
         model.getValue();
-        const sessionID: SessionID = <SessionID>Number.parseInt(model.uri.authority);
+        const sessionID: SessionID = <SessionID>Number.parseInt(model.uri.authority, 10);
         const session = services.sessions.get(sessionID);
         const text = model.getValue();
 
