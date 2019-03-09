@@ -12,9 +12,8 @@
   "bugs": {
     "url": "https://github.com/railsware/upterm/issues"
   },
-  "engineStrict": true,
   "engines": {
-    "node": ">= 6.0.0"
+    "node": ">=8.0.0 || >=10.0.0"
   },
   "keywords": [
     "terminal",
