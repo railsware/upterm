@@ -22,6 +22,13 @@ If not, before reporting the issue you'll need to gather some information by fol
 
  5.3. Copy the output and paste it into the issue.
 
+Developing
+----------
+
+Clone the repo, then `npm start`. This will install dependencies, build,
+and run Electron. You may need additional packages, such as `libgconf2`
+([reference](https://github.com/railsware/upterm/issues/1320)).
+
 I have some important changes!
 ------------------------------
 
