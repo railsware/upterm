@@ -1,6 +1,14 @@
 [![Join the chat at https://gitter.im/railsware/upterm](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/upterm/Lobby)
 [![Build Status](https://travis-ci.org/railsware/upterm.svg?branch=master)](https://travis-ci.org/railsware/upterm)
 
+# Deprecated
+
+Upterm is deprecated. Project had [lost maintainer](https://github.com/railsware/upterm/issues/1301#issue-327003344) and have zero activity to support it from community (only issues was created in repo).
+
+I am no longer accepting pull requests and issues.
+
+I recomended to check [Hyper](https://hyper.is/) instead.
+
 What Is It?
 -----------
 
