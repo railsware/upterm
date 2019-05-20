@@ -100,4 +100,21 @@ describe("application launch", function () {
             expect(await page.footer.presentDirectory.getText()).to.eql(newDirectory);
         });
     });
+
+    describe("source", () => {
+        it("Valid source command", async () => {
+            const sourceFile = userFriendlyPath(__dirname + "/test_files/scripts/test_source.sh");
+            await page.executeCommand(`source ${sourceFile}`);
+            await page.executeCommand(`echo $test_source_built_in`);
+            const output = await page.job.output.getText();
+            expect(output.trim()).to.eq("OK");
+        });
+        it("Invalid source command", async () => {
+            await page.executeCommand(`cd ${__dirname}`);
+            const sourceFile = __dirname + "/invalid";
+            await page.executeCommand(`source invalid`);
+            const output = await page.job.output.getText();
+            expect(output.trim()).to.eq(`/bin/sh: ${sourceFile}: No such file or directory`);
+        });
+    });
 });

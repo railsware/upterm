@@ -7,6 +7,7 @@ import {Session} from "./Session";
 import {OrderedSet} from "../utils/OrderedSet";
 import {parseAlias} from "./Aliases";
 import {stringLiteralValue} from "./Scanner";
+import {exec} from "child_process";
 
 const executors: Dictionary<(i: Job, a: string[]) => void> = {
     cd: (job: Job, args: string[]): void => {
@@ -52,9 +53,13 @@ const executors: Dictionary<(i: Job, a: string[]) => void> = {
             });
         }
     },
-    // FIXME: make the implementation more reliable.
     source: (job: Job, args: string[]): void => {
-        sourceFile(job.session, args[0]);
+        const dir = job.session.directory;
+        sourceFile(job.session, args[0])
+            .then(() => executors.cd(job, [dir]))
+            .catch((err) => {
+                job.output.write(err);
+            });
     },
     alias: (job: Job, args: string[]): void => {
         if (args.length === 0) {
@@ -86,17 +91,19 @@ const executors: Dictionary<(i: Job, a: string[]) => void> = {
 };
 
 export function sourceFile(session: Session, fileName: string) {
-    const content = readFileSync(resolveFile(session.directory, fileName)).toString();
-
-    content.split(EOL).forEach(line => {
-        if (line.startsWith("export ")) {
-            const [variableName, variableValueLiteral] = line.split(" ")[1].split("=");
-
-            const variableValue = stringLiteralValue(variableValueLiteral);
-            if (variableValue) {
-                session.environment.set(variableName, variableValue);
-            }
-        }
+    return new Promise((resolve, reject) => {
+        const cmd = `source ${resolveFile(session.directory, fileName)}; env`;
+        const script = exec(cmd);
+        script.stdout.on("data", (data: string) => {
+            data.split(EOL).forEach((line: string) => {
+                const [key, value] = line.split("=");
+                session.environment.set(key, value);
+            });
+            resolve();
+        });
+        script.stderr.on("data", function(data) {
+            reject(data);
+        });
     });
 }
 
